@@ -16,8 +16,8 @@ use App\Http\Controllers\Demo2Controller;
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('dashboard');
+})->name('dashboard');
 
 // Demo 1 routes
 Route::get('/demo1', function () {
