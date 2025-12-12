@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Demo1Controller;
+use App\Http\Controllers\AppController;
 use App\Http\Controllers\Demo2Controller;
 
 /*
@@ -17,6 +17,6 @@ use App\Http\Controllers\Demo2Controller;
 
 // Demo 1 routes
 Route::get('/', function () {
-    return view('pages.app.index');
+    return view('app.pages.app.index');
 });
 

@@ -13,19 +13,15 @@
                     <i class="ki-filled ki-menu">
                     </i>
                 </button>
-                <button class="kt-btn kt-btn-icon kt-btn-ghost" data-kt-drawer-toggle="#mega_menu_wrapper">
-                    <i class="ki-filled ki-burger-menu-2">
-                    </i>
-                </button>
             </div>
         </div>
         <!-- Topbar -->
         <div class="flex items-center gap-2.5">
-            @include('partials.topbar-search-modal')
-            @include('partials.topbar-notification-dropdown')
-            @include('partials.topbar-chat')
-            @include('partials.topbar-apps')
-            @include('partials.topbar-user-dropdown')
+            <a class="kt-btn kt-btn-ghost kt-btn-icon size-8 hover:bg-background hover:[&_i]:text-primary" href="#" title="Çıkış">
+                <i class="ki-filled ki-exit-right">
+                </i>
+            </a>
+            @include('app.partials.topbar-user-dropdown')
         </div>
         <!-- End of Topbar -->
     </div>
