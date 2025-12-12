@@ -1,10 +1,12 @@
-<!-- Scripts -->
-<script src="{{ asset('assets/js/core.bundle.js') }}" data-navigate-once></script>
-<script src="{{ asset('assets/vendors/ktui/ktui.min.js') }}" data-navigate-once></script>
-<script src="{{ asset('assets/vendors/apexcharts/apexcharts.min.js') }}" data-navigate-once></script>
-<script src="{{ asset('assets/js/layouts/demo1.js') }}" data-navigate-once></script>
+{{-- Global JS bundle --}}
+<script src="{{ asset('assets/js/core.bundle.js') }}"></script>
+<script src="{{ asset('assets/vendors/ktui/ktui.min.js') }}"></script>
+<script src="{{ asset('assets/vendors/apexcharts/apexcharts.min.js') }}"></script>
 
-@stack('scripts')
-<!-- Compiled App Scripts -->
+{{-- Custom JS stack’leri --}}
+@stack('custom_js')
+@stack('vendor_js')
+@stack('page_js')
+
+{{-- Senin uygulama JS’in (Vite) --}}
 @vite(['resources/js/app.js'])
-<!-- End of Scripts -->
