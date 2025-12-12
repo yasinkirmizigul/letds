@@ -53,7 +53,7 @@ public/assets/
 ├── js/
 │   ├── core.bundle.js
 │   └── layouts/
-│       ├── demo1.js
+│       ├── app.js
 │       ├── demo2.js
 │       └── ... (demo3-demo10.js)
 ├── media/

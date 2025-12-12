@@ -16,7 +16,7 @@ class DemoSmokeTest extends TestCase
     public function test_all_demo_pages_load_successfully()
     {
         $demos = [
-            'demo1' => '/demo1',
+            'app' => '/app',
             'demo2' => '/demo2',
             'demo3' => '/demo3',
             'demo4' => '/demo4',
@@ -57,8 +57,8 @@ class DemoSmokeTest extends TestCase
      */
     public function test_demo1_loads()
     {
-        $response = $this->get('/demo1');
-        $response->assertStatus(200)->assertViewIs('pages.demo1.index');
+        $response = $this->get('/app');
+        $response->assertStatus(200)->assertViewIs('pages.app.index');
     }
 
     public function test_demo2_loads()
@@ -125,7 +125,7 @@ class DemoSmokeTest extends TestCase
      */
     public function test_demo_layouts_have_proper_html_structure()
     {
-        $demos = ['demo1', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
+        $demos = ['app', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
 
         foreach ($demos as $demo) {
             $response = $this->get("/{$demo}");
@@ -148,7 +148,7 @@ class DemoSmokeTest extends TestCase
      */
     public function test_demo_layouts_include_sidebar_where_expected()
     {
-        $demosWithSidebar = ['demo1', 'demo3', 'demo4', 'demo5', 'demo6', 'demo8', 'demo10'];
+        $demosWithSidebar = ['app', 'demo3', 'demo4', 'demo5', 'demo6', 'demo8', 'demo10'];
 
         foreach ($demosWithSidebar as $demo) {
             $response = $this->get("/{$demo}");
@@ -168,7 +168,7 @@ class DemoSmokeTest extends TestCase
      */
     public function test_demos_load_assets()
     {
-        $demos = ['demo1', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
+        $demos = ['app', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
 
         foreach ($demos as $demo) {
             $response = $this->get("/{$demo}");
@@ -190,7 +190,7 @@ class DemoSmokeTest extends TestCase
      */
     public function test_demos_have_responsive_classes()
     {
-        $demos = ['demo1', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
+        $demos = ['app', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
 
         foreach ($demos as $demo) {
             $response = $this->get("/{$demo}");
@@ -212,7 +212,7 @@ class DemoSmokeTest extends TestCase
      */
     public function test_demos_dont_have_common_errors()
     {
-        $demos = ['demo1', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
+        $demos = ['app', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
 
         $errorPatterns = [
             'Undefined variable',
@@ -243,7 +243,7 @@ class DemoSmokeTest extends TestCase
      */
     public function test_demos_extend_correct_base_layout()
     {
-        $demos = ['demo1', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
+        $demos = ['app', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
 
         foreach ($demos as $demo) {
             $response = $this->get("/{$demo}");
@@ -261,7 +261,7 @@ class DemoSmokeTest extends TestCase
      */
     public function test_demo_pages_performance()
     {
-        $demos = ['demo1', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
+        $demos = ['app', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
 
         foreach ($demos as $demo) {
             $startTime = microtime(true);
@@ -284,7 +284,7 @@ class DemoSmokeTest extends TestCase
      */
     public function test_demos_have_page_titles()
     {
-        $demos = ['demo1', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
+        $demos = ['app', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
 
         foreach ($demos as $demo) {
             $response = $this->get("/{$demo}");

@@ -8,6 +8,10 @@ class Demo1Controller extends Controller
 {
     public function index()
     {
-        return view('pages.demo1.index');
+        return view('pages.app.index', [
+            'pageTitle' => 'APP - Sidebar',
+            'pageDescription' => 'Sidebar layout başlangıcı',
+            'currentDemo' => 'demo1',
+        ]);
     }
 }
