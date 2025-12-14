@@ -7,7 +7,7 @@
         </a>
         <div class="flex items-center">
             <h3 class="hidden text-base text-secondary-foreground md:block">
-                MetronicTeam
+                ThemeTeam
             </h3>
             <span class="hidden px-2.5 text-sm font-medium text-muted-foreground md:inline">
                 /

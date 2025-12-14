@@ -861,7 +861,7 @@ eval("{\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nvar
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
-eval("{\n/*\n * Metronic\n * @author: Keenthemes\n * Copyright 2024 Keenthemes\n */\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.KTDatePicker = exports.KTMenu = void 0;\nvar dom_1 = __webpack_require__(/*! ./helpers/dom */ \"./src/core/helpers/dom.ts\");\nvar utils_1 = __webpack_require__(/*! ./helpers/utils */ \"./src/core/helpers/utils.ts\");\nvar event_handler_1 = __webpack_require__(/*! ./helpers/event-handler */ \"./src/core/helpers/event-handler.ts\");\nvar menu_1 = __webpack_require__(/*! ./components/menu */ \"./src/core/components/menu/index.ts\");\nvar date_picker_1 = __webpack_require__(/*! ./components/date-picker */ \"./src/core/components/date-picker/index.ts\");\nvar menu_2 = __webpack_require__(/*! ./components/menu */ \"./src/core/components/menu/index.ts\");\nObject.defineProperty(exports, \"KTMenu\", ({ enumerable: true, get: function () { return menu_2.KTMenu; } }));\nvar date_picker_2 = __webpack_require__(/*! ./components/date-picker */ \"./src/core/components/date-picker/index.ts\");\nObject.defineProperty(exports, \"KTDatePicker\", ({ enumerable: true, get: function () { return date_picker_2.KTDatePicker; } }));\nvar KTComponents = {\n    /**\n     * Initializes all KT components.\n     * This method is called on initial page load and after Livewire navigation.\n     */\n    init: function () {\n        try {\n            menu_1.KTMenu.init();\n        }\n        catch (error) {\n            console.warn('KTMenu initialization failed:', error);\n        }\n        try {\n            date_picker_1.KTDatePicker.init();\n        }\n        catch (error) {\n            console.warn('KTDatePicker initialization failed:', error);\n        }\n    },\n};\nwindow.KTUtils = utils_1.default;\nwindow.KTDom = dom_1.default;\nwindow.KTEventHandler = event_handler_1.default;\nwindow.KTMenu = menu_1.KTMenu;\nwindow.KTDatePicker = date_picker_1.KTDatePicker;\nwindow.KTComponents = KTComponents;\nexports[\"default\"] = KTComponents;\ndom_1.default.ready(function () {\n    KTComponents.init();\n});\n\n\n//# sourceURL=webpack://metronic-tailwind-html/./src/core/index.ts?\n}");
+eval("{\n/*\n * Theme\n * @author: Keenthemes\n * Copyright 2024 Keenthemes\n */\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.KTDatePicker = exports.KTMenu = void 0;\nvar dom_1 = __webpack_require__(/*! ./helpers/dom */ \"./src/core/helpers/dom.ts\");\nvar utils_1 = __webpack_require__(/*! ./helpers/utils */ \"./src/core/helpers/utils.ts\");\nvar event_handler_1 = __webpack_require__(/*! ./helpers/event-handler */ \"./src/core/helpers/event-handler.ts\");\nvar menu_1 = __webpack_require__(/*! ./components/menu */ \"./src/core/components/menu/index.ts\");\nvar date_picker_1 = __webpack_require__(/*! ./components/date-picker */ \"./src/core/components/date-picker/index.ts\");\nvar menu_2 = __webpack_require__(/*! ./components/menu */ \"./src/core/components/menu/index.ts\");\nObject.defineProperty(exports, \"KTMenu\", ({ enumerable: true, get: function () { return menu_2.KTMenu; } }));\nvar date_picker_2 = __webpack_require__(/*! ./components/date-picker */ \"./src/core/components/date-picker/index.ts\");\nObject.defineProperty(exports, \"KTDatePicker\", ({ enumerable: true, get: function () { return date_picker_2.KTDatePicker; } }));\nvar KTComponents = {\n    /**\n     * Initializes all KT components.\n     * This method is called on initial page load and after Livewire navigation.\n     */\n    init: function () {\n        try {\n            menu_1.KTMenu.init();\n        }\n        catch (error) {\n            console.warn('KTMenu initialization failed:', error);\n        }\n        try {\n            date_picker_1.KTDatePicker.init();\n        }\n        catch (error) {\n            console.warn('KTDatePicker initialization failed:', error);\n        }\n    },\n};\nwindow.KTUtils = utils_1.default;\nwindow.KTDom = dom_1.default;\nwindow.KTEventHandler = event_handler_1.default;\nwindow.KTMenu = menu_1.KTMenu;\nwindow.KTDatePicker = date_picker_1.KTDatePicker;\nwindow.KTComponents = KTComponents;\nexports[\"default\"] = KTComponents;\ndom_1.default.ready(function () {\n    KTComponents.init();\n});\n\n\n//# sourceURL=webpack://metronic-tailwind-html/./src/core/index.ts?\n}");
 
 /***/ })
 
@@ -869,7 +869,7 @@ eval("{\n/*\n * Metronic\n * @author: Keenthemes\n * Copyright 2024 Keenthemes\n
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -883,14 +883,14 @@ eval("{\n/*\n * Metronic\n * @author: Keenthemes\n * Copyright 2024 Keenthemes\n
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	!function() {
@@ -903,12 +903,12 @@ eval("{\n/*\n * Metronic\n * @author: Keenthemes\n * Copyright 2024 Keenthemes\n
 /******/ 			}
 /******/ 		};
 /******/ 	}();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	!function() {
 /******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
 /******/ 	}();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	!function() {
 /******/ 		// define __esModule on exports
@@ -919,14 +919,14 @@ eval("{\n/*\n * Metronic\n * @author: Keenthemes\n * Copyright 2024 Keenthemes\n
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
 /******/ 	}();
-/******/ 	
+/******/
 /************************************************************************/
-/******/ 	
+/******/
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module can't be inlined because the eval devtool is used.
 /******/ 	var __webpack_exports__ = __webpack_require__("./src/core/index.ts");
-/******/ 	
+/******/
 /******/ 	return __webpack_exports__;
 /******/ })()
 ;

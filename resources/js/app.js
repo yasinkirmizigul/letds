@@ -5,7 +5,7 @@ import Alpine from 'alpinejs';
 window.Alpine = Alpine;
 Alpine.start();
 
-// Metronic Core JavaScript functionality
+// Theme Core JavaScript functionality
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize drawer functionality
     initDrawers();
@@ -107,7 +107,7 @@ document.addEventListener('click', function(e) {
 });
 
 // Export functions for use in other modules
-window.MetronicCore = {
+window.ThemeCore = {
     initDrawers,
     initMenus,
     initStickyHeaders,

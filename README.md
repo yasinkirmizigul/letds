@@ -1,10 +1,10 @@
-# Metronic Tailwind HTML Laravel Integration
+# Theme Tailwind HTML Laravel Integration
 
-This project integrates Metronic Tailwind HTML themes into a Laravel application, providing 10 complete demo layouts showcasing different UI patterns and design approaches.
+This project integrates Theme Tailwind HTML themes into a Laravel application, providing 10 complete demo layouts showcasing different UI patterns and design approaches.
 
 ## Project Overview
 
-**Goal**: Convert Metronic Tailwind HTML demo layouts (Demo1 through Demo10) into standard Laravel Blade views, providing a comprehensive showcase of Metronic's design system within Laravel's MVC architecture.
+**Goal**: Convert Theme Tailwind HTML demo layouts (Demo1 through Demo10) into standard Laravel Blade views, providing a comprehensive showcase of Theme's design system within Laravel's MVC architecture.
 
 ## Tech Stack
 
@@ -85,7 +85,7 @@ This integration includes 10 complete demo layouts, each showcasing different UI
    - Blade template inheritance and components
 
 2. **Asset Management**
-   - Metronic CSS and JavaScript assets properly integrated
+   - Theme CSS and JavaScript assets properly integrated
    - Laravel asset helpers for proper path resolution
    - Vite integration for development workflow
 
@@ -101,9 +101,9 @@ This integration includes 10 complete demo layouts, each showcasing different UI
 
 ### 🎨 Design System
 
-- **Metronic Tailwind CSS** - Complete design system integration
+- **Theme Tailwind CSS** - Complete design system integration
 - **Theme Support** - Light and dark mode switching
-- **Custom Components** - Metronic-specific UI components
+- **Custom Components** - Theme-specific UI components
 - **Icon System** - Comprehensive icon library integration
 
 ## Getting Started
@@ -132,7 +132,7 @@ composer install
 npm install
 ```
 
-4. **Copy Metronic assets**
+4. **Copy Theme assets**
 ```bash
 # Copy assets from metronic-tailwind-html/dist/assets to public/assets/
 cp -r ../metronic-tailwind-html/dist/assets public/
@@ -199,13 +199,13 @@ composer install --optimize-autoloader --no-dev
 ### Design Principles
 - **MVC Pattern**: Clean separation using Laravel's MVC architecture
 - **Component-Based**: Reusable Blade components for UI elements
-- **Asset Integration**: Proper integration of Metronic assets with Laravel
+- **Asset Integration**: Proper integration of Theme assets with Laravel
 - **Responsive Design**: Mobile-first approach across all layouts
 
 ### File Organization
 - **Controllers**: One controller per demo layout
 - **Views**: Organized by demo with shared layouts and partials
-- **Assets**: Metronic assets properly integrated in `public/assets/`
+- **Assets**: Theme assets properly integrated in `public/assets/`
 - **Components**: Reusable UI components for consistent functionality
 
 ## Documentation

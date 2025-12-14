@@ -17,11 +17,14 @@
         </div>
         <!-- Topbar -->
         <div class="flex items-center gap-2.5">
-            <a class="kt-btn kt-btn-ghost kt-btn-icon size-8 hover:bg-background hover:[&_i]:text-primary" href="#" title="Çıkış">
-                <i class="ki-filled ki-exit-right">
-                </i>
-            </a>
-            @include('app.partials.topbar-user-dropdown')
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit"
+                        class="kt-btn kt-btn-ghost kt-btn-icon size-8 hover:bg-background hover:[&_i]:text-primary">
+                    <i class="ki-outline ki-exit-right text-sm"></i>
+                </button>
+            </form>
+            @include('admin.partials.topbar-user-dropdown')
         </div>
         <!-- End of Topbar -->
     </div>

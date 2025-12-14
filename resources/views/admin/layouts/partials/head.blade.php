@@ -1,9 +1,9 @@
-<title>{{ $pageTitle ?? 'Dashboard' }} | Metronic</title>
+<title>{{ $pageTitle ?? 'Yönetim Paneli' }} | Yönetim Paneli</title>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 {{-- SEO istersen burayı doldurursun --}}
-<meta name="description" content="{{ $pageDescription ?? 'Metronic admin dashboard' }}" />
+<meta name="description" content="{{ $pageDescription ?? 'Yönetim Paneli' }}" />
 
 {{-- Fonts --}}
 <link rel="stylesheet"
@@ -12,7 +12,7 @@
 {{-- Vendor CSS --}}
 @stack('vendor_css')
 
-{{-- Metronic global CSS --}}
+{{-- Theme global CSS --}}
 <link rel="stylesheet" href="{{ asset('assets/vendors/apexcharts/apexcharts.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/vendors/keenicons/styles.bundle.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}" />

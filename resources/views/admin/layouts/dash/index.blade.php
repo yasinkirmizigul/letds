@@ -306,7 +306,7 @@
                                     <span class="kt-badge-success size-2 rounded-full rounded-full">
                                     </span>
                                     <span class="text-sm font-normal text-foreground">
-                                        Metronic
+                                        Theme
                                     </span>
                                 </div>
                                 <div class="flex items-center gap-1.5">
@@ -320,7 +320,7 @@
                                     <span class="kt-badge-info size-2 rounded-full rounded-full">
                                     </span>
                                     <span class="text-sm font-normal text-foreground">
-                                        MetronicNest
+                                        ThemeNest
                                     </span>
                                 </div>
                             </div>
