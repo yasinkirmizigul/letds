@@ -1,4 +1,4 @@
-@extends('admin.layouts.auth.base')
+@extends('admin.layouts.main.app')
 
 @section('content')
     <div class="px-4 lg:px-6">
@@ -10,29 +10,34 @@
         </div>
 
         <div class="kt-card max-w-2xl">
-            <form class="kt-card-content flex flex-col gap-5 p-8" method="POST" action="{{ route('admin.users.update', $user) }}">
+            <form class="kt-card-content flex flex-col gap-5 p-8" method="POST"
+                  action="{{ route('admin.users.update', $user) }}">
                 @csrf @method('PUT')
 
                 <div class="flex flex-col gap-1">
                     <label class="kt-form-label font-normal text-mono">Ad</label>
-                    <input class="kt-input" name="name" value="{{ old('name', $user->name) }}" required />
-                    @error('name') <div class="text-xs text-danger">{{ $message }}</div> @enderror
+                    <input class="kt-input" name="name" value="{{ old('name', $user->name) }}" required/>
+                    @error('name')
+                    <div class="text-xs text-danger">{{ $message }}</div> @enderror
                 </div>
 
                 <div class="flex flex-col gap-1">
                     <label class="kt-form-label font-normal text-mono">Email</label>
-                    <input class="kt-input" name="email" value="{{ old('email', $user->email) }}" required />
-                    @error('email') <div class="text-xs text-danger">{{ $message }}</div> @enderror
+                    <input class="kt-input" name="email" value="{{ old('email', $user->email) }}" required/>
+                    @error('email')
+                    <div class="text-xs text-danger">{{ $message }}</div> @enderror
                 </div>
 
                 <div class="flex flex-col gap-1">
                     <label class="kt-form-label font-normal text-mono">Şifre (boş bırakırsan değişmez)</label>
-                    <input class="kt-input" name="password" type="password" />
-                    @error('password') <div class="text-xs text-danger">{{ $message }}</div> @enderror
+                    <input class="kt-input" name="password" type="password"/>
+                    @error('password')
+                    <div class="text-xs text-danger">{{ $message }}</div> @enderror
                 </div>
 
                 <label class="kt-label">
-                    <input class="kt-checkbox kt-checkbox-sm" name="is_active" type="checkbox" value="1" @checked(old('is_active', $user->is_active)) />
+                    <input class="kt-checkbox kt-checkbox-sm" name="is_active" type="checkbox"
+                           value="1" @checked(old('is_active', $user->is_active)) />
                     <span class="kt-checkbox-label">Aktif</span>
                 </label>
 

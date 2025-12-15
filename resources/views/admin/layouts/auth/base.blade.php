@@ -1,4 +1,4 @@
-{{-- resources/views/layouts/demo1/base.blade.php --}}
+{{-- resources/views/layouts/demo1/app.blade.php --}}
     <!DOCTYPE html>
 <html class="h-full" lang="tr" dir="ltr"
       data-kt-theme="true"
@@ -14,7 +14,7 @@
 @yield('content')
 
 @include('admin.layouts.partials.scripts')
-<script src="{{ asset('assets/js/layouts/dash.js') }}"></script>
+<script src="{{ asset('assets/js/layouts/main.js') }}"></script>
 @stack('app_js')
 </body>
 </html>

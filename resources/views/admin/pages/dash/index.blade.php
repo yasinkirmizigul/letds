@@ -1,5 +1,4 @@
-
-@extends('admin.layouts.dash.base')
+@extends('admin.layouts.main.app')
 
 @section('content')
     <!-- Container -->

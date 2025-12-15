@@ -1,4 +1,4 @@
-@extends('admin.layouts.auth.base')
+@extends('admin.layouts.main.app')
 
 @section('content')
     <div class="px-4 lg:px-6">
@@ -17,15 +17,20 @@
 
                 <div class="flex flex-col gap-1">
                     <label class="kt-form-label font-normal text-mono">Yetki Adı</label>
-                    <input class="kt-input" name="name" value="{{ old('name') }}" placeholder="Blog Görüntüleme" required />
-                    @error('name') <div class="text-xs text-danger mt-1">{{ $message }}</div> @enderror
+                    <input class="kt-input" name="name" value="{{ old('name') }}" placeholder="Blog Görüntüleme"
+                           required/>
+                    @error('name')
+                    <div class="text-xs text-danger mt-1">{{ $message }}</div> @enderror
                 </div>
 
                 <div class="flex flex-col gap-1">
                     <label class="kt-form-label font-normal text-mono">Slug (örn: blog.view)</label>
-                    <input class="kt-input" name="slug" value="{{ old('slug') }}" placeholder="blog.view" required />
-                    @error('slug') <div class="text-xs text-danger mt-1">{{ $message }}</div> @enderror
-                    <div class="text-xs text-muted-foreground mt-1">Tavsiye: resource.action formatı kullan (blog.view, users.manage, pricing.view)</div>
+                    <input class="kt-input" name="slug" value="{{ old('slug') }}" placeholder="blog.view" required/>
+                    @error('slug')
+                    <div class="text-xs text-danger mt-1">{{ $message }}</div> @enderror
+                    <div class="text-xs text-muted-foreground mt-1">Tavsiye: resource.action formatı kullan (blog.view,
+                        users.manage, pricing.view)
+                    </div>
                 </div>
 
                 <div class="flex gap-2">

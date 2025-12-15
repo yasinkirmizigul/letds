@@ -20,7 +20,7 @@ return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/app/layouts/app.js":
+/***/ "./src/app/layouts/main.js":
 /*!**********************************!*\
   !*** ./src/main/layouts/main.js ***!
   \**********************************/
@@ -53,7 +53,7 @@ eval("{__webpack_require__.r(__webpack_exports__);\nfunction _typeof(o) { \"@bab
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module can't be inlined because the eval devtool is used.
 /******/ 	var __webpack_exports__ = {};
-/******/ 	__webpack_modules__["./src/app/layouts/app.js"](0,__webpack_exports__,__webpack_require__);
+/******/ 	__webpack_modules__["./src/app/layouts/main.js"](0,__webpack_exports__,__webpack_require__);
 /******/
 /******/ 	return __webpack_exports__;
 /******/ })()

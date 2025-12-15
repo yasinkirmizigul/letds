@@ -1,4 +1,4 @@
-@extends('admin.layouts.auth.base')
+@extends('admin.layouts.main.app')
 
 @section('content')
     <div class="px-4 lg:px-6">
@@ -18,14 +18,16 @@
 
                 <div class="flex flex-col gap-1">
                     <label class="kt-form-label font-normal text-mono">Yetki Adı</label>
-                    <input class="kt-input" name="name" value="{{ old('name', $permission->name) }}" required />
-                    @error('name') <div class="text-xs text-danger mt-1">{{ $message }}</div> @enderror
+                    <input class="kt-input" name="name" value="{{ old('name', $permission->name) }}" required/>
+                    @error('name')
+                    <div class="text-xs text-danger mt-1">{{ $message }}</div> @enderror
                 </div>
 
                 <div class="flex flex-col gap-1">
                     <label class="kt-form-label font-normal text-mono">Slug</label>
-                    <input class="kt-input" name="slug" value="{{ old('slug', $permission->slug) }}" required />
-                    @error('slug') <div class="text-xs text-danger mt-1">{{ $message }}</div> @enderror
+                    <input class="kt-input" name="slug" value="{{ old('slug', $permission->slug) }}" required/>
+                    @error('slug')
+                    <div class="text-xs text-danger mt-1">{{ $message }}</div> @enderror
                 </div>
 
                 <div class="flex gap-2">

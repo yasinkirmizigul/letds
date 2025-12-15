@@ -1,5 +1,4 @@
-
-@extends('admin.layouts.dash.base')
+@extends('admin.layouts.main.app')
 
 @section('content')
     <div class="px-4 lg:px-6">
@@ -27,7 +26,8 @@
                             <td>{{ $p->slug }}</td>
                             <td class="text-right">
                                 <div class="flex justify-end gap-2">
-                                    <a class="kt-btn kt-btn-sm kt-btn-light" href="{{ route('admin.permissions.edit', $p) }}">Düzenle</a>
+                                    <a class="kt-btn kt-btn-sm kt-btn-light"
+                                       href="{{ route('admin.permissions.edit', $p) }}">Düzenle</a>
 
                                     <form method="POST" action="{{ route('admin.permissions.destroy', $p) }}"
                                           onsubmit="return confirm('Yetki silinsin mi?')">

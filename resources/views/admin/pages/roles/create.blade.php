@@ -1,4 +1,4 @@
-@extends('admin.layouts.auth.base')
+@extends('admin.layouts.main.app')
 
 @section('content')
     <div class="px-4 lg:px-6">
@@ -17,14 +17,16 @@
 
                 <div class="flex flex-col gap-1">
                     <label class="kt-form-label font-normal text-mono">Rol Adı</label>
-                    <input class="kt-input" name="name" value="{{ old('name') }}" required />
-                    @error('name') <div class="text-xs text-danger mt-1">{{ $message }}</div> @enderror
+                    <input class="kt-input" name="name" value="{{ old('name') }}" required/>
+                    @error('name')
+                    <div class="text-xs text-danger mt-1">{{ $message }}</div> @enderror
                 </div>
 
                 <div class="flex flex-col gap-1">
                     <label class="kt-form-label font-normal text-mono">Slug (örn: editor, superadmin)</label>
-                    <input class="kt-input" name="slug" value="{{ old('slug') }}" required />
-                    @error('slug') <div class="text-xs text-danger mt-1">{{ $message }}</div> @enderror
+                    <input class="kt-input" name="slug" value="{{ old('slug') }}" required/>
+                    @error('slug')
+                    <div class="text-xs text-danger mt-1">{{ $message }}</div> @enderror
                 </div>
 
                 <div class="flex flex-col gap-3">
@@ -32,8 +34,11 @@
                         <div class="kt-form-label font-normal text-mono">Yetkiler</div>
 
                         <div class="flex gap-2">
-                            <button type="button" class="kt-btn kt-btn-sm kt-btn-light" id="perm_select_all">Tümünü seç</button>
-                            <button type="button" class="kt-btn kt-btn-sm kt-btn-light" id="perm_clear_all">Temizle</button>
+                            <button type="button" class="kt-btn kt-btn-sm kt-btn-light" id="perm_select_all">Tümünü
+                                seç
+                            </button>
+                            <button type="button" class="kt-btn kt-btn-sm kt-btn-light" id="perm_clear_all">Temizle
+                            </button>
                         </div>
                     </div>
 
@@ -55,7 +60,8 @@
                         @endforeach
                     </div>
 
-                    @error('permissions') <div class="text-xs text-danger mt-1">{{ $message }}</div> @enderror
+                    @error('permissions')
+                    <div class="text-xs text-danger mt-1">{{ $message }}</div> @enderror
                 </div>
 
                 <div class="flex gap-2">

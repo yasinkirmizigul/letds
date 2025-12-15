@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Auth\AuthController;
+use App\Http\Controllers\Admin\BlogPost\BlogPostController;
 use App\Http\Controllers\Admin\Dash\DashController;
 use App\Http\Controllers\Admin\User\PermissionController;
 use App\Http\Controllers\Admin\User\RoleController;
@@ -54,6 +55,38 @@ Route::middleware(['auth'])
             Route::put('/users/{user}', [UserController::class, 'update'])->middleware('permission:users.update')->name('users.update');
             Route::delete('/users/{user}', [UserController::class, 'destroy'])->middleware('permission:users.delete')->name('users.destroy');
         });
+    });
+
+Route::middleware(['auth'])
+    ->prefix('admin/blog')
+    ->as('admin.blog.')
+    ->group(function () {
+
+        // 📄 Liste (view)
+        Route::middleware('permission:blog.view')->group(function () {
+            Route::get('/', [BlogPostController::class, 'index'])->name('index');
+        });
+
+        // ✍️ Create
+        Route::middleware('permission:blog.create')->group(function () {
+            Route::get('/create', [BlogPostController::class, 'create'])->name('create');
+            Route::post('/', [BlogPostController::class, 'store'])->name('store');
+        });
+
+        // ✏️ Update
+        Route::middleware('permission:blog.update')->group(function () {
+            Route::get('/{blog}/edit', [BlogPostController::class, 'edit'])->name('edit');
+            Route::put('/{blog}', [BlogPostController::class, 'update'])->name('update');
+        });
+
+        // 🗑 Delete
+        Route::middleware('permission:blog.delete')->group(function () {
+            Route::delete('/{blog}', [BlogPostController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::patch('/{blog}/toggle-publish', [BlogPostController::class, 'togglePublish'])
+            ->middleware('permission:blog.update')
+            ->name('togglePublish');
     });
 
 Route::middleware('guest')->group(function () {

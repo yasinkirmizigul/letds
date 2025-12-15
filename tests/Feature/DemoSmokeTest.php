@@ -16,7 +16,7 @@ class DemoSmokeTest extends TestCase
     public function test_all_demo_pages_load_successfully()
     {
         $demos = [
-            'dash' => '/dash',
+            'main' => '/main',
             'demo2' => '/demo2',
             'demo3' => '/demo3',
             'demo4' => '/demo4',
@@ -57,8 +57,8 @@ class DemoSmokeTest extends TestCase
      */
     public function test_demo1_loads()
     {
-        $response = $this->get('/dash');
-        $response->assertStatus(200)->assertViewIs('pages.dash.index');
+        $response = $this->get('/main');
+        $response->assertStatus(200)->assertViewIs('pages.main.index');
     }
 
     public function test_demo2_loads()
@@ -125,7 +125,7 @@ class DemoSmokeTest extends TestCase
      */
     public function test_demo_layouts_have_proper_html_structure()
     {
-        $demos = ['dash', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
+        $demos = ['main', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
 
         foreach ($demos as $demo) {
             $response = $this->get("/{$demo}");
@@ -148,7 +148,7 @@ class DemoSmokeTest extends TestCase
      */
     public function test_demo_layouts_include_sidebar_where_expected()
     {
-        $demosWithSidebar = ['dash', 'demo3', 'demo4', 'demo5', 'demo6', 'demo8', 'demo10'];
+        $demosWithSidebar = ['main', 'demo3', 'demo4', 'demo5', 'demo6', 'demo8', 'demo10'];
 
         foreach ($demosWithSidebar as $demo) {
             $response = $this->get("/{$demo}");
@@ -168,7 +168,7 @@ class DemoSmokeTest extends TestCase
      */
     public function test_demos_load_assets()
     {
-        $demos = ['dash', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
+        $demos = ['main', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
 
         foreach ($demos as $demo) {
             $response = $this->get("/{$demo}");
@@ -178,8 +178,8 @@ class DemoSmokeTest extends TestCase
             $hasAssets = strpos($content, '.css') !== false ||
                         strpos($content, '.js') !== false ||
                         strpos($content, 'vite') !== false ||
-                        strpos($content, 'dash.css') !== false ||
-                        strpos($content, 'dash.js') !== false;
+                        strpos($content, 'main.css') !== false ||
+                        strpos($content, 'main.js') !== false;
 
             $this->assertTrue($hasAssets, "Demo {$demo} should include CSS/JS assets");
         }
@@ -190,7 +190,7 @@ class DemoSmokeTest extends TestCase
      */
     public function test_demos_have_responsive_classes()
     {
-        $demos = ['dash', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
+        $demos = ['main', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
 
         foreach ($demos as $demo) {
             $response = $this->get("/{$demo}");
@@ -212,7 +212,7 @@ class DemoSmokeTest extends TestCase
      */
     public function test_demos_dont_have_common_errors()
     {
-        $demos = ['dash', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
+        $demos = ['main', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
 
         $errorPatterns = [
             'Undefined variable',
@@ -243,7 +243,7 @@ class DemoSmokeTest extends TestCase
      */
     public function test_demos_extend_correct_base_layout()
     {
-        $demos = ['dash', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
+        $demos = ['main', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
 
         foreach ($demos as $demo) {
             $response = $this->get("/{$demo}");
@@ -261,7 +261,7 @@ class DemoSmokeTest extends TestCase
      */
     public function test_demo_pages_performance()
     {
-        $demos = ['dash', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
+        $demos = ['main', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
 
         foreach ($demos as $demo) {
             $startTime = microtime(true);
@@ -284,7 +284,7 @@ class DemoSmokeTest extends TestCase
      */
     public function test_demos_have_page_titles()
     {
-        $demos = ['dash', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
+        $demos = ['main', 'demo2', 'demo3', 'demo4', 'demo5', 'demo6', 'demo7', 'demo8', 'demo9', 'demo10'];
 
         foreach ($demos as $demo) {
             $response = $this->get("/{$demo}");
