@@ -1,5 +1,7 @@
 {{-- Global JS bundle --}}
+<script src="{{ asset('assets/js/jquery-3.7.1.min.js') }}"></script>
 <script src="{{ asset('assets/js/core.bundle.js') }}"></script>
+<script src="{{ asset('assets/js/datatables.min.js') }}"></script>
 <script src="{{ asset('assets/vendors/ktui/ktui.min.js') }}"></script>
 <script src="{{ asset('assets/vendors/apexcharts/apexcharts.min.js') }}"></script>
 

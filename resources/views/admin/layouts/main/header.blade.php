@@ -5,9 +5,9 @@
     <div class="flex items-stretch justify-end kt-container-fixed lg:gap-2" id="headerContainer">
         <!-- Mobile Logo -->
         <div class="-ms-1 flex items-center gap-2.5 lg:hidden">
-            <a class="shrink-0" href="#">
+            {{--<a class="shrink-0" href="#">
                 <img class="max-h-[25px] w-full" src="assets/media/app/mini-logo.svg" />
-            </a>
+            </a>--}}
             <div class="flex items-center">
                 <button class="kt-btn kt-btn-icon kt-btn-ghost" data-kt-drawer-toggle="#sidebar">
                     <i class="ki-filled ki-menu">

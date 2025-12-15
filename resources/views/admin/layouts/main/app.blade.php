@@ -48,6 +48,5 @@
 <script src="{{ asset('assets/js/layouts/main.js') }}"></script>
 
 @stack('admin_js')
-@stack('page_js')
 </body>
 </html>

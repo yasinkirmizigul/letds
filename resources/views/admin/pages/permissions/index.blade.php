@@ -6,20 +6,34 @@
 
         <div class="flex items-center justify-between mb-4">
             <h1 class="text-lg font-semibold">Yetkiler</h1>
-            <a class="kt-btn kt-btn-primary" href="{{ route('admin.permissions.create') }}">Yeni Yetki</a>
         </div>
+
         <div class="grid gap-5 lg:gap-7.5">
             <div class="kt-card kt-card-grid min-w-full">
-                <div class="kt-card-header py-5 flex-wrap">
+                <div class="kt-card-header py-5 flex-wrap gap-4">
                     <h3 class="kt-card-title">Yetkiler</h3>
+
+                    {{-- (Opsiyonel ama “tam uyum” için önerilir) --}}
+                    <div class="flex items-center gap-2">
+                        <input
+                            id="permissionsSearch"
+                            type="text"
+                            class="kt-input kt-input-sm"
+                            placeholder="Yetki / anahtar ara..."
+                        />
+                        @if(auth()->user()->hasPermission('permissions.create'))
+                            <a href="{{ route('admin.permissions.create') }}" class="kt-btn kt-btn-sm kt-btn-primary">
+                                Rol Ekle
+                            </a>
+                        @endif
+                    </div>
                 </div>
 
-
                 <div class="kt-card-content">
-                    <div class="grid" data-kt-datatable="true" data-kt-datatable-page-size="10">
+                    <div class="grid" id="permissions_dt">
+
                         <div class="kt-scrollable-x-auto">
-                            <table class="kt-table table-auto kt-table-border" data-kt-datatable-table="true"
-                                   id="permissions_table">
+                            <table class="kt-table table-auto kt-table-border w-full" id="permissions_table">
                                 <thead>
                                 <tr>
                                     <th class="min-w-[320px]">Yetki</th>
@@ -27,6 +41,7 @@
                                     <th class="min-w-[160px]">Oluşturulma</th>
                                 </tr>
                                 </thead>
+
                                 <tbody>
                                 @foreach($permissions as $permission)
                                     <tr>
@@ -37,25 +52,64 @@
                                 @endforeach
                                 </tbody>
                             </table>
+
+                            {{-- Empty / Zero templates --}}
+                            <template id="dt-empty-permissions">
+                                <div class="flex flex-col items-center justify-center gap-2 text-center py-12 text-muted-foreground">
+                                    <i class="ki-outline ki-folder-open text-4xl mb-2"></i>
+                                    <div class="font-medium text-secondary-foreground">Henüz kayıt bulunmuyor.</div>
+                                    <div class="text-sm">Yeni yetki ekleyerek başlayabilirsiniz.</div>
+                                </div>
+                            </template>
+
+                            <template id="dt-zero-permissions">
+                                <div class="flex flex-col items-center justify-center gap-2 text-center py-12 text-muted-foreground">
+                                    <i class="ki-outline ki-search-list text-4xl mb-2"></i>
+                                    <div class="font-medium text-secondary-foreground">Sonuç bulunamadı.</div>
+                                    <div class="text-sm">Arama kriterlerini değiştirip tekrar deneyin.</div>
+                                </div>
+                            </template>
                         </div>
 
-
-                        <div
-                            class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
+                        <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
                             <div class="flex items-center gap-2 order-2 md:order-1">
                                 Göster
-                                <select class="kt-select w-16" data-kt-datatable-size="true" name="perpage"></select>
+                                <select class="kt-select w-16" id="permissionsPageSize" name="perpage"></select>
                                 / sayfa
                             </div>
+
                             <div class="flex items-center gap-4 order-1 md:order-2">
-                                <span data-kt-datatable-info="true"></span>
-                                <div class="kt-datatable-pagination" data-kt-datatable-pagination="true"></div>
+                                <span id="permissionsInfo"></span>
+                                <div class="kt-datatable-pagination" id="permissionsPagination"></div>
                             </div>
                         </div>
+
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 @endsection
 
+@push('page_js')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initMetronicDataTable({
+                table: '#permissions_table',
+                search: '#permissionsSearch',
+                pageSize: '#permissionsPageSize',
+                info: '#permissionsInfo',
+                pagination: '#permissionsPagination',
+
+                pageLength: 10,
+                lengthMenu: [5, 10, 25, 50],
+                order: [[0, 'asc']],
+                dom: 't',
+
+                emptyTemplate: '#dt-empty-permissions',
+                zeroTemplate: '#dt-zero-permissions',
+            });
+        });
+    </script>
+@endpush

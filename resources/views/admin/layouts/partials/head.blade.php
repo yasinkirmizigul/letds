@@ -15,8 +15,10 @@
 {{-- Theme global CSS --}}
 <link rel="stylesheet" href="{{ asset('assets/vendors/apexcharts/apexcharts.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/vendors/keenicons/styles.bundle.css') }}" />
+<link rel="stylesheet" href="{{ asset('assets/css/datatables.min.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}" />
 
 {{-- İstersen sayfa özel CSS buraya --}}
 @stack('custom_css')
+@stack('page_css')
 @vite(['resources/css/app.css'])

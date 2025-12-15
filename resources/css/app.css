@@ -150,3 +150,65 @@
     display: none;
   }
 }
+/* DataTables 2.x – Metronic sort arrows (LARGE) */
+
+.kt-table thead th {
+    position: relative;
+}
+
+/* sıralanabilir kolon */
+.kt-table thead th.dt-orderable-asc,
+.kt-table thead th.dt-orderable-desc {
+    cursor: pointer;
+}
+
+/* ok alanı */
+.kt-table thead th .dt-column-order {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;              /* ⬅️ büyüdü */
+    height: 18px;             /* ⬅️ büyüdü */
+    margin-left: 10px;
+    vertical-align: middle;
+    opacity: .6;
+    transition: opacity .15s ease, transform .15s ease, color .15s ease;
+    color: var(--kt-gray-500, #a1a5b7);
+}
+
+/* pasif ↕ */
+.kt-table thead th.dt-orderable-asc .dt-column-order::after,
+.kt-table thead th.dt-orderable-desc .dt-column-order::after {
+    content: "↕";
+    font-size: 14px;          /* ⬅️ büyüdü */
+    line-height: 1;
+}
+
+/* hover */
+.kt-table thead th.dt-orderable-asc:hover .dt-column-order,
+.kt-table thead th.dt-orderable-desc:hover .dt-column-order {
+    opacity: .9;
+}
+
+/* aktif ASC */
+.kt-table thead th.dt-ordering-asc .dt-column-order::after {
+    content: "↑";
+    font-size: 15px;          /* ⬅️ biraz daha büyük */
+    color: var(--kt-primary, #3e97ff);
+    opacity: 1;
+}
+
+/* aktif DESC */
+.kt-table thead th.dt-ordering-desc .dt-column-order::after {
+    content: "↓";
+    font-size: 15px;
+    color: var(--kt-primary, #3e97ff);
+    opacity: 1;
+}
+
+/* sıralanamayan kolon */
+.kt-table thead th.dt-orderable-none {
+    cursor: default;
+}
+

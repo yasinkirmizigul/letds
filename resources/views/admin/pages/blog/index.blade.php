@@ -1,7 +1,6 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-
     <div class="kt-container-fixed">
         <div class="grid gap-5 lg:gap-7.5">
 
@@ -15,13 +14,11 @@
                     </div>
 
                     <div class="flex items-center gap-2">
-                        {{-- Datatable arama (client-side) --}}
                         <input
+                            id="blogSearch"
                             type="text"
                             class="kt-input kt-input-sm"
                             placeholder="Başlık / kısa bağlantı ara..."
-                            data-kt-datatable-search="true"
-                            data-kt-datatable-table="#blog_table"
                         />
 
                         @if(auth()->user()->hasPermission('blog.create'))
@@ -33,9 +30,10 @@
                 </div>
 
                 <div class="kt-card-content">
-                    <div class="grid" data-kt-datatable="true" data-kt-datatable-page-size="10">
+                    <div class="grid" id="blog_dt">
+
                         <div class="kt-scrollable-x-auto">
-                            <table class="kt-table table-auto kt-table-border" data-kt-datatable-table="true" id="blog_table">
+                            <table class="kt-table table-auto kt-table-border w-full" id="blog_table">
                                 <thead>
                                 <tr>
                                     <th class="w-[80px]">ID</th>
@@ -64,7 +62,7 @@
                                                         <a href="javascript:void(0)"
                                                            class="js-img-popover block size-full"
                                                            data-popover-img="{{ $img }}">
-                                                            <img src="{{ $img }}" alt="" class="size-full object-cover" />
+                                                            <img src="{{ $img }}" alt="" class="size-full object-cover"/>
                                                         </a>
                                                     @else
                                                         <i class="ki-outline ki-picture text-muted-foreground text-lg"></i>
@@ -145,22 +143,24 @@
                             </table>
                         </div>
 
-                        {{-- KT Datatable footer / pagination --}}
+                        {{-- FOOTER --}}
                         <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
                             <div class="flex items-center gap-2 order-2 md:order-1">
                                 Göster
-                                <select class="kt-select w-16" data-kt-datatable-size="true" name="perpage"></select>
+                                <select class="kt-select w-16" id="blogPageSize" name="perpage"></select>
                                 / sayfa
                             </div>
+
                             <div class="flex items-center gap-4 order-1 md:order-2">
-                                <span data-kt-datatable-info="true"></span>
-                                <div class="kt-datatable-pagination" data-kt-datatable-pagination="true"></div>
+                                <span id="blogInfo"></span>
+                                <div class="kt-datatable-pagination" id="blogPagination"></div>
                             </div>
                         </div>
 
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 @endsection
@@ -170,18 +170,10 @@
         (function () {
             // ---------- Notify ----------
             function notify(type, text) {
-                // 1) KTNotify/KTToast varsa onu kullan (Metronic/KTUI)
                 if (window.KTNotify && typeof KTNotify.show === 'function') {
-                    KTNotify.show({
-                        type: type, // 'success' | 'error' | 'warning' | 'info'
-                        message: text,
-                        placement: 'top-end',
-                        duration: 1800,
-                    });
+                    KTNotify.show({ type, message: text, placement: 'top-end', duration: 1800 });
                     return;
                 }
-
-                // 2) SweetAlert2 varsa toast
                 if (window.Swal && Swal.mixin) {
                     Swal.mixin({
                         toast: true,
@@ -189,11 +181,9 @@
                         showConfirmButton: false,
                         timer: 1800,
                         timerProgressBar: true,
-                    }).fire({icon: type === 'error' ? 'error' : 'success', title: text});
+                    }).fire({ icon: type === 'error' ? 'error' : 'success', title: text });
                     return;
                 }
-
-                // 3) fallback
                 console.log(type.toUpperCase() + ': ' + text);
             }
 
@@ -202,9 +192,7 @@
                 return meta ? meta.getAttribute('content') : '';
             }
 
-            // ---------- Popover (basit, bağımsız) ----------
-            // Bootstrap popover’a güvenmek yerine, KTUI içinde bağımsız küçük popover yaptım.
-            // Çünkü bazı demo paketlerinde bootstrap popover import edilmiyor, "uyumsuz" hissi oradan geliyor.
+            // ---------- Image popover ----------
             let popEl = null;
 
             function ensurePopover() {
@@ -244,12 +232,9 @@
                     a._inited = true;
 
                     const img = a.getAttribute('data-popover-img');
-
                     a.addEventListener('mouseenter', () => showImgPopover(a, img));
-                    a.addEventListener('mouseleave', () => hideImgPopover());
+                    a.addEventListener('mouseleave', hideImgPopover);
                 });
-
-                document.addEventListener('scroll', hideImgPopover, {passive: true});
             }
 
             // ---------- Toggle publish ----------
@@ -273,7 +258,7 @@
                             'Accept': 'application/json',
                             'X-CSRF-TOKEN': csrfToken(),
                         },
-                        body: JSON.stringify({is_published: nextVal}),
+                        body: JSON.stringify({ is_published: nextVal }),
                     });
 
                     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -316,24 +301,56 @@
                 });
             }
 
+            // ---------- DataTables.net INIT ----------
             document.addEventListener('DOMContentLoaded', () => {
+
+                initMetronicDataTable({
+                    table: '#blog_table',
+                    search: '#blogSearch',
+                    pageSize: '#blogPageSize',
+                    info: '#blogInfo',
+                    pagination: '#blogPagination',
+                    order: [[0,'desc']],
+                    onDraw: () => {
+                        initImagePopovers();
+                        initToggles();
+                    }
+                });
+
                 initImagePopovers();
                 initToggles();
-                KtDatatableEmptyState.init({
-                    table: '#blog_table',
-                    html: `
-                          <tr data-kt-empty-row="true">
-                            <td colspan="8" class="py-12">
-                              <div class="flex flex-col items-center justify-center gap-2 text-center">
-                                <i class="ki-outline ki-search-list text-4xl text-muted-foreground"></i>
-                                <div class="font-medium">Henüz kayıt bulunmuyor.</div>
-                                <div class="text-sm text-muted-foreground">Yeni kayıt ekleyerek başlayabilirsiniz.</div>
-                              </div>
-                            </td>
-                          </tr>
-                        `
-                });
             });
+
+            // ---------- Custom pagination (Metronic footer içine) ----------
+            function renderPagination(api) {
+                const host = document.querySelector('#blogPagination');
+                if (!host) return;
+
+                const info = api.page.info();
+                const pages = info.pages;
+                const page = info.page;
+
+                host.innerHTML = '';
+                if (pages <= 1) return;
+
+                const makeBtn = (label, targetPage, disabled = false, active = false) => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = active ? 'kt-btn kt-btn-sm kt-btn-primary' : 'kt-btn kt-btn-sm kt-btn-light';
+                    if (disabled) btn.disabled = true;
+                    btn.textContent = label;
+                    btn.addEventListener('click', () => api.page(targetPage).draw('page'));
+                    return btn;
+                };
+
+                host.appendChild(makeBtn('‹', Math.max(0, page - 1), page === 0));
+
+                const start = Math.max(0, page - 2);
+                const end = Math.min(pages - 1, page + 2);
+                for (let i = start; i <= end; i++) host.appendChild(makeBtn(String(i + 1), i, false, i === page));
+
+                host.appendChild(makeBtn('›', Math.min(pages - 1, page + 1), page === pages - 1));
+            }
         })();
     </script>
 @endpush
