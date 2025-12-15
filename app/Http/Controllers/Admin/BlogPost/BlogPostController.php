@@ -11,7 +11,17 @@ use Illuminate\Validation\Rule;
 
 class BlogPostController extends Controller
 {
-    public function index(Request $request)
+    public function index()
+    {
+        $posts = BlogPost::with('author')
+            ->latest()
+            ->get(); // paginate() YOK
+
+        return view('admin.pages.blog.index', [
+            'pageTitle' => 'Blog',
+        ], compact('posts'));
+    }
+    /*public function index(Request $request)
     {
         $q = trim((string) $request->get('q', ''));
 
@@ -30,7 +40,7 @@ class BlogPostController extends Controller
         return view('admin.pages.blog.index', [
             'pageTitle' => 'Blog',
         ], compact('posts', 'q'));
-    }
+    }*/
 
     public function create()
     {

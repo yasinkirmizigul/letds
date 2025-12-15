@@ -1,147 +1,164 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    <div class="px-4 lg:px-6">
 
-        @includeIf('admin.partials._flash')
+    <div class="kt-container-fixed">
+        <div class="grid gap-5 lg:gap-7.5">
 
-        <div class="flex items-center justify-between gap-3 mb-5">
-            <div>
-                <h1 class="text-xl font-semibold">Blog</h1>
-                <div class="text-sm text-muted-foreground">Yazıları yönetin</div>
-            </div>
+            @includeIf('admin.partials._flash')
 
-            <div class="flex items-center gap-2">
-                <form method="GET" class="flex items-center gap-2">
-                    <input type="text" name="q" value="{{ $q ?? '' }}" class="kt-input kt-input-sm"
-                           placeholder="Başlık / slug ara...">
-                    <button class="kt-btn kt-btn-sm kt-btn-light" type="submit">Ara</button>
-                </form>
+            <div class="kt-card kt-card-grid min-w-full">
+                <div class="kt-card-header py-5 flex-wrap gap-4">
+                    <div class="flex flex-col">
+                        <h3 class="kt-card-title">Blog Yazıları</h3>
+                        <div class="text-sm text-muted-foreground">Blog yazılarını yönetin</div>
+                    </div>
 
-                @if(auth()->user()->hasPermission('blog.create'))
-                    <a href="{{ route('admin.blog.create') }}" class="kt-btn kt-btn-sm kt-btn-primary">
-                        Yeni Yazı
-                    </a>
-                @endif
-            </div>
-        </div>
+                    <div class="flex items-center gap-2">
+                        {{-- Datatable arama (client-side) --}}
+                        <input
+                            type="text"
+                            class="kt-input kt-input-sm"
+                            placeholder="Başlık / kısa bağlantı ara..."
+                            data-kt-datatable-search="true"
+                            data-kt-datatable-table="#blog_table"
+                        />
 
-        <div class="kt-card">
-            <div class="kt-card-content p-0">
-                <div class="overflow-x-auto">
-                    <table class="kt-table">
-                        <thead>
-                        <tr>
-                            <th class="w-[80px] ps-6">ID</th>
-                            <th>Yazı</th>
-                            <th class="w-[260px]">Slug</th>
-                            <th class="w-[240px]">Durum</th>
-                            <th class="w-[180px]">Güncelleme</th>
-                            <th class="w-[170px] text-right pe-6">İşlem</th>
-                        </tr>
-                        </thead>
-
-                        <tbody>
-                        @forelse($posts as $p)
-                            @php
-                                $img = $p->featured_image ? asset('storage/'.$p->featured_image) : null;
-                            @endphp
-
-                            <tr data-row-id="{{ $p->id }}">
-                                <td class="ps-6">{{ $p->id }}</td>
-
-                                <td>
-                                    <div class="flex items-center gap-3">
-                                        <div class="size-[44px] rounded-full overflow-hidden bg-muted flex items-center justify-center">
-                                            @if($img)
-                                                <a href="javascript:void(0)"
-                                                   class="js-img-popover block size-full"
-                                                   data-popover-img="{{ $img }}">
-                                                    <img src="{{ $img }}" alt=""
-                                                         class="size-full object-cover">
-                                                </a>
-                                            @else
-                                                <i class="ki-outline ki-picture text-muted-foreground text-lg"></i>
-                                            @endif
-                                        </div>
-
-                                        <div class="flex flex-col">
-                                            <span class="font-semibold">{{ $p->title }}</span>
-                                            <span class="text-sm text-muted-foreground">{{ $p->author?->name ?? '-' }}</span>
-                                        </div>
-                                    </div>
-                                </td>
-
-                                <td class="text-muted-foreground">{{ $p->slug }}</td>
-
-                                <td>
-                                    <div class="flex items-center justify-between gap-3">
-                                        <div class="js-badge">
-                                            @if($p->is_published)
-                                                <span class="kt-badge kt-badge-sm kt-badge-success">Yayında</span>
-                                            @else
-                                                <span class="kt-badge kt-badge-sm kt-badge-light">Taslak</span>
-                                            @endif
-                                        </div>
-
-                                        @if(auth()->user()->hasPermission('blog.update'))
-                                            <label class="kt-switch kt-switch-sm">
-                                                <input
-                                                    class="js-publish-toggle"
-                                                    type="checkbox"
-                                                    data-url="{{ route('admin.blog.togglePublish', $p) }}"
-                                                    @checked($p->is_published)
-                                                />
-                                                <span class="kt-switch-indicator"></span>
-                                            </label>
-                                        @endif
-                                    </div>
-
-                                    <div class="text-sm text-muted-foreground mt-1 js-published-at">
-                                        @if($p->published_at)
-                                            Yayın: {{ $p->published_at->format('d.m.Y H:i') }}
-                                        @endif
-                                    </div>
-                                </td>
-
-                                <td class="text-muted-foreground">
-                                    {{ $p->updated_at?->format('d.m.Y H:i') }}
-                                </td>
-
-                                <td class="text-right pe-6">
-                                    <div class="inline-flex items-center gap-2">
-                                        @if(auth()->user()->hasPermission('blog.update'))
-                                            <a href="{{ route('admin.blog.edit', $p) }}" class="kt-btn kt-btn-sm kt-btn-light">
-                                                Düzenle
-                                            </a>
-                                        @endif
-
-                                        @if(auth()->user()->hasPermission('blog.delete'))
-                                            <form method="POST" action="{{ route('admin.blog.destroy', $p) }}"
-                                                  onsubmit="return confirm('Silinsin mi?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="kt-btn kt-btn-sm kt-btn-danger">
-                                                    Sil
-                                                </button>
-                                            </form>
-                                        @endif
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td class="ps-6 py-10 text-center text-muted-foreground" colspan="6">
-                                    Henüz blog yazısı yok.
-                                </td>
-                            </tr>
-                        @endforelse
-                        </tbody>
-                    </table>
+                        @if(auth()->user()->hasPermission('blog.create'))
+                            <a href="{{ route('admin.blog.create') }}" class="kt-btn kt-btn-sm kt-btn-primary">
+                                Yeni Yazı
+                            </a>
+                        @endif
+                    </div>
                 </div>
 
-                <div class="p-4">
-                    {{ $posts->links() }}
+                <div class="kt-card-content">
+                    <div class="grid" data-kt-datatable="true" data-kt-datatable-page-size="10">
+                        <div class="kt-scrollable-x-auto">
+                            <table class="kt-table table-auto kt-table-border" data-kt-datatable-table="true" id="blog_table">
+                                <thead>
+                                <tr>
+                                    <th class="w-[80px]">ID</th>
+                                    <th class="min-w-[360px]">Yazı</th>
+                                    <th class="min-w-[280px]">Kısa Bağlantı</th>
+                                    <th class="min-w-[280px]">Durum</th>
+                                    <th class="min-w-[190px]">Güncelleme Tarihi</th>
+                                    <th class="w-[60px]"></th>
+                                    <th class="w-[60px]"></th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                @foreach($posts as $p)
+                                    @php
+                                        $img = $p->featured_image ? asset('storage/'.$p->featured_image) : null;
+                                    @endphp
+
+                                    <tr data-row-id="{{ $p->id }}">
+                                        <td class="text-sm text-secondary-foreground">{{ $p->id }}</td>
+
+                                        <td>
+                                            <div class="flex items-center gap-3">
+                                                <div class="size-[44px] rounded-full overflow-hidden bg-muted flex items-center justify-center">
+                                                    @if($img)
+                                                        <a href="javascript:void(0)"
+                                                           class="js-img-popover block size-full"
+                                                           data-popover-img="{{ $img }}">
+                                                            <img src="{{ $img }}" alt="" class="size-full object-cover" />
+                                                        </a>
+                                                    @else
+                                                        <i class="ki-outline ki-picture text-muted-foreground text-lg"></i>
+                                                    @endif
+                                                </div>
+
+                                                <div class="flex flex-col gap-0.5">
+                                                    <span class="font-semibold">{{ $p->title }}</span>
+                                                    <span class="text-sm text-muted-foreground">{{ $p->author?->name ?? '-' }}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <td class="text-sm text-secondary-foreground">{{ $p->slug }}</td>
+
+                                        <td>
+                                            <div class="flex items-center justify-between gap-3">
+                                                <div class="js-badge">
+                                                    @if($p->is_published)
+                                                        <span class="kt-badge kt-badge-sm kt-badge-success">Yayında</span>
+                                                    @else
+                                                        <span class="kt-badge kt-badge-sm kt-badge-light">Taslak</span>
+                                                    @endif
+                                                </div>
+
+                                                @if(auth()->user()->hasPermission('blog.update'))
+                                                    <label class="kt-switch kt-switch-sm">
+                                                        <input
+                                                            class="js-publish-toggle"
+                                                            type="checkbox"
+                                                            data-url="{{ route('admin.blog.togglePublish', $p) }}"
+                                                            @checked($p->is_published)
+                                                        />
+                                                        <span class="kt-switch-indicator"></span>
+                                                    </label>
+                                                @endif
+                                            </div>
+
+                                            <div class="text-sm text-muted-foreground mt-1 js-published-at">
+                                                @if($p->published_at)
+                                                    Yayın Tarihi: {{ $p->published_at->format('d.m.Y H:i') }}
+                                                @endif
+                                            </div>
+                                        </td>
+
+                                        <td class="text-sm text-secondary-foreground">
+                                            {{ $p->updated_at?->format('d.m.Y H:i') }}
+                                        </td>
+
+                                        <td>
+                                            @if(auth()->user()->hasPermission('blog.update'))
+                                                <a href="{{ route('admin.blog.edit', $p) }}"
+                                                   class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost"
+                                                   title="Düzenle">
+                                                    <i class="ki-filled ki-notepad-edit"></i>
+                                                </a>
+                                            @endif
+                                        </td>
+
+                                        <td>
+                                            @if(auth()->user()->hasPermission('blog.delete'))
+                                                <form method="POST"
+                                                      action="{{ route('admin.blog.destroy', $p) }}"
+                                                      onsubmit="return confirm('Bu yazıyı silmek istiyor musunuz?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                            class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost"
+                                                            title="Sil">
+                                                        <i class="ki-filled ki-trash"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {{-- KT Datatable footer / pagination --}}
+                        <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
+                            <div class="flex items-center gap-2 order-2 md:order-1">
+                                Göster
+                                <select class="kt-select w-16" data-kt-datatable-size="true" name="perpage"></select>
+                                / sayfa
+                            </div>
+                            <div class="flex items-center gap-4 order-1 md:order-2">
+                                <span data-kt-datatable-info="true"></span>
+                                <div class="kt-datatable-pagination" data-kt-datatable-pagination="true"></div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -172,7 +189,7 @@
                         showConfirmButton: false,
                         timer: 1800,
                         timerProgressBar: true,
-                    }).fire({ icon: type === 'error' ? 'error' : 'success', title: text });
+                    }).fire({icon: type === 'error' ? 'error' : 'success', title: text});
                     return;
                 }
 
@@ -189,6 +206,7 @@
             // Bootstrap popover’a güvenmek yerine, KTUI içinde bağımsız küçük popover yaptım.
             // Çünkü bazı demo paketlerinde bootstrap popover import edilmiyor, "uyumsuz" hissi oradan geliyor.
             let popEl = null;
+
             function ensurePopover() {
                 if (popEl) return popEl;
                 popEl = document.createElement('div');
@@ -231,7 +249,7 @@
                     a.addEventListener('mouseleave', () => hideImgPopover());
                 });
 
-                document.addEventListener('scroll', hideImgPopover, { passive: true });
+                document.addEventListener('scroll', hideImgPopover, {passive: true});
             }
 
             // ---------- Toggle publish ----------
@@ -255,7 +273,7 @@
                             'Accept': 'application/json',
                             'X-CSRF-TOKEN': csrfToken(),
                         },
-                        body: JSON.stringify({ is_published: nextVal }),
+                        body: JSON.stringify({is_published: nextVal}),
                     });
 
                     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -301,6 +319,20 @@
             document.addEventListener('DOMContentLoaded', () => {
                 initImagePopovers();
                 initToggles();
+                KtDatatableEmptyState.init({
+                    table: '#blog_table',
+                    html: `
+                          <tr data-kt-empty-row="true">
+                            <td colspan="8" class="py-12">
+                              <div class="flex flex-col items-center justify-center gap-2 text-center">
+                                <i class="ki-outline ki-search-list text-4xl text-muted-foreground"></i>
+                                <div class="font-medium">Henüz kayıt bulunmuyor.</div>
+                                <div class="text-sm text-muted-foreground">Yeni kayıt ekleyerek başlayabilirsiniz.</div>
+                              </div>
+                            </td>
+                          </tr>
+                        `
+                });
             });
         })();
     </script>

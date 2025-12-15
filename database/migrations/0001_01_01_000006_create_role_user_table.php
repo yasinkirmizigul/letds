@@ -17,4 +17,8 @@ return new class extends Migration
             $table->foreignId('role_id')->constrained()->cascadeOnDelete();
         });
     }
+    public function down(): void
+    {
+        Schema::dropIfExists('role_user');
+    }
 };

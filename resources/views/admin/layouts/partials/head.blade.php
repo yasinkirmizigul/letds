@@ -19,3 +19,4 @@
 
 {{-- İstersen sayfa özel CSS buraya --}}
 @stack('custom_css')
+@vite(['resources/css/app.css'])

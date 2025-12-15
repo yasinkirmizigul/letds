@@ -1,4 +1,5 @@
 import './bootstrap';
+import './helpers/kt-datatable-empty-state';
 import Alpine from 'alpinejs';
 
 // Start Alpine.js

@@ -12,21 +12,11 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $q = trim((string) $request->get('q', ''));
-
-        $users = User::query()
-            ->when($q !== '', fn($query) => $query->where(function ($qq) use ($q) {
-                $qq->where('name', 'like', "%{$q}%")
-                    ->orWhere('email', 'like', "%{$q}%");
-            }))
-            ->with('roles')
-            ->orderByDesc('id')
-            ->paginate(15)
-            ->withQueryString();
+        $users = User::with('roles')->latest()->get();
 
         return view('admin.pages.users.index', [
             'pageTitle' => 'Kullanıcılar',
-        ], compact('users', 'q'));
+        ], compact('users'));
     }
 
     public function create()
