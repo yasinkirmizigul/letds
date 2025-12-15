@@ -150,7 +150,9 @@
     display: none;
   }
 }
-/* DataTables 2.x – Metronic sort arrows (LARGE) */
+/* ===================================================== */
+/* DataTables 2.x – Metronic Sort (Highlight + Animasyon) */
+/* ===================================================== */
 
 .kt-table thead th {
     position: relative;
@@ -162,18 +164,34 @@
     cursor: pointer;
 }
 
+/* aktif sıralanan kolonun arka planı */
+.kt-table thead th.dt-ordering-asc,
+.kt-table thead th.dt-ordering-desc {
+    background-color: rgba(62, 151, 255, 0.06); /* Metronic primary çok hafif */
+}
+
+/* başlık metni hafif vurgulansın */
+.kt-table thead th.dt-ordering-asc .dt-column-title,
+.kt-table thead th.dt-ordering-desc .dt-column-title {
+    color: var(--kt-primary, #3e97ff);
+    font-weight: 600;
+}
+
 /* ok alanı */
 .kt-table thead th .dt-column-order {
     position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 18px;              /* ⬅️ büyüdü */
-    height: 18px;             /* ⬅️ büyüdü */
+    width: 18px;
+    height: 18px;
     margin-left: 10px;
     vertical-align: middle;
     opacity: .6;
-    transition: opacity .15s ease, transform .15s ease, color .15s ease;
+    transition:
+        opacity .15s ease,
+        transform .18s ease,
+        color .15s ease;
     color: var(--kt-gray-500, #a1a5b7);
 }
 
@@ -181,22 +199,24 @@
 .kt-table thead th.dt-orderable-asc .dt-column-order::after,
 .kt-table thead th.dt-orderable-desc .dt-column-order::after {
     content: "↕";
-    font-size: 14px;          /* ⬅️ büyüdü */
+    font-size: 14px;
     line-height: 1;
 }
 
-/* hover */
+/* hover animasyonu (hafif yukarı kayma) */
 .kt-table thead th.dt-orderable-asc:hover .dt-column-order,
 .kt-table thead th.dt-orderable-desc:hover .dt-column-order {
     opacity: .9;
+    transform: translateY(-1px);
 }
 
 /* aktif ASC */
 .kt-table thead th.dt-ordering-asc .dt-column-order::after {
     content: "↑";
-    font-size: 15px;          /* ⬅️ biraz daha büyük */
+    font-size: 15px;
     color: var(--kt-primary, #3e97ff);
     opacity: 1;
+    animation: dt-sort-bounce-up .25s ease-out;
 }
 
 /* aktif DESC */
@@ -205,10 +225,26 @@
     font-size: 15px;
     color: var(--kt-primary, #3e97ff);
     opacity: 1;
+    animation: dt-sort-bounce-down .25s ease-out;
 }
 
 /* sıralanamayan kolon */
 .kt-table thead th.dt-orderable-none {
     cursor: default;
 }
+
+/* ------------------- */
+/* Keyframe animasyon */
+/* ------------------- */
+
+@keyframes dt-sort-bounce-up {
+    0%   { transform: translateY(2px); opacity: .4; }
+    100% { transform: translateY(0);   opacity: 1; }
+}
+
+@keyframes dt-sort-bounce-down {
+    0%   { transform: translateY(-2px); opacity: .4; }
+    100% { transform: translateY(0);    opacity: 1; }
+}
+
 
