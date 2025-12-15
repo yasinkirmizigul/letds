@@ -27,7 +27,9 @@ class BlogPostController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        return view('admin.pages.blog.index', compact('posts', 'q'));
+        return view('admin.pages.blog.index', [
+            'pageTitle' => 'Blog',
+        ], compact('posts', 'q'));
     }
 
     public function create()

@@ -21,7 +21,7 @@
                 @csrf
                 <button type="submit"
                         class="kt-btn kt-btn-ghost kt-btn-icon size-8 hover:bg-background hover:[&_i]:text-primary">
-                    <i class="ki-outline ki-exit-right text-sm"></i>
+                    <i class="ki-outline ki-exit-right text-xl"></i>
                 </button>
             </form>
             @include('admin.partials.topbar-user-dropdown')
