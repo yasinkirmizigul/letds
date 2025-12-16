@@ -109,6 +109,9 @@
 
                 emptyTemplate: '#dt-empty-permissions',
                 zeroTemplate: '#dt-zero-permissions',
+                columnDefs: [
+                    { className: 'text-center', targets: [2] },
+                ],
             });
         });
     </script>

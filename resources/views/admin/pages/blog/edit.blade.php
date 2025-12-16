@@ -36,7 +36,8 @@
                                 value="{{ old('title', $blog->title) }}"
                                 required
                             />
-                            @error('title') <div class="text-xs text-danger">{{ $message }}</div> @enderror
+                            @error('title')
+                            <div class="text-xs text-danger">{{ $message }}</div> @enderror
                         </div>
 
                         <div class="flex flex-col gap-2">
@@ -48,15 +49,16 @@
                                 value="{{ old('slug', $blog->slug) }}"
                                 required
                             />
-                            @error('slug') <div class="text-xs text-danger">{{ $message }}</div> @enderror
+                            @error('slug')
+                            <div class="text-xs text-danger">{{ $message }}</div> @enderror
                         </div>
 
                         <div class="flex flex-col gap-2">
                             <label class="kt-form-label font-normal text-mono">İçerik</label>
-                            <textarea
-                                class="kt-input min-h-[260px] @error('content') kt-input-invalid @enderror"
-                                name="content">{{ old('content', $blog->content) }}</textarea>
-                            @error('content') <div class="text-xs text-danger">{{ $message }}</div> @enderror
+                            <textarea id="post_content" name="content"
+                                      class="kt-input min-h-[260px]">{{ old('content', $post->content) }}</textarea>
+                            @error('content')
+                            <div class="text-xs text-danger">{{ $message }}</div> @enderror
                         </div>
                     </div>
 
@@ -75,7 +77,8 @@
                                    accept="image/*"
                                    class="kt-input @error('featured_image') kt-input-invalid @enderror">
 
-                            @error('featured_image') <div class="text-xs text-danger">{{ $message }}</div> @enderror
+                            @error('featured_image')
+                            <div class="text-xs text-danger">{{ $message }}</div> @enderror
 
                             <div class="mt-2">
                                 <div class="text-sm text-muted-foreground mb-2">Mevcut / Önizleme</div>
@@ -157,7 +160,7 @@
 
             // ---------- Slug auto-generate (edit) ----------
             const titleInput = document.querySelector('input[name="title"]');
-            const slugInput  = document.getElementById('slug');
+            const slugInput = document.getElementById('slug');
 
             if (!titleInput || !slugInput) return;
 
@@ -173,8 +176,8 @@
                 return String(str)
                     .trim()
                     .toLowerCase()
-                    .replaceAll('ğ','g').replaceAll('ü','u').replaceAll('ş','s')
-                    .replaceAll('ı','i').replaceAll('ö','o').replaceAll('ç','c')
+                    .replaceAll('ğ', 'g').replaceAll('ü', 'u').replaceAll('ş', 's')
+                    .replaceAll('ı', 'i').replaceAll('ö', 'o').replaceAll('ç', 'c')
                     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
                     .replace(/[^a-z0-9\s-]/g, '')
                     .replace(/\s+/g, '-')

@@ -125,6 +125,7 @@
                 columnDefs: [
                     { orderable: false, targets: [3] },
                     { searchable: false, targets: [3] },
+                    { className: 'text-center', targets: [2] },
                 ],
             });
         });

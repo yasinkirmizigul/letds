@@ -233,6 +233,34 @@
     cursor: default;
 }
 
+th.dt-orderable-none .dt-column-order{
+    display:none !important;
+}
+
+/* DataTables header: yatay + dikey ortala */
+table.kt-table thead th {
+    vertical-align: middle !important;
+    padding-top: 0.75rem;   /* istersen */
+    padding-bottom: 0.75rem;/* istersen */
+}
+
+table.kt-table thead th .dt-column-header {
+    display: flex;
+    align-items: center; /* dikey */
+    justify-content: center; /* yatay */
+    gap: .5rem; /* başlık + ikon arası */
+    width: 100%;
+}
+table.kt-table  thead th .dt-column-order {
+    margin-left: 0 !important;
+}
+
+/* Başlık yazısı ortada kalsın */
+table.kt-table thead th .dt-column-title {
+    text-align: center;
+    width: auto;
+}
+
 /* ------------------- */
 /* Keyframe animasyon */
 /* ------------------- */

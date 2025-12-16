@@ -4,135 +4,97 @@ namespace App\Http\Controllers\Admin\BlogPost;
 
 use App\Http\Controllers\Controller;
 use App\Models\BlogPost\BlogPost;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 
 class BlogPostController extends Controller
 {
     public function index()
     {
-        $posts = BlogPost::with('author')
-            ->latest()
-            ->get(); // paginate() YOK
+        $posts = BlogPost::query()
+            ->with('categories:id,name,slug')
+            ->latest('id')
+            ->paginate(15);
 
         return view('admin.pages.blog.index', [
-            'pageTitle' => 'Blog',
+            'pageTitle' => 'Blog'
         ], compact('posts'));
     }
-    /*public function index(Request $request)
-    {
-        $q = trim((string) $request->get('q', ''));
-
-        $posts = BlogPost::query()
-            ->with('author')
-            ->when($q !== '', function ($query) use ($q) {
-                $query->where(function ($qq) use ($q) {
-                    $qq->where('title', 'like', "%{$q}%")
-                        ->orWhere('slug', 'like', "%{$q}%");
-                });
-            })
-            ->orderByDesc('id')
-            ->paginate(15)
-            ->withQueryString();
-
-        return view('admin.pages.blog.index', [
-            'pageTitle' => 'Blog',
-        ], compact('posts', 'q'));
-    }*/
 
     public function create()
     {
-        return view('admin.pages.blog.create');
+        $categories = Category::query()->orderBy('name')->get(['id','name']);
+        return view('admin.pages.blog.create', [
+            'pageTitle' => 'Yazı Oluştur'
+        ], compact('categories'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'title'          => ['required', 'string', 'max:190'],
-            'slug'           => ['nullable', 'string', 'max:190', 'unique:blog_posts,slug'],
-            'content'        => ['nullable', 'string'],
-            'featured_image' => ['nullable', 'image', 'max:2048'], // 2MB
-            'is_published'   => ['nullable', 'boolean'],
-            'published_at'   => ['nullable', 'date'],
-        ]);
+        $data = $this->validated($request);
 
-        // Slug: boşsa title'dan üret, çakışırsa -2, -3...
-        $slug = $validated['slug'] ?? Str::slug($validated['title']);
-        $slug = $slug !== '' ? $slug : Str::random(8);
+        // slug backend garanti
+        $data['slug'] = $this->ensureSlug($data['slug'] ?? null, $data['title']);
 
-        $base = $slug;
-        $i = 2;
-        while (BlogPost::where('slug', $slug)->exists()) {
-            $slug = $base . '-' . $i++;
-        }
-
-        // Görseli public disk altındaki /blog klasörüne at
-        $imagePath = null;
+        // image upload
         if ($request->hasFile('featured_image')) {
-            $imagePath = $request->file('featured_image')->store('blog', 'public');
+            $path = $request->file('featured_image')->store('blog', 'public');
+            $data['featured_image_path'] = $path;
         }
 
-        $isPublished = (bool) ($validated['is_published'] ?? false);
+        // publish fields
+        $data['is_published'] = (bool)($data['is_published'] ?? false);
+        if ($data['is_published'] && empty($data['published_at'])) {
+            $data['published_at'] = now();
+        }
+        if (!$data['is_published']) {
+            $data['published_at'] = null;
+        }
 
-        $post = BlogPost::create([
-            'user_id'        => auth()->id(),
-            'title'          => $validated['title'],
-            'slug'           => $slug,
-            'content'        => $validated['content'] ?? null,
-            'featured_image' => $imagePath,
-            'is_published'   => $isPublished,
-            'published_at'   => $validated['published_at'] ?? ($isPublished ? now() : null),
-        ]);
+        $post = BlogPost::create($data);
 
-        return redirect()
-            ->route('admin.blog.edit', $post)
-            ->with('ok', 'Blog yazısı oluşturuldu.');
+        $post->categories()->sync($data['category_ids'] ?? []);
+
+        return redirect()->route('admin.blog.index')
+            ->with('success', 'Blog yazısı oluşturuldu.');
     }
 
-    public function edit(BlogPost $blog)
+    public function edit(BlogPost $blogPost)
     {
-        // view içinde $blog kullanıyoruz
-        return view('admin.pages.blog.edit', compact('blog'));
+        $blogPost->load('categories:id');
+        $categories = Category::query()->orderBy('name')->get(['id','name']);
+
+        return view('admin.pages.blog.edit', [
+            'pageTitle' => 'Yazı Düzenle'
+        ], compact('blogPost', 'categories'));
     }
 
-    public function update(Request $request, BlogPost $blog)
+    public function update(Request $request, BlogPost $blogPost)
     {
-        $validated = $request->validate([
-            'title'          => ['required', 'string', 'max:190'],
-            'slug'           => ['required', 'string', 'max:190', Rule::unique('blog_posts', 'slug')->ignore($blog->id)],
-            'content'        => ['nullable', 'string'],
-            'featured_image' => ['nullable', 'image', 'max:2048'],
-            'is_published'   => ['nullable', 'boolean'],
-            'published_at'   => ['nullable', 'date'],
-        ]);
+        $data = $this->validated($request, isUpdate: true);
 
-        // Yeni görsel geldiyse: eskisini sil + yenisini kaydet
+        $data['slug'] = $this->ensureSlug($data['slug'] ?? null, $data['title'], $blogPost->id);
+
         if ($request->hasFile('featured_image')) {
-            if ($blog->featured_image) {
-                Storage::disk('public')->delete($blog->featured_image);
-            }
-            $blog->featured_image = $request->file('featured_image')->store('blog', 'public');
+            $path = $request->file('featured_image')->store('blog', 'public');
+            $data['featured_image_path'] = $path;
         }
 
-        $isPublished = (bool) ($validated['is_published'] ?? false);
-
-        $blog->update([
-            'title'        => $validated['title'],
-            'slug'         => $validated['slug'],
-            'content'      => $validated['content'] ?? null,
-            'is_published' => $isPublished,
-            'published_at' => $validated['published_at']
-                ?? ($isPublished ? ($blog->published_at ?? now()) : null),
-        ]);
-
-        // featured_image alanı store kısmında set edildi, update array'ine eklemedik; save et
-        if ($request->hasFile('featured_image')) {
-            $blog->save();
+        $data['is_published'] = (bool)($data['is_published'] ?? false);
+        if ($data['is_published'] && !$blogPost->published_at) {
+            $data['published_at'] = now();
+        }
+        if (!$data['is_published']) {
+            $data['published_at'] = null;
         }
 
-        return back()->with('ok', 'Blog yazısı güncellendi.');
+        $blogPost->update($data);
+        $blogPost->categories()->sync($data['category_ids'] ?? []);
+
+        return redirect()->route('admin.blog.index')
+            ->with('success', 'Blog yazısı güncellendi.');
     }
 
     public function togglePublish(Request $request, BlogPost $blog)
@@ -178,5 +140,44 @@ class BlogPostController extends Controller
         return redirect()
             ->route('admin.blog.index')
             ->with('ok', 'Blog yazısı silindi.');
+    }
+
+    private function validated(Request $request, bool $isUpdate = false): array
+    {
+        return $request->validate([
+            'title' => ['required','string','max:255'],
+            'slug' => ['nullable','string','max:255'],
+            'content' => ['nullable','string'],
+
+            'meta_keywords' => ['nullable','string','max:500'],
+            'meta_description' => ['nullable','string','max:255'],
+
+            'category_ids' => ['nullable','array'],
+            'category_ids.*' => ['integer','exists:categories,id'],
+
+            'featured_image' => ['nullable','image','max:4096'],
+
+            'is_published' => ['nullable','boolean'],
+        ]);
+    }
+
+    private function ensureSlug(?string $slug, string $title, ?int $ignoreId = null): string
+    {
+        $base = Str::slug($slug ?: $title);
+        if ($base === '') $base = 'post';
+
+        $candidate = $base;
+        $i = 2;
+
+        while (BlogPost::query()
+            ->when($ignoreId, fn($q) => $q->where('id', '!=', $ignoreId))
+            ->where('slug', $candidate)
+            ->exists()
+        ) {
+            $candidate = $base . '-' . $i;
+            $i++;
+        }
+
+        return $candidate;
     }
 }

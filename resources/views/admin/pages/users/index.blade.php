@@ -37,7 +37,7 @@
                                 <thead>
                                 <tr>
                                     <th class="w-[55px]">
-                                        <input class="kt-checkbox kt-checkbox-sm" id="users_check_all" type="checkbox"/>
+                                        <input class="kt-checkbox kt-checkbox-sm flex" id="users_check_all" type="checkbox"/>
                                     </th>
                                     <th class="min-w-[250px]">Kullanıcı</th>
                                     <th class="min-w-[220px]">E-posta</th>
@@ -201,6 +201,7 @@
                     columnDefs: [
                         { orderable: false, targets: [0, 6, 7] },
                         { searchable: false, targets: [0, 6, 7] },
+                        { className: 'text-center', targets: [4] },
                     ],
 
                     // ✅ yeni: check-all desteği

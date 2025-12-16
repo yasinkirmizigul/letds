@@ -9,14 +9,16 @@ return new class extends Migration {
     {
         Schema::create('blog_posts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
 
             $table->string('title');
             $table->string('slug')->unique();
+
             $table->longText('content')->nullable();
 
-            // 🔴 ÖNE ÇIKAN GÖRSEL
-            $table->string('featured_image')->nullable();
+            $table->string('meta_keywords', 500)->nullable();
+            $table->string('meta_description', 255)->nullable();
+
+            $table->string('featured_image_path', 500)->nullable();
 
             $table->boolean('is_published')->default(false);
             $table->timestamp('published_at')->nullable();

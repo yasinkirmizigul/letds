@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class BlogPost extends Model
 {
     protected $fillable = [
-        'user_id',
         'title',
         'slug',
         'content',
-        'featured_image',
+        'meta_keywords',
+        'meta_description',
+        'featured_image_path',
         'is_published',
         'published_at',
     ];
@@ -33,5 +34,10 @@ class BlogPost extends Model
         return $this->featured_image
             ? asset('storage/' . $this->featured_image)
             : null;
+    }
+
+    public function categories(): MorphToMany
+    {
+        return $this->morphToMany(Category::class, 'categorizable');
     }
 }

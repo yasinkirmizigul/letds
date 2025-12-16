@@ -53,26 +53,26 @@
                 pagination: null,         // '#blogPagination'
                 pageLength: 10,
                 lengthMenu: [5, 10, 25, 50],
-                order: [[0, 'desc']],
+                order: [[1, 'desc']],
                 dom: 't',
                 autoWidth: false,
 
                 emptyTemplate: null,      // '#dt-empty-blog'
                 zeroTemplate: null,       // '#dt-zero-blog'
                 emptyFallback: `
-          <div class="flex flex-col items-center justify-center gap-2 text-center py-12 text-muted-foreground">
-            <i class="ki-outline ki-folder-open text-4xl mb-2"></i>
-            <div class="font-medium text-secondary-foreground">Henüz kayıt bulunmuyor.</div>
-            <div class="text-sm">Yeni kayıt ekleyerek başlayabilirsiniz.</div>
-          </div>
-        `,
+                      <div class="flex flex-col items-center justify-center gap-2 text-center py-12 text-muted-foreground">
+                        <i class="ki-outline ki-folder-open text-4xl mb-2"></i>
+                        <div class="font-medium text-secondary-foreground">Henüz kayıt bulunmuyor.</div>
+                        <div class="text-sm">Yeni kayıt ekleyerek başlayabilirsiniz.</div>
+                      </div>
+                    `,
                 zeroFallback: `
-          <div class="flex flex-col items-center justify-center gap-2 text-center py-12 text-muted-foreground">
-            <i class="ki-outline ki-search-list text-4xl mb-2"></i>
-            <div class="font-medium text-secondary-foreground">Sonuç bulunamadı.</div>
-            <div class="text-sm">Arama kriterlerini değiştirip tekrar deneyin.</div>
-          </div>
-        `,
+                      <div class="flex flex-col items-center justify-center gap-2 text-center py-12 text-muted-foreground">
+                        <i class="ki-outline ki-search-list text-4xl mb-2"></i>
+                        <div class="font-medium text-secondary-foreground">Sonuç bulunamadı.</div>
+                        <div class="text-sm">Arama kriterlerini değiştirip tekrar deneyin.</div>
+                      </div>
+                    `,
 
                 columnDefs: [],
                 language: {},
