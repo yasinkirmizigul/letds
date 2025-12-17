@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\BlogPost\BlogPostController;
 use App\Http\Controllers\Admin\Dash\DashController;
+use App\Http\Controllers\Admin\TinyMceController;
 use App\Http\Controllers\Admin\User\PermissionController;
 use App\Http\Controllers\Admin\User\RoleController;
 use App\Http\Controllers\Admin\User\UserController;
@@ -75,19 +76,23 @@ Route::middleware(['auth'])
 
         // ✏️ Update
         Route::middleware('permission:blog.update')->group(function () {
-            Route::get('/{blog}/edit', [BlogPostController::class, 'edit'])->name('edit');
-            Route::put('/{blog}', [BlogPostController::class, 'update'])->name('update');
+            Route::get('/{blogPost}/edit', [BlogPostController::class, 'edit'])->name('edit');
+            Route::put('/{blogPost}', [BlogPostController::class, 'update'])->name('update');
         });
 
         // 🗑 Delete
         Route::middleware('permission:blog.delete')->group(function () {
-            Route::delete('/{blog}', [BlogPostController::class, 'destroy'])->name('destroy');
+            Route::delete('/{blogPost}', [BlogPostController::class, 'destroy'])->name('destroy');
         });
 
-        Route::patch('/{blog}/toggle-publish', [BlogPostController::class, 'togglePublish'])
+        Route::patch('/{blogPost}/toggle-publish', [BlogPostController::class, 'togglePublish'])
             ->middleware('permission:blog.update')
             ->name('togglePublish');
     });
+
+Route::middleware(['auth'])->prefix('admin')->as('admin.')->group(function () {
+    Route::post('/tinymce/upload', [TinyMceController::class, 'upload'])->name('tinymce.upload');
+});
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');

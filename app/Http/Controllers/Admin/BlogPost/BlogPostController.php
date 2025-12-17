@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin\BlogPost;
 
 use App\Http\Controllers\Controller;
-use App\Models\BlogPost\BlogPost;
-use App\Models\Category;
+use App\Models\Admin\BlogPost\BlogPost;
+use App\Models\Admin\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -63,14 +63,17 @@ class BlogPostController extends Controller
 
     public function edit(BlogPost $blogPost)
     {
+        abort_unless($blogPost->exists, 404);
+
         $blogPost->load('categories:id');
         $categories = Category::query()->orderBy('name')->get(['id','name']);
 
         return view('admin.pages.blog.edit', [
-            'pageTitle' => 'Yazı Düzenle'
-        ], compact('blogPost', 'categories'));
+            'pageTitle'  => 'Yazı Düzenle',
+            'blogPost'   => $blogPost,
+            'categories' => $categories,
+        ]);
     }
-
     public function update(Request $request, BlogPost $blogPost)
     {
         $data = $this->validated($request, isUpdate: true);
@@ -97,7 +100,7 @@ class BlogPostController extends Controller
             ->with('success', 'Blog yazısı güncellendi.');
     }
 
-    public function togglePublish(Request $request, BlogPost $blog)
+    public function togglePublish(Request $request, BlogPost $blogPost)
     {
         $validated = $request->validate([
             'is_published' => ['required', 'boolean'],
@@ -105,28 +108,26 @@ class BlogPostController extends Controller
 
         $isPublished = (bool) $validated['is_published'];
 
-        $blog->is_published = $isPublished;
+        $blogPost->is_published = $isPublished;
 
-        if ($isPublished && !$blog->published_at) {
-            $blog->published_at = now();
+        if ($isPublished && !$blogPost->published_at) {
+            $blogPost->published_at = now();
         }
 
-        if (!$isPublished) {
-            // İstersen yayın tarihini koru; ben koruyorum.
-            // İlla null olsun dersen: $blog->published_at = null;
-        }
+        // isPublished false ise published_at'ı koruyorsun, okay.
 
-        $blog->save();
+        $blogPost->save(); // artık UPDATE olur
 
         return response()->json([
             'ok' => true,
-            'is_published' => (bool) $blog->is_published,
-            'badge_html' => $blog->is_published
+            'is_published' => (bool) $blogPost->is_published,
+            'badge_html' => $blogPost->is_published
                 ? '<span class="badge badge-light-success">Yayında</span>'
                 : '<span class="badge badge-light">Taslak</span>',
-            'published_at' => optional($blog->published_at)->format('d.m.Y H:i'),
+            'published_at' => optional($blogPost->published_at)->format('d.m.Y H:i'),
         ]);
     }
+
 
 
     public function destroy(BlogPost $blog)

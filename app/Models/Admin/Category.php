@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Admin;
 
-use App\Models\BlogPost\BlogPost;
+use App\Models\Admin\BlogPost\BlogPost;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;

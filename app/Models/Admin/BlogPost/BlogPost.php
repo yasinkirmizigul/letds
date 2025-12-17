@@ -1,12 +1,15 @@
 <?php
 
-namespace App\Models\BlogPost;
+namespace App\Models\Admin\BlogPost;
 
-use App\Models\User\User;
+use App\Models\Admin\Category;
+use App\Models\Admin\User\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class BlogPost extends Model
 {
+    protected $table = 'blog_posts';
     protected $fillable = [
         'title',
         'slug',
@@ -31,8 +34,8 @@ class BlogPost extends Model
     // Görsel URL helper
     public function featuredImageUrl(): ?string
     {
-        return $this->featured_image
-            ? asset('storage/' . $this->featured_image)
+        return $this->featured_image_path
+            ? asset('storage/' . $this->featured_image_path)
             : null;
     }
 

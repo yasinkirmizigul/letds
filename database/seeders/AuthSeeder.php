@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User\Permission;
-use App\Models\User\Role;
-use App\Models\User\User;
+use App\Models\Admin\User\Permission;
+use App\Models\Admin\User\Role;
+use App\Models\Admin\User\User;
 use Illuminate\Database\Seeder;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;

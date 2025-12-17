@@ -164,6 +164,8 @@
     <script>
         (function () {
             const SELECTOR = '#content_editor';
+            const UPLOAD_URL = "{{ route('admin.tinymce.upload') }}";
+            const CSRF = "{{ csrf_token() }}";
 
             function getTheme() {
                 const root = document.documentElement;
@@ -175,13 +177,16 @@
             function initTiny(theme) {
                 if (!window.tinymce) return;
 
-                window.tinymce.remove(SELECTOR);
+                // aynı selector için varsa temizle
+                try { window.tinymce.remove(SELECTOR); } catch (e) {}
 
                 window.tinymce.init({
                     selector: SELECTOR,
                     height: 420,
 
                     license_key: 'gpl',
+                    base_url: "{{ asset('assets/vendors/tinymce') }}",
+                    suffix: '.min',
 
                     language: 'tr',
                     language_url: "{{ asset('assets/vendors/tinymce/langs/tr.js') }}",
@@ -195,6 +200,52 @@
 
                     branding: false,
                     promotion: false,
+
+                    /**
+                     * --- IMAGE UPLOAD (Drag&drop + paste) ---
+                     */
+                    automatic_uploads: true,
+                    paste_data_images: true,
+
+                    // TinyMCE'nin default XHR handler'ı yerine bizim handler:
+                    images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('POST', UPLOAD_URL);
+                        xhr.withCredentials = true; // session cookie gitsin
+
+                        xhr.setRequestHeader('X-CSRF-TOKEN', CSRF);
+
+                        xhr.upload.onprogress = (e) => {
+                            if (e.lengthComputable) {
+                                progress((e.loaded / e.total) * 100);
+                            }
+                        };
+
+                        xhr.onload = () => {
+                            if (xhr.status < 200 || xhr.status >= 300) {
+                                return reject('Upload failed: ' + xhr.status);
+                            }
+
+                            let json;
+                            try {
+                                json = JSON.parse(xhr.responseText);
+                            } catch (e) {
+                                return reject('Invalid JSON');
+                            }
+
+                            if (!json || typeof json.location !== 'string') {
+                                return reject('No location returned');
+                            }
+
+                            resolve(json.location);
+                        };
+
+                        xhr.onerror = () => reject('Network error');
+
+                        const formData = new FormData();
+                        formData.append('file', blobInfo.blob(), blobInfo.filename());
+                        xhr.send(formData);
+                    }),
                 });
             }
 

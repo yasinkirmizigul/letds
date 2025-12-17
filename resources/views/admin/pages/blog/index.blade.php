@@ -91,12 +91,11 @@
                                                 @if(auth()->user()->hasPermission('blog.update'))
                                                     <label class="kt-switch kt-switch-sm">
                                                         <input
-                                                            class="js-publish-toggle"
+                                                            class="js-publish-toggle kt-switch kt-switch-mono"
                                                             type="checkbox"
                                                             data-url="{{ route('admin.blog.togglePublish', $p) }}"
                                                             @checked($p->is_published)
                                                         />
-                                                        <span class="kt-switch-indicator"></span>
                                                     </label>
                                                 @endif
                                             </div>
