@@ -119,7 +119,7 @@
                             class="kt-menu-link flex grow cursor-pointer items-center gap-[10px] border border-transparent py-[6px] pe-[10px] ps-[10px]"
                             tabindex="0">
                         <span class="kt-menu-icon w-[20px] items-start text-muted-foreground">
-                            <i class="ki-filled ki-book text-lg"></i>
+                            <i class="ki-filled ki-document text-lg"></i>
                         </span>
 
                             <span
