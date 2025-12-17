@@ -13,7 +13,7 @@
                         <div class="text-sm text-muted-foreground">Ortak kategori sistemi (blog/galeri/ürün)</div>
                     </div>
 
-                    <div class="flex items-center gap-2 flex-wrap">
+                    <div class="flex items-center gap-2">
                         <input
                             id="categoriesSearch"
                             type="text"

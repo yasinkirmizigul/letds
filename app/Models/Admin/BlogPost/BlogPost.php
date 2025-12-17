@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class BlogPost extends Model
 {
-    public mixed $categories;
     protected $table = 'blog_posts';
     protected $fillable = [
         'title',

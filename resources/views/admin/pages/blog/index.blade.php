@@ -15,7 +15,7 @@
 
                     <div class="flex items-center gap-2 flex-wrap">
 
-                        <form method="GET" action="{{ route('admin.blog.index') }}" class="flex items-center gap-2 flex-wrap">
+                        <form method="GET" action="{{ route('admin.blog.index') }}" class="flex items-center gap-2">
 
                             <input
                                 id="blogSearch"
@@ -29,8 +29,14 @@
                             <select
                                 id="blogCategoryFilter"
                                 name="category_ids[]"
-                                multiple
-                                class="kt-input kt-input-sm min-w-[260px]"
+                                class="kt-select"
+                                data-kt-select="true"
+                                data-kt-select-placeholder="Kategoriler..."
+                                data-kt-select-multiple="true"
+                                data-kt-select-tags="true"
+                                data-kt-select-config='{
+                                  "showSelectedCount": true
+                                }'
                             >
                                 @foreach(($categoryOptions ?? []) as $opt)
                                     <option value="{{ $opt['id'] }}"
@@ -213,12 +219,15 @@
                         </template>
                         {{-- FOOTER --}}
                         <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
-                            <div class="order-2 md:order-1">
-                                {{ $posts->firstItem() ?? 0 }}-{{ $posts->lastItem() ?? 0 }} / {{ $posts->total() }}
+                            <div class="flex items-center gap-2 order-2 md:order-1">
+                                Göster
+                                <select class="kt-select w-16" id="blogPageSize" name="perpage"></select>
+                                / sayfa
                             </div>
 
-                            <div class="order-1 md:order-2">
-                                {{ $posts->links('admin.vendor.pagination.kt') }}
+                            <div class="flex items-center gap-4 order-1 md:order-2">
+                                <span id="blogInfo"></span>
+                                <div class="kt-datatable-pagination" id="blogPagination"></div>
                             </div>
                         </div>
 
@@ -377,21 +386,20 @@
                     pagination: '#blogPagination',
 
                     pageLength: 10,
-                    lengthMenu: [5,10,25,50],
-                    dom: 't',
+                    lengthMenu: [5, 10, 25, 50],
                     order: [[0,'desc']],
+                    dom: 't',
 
                     emptyTemplate: '#dt-empty-blog',
                     zeroTemplate: '#dt-zero-blog',
 
                     columnDefs: [
-                        { orderable:false, searchable:false, targets:[5,6] }, // işlem kolonları
+                        { orderable:false, searchable:false, targets:[5,6] },
                         { className:'text-right', targets:[5,6] },
                     ],
 
                     onDraw: () => {
                         initImagePopovers();
-                        // toggle için DELEGATION kullanıyorsan burada initToggles çağırmana bile gerek yok
                         initToggles();
                     }
                 });
@@ -401,23 +409,10 @@
                 const sel = document.getElementById('blogCategoryFilter');
                 if (!sel) return;
 
-                // Select2 varsa kullan
-                if (window.$ && $.fn && $.fn.select2) {
-                    $(sel).select2({
-                        width: '260px',
-                        placeholder: 'Kategori filtrele',
-                        closeOnSelect: false,
-                        allowClear: true
-                    }).on('change', function(){
-                        // admin UX: seçince otomatik filtre uygula
-                        this.closest('form')?.requestSubmit();
-                    });
-                } else {
-                    // Select2 yoksa yine otomatik submit
-                    sel.addEventListener('change', () => {
-                        sel.closest('form')?.requestSubmit();
-                    });
-                }
+                // Select2 yoksa yine otomatik submit
+                sel.addEventListener('change', () => {
+                    sel.closest('form')?.requestSubmit();
+                });
                 const sel1 = document.getElementById('blogPageSize');
                 const form = document.querySelector('form[action="{{ route('admin.blog.index') }}"]');
 

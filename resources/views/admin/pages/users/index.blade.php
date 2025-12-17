@@ -122,15 +122,12 @@
                         </div>
 
                         <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
-                            <div class="flex items-center gap-2 order-2 md:order-1">
-                                Göster
-                                <select class="kt-select w-16" id="usersPageSize" name="perpage"></select>
-                                / sayfa
+                            <div class="order-2 md:order-1">
+                                {{ $users->firstItem() ?? 0 }}-{{ $users->lastItem() ?? 0 }} / {{ $users->total() }}
                             </div>
 
-                            <div class="flex items-center gap-4 order-1 md:order-2">
-                                <span id="usersInfo"></span>
-                                <div class="kt-datatable-pagination" id="usersPagination"></div>
+                            <div class="order-1 md:order-2">
+                                {{ $users->links('admin.vendor.pagination.kt') }}
                             </div>
                         </div>
 
