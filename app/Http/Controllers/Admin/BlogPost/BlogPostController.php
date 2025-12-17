@@ -2,33 +2,78 @@
 
 namespace App\Http\Controllers\Admin\BlogPost;
 
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\BlogPost\BlogPost;
 use App\Models\Admin\Category;
+use App\Support\CategoryTree;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class BlogPostController extends Controller
 {
-    public function index()
+
+    public function index(Request $request)
     {
+        // ✅ q
+        $q = trim((string) $request->query('q', ''));
+
+        // ✅ perPage (admin UX) - güvenli limit
+        $perPage = (int) $request->query('perpage', 25);
+        $perPage = in_array($perPage, [10, 25, 50, 100], true) ? $perPage : 25;
+
+        // ✅ category_ids sanitize (int + distinct + >0)
+        $raw = $request->query('category_ids', []);
+        $categoryIds = is_array($raw) ? $raw : [$raw];
+
+        $categoryIds = array_values(array_unique(array_filter(array_map(function ($v) {
+            $i = (int) $v;
+            return $i > 0 ? $i : null;
+        }, $categoryIds))));
+
+        // ✅ category options (tek kaynak)
+        $categoryOptions = CategoryTree::options();
+
+        // ✅ posts query
         $posts = BlogPost::query()
-            ->with('categories:id,name,slug')
-            ->latest('id')
-            ->paginate(15);
+            ->with([
+                'author:id,name',
+                'categories:id,name,slug,parent_id'
+            ])
+            ->when($q !== '', function ($query) use ($q) {
+                $query->where(function ($qq) use ($q) {
+                    $qq->where('title', 'like', "%{$q}%")
+                        ->orWhere('slug', 'like', "%{$q}%");
+                });
+            })
+            // OR filtre: seçilen kategorilerden herhangi biri varsa gelsin
+            ->when(!empty($categoryIds), function ($query) use ($categoryIds) {
+                $query->whereHas('categories', function ($q) use ($categoryIds) {
+                    $q->whereIn('categories.id', $categoryIds);
+                });
+            })
+            ->orderByDesc('updated_at')
+            ->paginate($perPage)
+            ->withQueryString();
 
         return view('admin.pages.blog.index', [
-            'pageTitle' => 'Blog'
-        ], compact('posts'));
+            'posts' => $posts,
+            'q' => $q,
+            'perPage' => $perPage,
+            'categoryOptions' => $categoryOptions,
+            'selectedCategoryIds' => $categoryIds,
+            'pageTitle' => 'Blog',
+        ]);
     }
+
 
     public function create()
     {
-        $categories = Category::query()->orderBy('name')->get(['id','name']);
-        return view('admin.pages.blog.create', [
-            'pageTitle' => 'Yazı Oluştur'
-        ], compact('categories'));
+        $categories = Category::query()->orderBy('name')->get(['id','name','parent_id']);
+        $categoryOptions = CategoryTree::options();
+
+        return view('admin.pages.blog.create', compact('categories', 'categoryOptions'));
     }
 
     public function store(Request $request)
@@ -56,6 +101,7 @@ class BlogPostController extends Controller
         $post = BlogPost::create($data);
 
         $post->categories()->sync($data['category_ids'] ?? []);
+        $post->categories()->sync($request->input('category_ids', []));
 
         return redirect()->route('admin.blog.index')
             ->with('success', 'Blog yazısı oluşturuldu.');
@@ -66,13 +112,10 @@ class BlogPostController extends Controller
         abort_unless($blogPost->exists, 404);
 
         $blogPost->load('categories:id');
-        $categories = Category::query()->orderBy('name')->get(['id','name']);
+        $selectedCategoryIds = $blogPost->categories->pluck('id')->all();
+        $categoryOptions = CategoryTree::options();
 
-        return view('admin.pages.blog.edit', [
-            'pageTitle'  => 'Yazı Düzenle',
-            'blogPost'   => $blogPost,
-            'categories' => $categories,
-        ]);
+        return view('admin.pages.blog.edit', compact('blogPost','categoryOptions','selectedCategoryIds'));
     }
     public function update(Request $request, BlogPost $blogPost)
     {
@@ -95,6 +138,8 @@ class BlogPostController extends Controller
 
         $blogPost->update($data);
         $blogPost->categories()->sync($data['category_ids'] ?? []);
+        $categoryIds = $request->input('category_ids', []);
+        $blogPost->categories()->sync($categoryIds);
 
         return redirect()->route('admin.blog.index')
             ->with('success', 'Blog yazısı güncellendi.');
@@ -159,6 +204,7 @@ class BlogPostController extends Controller
             'featured_image' => ['nullable','image','max:4096'],
 
             'is_published' => ['nullable','boolean'],
+
         ]);
     }
 

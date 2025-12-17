@@ -13,13 +13,49 @@
                         <div class="text-sm text-muted-foreground">Blog yazılarını yönetin</div>
                     </div>
 
-                    <div class="flex items-center gap-2">
-                        <input
-                            id="blogSearch"
-                            type="text"
-                            class="kt-input kt-input-sm"
-                            placeholder="Başlık / kısa bağlantı ara..."
-                        />
+                    <div class="flex items-center gap-2 flex-wrap">
+
+                        <form method="GET" action="{{ route('admin.blog.index') }}" class="flex items-center gap-2 flex-wrap">
+
+                            <input
+                                id="blogSearch"
+                                name="q"
+                                type="text"
+                                class="kt-input kt-input-sm"
+                                placeholder="Başlık / kısa bağlantı ara..."
+                                value="{{ $q ?? '' }}"
+                            />
+
+                            <select
+                                id="blogCategoryFilter"
+                                name="category_ids[]"
+                                multiple
+                                class="kt-input kt-input-sm min-w-[260px]"
+                            >
+                                @foreach(($categoryOptions ?? []) as $opt)
+                                    <option value="{{ $opt['id'] }}"
+                                        @selected(in_array($opt['id'], $selectedCategoryIds ?? [], true))>
+                                        {{ $opt['label'] }}
+                                    </option>
+                                @endforeach
+                            </select>
+
+                            <button type="submit" class="kt-btn kt-btn-sm kt-btn-light">
+                                Filtrele
+                            </button>
+
+                            @php
+                                $hasFilter = !empty($q) || !empty($selectedCategoryIds);
+                            @endphp
+
+                            @if($hasFilter)
+                                <a href="{{ route('admin.blog.index') }}" class="kt-btn kt-btn-sm kt-btn-ghost">
+                                    Temizle
+                                </a>
+                            @endif
+                            <input type="hidden" name="perpage" value="{{ $perPage ?? 25 }}">
+
+                        </form>
 
                         @if(auth()->user()->hasPermission('blog.create'))
                             <a href="{{ route('admin.blog.create') }}" class="kt-btn kt-btn-sm kt-btn-primary">
@@ -27,6 +63,7 @@
                             </a>
                         @endif
                     </div>
+
                 </div>
 
                 <div class="kt-card-content">
@@ -72,6 +109,16 @@
                                                 <div class="flex flex-col gap-0.5">
                                                     <span class="font-semibold">{{ $p->title }}</span>
                                                     <span class="text-sm text-muted-foreground">{{ $p->author?->name ?? '-' }}</span>
+
+                                                    @if($p->categories?->count())
+                                                        <div class="flex flex-wrap gap-1 mt-1">
+                                                            @foreach($p->categories as $c)
+                                                                <span class="kt-badge kt-badge-sm kt-badge-light">
+                                                                    {{ $c->name }}
+                                                                </span>
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </td>
@@ -141,18 +188,14 @@
                                 </tbody>
                             </table>
                         </div>
-
                         {{-- FOOTER --}}
                         <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
-                            <div class="flex items-center gap-2 order-2 md:order-1">
-                                Göster
-                                <select class="kt-select w-16" id="blogPageSize" name="perpage"></select>
-                                / sayfa
+                            <div class="order-2 md:order-1">
+                                {{ $posts->firstItem() ?? 0 }}-{{ $posts->lastItem() ?? 0 }} / {{ $posts->total() }}
                             </div>
 
-                            <div class="flex items-center gap-4 order-1 md:order-2">
-                                <span id="blogInfo"></span>
-                                <div class="kt-datatable-pagination" id="blogPagination"></div>
+                            <div class="order-1 md:order-2">
+                                {{ $posts->links('admin.vendor.pagination.kt') }}
                             </div>
                         </div>
 
@@ -318,6 +361,47 @@
 
                 initImagePopovers();
                 initToggles();
+                const sel = document.getElementById('blogCategoryFilter');
+                if (!sel) return;
+
+                // Select2 varsa kullan
+                if (window.$ && $.fn && $.fn.select2) {
+                    $(sel).select2({
+                        width: '260px',
+                        placeholder: 'Kategori filtrele',
+                        closeOnSelect: false,
+                        allowClear: true
+                    }).on('change', function(){
+                        // admin UX: seçince otomatik filtre uygula
+                        this.closest('form')?.requestSubmit();
+                    });
+                } else {
+                    // Select2 yoksa yine otomatik submit
+                    sel.addEventListener('change', () => {
+                        sel.closest('form')?.requestSubmit();
+                    });
+                }
+                const sel1 = document.getElementById('blogPageSize');
+                const form = document.querySelector('form[action="{{ route('admin.blog.index') }}"]');
+
+                if (!sel1 || !form) return;
+
+                const options = [10,25,50,100];
+                sel1.innerHTML = options.map(v => `<option value="${v}">${v}</option>`).join('');
+                sel.value = "{{ $perPage ?? 25 }}";
+
+                sel1.addEventListener('change', () => {
+                    // hidden perpage güncelle
+                    let hidden = form.querySelector('input[name="perpage"]');
+                    if (!hidden) {
+                        hidden = document.createElement('input');
+                        hidden.type = 'hidden';
+                        hidden.name = 'perpage';
+                        form.appendChild(hidden);
+                    }
+                    hidden.value = sel1.value;
+                    form.requestSubmit();
+                });
             });
 
             // ---------- Custom pagination (Metronic footer içine) ----------
@@ -350,6 +434,7 @@
 
                 host.appendChild(makeBtn('›', Math.min(pages - 1, page + 1), page === pages - 1));
             }
+
         })();
     </script>
 @endpush

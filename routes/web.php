@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\BlogPost\BlogPostController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\Dash\DashController;
 use App\Http\Controllers\Admin\TinyMceController;
 use App\Http\Controllers\Admin\User\PermissionController;
@@ -56,6 +57,40 @@ Route::middleware(['auth'])
             Route::put('/users/{user}', [UserController::class, 'update'])->middleware('permission:users.update')->name('users.update');
             Route::delete('/users/{user}', [UserController::class, 'destroy'])->middleware('permission:users.delete')->name('users.destroy');
         });
+    });
+Route::middleware(['auth'])
+    ->prefix('admin/categories')
+    ->as('admin.categories.')
+    ->group(function () {
+
+        Route::get('/', [CategoryController::class, 'index'])
+            ->middleware('permission:category.view')
+            ->name('index');
+
+        Route::get('/create', [CategoryController::class, 'create'])
+            ->middleware('permission:category.create')
+            ->name('create');
+
+        Route::post('/', [CategoryController::class, 'store'])
+            ->middleware('permission:category.create')
+            ->name('store');
+
+        Route::get('/{category}/edit', [CategoryController::class, 'edit'])
+            ->middleware('permission:category.update')
+            ->name('edit');
+
+        Route::put('/{category}', [CategoryController::class, 'update'])
+            ->middleware('permission:category.update')
+            ->name('update');
+
+        Route::delete('/{category}', [CategoryController::class, 'destroy'])
+            ->middleware('permission:category.delete')
+            ->name('destroy');
+
+        // ✅ canlı slug kontrol
+        Route::get('/check-slug', [CategoryController::class, 'checkSlug'])
+            ->middleware('permission:category.view')
+            ->name('checkSlug');
     });
 
 Route::middleware(['auth'])

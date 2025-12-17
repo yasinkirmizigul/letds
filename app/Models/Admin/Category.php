@@ -6,28 +6,48 @@ use App\Models\Admin\BlogPost\BlogPost;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\MorphedByMany;
 
 class Category extends Model
 {
-    protected $fillable = [
-        'name',
-        'slug',
-        'parent_id',
-    ];
+    protected $fillable = ['name','slug','parent_id'];
 
     public function parent(): BelongsTo
     {
-        return $this->belongsTo(Category::class, 'parent_id');
+        return $this->belongsTo(self::class, 'parent_id');
     }
 
     public function children(): HasMany
     {
-        return $this->hasMany(Category::class, 'parent_id');
+        return $this->hasMany(self::class, 'parent_id');
     }
 
-    public function blogPosts(): MorphToMany
+    public function blogPosts(): MorphedByMany
     {
-        return $this->morphedByMany(BlogPost::class, 'categorizable');
+        return $this->morphedByMany(
+            BlogPost::class,
+            'categorizable',
+            'categorizables',
+            'category_id',
+            'categorizable_id'
+        );
+    }
+
+    // ✅ edit'te kendi altını parent seçmeyi engellemek için:
+    public function descendantIds(): array
+    {
+        $ids = [];
+        $stack = $this->children()->get(['id'])->all();
+
+        while ($stack) {
+            /** @var \App\Models\Admin\Category $node */
+            $node = array_pop($stack);
+            $ids[] = $node->id;
+
+            $more = self::query()->where('parent_id', $node->id)->get(['id'])->all();
+            foreach ($more as $m) $stack[] = $m;
+        }
+
+        return $ids;
     }
 }
