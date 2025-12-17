@@ -107,7 +107,7 @@
 @push('page_js')
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            initMetronicDataTable({
+            initDataTable({
                 table: '#roles_table',
                 search: '#rolesSearch',
                 pageSize: '#rolesPageSize',

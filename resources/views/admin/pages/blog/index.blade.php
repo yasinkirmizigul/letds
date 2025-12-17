@@ -188,6 +188,29 @@
                                 </tbody>
                             </table>
                         </div>
+                        <template id="dt-empty-blog">
+                            <tr data-kt-empty-row="true">
+                                <td colspan="7" class="py-12">
+                                    <div class="flex flex-col items-center text-center gap-2">
+                                        <i class="ki-outline ki-document text-3xl text-muted-foreground"></i>
+                                        <div class="font-semibold">Henüz blog yazısı yok</div>
+                                        <div class="text-sm text-muted-foreground">Yeni yazı oluştur.</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+
+                        <template id="dt-zero-blog">
+                            <tr data-kt-zero-row="true">
+                                <td colspan="7" class="py-12">
+                                    <div class="flex flex-col items-center text-center gap-2">
+                                        <i class="ki-outline ki-magnifier text-3xl text-muted-foreground"></i>
+                                        <div class="font-semibold">Sonuç bulunamadı</div>
+                                        <div class="text-sm text-muted-foreground">Aramanı değiştirip tekrar dene.</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
                         {{-- FOOTER --}}
                         <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
                             <div class="order-2 md:order-1">
@@ -346,15 +369,29 @@
             // ---------- DataTables.net INIT ----------
             document.addEventListener('DOMContentLoaded', () => {
 
-                initMetronicDataTable({
+                initDataTable({
                     table: '#blog_table',
                     search: '#blogSearch',
                     pageSize: '#blogPageSize',
                     info: '#blogInfo',
                     pagination: '#blogPagination',
+
+                    pageLength: 10,
+                    lengthMenu: [5,10,25,50],
+                    dom: 't',
                     order: [[0,'desc']],
+
+                    emptyTemplate: '#dt-empty-blog',
+                    zeroTemplate: '#dt-zero-blog',
+
+                    columnDefs: [
+                        { orderable:false, searchable:false, targets:[5,6] }, // işlem kolonları
+                        { className:'text-right', targets:[5,6] },
+                    ],
+
                     onDraw: () => {
                         initImagePopovers();
+                        // toggle için DELEGATION kullanıyorsan burada initToggles çağırmana bile gerek yok
                         initToggles();
                     }
                 });

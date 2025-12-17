@@ -20,6 +20,7 @@ class AuthSeeder extends Seeder
 
         $permissions = [
             'blog.view',
+            'category.view',
             'blog.create',
             'blog.edit',
             'pricing.view',

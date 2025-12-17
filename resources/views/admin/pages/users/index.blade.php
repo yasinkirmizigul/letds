@@ -175,7 +175,7 @@
             }
 
             document.addEventListener('DOMContentLoaded', () => {
-                initMetronicDataTable({
+                initDataTable({
                     table: '#users_table',
                     search: '#usersSearch',
                     pageSize: '#usersPageSize',

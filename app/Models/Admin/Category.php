@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphedByMany;
 
 class Category extends Model
 {
-    protected $fillable = ['name','slug','parent_id'];
+    protected $fillable = ['name', 'slug', 'parent_id'];
 
     public function parent(): BelongsTo
     {
@@ -22,7 +22,7 @@ class Category extends Model
         return $this->hasMany(self::class, 'parent_id');
     }
 
-    public function blogPosts(): MorphedByMany
+    public function blogPosts()
     {
         return $this->morphedByMany(
             BlogPost::class,
@@ -31,23 +31,5 @@ class Category extends Model
             'category_id',
             'categorizable_id'
         );
-    }
-
-    // ✅ edit'te kendi altını parent seçmeyi engellemek için:
-    public function descendantIds(): array
-    {
-        $ids = [];
-        $stack = $this->children()->get(['id'])->all();
-
-        while ($stack) {
-            /** @var \App\Models\Admin\Category $node */
-            $node = array_pop($stack);
-            $ids[] = $node->id;
-
-            $more = self::query()->where('parent_id', $node->id)->get(['id'])->all();
-            foreach ($more as $m) $stack[] = $m;
-        }
-
-        return $ids;
     }
 }
