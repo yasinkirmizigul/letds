@@ -100,8 +100,7 @@ class BlogPostController extends Controller
 
         $post = BlogPost::create($data);
 
-        $post->categories()->sync($data['category_ids'] ?? []);
-        $post->categories()->sync($request->input('category_ids', []));
+        $post->categories()->sync(array_map('intval', $request->input('category_ids', [])));
 
         return redirect()->route('admin.blog.index')
             ->with('success', 'Blog yazısı oluşturuldu.');
@@ -112,10 +111,19 @@ class BlogPostController extends Controller
         abort_unless($blogPost->exists, 404);
 
         $blogPost->load('categories:id');
-        $selectedCategoryIds = $blogPost->categories->pluck('id')->all();
-        $categoryOptions = CategoryTree::options();
 
-        return view('admin.pages.blog.edit', compact('blogPost','categoryOptions','selectedCategoryIds'));
+        $selectedCategoryIds = $blogPost->categories->pluck('id')->all();
+
+        // DÜZ LİSTE (multi-select için ideal)
+        $categories = Category::query()
+            ->orderBy('name')
+            ->get(['id','name']);
+
+        return view('admin.pages.blog.edit', compact(
+            'blogPost',
+            'categories',
+            'selectedCategoryIds'
+        ));
     }
     public function update(Request $request, BlogPost $blogPost)
     {
@@ -137,9 +145,8 @@ class BlogPostController extends Controller
         }
 
         $blogPost->update($data);
-        $blogPost->categories()->sync($data['category_ids'] ?? []);
-        $categoryIds = $request->input('category_ids', []);
-        $blogPost->categories()->sync($categoryIds);
+        $blogPost->categories()->sync(array_map('intval', $request->input('category_ids', [])));
+
 
         return redirect()->route('admin.blog.index')
             ->with('success', 'Blog yazısı güncellendi.');
@@ -173,19 +180,18 @@ class BlogPostController extends Controller
         ]);
     }
 
-
-
-    public function destroy(BlogPost $blog)
+    public function destroy(BlogPost $blogPost)
     {
-        if ($blog->featured_image) {
-            Storage::disk('public')->delete($blog->featured_image);
+        if ($blogPost->featured_image_path) {
+            Storage::disk('public')->delete($blogPost->featured_image_path);
         }
 
-        $blog->delete();
+        $blogPost->categories()->detach(); // isteğe bağlı ama temiz
+        $blogPost->delete();
 
         return redirect()
             ->route('admin.blog.index')
-            ->with('ok', 'Blog yazısı silindi.');
+            ->with('success', 'Blog yazısı silindi.');
     }
 
     private function validated(Request $request, bool $isUpdate = false): array

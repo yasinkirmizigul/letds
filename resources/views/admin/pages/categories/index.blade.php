@@ -66,7 +66,7 @@
                                                           onsubmit="return confirm('Kategori silinsin mi? (İlişkiler otomatik kaldırılır)')">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button class="kt-btn kt-btn-danger kt-btn-sm">Sil</button>
+                                                        <button class="kt-btn kt-btn-destructive kt-btn-sm">Sil</button>
                                                     </form>
                                                 @endif
                                             </div>

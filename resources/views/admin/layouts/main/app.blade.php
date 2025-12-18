@@ -1,13 +1,23 @@
 <!DOCTYPE html>
-<html class="h-full" lang="tr" dir="ltr"
+<html class="h-full js-loading" lang="tr" dir="ltr"
       data-kt-theme="true"
-      data-kt-theme-mode="light">
+      data-kt-theme-mode="light" >
 <head>
+    <script>
+        document.documentElement.setAttribute('data-js', 'loading');
+    </script>
     @include('admin.layouts.partials.head')
     @stack('admin_css')
 </head>
 
 <body class="antialiased flex h-full text-base text-foreground bg-background app kt-sidebar-fixed kt-header-fixed">
+<div id="app-lock" class="app-lock" aria-hidden="true">
+    <div class="app-lock__panel">
+        <div class="app-lock__spinner"></div>
+        <div class="app-lock__text">Yükleniyor...</div>
+    </div>
+</div>
+
 {{-- Tema modu init --}}
 @include('admin.partials.theme-toggle')
 
@@ -42,11 +52,9 @@
     </div>
 </div>
 
-@include('admin.layouts.partials.scripts')
-
 {{-- NOT: Bunu uzun vadede Vite'a taşımalısın (resources/js/admin/...) --}}
-<script src="{{ asset('assets/js/layouts/main.js') }}"></script>
+{{--<script src="{{ asset('assets/js/layouts/app.js') }}"></script>--}}
 
-@stack('admin_js')
+@include('admin.layouts.partials.scripts')
 </body>
 </html>

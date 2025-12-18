@@ -85,7 +85,7 @@
                                         <td>
                                             @if(auth()->user()->hasPermission('users.update'))
                                                 <a href="{{ route('admin.users.edit', $user) }}"
-                                                   class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost">
+                                                   class="kt-btn kt-btn-sm kt-btn-icon kt-btn-mono">
                                                     <i class="ki-filled ki-notepad-edit"></i>
                                                 </a>
                                             @endif
@@ -98,7 +98,7 @@
                                                       onsubmit="return confirm('Bu kullanıcıyı silmek istiyor musunuz?')">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost">
+                                                    <button type="submit" class="kt-btn kt-btn-sm kt-btn-icon kt-btn-mono">
                                                         <i class="ki-filled ki-trash"></i>
                                                     </button>
                                                 </form>

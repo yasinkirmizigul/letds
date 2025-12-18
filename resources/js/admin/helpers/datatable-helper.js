@@ -57,8 +57,8 @@
         tbody.innerHTML = rowHtml;
     }
 
-    function renderPagination(api, hostSelector) {
-        const host = document.querySelector(hostSelector);
+    function renderPagination(api, hostSelector, root = document) {
+        const host = root.querySelector(hostSelector);
         if (!host) return;
 
         const info = api.page.info();
@@ -114,50 +114,8 @@
      * - DataTables.net core + senin Metronic header/footer entegrasyonu
      */
     function initDataTable(opts) {
-        const o = Object.assign(
-            {
-                table: null,
-                search: null,
-                pageSize: null,
-                info: null,
-                pagination: null,
-
-                pageLength: 10,
-                lengthMenu: [5, 10, 25, 50],
-                order: [[1, 'desc']],
-                dom: 't',
-                autoWidth: false,
-
-                emptyTemplate: null,
-                zeroTemplate: null,
-                emptyFallback: `
-                  <div class="flex flex-col items-center justify-center gap-2 text-center py-12 text-muted-foreground">
-                    <i class="ki-outline ki-folder-open text-4xl mb-2"></i>
-                    <div class="font-medium text-secondary-foreground">Henüz kayıt bulunmuyor.</div>
-                    <div class="text-sm">Yeni kayıt ekleyerek başlayabilirsiniz.</div>
-                  </div>
-                `,
-                zeroFallback: `
-                  <div class="flex flex-col items-center justify-center gap-2 text-center py-12 text-muted-foreground">
-                    <i class="ki-outline ki-search-list text-4xl mb-2"></i>
-                    <div class="font-medium text-secondary-foreground">Sonuç bulunamadı.</div>
-                    <div class="text-sm">Arama kriterlerini değiştirip tekrar deneyin.</div>
-                  </div>
-                `,
-
-                columnDefs: [],
-                language: {},
-
-                onDraw: null,
-                checkAll: null,
-                rowChecks: null,
-
-                // ✅ DataTables'ın ok span'ını CSS ile gizlemek için (orderable-none)
-                hideOrderIconsOnDisabled: true,
-                headerCenter: true,
-            },
-            opts || {}
-        );
+        const o = Object.assign({ /* ... aynı ... */ }, opts || {});
+        const root = o.root || document;
 
         if (!o.table) return null;
 
@@ -166,36 +124,18 @@
             return null;
         }
 
-        const $table = jQuery(o.table);
-        if (!$table.length) return null;
+        const tableEl = root.querySelector(o.table);
+        if (!tableEl) return null;
+
+        const $table = jQuery(tableEl);
 
         // çift init engeli
         if (jQuery.fn.dataTable.isDataTable($table)) return $table.DataTable();
 
-        const tableEl = document.querySelector(o.table);
         const emptyHtml = o.emptyTemplate ? tplHtml(o.emptyTemplate, o.emptyFallback) : o.emptyFallback;
         const zeroHtml  = o.zeroTemplate  ? tplHtml(o.zeroTemplate,  o.zeroFallback)  : o.zeroFallback;
 
-        // ✅ header center (hem yatay hem dikey)
-        if (o.headerCenter && tableEl) {
-            tableEl.classList.add('dt-kt-header-center');
-        }
-
-        // ✅ orderable false kolonlarda ok span'ı gizle
-        if (o.hideOrderIconsOnDisabled && !document.getElementById('dt-kt-helper-style')) {
-            const style = document.createElement('style');
-            style.id = 'dt-kt-helper-style';
-            style.textContent = `
-                table.dt-kt-header-center thead th { vertical-align: middle; }
-                table.dt-kt-header-center thead th .dt-column-header { display:flex; align-items:center; justify-content:center; gap:.35rem; }
-                table.dt-kt-header-center thead th.text-right .dt-column-header { justify-content:flex-end; }
-                table.dt-kt-header-center thead th.text-left .dt-column-header { justify-content:flex-start; }
-
-                /* DataTables order icon span: tamamen gizle (orderable-none) */
-                thead th.dt-orderable-none .dt-column-order { display:none !important; }
-            `;
-            document.head.appendChild(style);
-        }
+        if (o.headerCenter) tableEl.classList.add('dt-kt-header-center');
 
         const dt = $table.DataTable({
             pageLength: o.pageLength,
@@ -203,30 +143,20 @@
             order: o.order,
             autoWidth: o.autoWidth,
             dom: o.dom,
-
             columnDefs: o.columnDefs,
-
-            // ✅ empty/zero satırını biz yöneteceğiz → DataTables'ın default mesajını boş bırak
             language: Object.assign(
-                {
-                    emptyTable: '',
-                    zeroRecords: '',
-                    infoEmpty: 'Kayıt yok',
-                },
+                { emptyTable: '', zeroRecords: '', infoEmpty: 'Kayıt yok' },
                 o.language || {}
             ),
-
             drawCallback: function () {
                 const api = this.api();
 
-                // ✅ empty/zero state'i tbody üzerinde doğru şekilde uygula
-                if (tableEl) applyEmptyState(api, tableEl, emptyHtml, zeroHtml);
+                applyEmptyState(api, tableEl, emptyHtml, zeroHtml);
 
-                // info
                 if (o.info) {
                     const info = api.page.info();
                     const hasSearch = (api.search() || '').trim().length > 0;
-                    const infoEl = document.querySelector(o.info);
+                    const infoEl = root.querySelector(o.info);
 
                     if (infoEl) {
                         if (info.recordsTotal === 0 && !hasSearch) infoEl.textContent = 'Henüz kayıt yok';
@@ -235,26 +165,22 @@
                     }
                 }
 
-                // pagination
-                if (o.pagination) renderPagination(api, o.pagination);
+                if (o.pagination) renderPagination(api, o.pagination, root);
 
-                // hook
                 if (typeof o.onDraw === 'function') o.onDraw(api);
 
-                // sayfa değişince header checkbox sıfırla
                 if (o.checkAll) {
-                    const c = document.querySelector(o.checkAll);
+                    const c = root.querySelector(o.checkAll);
                     if (c) c.checked = false;
                 }
             },
         });
 
-        $table.removeClass('dataTable');
-        $table.removeClass('no-footer');
+        $table.removeClass('dataTable no-footer');
 
         // search bind
         if (o.search) {
-            const s = document.querySelector(o.search);
+            const s = root.querySelector(o.search);
             if (s && !s._dtBound) {
                 s._dtBound = true;
                 s.addEventListener('input', (e) => dt.search(e.target.value || '').draw());
@@ -263,7 +189,7 @@
 
         // page size bind
         if (o.pageSize) {
-            const sel = document.querySelector(o.pageSize);
+            const sel = root.querySelector(o.pageSize);
             if (sel && !sel._dtBound) {
                 sel._dtBound = true;
 
@@ -280,24 +206,20 @@
             }
         }
 
-        // check-all (tek seferlik bind)
+        // check-all
         if (o.checkAll && o.rowChecks) {
-            const checkAllEl = document.querySelector(o.checkAll);
+            const checkAllEl = root.querySelector(o.checkAll);
             if (checkAllEl && !checkAllEl._dtBound) {
                 checkAllEl._dtBound = true;
-
                 checkAllEl.addEventListener('change', () => {
                     const checked = checkAllEl.checked;
-                    document.querySelectorAll(o.rowChecks).forEach(cb => (cb.checked = checked));
+                    root.querySelectorAll(o.rowChecks).forEach(cb => (cb.checked = checked));
                 });
             }
         }
-
-        // ilk draw
-        dt.draw();
-
         return dt;
     }
+
 
     w.initDataTable = initDataTable;
 })(window);

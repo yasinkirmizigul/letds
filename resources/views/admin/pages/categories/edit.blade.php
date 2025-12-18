@@ -18,7 +18,9 @@
             </div>
 
             <div class="kt-card kt-card-grid min-w-full">
-                <form method="POST" action="{{ route('admin.categories.update', ['category' => $category->id]) }}">
+
+                {{-- UPDATE FORM (no nested forms, buttons are outside and linked via form="...") --}}
+                <form id="category-update-form" method="POST" action="{{ route('admin.categories.update', ['category' => $category->id]) }}">
                     @csrf
                     @method('PUT')
 
@@ -39,10 +41,12 @@
                                             value="{{ old('name', $category->name) }}"
                                             required
                                         />
-                                        @error('name') <div class="text-xs text-danger">{{ $message }}</div> @enderror
+                                        @error('name')
+                                        <div class="text-xs text-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
-                                    <div class="flex items-center justify-between gap-3 rounded-xl border px-4 py-3">
+                                    <div class="flex items-center justify-between gap-3">
                                         <div class="flex flex-col">
                                             <span class="font-medium">Slug otomatik</span>
                                             <span class="text-sm text-muted-foreground">Açarsan ad→slug</span>
@@ -55,44 +59,31 @@
                                 </div>
 
                                 {{-- Slug + Regen (same row) --}}
-                                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-end">
+                                <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 items-end">
                                     <div class="lg:col-span-2 flex flex-col gap-2">
                                         <label class="kt-form-label font-normal text-mono">Slug</label>
-                                        <input
-                                            id="cat_slug"
-                                            class="kt-input @error('slug') kt-input-invalid @enderror"
-                                            name="slug"
-                                            value="{{ old('slug', $category->slug) }}"
-                                            required
-                                        />
-                                        @error('slug') <div class="text-xs text-danger">{{ $message }}</div> @enderror
+                                        <div class="flex items-center justify-between gap-3">
+                                            <input
+                                                id="cat_slug"
+                                                class="kt-input @error('slug') kt-input-invalid @enderror"
+                                                name="slug"
+                                                value="{{ old('slug', $category->slug) }}"
+                                                required
+                                            />
+
+                                            <button type="button" id="slug_regen" class="kt-btn kt-btn-light">
+                                                Yeniden üret
+                                            </button>
+                                        </div>
+
+                                        @error('slug')
+                                        <div class="text-xs text-danger">{{ $message }}</div>
+                                        @enderror
 
                                         <div class="text-sm text-muted-foreground">
                                             URL önizleme:
                                             <span class="font-medium">/kategori/</span><span id="slug_preview" class="font-medium"></span>
                                         </div>
-                                    </div>
-
-                                    <button type="button" id="slug_regen" class="kt-btn kt-btn-light">
-                                        Yeniden üret
-                                    </button>
-                                </div>
-
-                                {{-- Parent --}}
-                                <div class="flex flex-col gap-2">
-                                    <label class="kt-form-label font-normal text-mono">Üst Kategori</label>
-                                    <select id="parent_id" name="parent_id" class="kt-input @error('parent_id') kt-input-invalid @enderror">
-                                        <option value="">— Seçme —</option>
-                                        @foreach(($parentOptions ?? []) as $opt)
-                                            <option value="{{ $opt['id'] }}" @selected(old('parent_id', $category->parent_id) == $opt['id'])>
-                                                {{ $opt['label'] }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('parent_id') <div class="text-xs text-danger">{{ $message }}</div> @enderror
-
-                                    <div class="text-sm text-muted-foreground">
-                                        Not: Kendi alt kategorilerini üst kategori olarak seçemezsin.
                                     </div>
                                 </div>
 
@@ -100,35 +91,104 @@
 
                             {{-- RIGHT --}}
                             <div class="lg:col-span-1 flex flex-col gap-6">
+                                {{-- Parent --}}
+                                <div class="flex flex-col gap-2">
+                                    <label class="kt-form-label font-normal text-mono">Üst Kategori</label>
 
-                                <div class="rounded-xl border p-5">
-                                    <div class="font-semibold mb-1">Dikkat</div>
+                                    {{-- parent tek seçim olmalı: multiple/tags kaldırıldı --}}
+                                    <select id="parent_id" name="parent_id"
+                                            class="kt-select @error('parent_id') kt-input-invalid @enderror"
+                                            data-kt-select="true"
+                                            data-kt-select-placeholder="Üst Kategoriler...">
+                                        <option value="">Üst kategori yok</option>
+                                        @foreach(($parentOptions ?? []) as $opt)
+                                            <option value="{{ $opt['id'] }}" @selected((string)old('parent_id', $category->parent_id) === (string)$opt['id'])>
+                                                {{ $opt['label'] }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+
+                                    @error('parent_id')
+                                    <div class="text-sm text-danger mt-1">{{ $message }}</div>
+                                    @enderror
+
                                     <div class="text-sm text-muted-foreground">
-                                        Slug’ı değiştirirsen mevcut URL’ler kırılır. Sadece bilinçli yap.
+                                        Not: Kendi alt kategorilerini üst kategori olarak seçemezsin.
                                     </div>
                                 </div>
 
+                                {{-- BUTTONS (same line) --}}
                                 <div class="flex gap-2 justify-center">
-                                    <button type="submit" class="kt-btn kt-btn-primary">Güncelle</button>
-                                    <a href="{{ route('admin.categories.index') }}" class="kt-btn kt-btn-light">İptal</a>
-                                </div>
+                                    {{-- UPDATE --}}
+                                    <button type="submit"
+                                            form="category-update-form"
+                                            class="kt-btn kt-btn-primary">
+                                        Güncelle
+                                    </button>
 
-                                @if(auth()->user()->hasPermission('category.delete'))
-                                    <form method="POST"
-                                          action="{{ route('admin.categories.destroy', ['category' => $category->id]) }}"
-                                          onsubmit="return confirm('Kategori silinsin mi? (İlişkiler otomatik kaldırılır)')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="kt-btn kt-btn-danger w-full">Sil</button>
-                                    </form>
-                                @endif
+                                    {{-- DELETE (modal open) --}}
+                                    @if(auth()->user()->hasPermission('category.delete'))
+                                        <button type="button"
+                                                class="kt-btn kt-btn-destructive"
+                                                data-kt-modal-target="#deleteCategoryModal">
+                                            Sil
+                                        </button>
+                                    @endif
+
+                                    <a href="{{ route('admin.categories.index') }}" class="kt-btn kt-btn-mono">İptal</a>
+                                </div>
 
                             </div>
 
                         </div>
                     </div>
                 </form>
+
+                {{-- DELETE FORM (separate; used by modal confirm) --}}
+                @if(auth()->user()->hasPermission('category.delete'))
+                    <form id="category-delete-form"
+                          method="POST"
+                          action="{{ route('admin.categories.destroy', ['category' => $category->id]) }}">
+                        @csrf
+                        @method('DELETE')
+                    </form>
+                @endif
+
             </div>
+
+            {{-- DELETE MODAL --}}
+            @if(auth()->user()->hasPermission('category.delete'))
+                <div id="deleteCategoryModal"
+                     class="kt-modal hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                    <div class="kt-card max-w-md">
+                        <div class="kt-card-header">
+                            <h3 class="kt-card-title">Kategori Sil</h3>
+                        </div>
+
+                        <div class="kt-card-content">
+                            <p class="text-sm text-muted-foreground">
+                                Bu kategoriyi silmek istediğine emin misin?
+                                <br>
+                                <strong>Alt kategoriler varsa silinemez.</strong>
+                            </p>
+                        </div>
+
+                        <div class="kt-card-footer flex justify-end gap-2">
+                            <button type="button"
+                                    class="kt-btn kt-btn-mono"
+                                    data-kt-modal-close>
+                                Vazgeç
+                            </button>
+
+                            <button type="submit"
+                                    form="category-delete-form"
+                                    class="kt-btn kt-btn-destructive">
+                                Evet, Sil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
         </div>
     </div>
@@ -142,7 +202,6 @@
             const autoEl = document.getElementById('slug_auto');
             const regenEl = document.getElementById('slug_regen');
             const previewEl = document.getElementById('slug_preview');
-            const parentEl = document.getElementById('parent_id');
 
             function slugifyTR(str) {
                 return String(str || '')
@@ -168,10 +227,18 @@
                 syncPreview();
             }
 
+            // Modal open/close (minimal)
+            function openModal(sel) {
+                const modal = document.querySelector(sel);
+                if (modal) modal.classList.remove('hidden');
+            }
+            function closeModal(modal) {
+                if (modal) modal.classList.add('hidden');
+            }
+
             document.addEventListener('DOMContentLoaded', () => {
                 syncPreview();
 
-                // edit'te default kapalı; kullanıcı açarsa otomatik üret
                 if (nameEl && autoEl) {
                     nameEl.addEventListener('input', () => {
                         if (!autoEl.checked) return;
@@ -183,13 +250,51 @@
 
                 if (regenEl) {
                     regenEl.addEventListener('click', () => {
-                        // bilinçli aksiyon: otomatik açık olmasa bile üretir
                         setSlugFromName();
                     });
                 }
 
-                if (parentEl && window.$ && $.fn && $.fn.select2) {
-                    $(parentEl).select2({ width: '100%', placeholder: 'Üst kategori seç' });
+                // modal open
+                document.querySelectorAll('[data-kt-modal-target]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        openModal(btn.getAttribute('data-kt-modal-target'));
+                    });
+                });
+
+                // modal close
+                document.querySelectorAll('[data-kt-modal-close]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        closeModal(btn.closest('.kt-modal'));
+                    });
+                });
+
+                // close on backdrop click
+                document.querySelectorAll('.kt-modal').forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) closeModal(modal);
+                    });
+                });
+
+                // prevent double submit on update
+                const updateForm = document.getElementById('category-update-form');
+                if (updateForm) {
+                    updateForm.addEventListener('submit', () => {
+                        document.querySelectorAll('button[form="category-update-form"][type="submit"]').forEach(b => {
+                            b.disabled = true;
+                            b.classList.add('opacity-60', 'pointer-events-none');
+                        });
+                    });
+                }
+
+                // prevent double submit on delete
+                const deleteForm = document.getElementById('category-delete-form');
+                if (deleteForm) {
+                    deleteForm.addEventListener('submit', () => {
+                        document.querySelectorAll('button[form="category-delete-form"][type="submit"]').forEach(b => {
+                            b.disabled = true;
+                            b.classList.add('opacity-60', 'pointer-events-none');
+                        });
+                    });
                 }
             });
         })();

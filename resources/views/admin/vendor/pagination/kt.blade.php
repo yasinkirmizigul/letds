@@ -23,7 +23,7 @@
                 {{-- "Three Dots" Separator --}}
                 @if (is_string($element))
                     <li>
-                        <span class="kt-btn kt-btn-sm kt-btn-ghost opacity-70 pointer-events-none" aria-disabled="true">
+                        <span class="kt-btn kt-btn-sm kt-btn-mono opacity-70 pointer-events-none" aria-disabled="true">
                             {{ $element }}
                         </span>
                     </li>

@@ -36,64 +36,50 @@
                                             class="kt-input @error('name') kt-input-invalid @enderror"
                                             name="name"
                                             value="{{ old('name') }}"
-                                            placeholder="Örn: Duyurular"
                                             required
                                         />
-                                        @error('name') <div class="text-xs text-danger">{{ $message }}</div> @enderror
+                                        @error('name')
+                                        <div class="text-xs text-danger">{{ $message }}</div> @enderror
                                     </div>
 
-                                    <div class="flex items-center justify-between gap-3 rounded-xl border px-4 py-3">
+                                    <div class="flex items-center justify-between gap-3">
                                         <div class="flex flex-col">
                                             <span class="font-medium">Slug otomatik</span>
                                             <span class="text-sm text-muted-foreground">Açık olursa ad→slug</span>
                                         </div>
 
                                         <label class="kt-switch kt-switch-sm">
-                                            <input id="slug_auto" type="checkbox" class="kt-switch kt-switch-mono" checked>
+                                            <input id="slug_auto" type="checkbox" class="kt-switch kt-switch-mono"
+                                                   checked>
                                         </label>
                                     </div>
                                 </div>
 
                                 {{-- Slug + Regen (same row) --}}
-                                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-end">
+                                <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 items-end">
                                     <div class="lg:col-span-2 flex flex-col gap-2">
                                         <label class="kt-form-label font-normal text-mono">Slug</label>
-                                        <input
-                                            id="cat_slug"
-                                            class="kt-input @error('slug') kt-input-invalid @enderror"
-                                            name="slug"
-                                            value="{{ old('slug') }}"
-                                            placeholder="otomatik oluşur (istersen değiştir)"
-                                            required
-                                        />
-                                        @error('slug') <div class="text-xs text-danger">{{ $message }}</div> @enderror
+                                        <div class="flex items-center justify-between gap-3">
+                                            <input
+                                                id="cat_slug"
+                                                class="kt-input @error('slug') kt-input-invalid @enderror"
+                                                name="slug"
+                                                value="{{ old('slug') }}"
+                                                placeholder="otomatik oluşur (istersen değiştir)"
+                                                required
+                                            />
+                                            <button type="button" id="slug_regen" class="kt-btn kt-btn-light">
+                                                Yeniden üret
+                                            </button>
+                                        </div>
+                                        @error('slug')
+                                        <div class="text-xs text-danger">{{ $message }}</div> @enderror
 
                                         <div class="text-sm text-muted-foreground">
                                             URL önizleme:
-                                            <span class="font-medium">/kategori/</span><span id="slug_preview" class="font-medium"></span>
+                                            <span class="font-medium">/kategori/</span><span id="slug_preview"
+                                                                                             class="font-medium"></span>
                                         </div>
-                                    </div>
-
-                                    <button type="button" id="slug_regen" class="kt-btn kt-btn-light">
-                                        Yeniden üret
-                                    </button>
-                                </div>
-
-                                {{-- Parent --}}
-                                <div class="flex flex-col gap-2">
-                                    <label class="kt-form-label font-normal text-mono">Üst Kategori</label>
-                                    <select id="parent_id" name="parent_id" class="kt-input @error('parent_id') kt-input-invalid @enderror">
-                                        <option value="">— Seçme —</option>
-                                        @foreach(($parentOptions ?? []) as $opt)
-                                            <option value="{{ $opt['id'] }}" @selected(old('parent_id') == $opt['id'])>
-                                                {{ $opt['label'] }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('parent_id') <div class="text-xs text-danger">{{ $message }}</div> @enderror
-
-                                    <div class="text-sm text-muted-foreground">
-                                        Üst kategori seçersen hiyerarşik bir ağaç oluşur.
                                     </div>
                                 </div>
 
@@ -101,17 +87,37 @@
 
                             {{-- RIGHT --}}
                             <div class="lg:col-span-1 flex flex-col gap-6">
-                                <div class="rounded-xl border p-5">
-                                    <div class="font-semibold mb-1">İpucu</div>
+                                {{-- Parent --}}
+                                <div class="flex flex-col gap-2">
+                                    <label class="kt-form-label font-normal text-mono">Üst Kategori</label>
+                                    <select id="parent_id" name="parent_id"
+                                            class="kt-select @error('parent_id') kt-input-invalid @enderror"
+                                            data-kt-select="true"
+                                            data-kt-select-placeholder="Üst Kategoriler..."
+                                            data-kt-select-multiple="true"
+                                            data-kt-select-tags="true"
+                                            data-kt-select-config='{
+                                              "showSelectedCount": true
+                                            }'>
+                                        @foreach(($parentOptions ?? []) as $opt)
+                                            <option value="{{ $opt['id'] }}" @selected(old('parent_id') == $opt['id'])>
+                                                {{ $opt['label'] }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('parent_id')
+                                    <div class="text-sm text-danger mt-1">{{ $message }}</div>
+                                    @enderror
+
                                     <div class="text-sm text-muted-foreground">
-                                        Slug otomatik açıkken ad değiştikçe slug güncellenir. Kurumsal kullanımda slug’ı
-                                        sabit tutmak daha güvenlidir.
+                                        Üst kategori seçersen hiyerarşik bir ağaç oluşur.
                                     </div>
                                 </div>
 
                                 <div class="flex gap-2 justify-center">
                                     <button type="submit" class="kt-btn kt-btn-primary">Kaydet</button>
-                                    <a href="{{ route('admin.categories.index') }}" class="kt-btn kt-btn-light">İptal</a>
+                                    <a href="{{ route('admin.categories.index') }}"
+                                       class="kt-btn kt-btn-light">İptal</a>
                                 </div>
                             </div>
 
@@ -170,11 +176,6 @@
 
                 if (slugEl) slugEl.addEventListener('input', syncPreview);
                 if (regenEl) regenEl.addEventListener('click', setSlugFromName);
-
-                // Select2 varsa parent seçimi daha iyi UX
-                if (parentEl && window.$ && $.fn && $.fn.select2) {
-                    $(parentEl).select2({ width: '100%', placeholder: 'Üst kategori seç' });
-                }
             });
         })();
     </script>

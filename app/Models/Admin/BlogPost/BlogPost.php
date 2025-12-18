@@ -41,6 +41,7 @@ class BlogPost extends Model
 
     public function categories(): MorphToMany
     {
-        return $this->morphToMany(Category::class, 'categorizable', 'categorizables', 'categorizable_id', 'category_id');
+        return $this->morphToMany(Category::class, 'categorizable', 'categorizables', 'categorizable_id', 'category_id')
+            ->withTimestamps();
     }
 }

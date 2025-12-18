@@ -14,7 +14,6 @@
 @yield('content')
 
 @include('admin.layouts.partials.scripts')
-<script src="{{ asset('assets/js/layouts/main.js') }}"></script>
 @stack('app_js')
 </body>
 </html>

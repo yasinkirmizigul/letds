@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Category\StoreCategoryRequest;
+use App\Http\Requests\Admin\Category\UpdateCategoryRequest;
 use App\Models\Admin\Category;
+use App\Support\CategoryTree;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -26,21 +29,23 @@ class CategoryController extends Controller
 
     public function create()
     {
-        $parentOptions = $this->treeOptions(); // tüm kategori ağacı
+        $all = CategoryTree::all();
+        $byParent = CategoryTree::indexByParent($all);
 
         return view('admin.pages.categories.create', [
-            'pageTitle' => 'Kategori Oluştur',
-            'parentOptions' => $parentOptions,
+            'pageTitle' => 'Yeni Kategori',
+            'parentOptions' => CategoryTree::optionsFromIndex($byParent),
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-        $data = $this->validated($request);
+        $data = $request->validated();
 
-        $category = Category::create($data);
-
-/*        $this->audit('created', $category, null, $category->only(['name','slug','parent_id']));*/
+        Category::create([
+            'name' => $data['name'],
+            'parent_id' => $data['parent_id'] ?? null,
+        ]);
 
         return redirect()
             ->route('admin.categories.index')
@@ -49,9 +54,20 @@ class CategoryController extends Controller
 
     public function edit(Category $category)
     {
-        // ✅ kendisi + tüm altları parent listesinde görünmesin
-        $excludeIds = array_merge([$category->id], $category->descendantIds());
-        $parentOptions = $this->treeOptions($excludeIds);
+        // 1) Tek query
+        $all = CategoryTree::all();
+
+        // 2) RAM index
+        $byParent = CategoryTree::indexByParent($all);
+
+        // 3) RAM’den descendant id’leri
+        $descendantIds = CategoryTree::descendantIdsFromAll($category->id, $byParent);
+
+        // 4) kendisi + tüm altları exclude
+        $excludeIds = array_merge([$category->id], $descendantIds);
+
+        // 5) parent options
+        $parentOptions = CategoryTree::optionsFromIndex($byParent, $excludeIds);
 
         return view('admin.pages.categories.edit', [
             'pageTitle' => 'Kategori Düzenle',
@@ -60,46 +76,34 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function update(Request $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $data = $this->validated($request, $category->id);
+        $data = $request->validated();
 
-        // ✅ kendisi / altı parent olamaz
-        $newParent = $data['parent_id'] ?? null;
-        if ($newParent) {
-            $invalidIds = array_merge([$category->id], $category->descendantIds());
-            abort_if(in_array($newParent, $invalidIds, true), 422, 'Geçersiz üst kategori seçimi.');
-        }
-
-        $before = $category->only(['name','slug','parent_id']);
-
-        $category->update($data);
-
-        $this->audit('updated', $category, $before, $category->only(['name','slug','parent_id']));
+        $category->update([
+            'name' => $data['name'],
+            'parent_id' => $data['parent_id'] ?? null,
+        ]);
 
         return redirect()
             ->route('admin.categories.index')
             ->with('success', 'Kategori güncellendi.');
     }
 
+
     public function destroy(Category $category)
     {
-        $before = $category->only(['name','slug','parent_id']);
+        $hasChildren = Category::where('parent_id', $category->id)->exists();
 
-        DB::transaction(function () use ($category) {
-            // ✅ ilişki temizliği (şu an blog var)
-            $category->blogPosts()->detach();
+        if ($hasChildren) {
+            return back()->with('error', 'Bu kategorinin alt kategorileri var. Önce alt kategorileri taşıyın veya silin.');
+        }
 
-            // ✅ polymorphic pivot genel temizlik (ileride product/gallery eklesen bile çöp kalmaz)
-            DB::table('categorizables')->where('category_id', $category->id)->delete();
+        $category->delete();
 
-            $category->delete();
-        });
-
-        // delete sonrası model instance durur (id vs duruyor), log atabiliriz
-/*        $this->audit('deleted', $category, $before, null);*/
-
-        return back()->with('success', 'Kategori silindi.');
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('success', 'Kategori silindi.');
     }
 
     /**

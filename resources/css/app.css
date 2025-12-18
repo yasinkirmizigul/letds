@@ -274,5 +274,41 @@ table.kt-table thead th .dt-column-title {
     0%   { transform: translateY(-2px); opacity: .4; }
     100% { transform: translateY(0);    opacity: 1; }
 }
+/* JS gelene kadar enhanced blok gizli */
+html.js-loading [data-js-hide-until-ready] { visibility: hidden; }
+html.js-ready   [data-js-hide-until-ready] { visibility: visible; }
 
+/*
+[data-page="blog.index"] table.kt-table thead th .dt-column-header { }
+*/
 
+/* ===== App Loading State (single source of truth) ===== */
+html.js-loading { overflow: hidden; }
+
+/* Global lock overlay */
+.app-lock {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: grid;
+    place-items: center;
+    background: rgba(0,0,0,.25);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .15s ease;
+}
+html.js-loading .app-lock {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Optional: hide specific enhanced blocks until ready */
+html.js-loading [data-js-hide-until-ready] { visibility: hidden; }
+html.js-ready   [data-js-hide-until-ready] { visibility: visible; }
+
+table.dt-kt-header-center thead th { vertical-align: middle; }
+table.dt-kt-header-center thead th .dt-column-header { display:flex; align-items:center; justify-content:center; gap:.35rem; }
+table.dt-kt-header-center thead th.text-right .dt-column-header { justify-content:flex-end; }
+table.dt-kt-header-center thead th.text-left .dt-column-header { justify-content:flex-start; }
+thead th.dt-orderable-none .dt-column-order { display:none !important; }

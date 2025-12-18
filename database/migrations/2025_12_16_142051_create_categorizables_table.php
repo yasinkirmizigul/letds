@@ -11,6 +11,7 @@ return new class extends Migration {
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->morphs('categorizable'); // categorizable_id + categorizable_type
             $table->primary(['category_id', 'categorizable_id', 'categorizable_type']);
+            $table->timestamps();
         });
     }
 

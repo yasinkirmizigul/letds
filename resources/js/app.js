@@ -1,116 +1,30 @@
 import './bootstrap';
 import './admin/helpers/datatable-helper';
-import Alpine from 'alpinejs';
 
-// Start Alpine.js
+import Alpine from 'alpinejs';
+import { AppInit } from './core/app-init';
+import { enhance } from './core/enhance';
+import { registerPages } from './admin/pages/index';
+
 window.Alpine = Alpine;
 Alpine.start();
 
-// Theme Core JavaScript functionality
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize drawer functionality
-    initDrawers();
+registerPages();
 
-    // Initialize menu functionality
-    initMenus();
+function domReady(fn) {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fn, { once: true });
+    } else {
+        fn();
+    }
+}
 
-    // Initialize sticky headers
-    initStickyHeaders();
-
-    // Initialize modal functionality
-    initModals();
+domReady(async () => {
+    try {
+        enhance(document);     // sadece DOM dekorasyonu
+        await AppInit();       // ✅ KTUI + page boot burada
+    } finally {
+        document.documentElement.classList.remove('js-loading');
+        document.documentElement.classList.add('js-ready');
+    }
 });
-
-// Drawer functionality
-function initDrawers() {
-    const drawers = document.querySelectorAll('[data-kt-drawer]');
-
-    drawers.forEach(drawer => {
-        const toggles = document.querySelectorAll(`[data-kt-drawer-toggle="#${drawer.id}"]`);
-
-        toggles.forEach(toggle => {
-            toggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                drawer.classList.toggle('hidden');
-                drawer.classList.toggle('block');
-            });
-        });
-    });
-}
-
-// Menu functionality
-function initMenus() {
-    const menus = document.querySelectorAll('[data-kt-menu="true"]');
-
-    menus.forEach(menu => {
-        const items = menu.querySelectorAll('[data-kt-menu-item-toggle="dropdown"]');
-
-        items.forEach(item => {
-            const trigger = item.querySelector('[data-kt-menu-item-trigger="click"], [data-kt-menu-item-trigger="click|lg:hover"]');
-            const dropdown = item.querySelector('.kt-menu-dropdown');
-
-            if (trigger && dropdown) {
-                trigger.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    dropdown.classList.toggle('hidden');
-                });
-            }
-        });
-    });
-}
-
-// Sticky header functionality
-function initStickyHeaders() {
-    const stickyElements = document.querySelectorAll('[data-kt-sticky="true"]');
-
-    stickyElements.forEach(element => {
-        const stickyClass = element.getAttribute('data-kt-sticky-class') || 'kt-sticky';
-        const offset = parseInt(element.getAttribute('data-kt-sticky-offset')) || 0;
-
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > offset) {
-                element.classList.add(...stickyClass.split(' '));
-            } else {
-                element.classList.remove(...stickyClass.split(' '));
-            }
-        });
-    });
-}
-
-// Modal functionality
-function initModals() {
-    const modalToggles = document.querySelectorAll('[data-kt-modal-toggle]');
-
-    modalToggles.forEach(toggle => {
-        toggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            const modalId = this.getAttribute('data-kt-modal-toggle');
-            const modal = document.querySelector(modalId);
-
-            if (modal) {
-                modal.classList.toggle('hidden');
-                modal.classList.toggle('flex');
-            }
-        });
-    });
-}
-
-// Close modals when clicking outside
-document.addEventListener('click', function(e) {
-    const modals = document.querySelectorAll('.kt-modal');
-
-    modals.forEach(modal => {
-        if (e.target === modal) {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-    });
-});
-
-// Export functions for use in other modules
-window.ThemeCore = {
-    initDrawers,
-    initMenus,
-    initStickyHeaders,
-    initModals
-};

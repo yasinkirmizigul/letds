@@ -55,7 +55,7 @@
                                         <td>
                                             @if(auth()->user()->hasPermission('roles.update'))
                                                 <a href="{{ route('admin.roles.edit', $role) }}"
-                                                   class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost">
+                                                   class="kt-btn kt-btn-sm kt-btn-icon kt-btn-mono">
                                                     <i class="ki-filled ki-notepad-edit"></i>
                                                 </a>
                                             @endif

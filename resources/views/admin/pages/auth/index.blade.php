@@ -77,7 +77,7 @@
                         />
 
                         <button
-                            class="kt-btn kt-btn-sm kt-btn-ghost kt-btn-icon bg-transparent! -me-1.5"
+                            class="kt-btn kt-btn-sm kt-btn-mono kt-btn-icon bg-transparent! -me-1.5"
                             data-kt-toggle-password-trigger="true"
                             type="button"
                         >

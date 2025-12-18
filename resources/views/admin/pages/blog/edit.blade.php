@@ -21,7 +21,10 @@
         @endphp
 
         <div class="kt-card">
-            <form class="kt-card-content p-8 flex flex-col gap-6"
+
+            {{-- UPDATE FORM (buttons are outside and linked via form="...") --}}
+            <form id="blog-update-form"
+                  class="kt-card-content p-8 flex flex-col gap-6"
                   method="POST"
                   action="{{ route('admin.blog.update', ['blogPost' => $blogPost->id]) }}"
                   enctype="multipart/form-data">
@@ -33,21 +36,19 @@
                     {{-- Left --}}
                     <div class="lg:col-span-2 flex flex-col gap-6">
 
+                        {{-- Title + Slug auto toggle --}}
                         <div class="flex flex-col gap-2">
+                            <label class="kt-form-label font-normal text-mono mb-0">Başlık</label>
 
-                            <label class="kt-form-label font-normal text-mono mb-0">
-                                Başlık
-                            </label>
-
-                            <div class="flex items-center justify-between">
-
+                            <div class="flex items-center justify-between gap-3">
                                 <input
                                     id="title"
                                     name="title"
-                                    class="kt-input me-5 @error('title') kt-input-invalid @enderror"
+                                    class="kt-input flex-1 @error('title') kt-input-invalid @enderror"
                                     value="{{ old('title', $blogPost->title) }}"
                                     required
                                 >
+
                                 <label class="inline-flex items-center gap-2 select-none">
                                     <span class="text-sm text-muted-foreground text-nowrap">Slug otomatik</span>
                                     <input
@@ -64,33 +65,25 @@
                             @enderror
                         </div>
 
+                        {{-- Slug + regen --}}
                         <div class="flex flex-col gap-2">
+                            <label class="kt-form-label font-normal text-mono mb-0">Slug</label>
 
-                            <label class="kt-form-label font-normal text-mono mb-0">
-                                Slug
-                            </label>
                             <div class="flex items-center justify-between gap-3">
-
                                 <input
                                     id="slug"
                                     name="slug"
-                                    class="kt-input me-5 @error('slug') kt-input-invalid @enderror"
+                                    class="kt-input flex-1 @error('slug') kt-input-invalid @enderror"
                                     value="{{ old('slug', $blogPost->slug) }}"
                                     required
                                 >
-                                <div class="flex items-center gap-2">
-                                <span
-                                    id="slug_mode_badge"
-                                    class="kt-badge kt-badge-light hidden"
-                                >
-                                    Manuel
-                                </span>
 
-                                    <button
-                                        type="button"
-                                        id="slug_regen_btn"
-                                        class="kt-btn kt-btn-light kt-btn-sm"
-                                    >
+                                <div class="flex items-center gap-2">
+                                    <span id="slug_mode_badge" class="kt-badge kt-badge-light hidden">Manuel</span>
+
+                                    <button type="button"
+                                            id="slug_regen_btn"
+                                            class="kt-btn kt-btn-light kt-btn-sm">
                                         Başlıktan yeniden üret
                                     </button>
                                 </div>
@@ -104,14 +97,12 @@
                                 URL Önizleme:
                                 <span class="font-medium">
                                     {{ url('/blog') }}/
-                                    <span id="url_slug_preview">
-                                        {{ old('slug', $blogPost->slug) }}
-                                    </span>
+                                    <span id="url_slug_preview">{{ old('slug', $blogPost->slug) }}</span>
                                 </span>
                             </div>
                         </div>
 
-
+                        {{-- Content --}}
                         <div class="flex flex-col gap-2">
                             <label class="kt-form-label font-normal text-mono">İçerik</label>
                             <textarea
@@ -120,7 +111,8 @@
                                 class="kt-input min-h-[320px] @error('content') kt-input-invalid @enderror"
                             >{{ old('content', $blogPost->content ?? '') }}</textarea>
                             @error('content')
-                            <div class="text-xs text-danger">{{ $message }}</div> @enderror
+                            <div class="text-xs text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
 
                     </div>
@@ -128,6 +120,57 @@
                     {{-- Right --}}
                     <div class="lg:col-span-1 flex flex-col gap-6">
 
+                        {{-- Categories (MISSING -> added) --}}
+                        <div class="flex flex-col gap-2">
+                            <label class="kt-form-label font-normal text-mono">Kategoriler</label>
+
+                            <select name="category_ids[]" multiple
+                                    class="kt-select @error('category_ids') kt-input-invalid @enderror"
+                                    data-kt-select="true"
+                                    data-kt-select-placeholder="Kategoriler...">
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat->id }}"
+                                        @selected(collect(old('category_ids', $selectedCategoryIds ?? []))->contains($cat->id))>
+                                        {{ $cat->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+
+                            @error('category_ids')
+                            <div class="text-xs text-danger">{{ $message }}</div>
+                            @enderror
+
+                            <div class="text-xs text-muted-foreground">
+                                Çoklu seçebilirsin. Ürün/galeri de aynı kategori yapısını kullanacak.
+                            </div>
+                        </div>
+
+                        {{-- SEO: meta keywords (MISSING -> added) --}}
+                        <div class="flex flex-col gap-2">
+                            <label class="kt-form-label font-normal text-mono">Anahtar Kelimeler</label>
+                            <input class="kt-input @error('meta_keywords') kt-input-invalid @enderror"
+                                   name="meta_keywords"
+                                   value="{{ old('meta_keywords', $blogPost->meta_keywords ?? '') }}"
+                                   placeholder="örn: veri analizi, istatistik"/>
+                            @error('meta_keywords')
+                            <div class="text-xs text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- SEO: meta description (MISSING -> added) --}}
+                        <div class="flex flex-col gap-2">
+                            <label class="kt-form-label font-normal text-mono">Açıklama</label>
+                            <textarea
+                                class="kt-input min-h-[90px] @error('meta_description') kt-input-invalid @enderror"
+                                name="meta_description"
+                                maxlength="255"
+                                placeholder="Google snippet için kısa açıklama...">{{ old('meta_description', $blogPost->meta_description ?? '') }}</textarea>
+                            @error('meta_description')
+                            <div class="text-xs text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- Featured image --}}
                         <div class="flex flex-col gap-2">
                             <label class="kt-form-label font-normal text-mono">Öne Çıkan Görsel</label>
 
@@ -138,7 +181,8 @@
                                    class="kt-input @error('featured_image') kt-input-invalid @enderror">
 
                             @error('featured_image')
-                            <div class="text-xs text-danger">{{ $message }}</div> @enderror
+                            <div class="text-xs text-danger">{{ $message }}</div>
+                            @enderror
 
                             <div class="mt-2">
                                 <div class="text-sm text-muted-foreground mb-2">Mevcut / Önizleme</div>
@@ -161,6 +205,7 @@
                             @endif
                         </div>
 
+                        {{-- Publish --}}
                         <div class="flex items-center justify-between">
                             <div class="flex flex-col">
                                 <span class="font-medium">Yayınla</span>
@@ -174,8 +219,22 @@
                                 @checked(old('is_published', $blogPost->is_published)) />
                         </div>
 
+                        {{-- Buttons (same row: update + delete + cancel; no nested forms) --}}
                         <div class="flex gap-2 justify-center">
-                            <button type="submit" class="kt-btn kt-btn-primary">Güncelle</button>
+                            <button type="submit"
+                                    form="blog-update-form"
+                                    class="kt-btn kt-btn-primary">
+                                Güncelle
+                            </button>
+
+                            @if(auth()->user()->hasPermission('blog.delete'))
+                                <button type="button"
+                                        class="kt-btn kt-btn-destructive"
+                                        data-kt-modal-target="#deleteBlogModal">
+                                    Sil
+                                </button>
+                            @endif
+
                             <a href="{{ route('admin.blog.index') }}" class="kt-btn kt-btn-light">İptal</a>
                         </div>
 
@@ -184,16 +243,45 @@
             </form>
         </div>
 
-        {{-- Silme formu: UPDATE formunun DIŞINDA olmalı --}}
+        {{-- DELETE FORM (separate) --}}
         @if(auth()->user()->hasPermission('blog.delete'))
-            <div class="mt-4 flex justify-end">
-                <form method="POST"
-                      action="{{ route('admin.blog.destroy', ['blogPost' => $blogPost->id]) }}"
-                      onsubmit="return confirm('Silinsin mi?')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="kt-btn kt-btn-danger">Sil</button>
-                </form>
+            <form id="blog-delete-form"
+                  method="POST"
+                  action="{{ route('admin.blog.destroy', ['blogPost' => $blogPost->id]) }}">
+                @csrf
+                @method('DELETE')
+            </form>
+
+            {{-- DELETE MODAL --}}
+            <div id="deleteBlogModal"
+                 class="kt-modal hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                <div class="kt-card w-full max-w-md">
+                    <div class="kt-card-header">
+                        <h3 class="kt-card-title">Blog Yazısını Sil</h3>
+                    </div>
+
+                    <div class="kt-card-content">
+                        <p class="text-sm text-muted-foreground">
+                            Bu blog yazısını silmek istediğine emin misin?
+                            <br>
+                            <strong>Bu işlem geri alınamaz.</strong>
+                        </p>
+                    </div>
+
+                    <div class="kt-card-footer flex justify-end gap-2">
+                        <button type="button"
+                                class="kt-btn kt-btn-light"
+                                data-kt-modal-close>
+                            Vazgeç
+                        </button>
+
+                        <button type="submit"
+                                form="blog-delete-form"
+                                class="kt-btn kt-btn-destructive">
+                            Evet, Sil
+                        </button>
+                    </div>
+                </div>
             </div>
         @endif
 
@@ -221,10 +309,7 @@
             function initTiny(theme) {
                 if (!window.tinymce) return;
 
-                try {
-                    window.tinymce.remove(SELECTOR);
-                } catch (e) {
-                }
+                try { window.tinymce.remove(SELECTOR); } catch (e) {}
 
                 window.tinymce.init({
                     selector: SELECTOR,
@@ -264,11 +349,8 @@
                             if (xhr.status < 200 || xhr.status >= 300) return reject('Upload failed: ' + xhr.status);
 
                             let json;
-                            try {
-                                json = JSON.parse(xhr.responseText);
-                            } catch (e) {
-                                return reject('Invalid JSON');
-                            }
+                            try { json = JSON.parse(xhr.responseText); }
+                            catch (e) { return reject('Invalid JSON'); }
 
                             if (!json || typeof json.location !== 'string') return reject('No location returned');
                             resolve(json.location);
@@ -284,7 +366,7 @@
             }
 
             function slugifyTR(str) {
-                return String(str)
+                return String(str || '')
                     .trim()
                     .toLowerCase()
                     .replaceAll('ğ', 'g').replaceAll('ü', 'u').replaceAll('ş', 's')
@@ -294,6 +376,15 @@
                     .replace(/\s+/g, '-')
                     .replace(/-+/g, '-')
                     .replace(/^-|-$/g, '');
+            }
+
+            // Modal open/close (minimal)
+            function openModal(sel) {
+                const modal = document.querySelector(sel);
+                if (modal) modal.classList.remove('hidden');
+            }
+            function closeModal(modal) {
+                if (modal) modal.classList.add('hidden');
             }
 
             document.addEventListener('DOMContentLoaded', () => {
@@ -320,13 +411,15 @@
                     });
                 }
 
-                // ---------- Slug UX: toggle + manual badge + regen + highlight ----------
+                // ---------- Slug (same behavior as create) ----------
                 const titleInput = document.getElementById('title') || document.querySelector('input[name="title"]');
                 const slugInput = document.getElementById('slug');
                 const slugAutoToggle = document.getElementById('slug_auto_toggle');
                 const slugRegenBtn = document.getElementById('slug_regen_btn');
                 const slugModeBadge = document.getElementById('slug_mode_badge');
                 const urlSlugPreview = document.getElementById('url_slug_preview');
+
+                let slugLocked = slugInput && slugInput.value.trim().length > 0;
 
                 function syncPreview() {
                     if (urlSlugPreview) urlSlugPreview.textContent = (slugInput?.value || '').trim();
@@ -341,67 +434,97 @@
                 function setManualMode(isManual) {
                     if (slugModeBadge) slugModeBadge.classList.toggle('hidden', !isManual);
 
-                    // highlight (Tailwind varsa)
                     if (slugInput) {
-                        slugInput.classList.toggle('ring-1', isManual);
-                        slugInput.classList.toggle('ring-warning', isManual);
-                        slugInput.classList.toggle('border-warning', isManual);
-
-                        // Tailwind yoksa bile en azından gözle görülür olsun:
                         slugInput.style.boxShadow = isManual ? '0 0 0 2px rgba(245, 158, 11, .35)' : '';
                     }
-
-                    if (slugRegenBtn) slugRegenBtn.classList.toggle('opacity-60', !isManual);
                 }
 
                 if (titleInput && slugInput && slugAutoToggle) {
-                    // initial
                     syncPreview();
-                    setManualMode(!slugAutoToggle.checked);
+                    // başlangıç: otomatik açık ama slug mevcut olduğu için "kilit" davranışı
+                    // Eğer kullanıcı manuel dokunursa kilitle, toggle kapat.
+                    setManualMode(false);
 
-                    // toggle change
-                    slugAutoToggle.addEventListener('change', () => {
-                        const isAuto = slugAutoToggle.checked;
-                        setManualMode(!isAuto);
-                        if (isAuto) applyAutoSlug();
-                    });
-
-                    // title input -> auto slug (only if toggle on)
-                    titleInput.addEventListener('input', () => {
-                        if (!slugAutoToggle.checked) return;
-                        applyAutoSlug();
-                    });
-
-                    // manual slug input -> toggle off + manual mode
                     slugInput.addEventListener('input', () => {
-                        if (slugAutoToggle.checked) {
+                        const v = slugInput.value.trim();
+                        slugLocked = v.length > 0;
+                        // manuel yazmaya başladıysa auto kapat
+                        if (slugLocked && slugAutoToggle.checked) {
                             slugAutoToggle.checked = false;
                             setManualMode(true);
                         }
                         syncPreview();
                     });
 
-                    // regen button
+                    titleInput.addEventListener('input', () => {
+                        if (!slugAutoToggle.checked) return;
+                        if (slugLocked) return; // manuel doluysa override etme
+                        applyAutoSlug();
+                    });
+
+                    slugAutoToggle.addEventListener('change', () => {
+                        const isAuto = slugAutoToggle.checked;
+                        setManualMode(!isAuto);
+                        if (isAuto) {
+                            slugLocked = false;
+                            applyAutoSlug();
+                        }
+                    });
+
                     if (slugRegenBtn) {
                         slugRegenBtn.addEventListener('click', () => {
                             slugAutoToggle.checked = true;
                             setManualMode(false);
+                            slugLocked = false;
                             applyAutoSlug();
                         });
                     }
-                } else {
-                    // fallback: preview only
-                    if (slugInput && urlSlugPreview) {
-                        syncPreview();
-                        slugInput.addEventListener('input', syncPreview);
-                    }
+                } else if (slugInput) {
+                    syncPreview();
+                    slugInput.addEventListener('input', syncPreview);
                 }
 
-                // ---------- Init TinyMCE ----------
+                // ---------- TinyMCE ----------
                 initTiny(getTheme());
+
+                // ---------- Modal ----------
+                document.querySelectorAll('[data-kt-modal-target]').forEach(btn => {
+                    btn.addEventListener('click', () => openModal(btn.getAttribute('data-kt-modal-target')));
+                });
+
+                document.querySelectorAll('[data-kt-modal-close]').forEach(btn => {
+                    btn.addEventListener('click', () => closeModal(btn.closest('.kt-modal')));
+                });
+
+                document.querySelectorAll('.kt-modal').forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) closeModal(modal);
+                    });
+                });
+
+                // ---------- Prevent double submit ----------
+                const updateForm = document.getElementById('blog-update-form');
+                if (updateForm) {
+                    updateForm.addEventListener('submit', () => {
+                        document.querySelectorAll('button[form="blog-update-form"][type="submit"]').forEach(b => {
+                            b.disabled = true;
+                            b.classList.add('opacity-60', 'pointer-events-none');
+                        });
+                    });
+                }
+
+                const deleteForm = document.getElementById('blog-delete-form');
+                if (deleteForm) {
+                    deleteForm.addEventListener('submit', () => {
+                        document.querySelectorAll('button[form="blog-delete-form"][type="submit"]').forEach(b => {
+                            b.disabled = true;
+                            b.classList.add('opacity-60', 'pointer-events-none');
+                        });
+                    });
+                }
             });
 
-            // ---------- Theme observer ----------
+            // Theme observer
             let currentTheme = getTheme();
             const observer = new MutationObserver(() => {
                 const next = getTheme();
@@ -410,8 +533,8 @@
                 initTiny(currentTheme);
             });
 
-            observer.observe(document.documentElement, {attributes: true, attributeFilter: ['class']});
-            observer.observe(document.body, {attributes: true, attributeFilter: ['class']});
+            observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+            observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
         })();
     </script>
 @endpush
