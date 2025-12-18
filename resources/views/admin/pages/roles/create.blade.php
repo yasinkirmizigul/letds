@@ -1,7 +1,7 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    <div class="px-4 lg:px-6">
+    <div class="px-4 lg:px-6" data-page="roles.create">
         @include('admin.partials._flash')
 
         <div class="flex items-center justify-between mb-4">
@@ -71,17 +71,4 @@
             </form>
         </div>
     </div>
-
-    @push('scripts')
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const allBtn = document.getElementById('perm_select_all');
-                const clearBtn = document.getElementById('perm_clear_all');
-                const checks = () => Array.from(document.querySelectorAll('.perm-check'));
-
-                if (allBtn) allBtn.addEventListener('click', () => checks().forEach(c => c.checked = true));
-                if (clearBtn) clearBtn.addEventListener('click', () => checks().forEach(c => c.checked = false));
-            });
-        </script>
-    @endpush
 @endsection

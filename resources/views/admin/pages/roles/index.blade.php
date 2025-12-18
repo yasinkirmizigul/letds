@@ -1,7 +1,7 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    <div class="kt-container-fixed">
+    <div class="kt-container-fixed" data-page="roles.index">
         @include('admin.partials._flash')
 
         <div class="flex items-center justify-between mb-4">
@@ -64,23 +64,28 @@
                                 @endforeach
                                 </tbody>
                             </table>
-
-                            {{-- Empty UI template (tablo tamamen boşsa) --}}
                             <template id="dt-empty-roles">
-                                <div class="flex flex-col items-center justify-center gap-2 text-center py-12 text-muted-foreground">
-                                    <i class="ki-outline ki-folder-open text-4xl mb-2"></i>
-                                    <div class="font-medium text-secondary-foreground">Henüz kayıt bulunmuyor.</div>
-                                    <div class="text-sm">Yeni rol ekleyerek başlayabilirsiniz.</div>
-                                </div>
+                                <tr data-kt-empty-row="true">
+                                    <td colspan="4" class="py-12">
+                                        <div class="flex flex-col items-center justify-center gap-2 text-center text-muted-foreground">
+                                            <i class="ki-outline ki-folder-open text-4xl mb-2"></i>
+                                            <div class="font-medium text-secondary-foreground">Henüz kayıt bulunmuyor.</div>
+                                            <div class="text-sm">Yeni rol ekleyerek başlayabilirsiniz.</div>
+                                        </div>
+                                    </td>
+                                </tr>
                             </template>
 
-                            {{-- Zero UI (arama var ama sonuç yoksa) --}}
                             <template id="dt-zero-roles">
-                                <div class="flex flex-col items-center justify-center gap-2 text-center py-12 text-muted-foreground">
-                                    <i class="ki-outline ki-search-list text-4xl mb-2"></i>
-                                    <div class="font-medium text-secondary-foreground">Sonuç bulunamadı.</div>
-                                    <div class="text-sm">Arama kriterlerini değiştirip tekrar deneyin.</div>
-                                </div>
+                                <tr data-kt-zero-row="true">
+                                    <td colspan="4" class="py-12">
+                                        <div class="flex flex-col items-center justify-center gap-2 text-center text-muted-foreground">
+                                            <i class="ki-outline ki-search-list text-4xl mb-2"></i>
+                                            <div class="font-medium text-secondary-foreground">Sonuç bulunamadı.</div>
+                                            <div class="text-sm">Arama kriterlerini değiştirip tekrar deneyin.</div>
+                                        </div>
+                                    </td>
+                                </tr>
                             </template>
                         </div>
 
@@ -103,31 +108,3 @@
         </div>
     </div>
 @endsection
-
-@push('page_js')
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            initDataTable({
-                table: '#roles_table',
-                search: '#rolesSearch',
-                pageSize: '#rolesPageSize',
-                info: '#rolesInfo',
-                pagination: '#rolesPagination',
-
-                pageLength: 10,
-                lengthMenu: [5, 10, 25, 50],
-                order: [[0, 'asc']],
-                dom: 't',
-
-                emptyTemplate: '#dt-empty-roles',
-                zeroTemplate: '#dt-zero-roles',
-
-                columnDefs: [
-                    { orderable: false, targets: [3] },
-                    { searchable: false, targets: [3] },
-                    { className: 'text-center', targets: [2] },
-                ],
-            });
-        });
-    </script>
-@endpush

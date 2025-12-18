@@ -1,8 +1,8 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    <div class="px-4 lg:px-6">
-        @include('admin.partials._flash')
+    <div class="px-4 lg:px-6" data-page="users.create">
+    @include('admin.partials._flash')
 
         <div class="flex items-center justify-between mb-4">
             <h1 class="text-lg font-semibold">Yeni Kullanıcı</h1>

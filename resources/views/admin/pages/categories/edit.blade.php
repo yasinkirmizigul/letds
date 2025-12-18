@@ -1,8 +1,8 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    <div class="kt-container-fixed">
-        <div class="grid gap-5 lg:gap-7.5">
+    <div class="kt-container-fixed" data-page="categories.edit">
+    <div class="grid gap-5 lg:gap-7.5">
 
             @includeIf('admin.partials._flash')
 
@@ -193,110 +193,3 @@
         </div>
     </div>
 @endsection
-
-@push('page_js')
-    <script>
-        (function () {
-            const nameEl = document.getElementById('cat_name');
-            const slugEl = document.getElementById('cat_slug');
-            const autoEl = document.getElementById('slug_auto');
-            const regenEl = document.getElementById('slug_regen');
-            const previewEl = document.getElementById('slug_preview');
-
-            function slugifyTR(str) {
-                return String(str || '')
-                    .trim()
-                    .toLowerCase()
-                    .replaceAll('ğ', 'g').replaceAll('ü', 'u').replaceAll('ş', 's')
-                    .replaceAll('ı', 'i').replaceAll('ö', 'o').replaceAll('ç', 'c')
-                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-                    .replace(/[^a-z0-9\s-]/g, '')
-                    .replace(/\s+/g, '-')
-                    .replace(/-+/g, '-')
-                    .replace(/^-|-$/g, '');
-            }
-
-            function syncPreview() {
-                if (!previewEl) return;
-                previewEl.textContent = (slugEl?.value || '').trim();
-            }
-
-            function setSlugFromName() {
-                if (!nameEl || !slugEl) return;
-                slugEl.value = slugifyTR(nameEl.value);
-                syncPreview();
-            }
-
-            // Modal open/close (minimal)
-            function openModal(sel) {
-                const modal = document.querySelector(sel);
-                if (modal) modal.classList.remove('hidden');
-            }
-            function closeModal(modal) {
-                if (modal) modal.classList.add('hidden');
-            }
-
-            document.addEventListener('DOMContentLoaded', () => {
-                syncPreview();
-
-                if (nameEl && autoEl) {
-                    nameEl.addEventListener('input', () => {
-                        if (!autoEl.checked) return;
-                        setSlugFromName();
-                    });
-                }
-
-                if (slugEl) slugEl.addEventListener('input', syncPreview);
-
-                if (regenEl) {
-                    regenEl.addEventListener('click', () => {
-                        setSlugFromName();
-                    });
-                }
-
-                // modal open
-                document.querySelectorAll('[data-kt-modal-target]').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        openModal(btn.getAttribute('data-kt-modal-target'));
-                    });
-                });
-
-                // modal close
-                document.querySelectorAll('[data-kt-modal-close]').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        closeModal(btn.closest('.kt-modal'));
-                    });
-                });
-
-                // close on backdrop click
-                document.querySelectorAll('.kt-modal').forEach(modal => {
-                    modal.addEventListener('click', (e) => {
-                        if (e.target === modal) closeModal(modal);
-                    });
-                });
-
-                // prevent double submit on update
-                const updateForm = document.getElementById('category-update-form');
-                if (updateForm) {
-                    updateForm.addEventListener('submit', () => {
-                        document.querySelectorAll('button[form="category-update-form"][type="submit"]').forEach(b => {
-                            b.disabled = true;
-                            b.classList.add('opacity-60', 'pointer-events-none');
-                        });
-                    });
-                }
-
-                // prevent double submit on delete
-                const deleteForm = document.getElementById('category-delete-form');
-                if (deleteForm) {
-                    deleteForm.addEventListener('submit', () => {
-                        document.querySelectorAll('button[form="category-delete-form"][type="submit"]').forEach(b => {
-                            b.disabled = true;
-                            b.classList.add('opacity-60', 'pointer-events-none');
-                        });
-                    });
-                }
-            });
-        })();
-    </script>
-@endpush

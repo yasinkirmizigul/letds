@@ -1,7 +1,7 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    <div class="kt-container-fixed">
+    <div class="kt-container-fixed" data-page="permissions.index">
         @include('admin.partials._flash')
 
         <div class="flex items-center justify-between mb-4">
@@ -23,7 +23,7 @@
                         />
                         @if(auth()->user()->hasPermission('permissions.create'))
                             <a href="{{ route('admin.permissions.create') }}" class="kt-btn kt-btn-sm kt-btn-primary">
-                                Rol Ekle
+                                Yetki Ekle
                             </a>
                         @endif
                     </div>
@@ -53,21 +53,28 @@
                                 </tbody>
                             </table>
 
-                            {{-- Empty / Zero templates --}}
                             <template id="dt-empty-permissions">
-                                <div class="flex flex-col items-center justify-center gap-2 text-center py-12 text-muted-foreground">
-                                    <i class="ki-outline ki-folder-open text-4xl mb-2"></i>
-                                    <div class="font-medium text-secondary-foreground">Henüz kayıt bulunmuyor.</div>
-                                    <div class="text-sm">Yeni yetki ekleyerek başlayabilirsiniz.</div>
-                                </div>
+                                <tr data-kt-empty-row="true">
+                                    <td colspan="3" class="py-12">
+                                        <div class="flex flex-col items-center justify-center gap-2 text-center text-muted-foreground">
+                                            <i class="ki-outline ki-folder-open text-4xl mb-2"></i>
+                                            <div class="font-medium text-secondary-foreground">Henüz kayıt bulunmuyor.</div>
+                                            <div class="text-sm">Yeni yetki ekleyerek başlayabilirsiniz.</div>
+                                        </div>
+                                    </td>
+                                </tr>
                             </template>
 
                             <template id="dt-zero-permissions">
-                                <div class="flex flex-col items-center justify-center gap-2 text-center py-12 text-muted-foreground">
-                                    <i class="ki-outline ki-search-list text-4xl mb-2"></i>
-                                    <div class="font-medium text-secondary-foreground">Sonuç bulunamadı.</div>
-                                    <div class="text-sm">Arama kriterlerini değiştirip tekrar deneyin.</div>
-                                </div>
+                                <tr data-kt-zero-row="true">
+                                    <td colspan="3" class="py-12">
+                                        <div class="flex flex-col items-center justify-center gap-2 text-center text-muted-foreground">
+                                            <i class="ki-outline ki-search-list text-4xl mb-2"></i>
+                                            <div class="font-medium text-secondary-foreground">Sonuç bulunamadı.</div>
+                                            <div class="text-sm">Arama kriterlerini değiştirip tekrar deneyin.</div>
+                                        </div>
+                                    </td>
+                                </tr>
                             </template>
                         </div>
 
@@ -91,28 +98,3 @@
         </div>
     </div>
 @endsection
-
-@push('page_js')
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            initDataTable({
-                table: '#permissions_table',
-                search: '#permissionsSearch',
-                pageSize: '#permissionsPageSize',
-                info: '#permissionsInfo',
-                pagination: '#permissionsPagination',
-
-                pageLength: 10,
-                lengthMenu: [5, 10, 25, 50],
-                order: [[0, 'asc']],
-                dom: 't',
-
-                emptyTemplate: '#dt-empty-permissions',
-                zeroTemplate: '#dt-zero-permissions',
-                columnDefs: [
-                    { className: 'text-center', targets: [2] },
-                ],
-            });
-        });
-    </script>
-@endpush

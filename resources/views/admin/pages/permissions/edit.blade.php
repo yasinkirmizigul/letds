@@ -1,7 +1,7 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    <div class="px-4 lg:px-6">
+    <div class="px-4 lg:px-6" data-page="permissions.edit">
         @include('admin.partials._flash')
 
         <div class="flex items-center justify-between mb-4">

@@ -1,6 +1,6 @@
 @extends('admin.layouts.main.app')
 @section('content')
-    <div class="kt-container-fixed">
+    <div class="kt-container-fixed" data-page="users.index">
 
         @include('admin.partials._flash')
 
@@ -111,23 +111,40 @@
 
                             {{-- Empty UI template (DataTables için HTML olarak kullanacağız) --}}
                             <template id="dt-empty-users">
-                                <div class="flex flex-col items-center justify-center gap-2 text-center py-12">
-                                    <i class="ki-outline ki-search-list text-4xl text-muted-foreground"></i>
-                                    <div class="font-medium">Henüz kayıt bulunmuyor.</div>
-                                    <div class="text-sm text-muted-foreground">
-                                        Yeni kayıt ekleyerek başlayabilirsiniz.
-                                    </div>
-                                </div>
+                                <tr data-kt-empty-row="true">
+                                    <td colspan="8" class="py-12">
+                                        <div class="flex flex-col items-center justify-center gap-2 text-center text-muted-foreground">
+                                            <i class="ki-outline ki-folder-open text-4xl mb-2"></i>
+                                            <div class="font-medium text-secondary-foreground">Henüz kayıt bulunmuyor.</div>
+                                            <div class="text-sm">Yeni kayıt ekleyerek başlayabilirsiniz.</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+
+                            <template id="dt-zero-users">
+                                <tr data-kt-zero-row="true">
+                                    <td colspan="8" class="py-12">
+                                        <div class="flex flex-col items-center justify-center gap-2 text-center text-muted-foreground">
+                                            <i class="ki-outline ki-search-list text-4xl mb-2"></i>
+                                            <div class="font-medium text-secondary-foreground">Sonuç bulunamadı.</div>
+                                            <div class="text-sm">Arama kriterlerini değiştirip tekrar deneyin.</div>
+                                        </div>
+                                    </td>
+                                </tr>
                             </template>
                         </div>
 
                         <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
-                            <div class="order-2 md:order-1">
-                                {{ $users->firstItem() ?? 0 }}-{{ $users->lastItem() ?? 0 }} / {{ $users->total() }}
+                            <div class="flex items-center gap-2 order-2 md:order-1">
+                                Göster
+                                <select class="kt-select w-16" id="usersPageSize"></select>
+                                / sayfa
                             </div>
 
-                            <div class="order-1 md:order-2">
-                                {{ $users->links('admin.vendor.pagination.kt') }}
+                            <div class="flex items-center gap-4 order-1 md:order-2">
+                                <span id="usersInfo"></span>
+                                <div class="kt-datatable-pagination" id="usersPagination"></div>
                             </div>
                         </div>
 
@@ -137,75 +154,3 @@
         </div>
     </div>
 @endsection
-
-@push('page_js')
-    <script>
-        (function () {
-            function renderPagination(api, hostSelector) {
-                const host = document.querySelector(hostSelector);
-                if (!host) return;
-
-                const info = api.page.info();
-                const pages = info.pages;
-                const page = info.page;
-
-                host.innerHTML = '';
-                if (pages <= 1) return;
-
-                const makeBtn = (label, targetPage, disabled = false, active = false) => {
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = active ? 'kt-btn kt-btn-sm kt-btn-primary' : 'kt-btn kt-btn-sm kt-btn-light';
-                    if (disabled) btn.disabled = true;
-                    btn.textContent = label;
-                    btn.addEventListener('click', () => api.page(targetPage).draw('page'));
-                    return btn;
-                };
-
-                host.appendChild(makeBtn('‹', Math.max(0, page - 1), page === 0));
-
-                const start = Math.max(0, page - 2);
-                const end = Math.min(pages - 1, page + 2);
-                for (let i = start; i <= end; i++) host.appendChild(makeBtn(String(i + 1), i, false, i === page));
-
-                host.appendChild(makeBtn('›', Math.min(pages - 1, page + 1), page === pages - 1));
-            }
-
-            document.addEventListener('DOMContentLoaded', () => {
-                initDataTable({
-                    table: '#users_table',
-                    search: '#usersSearch',
-                    pageSize: '#usersPageSize',
-                    info: '#usersInfo',
-                    pagination: '#usersPagination',
-
-                    pageLength: 10,
-                    lengthMenu: [5, 10, 25, 50],
-                    order: [[1, 'asc']],
-                    dom: 't',
-
-                    emptyTemplate: '#dt-empty-users',
-                    zeroFallback: `
-                      <div class="flex flex-col items-center justify-center gap-2 text-center py-12">
-                        <i class="ki-outline ki-search-list text-4xl text-muted-foreground"></i>
-                        <div class="font-medium">Sonuç bulunamadı.</div>
-                        <div class="text-sm text-muted-foreground">
-                          Arama kriterlerini değiştirip tekrar deneyin.
-                        </div>
-                      </div>
-                    `,
-
-                    columnDefs: [
-                        { orderable: false, targets: [0, 6, 7] },
-                        { searchable: false, targets: [0, 6, 7] },
-                        { className: 'text-center', targets: [4] },
-                    ],
-
-                    // ✅ yeni: check-all desteği
-                    checkAll: '#users_check_all',
-                    rowChecks: '.users_row_check',
-                });
-            });
-        })();
-    </script>
-@endpush
