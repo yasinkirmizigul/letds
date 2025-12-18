@@ -18,7 +18,7 @@
                             id="usersSearch"
                             type="text"
                             class="kt-input kt-input-sm"
-                            placeholder="Rol / yetki ara..."
+                            placeholder="Ad / e-posta / rol ara..."
                         />
 
                         @if(auth()->user()->hasPermission('users.create'))
@@ -94,8 +94,8 @@
                                         <td>
                                             @if(auth()->user()->hasPermission('users.delete'))
                                                 <form method="POST"
-                                                      action="{{ route('admin.users.destroy', $user) }}"
-                                                      onsubmit="return confirm('Bu kullanıcıyı silmek istiyor musunuz?')">
+                                                      data-confirm="delete-user"
+                                                      action="{{ route('admin.users.destroy', $user) }}">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="kt-btn kt-btn-sm kt-btn-icon kt-btn-mono">

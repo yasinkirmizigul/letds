@@ -47,7 +47,21 @@
                                     <tr>
                                         <td class="font-medium">{{ $role->name }}</td>
                                         <td class="text-sm text-secondary-foreground">
-                                            {{ $role->permissions->pluck('name')->join(', ') }}
+                                            @php
+                                                $perms = $role->permissions;
+                                                $shown = $perms->take(6);
+                                                $more = $perms->count() - $shown->count();
+                                            @endphp
+
+                                            <div class="flex flex-wrap gap-1">
+                                                @foreach($shown as $perm)
+                                                    <span class="kt-badge kt-badge-sm kt-badge-light">{{ $perm->name }}</span>
+                                                @endforeach
+
+                                                @if($more > 0)
+                                                    <span class="kt-badge kt-badge-sm kt-badge-mono">+{{ $more }}</span>
+                                                @endif
+                                            </div>
                                         </td>
                                         <td class="text-sm text-secondary-foreground">
                                             {{ $role->created_at->format('d.m.Y') }}

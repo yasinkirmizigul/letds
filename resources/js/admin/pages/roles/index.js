@@ -20,6 +20,7 @@ export default function init({ root }) {
 
         columnDefs: [
             { orderable: false, searchable: false, targets: [3] },
+            { className: 'text-right', targets: [3] },
             { className: 'text-center', targets: [2] },
         ],
     });

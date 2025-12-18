@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\User;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\User\Permission;
 use App\Models\Admin\User\Role;
+use App\Support\Rbac;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -12,16 +13,34 @@ class RoleController extends Controller
 {
     public function index()
     {
-        $roles = Role::withCount('users')->orderBy('name')->paginate(15);
+        $roles = Role::query()
+            ->select(['id','name','slug','created_at']) // ihtiyacın kadar
+            ->withCount('users')
+            ->with(['permissions:id,name']) // blade'de name basıyorsun
+            ->orderBy('name')
+            ->paginate(15);
+
         return view('admin.pages.roles.index', [
             'pageTitle' => 'Kullanıcı Roller',
-        ], compact('roles'));
+            'roles' => $roles,
+        ]);
     }
 
     public function create()
     {
-        $permissions = Permission::orderBy('slug')->get();
+        $permissions = Permission::orderBy('slug')->get()
+            ->groupBy(fn($p) => explode('.', $p->slug, 2)[0] ?? 'other');
+
         return view('admin.pages.roles.create', compact('permissions'));
+    }
+
+    public function edit(Role $role)
+    {
+        $role->load('permissions:id');
+        $permissions = Permission::orderBy('slug')->get()
+            ->groupBy(fn($p) => explode('.', $p->slug, 2)[0] ?? 'other');
+
+        return view('admin.pages.roles.edit', compact('role','permissions'));
     }
 
     public function store(Request $request)
@@ -40,14 +59,8 @@ class RoleController extends Controller
 
         $role->permissions()->sync($validated['permissions'] ?? []);
 
-        return redirect()->route('admin.roles.index')->with('ok', 'Rol oluşturuldu.');
-    }
 
-    public function edit(Role $role)
-    {
-        $permissions = Permission::orderBy('slug')->get();
-        $role->load('permissions');
-        return view('admin.pages.roles.edit', compact('role','permissions'));
+        return redirect()->route('admin.roles.index')->with('ok', 'Rol oluşturuldu.');
     }
 
     public function update(Request $request, Role $role)
@@ -65,6 +78,7 @@ class RoleController extends Controller
         ]);
 
         $role->permissions()->sync($validated['permissions'] ?? []);
+        Rbac::bumpVersion();
 
         return redirect()->route('admin.roles.index')->with('ok', 'Rol güncellendi.');
     }
@@ -79,7 +93,7 @@ class RoleController extends Controller
         $role->permissions()->detach();
         $role->users()->detach();
         $role->delete();
-
+        Rbac::bumpVersion();
         return redirect()->route('admin.roles.index')->with('ok', 'Rol silindi.');
     }
 }

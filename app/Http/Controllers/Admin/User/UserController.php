@@ -5,18 +5,24 @@ namespace App\Http\Controllers\Admin\User;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\User\Role;
 use App\Models\Admin\User\User;
+use App\Support\Rbac;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $users = User::with('roles')->latest()->get();
+        $users = User::query()
+            ->select(['id','name','email','is_active','created_at'])
+            ->with(['roles:id,name'])   // eager load: tek seferde roller
+            ->orderByDesc('id')
+            ->get();
 
         return view('admin.pages.users.index', [
             'pageTitle' => 'Kullanıcılar',
-        ], compact('users'));
+            'users' => $users,
+        ]);
     }
 
     public function create()
@@ -44,7 +50,7 @@ class UserController extends Controller
         ]);
 
         $user->roles()->sync($validated['roles'] ?? []);
-
+        Rbac::bumpVersion();
         return redirect()->route('admin.users.index')->with('ok', 'Kullanıcı oluşturuldu.');
     }
 
@@ -76,7 +82,7 @@ class UserController extends Controller
 
         $user->save();
         $user->roles()->sync($validated['roles'] ?? []);
-
+        Rbac::bumpVersion();
         return redirect()->route('admin.users.index')->with('ok', 'Kullanıcı güncellendi.');
     }
 

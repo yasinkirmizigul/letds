@@ -9,21 +9,33 @@ export default function init({ root }) {
         pageSize: '#usersPageSize',
         info: '#usersInfo',
         pagination: '#usersPagination',
-
         pageLength: 10,
         lengthMenu: [5, 10, 25, 50],
         order: [[1, 'asc']],
         dom: 't',
-
         emptyTemplate: '#dt-empty-users',
         zeroTemplate: '#dt-zero-users',
-
         columnDefs: [
             { orderable: false, searchable: false, targets: [0, 6, 7] },
             { className: 'text-center', targets: [4] },
         ],
-
         checkAll: '#users_check_all',
         rowChecks: '.users_row_check',
     });
+
+    const ac = new AbortController();
+    const { signal } = ac;
+
+    root.addEventListener('submit', (e) => {
+        const form = e.target;
+        if (!(form instanceof HTMLFormElement)) return;
+        if (!form.matches('form[data-confirm="delete-user"]')) return;
+
+        if (!confirm('Bu kullanıcıyı silmek istiyor musunuz?')) e.preventDefault();
+    }, { signal });
+
+    // isteğe bağlı: MPA'da şart değil ama hijyen
+    window.addEventListener('beforeunload', () => {
+        try { ac.abort(); } catch {}
+    }, { once: true });
 }

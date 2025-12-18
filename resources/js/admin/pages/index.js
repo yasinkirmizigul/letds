@@ -1,6 +1,5 @@
 import { register } from '../../core/page-registry';
 
-// Blog
 import BlogCreate from './blog/create';
 import BlogEdit from './blog/edit';
 import BlogIndex from './blog/index';

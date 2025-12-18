@@ -6,6 +6,7 @@ namespace App\Models\Admin\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 
 class User extends Authenticatable
 {
@@ -69,24 +70,39 @@ class User extends Authenticatable
         return $this->roles->contains(fn ($role) => in_array($role->slug, ['admin', 'superadmin']));
     }
 
-    /**
-     * Belirli bir permission var mı?
-     */
-    public function hasPermission(string $permission): bool
+    public function permissionSlugsCached(): array
     {
-        // Superadmin her şeye sahiptir
-        if ($this->isSuperAdmin()) {
-            return true;
+        $version = Cache::get('rbac:version', 1);
+        $key = "rbac:user:{$this->id}:v{$version}";
+
+        return Cache::remember($key, now()->addHours(6), function () {
+            // roles -> permissions slug listesi
+            return $this->roles()
+                ->with('permissions:permissions.id,slug')
+                ->get()
+                ->pluck('permissions')
+                ->flatten()
+                ->pluck('slug')
+                ->unique()
+                ->values()
+                ->all();
+        });
+    }
+
+    public function hasPermission(string $slug): bool
+    {
+        $slug = trim($slug);
+        if ($slug === '') return false;
+
+        // O(1) lookup için flip
+        static $memo = [];
+        $memoKey = $this->id;
+
+        if (!isset($memo[$memoKey])) {
+            $memo[$memoKey] = array_flip($this->permissionSlugsCached());
         }
 
-        // İlişkiler yüklü değilse lazy load et
-        if (!$this->relationLoaded('roles')) {
-            $this->load('roles.permissions');
-        }
-
-        return $this->roles
-            ->flatMap(fn ($role) => $role->permissions)
-            ->contains(fn ($perm) => $perm->slug === $permission);
+        return isset($memo[$memoKey][$slug]);
     }
 
     /**

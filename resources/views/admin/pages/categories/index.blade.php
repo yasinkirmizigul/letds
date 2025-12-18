@@ -1,7 +1,7 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    <div class="kt-container-fixed">
+    <div class="kt-container-fixed" data-page="categories.index">
         <div class="grid gap-5 lg:gap-7.5">
 
             @includeIf('admin.partials._flash')
@@ -125,33 +125,3 @@
     </div>
 @endsection
 
-@push('page_js')
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            if (typeof initDataTable !== 'function') return;
-
-            initDataTable({
-                table: '#categories_table',
-                search: '#categoriesSearch',
-                pageSize: '#categoriesPageSize',
-                info: '#categoriesInfo',
-                pagination: '#categoriesPagination',
-
-                pageLength: 10,
-                lengthMenu: [5, 10, 25, 50],
-                order: [[0, 'asc']],
-                dom: 't',
-
-                emptyTemplate: '#dt-empty-categories',
-                zeroTemplate: '#dt-zero-categories',
-
-                columnDefs: [
-                    // Blog sayısı ortalı
-                    { className: 'text-center', targets: [3] },
-                    // İşlem sağı (butonlar)
-                    { className: 'text-right', orderable: false, searchable: false, targets: [4] },
-                ],
-            });
-        });
-    </script>
-@endpush

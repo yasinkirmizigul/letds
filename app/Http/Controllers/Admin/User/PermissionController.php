@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\User\Permission;
+use App\Support\Rbac;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -30,7 +31,7 @@ class PermissionController extends Controller
         ]);
 
         Permission::create($validated);
-
+        Rbac::bumpVersion();
         return redirect()->route('admin.permissions.index')->with('ok', 'Yetki oluşturuldu.');
     }
 
@@ -47,7 +48,7 @@ class PermissionController extends Controller
         ]);
 
         $permission->update($validated);
-
+        Rbac::bumpVersion();
         return redirect()->route('admin.permissions.index')->with('ok', 'Yetki güncellendi.');
     }
 
@@ -55,7 +56,7 @@ class PermissionController extends Controller
     {
         $permission->roles()->detach();
         $permission->delete();
-
+        Rbac::bumpVersion();
         return redirect()->route('admin.permissions.index')->with('ok', 'Yetki silindi.');
     }
 }
