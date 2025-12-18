@@ -26,14 +26,18 @@ let current = {
 export async function bootPage(pageName, ctx) {
     if (!pageName) return;
 
-    // ✅ guard: same page booted already
+    // same page guard
     if (current.booted && current.name === pageName) {
         return;
     }
 
-    // ✅ if another page was booted before, destroy it (MPA’da pek gerekmez ama HMR/debug’da hayat kurtarır)
+    // destroy previous page
     if (current.destroy) {
-        try { await current.destroy(current.ctx); } catch (e) { console.warn('[pages] destroy failed:', e); }
+        try {
+            await current.destroy(current.ctx);
+        } catch (e) {
+            console.warn('[pages] destroy failed:', e);
+        }
     }
 
     const mod = registry.get(pageName);
@@ -43,11 +47,19 @@ export async function bootPage(pageName, ctx) {
         return;
     }
 
-    const init = mod.default ?? mod.init;
-    const destroy = mod.destroy;
+    // 🔥 KRİTİK DÜZELTME
+    const init =
+        (typeof mod === 'function')
+            ? mod
+            : (mod.default ?? mod.init);
+
+    const destroy =
+        (typeof mod === 'object' && typeof mod.destroy === 'function')
+            ? mod.destroy
+            : null;
 
     if (typeof init !== 'function') {
-        console.warn(`[pages] Module for "${pageName}" has no init() / default export`);
+        console.warn(`[pages] Module for "${pageName}" has no init() / default export`, mod);
         current = { name: pageName, destroy: null, ctx, booted: false };
         return;
     }
@@ -56,8 +68,9 @@ export async function bootPage(pageName, ctx) {
 
     current = {
         name: pageName,
-        destroy: (typeof destroy === 'function') ? destroy : null,
+        destroy,
         ctx,
         booted: true,
     };
 }
+

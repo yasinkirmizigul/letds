@@ -285,23 +285,49 @@ html.js-ready   [data-js-hide-until-ready] { visibility: visible; }
 /* ===== App Loading State (single source of truth) ===== */
 html.js-loading { overflow: hidden; }
 
-/* Global lock overlay */
-.app-lock {
+/* App Lock Overlay (Metronic spinner kullanır) */
+.app-lock{
     position: fixed;
     inset: 0;
-    z-index: 99999;
-    display: grid;
-    place-items: center;
-    background: rgba(0,0,0,.25);
-    backdrop-filter: blur(2px);
-    opacity: 0;
-    pointer-events: none;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,.08);
+    backdrop-filter: blur(6px);
+}
+
+html.js-loading .app-lock{
+    opacity: 1;
+    pointer-events: auto;
     transition: opacity .15s ease;
 }
-html.js-loading .app-lock {
-    opacity: 1;
-    pointer-events: all;
+
+html.js-ready .app-lock{
+    opacity: 0;
+    pointer-events: none;
 }
+
+.app-lock__panel{
+    padding: 1rem 1.25rem;
+    border-radius: 1rem;
+}
+/* Lock spinner – bağımsız, garanti */
+.app-lock-spinner{
+    width: 28px;
+    height: 28px;
+    border-radius: 9999px;
+    border: 3px solid rgba(0.55,0.24,262.88,.15);
+    border-top-color: rgba(0.55,0.24,262.88,.55);
+    animation: app-lock-spin .9s linear infinite;
+}
+
+@keyframes app-lock-spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes app-lock-spin { to { transform: rotate(360deg); } }
+
 
 /* Optional: hide specific enhanced blocks until ready */
 html.js-loading [data-js-hide-until-ready] { visibility: hidden; }

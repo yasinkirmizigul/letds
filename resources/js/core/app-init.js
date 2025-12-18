@@ -1,9 +1,9 @@
 import { bootPage } from './page-registry';
+import { enhance } from './enhance';
 
 function getPageRoot() {
     const root = document.querySelector('[data-page]');
-    if (!root) return null;
-    return root;
+    return root || null;
 }
 
 function getPageName(root) {
@@ -26,10 +26,12 @@ export async function AppInit() {
 
     const ctx = { root, page, dataset: root.dataset };
 
-    // ✅ KTUI init ONLY HERE (app.js içinden kaldır)
     try { window.KTComponents?.init?.(); } catch (e) { console.warn('[KTUI] KTComponents init failed:', e); }
     try { window.KTMenu?.init?.(); } catch (e) { console.warn('[KTUI] KTMenu init failed:', e); }
     try { window.KTDrawer?.init?.(); } catch (e) { console.warn('[KTUI] KTDrawer init failed:', e); }
+
+    // ✅ burada
+    try { enhance(root); } catch (e) { console.warn('[Enhance] failed:', e); }
 
     await bootPage(page, ctx);
     return ctx;

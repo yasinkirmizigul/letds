@@ -1,8 +1,7 @@
 /* global jQuery */
-
 (function (w) {
-    function tplHtml(selector, fallbackHtml) {
-        const el = document.querySelector(selector);
+    function tplHtml(selector, fallbackHtml, root = document) {
+        const el = root.querySelector(selector) || document.querySelector(selector);
         if (!el) return (fallbackHtml || '').trim();
         if (el.tagName === 'TEMPLATE') return (el.innerHTML || '').trim();
         return (el.innerHTML || '').trim();
@@ -14,18 +13,14 @@
     }
 
     function normalizeRowTemplate(html, colCount) {
-        // <tr> verilmişse aynen kullan; colspan eksikse zorla
         const t = document.createElement('tbody');
         t.innerHTML = html.trim();
 
         const tr = t.querySelector('tr');
         if (!tr) return null;
 
-        // colspan garanti
         const tds = tr.querySelectorAll('td,th');
-        if (tds.length === 1) {
-            tds[0].setAttribute('colspan', String(colCount));
-        }
+        if (tds.length === 1) tds[0].setAttribute('colspan', String(colCount));
         return tr.outerHTML;
     }
 
@@ -37,10 +32,9 @@
         const tbody = tableEl.querySelector('tbody');
         if (!tbody) return;
 
-        // Normal durumda DataTables kendi satırlarını basar, biz dokunmayız.
+        // Normal durumda dokunma
         if (info.recordsTotal > 0 && info.recordsDisplay > 0) return;
 
-        // Kayıt yok / arama sonucu yok durumunda tbody'yi tek satırla yönet.
         let rowHtml = '';
         if (info.recordsTotal === 0 && !hasSearch) {
             rowHtml = isTrTemplate(emptyHtml)
@@ -52,14 +46,12 @@
                 : `<tr data-kt-zero-row="true"><td colspan="${colCount}">${zeroHtml}</td></tr>`;
         }
 
-        if (!rowHtml) return;
-
-        tbody.innerHTML = rowHtml;
+        if (rowHtml) tbody.innerHTML = rowHtml;
     }
 
     function renderPagination(api, hostSelector, root = document) {
         const host = root.querySelector(hostSelector);
-        if (!host) return;
+        if (!host || !api) return;
 
         const info = api.page.info();
         const pages = info.pages;
@@ -74,25 +66,19 @@
         const makeBtn = (label, targetPage, disabled = false, active = false) => {
             const btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = active
-                ? 'kt-btn kt-btn-sm kt-btn-primary'
-                : 'kt-btn kt-btn-sm kt-btn-light';
-
+            btn.className = active ? 'kt-btn kt-btn-sm kt-btn-primary' : 'kt-btn kt-btn-sm kt-btn-light';
             if (disabled) {
                 btn.disabled = true;
                 btn.className += ' opacity-60 pointer-events-none';
             }
-
             btn.textContent = label;
             btn.addEventListener('click', () => api.page(targetPage).draw('page'));
             return btn;
         };
 
-        // First / Prev
         wrap.appendChild(makeBtn('«', 0, page === 0));
         wrap.appendChild(makeBtn('‹', Math.max(0, page - 1), page === 0));
 
-        // window
         const windowSize = 5;
         let start = Math.max(0, page - 2);
         let end = Math.min(pages - 1, start + windowSize - 1);
@@ -102,19 +88,58 @@
             wrap.appendChild(makeBtn(String(i + 1), i, false, i === page));
         }
 
-        // Next / Last
         wrap.appendChild(makeBtn('›', Math.min(pages - 1, page + 1), page === pages - 1));
         wrap.appendChild(makeBtn('»', pages - 1, page === pages - 1));
 
         host.appendChild(wrap);
     }
 
-    /**
-     * initDataTable
-     * - DataTables.net core + senin Metronic header/footer entegrasyonu
-     */
     function initDataTable(opts) {
-        const o = Object.assign({ /* ... aynı ... */ }, opts || {});
+        const o = Object.assign(
+            {
+                root: document,
+
+                table: null,
+                search: null,
+                pageSize: null,
+                info: null,
+                pagination: null,
+
+                pageLength: 10,
+                lengthMenu: [5, 10, 25, 50],
+                order: [[1, 'desc']],
+                dom: 't',
+                autoWidth: false,
+
+                emptyTemplate: null,
+                zeroTemplate: null,
+                emptyFallback: `
+          <div class="flex flex-col items-center justify-center gap-2 text-center py-12 text-muted-foreground">
+            <i class="ki-outline ki-folder-open text-4xl mb-2"></i>
+            <div class="font-medium text-secondary-foreground">Henüz kayıt bulunmuyor.</div>
+            <div class="text-sm">Yeni kayıt ekleyerek başlayabilirsiniz.</div>
+          </div>
+        `,
+                zeroFallback: `
+          <div class="flex flex-col items-center justify-center gap-2 text-center py-12 text-muted-foreground">
+            <i class="ki-outline ki-search-list text-4xl mb-2"></i>
+            <div class="font-medium text-secondary-foreground">Sonuç bulunamadı.</div>
+            <div class="text-sm">Arama kriterlerini değiştirip tekrar deneyin.</div>
+          </div>
+        `,
+
+                columnDefs: [],
+                language: {},
+                onDraw: null,
+
+                checkAll: null,
+                rowChecks: null,
+
+                headerCenter: true,
+            },
+            opts || {}
+        );
+
         const root = o.root || document;
 
         if (!o.table) return null;
@@ -129,11 +154,10 @@
 
         const $table = jQuery(tableEl);
 
-        // çift init engeli
         if (jQuery.fn.dataTable.isDataTable($table)) return $table.DataTable();
 
-        const emptyHtml = o.emptyTemplate ? tplHtml(o.emptyTemplate, o.emptyFallback) : o.emptyFallback;
-        const zeroHtml  = o.zeroTemplate  ? tplHtml(o.zeroTemplate,  o.zeroFallback)  : o.zeroFallback;
+        const emptyHtml = o.emptyTemplate ? tplHtml(o.emptyTemplate, o.emptyFallback, root) : o.emptyFallback;
+        const zeroHtml  = o.zeroTemplate  ? tplHtml(o.zeroTemplate,  o.zeroFallback,  root) : o.zeroFallback;
 
         if (o.headerCenter) tableEl.classList.add('dt-kt-header-center');
 
@@ -157,7 +181,6 @@
                     const info = api.page.info();
                     const hasSearch = (api.search() || '').trim().length > 0;
                     const infoEl = root.querySelector(o.info);
-
                     if (infoEl) {
                         if (info.recordsTotal === 0 && !hasSearch) infoEl.textContent = 'Henüz kayıt yok';
                         else if (info.recordsDisplay === 0 && hasSearch) infoEl.textContent = 'Sonuç yok';
@@ -178,7 +201,7 @@
 
         $table.removeClass('dataTable no-footer');
 
-        // search bind
+        // search bind (root scoped)
         if (o.search) {
             const s = root.querySelector(o.search);
             if (s && !s._dtBound) {
@@ -187,7 +210,7 @@
             }
         }
 
-        // page size bind
+        // page size bind (client-side mode only)
         if (o.pageSize) {
             const sel = root.querySelector(o.pageSize);
             if (sel && !sel._dtBound) {
@@ -206,7 +229,7 @@
             }
         }
 
-        // check-all
+        // check-all (root scoped)
         if (o.checkAll && o.rowChecks) {
             const checkAllEl = root.querySelector(o.checkAll);
             if (checkAllEl && !checkAllEl._dtBound) {
@@ -217,9 +240,9 @@
                 });
             }
         }
+
         return dt;
     }
-
 
     w.initDataTable = initDataTable;
 })(window);
