@@ -7,18 +7,32 @@ use Illuminate\Http\Request;
 
 class PermissionMiddleware
 {
-    public function handle(Request $request, Closure $next, string $permission)
+    /**
+     * Kullanım:
+     *  ->middleware('permission:blog.view')
+     *  ->middleware('permission:blog.view,blog.create')  // any-of
+     */
+    public function handle(Request $request, Closure $next, ...$permissions)
     {
-        $user = auth()->user();
+        $user = $request->user();
 
         if (!$user || !$user->is_active) {
             abort(403);
         }
 
-        if (!$user->hasPermission($permission)) {
-            abort(403, 'Bu işlem için yetkin yok.');
+        // Superadmin bypass
+        if ($user->isSuperAdmin()) {
+            return $next($request);
         }
 
-        return $next($request);
+        // Any-of: verilen permissionlardan biri varsa geç
+        foreach ($permissions as $permission) {
+            $permission = trim((string) $permission);
+            if ($permission !== '' && $user->hasPermission($permission)) {
+                return $next($request);
+            }
+        }
+
+        abort(403, 'Bu işlem için yetkin yok.');
     }
 }

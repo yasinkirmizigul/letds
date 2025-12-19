@@ -34,6 +34,8 @@
                     $selectedPerms = old('permissions', $role->permissions->pluck('id')->all());
                 @endphp
 
+                {{-- $selectedPerms aynı kalsın --}}
+
                 <div class="flex flex-col gap-3">
                     <div class="flex items-center justify-between">
                         <div class="kt-form-label font-normal text-mono">Yetkiler</div>
@@ -46,27 +48,51 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        @foreach($permissions as $perm)
-                            <label class="kt-label">
-                                <input
-                                    class="kt-checkbox kt-checkbox-sm perm-check"
-                                    type="checkbox"
-                                    name="permissions[]"
-                                    value="{{ $perm->id }}"
-                                    @checked(in_array($perm->id, $selectedPerms))
-                                />
-                                <span class="kt-checkbox-label">
+                    <div class="flex flex-col gap-5">
+                        @foreach($permissions as $group => $perms)
+                            <div class="rounded-xl border border-input p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="font-semibold text-sm capitalize">{{ $group }}</div>
+                                    <div class="flex gap-2">
+                                        <button type="button"
+                                                class="kt-btn kt-btn-xs kt-btn-light"
+                                                data-perm-group-select="{{ $group }}">
+                                            Hepsi
+                                        </button>
+                                        <button type="button"
+                                                class="kt-btn kt-btn-xs kt-btn-light"
+                                                data-perm-group-clear="{{ $group }}">
+                                            Temizle
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3" data-perm-group="{{ $group }}">
+                                    @foreach($perms as $perm)
+                                        <label class="kt-label">
+                                            <input
+                                                class="kt-checkbox kt-checkbox-sm perm-check"
+                                                type="checkbox"
+                                                name="permissions[]"
+                                                value="{{ $perm->id }}"
+                                                @checked(in_array($perm->id, $selectedPerms, true))
+                                            />
+                                            <span class="kt-checkbox-label">
                                 <span class="font-medium">{{ $perm->slug }}</span>
                                 <span class="text-xs text-muted-foreground block">{{ $perm->name }}</span>
                             </span>
-                            </label>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
                         @endforeach
                     </div>
 
                     @error('permissions')
-                    <div class="text-xs text-danger mt-1">{{ $message }}</div> @enderror
+                    <div class="text-xs text-danger mt-1">{{ $message }}</div>
+                    @enderror
                 </div>
+
 
                 <div class="flex gap-2">
                     <button class="kt-btn kt-btn-primary" type="submit">Güncelle</button>

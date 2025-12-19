@@ -95,7 +95,7 @@ class UserController extends Controller
 
         $user->roles()->detach();
         $user->delete();
-
+        Rbac::bumpVersion();
         return redirect()->route('admin.users.index')->with('ok', 'Kullanıcı silindi.');
     }
 }

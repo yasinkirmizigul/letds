@@ -2,7 +2,6 @@
 
 namespace App\Models\Admin\User;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,42 +9,26 @@ use Illuminate\Support\Facades\Cache;
 
 class User extends Authenticatable
 {
-
-
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
+        // is_active varsa fillable'a koymak zorunda değilsin (formdan alıyorsan koy)
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean', // varsa
         ];
     }
 
@@ -55,11 +38,27 @@ class User extends Authenticatable
     }
 
     /**
+     * Role var mı? (slug üzerinden)
+     */
+    public function hasRole(string $slug): bool
+    {
+        $slug = trim($slug);
+        if ($slug === '') return false;
+
+        // ilişkiler yüklüyse memory'den, değilse exists
+        if ($this->relationLoaded('roles')) {
+            return $this->roles->contains('slug', $slug);
+        }
+
+        return $this->roles()->where('slug', $slug)->exists();
+    }
+
+    /**
      * Superadmin kontrolü
      */
     public function isSuperAdmin(): bool
     {
-        return $this->roles->contains(fn ($role) => $role->slug === 'superadmin');
+        return $this->hasRole('superadmin');
     }
 
     /**
@@ -67,22 +66,31 @@ class User extends Authenticatable
      */
     public function isAdmin(): bool
     {
-        return $this->roles->contains(fn ($role) => in_array($role->slug, ['admin', 'superadmin']));
+        // relation loaded ise hızlı, değilse exists
+        if ($this->relationLoaded('roles')) {
+            return $this->roles->contains(fn ($role) => in_array($role->slug, ['admin', 'superadmin'], true));
+        }
+
+        return $this->roles()->whereIn('slug', ['admin', 'superadmin'])->exists();
     }
 
+    /**
+     * Permission slug listesi (cache)
+     */
     public function permissionSlugsCached(): array
     {
         $version = Cache::get('rbac:version', 1);
         $key = "rbac:user:{$this->id}:v{$version}";
 
         return Cache::remember($key, now()->addHours(6), function () {
-            // roles -> permissions slug listesi
             return $this->roles()
                 ->with('permissions:permissions.id,slug')
                 ->get()
                 ->pluck('permissions')
                 ->flatten()
                 ->pluck('slug')
+                ->filter(fn ($s) => is_string($s) && trim($s) !== '')
+                ->map(fn ($s) => trim($s))
                 ->unique()
                 ->values()
                 ->all();
@@ -94,9 +102,11 @@ class User extends Authenticatable
         $slug = trim($slug);
         if ($slug === '') return false;
 
-        // O(1) lookup için flip
+        // RBAC version'a göre memo tut ki version bump sonrası aynı request'te bile stale kalmasın
+        $version = Cache::get('rbac:version', 1);
+
         static $memo = [];
-        $memoKey = $this->id;
+        $memoKey = "{$this->id}:v{$version}";
 
         if (!isset($memo[$memoKey])) {
             $memo[$memoKey] = array_flip($this->permissionSlugsCached());
@@ -111,7 +121,7 @@ class User extends Authenticatable
     public function hasAnyPermission(array $permissions): bool
     {
         foreach ($permissions as $permission) {
-            if ($this->hasPermission($permission)) {
+            if ($this->hasPermission((string) $permission)) {
                 return true;
             }
         }
@@ -123,6 +133,14 @@ class User extends Authenticatable
      */
     public function canAccessAdmin(): bool
     {
-        return $this->isAdmin() && $this->is_active;
+        return $this->isAdmin() && (bool) $this->is_active;
+    }
+
+    /**
+     * Sidebar + UI için: superadmin bypass + permission
+     */
+    public function canAccess(string $permission): bool
+    {
+        return $this->isSuperAdmin() || $this->hasPermission($permission);
     }
 }

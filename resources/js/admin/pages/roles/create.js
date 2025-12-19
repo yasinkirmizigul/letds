@@ -1,6 +1,8 @@
+import initPermissionsForm from './_permissions-form';
 let ac = null;
 
 export default function init({ root }) {
+    initPermissionsForm(root);
     ac = new AbortController();
     const { signal } = ac;
 

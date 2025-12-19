@@ -20,6 +20,7 @@ class PermissionController extends Controller
 
     public function create()
     {
+        Rbac::bumpVersion();
         return view('admin.pages.permissions.create');
     }
 

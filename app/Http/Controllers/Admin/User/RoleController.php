@@ -30,7 +30,7 @@ class RoleController extends Controller
     {
         $permissions = Permission::orderBy('slug')->get()
             ->groupBy(fn($p) => explode('.', $p->slug, 2)[0] ?? 'other');
-
+        Rbac::bumpVersion();
         return view('admin.pages.roles.create', compact('permissions'));
     }
 
@@ -59,7 +59,7 @@ class RoleController extends Controller
 
         $role->permissions()->sync($validated['permissions'] ?? []);
 
-
+        Rbac::bumpVersion();
         return redirect()->route('admin.roles.index')->with('ok', 'Rol oluşturuldu.');
     }
 

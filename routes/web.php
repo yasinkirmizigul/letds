@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\BlogPost\BlogPostController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\Dash\DashController;
+use App\Http\Controllers\Admin\Media\MediaController;
 use App\Http\Controllers\Admin\TinyMceController;
 use App\Http\Controllers\Admin\User\PermissionController;
 use App\Http\Controllers\Admin\User\RoleController;
@@ -123,6 +124,27 @@ Route::middleware(['auth'])
         Route::patch('/{blogPost}/toggle-publish', [BlogPostController::class, 'togglePublish'])
             ->middleware('permission:blog.update')
             ->name('togglePublish');
+    });
+
+Route::middleware(['auth'])
+    ->prefix('admin/media')
+    ->as('admin.media.')
+    ->group(function () {
+        Route::get('/', [MediaController::class, 'index'])
+            ->middleware('permission:media.view')
+            ->name('index');
+
+        Route::get('/list', [MediaController::class, 'list'])
+            ->middleware('permission:media.view')
+            ->name('list');
+
+        Route::post('/upload', [MediaController::class, 'upload'])
+            ->middleware('permission:media.upload')
+            ->name('upload');
+
+        Route::delete('/{media}', [MediaController::class, 'destroy'])
+            ->middleware('permission:media.delete')
+            ->name('destroy');
     });
 
 Route::middleware(['auth'])->prefix('admin')->as('admin.')->group(function () {
