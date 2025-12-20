@@ -192,14 +192,29 @@ Route::middleware(['auth'])
                 ->name('destroy');
         });
 
-        // Profile
-        Route::prefix('profile')->as('profile.')->group(function () {
-            Route::get('/', [ProfileController::class, 'edit'])->name('edit');
+        Route::prefix('profile')
+            ->as('profile.')
+            ->middleware('auth')
+            ->group(function () {
 
-            Route::post('/avatar', [ProfileController::class, 'updateAvatar'])
-                ->middleware('permission:users.update')
-                ->name('avatar');
-        });
+                // Profil görüntüleme
+                Route::get('/', [ProfileController::class, 'index'])
+                    ->name('index');
+
+                // Profil düzenleme ekranı
+                Route::get('/edit', [ProfileController::class, 'edit'])
+                    ->name('edit');
+
+                // Profil bilgilerini güncelle
+                Route::put('/', [ProfileController::class, 'update'])
+                    ->middleware('permission:users.update')
+                    ->name('update');
+
+                // Avatar güncelle
+                Route::post('/avatar', [ProfileController::class, 'updateAvatar'])
+                    ->middleware('permission:users.update')
+                    ->name('avatar');
+            });
 
         // TinyMCE upload (admin grubu içinde zaten)
         Route::post('/tinymce/upload', [TinyMceController::class, 'upload'])->name('tinymce.upload');

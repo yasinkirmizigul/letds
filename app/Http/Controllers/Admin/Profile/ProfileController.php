@@ -3,37 +3,79 @@
 namespace App\Http\Controllers\Admin\Profile;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin\Media\Media;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
-    public function edit(Request $request)
+    /**
+     * Profil ana sayfası
+     */
+    public function index()
     {
-        return view('admin.pages.profile.edit');
+        return view('admin.pages.profile.index', [
+            'user' => auth()->user(),
+        ]);
     }
 
-    public function updateAvatar(Request $request)
+    /**
+     * Profil düzenleme formu
+     */
+    public function edit()
     {
-        $request->validate([
-            'avatar_media_id' => ['nullable', 'integer', 'exists:media,id'],
+        return view('admin.pages.profile.edit', [
+            'user' => auth()->user(),
+        ]);
+    }
+
+    /**
+     * Profil bilgilerini güncelle
+     */
+    public function update(Request $request)
+    {
+        $user = auth()->user();
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:100'],
+            'surname' => ['nullable', 'string', 'max:100'],
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users')->ignore($user->id),
+            ],
+            'company' => ['nullable', 'string', 'max:150'],
+            'location' => ['nullable', 'string', 'max:150'],
         ]);
 
-        $u = $request->user();
+        $user->update($data);
 
-        // İstersen sadece image kabul ettir:
-        if ($request->filled('avatar_media_id')) {
-            $m = Media::findOrFail($request->integer('avatar_media_id'));
-            if (!str_starts_with((string)$m->mime_type, 'image/')) {
-                return back()->with('error', 'Avatar sadece görsel olabilir.');
-            }
+        return redirect()
+            ->route('admin.profile.index')
+            ->with('success', 'Profil bilgileri güncellendi.');
+    }
+
+    /**
+     * Avatar güncelle
+     */
+    public function updateAvatar(Request $request)
+    {
+        $user = auth()->user();
+
+        $request->validate([
+            'avatar' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ]);
+
+        // Eski avatarı sil (varsa)
+        if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+            Storage::disk('public')->delete($user->avatar);
         }
 
-        $u->avatar_media_id = $request->filled('avatar_media_id')
-            ? $request->integer('avatar_media_id')
-            : null;
+        $path = $request->file('avatar')->store('avatars', 'public');
 
-        $u->save();
+        $user->update([
+            'avatar' => $path,
+        ]);
 
         return back()->with('success', 'Avatar güncellendi.');
     }
