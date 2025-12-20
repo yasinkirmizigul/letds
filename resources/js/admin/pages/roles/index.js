@@ -1,4 +1,104 @@
 export default function init({ root }) {
+    const modal = document.getElementById('roleDeleteModal');
+    if (!modal) return;
+
+    const alertWrap = document.getElementById('roleDeleteAlert');
+    const nameEl = document.getElementById('roleDeleteName');
+    const usersEl = document.getElementById('roleDeleteUsers');
+    const usersWrap = document.getElementById('roleDeleteUsersWrap');
+    const confirmBtn = document.getElementById('roleDeleteConfirmBtn');
+
+    let currentRoleId = null;
+    let delayTimer = null;
+    let countdownTimer = null;
+
+    function resetTimers() {
+        if (delayTimer) {
+            clearTimeout(delayTimer);
+            delayTimer = null;
+        }
+        if (countdownTimer) {
+            clearInterval(countdownTimer);
+            countdownTimer = null;
+        }
+    }
+
+    function setDangerMode(isDanger) {
+        if (alertWrap) {
+            alertWrap.classList.toggle('text-danger', isDanger);
+        }
+
+        if (usersWrap) {
+            usersWrap.classList.toggle('text-danger', isDanger);
+            usersWrap.classList.toggle('font-medium', isDanger);
+        }
+
+        if (usersEl) {
+            usersEl.classList.toggle('text-danger', isDanger);
+            usersEl.classList.toggle('font-bold', isDanger);
+        }
+    }
+
+    function enableConfirm() {
+        if (!confirmBtn) return;
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = 'Sil';
+    }
+
+    function disableConfirm(seconds) {
+        if (!confirmBtn) return;
+
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = `Sil (${seconds})`;
+
+        let remaining = seconds;
+
+        countdownTimer = setInterval(() => {
+            remaining--;
+            if (remaining <= 0) {
+                resetTimers();
+                enableConfirm();
+            } else {
+                confirmBtn.textContent = `Sil (${remaining})`;
+            }
+        }, 1000);
+    }
+
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('[data-kt-modal-toggle="#roleDeleteModal"]');
+        if (!btn) return;
+
+        resetTimers();
+        enableConfirm();
+
+        currentRoleId = btn.getAttribute('data-role-id');
+
+        const roleName = btn.getAttribute('data-role-name') || '';
+        const usersCountRaw = btn.getAttribute('data-role-users') || '0';
+        const usersCount = Number(usersCountRaw) || 0;
+
+        if (nameEl) nameEl.textContent = roleName;
+        if (usersEl) usersEl.textContent = String(usersCount);
+
+        const isDanger = usersCount > 0;
+        setDangerMode(isDanger);
+
+        // 🔥 Panic click engelleme
+        if (isDanger) {
+            disableConfirm(2); // 2 saniye
+        }
+    });
+
+    confirmBtn?.addEventListener('click', function () {
+        if (confirmBtn.disabled) return;
+        if (!currentRoleId) return;
+
+        const form = document.getElementById('role_delete_form_' + currentRoleId);
+        if (form) form.submit();
+    });
+
+    // Modal kapanınca state temizle
+    modal.addEventListener('hidden', resetTimers);
     const table = root.querySelector('#roles_table');
     if (!table) return;
 

@@ -4,6 +4,8 @@ import './admin/helpers/datatable-helper';
 import Alpine from 'alpinejs';
 import { AppInit } from './core/app-init';
 import { registerPages } from './admin/pages/index';
+import { initMediaPicker } from './core/media-picker';
+initMediaPicker();
 
 window.Alpine = Alpine;
 Alpine.start();

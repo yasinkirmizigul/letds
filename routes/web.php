@@ -36,7 +36,9 @@ Route::middleware(['auth'])
             Route::post('/roles', [RoleController::class, 'store'])->middleware('permission:roles.create')->name('roles.store');
             Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])->middleware('permission:roles.update')->name('roles.edit');
             Route::put('/roles/{role}', [RoleController::class, 'update'])->middleware('permission:roles.update')->name('roles.update');
-            Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->middleware('permission:roles.delete')->name('roles.destroy');
+            Route::delete('/roles/{role}', [RoleController::class, 'destroy'])
+                ->name('admin.roles.destroy')
+                ->middleware('permission:roles.delete');
         });
 
         // Permissions (admin + superadmin)
@@ -145,6 +147,17 @@ Route::middleware(['auth'])
         Route::delete('/{media}', [MediaController::class, 'destroy'])
             ->middleware('permission:media.delete')
             ->name('destroy');
+    });
+Route::middleware(['auth'])
+    ->prefix('admin/profile')
+    ->as('admin.profile.')
+    ->group(function () {
+        Route::get('/', [ProfileController::class, 'edit'])
+            ->name('edit');
+
+        Route::post('/avatar', [ProfileController::class, 'updateAvatar'])
+            ->name('avatar')
+            ->middleware('permission:users.update'); // istersen ayrı permission: profile.update
     });
 
 Route::middleware(['auth'])->prefix('admin')->as('admin.')->group(function () {

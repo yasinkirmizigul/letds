@@ -29,6 +29,23 @@
                     <div class="text-xs text-danger mt-1">{{ $message }}</div> @enderror
                 </div>
 
+                {{-- ✅ Priority --}}
+                <div class="flex flex-col gap-1">
+                    <label class="kt-form-label font-normal text-mono">Priority</label>
+                    <input class="kt-input"
+                           type="number"
+                           name="priority"
+                           min="0"
+                           step="1"
+                           value="{{ old('priority', 0) }}"
+                           placeholder="Örn: 900"/>
+                    <div class="text-xs text-muted-foreground">
+                        Büyük sayı = daha yüksek öncelik. Örn: superadmin 1000, admin 900, editor 100.
+                    </div>
+                    @error('priority')
+                    <div class="text-xs text-danger mt-1">{{ $message }}</div> @enderror
+                </div>
+
                 <div class="flex flex-col gap-3">
                     <div class="flex items-center justify-between">
                         <div class="kt-form-label font-normal text-mono">Yetkiler</div>

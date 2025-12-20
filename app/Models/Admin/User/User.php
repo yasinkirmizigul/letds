@@ -2,7 +2,9 @@
 
 namespace App\Models\Admin\User;
 
+use App\Models\Admin\Media\Media;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Cache;
@@ -142,5 +144,49 @@ class User extends Authenticatable
     public function canAccess(string $permission): bool
     {
         return $this->isSuperAdmin() || $this->hasPermission($permission);
+    }
+    public function avatarMedia(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'avatar_media_id');
+    }
+
+    public function avatarUrl(): string
+    {
+        // avatarMedia eager-load değilse bile sorun değil; burada query tetikleyebilir
+        // ama admin tarafında zaten roles.permissions eager-load var; avatar için de loadMissing ekleyebiliriz
+        if ($this->relationLoaded('avatarMedia') ? $this->avatarMedia : $this->avatarMedia()->first()) {
+            return $this->avatarMedia->url();
+        }
+
+        return asset('assets/media/avatars/300-2.png');
+    }
+    public function badgeLabel(): string
+    {
+        if (method_exists($this, 'isSuperAdmin') && $this->isSuperAdmin()) {
+            return 'Super Admin';
+        }
+
+        if (method_exists($this, 'canAccessAdmin') && $this->canAccessAdmin()) {
+            return 'Admin';
+        }
+
+        $top = $this->topRole();
+        return $top?->name ?: 'User';
+    }
+    public function topRole()
+    {
+        // roles ilişkisi loadMissing ile geldiyse query yok; gelmediyse 1 query
+        return $this->roles
+            ? $this->roles->sortByDesc('priority')->first()
+            : $this->roles()->orderByDesc('priority')->first();
+    }
+    public function topRolePriority(): int
+    {
+        // roles eager-loaded ise collection üzerinden, değilse query ile
+        $role = $this->roles
+            ? $this->roles->sortByDesc('priority')->first()
+            : $this->roles()->orderByDesc('priority')->first();
+
+        return (int)($role?->priority ?? 0);
     }
 }

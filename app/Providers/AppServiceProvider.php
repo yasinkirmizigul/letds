@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-// app/Providers/AppServiceProvider.php
-
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
@@ -16,9 +14,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // SADECE admin tarafında eager-load (public site şişmesin)
-        View::composer('*', function ($view) {
-            if (auth()->check() && request()->is('admin*')) {
-                auth()->user()->loadMissing('roles.permissions');
+        View::composer('*', function () {
+            if (auth()->check() && (request()->is('admin') || request()->is('admin/*'))) {
+                auth()->user()->loadMissing('roles.permissions', 'avatarMedia');
             }
         });
 
@@ -39,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
             }
 
             foreach ($slugs as $slug) {
-                $slug = trim((string)$slug);
+                $slug = trim((string) $slug);
                 if ($slug !== '' && $u->canAccess($slug)) return true;
             }
             return false;
@@ -51,4 +49,3 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 }
-
