@@ -2,20 +2,19 @@
 
 return [
     [
-        'type'   => 'single',
-        'title'  => 'Dashboard',
-        'icon'   => 'ki-filled ki-element-11 text-lg',
-        'route'  => 'admin.dashboard',
-        'active' => ['admin.dashboard'],
-        'guard'  => 'admin',                 // @admin kullan
+        'type'  => 'single',
+        'title' => 'Dashboard',
+        'icon'  => 'ki-filled ki-element-11 text-lg',
+        'route' => 'admin.dashboard',
+        'active'=> ['admin.dashboard'],
+        'guard' => 'admin', // @admin
     ],
 
     [
-        'type'   => 'accordion',
-        'title'  => 'Blog',
-        'icon'   => 'ki-filled ki-book text-lg',
-        'active' => ['admin.blog.*'],
-        'permAny'=> ['blog.view'],           // parent görünme şartı
+        'type'     => 'accordion',
+        'title'    => 'Blog',
+        'icon'     => 'ki-filled ki-book text-lg',
+        'perm'     => 'blog.view',
         'children' => [
             [
                 'title'  => 'Yazılar',
@@ -27,11 +26,10 @@ return [
     ],
 
     [
-        'type'   => 'accordion',
-        'title'  => 'Medya',
-        'icon'   => 'ki-filled ki-screen text-lg',
-        'active' => ['admin.media.*'],
-        'permAny'=> ['media.view'],
+        'type'     => 'accordion',
+        'title'    => 'Medya',
+        'icon'     => 'ki-filled ki-screen text-lg',
+        'perm'     => 'media.view',
         'children' => [
             [
                 'title'  => 'Medyalar',
@@ -43,11 +41,10 @@ return [
     ],
 
     [
-        'type'   => 'accordion',
-        'title'  => 'Kategoriler',
-        'icon'   => 'ki-filled ki-document text-lg',
-        'active' => ['admin.categories.*'],
-        'permAny'=> ['category.view'],
+        'type'     => 'accordion',
+        'title'    => 'Kategoriler',
+        'icon'     => 'ki-filled ki-document text-lg',
+        'perm'     => 'category.view',
         'children' => [
             [
                 'title'  => 'Kategoriler',
@@ -59,11 +56,10 @@ return [
     ],
 
     [
-        'type'   => 'accordion',
-        'title'  => 'Kullanıcılar',
-        'icon'   => 'ki-filled ki-profile-circle text-lg',
-        'active' => ['admin.users.*','admin.roles.*','admin.permissions.*'],
-        'permAny'=> ['users.view','roles.view','permissions.view'],
+        'type'     => 'accordion',
+        'title'    => 'Kullanıcılar',
+        'icon'     => 'ki-filled ki-profile-circle text-lg',
+        'permAny'  => ['users.view', 'roles.view', 'permissions.view'],
         'children' => [
             [
                 'title'  => 'Kullanıcı Listesi',
