@@ -56,7 +56,7 @@
             <li><div class="kt-dropdown-menu-separator"></div></li>
 
             <li>
-                <a class="kt-dropdown-menu-link" href="{{ route('admin.profile.edit') }}">
+                <a class="kt-dropdown-menu-link" href="{{ route('admin.profile.index') }}">
                     <i class="ki-filled ki-profile-circle"></i>
                     Profilim
                 </a>

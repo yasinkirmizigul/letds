@@ -214,6 +214,11 @@ Route::middleware(['auth'])
                 Route::post('/avatar', [ProfileController::class, 'updateAvatar'])
                     ->middleware('permission:users.update')
                     ->name('avatar');
+
+                // Avatar kaldır
+                Route::delete('/avatar', [ProfileController::class, 'removeAvatar'])
+                    ->middleware('permission:users.update')
+                    ->name('avatar.remove');
             });
 
         // TinyMCE upload (admin grubu içinde zaten)

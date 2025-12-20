@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -145,21 +146,6 @@ class User extends Authenticatable
     {
         return $this->isSuperAdmin() || $this->hasPermission($permission);
     }
-    public function avatarMedia(): BelongsTo
-    {
-        return $this->belongsTo(Media::class, 'avatar_media_id');
-    }
-
-    public function avatarUrl(): string
-    {
-        // avatarMedia eager-load değilse bile sorun değil; burada query tetikleyebilir
-        // ama admin tarafında zaten roles.permissions eager-load var; avatar için de loadMissing ekleyebiliriz
-        if ($this->relationLoaded('avatarMedia') ? $this->avatarMedia : $this->avatarMedia()->first()) {
-            return $this->avatarMedia->url();
-        }
-
-        return asset('assets/media/avatars/300-2.png');
-    }
     public function badgeLabel(): string
     {
         if (method_exists($this, 'isSuperAdmin') && $this->isSuperAdmin()) {
@@ -188,5 +174,26 @@ class User extends Authenticatable
             : $this->roles()->orderByDesc('priority')->first();
 
         return (int)($role?->priority ?? 0);
+    }
+    public function avatarMedia()
+    {
+        return $this->belongsTo(Media::class, 'avatar_media_id');
+    }
+
+    public function avatarUrl(): string
+    {
+        // 1) media bağlıysa onu kullan
+        if ($this->avatar_media_id && $this->relationLoaded('avatarMedia') ? $this->avatarMedia : $this->avatarMedia()->exists()) {
+            $m = $this->relationLoaded('avatarMedia') ? $this->avatarMedia : $this->avatarMedia()->first();
+            if ($m && $m->isImage()) return $m->url();
+        }
+
+        // 2) legacy avatar path varsa onu kullan
+        if (!empty($this->avatar)) {
+            return Storage::disk('public')->url($this->avatar);
+        }
+
+        // 3) default
+        return asset('assets/media/avatars/blank.png');
     }
 }
