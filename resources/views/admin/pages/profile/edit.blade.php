@@ -1,15 +1,16 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    @php($u = auth()->user())
+    @php($u = $user ?? auth()->user())
+    @php($avatarUrl = method_exists($u, 'avatarUrl') ? $u->avatarUrl() : asset('assets/media/avatars/blank.png'))
 
-    <div class="kt-container-fixed">
+    <div class="kt-container-fixed" data-page="profile.edit">
         @includeIf('admin.partials._flash')
 
         <div class="flex items-center justify-between mb-5">
             <div>
                 <h1 class="text-xl font-semibold">Profil</h1>
-                <div class="text-sm text-muted-foreground">Hesap bilgilerini düzenle</div>
+                <div class="text-sm text-muted-foreground">Profil bilgilerini ve avatarını düzenle</div>
             </div>
 
             <a href="{{ route('admin.profile.index') }}" class="kt-btn kt-btn-light">
@@ -18,6 +19,7 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-7.5">
+
             {{-- LEFT: Avatar --}}
             <div class="lg:col-span-1">
                 <div class="kt-card">
@@ -26,77 +28,77 @@
                     </div>
 
                     <div class="kt-card-content flex flex-col gap-4">
-                        @php
-                            // DB'de avatar alanı yoksa statik gösteriyoruz.
-                            // Eğer ileride avatarı gerçek yapacaksan:
-                            // - users.avatar kolonu ekle, ya da
-                            // - media tablosu ile ilişki kur.
-                            $avatarUrl = asset('assets/media/avatars/300-1.png');
-                            $blankUrl  = asset('assets/media/avatars/blank.png');
-                            $avatarRouteExists = \Illuminate\Support\Facades\Route::has('admin.profile.avatar');
-                        @endphp
 
-                        <div class="text-sm text-muted-foreground leading-5">
-                            Bu panelde avatar alanı veritabanında tanımlı değilse sadece görsel (UI) olarak kalır.
-                            Gerçek kaydetme için backend tarafını bağlaman gerekir.
-                        </div>
+                        {{-- Avatar FORM --}}
+                        <form id="avatarForm" method="POST" action="{{ route('admin.profile.avatar') }}" enctype="multipart/form-data" class="flex flex-col gap-4">
+                            @csrf
 
-                        {{-- KT Image Input --}}
-                        <div class="kt-image-input" data-kt-image-input="true">
-                            <input type="file" accept=".png, .jpg, .jpeg" name="avatar" {{ $avatarRouteExists ? '' : 'disabled' }} />
-                            <input type="hidden" name="avatar_remove" />
+                            {{-- Media picker seçimi buraya yazılacak --}}
+                            <input type="hidden" name="media_id" id="avatar_media_id" value="">
 
-                            <button
-                                type="button"
-                                data-kt-tooltip="true"
-                                data-kt-tooltip-trigger="hover"
-                                data-kt-tooltip-placement="right"
-                                data-kt-image-input-remove="true"
-                                class="kt-image-input-remove"
-                                {{ $avatarRouteExists ? '' : 'disabled' }}
-                            >
-                                <i class="ki-filled ki-cross text-lg"></i>
-                                <span data-kt-tooltip-content="true" class="kt-tooltip">Kaldır / Geri al</span>
-                            </button>
+                            {{-- KT Image Input --}}
+                            <div class="kt-image-input" data-kt-image-input="true">
+                                <input type="file" accept=".png,.jpg,.jpeg,.webp" name="avatar" />
 
-                            <div
-                                data-kt-image-input-placeholder="true"
-                                class="kt-image-input-placeholder"
-                                style="background-image: url('{{ $blankUrl }}')"
-                            >
+                                <button
+                                    type="button"
+                                    data-kt-tooltip="true"
+                                    data-kt-tooltip-trigger="hover"
+                                    data-kt-tooltip-placement="right"
+                                    data-kt-image-input-remove="true"
+                                    class="kt-image-input-remove"
+                                >
+                                    <i class="ki-filled ki-cross text-lg"></i>
+                                    <span data-kt-tooltip-content="true" class="kt-tooltip">Kaldır / Geri al</span>
+                                </button>
+
                                 <div
-                                    data-kt-image-input-preview="true"
-                                    class="kt-image-input-preview"
-                                    style="background-image: url('{{ $avatarUrl }}')"
-                                ></div>
+                                    data-kt-image-input-placeholder="true"
+                                    class="kt-image-input-placeholder"
+                                    style="background-image:url('{{ asset('assets/media/avatars/blank.png') }}')"
+                                >
+                                    <div
+                                        data-kt-image-input-preview="true"
+                                        class="kt-image-input-preview"
+                                        style="background-image:url('{{ $avatarUrl }}')"
+                                    ></div>
 
-                                <div class="flex items-center justify-center cursor-pointer h-6 left-0 right-0 bottom-0 bg-black/25 absolute">
-                                    <i class="ki-filled ki-camera text-white text-sm"></i>
+                                    <div class="flex items-center justify-center cursor-pointer h-6 left-0 right-0 bottom-0 bg-black/25 absolute">
+                                        <i class="ki-filled ki-camera text-white text-sm"></i>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        @if(!$avatarRouteExists)
-                            <div class="kt-alert kt-alert-light border border-border">
-                                <div class="kt-alert-title">Avatar kaydı kapalı</div>
-                                <div class="kt-alert-text">
-                                    <code>admin.profile.avatar</code> route’u yok. UI görünüyor ama kaydetmez.
-                                </div>
-                            </div>
-                        @else
-                            {{-- Eğer route varsa: ayrı avatar formu --}}
-                            <form method="POST" action="{{ route('admin.profile.avatar') }}" enctype="multipart/form-data" class="flex gap-2">
-                                @csrf
+                            @error('avatar')
+                            <div class="text-sm text-destructive">{{ $message }}</div>
+                            @enderror
+
+                            <div class="flex flex-wrap gap-2">
                                 <button type="submit" class="kt-btn kt-btn-primary">
                                     <i class="ki-filled ki-check"></i>
                                     Avatarı Kaydet
                                 </button>
+
                                 <button type="button" class="kt-btn kt-btn-light" data-kt-modal-toggle="#media_picker_modal">
                                     <i class="ki-filled ki-some-files"></i>
                                     Medyadan Seç
                                 </button>
-                            </form>
-                        @endif
+                            </div>
+                        </form>
+
+                        {{-- Remove Avatar FORM --}}
+                        <form method="POST" action="{{ route('admin.profile.avatar.remove') }}">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="kt-btn kt-btn-outline w-full">
+                                <i class="ki-filled ki-trash"></i>
+                                Avatarı Kaldır
+                            </button>
+                        </form>
+
+                        <div class="text-xs text-muted-foreground leading-5">
+                            Not: Avatar kaydı <b>avatar_media_id</b> üzerinden yapılır. Upload ettiğin görsel de otomatik media tablosuna kayıt açar.
+                        </div>
                     </div>
                 </div>
             </div>
@@ -143,23 +145,15 @@
 
                         <div class="flex flex-wrap items-center gap-2">
                             @if($u->email_verified_at)
-                                <span class="kt-badge kt-badge-primary kt-badge-outline">
-                                Email doğrulandı
-                            </span>
+                                <span class="kt-badge kt-badge-primary kt-badge-outline">Email doğrulandı</span>
                             @else
-                                <span class="kt-badge kt-badge-outline">
-                                Email doğrulanmadı
-                            </span>
+                                <span class="kt-badge kt-badge-outline">Email doğrulanmadı</span>
                             @endif
 
                             @if($u->is_active)
-                                <span class="kt-badge kt-badge-success kt-badge-outline">
-                                Aktif
-                            </span>
+                                <span class="kt-badge kt-badge-success kt-badge-outline">Aktif</span>
                             @else
-                                <span class="kt-badge kt-badge-danger kt-badge-outline">
-                                Pasif
-                            </span>
+                                <span class="kt-badge kt-badge-danger kt-badge-outline">Pasif</span>
                             @endif
                         </div>
 
@@ -173,9 +167,50 @@
                     </form>
                 </div>
 
-                {{-- Media Picker modal (mevcut yapın) --}}
+                {{-- Media Picker modal (sende zaten var) --}}
                 @include('admin.partials.media._picker-modal')
             </div>
+
         </div>
     </div>
 @endsection
+
+@push('page_js')
+    <script>
+        /**
+         * Media picker entegrasyonu:
+         * Modal içinde bir medya seçildiğinde:
+         *  - Seçilen elemanda data-media-id olmalı
+         *  - Hidden input (media_id) set edilir
+         *  - Avatar form submit edilir
+         *
+         * Not: Senin modal HTML'ini bilmediğim için "delegation" kullandım.
+         * Modal içinde herhangi bir elemente data-media-id koyduğun an çalışır.
+         */
+        document.addEventListener('click', function (e) {
+            const el = e.target.closest('[data-media-id]');
+            if (!el) return;
+
+            const mediaId = el.getAttribute('data-media-id');
+            if (!mediaId) return;
+
+            const input = document.getElementById('avatar_media_id');
+            const form  = document.getElementById('avatarForm');
+
+            if (!input || !form) return;
+
+            // Dosya seçiliyse iptal (önce dosyayı temizlemeden media seçmek kafa karıştırır)
+            // İstersen bunu kaldırabilirsin, ama ben çakışmayı engelliyorum.
+            const fileInput = form.querySelector('input[type="file"][name="avatar"]');
+            if (fileInput && fileInput.files && fileInput.files.length) {
+                fileInput.value = '';
+            }
+
+            input.value = mediaId;
+
+            // Eğer modal açıksa kapatmayı senin KT modal mekanizmana bırakıyorum.
+            // Sadece submit ediyorum.
+            form.submit();
+        });
+    </script>
+@endpush

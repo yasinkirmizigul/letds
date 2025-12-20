@@ -15,6 +15,8 @@ import UsersIndex from './users/index';
 import CategoriesCreate from './categories/create';
 import CategoriesEdit from './categories/edit';
 import CategoriesIndex from './categories/index';
+import profileEdit from './profile/edit';
+import profileIndex from './profile/index';
 import mediaIndex from './media/index';
 
 export function registerPages() {
@@ -37,6 +39,9 @@ export function registerPages() {
     register('categories.create', CategoriesCreate);
     register('categories.edit', CategoriesEdit);
     register('categories.index', CategoriesIndex);
+
+    register('profile.edit', profileEdit);
+    register('profile.index', profileIndex);
 
     register('media.index', mediaIndex);
 }

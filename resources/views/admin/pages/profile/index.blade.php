@@ -63,7 +63,7 @@
         </div>
     </div>
 
-    <div class="kt-container-fixed">
+    <div class="kt-container-fixed" data-page="profile.index">
         <div class="flex items-center flex-wrap md:flex-nowrap lg:items-end justify-between border-b border-b-border gap-3 lg:gap-6 mb-5 lg:mb-10">
             <div class="grid">
                 <div class="kt-scrollable-x-auto">

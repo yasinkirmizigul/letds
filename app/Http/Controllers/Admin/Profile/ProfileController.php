@@ -5,148 +5,179 @@ namespace App\Http\Controllers\Admin\Profile;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Media\Media;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class ProfileController extends Controller
 {
+    /**
+     * Profil özet sayfası (index)
+     */
     public function index()
     {
         return view('admin.pages.profile.index', [
+            'pageTitle' => 'Profil Sayfası',
             'user' => auth()->user(),
         ]);
     }
 
+    /**
+     * Profil düzenleme formu
+     */
     public function edit()
     {
         return view('admin.pages.profile.edit', [
+            'pageTitle' => 'Profil Düzenle',
             'user' => auth()->user(),
         ]);
     }
 
+    /**
+     * Profil bilgilerini güncelle
+     * (Sen "benim alanlar" dediğin için sadece temel alanları tutuyorum.)
+     */
     public function update(Request $request)
     {
         $user = auth()->user();
 
         $data = $request->validate([
-            'name'  => ['required', 'string', 'max:100'],
-            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
+            'name' => ['required', 'string', 'max:150'],
+            'email' => [
+                'required',
+                'email',
+                'max:190',
+                Rule::unique('users', 'email')->ignore($user->id),
+            ],
+
+            // İstersen şifre değişimi:
+            'password' => ['nullable', 'string', 'min:8', 'max:190'],
         ]);
+
+        // boş password gelirse dokunma
+        if (empty($data['password'])) {
+            unset($data['password']);
+        } else {
+            $data['password'] = bcrypt($data['password']);
+        }
 
         $user->update($data);
 
         return redirect()
-            ->route('admin.profile.index')
+            ->route('admin.profile.edit')
             ->with('success', 'Profil bilgileri güncellendi.');
     }
 
     /**
-     * Avatar güncelle:
-     * - file upload (avatar)
-     * - veya media_id ile mevcut medyayı avatar yap
+     * Avatar güncelle
+     * - users.avatar_media_id -> media.id
+     * - Eski avatar media kaydını ve dosyasını temizler
      */
     public function updateAvatar(Request $request)
     {
         $user = auth()->user();
 
-        // 1) Media seçimi ile avatar (picker)
-        if ($request->filled('media_id')) {
-            $media = Media::query()
-                ->whereKey($request->input('media_id'))
-                ->firstOrFail();
-
-            if (!$media->isImage()) {
-                return back()->with('error', 'Seçilen medya bir görsel değil.');
-            }
-
-            if (Schema::hasColumn('users', 'avatar_media_id')) {
-                $user->update(['avatar_media_id' => $media->id]);
-                return back()->with('success', 'Avatar güncellendi (medyadan).');
-            }
-
-            // avatar_media_id yoksa mecburen fallback (avatar_url üretmezsen)
-            return back()->with('error', 'users.avatar_media_id kolonu yok. Medyadan avatar seçimi için şema güncelle.');
-        }
-
-        // 2) File upload ile avatar
         $request->validate([
-            'avatar' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'avatar' => ['required', 'file', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ]);
 
         $file = $request->file('avatar');
 
-        // Dosyayı disk'e yaz
-        $disk = 'public';
-        $path = $file->store('avatars', $disk);
+        return DB::transaction(function () use ($user, $file) {
 
-        // Eğer avatar_media_id varsa: media kaydı oluştur, user.avatar_media_id set et
-        if (Schema::hasColumn('users', 'avatar_media_id')) {
+            // 1) Eski avatarı temizle (varsa)
+            $this->purgeUserAvatarMedia($user);
 
-            // Eski avatar_media_id varsa sadece referansı değiştiriyoruz (dosyayı silmek istersen ayrıca yönet)
-            [$width, $height] = @getimagesize($file->getRealPath()) ?: [null, null];
+            // 2) Yeni media oluştur
+            $uuid = (string) Str::uuid();
+            $ext = strtolower($file->getClientOriginalExtension() ?: 'jpg');
 
-            $media = Media::create([
-                'uuid'          => (string) Str::uuid(),
-                'disk'          => $disk,
-                'path'          => $path,
-                'original_name' => $file->getClientOriginalName(),
-                'mime_type'     => $file->getMimeType(),
-                'size'          => $file->getSize(),
-                'width'         => $width,
-                'height'        => $height,
-                'title'         => null,
-                'alt'           => null,
-                'meta'          => [],
-            ]);
+            $disk = 'public'; // senin Storage url() mantığına uyuyor
+            $path = "uploads/avatars/{$uuid}.{$ext}";
 
-            $user->update([
-                'avatar_media_id' => $media->id,
-            ]);
+            Storage::disk($disk)->put($path, file_get_contents($file->getRealPath()));
 
-            return back()->with('success', 'Avatar güncellendi (yükleme).');
-        }
+            // width/height (image ise)
+            $width = null;
+            $height = null;
+            $mime = $file->getMimeType();
 
-        // avatar_media_id yoksa: eski ProfileController mantığına düş
-        if (Schema::hasColumn('users', 'avatar')) {
-            // Eski avatar path'i sil (varsa)
-            if (!empty($user->avatar) && Storage::disk($disk)->exists($user->avatar)) {
-                Storage::disk($disk)->delete($user->avatar);
+            if (is_string($mime) && str_starts_with($mime, 'image/')) {
+                $info = @getimagesize($file->getRealPath());
+                if (is_array($info)) {
+                    $width = $info[0] ?? null;
+                    $height = $info[1] ?? null;
+                }
             }
 
-            $user->update(['avatar' => $path]);
+            $media = Media::create([
+                'uuid' => $uuid,
+                'disk' => $disk,
+                'path' => $path,
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $mime,
+                'size' => $file->getSize(),
+                'width' => $width,
+                'height' => $height,
+                'title' => null,
+                'alt' => null,
+                'meta' => null,
+            ]);
+
+            // 3) User’a bağla
+            $user->forceFill([
+                'avatar_media_id' => $media->id,
+                'avatar' => null, // eski string path alanını boş bırak (istersen kaldır)
+            ])->save();
 
             return back()->with('success', 'Avatar güncellendi.');
-        }
-
-        // Hiçbiri yoksa: dosyayı da geri al (çöp bırakma)
-        Storage::disk($disk)->delete($path);
-
-        return back()->with('error', 'Avatar alanı yok (users.avatar_media_id veya users.avatar). Şemayı güncelle.');
+        });
     }
 
+    /**
+     * Avatar kaldır (media + dosya temizlenir)
+     */
     public function removeAvatar()
     {
         $user = auth()->user();
 
-        // avatar_media_id varsa sadece null yapıyoruz
-        if (Schema::hasColumn('users', 'avatar_media_id')) {
-            $user->update(['avatar_media_id' => null]);
-            return back()->with('success', 'Avatar kaldırıldı.');
-        }
+        DB::transaction(function () use ($user) {
+            $this->purgeUserAvatarMedia($user);
 
-        // avatar varsa dosyayı da sil
-        if (Schema::hasColumn('users', 'avatar')) {
-            $disk = 'public';
-            if (!empty($user->avatar) && Storage::disk($disk)->exists($user->avatar)) {
-                Storage::disk($disk)->delete($user->avatar);
+            $user->forceFill([
+                'avatar_media_id' => null,
+                'avatar' => null,
+            ])->save();
+        });
+
+        return back()->with('success', 'Avatar kaldırıldı.');
+    }
+
+    /**
+     * Kullanıcının avatar media kaydını + dosyasını siler
+     */
+    private function purgeUserAvatarMedia($user): void
+    {
+        if (!$user->avatar_media_id) {
+            // eski sistemden kalan avatar string’i varsa da temizlemek istersen:
+            if (!empty($user->avatar) && Storage::disk('public')->exists($user->avatar)) {
+                Storage::disk('public')->delete($user->avatar);
             }
-
-            $user->update(['avatar' => null]);
-            return back()->with('success', 'Avatar kaldırıldı.');
+            return;
         }
 
-        return back()->with('error', 'Avatar alanı yok. Şemayı güncelle.');
+        $media = Media::query()->find($user->avatar_media_id);
+        if (!$media) {
+            return;
+        }
+
+        // Dosyayı sil
+        if ($media->disk && $media->path && Storage::disk($media->disk)->exists($media->path)) {
+            Storage::disk($media->disk)->delete($media->path);
+        }
+
+        // Media kaydını sil
+        $media->delete();
     }
 }

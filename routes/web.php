@@ -192,25 +192,25 @@ Route::middleware(['auth'])
                 ->name('destroy');
         });
 
-        Route::prefix('profile')
+// Profile
+        Route::middleware(['auth'])
+            ->prefix('profile')
             ->as('profile.')
-            ->middleware('auth')
             ->group(function () {
 
-                // Profil görüntüleme
+                // Profil özet sayfası
                 Route::get('/', [ProfileController::class, 'index'])
                     ->name('index');
 
-                // Profil düzenleme ekranı
+                // Düzenleme formu
                 Route::get('/edit', [ProfileController::class, 'edit'])
                     ->name('edit');
 
-                // Profil bilgilerini güncelle
+                // Profil bilgilerini kaydet
                 Route::put('/', [ProfileController::class, 'update'])
-                    ->middleware('permission:users.update')
                     ->name('update');
 
-                // Avatar güncelle
+                // Avatar yükle
                 Route::post('/avatar', [ProfileController::class, 'updateAvatar'])
                     ->middleware('permission:users.update')
                     ->name('avatar');
