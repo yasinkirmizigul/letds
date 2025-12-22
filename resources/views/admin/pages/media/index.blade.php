@@ -11,7 +11,6 @@
                 <div class="text-sm text-muted-foreground">Yükle, seç, modüllerde tekrar kullan.</div>
             </div>
 
-            {{-- Modal açma butonu (JS buna dokunmuyor) --}}
             <button class="kt-btn kt-btn-primary"
                     type="button"
                     data-kt-modal-toggle="#mediaUploadModal">
@@ -67,7 +66,6 @@
             </div>
         </div>
 
-        {{-- Upload modal: Aşağıdaki partial, JS’in beklediği id’leri içermeli --}}
         @include('admin.pages.media.partials._upload-modal')
     </div>
 @endsection
