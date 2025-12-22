@@ -50,7 +50,7 @@
                 @php($menu = config('admin_menu', []))
 
                 @foreach($menu as $item)
-                    @include('admin.layouts.main._sidebar_item', ['item' => $item])
+                    @include('admin.layouts.main.sidebar._sidebar_item', ['item' => $item])
                 @endforeach
 
             </div>

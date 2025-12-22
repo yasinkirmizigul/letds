@@ -7,7 +7,7 @@
     @stack('admin_css')
 </head>
 
-<body class="antialiased flex h-full text-base text-foreground bg-background app kt-sidebar-fixed kt-header-fixed">
+<body class="antialiased flex h-full text-base text-foreground bg-background dash_app kt-sidebar-fixed kt-header-fixed">
 <div id="app-lock" class="app-lock" aria-hidden="true">
     <div class="app-lock__panel kt-card">
         <div class="flex items-center gap-3">

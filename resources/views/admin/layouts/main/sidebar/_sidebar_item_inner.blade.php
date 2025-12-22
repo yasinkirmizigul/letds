@@ -72,7 +72,7 @@
 
                 @elseif($childPermAny)
                     @permAny($childPermAny)
-                    @include('admin.layouts.main._sidebar_item_inner_child', [
+                    @include('admin.layouts.main.sidebar._sidebar_item_inner_child', [
                         'childTitle' => $childTitle,
                         'childRoute' => $childRoute,
                         'childIsActive' => $childIsActive,
@@ -81,7 +81,7 @@
 
                 @elseif($childPerm)
                     @perm($childPerm)
-                    @include('admin.layouts.main._sidebar_item_inner_child', [
+                    @include('admin.layouts.main.sidebar._sidebar_item_inner_child', [
                         'childTitle' => $childTitle,
                         'childRoute' => $childRoute,
                         'childIsActive' => $childIsActive,
@@ -89,7 +89,7 @@
                     @endperm
 
                 @else
-                    @include('admin.layouts.main._sidebar_item_inner_child', [
+                    @include('admin.layouts.main.sidebar._sidebar_item_inner_child', [
                         'childTitle' => $childTitle,
                         'childRoute' => $childRoute,
                         'childIsActive' => $childIsActive,

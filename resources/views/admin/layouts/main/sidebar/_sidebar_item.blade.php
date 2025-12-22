@@ -26,22 +26,22 @@
 {{-- Guard (admin) --}}
 @if($guard === 'admin')
     @admin
-    @include('admin.layouts.main._sidebar_item_inner', compact('item','isActive'))
+    @include('admin.layouts.main.sidebar._sidebar_item_inner', compact('item','isActive'))
     @endadmin
 
     {{-- Permission Any --}}
 @elseif($permAny)
     @permAny($permAny)
-    @include('admin.layouts.main._sidebar_item_inner', compact('item','isActive'))
+    @include('admin.layouts.main.sidebar._sidebar_item_inner', compact('item','isActive'))
     @endpermAny
 
     {{-- Permission Single --}}
 @elseif($perm)
     @perm($perm)
-    @include('admin.layouts.main._sidebar_item_inner', compact('item','isActive'))
+    @include('admin.layouts.main.sidebar._sidebar_item_inner', compact('item','isActive'))
     @endperm
 
     {{-- No guard/perm => render --}}
 @else
-    @include('admin.layouts.main._sidebar_item_inner', compact('item','isActive'))
+    @include('admin.layouts.main.sidebar._sidebar_item_inner', compact('item','isActive'))
 @endif

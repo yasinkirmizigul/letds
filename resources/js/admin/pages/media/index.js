@@ -20,6 +20,13 @@ export default function init() {
     let debounceTimer = null;
 
     const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    const required = { grid, empty, info, pagination, searchInput, typeSelect, uploadBtn, fileInput, titleInput, altInput, uploadError };
+    const missing = Object.entries(required).filter(([, v]) => !v).map(([k]) => k);
+
+    if (missing.length) {
+        console.error('[media.index] Missing DOM elements:', missing);
+        return;
+    }
 
     function formatBytes(bytes) {
         if (!bytes) return '0 B';

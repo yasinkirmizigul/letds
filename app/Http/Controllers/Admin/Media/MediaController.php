@@ -12,7 +12,9 @@ class MediaController extends Controller
 
     public function index()
     {
-        return view('admin.pages.media.index');
+        return view('admin.pages.media.index', [
+            'pageTitle' => 'Medya Yükle'
+        ]);
     }
 
     public function list(Request $request)

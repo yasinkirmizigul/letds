@@ -1,4 +1,4 @@
-/*! tailwindcss v4.1.17 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.1.18 | MIT License | https://tailwindcss.com */
 @layer properties;
 @layer theme, base, components, utilities;
 @layer theme {
@@ -9,12 +9,9 @@
       "Courier New", monospace;
     --color-red-50: oklch(97.1% 0.013 17.38);
     --color-red-100: oklch(93.6% 0.032 17.717);
-    --color-red-400: oklch(70.4% 0.191 22.216);
-    --color-red-500: oklch(63.7% 0.237 25.331);
     --color-red-600: oklch(57.7% 0.245 27.325);
     --color-red-700: oklch(50.5% 0.213 27.518);
     --color-red-800: oklch(44.4% 0.177 26.899);
-    --color-red-900: oklch(39.6% 0.141 25.723);
     --color-red-950: oklch(25.8% 0.092 26.042);
     --color-orange-100: oklch(95.4% 0.038 75.164);
     --color-orange-200: oklch(90.1% 0.076 70.697);
@@ -28,26 +25,21 @@
     --color-yellow-600: oklch(68.1% 0.162 75.834);
     --color-yellow-700: oklch(55.4% 0.135 66.442);
     --color-yellow-800: oklch(47.6% 0.114 61.907);
-    --color-yellow-900: oklch(42.1% 0.095 57.708);
     --color-yellow-950: oklch(28.6% 0.066 53.813);
     --color-green-50: oklch(98.2% 0.018 155.826);
     --color-green-100: oklch(96.2% 0.044 156.743);
     --color-green-200: oklch(92.5% 0.084 155.995);
-    --color-green-400: oklch(79.2% 0.209 151.711);
     --color-green-500: oklch(72.3% 0.219 149.579);
     --color-green-600: oklch(62.7% 0.194 149.214);
     --color-green-700: oklch(52.7% 0.154 150.069);
     --color-green-800: oklch(44.8% 0.119 151.328);
-    --color-green-900: oklch(39.3% 0.095 152.535);
     --color-green-950: oklch(26.6% 0.065 152.934);
     --color-blue-50: oklch(97% 0.014 254.604);
     --color-blue-100: oklch(93.2% 0.032 255.585);
-    --color-blue-400: oklch(70.7% 0.165 254.624);
     --color-blue-500: oklch(62.3% 0.214 259.815);
     --color-blue-600: oklch(54.6% 0.245 262.881);
     --color-blue-700: oklch(48.8% 0.243 264.376);
     --color-blue-800: oklch(42.4% 0.199 265.638);
-    --color-blue-900: oklch(37.9% 0.146 265.522);
     --color-blue-950: oklch(28.2% 0.091 267.935);
     --color-violet-50: oklch(96.9% 0.016 293.756);
     --color-violet-100: oklch(94.3% 0.029 294.588);
@@ -57,13 +49,6 @@
     --color-violet-700: oklch(49.1% 0.27 292.581);
     --color-violet-800: oklch(43.2% 0.232 292.759);
     --color-violet-950: oklch(28.3% 0.141 291.089);
-    --color-purple-100: oklch(94.6% 0.033 307.174);
-    --color-purple-400: oklch(71.4% 0.203 305.504);
-    --color-purple-500: oklch(62.7% 0.265 303.9);
-    --color-purple-600: oklch(55.8% 0.288 302.321);
-    --color-purple-700: oklch(49.6% 0.265 301.924);
-    --color-purple-800: oklch(43.8% 0.218 303.724);
-    --color-purple-900: oklch(38.1% 0.176 304.987);
     --color-gray-50: oklch(98.5% 0.002 247.839);
     --color-gray-200: oklch(92.8% 0.006 264.531);
     --color-gray-400: oklch(70.7% 0.022 261.325);
@@ -90,7 +75,6 @@
     --breakpoint-lg: 64rem;
     --breakpoint-xl: 80rem;
     --breakpoint-2xl: 96rem;
-    --container-md: 28rem;
     --container-2xl: 42rem;
     --text-xs: 0.75rem;
     --text-xs--line-height: calc(1 / 0.75);
@@ -119,11 +103,9 @@
     --radius-md: calc(var(--radius) - 2px);
     --radius-lg: var(--radius);
     --radius-xl: calc(var(--radius) + 4px);
-    --ease-out: cubic-bezier(0, 0, 0.2, 1);
     --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --animate-spin: spin 1s linear infinite;
     --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    --blur-sm: 8px;
     --blur-md: 12px;
     --aspect-video: 16 / 9;
     --default-transition-duration: 150ms;
@@ -6288,887 +6270,394 @@
     }
 }
 @layer components {
-  .kt-alert-overlay {
-    position: fixed;
-    inset: calc(var(--spacing) * 0);
-    z-index: 50;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: calc(var(--spacing) * 4);
-    background-color: color-mix(in srgb, #000 30%, transparent);
-  }
-    @supports (color: color-mix(in lab, red, red)) {
-  .kt-alert-overlay {
-      background-color: color-mix(in oklab, var(--color-black) 30%, transparent);
-  }
-    }
-  .kt-alert-overlay {
-    --tw-backdrop-blur: blur(var(--blur-sm));
-    -webkit-backdrop-filter: var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);
-    backdrop-filter: var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);
-    transition-property: opacity;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-    --tw-duration: 300ms;
-    transition-duration: 300ms;
-  }
-  .kt-alert-modal {
-    position: relative;
-    margin-inline: auto;
+  .kt-alert {
     display: flex;
     width: 100%;
-    max-width: var(--container-md);
-    flex-direction: column;
-    border-radius: calc(var(--radius) + 4px);
-    background-color: var(--popover);
-    color: var(--popover-foreground);
-    border-style: var(--tw-border-style);
-    border-width: 1px;
-    border-color: var(--border);
-    --tw-shadow: 0 4px 6px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 2px 4px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
-    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    transition-property: all;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-    --tw-duration: 300ms;
-    transition-duration: 300ms;
-    --tw-ease: var(--ease-out);
-    transition-timing-function: var(--ease-out);
-    animation: fadeIn 0.3s ease-out, zoomIn 0.3s ease-out;
-  }
-  .kt-alert-container {
-    position: relative;
-    display: flex;
-    width: 100%;
-    flex-direction: column;
-    border-radius: calc(var(--radius) + 4px);
-    background-color: var(--popover);
-    color: var(--popover-foreground);
-    border-style: var(--tw-border-style);
-    border-width: 1px;
-    border-color: var(--border);
-    --tw-shadow: 0 4px 6px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 2px 4px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
-    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    transition-property: all;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-    --tw-duration: 300ms;
-    transition-duration: 300ms;
-    --tw-ease: var(--ease-out);
-    transition-timing-function: var(--ease-out);
-    animation: fadeIn 0.3s ease-out, zoomIn 0.3s ease-out;
-  }
-  .kt-alert-modal > *:not(.kt-alert-close-button),	.kt-alert-container > *:not(.kt-alert-close-button) {
-    padding-inline: calc(var(--spacing) * 5);
-  }
-  .kt-alert-modal > *:first-child:not(.kt-alert-close-button),	.kt-alert-container > *:first-child:not(.kt-alert-close-button) {
-    padding-top: calc(var(--spacing) * 5);
-  }
-  .kt-alert-modal > *:last-child:not(.kt-alert-close-button),	.kt-alert-container > *:last-child:not(.kt-alert-close-button) {
-    padding-bottom: calc(var(--spacing) * 5);
-  }
-  .kt-alert-icon {
-    margin-inline: auto;
-    margin-bottom: calc(var(--spacing) * 4);
-    width: calc(var(--spacing) * 16);
-    height: calc(var(--spacing) * 16);
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: calc(infinity * 1px);
-    transition-delay: 100ms;
-    --tw-duration: 300ms;
-    transition-duration: 300ms;
-    animation: fadeIn 0.3s ease-out 0.1s both, zoomInSmall 0.3s ease-out 0.1s both;
+    align-items: stretch;
   }
   .kt-alert-title {
-    margin-bottom: calc(var(--spacing) * 3);
-    text-align: center;
-    font-size: var(--text-xl);
-    line-height: var(--tw-leading, var(--text-xl--line-height));
-    --tw-font-weight: var(--font-weight-semibold);
-    font-weight: var(--font-weight-semibold);
-    color: var(--popover-foreground);
-    --tw-leading: var(--leading-tight);
-    line-height: var(--leading-tight);
+    flex-grow: 1;
+    --tw-tracking: var(--tracking-tight);
+    letter-spacing: var(--tracking-tight);
   }
-  .kt-alert-message {
-    margin-bottom: calc(var(--spacing) * 6);
-    text-align: center;
-    font-size: var(--text-base);
-    line-height: var(--tw-leading, var(--text-base--line-height));
-    color: var(--muted-foreground);
-    --tw-leading: var(--leading-relaxed);
-    line-height: var(--leading-relaxed);
+  .kt-alert-toolbar {
+    display: flex;
+    align-items: baseline;
+    gap: calc(var(--spacing) * 2.5);
   }
   .kt-alert-actions {
-    margin-top: calc(var(--spacing) * 6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: calc(var(--spacing) * 3);
-  }
-  .kt-alert-confirm-button {
-    border-radius: var(--radius);
-    padding-inline: calc(var(--spacing) * 6);
-    padding-block: calc(var(--spacing) * 3);
-    font-size: var(--text-sm);
-    line-height: var(--tw-leading, var(--text-sm--line-height));
-    --tw-font-weight: var(--font-weight-medium);
-    font-weight: var(--font-weight-medium);
-    background-color: var(--primary);
-    color: var(--primary-foreground);
-  }
-      @media (hover: hover) {
-    .kt-alert-confirm-button:hover {
-        background-color: var(--primary);
-    }
-        @supports (color: color-mix(in lab, red, red)) {
-    .kt-alert-confirm-button:hover {
-          background-color: color-mix(in oklab, var(--primary) 90%, transparent);
-    }
-        }
-      }
-    .kt-alert-confirm-button:focus {
-      background-color: var(--primary);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    .kt-alert-confirm-button:focus {
-        background-color: color-mix(in oklab, var(--primary) 90%, transparent);
-    }
-      }
-    .kt-alert-confirm-button:active {
-      background-color: var(--primary);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    .kt-alert-confirm-button:active {
-        background-color: color-mix(in oklab, var(--primary) 80%, transparent);
-    }
-      }
-    .kt-alert-confirm-button:focus-visible {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-    .kt-alert-confirm-button:focus-visible {
-      --tw-ring-color: var(--ring);
-    }
-    .kt-alert-confirm-button:focus-visible {
-      --tw-ring-offset-width: 2px;
-      --tw-ring-offset-shadow: var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-    }
-  .kt-alert-confirm-button {
-    transition-property: all;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-    --tw-duration: 200ms;
-    transition-duration: 200ms;
-    --tw-ease: var(--ease-in-out);
-    transition-timing-function: var(--ease-in-out);
-    --tw-shadow: 0 1px 3px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 1px 2px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
-    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-  }
-      @media (hover: hover) {
-    .kt-alert-confirm-button:hover {
-        --tw-shadow: 0 4px 6px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 2px 4px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
-        box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-      }
-  .kt-alert-cancel-button {
-    border-radius: var(--radius);
-    padding-inline: calc(var(--spacing) * 6);
-    padding-block: calc(var(--spacing) * 3);
-    font-size: var(--text-sm);
-    line-height: var(--tw-leading, var(--text-sm--line-height));
-    --tw-font-weight: var(--font-weight-medium);
-    font-weight: var(--font-weight-medium);
-    background-color: var(--secondary);
-    color: var(--secondary-foreground);
-  }
-      @media (hover: hover) {
-    .kt-alert-cancel-button:hover {
-        background-color: var(--secondary);
-    }
-        @supports (color: color-mix(in lab, red, red)) {
-    .kt-alert-cancel-button:hover {
-          background-color: color-mix(in oklab, var(--secondary) 80%, transparent);
-    }
-        }
-      }
-    .kt-alert-cancel-button:focus {
-      background-color: var(--secondary);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    .kt-alert-cancel-button:focus {
-        background-color: color-mix(in oklab, var(--secondary) 80%, transparent);
-    }
-      }
-    .kt-alert-cancel-button:active {
-      background-color: var(--secondary);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    .kt-alert-cancel-button:active {
-        background-color: color-mix(in oklab, var(--secondary) 70%, transparent);
-    }
-      }
-    .kt-alert-cancel-button:focus-visible {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-    .kt-alert-cancel-button:focus-visible {
-      --tw-ring-color: var(--ring);
-    }
-    .kt-alert-cancel-button:focus-visible {
-      --tw-ring-offset-width: 2px;
-      --tw-ring-offset-shadow: var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-    }
-  .kt-alert-cancel-button {
-    transition-property: all;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-    --tw-duration: 200ms;
-    transition-duration: 200ms;
-    --tw-ease: var(--ease-in-out);
-    transition-timing-function: var(--ease-in-out);
-    --tw-shadow: 0 1px 3px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 1px 2px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
-    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-  }
-      @media (hover: hover) {
-    .kt-alert-cancel-button:hover {
-        --tw-shadow: 0 4px 6px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 2px 4px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
-        box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-      }
-  .kt-alert-close-button {
-    position: absolute;
-    top: calc(var(--spacing) * 4);
-    right: calc(var(--spacing) * 4);
-    width: calc(var(--spacing) * 8);
-    height: calc(var(--spacing) * 8);
-    border-radius: var(--radius);
-    color: var(--muted-foreground);
-  }
-      @media (hover: hover) {
-    .kt-alert-close-button:hover {
-        color: var(--popover-foreground);
-    }
-      }
-      @media (hover: hover) {
-    .kt-alert-close-button:hover {
-        background-color: var(--muted);
-    }
-      }
-    .kt-alert-close-button:focus-visible {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-    .kt-alert-close-button:focus-visible {
-      --tw-ring-color: var(--ring);
-    }
-    .kt-alert-close-button:focus-visible {
-      --tw-ring-offset-width: 2px;
-      --tw-ring-offset-shadow: var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-    }
-  .kt-alert-close-button {
-    transition-property: all;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-    --tw-duration: 200ms;
-    transition-duration: 200ms;
-    --tw-ease: var(--ease-in-out);
-    transition-timing-function: var(--ease-in-out);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .kt-alert-input {
-    width: 100%;
-    padding-inline: calc(var(--spacing) * 4);
-    padding-block: calc(var(--spacing) * 3);
-    font-size: var(--text-base);
-    line-height: var(--tw-leading, var(--text-base--line-height));
-    border-radius: var(--radius);
-    border-style: var(--tw-border-style);
-    border-width: 1px;
-    border-color: var(--input);
-    background-color: var(--background);
-  }
-    .kt-alert-input:focus-visible {
-      border-color: var(--ring);
-    }
-    .kt-alert-input:focus-visible {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-    .kt-alert-input:focus-visible {
-      --tw-ring-color: var(--ring);
-    }
-    .kt-alert-input:focus-visible {
-      --tw-ring-offset-width: 2px;
-      --tw-ring-offset-shadow: var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-    }
-  .kt-alert-input {
-    transition-property: all;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-    --tw-duration: 200ms;
-    transition-duration: 200ms;
-    --tw-ease: var(--ease-in-out);
-    transition-timing-function: var(--ease-in-out);
-  }
-    .kt-alert-input::placeholder {
-      color: var(--muted-foreground);
-    }
-  .kt-alert-input-label {
-    margin-bottom: calc(var(--spacing) * 3);
-    display: block;
-    font-size: var(--text-sm);
-    line-height: var(--tw-leading, var(--text-sm--line-height));
-    --tw-font-weight: var(--font-weight-medium);
-    font-weight: var(--font-weight-medium);
-    color: var(--popover-foreground);
-  }
-  .kt-alert-custom-content {
-    margin-top: calc(var(--spacing) * 6);
-  }
-  .kt-alert-loader {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: calc(var(--spacing) * 6);
-    height: calc(var(--spacing) * 6);
-    animation: var(--animate-spin);
-  }
-  .kt-alert-loader::before {
-    content: '';
-    width: calc(var(--spacing) * 6);
-    height: calc(var(--spacing) * 6);
-    border-radius: calc(infinity * 1px);
-    border-style: var(--tw-border-style);
-    border-width: 2px;
-    border-color: var(--muted);
-    border-top-color: var(--primary);
-    animation: var(--animate-spin);
-  }
-  .kt-alert-confirm-button:disabled {
-    cursor: not-allowed;
-    opacity: 75%;
-    position: relative;
-  }
-  .kt-alert-confirm-button:disabled::after {
-    content: '';
-    position: absolute;
-    inset: calc(var(--spacing) * 0);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
-    border-radius: calc(infinity * 1px);
-    border-style: var(--tw-border-style);
-    border-width: 2px;
-    border-color: var(--primary-foreground);
-    border-top-color: transparent;
-    animation: var(--animate-spin);
-  }
-}
-@layer components {
-  .kt-alert-input[type="text"],	.kt-alert-input[type="email"],	.kt-alert-input[type="password"],	.kt-alert-input[type="number"],	.kt-alert-input[type="url"],	textarea.kt-alert-input {
-    width: 100%;
-    padding-inline: calc(var(--spacing) * 4);
-    padding-block: calc(var(--spacing) * 3);
-    font-size: var(--text-base);
-    line-height: var(--tw-leading, var(--text-base--line-height));
-    border-radius: var(--radius);
-    border-style: var(--tw-border-style);
-    border-width: 1px;
-    border-color: var(--input);
-    background-color: var(--background);
-  }
-    :is(.kt-alert-input[type="text"],.kt-alert-input[type="email"],.kt-alert-input[type="password"],.kt-alert-input[type="number"],.kt-alert-input[type="url"],textarea.kt-alert-input):focus-visible {
-      border-color: var(--ring);
-    }
-    :is(.kt-alert-input[type="text"],.kt-alert-input[type="email"],.kt-alert-input[type="password"],.kt-alert-input[type="number"],.kt-alert-input[type="url"],textarea.kt-alert-input):focus-visible {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-    :is(.kt-alert-input[type="text"],.kt-alert-input[type="email"],.kt-alert-input[type="password"],.kt-alert-input[type="number"],.kt-alert-input[type="url"],textarea.kt-alert-input):focus-visible {
-      --tw-ring-color: var(--ring);
-    }
-    :is(.kt-alert-input[type="text"],.kt-alert-input[type="email"],.kt-alert-input[type="password"],.kt-alert-input[type="number"],.kt-alert-input[type="url"],textarea.kt-alert-input):focus-visible {
-      --tw-ring-offset-width: 2px;
-      --tw-ring-offset-shadow: var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-    }
-  .kt-alert-input[type="text"],	.kt-alert-input[type="email"],	.kt-alert-input[type="password"],	.kt-alert-input[type="number"],	.kt-alert-input[type="url"],	textarea.kt-alert-input {
-    transition-property: all;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-    --tw-duration: 200ms;
-    transition-duration: 200ms;
-    --tw-ease: var(--ease-in-out);
-    transition-timing-function: var(--ease-in-out);
-  }
-    :is(.kt-alert-input[type="text"],.kt-alert-input[type="email"],.kt-alert-input[type="password"],.kt-alert-input[type="number"],.kt-alert-input[type="url"],textarea.kt-alert-input)::placeholder {
-      color: var(--muted-foreground);
-    }
-  select.kt-alert-input {
-    width: 100%;
-    padding-inline: calc(var(--spacing) * 4);
-    padding-block: calc(var(--spacing) * 3);
-    font-size: var(--text-base);
-    line-height: var(--tw-leading, var(--text-base--line-height));
-    border-radius: var(--radius);
-    border-style: var(--tw-border-style);
-    border-width: 1px;
-    border-color: var(--input);
-    background-color: var(--background);
-  }
-    select.kt-alert-input:focus-visible {
-      border-color: var(--ring);
-    }
-    select.kt-alert-input:focus-visible {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-    select.kt-alert-input:focus-visible {
-      --tw-ring-color: var(--ring);
-    }
-    select.kt-alert-input:focus-visible {
-      --tw-ring-offset-width: 2px;
-      --tw-ring-offset-shadow: var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-    }
-  select.kt-alert-input {
-    transition-property: all;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-    --tw-duration: 200ms;
-    transition-duration: 200ms;
-    --tw-ease: var(--ease-in-out);
-    transition-timing-function: var(--ease-in-out);
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    background-size: 16px 12px;
-    padding-right: 2.5rem;
-  }
-  .kt-alert-input-label input[type="radio"],	.kt-alert-input-label input[type="checkbox"] {
-    margin-right: calc(var(--spacing) * 3);
-    width: calc(var(--spacing) * 4);
-    height: calc(var(--spacing) * 4);
-    border-radius: 0.25rem;
-    border-color: var(--input);
-    color: var(--primary);
-  }
-    :is(.kt-alert-input-label input[type="radio"],.kt-alert-input-label input[type="checkbox"]):focus {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-    :is(.kt-alert-input-label input[type="radio"],.kt-alert-input-label input[type="checkbox"]):focus {
-      --tw-ring-color: var(--ring);
-    }
-  .kt-alert-input-label label {
-    display: flex;
-    cursor: pointer;
-    align-items: center;
-    font-size: var(--text-base);
-    line-height: var(--tw-leading, var(--text-base--line-height));
-    color: var(--popover-foreground);
-    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-    --tw-duration: 200ms;
-    transition-duration: 200ms;
-  }
-      @media (hover: hover) {
-    :is(.kt-alert-input-label label):hover {
-        color: var(--popover-foreground);
-    }
-      }
-  .kt-alert-input-label label {
-    padding-block: calc(var(--spacing) * 2);
-  }
-    :where(:is(.kt-alert-input-label fieldset) > :not(:last-child)) {
-      --tw-space-y-reverse: 0;
-      margin-block-start: calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));
-      margin-block-end: calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)));
-    }
-  .kt-alert-input-label legend {
-    margin-bottom: calc(var(--spacing) * 3);
-    font-size: var(--text-sm);
-    line-height: var(--tw-leading, var(--text-sm--line-height));
-    --tw-font-weight: var(--font-weight-medium);
-    font-weight: var(--font-weight-medium);
-    color: var(--popover-foreground);
-  }
-  .kt-alert-input-error {
-    margin-top: calc(var(--spacing) * 2);
-    font-size: var(--text-sm);
-    line-height: var(--tw-leading, var(--text-sm--line-height));
-    color: var(--destructive);
     display: flex;
     align-items: center;
     gap: calc(var(--spacing) * 2);
-    --tw-duration: 200ms;
-    transition-duration: 200ms;
-    animation: fadeIn 0.2s ease-out;
   }
-  .kt-alert-input-error::before {
-    content: '⚠';
-    color: var(--destructive);
+  .kt-alert-description {
+    font-size: var(--text-sm);
+    line-height: var(--tw-leading, var(--text-sm--line-height));
   }
-  .kt-alert-input-error + .kt-alert-input-label .kt-alert-input,	.kt-alert-input-label .kt-alert-input[aria-invalid="true"] {
-    border-color: var(--destructive);
+    .kt-alert-description p {
+      margin-bottom: calc(var(--spacing) * 2);
+    }
+    .kt-alert-description p {
+      --tw-leading: var(--leading-relaxed);
+      line-height: var(--leading-relaxed);
+    }
+  .kt-alert-content {
+    width: 100%;
+    flex-grow: 1;
   }
-    :is(.kt-alert-input-error + .kt-alert-input-label .kt-alert-input,.kt-alert-input-label .kt-alert-input[aria-invalid="true"]):focus-visible {
+    :where(.kt-alert-content > :not(:last-child)) {
+      --tw-space-y-reverse: 0;
+      margin-block-start: calc(calc(var(--spacing) * 1.5) * var(--tw-space-y-reverse));
+      margin-block-end: calc(calc(var(--spacing) * 1.5) * calc(1 - var(--tw-space-y-reverse)));
+    }
+    .kt-alert-content .kt-alert-title {
+      --tw-font-weight: var(--font-weight-semibold);
+      font-weight: var(--font-weight-semibold);
+    }
+  .kt-alert-icon {
+    flex-shrink: 0;
+  }
+  .kt-alert-close {
+    width: calc(var(--spacing) * 4);
+    height: calc(var(--spacing) * 4);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+    .kt-alert-close i {
+      font-size: var(--text-xs);
+      line-height: var(--tw-leading, var(--text-xs--line-height));
+      color: var(--muted-foreground);
+    }
+    .kt-alert-close  > svg {
+      width: calc(var(--spacing) * 4);
+      height: calc(var(--spacing) * 4);
+      color: var(--muted-foreground);
+    }
+      :is(.kt-alert-close:focus,.kt-alert-close:hover) i,:is(.kt-alert-close:focus,.kt-alert-close:hover)  > svg {
+        color: var(--foreground);
+      }
+  .kt-alert {
+    gap: calc(var(--spacing) * 2.5);
+    border-radius: var(--radius);
+    padding: calc(var(--spacing) * 3.5);
+    font-size: var(--text-sm);
+    line-height: var(--tw-leading, var(--text-sm--line-height));
+  }
+    .kt-alert .kt-alert-icon svg {
+      width: calc(var(--spacing) * 5);
+      height: calc(var(--spacing) * 5);
+    }
+    .kt-alert .kt-alert-toolbar {
+      padding-top: calc(var(--spacing) * 0.25);
+    }
+  .kt-alert-sm {
+    gap: calc(var(--spacing) * 1.5);
+    border-radius: calc(var(--radius) - 2px);
+    padding-inline: calc(var(--spacing) * 2.5);
+    padding-block: calc(var(--spacing) * 2);
+    font-size: var(--text-xs);
+    line-height: var(--tw-leading, var(--text-xs--line-height));
+  }
+    .kt-alert-sm .kt-alert-close {
+      width: calc(var(--spacing) * 3.5);
+      height: calc(var(--spacing) * 3.5);
+    }
+      :is(.kt-alert-sm .kt-alert-close)  > svg {
+        width: calc(var(--spacing) * 3.5);
+        height: calc(var(--spacing) * 3.5);
+      }
+    .kt-alert-sm .kt-alert-icon svg {
+      width: calc(var(--spacing) * 4);
+      height: calc(var(--spacing) * 4);
+    }
+  .kt-alert-lg {
+    gap: calc(var(--spacing) * 2.5);
+    border-radius: calc(var(--radius) - 2px);
+    padding: calc(var(--spacing) * 4);
+    font-size: var(--text-base);
+    line-height: var(--tw-leading, var(--text-base--line-height));
+  }
+    .kt-alert-lg .kt-alert-icon svg {
+      width: calc(var(--spacing) * 6);
+      height: calc(var(--spacing) * 6);
+    }
+    .kt-alert-lg .kt-alert-toolbar {
+      padding-top: calc(var(--spacing) * 0.75);
+    }
+  .kt-alert {
+    background-color: var(--muted);
+    color: var(--foreground);
+  }
+  .kt-alert-primary {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+    .kt-alert-primary .kt-alert-close > svg {
+      color: var(--primary-foreground);
+    }
+  .kt-alert-destructive {
+    background-color: var(--destructive);
+    color: var(--destructive-foreground);
+  }
+    .kt-alert-destructive .kt-alert-close > svg {
+      color: var(--destructive-foreground);
+    }
+  .kt-alert-success {
+    background-color: var(--color-green-500);
+    color: var(--color-white);
+  }
+    .kt-alert-success .kt-alert-close > svg {
+      color: var(--color-white);
+    }
+  .kt-alert-info {
+    background-color: var(--color-violet-600);
+    color: var(--color-white);
+  }
+    .kt-alert-info .kt-alert-close > svg {
+      color: var(--color-white);
+    }
+  .kt-alert-warning {
+    background-color: var(--color-yellow-500);
+    color: var(--color-white);
+  }
+    .kt-alert-warning .kt-alert-close > svg {
+      color: var(--color-white);
+    }
+  .kt-alert-mono {
+    background-color: var(--mono);
+    color: var(--mono-foreground);
+  }
+    .kt-alert-mono .kt-alert-close > svg {
+      color: var(--mono-foreground);
+    }
+      .kt-alert-mono.kt-alert-primary .kt-alert-icon {
+        color: var(--primary);
+      }
+      .kt-alert-mono.kt-alert-success .kt-alert-icon {
+        color: var(--color-green-500);
+      }
+      .kt-alert-mono.kt-alert-destructive .kt-alert-icon {
+        color: var(--destructive);
+      }
+      .kt-alert-mono.kt-alert-warning .kt-alert-icon {
+        color: var(--color-yellow-500);
+      }
+      .kt-alert-mono.kt-alert-info .kt-alert-icon {
+        color: var(--color-violet-600);
+      }
+    .kt-alert-outline .kt-alert-close {
+      width: calc(var(--spacing) * 4);
+      height: calc(var(--spacing) * 4);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+      :is(.kt-alert-outline .kt-alert-close)  > svg {
+        width: calc(var(--spacing) * 4);
+        height: calc(var(--spacing) * 4);
+        color: var(--muted-foreground);
+      }
+        :is(:is(.kt-alert-outline .kt-alert-close):focus,:is(.kt-alert-outline .kt-alert-close):hover)  > svg {
+          color: var(--foreground);
+        }
+  .kt-alert-outline {
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+    border-color: var(--border);
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+    .kt-alert-outline.kt-alert-primary {
+      border-style: var(--tw-border-style);
+      border-width: 1px;
+      border-color: var(--border);
+      background-color: var(--background);
+      color: var(--primary);
+    }
+    .kt-alert-outline.kt-alert-destructive {
+      border-style: var(--tw-border-style);
+      border-width: 1px;
+      border-color: var(--border);
+      background-color: var(--background);
+      color: var(--destructive);
+    }
+    .kt-alert-outline.kt-alert-success {
+      border-style: var(--tw-border-style);
+      border-width: 1px;
+      border-color: var(--border);
+      background-color: var(--background);
+      color: var(--color-green-500);
+    }
+    .kt-alert-outline.kt-alert-info {
+      border-style: var(--tw-border-style);
+      border-width: 1px;
+      border-color: var(--border);
+      background-color: var(--background);
+      color: var(--color-violet-600);
+    }
+    .kt-alert-outline.kt-alert-warning {
+      border-style: var(--tw-border-style);
+      border-width: 1px;
+      border-color: var(--border);
+      background-color: var(--background);
+      color: var(--color-yellow-500);
+    }
+    .kt-alert-outline.kt-alert-mono {
+      border-style: var(--tw-border-style);
+      border-width: 1px;
+      border-color: var(--border);
+      background-color: var(--background);
+      color: var(--mono);
+    }
+  .kt-alert-light {
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+    border-color: var(--border);
+    background-color: var(--muted);
+    color: var(--foreground);
+  }
+    .kt-alert-light .kt-alert-icon > svg {
+      color: var(--muted-foreground);
+    }
+    .kt-alert-light .kt-alert-close {
+      width: calc(var(--spacing) * 4);
+      height: calc(var(--spacing) * 4);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+      :is(.kt-alert-light .kt-alert-close)  > svg {
+        width: calc(var(--spacing) * 4);
+        height: calc(var(--spacing) * 4);
+        color: var(--muted-foreground);
+      }
+        :is(:is(.kt-alert-light .kt-alert-close):focus,:is(.kt-alert-light .kt-alert-close):hover)  > svg {
+          color: var(--foreground);
+        }
+    .kt-alert-light.kt-alert-primary {
+      border-style: var(--tw-border-style);
+      border-width: 1px;
+      border-color: var(--primary);
+    }
+      @supports (color: color-mix(in lab, red, red)) {
+    .kt-alert-light.kt-alert-primary {
+        border-color: color-mix(in oklab, var(--primary) 10%, transparent);
+    }
+      }
+    .kt-alert-light.kt-alert-primary {
+      background-color: var(--primary);
+    }
+      @supports (color: color-mix(in lab, red, red)) {
+    .kt-alert-light.kt-alert-primary {
+        background-color: color-mix(in oklab, var(--primary) 5%, transparent);
+    }
+      }
+    .kt-alert-light.kt-alert-primary {
+      color: var(--foreground);
+    }
+      .kt-alert-light.kt-alert-primary .kt-alert-icon > svg {
+        color: var(--primary);
+      }
+    .kt-alert-light.kt-alert-destructive {
+      border-style: var(--tw-border-style);
+      border-width: 1px;
       border-color: var(--destructive);
     }
-    :is(.kt-alert-input-error + .kt-alert-input-label .kt-alert-input,.kt-alert-input-label .kt-alert-input[aria-invalid="true"]):focus-visible {
-      --tw-ring-color: var(--destructive);
+      @supports (color: color-mix(in lab, red, red)) {
+    .kt-alert-light.kt-alert-destructive {
+        border-color: color-mix(in oklab, var(--destructive) 10%, transparent);
     }
-}
-@layer components {
-    [data-kt-alert-type="success"] .kt-alert-icon {
-      background-color: var(--color-green-100);
-      color: var(--color-green-600);
+      }
+    .kt-alert-light.kt-alert-destructive {
+      background-color: var(--destructive);
     }
-    [data-kt-alert-type="success"] .kt-alert-confirm-button {
-      background-color: var(--color-green-600);
-      color: var(--color-white);
+      @supports (color: color-mix(in lab, red, red)) {
+    .kt-alert-light.kt-alert-destructive {
+        background-color: color-mix(in oklab, var(--destructive) 5%, transparent);
     }
-        @media (hover: hover) {
-      :is([data-kt-alert-type="success"] .kt-alert-confirm-button):hover {
-          background-color: var(--color-green-700);
+      }
+    .kt-alert-light.kt-alert-destructive {
+      color: var(--foreground);
+    }
+      .kt-alert-light.kt-alert-destructive .kt-alert-icon > svg {
+        color: var(--destructive);
+      }
+    .kt-alert-light.kt-alert-success {
+      border-style: var(--tw-border-style);
+      border-width: 1px;
+      border-color: var(--color-green-200);
+      background-color: var(--color-green-50);
+      color: var(--foreground);
+    }
+      .kt-alert-light.kt-alert-success:is(.dark *) {
+        border-color: color-mix(in srgb, oklch(26.6% 0.065 152.934) 50%, transparent);
+      }
+        @supports (color: color-mix(in lab, red, red)) {
+      .kt-alert-light.kt-alert-success:is(.dark *) {
+          border-color: color-mix(in oklab, var(--color-green-950) 50%, transparent);
       }
         }
-      :is([data-kt-alert-type="success"] .kt-alert-confirm-button):focus {
-        background-color: var(--color-green-700);
+      .kt-alert-light.kt-alert-success:is(.dark *) {
+        background-color: color-mix(in srgb, oklch(26.6% 0.065 152.934) 30%, transparent);
       }
-      :is([data-kt-alert-type="success"] .kt-alert-confirm-button):active {
-        background-color: var(--color-green-800);
-      }
-      :is([data-kt-alert-type="success"] .kt-alert-confirm-button):focus-visible {
-        --tw-ring-color: var(--color-green-500);
-      }
-    [data-kt-alert-type="error"] .kt-alert-icon {
-      background-color: var(--color-red-100);
-      color: var(--color-red-600);
-    }
-    [data-kt-alert-type="error"] .kt-alert-confirm-button {
-      background-color: var(--color-red-600);
-      color: var(--color-white);
-    }
-        @media (hover: hover) {
-      :is([data-kt-alert-type="error"] .kt-alert-confirm-button):hover {
-          background-color: var(--color-red-700);
+        @supports (color: color-mix(in lab, red, red)) {
+      .kt-alert-light.kt-alert-success:is(.dark *) {
+          background-color: color-mix(in oklab, var(--color-green-950) 30%, transparent);
       }
         }
-      :is([data-kt-alert-type="error"] .kt-alert-confirm-button):focus {
-        background-color: var(--color-red-700);
+      .kt-alert-light.kt-alert-success .kt-alert-icon > svg {
+        color: var(--color-green-500);
       }
-      :is([data-kt-alert-type="error"] .kt-alert-confirm-button):active {
-        background-color: var(--color-red-800);
-      }
-      :is([data-kt-alert-type="error"] .kt-alert-confirm-button):focus-visible {
-        --tw-ring-color: var(--color-red-500);
-      }
-    [data-kt-alert-type="warning"] .kt-alert-icon {
-      background-color: var(--color-yellow-100);
-      color: var(--color-yellow-600);
+    .kt-alert-light.kt-alert-info {
+      border-style: var(--tw-border-style);
+      border-width: 1px;
+      border-color: var(--color-violet-200);
+      background-color: var(--color-violet-50);
+      color: var(--foreground);
     }
-    [data-kt-alert-type="warning"] .kt-alert-confirm-button {
-      background-color: var(--color-yellow-600);
-      color: var(--color-white);
-    }
-        @media (hover: hover) {
-      :is([data-kt-alert-type="warning"] .kt-alert-confirm-button):hover {
-          background-color: var(--color-yellow-700);
+      .kt-alert-light.kt-alert-info:is(.dark *) {
+        border-color: color-mix(in srgb, oklch(28.3% 0.141 291.089) 50%, transparent);
+      }
+        @supports (color: color-mix(in lab, red, red)) {
+      .kt-alert-light.kt-alert-info:is(.dark *) {
+          border-color: color-mix(in oklab, var(--color-violet-950) 50%, transparent);
       }
         }
-      :is([data-kt-alert-type="warning"] .kt-alert-confirm-button):focus {
-        background-color: var(--color-yellow-700);
+      .kt-alert-light.kt-alert-info:is(.dark *) {
+        background-color: color-mix(in srgb, oklch(28.3% 0.141 291.089) 30%, transparent);
       }
-      :is([data-kt-alert-type="warning"] .kt-alert-confirm-button):active {
-        background-color: var(--color-yellow-800);
-      }
-      :is([data-kt-alert-type="warning"] .kt-alert-confirm-button):focus-visible {
-        --tw-ring-color: var(--color-yellow-500);
-      }
-    [data-kt-alert-type="info"] .kt-alert-icon {
-      background-color: var(--color-blue-100);
-      color: var(--color-blue-600);
-    }
-    [data-kt-alert-type="info"] .kt-alert-confirm-button {
-      background-color: var(--color-blue-600);
-      color: var(--color-white);
-    }
-        @media (hover: hover) {
-      :is([data-kt-alert-type="info"] .kt-alert-confirm-button):hover {
-          background-color: var(--color-blue-700);
+        @supports (color: color-mix(in lab, red, red)) {
+      .kt-alert-light.kt-alert-info:is(.dark *) {
+          background-color: color-mix(in oklab, var(--color-violet-950) 30%, transparent);
       }
         }
-      :is([data-kt-alert-type="info"] .kt-alert-confirm-button):focus {
-        background-color: var(--color-blue-700);
+      .kt-alert-light.kt-alert-info .kt-alert-icon > svg {
+        color: var(--color-violet-500);
       }
-      :is([data-kt-alert-type="info"] .kt-alert-confirm-button):active {
-        background-color: var(--color-blue-800);
-      }
-      :is([data-kt-alert-type="info"] .kt-alert-confirm-button):focus-visible {
-        --tw-ring-color: var(--color-blue-500);
-      }
-    [data-kt-alert-type="question"] .kt-alert-icon {
-      background-color: var(--color-purple-100);
-      color: var(--color-purple-600);
+    .kt-alert-light.kt-alert-warning {
+      border-style: var(--tw-border-style);
+      border-width: 1px;
+      border-color: var(--color-yellow-200);
+      background-color: var(--color-yellow-50);
+      color: var(--foreground);
     }
-    [data-kt-alert-type="question"] .kt-alert-confirm-button {
-      background-color: var(--color-purple-600);
-      color: var(--color-white);
-    }
-        @media (hover: hover) {
-      :is([data-kt-alert-type="question"] .kt-alert-confirm-button):hover {
-          background-color: var(--color-purple-700);
+      .kt-alert-light.kt-alert-warning:is(.dark *) {
+        border-color: color-mix(in srgb, oklch(28.6% 0.066 53.813) 50%, transparent);
+      }
+        @supports (color: color-mix(in lab, red, red)) {
+      .kt-alert-light.kt-alert-warning:is(.dark *) {
+          border-color: color-mix(in oklab, var(--color-yellow-950) 50%, transparent);
       }
         }
-      :is([data-kt-alert-type="question"] .kt-alert-confirm-button):focus {
-        background-color: var(--color-purple-700);
+      .kt-alert-light.kt-alert-warning:is(.dark *) {
+        background-color: color-mix(in srgb, oklch(28.6% 0.066 53.813) 30%, transparent);
       }
-      :is([data-kt-alert-type="question"] .kt-alert-confirm-button):active {
-        background-color: var(--color-purple-800);
+        @supports (color: color-mix(in lab, red, red)) {
+      .kt-alert-light.kt-alert-warning:is(.dark *) {
+          background-color: color-mix(in oklab, var(--color-yellow-950) 30%, transparent);
       }
-      :is([data-kt-alert-type="question"] .kt-alert-confirm-button):focus-visible {
-        --tw-ring-color: var(--color-purple-500);
+        }
+      .kt-alert-light.kt-alert-warning .kt-alert-icon > svg {
+        color: var(--color-yellow-500);
       }
-}
-@layer components {
-  [data-kt-alert-position="top"] {
-    align-items: flex-start;
-    justify-content: center;
-  }
-  [data-kt-alert-position="center"] {
-    align-items: center;
-    justify-content: center;
-  }
-  [data-kt-alert-position="bottom"] {
-    align-items: flex-end;
-    justify-content: center;
-  }
-  [data-kt-alert-position="top-start"] {
-    align-items: flex-start;
-    justify-content: flex-start;
-  }
-  [data-kt-alert-position="top-end"] {
-    align-items: flex-start;
-    justify-content: flex-end;
-  }
-  [data-kt-alert-position="bottom-start"] {
-    align-items: flex-end;
-    justify-content: flex-start;
-  }
-  [data-kt-alert-position="bottom-end"] {
-    align-items: flex-end;
-    justify-content: flex-end;
-  }
-}
-@layer components {
-  .kt-alert-modal:focus-within,	.kt-alert-container:focus-within {
-    --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    --tw-ring-color: var(--ring);
-    --tw-ring-offset-width: 2px;
-    --tw-ring-offset-shadow: var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  }
-  .kt-alert-confirm-button:disabled,	.kt-alert-cancel-button:disabled {
-    cursor: not-allowed;
-    opacity: 75%;
-  }
-  .kt-alert-input:disabled {
-    cursor: not-allowed;
-    background-color: var(--muted);
-    opacity: 75%;
-  }
-  .kt-alert-confirm-button,	.kt-alert-cancel-button {
-    transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
-    transition-property: all;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-    --tw-duration: 200ms;
-    transition-duration: 200ms;
-    --tw-ease: var(--ease-in-out);
-    transition-timing-function: var(--ease-in-out);
-  }
-  .kt-alert-confirm-button:hover,	.kt-alert-cancel-button:hover {
-    --tw-scale-x: 105%;
-    --tw-scale-y: 105%;
-    --tw-scale-z: 105%;
-    scale: var(--tw-scale-x) var(--tw-scale-y);
-  }
-  .kt-alert-confirm-button:active,	.kt-alert-cancel-button:active {
-    --tw-scale-x: 95%;
-    --tw-scale-y: 95%;
-    --tw-scale-z: 95%;
-    scale: var(--tw-scale-x) var(--tw-scale-y);
-  }
-  .kt-alert-close-button {
-    transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
-    transition-property: all;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-    --tw-duration: 200ms;
-    transition-duration: 200ms;
-    --tw-ease: var(--ease-in-out);
-    transition-timing-function: var(--ease-in-out);
-  }
-  .kt-alert-close-button:hover {
-    --tw-scale-x: 110%;
-    --tw-scale-y: 110%;
-    --tw-scale-z: 110%;
-    scale: var(--tw-scale-x) var(--tw-scale-y);
-  }
-  .kt-alert-modal:focus-visible,	.kt-alert-container:focus-visible {
-    --tw-outline-style: none;
-    outline-style: none;
-  }
-  .kt-alert-input:focus {
-    scale: 1.02;
-    transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
-  }
-}
-@layer components {
-    [dir='rtl'] .kt-alert-close-button {
-      right: auto;
-      left: calc(var(--spacing) * 4);
-    }
-    [dir='rtl'] .kt-alert-actions {
-      justify-content: center;
-    }
-    [dir='rtl'] select.kt-alert-input {
-      background-position: left 0.75rem center;
-      padding-left: 2.5rem;
-      padding-right: 1rem;
-    }
-    [dir='rtl'] .kt-alert-input-label input[type="radio"],[dir='rtl'] .kt-alert-input-label input[type="checkbox"] {
-      margin-right: calc(var(--spacing) * 0);
-      margin-left: calc(var(--spacing) * 3);
-    }
-}
-@layer components {
-    .dark .kt-alert-overlay {
-      background-color: color-mix(in srgb, #000 50%, transparent);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    .dark .kt-alert-overlay {
-        background-color: color-mix(in oklab, var(--color-black) 50%, transparent);
-    }
-      }
-    .dark .kt-alert-modal,.dark .kt-alert-container {
-      background-color: var(--popover);
-      color: var(--popover-foreground);
-    }
-    .dark .kt-alert-input {
-      border-color: var(--input);
-      background-color: var(--background);
-    }
-    .dark select.kt-alert-input {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
-    }
-    .dark [data-kt-alert-type="success"] .kt-alert-icon {
-      background-color: color-mix(in srgb, oklch(39.3% 0.095 152.535) 20%, transparent);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    .dark [data-kt-alert-type="success"] .kt-alert-icon {
-        background-color: color-mix(in oklab, var(--color-green-900) 20%, transparent);
-    }
-      }
-    .dark [data-kt-alert-type="success"] .kt-alert-icon {
-      color: var(--color-green-400);
-    }
-    .dark [data-kt-alert-type="error"] .kt-alert-icon {
-      background-color: color-mix(in srgb, oklch(39.6% 0.141 25.723) 20%, transparent);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    .dark [data-kt-alert-type="error"] .kt-alert-icon {
-        background-color: color-mix(in oklab, var(--color-red-900) 20%, transparent);
-    }
-      }
-    .dark [data-kt-alert-type="error"] .kt-alert-icon {
-      color: var(--color-red-400);
-    }
-    .dark [data-kt-alert-type="warning"] .kt-alert-icon {
-      background-color: color-mix(in srgb, oklch(42.1% 0.095 57.708) 20%, transparent);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    .dark [data-kt-alert-type="warning"] .kt-alert-icon {
-        background-color: color-mix(in oklab, var(--color-yellow-900) 20%, transparent);
-    }
-      }
-    .dark [data-kt-alert-type="warning"] .kt-alert-icon {
-      color: var(--color-yellow-400);
-    }
-    .dark [data-kt-alert-type="info"] .kt-alert-icon {
-      background-color: color-mix(in srgb, oklch(37.9% 0.146 265.522) 20%, transparent);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    .dark [data-kt-alert-type="info"] .kt-alert-icon {
-        background-color: color-mix(in oklab, var(--color-blue-900) 20%, transparent);
-    }
-      }
-    .dark [data-kt-alert-type="info"] .kt-alert-icon {
-      color: var(--color-blue-400);
-    }
-    .dark [data-kt-alert-type="question"] .kt-alert-icon {
-      background-color: color-mix(in srgb, oklch(38.1% 0.176 304.987) 20%, transparent);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    .dark [data-kt-alert-type="question"] .kt-alert-icon {
-        background-color: color-mix(in oklab, var(--color-purple-900) 20%, transparent);
-    }
-      }
-    .dark [data-kt-alert-type="question"] .kt-alert-icon {
-      color: var(--color-purple-400);
-    }
-}
-@layer utilities {
-  .animate-in {
-    animation-fill-mode: both;
-  }
-  .fade-in-0 {
-    animation-name: fadeIn;
-  }
-  .zoom-in-95 {
-    animation-name: zoomIn;
-  }
-  .zoom-in-50 {
-    animation-name: zoomInSmall;
-  }
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  @keyframes zoomIn {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-  @keyframes zoomInSmall {
-    from {
-      opacity: 0;
-      transform: scale(0.5);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
 }
 @layer components {
     :where(.kt-form > :not(:last-child)) {
@@ -8705,1118 +8194,6 @@
     opacity: 0.6;
   }
 }
-@layer utilities {
-  [data-kt-datepicker-input-wrapper] {
-    position: relative;
-    display: inline-flex;
-    width: 100%;
-    cursor: pointer;
-    align-items: center;
-    height: calc(var(--spacing) * 8.5);
-    border-radius: calc(var(--radius) - 2px);
-    border-style: var(--tw-border-style);
-    border-width: 1px;
-    border-color: var(--input);
-    background-color: var(--background);
-    --tw-shadow: 0 1px 2px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.05));
-    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    --tw-shadow-color: rgba(0,0,0,0.05);
-  }
-    @supports (color: color-mix(in lab, red, red)) {
-  [data-kt-datepicker-input-wrapper] {
-      --tw-shadow-color: color-mix(in oklab, rgba(0,0,0,0.05) var(--tw-shadow-alpha), transparent);
-  }
-    }
-  [data-kt-datepicker-input-wrapper] {
-    transition-property: color,box-shadow;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-  }
-    [data-kt-datepicker-input-wrapper]:focus-within {
-      border-color: var(--ring);
-    }
-    [data-kt-datepicker-input-wrapper]:focus-within {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-    [data-kt-datepicker-input-wrapper]:focus-within {
-      --tw-ring-color: var(--ring);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    [data-kt-datepicker-input-wrapper]:focus-within {
-        --tw-ring-color: color-mix(in oklab, var(--ring) 30%, transparent);
-    }
-      }
-    [data-kt-datepicker-input-wrapper]:focus-within {
-      --tw-outline-style: none;
-      outline-style: none;
-    }
-      @media (hover: hover) {
-    [data-kt-datepicker-input-wrapper]:hover {
-        border-color: var(--ring);
-    }
-        @supports (color: color-mix(in lab, red, red)) {
-    [data-kt-datepicker-input-wrapper]:hover {
-          border-color: color-mix(in oklab, var(--ring) 50%, transparent);
-    }
-        }
-      }
-    [data-kt-datepicker-input-wrapper]:disabled {
-      cursor: not-allowed;
-    }
-    [data-kt-datepicker-input-wrapper]:disabled {
-      opacity: 60%;
-    }
-    [data-kt-datepicker-input-wrapper][aria-invalid="true"] {
-      border-color: var(--destructive);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    [data-kt-datepicker-input-wrapper][aria-invalid="true"] {
-        border-color: color-mix(in oklab, var(--destructive) 60%, transparent);
-    }
-      }
-    [data-kt-datepicker-input-wrapper][aria-invalid="true"] {
-      --tw-ring-color: var(--destructive);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    [data-kt-datepicker-input-wrapper][aria-invalid="true"] {
-        --tw-ring-color: color-mix(in oklab, var(--destructive) 10%, transparent);
-    }
-      }
-  [data-kt-datepicker-input-wrapper] {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-  [data-kt-datepicker-segmented-input] {
-    display: inline-flex;
-    min-width: calc(var(--spacing) * 0);
-    flex: 1;
-    align-items: center;
-    border-style: var(--tw-border-style);
-    border-width: 0px;
-    background-color: transparent;
-    --tw-shadow: 0 0 #0000;
-    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-  }
-    [data-kt-datepicker-segmented-input]:focus-within {
-      border-style: var(--tw-border-style);
-      border-width: 0px;
-    }
-    [data-kt-datepicker-segmented-input]:focus-within {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-      @media (hover: hover) {
-    [data-kt-datepicker-segmented-input]:hover {
-        border-style: var(--tw-border-style);
-        border-width: 0px;
-    }
-      }
-  [data-kt-datepicker-segmented-input] {
-    font-size: 0.8125rem;
-    --tw-leading: var(--text-sm--line-height);
-    line-height: var(--text-sm--line-height);
-    font-size: 0;
-    letter-spacing: 0;
-    word-spacing: 0;
-  }
-  [data-kt-datepicker-segmented-range-input] {
-    gap: calc(var(--spacing) * 0.5);
-  }
-  [data-segment] {
-    display: inline-flex;
-    min-width: 2rem;
-    align-items: center;
-    justify-content: center;
-    padding-inline: calc(var(--spacing) * 0);
-    padding-block: calc(var(--spacing) * 0);
-    font-size: var(--text-sm);
-    line-height: var(--tw-leading, var(--text-sm--line-height));
-    --tw-font-weight: var(--font-weight-medium);
-    font-weight: var(--font-weight-medium);
-    color: var(--foreground);
-    border-radius: calc(var(--radius) - 4px);
-    transition-property: all;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-    --tw-outline-style: none;
-    outline-style: none;
-  }
-    [data-segment]:focus {
-      background-color: var(--accent);
-    }
-    [data-segment]:focus {
-      color: var(--accent-foreground);
-    }
-    [data-segment]:focus {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-    [data-segment]:focus {
-      --tw-ring-color: var(--ring);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    [data-segment]:focus {
-        --tw-ring-color: color-mix(in oklab, var(--ring) 50%, transparent);
-    }
-      }
-      @media (hover: hover) {
-    [data-segment]:hover {
-        background-color: var(--accent);
-    }
-        @supports (color: color-mix(in lab, red, red)) {
-    [data-segment]:hover {
-          background-color: color-mix(in oklab, var(--accent) 50%, transparent);
-    }
-        }
-      }
-    [data-segment]:disabled {
-      cursor: not-allowed;
-    }
-    [data-segment]:disabled {
-      opacity: 50%;
-    }
-    [data-segment][aria-invalid="true"] {
-      background-color: var(--destructive);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    [data-segment][aria-invalid="true"] {
-        background-color: color-mix(in oklab, var(--destructive) 10%, transparent);
-    }
-      }
-    [data-segment][aria-invalid="true"] {
-      color: var(--destructive);
-    }
-  [data-segment] {
-    font-size: 0.875rem;
-    letter-spacing: normal;
-    word-spacing: normal;
-  }
-  [data-segment][contenteditable="true"] {
-    cursor: text;
-    padding: 0 !important;
-    margin: 0 !important;
-    line-height: 1.5;
-    white-space: nowrap !important;
-    overflow: hidden;
-    -webkit-user-modify: read-write-plaintext-only;
-    user-modify: read-write-plaintext-only;
-    outline: none;
-    outline-offset: 0;
-    text-indent: 0;
-    align-items: center;
-    justify-content: flex-start;
-    -webkit-tap-highlight-color: transparent;
-    word-spacing: 0;
-    letter-spacing: normal;
-    min-height: 1em;
-    -webkit-margin-before: 0;
-    -webkit-margin-after: 0;
-    -webkit-margin-start: 0;
-    -webkit-margin-end: 0;
-    min-width: fit-content;
-    width: fit-content;
-  }
-  [data-segment][contenteditable="true"] * {
-    margin: 0;
-    padding: 0;
-    display: inline;
-  }
-  [data-segment][contenteditable="true"]:empty::before {
-    content: "\200B";
-    display: inline-block;
-  }
-  [data-segment][contenteditable="true"]:focus {
-    background-color: var(--accent);
-    color: var(--accent-foreground);
-    --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    --tw-ring-color: var(--ring);
-  }
-    @supports (color: color-mix(in lab, red, red)) {
-  [data-segment][contenteditable="true"]:focus {
-      --tw-ring-color: color-mix(in oklab, var(--ring) 50%, transparent);
-  }
-    }
-  [data-segment-separator] + [data-segment="hour"] {
-    margin-left: calc(var(--spacing) * 3);
-  }
-  [data-kt-datepicker-segmented-input] > [data-segment="hour"]:first-child {
-    margin-left: calc(var(--spacing) * 0);
-  }
-  [data-segment-separator] + [data-segment="ampm"] {
-    margin-left: calc(var(--spacing) * 3);
-  }
-  [data-segment-separator] {
-    pointer-events: none;
-    display: inline-flex;
-    align-items: center;
-    color: var(--muted-foreground);
-    -webkit-user-select: none;
-    user-select: none;
-    font-size: var(--text-sm);
-    line-height: var(--tw-leading, var(--text-sm--line-height));
-    --tw-font-weight: var(--font-weight-medium);
-    font-weight: var(--font-weight-medium);
-    font-size: 0.875rem;
-    letter-spacing: normal;
-    word-spacing: normal;
-    white-space: pre;
-    min-width: 0.25rem;
-  }
-  [data-kt-datepicker-calendar-btn] {
-    position: absolute;
-    top: calc(var(--spacing) * 0);
-    right: calc(var(--spacing) * 0);
-    bottom: calc(var(--spacing) * 0);
-    display: inline-flex;
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: calc(var(--spacing) * 10);
-    border-top-right-radius: calc(var(--radius) - 2px);
-    border-bottom-right-radius: calc(var(--radius) - 2px);
-    color: var(--muted-foreground);
-    transition-property: all;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-  }
-      @media (hover: hover) {
-    [data-kt-datepicker-calendar-btn]:hover {
-        background-color: var(--accent);
-    }
-        @supports (color: color-mix(in lab, red, red)) {
-    [data-kt-datepicker-calendar-btn]:hover {
-          background-color: color-mix(in oklab, var(--accent) 50%, transparent);
-    }
-        }
-      }
-      @media (hover: hover) {
-    [data-kt-datepicker-calendar-btn]:hover {
-        color: var(--accent-foreground);
-    }
-      }
-    [data-kt-datepicker-calendar-btn]:focus-visible {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-    [data-kt-datepicker-calendar-btn]:focus-visible {
-      --tw-ring-color: var(--ring);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    [data-kt-datepicker-calendar-btn]:focus-visible {
-        --tw-ring-color: color-mix(in oklab, var(--ring) 50%, transparent);
-    }
-      }
-    [data-kt-datepicker-calendar-btn]:focus-visible {
-      --tw-outline-style: none;
-      outline-style: none;
-    }
-    [data-kt-datepicker-calendar-btn]:focus-visible {
-      --tw-ring-inset: inset;
-    }
-    [data-kt-datepicker-calendar-btn]:active {
-      background-color: var(--accent);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    [data-kt-datepicker-calendar-btn]:active {
-        background-color: color-mix(in oklab, var(--accent) 70%, transparent);
-    }
-      }
-  [data-kt-datepicker-calendar-btn] {
-    border-style: var(--tw-border-style);
-    border-width: 0px;
-    background-color: transparent;
-    cursor: pointer;
-  }
-  [data-kt-datepicker-calendar-btn] svg {
-    height: calc(var(--spacing) * 4);
-    width: calc(var(--spacing) * 4);
-  }
-  [data-kt-datepicker-calendar-btn][aria-expanded="true"] {
-    background-color: var(--accent);
-  }
-    @supports (color: color-mix(in lab, red, red)) {
-  [data-kt-datepicker-calendar-btn][aria-expanded="true"] {
-      background-color: color-mix(in oklab, var(--accent) 50%, transparent);
-  }
-    }
-  [data-kt-datepicker-calendar-btn][aria-expanded="true"] {
-    color: var(--accent-foreground);
-  }
-  [data-kt-datepicker-placeholder] {
-    pointer-events: none;
-    color: var(--muted-foreground);
-    -webkit-user-select: none;
-    user-select: none;
-  }
-  [data-kt-datepicker-display-wrapper] {
-    display: inline-flex;
-    min-height: 2rem;
-    align-items: center;
-    padding-inline: calc(var(--spacing) * 3);
-    padding-block: calc(var(--spacing) * 1.5);
-    font-size: var(--text-sm);
-    line-height: var(--tw-leading, var(--text-sm--line-height));
-    color: var(--foreground);
-  }
-  [data-kt-datepicker-display-element] {
-    color: var(--foreground);
-  }
-}
-@layer utilities {
-  [data-kt-datepicker-dropdown] {
-    position: absolute;
-    z-index: 50;
-    margin-top: calc(var(--spacing) * 1.5);
-    border-radius: calc(var(--radius) - 2px);
-    border-style: var(--tw-border-style);
-    border-width: 1px;
-    border-color: var(--border);
-  }
-    @supports (color: color-mix(in lab, red, red)) {
-  [data-kt-datepicker-dropdown] {
-      border-color: color-mix(in oklab, var(--border) 60%, transparent);
-  }
-    }
-  [data-kt-datepicker-dropdown] {
-    background-color: var(--popover);
-    color: var(--popover-foreground);
-    padding-inline: calc(var(--spacing) * 3);
-    padding-block: calc(var(--spacing) * 2);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    width: 20rem;
-    min-width: 20rem;
-  }
-  [data-kt-datepicker-dropdown].hidden {
-    display: none;
-  }
-  [data-kt-datepicker-dropdown].open {
-    display: block;
-  }
-  [data-kt-datepicker-panel] {
-    display: flex;
-    flex-direction: column;
-    gap: calc(var(--spacing) * 1.5);
-  }
-  [data-kt-datepicker-header] {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: calc(var(--spacing) * 2);
-    padding-inline: calc(var(--spacing) * 0.5);
-    padding-bottom: calc(var(--spacing) * 1.5);
-    border-style: var(--tw-border-style);
-    border-width: 0px;
-    height: 34px;
-  }
-  [data-kt-datepicker-month-year] {
-    font-size: var(--text-sm);
-    line-height: var(--tw-leading, var(--text-sm--line-height));
-    --tw-font-weight: var(--font-weight-medium);
-    font-weight: var(--font-weight-medium);
-    color: var(--foreground);
-    -webkit-user-select: none;
-    user-select: none;
-    flex: 1;
-    text-align: center;
-  }
-  [data-kt-datepicker-prev],	[data-kt-datepicker-next] {
-    display: inline-flex;
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: center;
-    height: calc(var(--spacing) * 7);
-    width: calc(var(--spacing) * 7);
-    cursor: pointer;
-    border-radius: calc(var(--radius) - 2px);
-    transition-property: all;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-    --tw-duration: 150ms;
-    transition-duration: 150ms;
-    color: var(--muted-foreground);
-  }
-      @media (hover: hover) {
-    :is([data-kt-datepicker-prev],[data-kt-datepicker-next]):hover {
-        background-color: var(--accent);
-    }
-        @supports (color: color-mix(in lab, red, red)) {
-    :is([data-kt-datepicker-prev],[data-kt-datepicker-next]):hover {
-          background-color: color-mix(in oklab, var(--accent) 60%, transparent);
-    }
-        }
-      }
-      @media (hover: hover) {
-    :is([data-kt-datepicker-prev],[data-kt-datepicker-next]):hover {
-        color: var(--foreground);
-    }
-      }
-    :is([data-kt-datepicker-prev],[data-kt-datepicker-next]):focus-visible {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-    :is([data-kt-datepicker-prev],[data-kt-datepicker-next]):focus-visible {
-      --tw-ring-color: var(--ring);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    :is([data-kt-datepicker-prev],[data-kt-datepicker-next]):focus-visible {
-        --tw-ring-color: color-mix(in oklab, var(--ring) 50%, transparent);
-    }
-      }
-    :is([data-kt-datepicker-prev],[data-kt-datepicker-next]):focus-visible {
-      --tw-ring-offset-width: 1px;
-      --tw-ring-offset-shadow: var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-    }
-    :is([data-kt-datepicker-prev],[data-kt-datepicker-next]):focus-visible {
-      --tw-outline-style: none;
-      outline-style: none;
-    }
-    :is([data-kt-datepicker-prev],[data-kt-datepicker-next]):active {
-      --tw-scale-x: 95%;
-      --tw-scale-y: 95%;
-      --tw-scale-z: 95%;
-      scale: var(--tw-scale-x) var(--tw-scale-y);
-    }
-    :is([data-kt-datepicker-prev],[data-kt-datepicker-next]):disabled {
-      cursor: not-allowed;
-    }
-    :is([data-kt-datepicker-prev],[data-kt-datepicker-next]):disabled {
-      opacity: 40%;
-    }
-        @media (hover: hover) {
-      :is([data-kt-datepicker-prev],[data-kt-datepicker-next]):disabled:hover {
-          background-color: transparent;
-      }
-        }
-  [data-kt-datepicker-prev] svg,	[data-kt-datepicker-next] svg {
-    height: calc(var(--spacing) * 3.5);
-    width: calc(var(--spacing) * 3.5);
-  }
-  [data-kt-datepicker-calendar-table] {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  [data-kt-datepicker-calendar-table] thead {
-    border-style: var(--tw-border-style);
-    border-width: 0px;
-  }
-  [data-kt-datepicker-calendar-table] th {
-    padding-inline: calc(var(--spacing) * 0.5);
-    padding-block: calc(var(--spacing) * 1);
-    text-align: center;
-    font-size: var(--text-xs);
-    line-height: var(--tw-leading, var(--text-xs--line-height));
-    --tw-font-weight: var(--font-weight-medium);
-    font-weight: var(--font-weight-medium);
-    color: var(--muted-foreground);
-    text-transform: uppercase;
-    width: calc(100% / 7);
-  }
-  [data-kt-datepicker-calendar-body] {
-    border-style: var(--tw-border-style);
-    border-width: 0px;
-  }
-  [data-kt-datepicker-calendar-row] {
-    border-style: var(--tw-border-style);
-    border-width: 0px;
-  }
-  [data-kt-datepicker-day] {
-    padding-inline: calc(var(--spacing) * 1);
-    padding-block: calc(var(--spacing) * 0.5);
-    text-align: center;
-  }
-  [data-kt-datepicker-day] button {
-    aspect-ratio: 1 / 1;
-    width: 100%;
-    border-radius: calc(var(--radius) - 2px);
-    font-size: var(--text-sm);
-    line-height: var(--tw-leading, var(--text-sm--line-height));
-    --tw-font-weight: var(--font-weight-medium);
-    font-weight: var(--font-weight-medium);
-    transition-property: all;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-    --tw-duration: 150ms;
-    transition-duration: 150ms;
-    cursor: pointer;
-    color: var(--foreground);
-  }
-      @media (hover: hover) {
-    :is([data-kt-datepicker-day] button):hover {
-        background-color: var(--accent);
-    }
-        @supports (color: color-mix(in lab, red, red)) {
-    :is([data-kt-datepicker-day] button):hover {
-          background-color: color-mix(in oklab, var(--accent) 60%, transparent);
-    }
-        }
-      }
-      @media (hover: hover) {
-    :is([data-kt-datepicker-day] button):hover {
-        color: var(--accent-foreground);
-    }
-      }
-    :is([data-kt-datepicker-day] button):focus-visible {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-    :is([data-kt-datepicker-day] button):focus-visible {
-      --tw-ring-color: var(--ring);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    :is([data-kt-datepicker-day] button):focus-visible {
-        --tw-ring-color: color-mix(in oklab, var(--ring) 50%, transparent);
-    }
-      }
-    :is([data-kt-datepicker-day] button):focus-visible {
-      --tw-ring-offset-width: 0px;
-      --tw-ring-offset-shadow: var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-    }
-    :is([data-kt-datepicker-day] button):focus-visible {
-      --tw-outline-style: none;
-      outline-style: none;
-    }
-    :is([data-kt-datepicker-day] button):active {
-      scale: 0.97;
-    }
-    :is([data-kt-datepicker-day] button):disabled {
-      cursor: not-allowed;
-    }
-    :is([data-kt-datepicker-day] button):disabled {
-      opacity: 40%;
-    }
-        @media (hover: hover) {
-      :is([data-kt-datepicker-day] button):disabled:hover {
-          background-color: transparent;
-      }
-        }
-  [data-kt-datepicker-day][data-today="true"] button {
-    background-color: var(--primary);
-  }
-    @supports (color: color-mix(in lab, red, red)) {
-  [data-kt-datepicker-day][data-today="true"] button {
-      background-color: color-mix(in oklab, var(--primary) 8%, transparent);
-  }
-    }
-  [data-kt-datepicker-day][data-today="true"] button {
-    --tw-font-weight: var(--font-weight-semibold);
-    font-weight: var(--font-weight-semibold);
-    color: var(--primary);
-  }
-      @media (hover: hover) {
-    :is([data-kt-datepicker-day][data-today="true"] button):hover {
-        background-color: var(--primary);
-    }
-        @supports (color: color-mix(in lab, red, red)) {
-    :is([data-kt-datepicker-day][data-today="true"] button):hover {
-          background-color: color-mix(in oklab, var(--primary) 15%, transparent);
-    }
-        }
-      }
-  [data-kt-datepicker-day][data-kt-selected="true"] button,	[data-kt-datepicker-day].active button,	[data-kt-datepicker-day][aria-selected="true"] button {
-    background-color: var(--primary);
-    --tw-font-weight: var(--font-weight-semibold);
-    font-weight: var(--font-weight-semibold);
-    color: var(--primary-foreground);
-  }
-      @media (hover: hover) {
-    :is([data-kt-datepicker-day][data-kt-selected="true"] button,[data-kt-datepicker-day].active button,[data-kt-datepicker-day][aria-selected="true"] button):hover {
-        background-color: var(--primary);
-    }
-        @supports (color: color-mix(in lab, red, red)) {
-    :is([data-kt-datepicker-day][data-kt-selected="true"] button,[data-kt-datepicker-day].active button,[data-kt-datepicker-day][aria-selected="true"] button):hover {
-          background-color: color-mix(in oklab, var(--primary) 90%, transparent);
-    }
-        }
-      }
-  [data-kt-datepicker-day][data-kt-selected="true"][data-today="true"] button,	[data-kt-datepicker-day].active[data-today="true"] button,	[data-kt-datepicker-day][aria-selected="true"][data-today="true"] button {
-    background-color: var(--primary);
-    --tw-font-weight: var(--font-weight-semibold);
-    font-weight: var(--font-weight-semibold);
-    color: var(--primary-foreground);
-  }
-      @media (hover: hover) {
-    :is([data-kt-datepicker-day][data-kt-selected="true"][data-today="true"] button,[data-kt-datepicker-day].active[data-today="true"] button,[data-kt-datepicker-day][aria-selected="true"][data-today="true"] button):hover {
-        background-color: var(--primary);
-    }
-        @supports (color: color-mix(in lab, red, red)) {
-    :is([data-kt-datepicker-day][data-kt-selected="true"][data-today="true"] button,[data-kt-datepicker-day].active[data-today="true"] button,[data-kt-datepicker-day][aria-selected="true"][data-today="true"] button):hover {
-          background-color: color-mix(in oklab, var(--primary) 90%, transparent);
-    }
-        }
-      }
-  [data-kt-datepicker-day][data-kt-selected="true"][data-today="true"] button,	[data-kt-datepicker-day].active[data-today="true"] button,	[data-kt-datepicker-day][aria-selected="true"][data-today="true"] button {
-    border-style: var(--tw-border-style);
-    border-width: 0px;
-  }
-  [data-kt-datepicker-day][data-kt-hover] button {
-    background-color: var(--accent);
-    color: var(--accent-foreground);
-  }
-  [data-kt-datepicker-day][data-kt-selected="true"][data-kt-hover] button {
-    background-color: var(--primary);
-  }
-    @supports (color: color-mix(in lab, red, red)) {
-  [data-kt-datepicker-day][data-kt-selected="true"][data-kt-hover] button {
-      background-color: color-mix(in oklab, var(--primary) 90%, transparent);
-  }
-    }
-  [data-kt-datepicker-day][data-kt-selected="true"][data-kt-hover] button {
-    color: var(--primary-foreground);
-  }
-  [data-kt-datepicker-day][data-kt-hover-range] button {
-    background-color: var(--accent);
-  }
-    @supports (color: color-mix(in lab, red, red)) {
-  [data-kt-datepicker-day][data-kt-hover-range] button {
-      background-color: color-mix(in oklab, var(--accent) 40%, transparent);
-  }
-    }
-  [data-kt-datepicker-day][data-kt-hover-range] button {
-    color: var(--accent-foreground);
-  }
-  [data-kt-datepicker-day][data-kt-selected="true"][data-kt-hover-range] button {
-    background-color: var(--primary);
-  }
-    @supports (color: color-mix(in lab, red, red)) {
-  [data-kt-datepicker-day][data-kt-selected="true"][data-kt-hover-range] button {
-      background-color: color-mix(in oklab, var(--primary) 80%, transparent);
-  }
-    }
-  [data-kt-datepicker-day][data-kt-selected="true"][data-kt-hover-range] button {
-    color: var(--primary-foreground);
-  }
-  [data-kt-datepicker-day][data-kt-hover-range][data-kt-hover] button {
-    background-color: var(--accent);
-  }
-    @supports (color: color-mix(in lab, red, red)) {
-  [data-kt-datepicker-day][data-kt-hover-range][data-kt-hover] button {
-      background-color: color-mix(in oklab, var(--accent) 60%, transparent);
-  }
-    }
-  [data-kt-datepicker-day][data-kt-hover-range][data-kt-hover] button {
-    color: var(--accent-foreground);
-  }
-  [data-kt-datepicker-day][data-outside="true"] button {
-    cursor: default;
-    color: var(--muted-foreground);
-    opacity: 50%;
-  }
-      @media (hover: hover) {
-    :is([data-kt-datepicker-day][data-outside="true"] button):hover {
-        background-color: var(--accent);
-    }
-        @supports (color: color-mix(in lab, red, red)) {
-    :is([data-kt-datepicker-day][data-outside="true"] button):hover {
-          background-color: color-mix(in oklab, var(--accent) 40%, transparent);
-    }
-        }
-      }
-      @media (hover: hover) {
-    :is([data-kt-datepicker-day][data-outside="true"] button):hover {
-        opacity: 70%;
-    }
-      }
-  [data-kt-datepicker-day][tabindex="0"] button {
-    --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    --tw-ring-color: var(--ring);
-  }
-    @supports (color: color-mix(in lab, red, red)) {
-  [data-kt-datepicker-day][tabindex="0"] button {
-      --tw-ring-color: color-mix(in oklab, var(--ring) 50%, transparent);
-  }
-    }
-  [data-kt-datepicker-day][tabindex="0"] button {
-    --tw-ring-offset-width: 0px;
-    --tw-ring-offset-shadow: var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  }
-  [data-kt-datepicker-footer] {
-    margin-top: calc(var(--spacing) * 1.5);
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: calc(var(--spacing) * 2);
-    padding-top: calc(var(--spacing) * 1.5);
-    border-top-style: var(--tw-border-style);
-    border-top-width: 1px;
-    border-color: var(--border);
-  }
-    @supports (color: color-mix(in lab, red, red)) {
-  [data-kt-datepicker-footer] {
-      border-color: color-mix(in oklab, var(--border) 40%, transparent);
-  }
-    }
-  [data-kt-datepicker-today],	[data-kt-datepicker-clear],	[data-kt-datepicker-apply] {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: calc(var(--spacing) * 7);
-    cursor: pointer;
-    border-radius: calc(var(--radius) - 2px);
-    padding-inline: calc(var(--spacing) * 3);
-    font-size: var(--text-xs);
-    line-height: var(--tw-leading, var(--text-xs--line-height));
-    --tw-font-weight: var(--font-weight-medium);
-    font-weight: var(--font-weight-medium);
-    transition-property: all;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-    --tw-duration: 150ms;
-    transition-duration: 150ms;
-  }
-    :is([data-kt-datepicker-today],[data-kt-datepicker-clear],[data-kt-datepicker-apply]):focus-visible {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-    :is([data-kt-datepicker-today],[data-kt-datepicker-clear],[data-kt-datepicker-apply]):focus-visible {
-      --tw-ring-color: var(--ring);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    :is([data-kt-datepicker-today],[data-kt-datepicker-clear],[data-kt-datepicker-apply]):focus-visible {
-        --tw-ring-color: color-mix(in oklab, var(--ring) 50%, transparent);
-    }
-      }
-    :is([data-kt-datepicker-today],[data-kt-datepicker-clear],[data-kt-datepicker-apply]):focus-visible {
-      --tw-ring-offset-width: 2px;
-      --tw-ring-offset-shadow: var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-    }
-    :is([data-kt-datepicker-today],[data-kt-datepicker-clear],[data-kt-datepicker-apply]):focus-visible {
-      --tw-outline-style: none;
-      outline-style: none;
-    }
-    :is([data-kt-datepicker-today],[data-kt-datepicker-clear],[data-kt-datepicker-apply]):active {
-      scale: 0.97;
-    }
-    :is([data-kt-datepicker-today],[data-kt-datepicker-clear],[data-kt-datepicker-apply]):disabled {
-      cursor: not-allowed;
-    }
-    :is([data-kt-datepicker-today],[data-kt-datepicker-clear],[data-kt-datepicker-apply]):disabled {
-      opacity: 50%;
-    }
-  [data-kt-datepicker-today] {
-    color: var(--muted-foreground);
-  }
-      @media (hover: hover) {
-    [data-kt-datepicker-today]:hover {
-        background-color: var(--accent);
-    }
-        @supports (color: color-mix(in lab, red, red)) {
-    [data-kt-datepicker-today]:hover {
-          background-color: color-mix(in oklab, var(--accent) 70%, transparent);
-    }
-        }
-      }
-      @media (hover: hover) {
-    [data-kt-datepicker-today]:hover {
-        color: var(--foreground);
-    }
-      }
-  [data-kt-datepicker-clear] {
-    color: var(--muted-foreground);
-  }
-      @media (hover: hover) {
-    [data-kt-datepicker-clear]:hover {
-        background-color: var(--destructive);
-    }
-        @supports (color: color-mix(in lab, red, red)) {
-    [data-kt-datepicker-clear]:hover {
-          background-color: color-mix(in oklab, var(--destructive) 10%, transparent);
-    }
-        }
-      }
-      @media (hover: hover) {
-    [data-kt-datepicker-clear]:hover {
-        color: var(--destructive);
-    }
-      }
-  [data-kt-datepicker-apply] {
-    background-color: var(--primary);
-    color: var(--primary-foreground);
-  }
-      @media (hover: hover) {
-    [data-kt-datepicker-apply]:hover {
-        background-color: var(--primary);
-    }
-        @supports (color: color-mix(in lab, red, red)) {
-    [data-kt-datepicker-apply]:hover {
-          background-color: color-mix(in oklab, var(--primary) 95%, transparent);
-    }
-        }
-      }
-  [data-kt-datepicker-apply] {
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  }
-  [data-kt-datepicker-multimonth-container] {
-    display: flex;
-    flex-direction: column;
-    gap: calc(var(--spacing) * 4);
-  }
-    @media (width >= 48rem) {
-  [data-kt-datepicker-multimonth-container] {
-      flex-direction: row;
-  }
-    }
-  [data-kt-datepicker-time-picker] {
-    display: flex;
-    flex-direction: column;
-    gap: calc(var(--spacing) * 1.5);
-    border-top-style: var(--tw-border-style);
-    border-top-width: 1px;
-    border-color: var(--border);
-  }
-    @supports (color: color-mix(in lab, red, red)) {
-  [data-kt-datepicker-time-picker] {
-      border-color: color-mix(in oklab, var(--border) 40%, transparent);
-  }
-    }
-  [data-kt-datepicker-time-picker] {
-    padding: calc(var(--spacing) * 2);
-  }
-  [data-kt-datepicker-time-display] {
-    text-align: center;
-    font-size: var(--text-lg);
-    line-height: var(--tw-leading, var(--text-lg--line-height));
-    --tw-font-weight: var(--font-weight-semibold);
-    font-weight: var(--font-weight-semibold);
-    color: var(--foreground);
-  }
-  [data-kt-datepicker-time-controls] {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: calc(var(--spacing) * 2);
-  }
-  [data-kt-datepicker-time-unit] {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: calc(var(--spacing) * 1);
-  }
-  [data-kt-datepicker-time-up],	[data-kt-datepicker-time-down] {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: calc(var(--spacing) * 6);
-    width: calc(var(--spacing) * 8);
-    border-radius: calc(var(--radius) - 2px);
-    transition-property: all;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-    color: var(--muted-foreground);
-  }
-      @media (hover: hover) {
-    :is([data-kt-datepicker-time-up],[data-kt-datepicker-time-down]):hover {
-        color: var(--foreground);
-    }
-      }
-      @media (hover: hover) {
-    :is([data-kt-datepicker-time-up],[data-kt-datepicker-time-down]):hover {
-        background-color: var(--accent);
-    }
-      }
-      @media (hover: hover) {
-    :is([data-kt-datepicker-time-up],[data-kt-datepicker-time-down]):hover {
-        color: var(--accent-foreground);
-    }
-      }
-    :is([data-kt-datepicker-time-up],[data-kt-datepicker-time-down]):focus-visible {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-    :is([data-kt-datepicker-time-up],[data-kt-datepicker-time-down]):focus-visible {
-      --tw-ring-color: var(--ring);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    :is([data-kt-datepicker-time-up],[data-kt-datepicker-time-down]):focus-visible {
-        --tw-ring-color: color-mix(in oklab, var(--ring) 50%, transparent);
-    }
-      }
-    :is([data-kt-datepicker-time-up],[data-kt-datepicker-time-down]):focus-visible {
-      --tw-outline-style: none;
-      outline-style: none;
-    }
-    :is([data-kt-datepicker-time-up],[data-kt-datepicker-time-down]):active {
-      --tw-scale-x: 95%;
-      --tw-scale-y: 95%;
-      --tw-scale-z: 95%;
-      scale: var(--tw-scale-x) var(--tw-scale-y);
-    }
-    :is([data-kt-datepicker-time-up],[data-kt-datepicker-time-down]):disabled {
-      cursor: not-allowed;
-    }
-    :is([data-kt-datepicker-time-up],[data-kt-datepicker-time-down]):disabled {
-      opacity: 50%;
-    }
-  [data-kt-datepicker-time-value] {
-    font-size: var(--text-sm);
-    line-height: var(--tw-leading, var(--text-sm--line-height));
-    --tw-font-weight: var(--font-weight-semibold);
-    font-weight: var(--font-weight-semibold);
-    color: var(--foreground);
-  }
-  [data-kt-datepicker-time-separator] {
-    font-size: var(--text-sm);
-    line-height: var(--tw-leading, var(--text-sm--line-height));
-    --tw-font-weight: var(--font-weight-medium);
-    font-weight: var(--font-weight-medium);
-    color: var(--muted-foreground);
-  }
-  [data-kt-datepicker-ampm-control] {
-    margin-left: calc(var(--spacing) * 2);
-    display: flex;
-    flex-direction: column;
-    gap: calc(var(--spacing) * 1);
-  }
-  [data-kt-datepicker-ampm-button] {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: calc(var(--spacing) * 6);
-    width: calc(var(--spacing) * 10);
-    border-radius: calc(var(--radius) - 2px);
-    font-size: var(--text-xs);
-    line-height: var(--tw-leading, var(--text-xs--line-height));
-    --tw-font-weight: var(--font-weight-medium);
-    font-weight: var(--font-weight-medium);
-    transition-property: all;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-    color: var(--muted-foreground);
-  }
-      @media (hover: hover) {
-    [data-kt-datepicker-ampm-button]:hover {
-        color: var(--foreground);
-    }
-      }
-      @media (hover: hover) {
-    [data-kt-datepicker-ampm-button]:hover {
-        background-color: var(--accent);
-    }
-      }
-      @media (hover: hover) {
-    [data-kt-datepicker-ampm-button]:hover {
-        color: var(--accent-foreground);
-    }
-      }
-    [data-kt-datepicker-ampm-button]:focus-visible {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-    [data-kt-datepicker-ampm-button]:focus-visible {
-      --tw-ring-color: var(--ring);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    [data-kt-datepicker-ampm-button]:focus-visible {
-        --tw-ring-color: color-mix(in oklab, var(--ring) 50%, transparent);
-    }
-      }
-    [data-kt-datepicker-ampm-button]:focus-visible {
-      --tw-outline-style: none;
-      outline-style: none;
-    }
-    [data-kt-datepicker-ampm-button]:active {
-      --tw-scale-x: 95%;
-      --tw-scale-y: 95%;
-      --tw-scale-z: 95%;
-      scale: var(--tw-scale-x) var(--tw-scale-y);
-    }
-    [data-kt-datepicker-ampm-button]:disabled {
-      cursor: not-allowed;
-    }
-    [data-kt-datepicker-ampm-button]:disabled {
-      opacity: 50%;
-    }
-  [data-kt-datepicker-multidate-tag] {
-    display: inline-flex;
-    align-items: center;
-    gap: calc(var(--spacing) * 1.5);
-    border-radius: calc(var(--radius) - 2px);
-    padding-inline: calc(var(--spacing) * 2);
-    padding-block: calc(var(--spacing) * 1);
-    background-color: var(--accent);
-    font-size: var(--text-xs);
-    line-height: var(--tw-leading, var(--text-xs--line-height));
-    --tw-font-weight: var(--font-weight-medium);
-    font-weight: var(--font-weight-medium);
-    color: var(--accent-foreground);
-  }
-  [data-kt-datepicker-multidate-tag] button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: calc(var(--spacing) * 4);
-    width: calc(var(--spacing) * 4);
-    border-radius: calc(var(--radius) - 4px);
-    transition-property: all;
-    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
-    transition-duration: var(--tw-duration, var(--default-transition-duration));
-    color: var(--muted-foreground);
-  }
-      @media (hover: hover) {
-    :is([data-kt-datepicker-multidate-tag] button):hover {
-        color: var(--destructive);
-    }
-      }
-      @media (hover: hover) {
-    :is([data-kt-datepicker-multidate-tag] button):hover {
-        background-color: var(--destructive);
-    }
-        @supports (color: color-mix(in lab, red, red)) {
-    :is([data-kt-datepicker-multidate-tag] button):hover {
-          background-color: color-mix(in oklab, var(--destructive) 10%, transparent);
-    }
-        }
-      }
-    :is([data-kt-datepicker-multidate-tag] button):focus-visible {
-      --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
-      box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-    }
-    :is([data-kt-datepicker-multidate-tag] button):focus-visible {
-      --tw-ring-color: var(--ring);
-    }
-    :is([data-kt-datepicker-multidate-tag] button):focus-visible {
-      --tw-outline-style: none;
-      outline-style: none;
-    }
-  [data-kt-datepicker-empty] {
-    padding-block: calc(var(--spacing) * 8);
-    text-align: center;
-    font-size: var(--text-sm);
-    line-height: var(--tw-leading, var(--text-sm--line-height));
-    color: var(--muted-foreground);
-  }
-  [data-kt-datepicker-live] {
-    position: absolute;
-    margin: -1px;
-    height: 1px;
-    width: 1px;
-    overflow: hidden;
-    border-style: var(--tw-border-style);
-    border-width: 0px;
-    padding: calc(var(--spacing) * 0);
-    white-space: nowrap;
-    clip: rect(0, 0, 0, 0);
-  }
-}
-@layer utilities {
-    [aria-invalid="true"]:is(.dark [data-kt-datepicker-input-wrapper]) {
-      border-color: var(--destructive);
-    }
-    [aria-invalid="true"]:is(.dark [data-kt-datepicker-input-wrapper]) {
-      --tw-ring-color: var(--destructive);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    [aria-invalid="true"]:is(.dark [data-kt-datepicker-input-wrapper]) {
-        --tw-ring-color: color-mix(in oklab, var(--destructive) 20%, transparent);
-    }
-      }
-  .dark [data-kt-datepicker-dropdown] {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-  }
-}
 @layer components {
   .kt-drawer {
     position: fixed;
@@ -10328,25 +8705,6 @@
     .kt-input:disabled {
       opacity: 60%;
     }
-    .kt-input[readonly] {
-      cursor: not-allowed;
-    }
-    .kt-input[readonly] {
-      background-color: var(--muted);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    .kt-input[readonly] {
-        background-color: color-mix(in oklab, var(--muted) 80%, transparent);
-    }
-      }
-    .kt-input[readonly] {
-      color: var(--secondary-foreground);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    .kt-input[readonly] {
-        color: color-mix(in oklab, var(--secondary-foreground) 80%, transparent);
-    }
-      }
     .kt-input::file-selector-button {
       height: 100%;
     }
@@ -11015,9 +9373,6 @@
     }
     .kt-select:disabled {
       opacity: 60%;
-    }
-    .kt-select[readonly] {
-      opacity: 70%;
     }
     .kt-select[aria-invalid="true"] {
       border-color: var(--destructive);
@@ -11714,17 +10069,6 @@
     .kt-textarea:disabled {
       opacity: 60%;
     }
-    .kt-textarea[readonly] {
-      cursor: not-allowed;
-    }
-    .kt-textarea[readonly] {
-      background-color: var(--muted);
-    }
-      @supports (color: color-mix(in lab, red, red)) {
-    .kt-textarea[readonly] {
-        background-color: color-mix(in oklab, var(--muted) 80%, transparent);
-    }
-      }
     .kt-textarea[aria-invalid="true"] {
       border-color: var(--destructive);
     }
@@ -14071,7 +12415,7 @@ button[data-vc-week-day] {
   }
 }
 @layer components {
-  .app {
+  .dash_app {
     --sidebar-transition-duration: 0.3s;
     --sidebar-transition-timing: ease;
     --sidebar-width: 280px;
@@ -14080,76 +12424,76 @@ button[data-vc-week-day] {
     --header-height: 70px;
   }
   @media (max-width: 64rem) {
-    .app {
+    .dash_app {
       --sidebar-width: 280px;
       --header-height: 60px;
     }
   }
-  .app .kt-header {
+  .dash_app .kt-header {
     height: var(--header-height);
   }
-  .app .kt-sidebar {
+  .dash_app .kt-sidebar {
     width: var(--sidebar-width);
   }
-  .app.kt-header-fixed .kt-wrapper {
+  .dash_app.kt-header-fixed .kt-wrapper {
     padding-top: var(--header-height);
   }
   @media (min-width: 64rem) {
-    .app .kt-sidebar {
+    .dash_app .kt-sidebar {
       width: var(--sidebar-width);
       transition: width var(--sidebar-transition-duration) var(--sidebar-transition-timing);
     }
-    .app .kt-sidebar .kt-sidebar-header {
+    .dash_app .kt-sidebar .kt-sidebar-header {
       height: var(--header-height);
     }
-    .app .kt-sidebar .kt-sidebar-wrapper {
+    .dash_app .kt-sidebar .kt-sidebar-wrapper {
       width: var(--sidebar-default-width);
     }
-    .app .kt-sidebar .kt-sidebar-logo {
+    .dash_app .kt-sidebar .kt-sidebar-logo {
       width: var(--sidebar-default-width);
     }
-    .app .kt-sidebar .small-logo {
+    .dash_app .kt-sidebar .small-logo {
       display: none;
     }
-    .app.kt-sidebar-fixed .kt-wrapper {
+    .dash_app.kt-sidebar-fixed .kt-wrapper {
       padding-inline-start: var(--sidebar-width) !important;
     }
-    .app.kt-sidebar-fixed.kt-header-fixed .kt-header {
+    .dash_app.kt-sidebar-fixed.kt-header-fixed .kt-header {
       inset-inline-start: var(--sidebar-width) !important;
     }
-    .app.kt-sidebar-fixed.kt-header-fixed .kt-wrapper {
+    .dash_app.kt-sidebar-fixed.kt-header-fixed .kt-wrapper {
       padding-top: var(--header-height);
     }
-    .app.kt-sidebar-collapse {
+    .dash_app.kt-sidebar-collapse {
       --sidebar-width: var(--sidebar-width-collapse);
     }
-    .app.kt-sidebar-collapse .kt-sidebar {
+    .dash_app.kt-sidebar-collapse .kt-sidebar {
       transition: width var(--sidebar-transition-duration) var(--sidebar-transition-timing);
     }
-    .app.kt-sidebar-collapse .kt-sidebar.animating {
+    .dash_app.kt-sidebar-collapse .kt-sidebar.animating {
       pointer-events: none;
     }
-    .app.kt-sidebar-collapse .kt-sidebar:hover:not(.animating) {
+    .dash_app.kt-sidebar-collapse .kt-sidebar:hover:not(.animating) {
       width: var(--sidebar-default-width);
       transition: width var(--sidebar-transition-duration) var(--sidebar-transition-timing);
     }
-    .app.kt-sidebar-collapse .kt-sidebar:not(:hover) .default-logo {
+    .dash_app.kt-sidebar-collapse .kt-sidebar:not(:hover) .default-logo {
       display: none;
     }
-    .app.kt-sidebar-collapse .kt-sidebar:not(:hover) .small-logo {
+    .dash_app.kt-sidebar-collapse .kt-sidebar:not(:hover) .small-logo {
       display: flex;
     }
-    .app.kt-sidebar-collapse .kt-sidebar:not(:hover) .kt-menu > .kt-menu-item > .kt-menu-link .kt-menu-title,	.app.kt-sidebar-collapse .kt-sidebar:not(:hover) .kt-menu > .kt-menu-item > .kt-menu-link .kt-menu-arrow,	.app.kt-sidebar-collapse .kt-sidebar:not(:hover) .kt-menu > .kt-menu-item > .kt-menu-link .kt-menu-badge,	.app.kt-sidebar-collapse .kt-sidebar:not(:hover) .kt-menu > .kt-menu-item > .kt-menu-label .kt-menu-title,	.app.kt-sidebar-collapse .kt-sidebar:not(:hover) .kt-menu > .kt-menu-item > .kt-menu-label .kt-menu-arrow,	.app.kt-sidebar-collapse .kt-sidebar:not(:hover) .kt-menu > .kt-menu-item > .kt-menu-label .kt-menu-badge {
+    .dash_app.kt-sidebar-collapse .kt-sidebar:not(:hover) .kt-menu > .kt-menu-item > .kt-menu-link .kt-menu-title,	.dash_app.kt-sidebar-collapse .kt-sidebar:not(:hover) .kt-menu > .kt-menu-item > .kt-menu-link .kt-menu-arrow,	.dash_app.kt-sidebar-collapse .kt-sidebar:not(:hover) .kt-menu > .kt-menu-item > .kt-menu-link .kt-menu-badge,	.dash_app.kt-sidebar-collapse .kt-sidebar:not(:hover) .kt-menu > .kt-menu-item > .kt-menu-label .kt-menu-title,	.dash_app.kt-sidebar-collapse .kt-sidebar:not(:hover) .kt-menu > .kt-menu-item > .kt-menu-label .kt-menu-arrow,	.dash_app.kt-sidebar-collapse .kt-sidebar:not(:hover) .kt-menu > .kt-menu-item > .kt-menu-label .kt-menu-badge {
       display: none;
     }
-    .app.kt-sidebar-collapse .kt-sidebar:not(:hover) .kt-menu > .kt-menu-item > .kt-menu-accordion {
+    .dash_app.kt-sidebar-collapse .kt-sidebar:not(:hover) .kt-menu > .kt-menu-item > .kt-menu-accordion {
       display: none;
     }
-    .app.kt-sidebar-collapse .kt-sidebar:not(:hover) .kt-menu > .kt-menu-item > .kt-menu-heading {
+    .dash_app.kt-sidebar-collapse .kt-sidebar:not(:hover) .kt-menu > .kt-menu-item > .kt-menu-heading {
       visibility: hidden;
       position: relative;
     }
-    .app.kt-sidebar-collapse .kt-sidebar:not(:hover) .kt-menu > .kt-menu-item > .kt-menu-heading::before {
+    .dash_app.kt-sidebar-collapse .kt-sidebar:not(:hover) .kt-menu > .kt-menu-item > .kt-menu-heading::before {
       content: "...";
       color: currentColor;
       font-size: inherit;
@@ -14161,14 +12505,14 @@ button[data-vc-week-day] {
       margin-inline-start: 0.225rem;
       transform: translateX(100%);
     }
-    .app.kt-sidebar-collapse .kt-sidebar .kt-sidebar-content {
+    .dash_app.kt-sidebar-collapse .kt-sidebar .kt-sidebar-content {
       overflow: hidden;
     }
   }
-  .app .kt-wrapper {
+  .dash_app .kt-wrapper {
     transition: padding-inline-start var(--sidebar-transition-duration) var(--sidebar-transition-timing);
   }
-  .app .kt-header {
+  .dash_app .kt-header {
     transition: inset-inline-start var(--sidebar-transition-duration) var(--sidebar-transition-timing);
   }
 }
