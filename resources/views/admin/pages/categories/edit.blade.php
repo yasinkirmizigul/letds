@@ -127,13 +127,13 @@
                                     </button>
 
                                     {{-- DELETE (modal open) --}}
-                                    @if(auth()->user()->hasPermission('category.delete'))
+                                    @perm('category.delete')
                                         <button type="button"
                                                 class="kt-btn kt-btn-destructive"
                                                 data-kt-modal-target="#deleteCategoryModal">
                                             Sil
                                         </button>
-                                    @endif
+                                    @endperm
 
                                     <a href="{{ route('admin.categories.index') }}" class="kt-btn kt-btn-mono">İptal</a>
                                 </div>
@@ -145,19 +145,19 @@
                 </form>
 
                 {{-- DELETE FORM (separate; used by modal confirm) --}}
-                @if(auth()->user()->hasPermission('category.delete'))
+                @perm('category.delete')
                     <form id="category-delete-form"
                           method="POST"
                           action="{{ route('admin.categories.destroy', ['category' => $category->id]) }}">
                         @csrf
                         @method('DELETE')
                     </form>
-                @endif
+                @endperm
 
             </div>
 
             {{-- DELETE MODAL --}}
-            @if(auth()->user()->hasPermission('category.delete'))
+        @perm('category.delete')
                 <div id="deleteCategoryModal"
                      class="kt-modal hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                     <div class="kt-card max-w-md">
@@ -188,7 +188,7 @@
                         </div>
                     </div>
                 </div>
-            @endif
+            @endperm
 
         </div>
     </div>

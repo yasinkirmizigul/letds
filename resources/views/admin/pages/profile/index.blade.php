@@ -221,7 +221,7 @@
                                     <th class="text-start w-52">Proje Adı</th>
                                     <th class="w-56 text-end">İlerleme</th>
                                     <th class="w-36 text-end">Tarih</th>
-                                    <th class="w-16"></th>
+                                    <th class="w-20"></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -238,7 +238,7 @@
                                         {{ now()->format('d M, Y') }}
                                     </td>
                                     <td class="text-start">
-                                        <button class="kt-btn kt-btn-sm kt-btn-light" type="button" disabled>Düzenle</button>
+                                        <button class="kt-btn kt-btn-sm kt-btn-mono" type="button" disabled>Düzenle</button>
                                     </td>
                                 </tr>
                                 </tbody>

@@ -109,7 +109,7 @@
 
                 <div class="flex gap-2">
                     <button class="kt-btn kt-btn-primary" type="submit">Güncelle</button>
-                    <a class="kt-btn kt-btn-light" href="{{ route('admin.roles.index') }}">İptal</a>
+                    <a class="kt-btn kt-btn-mono" href="{{ route('admin.roles.index') }}">İptal</a>
                 </div>
             </form>
         </div>

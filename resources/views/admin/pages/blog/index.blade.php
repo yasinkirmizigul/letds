@@ -61,9 +61,9 @@
                             @endif
                         </form>
 
-                        @if(auth()->user()->hasPermission('blog.create'))
+                        @perm('blog.create')
                             <a href="{{ route('admin.blog.create') }}" class="kt-btn kt-btn-sm kt-btn-primary">Yeni Yazı</a>
-                        @endif
+                        @endperm
                     </div>
                 </div>
 
@@ -136,7 +136,7 @@
                                                     @endif
                                                 </div>
 
-                                                @if(auth()->user()->hasPermission('blog.update'))
+                                                @perm('blog.update')
                                                     <label class="kt-switch kt-switch-sm">
                                                         <input
                                                             class="js-publish-toggle kt-switch kt-switch-mono"
@@ -145,7 +145,7 @@
                                                             @checked($p->is_published)
                                                         />
                                                     </label>
-                                                @endif
+                                                @endperm
                                             </div>
 
                                             <div class="text-sm text-muted-foreground mt-1 js-published-at">
@@ -160,17 +160,17 @@
                                         </td>
 
                                         <td>
-                                            @if(auth()->user()->hasPermission('blog.update'))
+                                            @perm('blog.update')
                                                 <a href="{{ route('admin.blog.edit', $p) }}"
                                                    class="kt-btn kt-btn-sm kt-btn-icon kt-btn-primary"
                                                    title="Düzenle">
                                                     <i class="ki-filled ki-notepad-edit"></i>
                                                 </a>
-                                            @endif
+                                            @endperm
                                         </td>
 
                                         <td>
-                                            @if(auth()->user()->hasPermission('blog.delete'))
+                                            @perm('blog.delete')
                                                 <form method="POST"
                                                       action="{{ route('admin.blog.destroy', $p) }}"
                                                       onsubmit="return confirm('Bu yazıyı silmek istiyor musunuz?')">
@@ -182,7 +182,7 @@
                                                         <i class="ki-filled ki-trash"></i>
                                                     </button>
                                                 </form>
-                                            @endif
+                                            @endperm
                                         </td>
                                     </tr>
                                 @endforeach

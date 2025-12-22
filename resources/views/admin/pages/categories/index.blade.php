@@ -21,11 +21,11 @@
                             placeholder="Kategori adı / slug ara..."
                         />
 
-                        @if(auth()->user()->hasPermission('category.create'))
+                        @perm('category.create')
                             <a href="{{ route('admin.categories.create') }}" class="kt-btn kt-btn-sm kt-btn-primary">
                                 Yeni Kategori
                             </a>
-                        @endif
+                        @endperm
                     </div>
                 </div>
 
@@ -53,14 +53,14 @@
                                         <td class="text-sm text-secondary-foreground">{{ $cat->blog_posts_count ?? 0 }}</td>
                                         <td>
                                             <div class="inline-flex gap-2 justify-end">
-                                                @if(auth()->user()->hasPermission('category.update'))
+                                                @perm('category.update')
                                                     <a class="kt-btn kt-btn-light kt-btn-sm"
                                                        href="{{ route('admin.categories.edit', ['category' => $cat->id]) }}">
                                                         Düzenle
                                                     </a>
-                                                @endif
+                                                @endperm
 
-                                                @if(auth()->user()->hasPermission('category.delete'))
+                                                @perm('category.delete')
                                                     <form method="POST"
                                                           action="{{ route('admin.categories.destroy', ['category' => $cat->id]) }}"
                                                           onsubmit="return confirm('Kategori silinsin mi? (İlişkiler otomatik kaldırılır)')">
@@ -68,7 +68,7 @@
                                                         @method('DELETE')
                                                         <button class="kt-btn kt-btn-destructive kt-btn-sm">Sil</button>
                                                     </form>
-                                                @endif
+                                                @endperm
                                             </div>
                                         </td>
                                     </tr>

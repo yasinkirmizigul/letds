@@ -21,11 +21,11 @@
                             class="kt-input kt-input-sm"
                             placeholder="Yetki / anahtar ara..."
                         />
-                        @if(auth()->user()->hasPermission('permissions.create'))
+                        @perm('permissions.create')
                             <a href="{{ route('admin.permissions.create') }}" class="kt-btn kt-btn-sm kt-btn-primary">
                                 Yetki Ekle
                             </a>
-                        @endif
+                        @endperm
                     </div>
                 </div>
 

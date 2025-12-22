@@ -89,7 +89,7 @@
                                                 @perm('roles.update')
                                                 @if($role->slug !== 'superadmin' && $myP > (int)($role->priority ?? 0))
                                                     <a href="{{ route('admin.roles.edit', $role) }}"
-                                                       class="kt-btn kt-btn-sm kt-btn-icon kt-btn-mono"
+                                                       class="kt-btn kt-btn-sm kt-btn-icon kt-btn-primary"
                                                        title="Düzenle">
                                                         <i class="ki-filled ki-notepad-edit"></i>
                                                     </a>
@@ -98,7 +98,7 @@
                                                 @perm('roles.delete')
                                                 @if($role->slug !== 'superadmin' && $myP > (int)($role->priority ?? 0))
                                                     <button type="button"
-                                                            class="kt-btn kt-btn-sm kt-btn-icon kt-btn-mono"
+                                                            class="kt-btn kt-btn-sm kt-btn-icon kt-btn-destructive"
                                                             title="Sil"
                                                             data-kt-modal-toggle="#roleDeleteModal"
                                                             data-role-id="{{ $role->id }}"

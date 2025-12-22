@@ -21,11 +21,11 @@
                             placeholder="Ad / e-posta / rol ara..."
                         />
 
-                        @if(auth()->user()->hasPermission('users.create'))
+                        @perm('users.create')
                             <a href="{{ route('admin.users.create') }}" class="kt-btn kt-btn-sm kt-btn-primary">
                                 Kullanıcı Ekle
                             </a>
-                        @endif
+                        @endperm
                     </div>
                 </div>
 
@@ -83,26 +83,26 @@
                                         </td>
 
                                         <td>
-                                            @if(auth()->user()->hasPermission('users.update'))
+                                            @perm('users.update')
                                                 <a href="{{ route('admin.users.edit', $user) }}"
-                                                   class="kt-btn kt-btn-sm kt-btn-icon kt-btn-mono">
+                                                   class="kt-btn kt-btn-sm kt-btn-icon kt-btn-primary">
                                                     <i class="ki-filled ki-notepad-edit"></i>
                                                 </a>
-                                            @endif
+                                            @endperm
                                         </td>
 
                                         <td>
-                                            @if(auth()->user()->hasPermission('users.delete'))
+                                            @perm('users.delete')
                                                 <form method="POST"
                                                       data-confirm="delete-user"
                                                       action="{{ route('admin.users.destroy', $user) }}">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="kt-btn kt-btn-sm kt-btn-icon kt-btn-mono">
+                                                    <button type="submit" class="kt-btn kt-btn-sm kt-btn-icon kt-btn-destructive">
                                                         <i class="ki-filled ki-trash"></i>
                                                     </button>
                                                 </form>
-                                            @endif
+                                            @endperm
                                         </td>
                                     </tr>
                                 @endforeach

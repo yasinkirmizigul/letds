@@ -232,13 +232,13 @@
                                 Güncelle
                             </button>
 
-                            @if(auth()->user()->hasPermission('blog.delete'))
+                            @perm('blog.delete')
                                 <button type="button"
                                         class="kt-btn kt-btn-destructive"
                                         data-kt-modal-target="#deleteBlogModal">
                                     Sil
                                 </button>
-                            @endif
+                            @endperm
 
                             <a href="{{ route('admin.blog.index') }}" class="kt-btn kt-btn-light">İptal</a>
                         </div>
@@ -249,7 +249,7 @@
         </div>
 
         {{-- DELETE FORM (separate) --}}
-        @if(auth()->user()->hasPermission('blog.delete'))
+        @perm('blog.delete')
             <form id="blog-delete-form"
                   method="POST"
                   action="{{ route('admin.blog.destroy', ['blogPost' => $blogPost->id]) }}">
@@ -288,7 +288,7 @@
                     </div>
                 </div>
             </div>
-        @endif
+        @endperm
 
     </div>
 @endsection
