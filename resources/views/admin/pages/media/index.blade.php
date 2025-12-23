@@ -12,8 +12,12 @@
                     </div>
 
                     <div class="flex items-center gap-2 ms-auto">
-                        <input id="mediaSearch" class="kt-input w-64" placeholder="Ara..." />
-                        <select id="mediaType" class="kt-select w-40">
+                        <input id="mediaSearch" class="kt-input" placeholder="Ara..." />
+                        <select id="mediaType" class="kt-select"  data-kt-select="true"
+                                data-kt-select-placeholder="Medya Tipi"
+                                data-kt-select-config='{
+			"optionsClass": "kt-scrollable overflow-auto max-h-[250px]"
+		}'>
                             <option value="">Tümü</option>
                             <option value="image">Görsel</option>
                             <option value="video">Video</option>

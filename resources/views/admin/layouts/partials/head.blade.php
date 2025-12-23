@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="{{ asset('assets/css/select2.min.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/css/datatables.min.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}" />
+<link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}" />
 
 {{-- İstersen sayfa özel CSS buraya --}}
 @stack('custom_css')

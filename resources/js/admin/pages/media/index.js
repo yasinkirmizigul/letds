@@ -1,3 +1,4 @@
+// resources/js/pages/media/index.js
 export default function init() {
     const root = document.querySelector('[data-page="media.index"]');
     if (!root) return;
@@ -32,8 +33,9 @@ export default function init() {
     const titleInput = modal?.querySelector('#mediaTitle');
     const altInput = modal?.querySelector('#mediaAlt');
 
-    // optional error box
-    const globalErr = modal?.querySelector('#mediaUploadError');
+    // ✅ FIX: senin modal'da genelde bu id var: #mediaUploadGlobalError
+    // (eski sürüm #mediaUploadError aradığı için "Missing DOM elements: ['globalErr']" alıyordun)
+    const globalErr = modal?.querySelector('#mediaUploadGlobalError') || modal?.querySelector('#mediaUploadError');
 
     const startBtn = modal?.querySelector('#mediaStartUpload');
     const clearBtn = modal?.querySelector('#mediaClearQueue');
@@ -183,7 +185,7 @@ export default function init() {
     }
 
     // -------------------------
-    // Lightbox (image + video + pdf iframe + swipe)
+    // Lightbox (CSS-class based: styles.css -> .media-lb*)
     // -------------------------
     let lbOpen = false;
     let lbItems = [];
@@ -191,52 +193,46 @@ export default function init() {
 
     const lb = document.createElement('div');
     lb.id = 'mediaLightbox';
-    lb.className = 'fixed inset-0 z-[9999] hidden';
+    lb.className = 'media-lb hidden';
 
     lb.innerHTML = `
-      <div class="absolute inset-0 bg-black/70" data-lb-backdrop></div>
-
-      <div class="absolute inset-0 flex items-center justify-center p-4">
-        <div class="relative w-full max-w-5xl">
-          <button type="button" data-lb-close class="absolute -top-10 right-0 kt-btn kt-btn-sm kt-btn-light">
-            <i class="ki-outline ki-cross"></i> Kapat
-          </button>
-
-          <div class="bg-background rounded-2xl ring-1 ring-border overflow-hidden shadow-xl">
-            <div class="flex items-center justify-between p-3 border-b border-border gap-3">
-              <div class="min-w-0">
-                <div class="text-sm font-semibold truncate" data-lb-title></div>
-                <div class="text-xs text-muted-foreground truncate" data-lb-sub></div>
-              </div>
-              <div class="flex items-center gap-2 shrink-0">
-                <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-lb-prev title="Önceki">
-                  <i class="ki-outline ki-left"></i>
-                </button>
-                <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-lb-next title="Sonraki">
-                  <i class="ki-outline ki-right"></i>
-                </button>
-                <a class="kt-btn kt-btn-sm kt-btn-light" data-lb-open target="_blank" rel="noreferrer" title="Yeni sekmede aç">
-                  <i class="ki-outline ki-fasten"></i>
-                </a>
-              </div>
-            </div>
-
-            <div class="bg-black/5" data-lb-stage>
-              <img data-lb-img class="hidden w-full max-h-[78vh] object-contain mx-auto block select-none" alt="">
-              <video data-lb-video class="hidden w-full max-h-[78vh] mx-auto block" controls playsinline></video>
-              <iframe data-lb-pdf class="hidden w-full h-[78vh] bg-white" frameborder="0"></iframe>
-
-              <div data-lb-nonprev class="hidden p-10 text-center">
-                <i class="ki-outline ki-file text-6xl text-muted-foreground"></i>
-                <div class="mt-3 text-sm text-muted-foreground">Bu dosya önizlenemiyor.</div>
-              </div>
-            </div>
+      <div class="media-lb__bg" data-lb-backdrop></div>
+      <div class="media-lb__panel" role="dialog" aria-modal="true">
+        <div class="media-lb__top">
+          <div class="media-lb__meta">
+            <div class="media-lb__title" data-lb-title></div>
+            <div class="media-lb__sub" data-lb-sub></div>
           </div>
 
-          <div class="mt-3 text-xs text-white/80 text-center">
-            <span class="hidden sm:inline">← / →</span>
-            <span class="sm:hidden">Sağa/sola kaydır</span>
-            <span> • ESC</span>
+          <div class="media-lb__actions">
+            <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-lb-prev title="Önceki">
+              <i class="ki-outline ki-left"></i>
+            </button>
+            <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-lb-next title="Sonraki">
+              <i class="ki-outline ki-right"></i>
+            </button>
+            <a class="kt-btn kt-btn-sm kt-btn-light" data-lb-open target="_blank" rel="noreferrer" title="Yeni sekmede aç">
+              <i class="ki-outline ki-fasten"></i>
+            </a>
+            <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-lb-close title="Kapat">
+              <i class="ki-outline ki-cross"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="media-lb__body" data-lb-stage>
+          <img data-lb-img class="media-lb__img hidden" alt="">
+          <video data-lb-video class="media-lb__video hidden" controls playsinline></video>
+          <iframe data-lb-pdf class="media-lb__iframe hidden" frameborder="0"></iframe>
+
+          <div data-lb-nonprev class="media-lb__fallback hidden">
+            <div class="text-sm font-medium">Önizleme yok</div>
+            <div class="text-xs text-muted-foreground mt-1">Bu dosya tipi tarayıcı içinde gösterilemiyor.</div>
+            <div class="mt-3">
+              <a class="kt-btn kt-btn-sm kt-btn-primary" data-lb-open2 target="_blank" rel="noreferrer">
+                Yeni sekmede aç
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -250,7 +246,12 @@ export default function init() {
     const lbPdf = lb.querySelector('[data-lb-pdf]');
     const lbNonPrev = lb.querySelector('[data-lb-nonprev]');
     const lbOpenLink = lb.querySelector('[data-lb-open]');
+    const lbOpenLink2 = lb.querySelector('[data-lb-open2]');
     const lbStage = lb.querySelector('[data-lb-stage]');
+
+    function isHidden(el) { return el.classList.contains('hidden'); }
+    function hide(el) { el.classList.add('hidden'); }
+    function show(el) { el.classList.remove('hidden'); }
 
     function stopAllMedia() {
         try { lbVideo.pause(); } catch (_) { }
@@ -268,40 +269,39 @@ export default function init() {
 
         lbTitle.textContent = it.title || it.name || 'Önizleme';
         lbSub.textContent = it.sub || '';
-        lbOpenLink.href = it.url || '#';
+        const url = it.url || '#';
+
+        lbOpenLink.href = url;
+        lbOpenLink2.href = url;
 
         const kind = it.kind || inferKindFromMimeOrExt(it.mime, it.name || it.url || '');
-        const url = it.url;
 
-        lbImg.classList.add('hidden');
-        lbVideo.classList.add('hidden');
-        lbPdf.classList.add('hidden');
-        lbNonPrev.classList.add('hidden');
+        hide(lbImg); hide(lbVideo); hide(lbPdf); hide(lbNonPrev);
 
-        if (!url) {
-            lbNonPrev.classList.remove('hidden');
+        if (!it.url) {
+            show(lbNonPrev);
             return;
         }
 
         if (kind === 'image') {
-            lbImg.classList.remove('hidden');
-            lbImg.src = url;
+            show(lbImg);
+            lbImg.src = it.url;
             return;
         }
 
         if (kind === 'video') {
-            lbVideo.classList.remove('hidden');
-            lbVideo.src = url;
+            show(lbVideo);
+            lbVideo.src = it.url;
             return;
         }
 
         if (kind === 'pdf') {
-            lbPdf.classList.remove('hidden');
-            lbPdf.src = url;
+            show(lbPdf);
+            lbPdf.src = it.url;
             return;
         }
 
-        lbNonPrev.classList.remove('hidden');
+        show(lbNonPrev);
     }
 
     function openLightbox(items, index = 0) {
@@ -309,12 +309,14 @@ export default function init() {
         lbIndex = Math.max(0, Math.min(index, lbItems.length - 1));
         lb.classList.remove('hidden');
         lbOpen = true;
+        document.documentElement.classList.add('overflow-hidden');
         renderLightbox();
     }
 
     function closeLightbox() {
         lb.classList.add('hidden');
         lbOpen = false;
+        document.documentElement.classList.remove('overflow-hidden');
         stopAllMedia();
     }
 
@@ -331,11 +333,30 @@ export default function init() {
     }
 
     lb.addEventListener('click', (e) => {
-        if (e.target.matches('[data-lb-close]')) closeLightbox();
-        if (e.target.matches('[data-lb-backdrop]')) closeLightbox();
-        if (e.target.closest('[data-lb-prev]')) lbPrev();
-        if (e.target.closest('[data-lb-next]')) lbNext();
-    });
+        console.log('NEXT', !!e.target.closest('[data-lb-next]'), e.target);
+        const closeBtn = e.target.closest('[data-lb-close],[data-lb-backdrop]');
+        if (closeBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeLightbox();
+            return;
+        }
+        const nextBtn = e.target.closest('[data-lb-next]');
+        if (nextBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            lbNext();
+            return;
+        }
+
+        const prevBtn = e.target.closest('[data-lb-prev]');
+        if (prevBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            lbPrev();
+
+        }
+    }, true);
 
     document.addEventListener('keydown', (e) => {
         if (!lbOpen) return;
@@ -344,7 +365,7 @@ export default function init() {
         if (e.key === 'ArrowRight') lbNext();
     });
 
-    // touch swipe
+    // touch/pointer swipe
     let pDown = false;
     let pStartX = 0;
     let pStartY = 0;
@@ -1189,58 +1210,43 @@ export default function init() {
 
     // Grid open/delete (delegation)
     grid.addEventListener('click', async (e) => {
-        if (e.target.closest('input[data-media-check="1"]')) {
-            e.stopPropagation();
-            return;
-        }
-
-        const del = e.target.closest('[data-action="delete"]');
-        if (del) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            const id = del.getAttribute('data-id');
-            if (!id) return;
-
-            if (!confirm('Bu dosya silinsin mi?')) return;
-
-            const res = await fetch(`/admin/media/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    ...(csrf ? { 'X-CSRF-TOKEN': csrf } : {}),
-                    'Accept': 'application/json'
-                }
-            });
-
-            if (!res.ok) {
-                const j = await res.json().catch(() => ({}));
-                alert(j?.error?.message || j?.message || 'Silme başarısız');
-                return;
-            }
-
-            selectedIds.delete(String(id));
-            setBulkUI();
-
-            await fetchList();
-            recent = recent.filter(x => String(x.id) !== String(id));
-            renderRecent();
-            return;
-        }
+        if (e.target.closest('input[data-media-check="1"]')) return;
 
         const btn = e.target.closest('[data-action="open"]');
         if (!btn) return;
 
-        const cards = [...grid.querySelectorAll('[data-action="open"]')];
-        const items = cards.map(b => ({
-            url: b.getAttribute('data-url') || '',
-            kind: b.getAttribute('data-kind') || inferKindFromMimeOrExt(b.getAttribute('data-mime'), b.getAttribute('data-name') || b.getAttribute('data-url')),
-            title: b.getAttribute('data-name') || 'Medya',
-            sub: `${b.getAttribute('data-mime') || ''} • ${formatBytes(Number(b.getAttribute('data-size') || 0))}`,
-            mime: b.getAttribute('data-mime') || '',
-            name: b.getAttribute('data-name') || '',
-        }));
-        const idx = cards.indexOf(btn);
-        openLightbox(items, Math.max(0, idx));
+        // ✅ UNIQUE items by URL (veya data-id varsa onu kullan)
+        const all = [...grid.querySelectorAll('[data-action="open"]')];
+
+        const seen = new Set();
+        const items = [];
+        const btnToIndex = new Map(); // hangi button hangi unique index'e denk geliyor
+
+        for (const b of all) {
+            const url = b.getAttribute('data-url') || '';
+            if (!url) continue;
+
+            // Eğer id varsa daha sağlam: const key = b.getAttribute('data-id') || url;
+            const key = url;
+
+            if (!seen.has(key)) {
+                seen.add(key);
+                items.push({
+                    url,
+                    kind: b.getAttribute('data-kind') || inferKindFromMimeOrExt(b.getAttribute('data-mime'), b.getAttribute('data-name') || url),
+                    title: b.getAttribute('data-name') || 'Medya',
+                    sub: `${b.getAttribute('data-mime') || ''} • ${formatBytes(Number(b.getAttribute('data-size') || 0))}`,
+                    mime: b.getAttribute('data-mime') || '',
+                    name: b.getAttribute('data-name') || '',
+                });
+            }
+
+            // Bu butonun unique index'i
+            btnToIndex.set(b, items.length - 1);
+        }
+
+        const idx = btnToIndex.get(btn) ?? 0;
+        openLightbox(items, idx);
     });
 
     if (libSearch) {
@@ -1306,4 +1312,7 @@ export default function init() {
     renderQueue();
     setBulkUI();
     fetchList();
+
+    // expose for debugging (optional)
+    window.__mediaLb = { openLightbox, closeLightbox };
 }
