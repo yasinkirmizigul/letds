@@ -190,6 +190,8 @@ Route::middleware(['auth'])
             Route::delete('/{media}', [MediaController::class, 'destroy'])
                 ->middleware('permission:media.delete')
                 ->name('destroy');
+            Route::delete('media/bulk', [MediaController::class, 'bulkDestroy'])
+                ->name('admin.media.bulkDestroy');
         });
 
 // Profile
