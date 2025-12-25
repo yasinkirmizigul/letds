@@ -12,6 +12,7 @@
             <div class="border-b border-b-border px-6 py-4">
                 <div class="flex items-center gap-2">
                     <button type="button"
+                            id="mediaTabUpload"
                             class="kt-btn kt-btn-sm kt-btn-light"
                             data-media-tab="upload"
                             aria-selected="true">
@@ -19,6 +20,7 @@
                     </button>
 
                     <button type="button"
+                            id="mediaTabLibrary"
                             class="kt-btn kt-btn-sm kt-btn-light"
                             data-media-tab="library"
                             aria-selected="false">
@@ -34,20 +36,6 @@
             <div class="pt-6">
                 {{-- UPLOAD PANE --}}
                 <div id="mediaUploadPane">
-                    <div class="flex items-center gap-2 mb-3">
-                        <div class="flex items-center gap-2 grow">
-                            <i class="ki-filled ki-magnifier text-muted-foreground"></i>
-                            <input id="mediaLibrarySearch" type="text" class="kt-input w-full" placeholder="Kütüphanede ara..." />
-                        </div>
-
-                        <select id="mediaLibraryType" class="kt-select w-40">
-                            <option value="">Tümü</option>
-                            <option value="image">Görsel</option>
-                            <option value="video">Video</option>
-                            <option value="doc">Doküman</option>
-                        </select>
-                    </div>
-
                     <div id="mediaLibraryResults" class="grid gap-2"></div>
                     <div class="grid gap-4">
                         <div id="mediaDropzone"
@@ -109,8 +97,8 @@
                             <div class="kt-card-content p-4 flex flex-col gap-4">
                                 <div class="flex flex-col md:flex-row md:items-center gap-3">
                                     <div class="grow">
-                                        <div class="kt-input-icon">
-                                            <i class="ki-outline ki-magnifier"></i>
+                                        <div class="flex flex-row kt-input-icon">
+                                            <i class="items-center ki-magnifier ki-outline me-2"></i>
                                             <input
                                                 id="mediaLibrarySearch"
                                                 type="text"
@@ -120,7 +108,12 @@
                                     </div>
 
                                     <div class="w-full md:w-56">
-                                        <select id="mediaLibraryType" class="kt-select w-full">
+                                        <select id="mediaLibraryType" class="kt-select w-full"
+                                                data-kt-select="true"
+                                                data-kt-select-placeholder="Medya Türü"
+                                                data-kt-select-config='{
+                                                "optionsClass": "kt-scrollable overflow-auto max-h-[250px]"
+                                            }'>
                                             <option value="">Tümü</option>
                                             <option value="image">Görsel</option>
                                             <option value="video">Video</option>

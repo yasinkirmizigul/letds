@@ -8,8 +8,7 @@ export default function init() {
     // -------------------------
     const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
-    const tabUploadBtn = root.querySelector('#mediaTabUpload');
-    const tabLibraryBtn = root.querySelector('#mediaTabLibrary');
+    const tabButtons = [...root.querySelectorAll('[data-media-tab]')];
     const uploadPane = root.querySelector('#mediaUploadPane');
     const libraryPane = root.querySelector('#mediaLibraryPane');
 
@@ -136,11 +135,22 @@ export default function init() {
 
     function switchTab(tab) {
         const isUpload = tab === 'upload';
-        tabUploadBtn?.classList.toggle('kt-tab-active', isUpload);
-        tabLibraryBtn?.classList.toggle('kt-tab-active', !isUpload);
 
+        // Pane toggle
         uploadPane?.classList.toggle('hidden', !isUpload);
         libraryPane?.classList.toggle('hidden', isUpload);
+
+        // Button state
+        tabButtons.forEach(btn => {
+            const t = btn.getAttribute('data-media-tab');
+            const active = t === tab;
+
+            btn.setAttribute('aria-selected', active ? 'true' : 'false');
+
+            // aktif görsel: istersen kt-btn-primary, değilse kt-btn-light
+            btn.classList.toggle('kt-btn-primary', active);
+            btn.classList.toggle('kt-btn-light', !active);
+        });
     }
 
     // -------------------------
@@ -622,8 +632,13 @@ export default function init() {
     // -------------------------
     // Events
     // -------------------------
-    tabUploadBtn?.addEventListener('click', () => switchTab('upload'));
-    tabLibraryBtn?.addEventListener('click', () => switchTab('library'));
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const t = btn.getAttribute('data-media-tab');
+            if (!t) return;
+            switchTab(t);
+        });
+    });
 
     dropzone?.addEventListener('click', () => filesInput.click());
 
