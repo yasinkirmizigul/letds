@@ -173,7 +173,7 @@ Route::middleware(['auth'])
                 ->name('togglePublish');
         });
 
-        // Media
+// Media
         Route::prefix('media')->as('media.')->group(function () {
             Route::get('/', [MediaController::class, 'index'])
                 ->middleware('permission:media.view')
@@ -187,11 +187,15 @@ Route::middleware(['auth'])
                 ->middleware('permission:media.upload')
                 ->name('upload');
 
+            // ✅ BULK: önce + path doğru
+            Route::delete('/bulk', [MediaController::class, 'bulkDestroy'])
+                ->middleware('permission:media.delete')
+                ->name('bulkDestroy');
+
+            // ✅ tekil silme her zaman en sona
             Route::delete('/{media}', [MediaController::class, 'destroy'])
                 ->middleware('permission:media.delete')
                 ->name('destroy');
-            Route::delete('media/bulk', [MediaController::class, 'bulkDestroy'])
-                ->name('admin.media.bulkDestroy');
         });
 
 // Profile

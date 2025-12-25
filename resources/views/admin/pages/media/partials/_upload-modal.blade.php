@@ -1,5 +1,5 @@
 <div class="kt-modal kt-modal-center" id="mediaUploadModal" data-kt-modal="true">
-    <div class="kt-modal-content max-w-[60%]" style="max-height: 90%">
+    <div class="kt-modal-content max-w-[60%]" style="max-height: 97vh">
         <div class="kt-modal-header">
             <h3 class="kt-modal-title">Medya</h3>
             <button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost" data-kt-modal-dismiss="true">
@@ -7,7 +7,7 @@
             </button>
         </div>
 
-        <div class="kt-modal-body p-7">
+        <div class="kt-modal-body overflow-hidden p-7">
             {{-- Tabs --}}
             <div class="border-b border-b-border px-6 py-4">
                 <div class="flex items-center gap-2">
@@ -94,7 +94,7 @@
                             </div>
                         </div>
 
-                        <div id="mediaUploadList" class="grid gap-2"></div>
+                        <div id="mediaUploadList" class="gap-2 grid kt-scrollable" style="max-height: 52vh;"></div>
                     </div>
                 </div>
 

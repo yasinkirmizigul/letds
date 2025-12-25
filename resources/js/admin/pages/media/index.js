@@ -4,792 +4,845 @@ export default function init() {
     if (!root) return;
 
     // -------------------------
-    // Page list DOM
+    // Elements
     // -------------------------
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+    const tabUploadBtn = root.querySelector('#mediaTabUpload');
+    const tabLibraryBtn = root.querySelector('#mediaTabLibrary');
+    const uploadPane = root.querySelector('#mediaUploadPane');
+    const libraryPane = root.querySelector('#mediaLibraryPane');
+
+    const dropzone = root.querySelector('#mediaDropzone');
+    const filesInput = root.querySelector('#mediaFiles');
+    const startBtn = root.querySelector('#mediaStartUpload');
+    const clearBtn = root.querySelector('#mediaClearQueue');
+    const globalErr = root.querySelector('#mediaGlobalError');
+
+    const uploadList = root.querySelector('#mediaUploadList');
+    const recentList = root.querySelector('#mediaRecentList');
+
     const grid = root.querySelector('#mediaGrid');
     const empty = root.querySelector('#mediaEmpty');
     const info = root.querySelector('#mediaInfo');
     const pagination = root.querySelector('#mediaPagination');
+
     const searchInput = root.querySelector('#mediaSearch');
     const typeSelect = root.querySelector('#mediaType');
+    const perPageInput = root.querySelector('#mediaPerPage');
 
-    // Bulk select (page grid)
+    // Bulk UI
     const bulkBar = root.querySelector('#mediaBulkBar');
-    const checkAll = root.querySelector('#mediaCheckAll');
     const selectedCountEl = root.querySelector('#mediaSelectedCount');
+    const checkAll = root.querySelector('#mediaCheckAll');
     const bulkDeleteBtn = root.querySelector('#mediaBulkDeleteBtn');
 
-    // -------------------------
-    // Modal DOM
-    // -------------------------
-    const modal = root.querySelector('#mediaUploadModal');
-    const tabUploadBtn = modal?.querySelector('[data-media-tab="upload"]');
-    const tabLibraryBtn = modal?.querySelector('[data-media-tab="library"]');
-    const uploadPane = modal?.querySelector('#mediaUploadPane');
-    const libraryPane = modal?.querySelector('#mediaLibraryPane');
-
-    const dropzone = modal?.querySelector('#mediaDropzone');
-    const filesInput = modal?.querySelector('#mediaFiles');
-    const titleInput = modal?.querySelector('#mediaTitle');
-    const altInput = modal?.querySelector('#mediaAlt');
-
-    const globalErr = modal?.querySelector('#mediaUploadGlobalError') || modal?.querySelector('#mediaUploadError');
-
-    const startBtn = modal?.querySelector('#mediaStartUpload');
-    const clearBtn = modal?.querySelector('#mediaClearQueue');
-
-    const queueInfo = modal?.querySelector('#mediaQueueInfo');
-    const uploadList = modal?.querySelector('#mediaUploadList');
-
-    const recentList = modal?.querySelector('#mediaRecentList');
-    const refreshLibraryBtn = modal?.querySelector('#mediaRefreshLibrary');
-
-    // Optional: modal library search/filter/results (v2)
-    const libSearch = modal?.querySelector('#mediaLibrarySearch');
-    const libType = modal?.querySelector('#mediaLibraryType');
-    const libResults = modal?.querySelector('#mediaLibraryResults');
-
-    const required = {
-        grid, empty, info, pagination, searchInput, typeSelect,
-        modal, tabUploadBtn, tabLibraryBtn, uploadPane, libraryPane,
-        dropzone, filesInput, titleInput, altInput,
-        startBtn, clearBtn, queueInfo, uploadList,
-        recentList, refreshLibraryBtn
-    };
-
-    const missing = Object.entries(required).filter(([, v]) => !v).map(([k]) => k);
-    if (missing.length) {
-        console.error('[media.index] Missing DOM elements:', missing);
-        return;
-    }
+    // Modal library (optional)
+    const libSearch = root.querySelector('#mediaLibSearch');
+    const libType = root.querySelector('#mediaLibType');
+    const libResults = root.querySelector('#mediaLibResults');
+    const refreshLibraryBtn = root.querySelector('#mediaLibRefresh');
 
     // -------------------------
-    // Config
+    // State
     // -------------------------
-    const csrf =
-        document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
-        window?.Laravel?.csrfToken ||
-        '';
-
-    const endpoints = {
-        list: '/admin/media/list',
-        upload: '/admin/media/upload',
-        chunkInit: '/admin/media/upload/init',
-        chunk: '/admin/media/upload/chunk',
-        chunkFinalize: '/admin/media/upload/finalize',
-        bulkDelete: '/admin/media/bulk',
-        destroyBase: '/admin/media', // /admin/media/{id}
-    };
-
-    const CONCURRENCY = 3;
-    const CHUNK_SIZE = 5 * 1024 * 1024;
-    const CHUNK_THRESHOLD = 20 * 1024 * 1024;
-    const MAX_RETRY = 3;
-
-    // -------------------------
-    // State (page grid)
-    // -------------------------
-    const state = { page: 1, perpage: 24, q: '', type: '' };
-    const selectedIds = new Set(); // page grid selected ids (string)
+    let busy = false;
     let debounceTimer = null;
 
-    // -------------------------
-    // State (upload)
-    // -------------------------
-    let queue = [];    // {qid,file,previewUrl,status,progress,errMsg,serverMedia}
-    let busy = false;
+    let queue = []; // {qid,file,previewUrl,status,error,kind}
+    let recent = []; // {id,url,thumb_url,kind,original_name,mime_type,size,name}
 
-    // -------------------------
-    // State (recent)
-    // -------------------------
-    let recent = [];
-    try {
-        const x = JSON.parse(localStorage.getItem('media_recent') || '[]');
-        if (Array.isArray(x)) recent = x;
-    } catch (_) { }
+    const selectedIds = new Set(); // bulk selection
 
-    // -------------------------
-    // State (modal library)
-    // -------------------------
-    const libState = { page: 1, perpage: 12, q: '', type: '' };
-    const libSelectedIds = new Set(); // modal library selected ids (string)
+    const state = {
+        q: '',
+        type: '',
+        page: 1,
+        perpage: Number(perPageInput?.value || 24) || 24,
+        last_page: 1,
+        total: 0,
+    };
 
     // -------------------------
     // Helpers
     // -------------------------
     function esc(s) {
-        return String(s ?? '')
-            .replaceAll('&', '&amp;')
-            .replaceAll('<', '&lt;')
-            .replaceAll('>', '&gt;')
-            .replaceAll('"', '&quot;')
-            .replaceAll("'", '&#039;');
+        return String(s ?? '').replace(/[&<>"']/g, m => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+        }[m]));
     }
 
     function formatBytes(bytes) {
         const b = Number(bytes || 0);
         if (!b) return '0 B';
-        const k = 1024;
-        const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-        const i = Math.floor(Math.log(b) / Math.log(k));
-        const v = (b / Math.pow(k, i)).toFixed(i === 0 ? 0 : 1);
-        return `${v} ${sizes[i]}`;
+        const units = ['B', 'KB', 'MB', 'GB'];
+        let i = 0, n = b;
+        while (n >= 1024 && i < units.length - 1) { n /= 1024; i++; }
+        return `${n.toFixed(i ? 1 : 0)} ${units[i]}`;
+    }
+
+    function setBulkUI() {
+        if (!bulkBar) return;
+
+        const n = selectedIds.size;
+        bulkBar.classList.toggle('hidden', n === 0);
+
+        if (selectedCountEl) selectedCountEl.textContent = String(n);
+        if (bulkDeleteBtn) bulkDeleteBtn.disabled = (n === 0); // ✅ (senin bugın)
+
+        const boxes = [...grid.querySelectorAll('input[data-media-check="1"]')];
+        const checked = boxes.filter(b => b.checked).length;
+
+        if (checkAll) {
+            checkAll.indeterminate = checked > 0 && checked < boxes.length;
+            checkAll.checked = boxes.length > 0 && checked === boxes.length;
+        }
+    }
+
+    function applySelectionToGrid() {
+        grid.querySelectorAll('input[data-media-check="1"]').forEach(cb => {
+            const id = String(cb.getAttribute('data-id') || '');
+            cb.checked = selectedIds.has(id);
+        });
+        setBulkUI();
+    }
+
+    function fileExt(name) {
+        const s = String(name || '');
+        const i = s.lastIndexOf('.');
+        return i >= 0 ? s.slice(i + 1).toLowerCase() : '';
     }
 
     function inferKindFromMimeOrExt(mime, nameOrUrl) {
         const m = String(mime || '').toLowerCase();
+        const ext = fileExt(nameOrUrl);
+
         if (m.startsWith('image/')) return 'image';
         if (m.startsWith('video/')) return 'video';
         if (m === 'application/pdf') return 'pdf';
 
-        const s = String(nameOrUrl || '').toLowerCase();
-        if (s.endsWith('.pdf')) return 'pdf';
-        if (/\.(mp4|webm|ogg|mov|m4v)$/.test(s)) return 'video';
-        if (/\.(png|jpe?g|gif|webp|bmp|svg)$/.test(s)) return 'image';
-        return 'file';
+        if (['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'].includes(ext)) return 'image';
+        if (['mp4', 'webm', 'ogg', 'mov', 'm4v'].includes(ext)) return 'video';
+        if (ext === 'pdf') return 'pdf';
+
+        return 'other';
     }
 
-    async function httpJson(url, options = {}) {
-        const res = await fetch(url, {
-            ...options,
-            headers: {
-                'Accept': 'application/json',
-                ...(options.headers || {}),
-            },
-        });
-        const json = await res.json().catch(() => ({}));
-        return { res, json };
+    function setGlobalError(msg) {
+        if (!globalErr) return;
+        globalErr.textContent = msg || '';
+        globalErr.classList.toggle('hidden', !msg);
+    }
+
+    function switchTab(tab) {
+        const isUpload = tab === 'upload';
+        tabUploadBtn?.classList.toggle('kt-tab-active', isUpload);
+        tabLibraryBtn?.classList.toggle('kt-tab-active', !isUpload);
+
+        uploadPane?.classList.toggle('hidden', !isUpload);
+        libraryPane?.classList.toggle('hidden', isUpload);
     }
 
     // -------------------------
-    // Recent (modal)
+    // Lightbox (CSS-class based: styles.css -> .media-lb*)
+    // -------------------------
+    let lbOpen = false;
+    let lbItems = [];
+    let lbIndex = 0;
+
+    const lb = document.createElement('div');
+    lb.id = 'mediaLightbox';
+    lb.className = 'media-lb hidden';
+
+    lb.innerHTML = `
+      <div class="media-lb__bg" data-lb-backdrop></div>
+      <div class="media-lb__panel" role="dialog" aria-modal="true">
+        <div class="media-lb__top">
+          <div class="media-lb__meta">
+            <div class="media-lb__title" data-lb-title></div>
+            <div class="media-lb__sub" data-lb-sub></div>
+          </div>
+          <div class="media-lb__actions">
+            <a class="kt-btn kt-btn-sm kt-btn-light" href="#" target="_blank" rel="noreferrer" data-lb-open>
+              <i class="ki-outline ki-fasten"></i>
+            </a>
+            <button class="kt-btn kt-btn-sm kt-btn-light" type="button" data-lb-close>
+              <i class="ki-outline ki-cross"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="media-lb__body" data-lb-body></div>
+
+        <div class="media-lb__nav">
+          <button class="kt-btn kt-btn-sm kt-btn-light" type="button" data-lb-prev>
+            <i class="ki-outline ki-arrow-left"></i>
+          </button>
+          <button class="kt-btn kt-btn-sm kt-btn-light" type="button" data-lb-next>
+            <i class="ki-outline ki-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(lb);
+
+    const lbTitle = lb.querySelector('[data-lb-title]');
+    const lbSub = lb.querySelector('[data-lb-sub]');
+    const lbBody = lb.querySelector('[data-lb-body]');
+    const lbBackdrop = lb.querySelector('[data-lb-backdrop]');
+    const lbClose = lb.querySelector('[data-lb-close]');
+    const lbPrev = lb.querySelector('[data-lb-prev]');
+    const lbNext = lb.querySelector('[data-lb-next]');
+    const lbOpenLink = lb.querySelector('[data-lb-open]');
+
+    function stopAllMedia() {
+        lbBody?.querySelectorAll('video,audio').forEach(m => {
+            try { m.pause(); } catch (_) {}
+            try { m.currentTime = 0; } catch (_) {}
+        });
+        lbBody.innerHTML = '';
+    }
+
+    function renderLightbox() {
+        const it = lbItems[lbIndex];
+        if (!it) return;
+
+        stopAllMedia();
+
+        lbTitle.textContent = it.title || it.name || 'Önizleme';
+        lbSub.textContent = it.sub || '';
+        const url = it.url || '#';
+
+        lbOpenLink.href = url;
+
+        const kind = it.kind || inferKindFromMimeOrExt(it.mime, it.name || url);
+
+        if (kind === 'image') {
+            lbBody.innerHTML = `<img class="media-lb__img" src="${esc(url)}" alt="${esc(it.title || it.name || '')}">`;
+            return;
+        }
+
+        if (kind === 'video') {
+            lbBody.innerHTML = `
+              <video class="media-lb__video" controls playsinline>
+                <source src="${esc(url)}" type="${esc(it.mime || 'video/mp4')}">
+              </video>
+            `;
+            return;
+        }
+
+        if (kind === 'pdf') {
+            lbBody.innerHTML = `<iframe class="media-lb__iframe" src="${esc(url)}"></iframe>`;
+            return;
+        }
+
+        lbBody.innerHTML = `
+          <div class="media-lb__other">
+            <i class="ki-outline ki-document"></i>
+            <div class="media-lb__other-title">${esc(it.title || it.name || 'Dosya')}</div>
+            <a class="kt-btn kt-btn-light" href="${esc(url)}" target="_blank" rel="noreferrer">Aç</a>
+          </div>
+        `;
+    }
+
+    function openLightbox(items, index = 0) {
+        lbItems = Array.isArray(items) ? items : [];
+        lbIndex = Math.max(0, Math.min(Number(index || 0), lbItems.length - 1));
+        lbOpen = true;
+
+        lb.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+
+        renderLightbox();
+    }
+
+    function closeLightbox() {
+        lbOpen = false;
+        stopAllMedia();
+        lb.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+    }
+
+    function lbPrevFn() {
+        if (!lbItems.length) return;
+        lbIndex = (lbIndex - 1 + lbItems.length) % lbItems.length;
+        renderLightbox();
+    }
+
+    function lbNextFn() {
+        if (!lbItems.length) return;
+        lbIndex = (lbIndex + 1) % lbItems.length;
+        renderLightbox();
+    }
+
+    lbBackdrop.addEventListener('click', closeLightbox);
+    lbClose.addEventListener('click', closeLightbox);
+    lbPrev.addEventListener('click', lbPrevFn);
+    lbNext.addEventListener('click', lbNextFn);
+
+    window.addEventListener('keydown', (e) => {
+        if (!lbOpen) return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') lbPrevFn();
+        if (e.key === 'ArrowRight') lbNextFn();
+    });
+
+    // -------------------------
+    // Rendering (RECENT + GRID)
     // -------------------------
     function renderRecent() {
-        try { localStorage.setItem('media_recent', JSON.stringify(recent)); } catch (_) { }
+        if (!recentList) return;
 
         if (!recent.length) {
             recentList.innerHTML = `<div class="text-xs text-muted-foreground">Henüz yükleme yok.</div>`;
             return;
         }
 
-        recentList.innerHTML = recent.map(m => {
-            const kind = m.is_image ? 'image' : inferKindFromMimeOrExt(m.mime_type, m.original_name || m.url);
-            const icon = (kind === 'image')
-                ? `<img src="${esc(m.thumb_url || m.url)}" class="size-10 rounded-md object-cover ring-1 ring-border" alt="">`
-                : (kind === 'video')
-                    ? `<div class="size-10 rounded-md bg-muted flex items-center justify-center ring-1 ring-border"><i class="ki-outline ki-video text-lg"></i></div>`
-                    : (kind === 'pdf')
-                        ? `<div class="size-10 rounded-md bg-muted flex items-center justify-center ring-1 ring-border"><i class="ki-outline ki-file-sheet text-lg"></i></div>`
-                        : `<div class="size-10 rounded-md bg-muted flex items-center justify-center ring-1 ring-border"><i class="ki-outline ki-file text-lg"></i></div>`;
+        recentList.innerHTML = recent.slice(0, 8).map(m => {
+            const kind = m.kind || inferKindFromMimeOrExt(m.mime_type, m.original_name || m.url);
+            const name = m.original_name || m.name || 'Medya';
+            const url = m.url || '#';
 
             return `
-              <div class="flex items-center gap-3 py-2">
-                <button type="button"
-                  class="shrink-0"
-                  data-action="recent-open"
-                  data-url="${esc(m.url)}"
-                  data-name="${esc(m.original_name || '')}"
-                  data-mime="${esc(m.mime_type || '')}"
-                  data-size="${esc(m.size || 0)}"
-                  data-kind="${esc(kind)}">
-                  ${icon}
-                </button>
-
-                <div class="min-w-0 grow">
-                  <div class="text-sm font-medium truncate" title="${esc(m.original_name)}">${esc(m.original_name || '-')}</div>
-                  <div class="text-xs text-muted-foreground truncate">${esc(m.mime_type || '')} • ${formatBytes(m.size || 0)}</div>
+              <button class="kt-card p-2 flex items-center gap-3 w-full text-left hover:bg-muted/30"
+                      type="button"
+                      data-action="recent-open"
+                      data-url="${esc(url)}"
+                      data-kind="${esc(kind)}"
+                      data-name="${esc(name)}"
+                      data-mime="${esc(m.mime_type || '')}"
+                      data-size="${esc(m.size || 0)}">
+                <div class="w-12 h-12 rounded overflow-hidden bg-muted shrink-0">
+                  ${kind === 'image'
+                ? `<img class="w-full h-full" style="object-fit:cover" src="${esc(m.thumb_url || m.url)}" alt="">`
+                : `<div class="w-full h-full grid place-items-center text-muted-foreground"><i class="ki-outline ki-document"></i></div>`}
                 </div>
-
-                <a class="kt-btn kt-btn-sm kt-btn-light" href="${esc(m.url)}" target="_blank" rel="noreferrer">
-                  <i class="ki-outline ki-fasten"></i>
-                </a>
-              </div>
+                <div class="min-w-0">
+                  <div class="text-sm font-medium truncate">${esc(name)}</div>
+                  <div class="text-xs text-muted-foreground">${esc(m.mime_type || '')}</div>
+                </div>
+              </button>
             `;
         }).join('');
     }
 
-    // -------------------------
-    // Modal library UI (bulk bar + pagination containers created if missing)
-    // -------------------------
-    function ensureModalLibraryChrome() {
-        if (!libraryPane) return;
+    // ✅ Kart: checkbox inline (top-2/left-2 yok), thumbnail daha büyük, Gör/Sil geri.
+    function mediaCard(m) {
+        const url = m.thumb_url || m.url;
+        const kind = m.is_image ? 'image' : inferKindFromMimeOrExt(m.mime_type, m.original_name || m.url);
 
-        // Bulk bar container
-        let bulk = libraryPane.querySelector('#mediaLibraryBulkBar');
-        if (!bulk) {
-            bulk = document.createElement('div');
-            bulk.id = 'mediaLibraryBulkBar';
-            bulk.className = 'hidden mb-3';
-            bulk.innerHTML = `
-              <div class="kt-card">
-                <div class="kt-card-content px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-                  <label class="flex items-center gap-2">
-                    <input type="checkbox" class="kt-checkbox kt-checkbox-sm" id="mediaLibraryCheckAll">
-                    <span class="text-sm">Tümünü seç</span>
-                  </label>
+        const thumb = (kind === 'image')
+            ? `<img src="${esc(url)}" class="w-full rounded-xl ring-1 ring-border" style="height:220px;object-fit:cover" alt="">`
+            : (kind === 'video')
+                ? `<div class="w-full rounded-xl bg-muted ring-1 ring-border flex items-center justify-center" style="height:220px">
+                       <i class="ki-outline ki-video text-3xl text-muted-foreground"></i>
+                   </div>`
+                : (kind === 'pdf')
+                    ? `<div class="w-full rounded-xl bg-muted ring-1 ring-border flex items-center justify-center" style="height:220px">
+                           <i class="ki-outline ki-file-sheet text-3xl text-muted-foreground"></i>
+                       </div>`
+                    : `<div class="w-full rounded-xl bg-muted ring-1 ring-border flex items-center justify-center" style="height:220px">
+                           <i class="ki-outline ki-file text-3xl text-muted-foreground"></i>
+                       </div>`;
 
-                  <div class="flex items-center gap-3">
-                    <div class="text-sm">
-                      Seçili: <span class="font-semibold" id="mediaLibrarySelectedCount">0</span>
-                    </div>
-                    <button type="button" class="kt-btn kt-btn-sm kt-btn-danger" id="mediaLibraryBulkDeleteBtn">
-                      <i class="ki-outline ki-trash"></i>
-                      Toplu Sil
-                    </button>
-                  </div>
-                </div>
+        return `
+          <div class="kt-card relative">
+            <div class="absolute z-10" style="top:8px;left:8px;">
+                <label class="inline-flex items-center gap-2 bg-background/80 backdrop-blur px-2 py-1 rounded-lg ring-1 ring-border">
+                    <input type="checkbox" class="kt-checkbox kt-checkbox-sm" data-media-check="1" data-id="${esc(m.id)}">
+                    <span class="kt-checkbox-label"></span>
+                </label>
+            </div>
+
+            <div class="kt-card-content p-3">
+              <button type="button"
+                class="w-full text-left"
+                data-action="open"
+                data-url="${esc(m.url)}"
+                data-thumb="${esc(url)}"
+                data-name="${esc(m.original_name || '')}"
+                data-mime="${esc(m.mime_type || '')}"
+                data-size="${esc(m.size || 0)}"
+                data-kind="${esc(kind)}">
+                ${thumb}
+              </button>
+
+              <div class="mt-3">
+                <div class="text-sm font-medium truncate" title="${esc(m.original_name)}">${esc(m.original_name || '-')}</div>
+                <div class="text-xs text-muted-foreground truncate">${esc(m.mime_type || '')} • ${formatBytes(m.size || 0)}</div>
               </div>
-            `;
-            // results'in üstüne koy
-            if (libResults?.parentElement) {
-                libResults.parentElement.insertBefore(bulk, libResults);
-            } else {
-                libraryPane.prepend(bulk);
-            }
-        }
 
-        // Pagination container
-        let pag = libraryPane.querySelector('#mediaLibraryPagination');
-        if (!pag) {
-            pag = document.createElement('div');
-            pag.id = 'mediaLibraryPagination';
-            pag.className = 'mt-3 flex items-center justify-center';
-            if (libResults?.parentElement) libResults.parentElement.appendChild(pag);
-            else libraryPane.appendChild(pag);
-        }
+              <div class="mt-3 flex items-center justify-between gap-2">
+                <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-action="open"
+                  data-url="${esc(m.url)}"
+                  data-thumb="${esc(url)}"
+                  data-name="${esc(m.original_name)}"
+                  data-mime="${esc(m.mime_type || '')}"
+                  data-size="${esc(m.size || 0)}"
+                  data-kind="${esc(kind)}">
+                  <i class="ki-outline ki-eye"></i> Gör
+                </button>
 
-        return {
-            bulkBar: bulk,
-            checkAll: bulk.querySelector('#mediaLibraryCheckAll'),
-            selectedCount: bulk.querySelector('#mediaLibrarySelectedCount'),
-            bulkDeleteBtn: bulk.querySelector('#mediaLibraryBulkDeleteBtn'),
-            pagination: pag,
-        };
-    }
+                <div class="flex items-center gap-2">
+                    <button type="button" class="kt-btn kt-btn-sm kt-btn-destructive" data-action="delete" data-id="${esc(m.id)}" title="Sil">
+                      <i class="ki-outline ki-trash"></i>
+                    </button>
 
-    function setModalBulkUI(chrome) {
-        if (!chrome) return;
-        const n = libSelectedIds.size;
-
-        chrome.selectedCount.textContent = String(n);
-        chrome.bulkBar.classList.toggle('hidden', n === 0);
-
-        // checkAll state (tri-state yok, ama doğru duruma yakınlaştır)
-        const visibleBoxes = [...(libResults?.querySelectorAll('input[data-lib-check="1"]') || [])];
-        if (!visibleBoxes.length) {
-            chrome.checkAll.checked = false;
-            chrome.checkAll.indeterminate = false;
-            return;
-        }
-        const checkedCount = visibleBoxes.filter(x => x.checked).length;
-        chrome.checkAll.checked = checkedCount === visibleBoxes.length;
-        chrome.checkAll.indeterminate = checkedCount > 0 && checkedCount < visibleBoxes.length;
-    }
-
-    function renderModalPagination(chrome, meta) {
-        if (!chrome?.pagination) return;
-
-        const cur = Number(meta?.current_page || 1);
-        const last = Number(meta?.last_page || 1);
-
-        if (last <= 1) {
-            chrome.pagination.innerHTML = '';
-            return;
-        }
-
-        const mkBtn = (label, page, disabled = false, active = false) => `
-          <button type="button"
-            class="kt-btn kt-btn-sm ${active ? 'kt-btn-primary' : 'kt-btn-light'}"
-            data-action="lib-page"
-            data-page="${page}"
-            ${disabled ? 'disabled' : ''}>
-            ${label}
-          </button>
-        `;
-
-        // basit, iş gören pencere
-        const windowSize = 5;
-        let start = Math.max(1, cur - Math.floor(windowSize / 2));
-        let end = Math.min(last, start + windowSize - 1);
-        start = Math.max(1, end - windowSize + 1);
-
-        let html = `<div class="flex items-center gap-2">`;
-        html += mkBtn('<i class="ki-outline ki-arrow-left"></i>', cur - 1, cur <= 1);
-        if (start > 1) {
-            html += mkBtn('1', 1, false, cur === 1);
-            if (start > 2) html += `<span class="px-1 text-muted-foreground">…</span>`;
-        }
-        for (let p = start; p <= end; p++) {
-            html += mkBtn(String(p), p, false, p === cur);
-        }
-        if (end < last) {
-            if (end < last - 1) html += `<span class="px-1 text-muted-foreground">…</span>`;
-            html += mkBtn(String(last), last, false, cur === last);
-        }
-        html += mkBtn('<i class="ki-outline ki-arrow-right"></i>', cur + 1, cur >= last);
-        html += `</div>`;
-
-        chrome.pagination.innerHTML = html;
-    }
-
-    // -------------------------
-    // Modal library fetch/render (search/filter + pagination + bulk delete + single delete)
-    // -------------------------
-    async function fetchLibraryModal() {
-        if (!libResults) return;
-
-        const chrome = ensureModalLibraryChrome();
-
-        libState.q = (libSearch?.value || '').trim();
-        libState.type = libType?.value || '';
-
-        const qs = new URLSearchParams({
-            page: String(libState.page || 1),
-            perpage: String(libState.perpage || 12),
-            q: libState.q,
-            type: libState.type,
-        });
-
-        const { res, json } = await httpJson(`${endpoints.list}?${qs.toString()}`);
-        if (!res.ok) {
-            libResults.innerHTML = `<div class="text-sm text-danger">Liste alınamadı.</div>`;
-            if (chrome?.pagination) chrome.pagination.innerHTML = '';
-            return;
-        }
-
-        const items = Array.isArray(json?.data) ? json.data : [];
-        const meta = json?.meta || { current_page: 1, last_page: 1 };
-
-        libResults.innerHTML = items.map(m => {
-            const kind = m.is_image ? 'image' : inferKindFromMimeOrExt(m.mime_type, m.original_name || m.url);
-            const thumb = esc(m.thumb_url || m.url);
-            const id = String(m.id ?? '');
-
-            const icon = (kind === 'image')
-                ? `<img src="${thumb}" class="size-10 rounded-md object-cover ring-1 ring-border" alt="">`
-                : (kind === 'video')
-                    ? `<div class="size-10 rounded-md bg-muted flex items-center justify-center ring-1 ring-border"><i class="ki-outline ki-video text-lg"></i></div>`
-                    : (kind === 'pdf')
-                        ? `<div class="size-10 rounded-md bg-muted flex items-center justify-center ring-1 ring-border"><i class="ki-outline ki-file-sheet text-lg"></i></div>`
-                        : `<div class="size-10 rounded-md bg-muted flex items-center justify-center ring-1 ring-border"><i class="ki-outline ki-file text-lg"></i></div>`;
-
-            return `
-              <div class="kt-card" data-lib-item="1" data-id="${esc(id)}">
-                <div class="kt-card-content p-3 flex items-center gap-3">
-
-                  <label class="shrink-0 flex items-center">
-                    <input type="checkbox"
-                      class="kt-checkbox kt-checkbox-sm"
-                      data-lib-check="1"
-                      data-id="${esc(id)}"
-                      ${libSelectedIds.has(id) ? 'checked' : ''}>
-                  </label>
-
-                  <button type="button"
-                    class="shrink-0"
-                    data-action="lib-open"
-                    data-id="${esc(id)}"
-                    data-url="${esc(m.url)}"
-                    data-name="${esc(m.original_name || '')}"
-                    data-mime="${esc(m.mime_type || '')}"
-                    data-size="${esc(m.size || 0)}"
-                    data-kind="${esc(kind)}">
-                    ${icon}
-                  </button>
-
-                  <div class="min-w-0 grow">
-                    <div class="text-sm font-medium truncate" title="${esc(m.original_name)}">${esc(m.original_name || '-')}</div>
-                    <div class="text-xs text-muted-foreground truncate">${esc(m.mime_type || '')} • ${formatBytes(m.size || 0)}</div>
-                  </div>
-
-                  <div class="flex items-center gap-2">
-                    <a class="kt-btn kt-btn-sm kt-btn-light" href="${esc(m.url)}" target="_blank" rel="noreferrer" title="Aç">
+                    <a href="${esc(m.url)}" target="_blank" rel="noreferrer" class="kt-btn kt-btn-sm kt-btn-outline" title="Link">
                       <i class="ki-outline ki-fasten"></i>
                     </a>
-
-                    <button type="button"
-                      class="kt-btn kt-btn-sm kt-btn-danger"
-                      data-action="lib-delete"
-                      data-id="${esc(id)}"
-                      title="Sil">
-                      <i class="ki-outline ki-trash"></i>
-                    </button>
-                  </div>
-
                 </div>
               </div>
-            `;
-        }).join('') || `<div class="text-sm text-muted-foreground">Kayıt bulunamadı.</div>`;
-
-        renderModalPagination(chrome, meta);
-        setModalBulkUI(chrome);
+            </div>
+          </div>
+        `;
     }
-
-    async function modalBulkDelete(ids) {
-        if (!ids.length) return;
-        if (!confirm(`${ids.length} medya silinsin mi?`)) return;
-
-        const { res, json } = await httpJson(endpoints.bulkDelete, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                ...(csrf ? { 'X-CSRF-TOKEN': csrf } : {}),
-            },
-            body: JSON.stringify({ ids }),
-        });
-
-        if (!res.ok) {
-            alert(json?.error?.message || json?.message || 'Toplu silme başarısız');
-            return;
-        }
-
-        // state temizle + refresh
-        ids.forEach(id => libSelectedIds.delete(String(id)));
-        selectedIds.forEach(id => { if (ids.includes(id)) selectedIds.delete(id); });
-
-        recent = recent.filter(x => !ids.includes(String(x.id)));
-        renderRecent();
-
-        // modal list refresh (sayfa boşaldıysa bir önceki sayfaya düş)
-        libState.page = Math.max(1, libState.page);
-        await fetchLibraryModal();
-
-        // page grid refresh
-        state.page = 1;
-        await fetchList();
-        setBulkUI();
-    }
-
-    async function modalSingleDelete(id) {
-        const sid = String(id || '');
-        if (!sid) return;
-        if (!confirm(`Bu medya silinsin mi? (#${sid})`)) return;
-
-        const { res, json } = await httpJson(`${endpoints.destroyBase}/${encodeURIComponent(sid)}`, {
-            method: 'DELETE',
-            headers: {
-                ...(csrf ? { 'X-CSRF-TOKEN': csrf } : {}),
-            },
-        });
-
-        if (!res.ok) {
-            alert(json?.error?.message || json?.message || 'Silme başarısız');
-            return;
-        }
-
-        libSelectedIds.delete(sid);
-        selectedIds.delete(sid);
-
-        recent = recent.filter(x => String(x.id) !== sid);
-        renderRecent();
-
-        await fetchLibraryModal();
-
-        state.page = 1;
-        await fetchList();
-        setBulkUI();
-    }
-
-    // -------------------------
-    // Page grid bulk UI
-    // -------------------------
-    function setBulkUI() {
-        if (!bulkBar || !selectedCountEl) return;
-        const n = selectedIds.size;
-        selectedCountEl.textContent = String(n);
-        bulkBar.classList.toggle('hidden', n === 0);
-
-        // checkAll state
-        const boxes = [...grid.querySelectorAll('input[data-media-check="1"]')];
-        if (!boxes.length) {
-            if (checkAll) {
-                checkAll.checked = false;
-                checkAll.indeterminate = false;
-            }
-            return;
-        }
-        const checked = boxes.filter(x => x.checked).length;
-        if (checkAll) {
-            checkAll.checked = checked === boxes.length;
-            checkAll.indeterminate = checked > 0 && checked < boxes.length;
-        }
-    }
-
-    // -------------------------
-    // Page list fetch/render (senin mevcut fonksiyonların burada vardı)
-    // NOT: Aşağıya senin mevcut fetchList/renderGrid/renderPagination kodların geliyorsa
-    // aynen bırak. Ben sadece modal tarafını tamamladım.
-    // -------------------------
 
     async function fetchList() {
         const qs = new URLSearchParams({
-            page: String(state.page || 1),
-            perpage: String(state.perpage || 24),
-            q: String(state.q || ''),
-            type: String(state.type || ''),
+            page: String(state.page),
+            perpage: String(state.perpage),
+            q: state.q || '',
+            type: state.type || '',
         });
 
-        const { res, json } = await httpJson(`${endpoints.list}?${qs.toString()}`);
-        if (!res.ok) return;
+        const res = await fetch(`/admin/media/list?${qs.toString()}`, {
+            headers: { 'Accept': 'application/json' }
+        });
 
-        const items = Array.isArray(json?.data) ? json.data : [];
-        const meta = json?.meta || {};
+        if (!res.ok) {
+            setGlobalError('Liste alınamadı.');
+            return;
+        }
 
-        renderGrid(items);
+        const j = await res.json().catch(() => ({}));
+        if (!j?.ok) {
+            setGlobalError(j?.error?.message || 'Liste alınamadı.');
+            return;
+        }
+
+        const items = Array.isArray(j.data) ? j.data : [];
+        const meta = j.meta || {};
+
+        state.last_page = Number(meta.last_page || 1) || 1;
+        state.total = Number(meta.total || 0) || 0;
+
+        grid.innerHTML = items.map(mediaCard).join('');
+        empty.classList.toggle('hidden', items.length > 0);
+
+        const from = items.length ? ((meta.current_page - 1) * meta.per_page + 1) : 0;
+        const to = items.length ? (from + items.length - 1) : 0;
+
+        info.textContent = `${from}-${to} / ${meta.total ?? items.length}`;
         renderPagination(meta);
-        renderInfo(meta);
-        setBulkUI();
-    }
 
-    function renderInfo(meta) {
-        if (!info) return;
-        const total = Number(meta?.total || 0);
-        const cur = Number(meta?.current_page || 1);
-        const per = Number(meta?.per_page || state.perpage || 24);
-        const from = total ? ((cur - 1) * per + 1) : 0;
-        const to = total ? Math.min(total, cur * per) : 0;
-        info.textContent = `${from}-${to} / ${total}`;
+        applySelectionToGrid();
     }
 
     function renderPagination(meta) {
-        if (!pagination) return;
-        const cur = Number(meta?.current_page || 1);
-        const last = Number(meta?.last_page || 1);
+        const current = Number(meta.current_page || 1);
+        const last = Number(meta.last_page || 1);
+
         if (last <= 1) {
             pagination.innerHTML = '';
             return;
         }
 
-        const mk = (label, page, disabled = false, active = false) => `
+        const btn = (p, label, disabled = false, active = false) => `
           <button type="button"
             class="kt-btn kt-btn-sm ${active ? 'kt-btn-primary' : 'kt-btn-light'}"
-            data-action="page"
-            data-page="${page}"
+            data-page="${p}"
             ${disabled ? 'disabled' : ''}>
             ${label}
           </button>
         `;
 
-        let html = `<div class="flex items-center gap-2 justify-center">`;
-        html += mk('<i class="ki-outline ki-arrow-left"></i>', cur - 1, cur <= 1);
+        const parts = [];
+        parts.push(btn(current - 1, '‹', current <= 1, false));
 
-        const windowSize = 5;
-        let start = Math.max(1, cur - Math.floor(windowSize / 2));
-        let end = Math.min(last, start + windowSize - 1);
-        start = Math.max(1, end - windowSize + 1);
+        const start = Math.max(1, current - 2);
+        const end = Math.min(last, current + 2);
 
-        if (start > 1) {
-            html += mk('1', 1, false, cur === 1);
-            if (start > 2) html += `<span class="px-1 text-muted-foreground">…</span>`;
-        }
-        for (let p = start; p <= end; p++) html += mk(String(p), p, false, p === cur);
-        if (end < last) {
-            if (end < last - 1) html += `<span class="px-1 text-muted-foreground">…</span>`;
-            html += mk(String(last), last, false, cur === last);
-        }
+        if (start > 1) parts.push(btn(1, '1', false, current === 1));
+        if (start > 2) parts.push(`<span class="px-2 text-muted-foreground">…</span>`);
 
-        html += mk('<i class="ki-outline ki-arrow-right"></i>', cur + 1, cur >= last);
-        html += `</div>`;
-        pagination.innerHTML = html;
+        for (let p = start; p <= end; p++) parts.push(btn(p, String(p), false, p === current));
+
+        if (end < last - 1) parts.push(`<span class="px-2 text-muted-foreground">…</span>`);
+        if (end < last) parts.push(btn(last, String(last), false, current === last));
+
+        parts.push(btn(current + 1, '›', current >= last, false));
+
+        pagination.innerHTML = `<div class="flex items-center justify-center gap-2">${parts.join('')}</div>`;
     }
 
-    function renderGrid(items) {
-        if (!grid) return;
+    // -------------------------
+    // Upload queue (senin mevcut mantık: kısa bıraktım ama kaldırmadım)
+    // -------------------------
+    function addFiles(fileList) {
+        const files = [...(fileList || [])];
+        if (!files.length) return;
 
-        if (!items.length) {
-            grid.innerHTML = '';
-            empty.classList.remove('hidden');
+        for (const file of files) {
+            const qid = crypto.randomUUID?.() || String(Date.now()) + Math.random();
+            const previewUrl = URL.createObjectURL(file);
+
+            queue.push({
+                qid,
+                file,
+                previewUrl,
+                status: 'pending',
+                error: '',
+                kind: inferKindFromMimeOrExt(file.type, file.name),
+            });
+        }
+        renderQueue();
+    }
+
+    function removeFromQueue(qid) {
+        const idx = queue.findIndex(x => x.qid === qid);
+        if (idx < 0) return;
+
+        const it = queue[idx];
+        if (it.previewUrl) {
+            try { URL.revokeObjectURL(it.previewUrl); } catch (_) {}
+        }
+        queue.splice(idx, 1);
+        renderQueue();
+    }
+
+    function renderQueue() {
+        if (!uploadList) return;
+
+        if (!queue.length) {
+            uploadList.innerHTML = `<div class="text-sm text-muted-foreground">Kuyruk boş.</div>`;
             return;
         }
-        empty.classList.add('hidden');
 
-        grid.innerHTML = items.map(m => {
-            const kind = m.is_image ? 'image' : inferKindFromMimeOrExt(m.mime_type, m.original_name || m.url);
-            const id = String(m.id ?? '');
+        uploadList.innerHTML = queue.map(it => {
+            const name = it.file?.name || 'Dosya';
+            const mime = it.file?.type || 'unknown';
+            const size = formatBytes(it.file?.size || 0);
 
-            const icon = (kind === 'image')
-                ? `<img src="${esc(m.thumb_url || m.url)}" class="w-full h-full object-cover" alt="">`
-                : (kind === 'video')
-                    ? `<div class="w-full h-full flex items-center justify-center"><i class="ki-outline ki-video text-3xl"></i></div>`
-                    : (kind === 'pdf')
-                        ? `<div class="w-full h-full flex items-center justify-center"><i class="ki-outline ki-file-sheet text-3xl"></i></div>`
-                        : `<div class="w-full h-full flex items-center justify-center"><i class="ki-outline ki-file text-3xl"></i></div>`;
+            const badge = it.status === 'success'
+                ? `<span class="kt-badge kt-badge-sm kt-badge-success">Yüklendi</span>`
+                : it.status === 'uploading'
+                    ? `<span class="kt-badge kt-badge-sm kt-badge-primary">Yükleniyor</span>`
+                    : it.status === 'error'
+                        ? `<span class="kt-badge kt-badge-sm kt-badge-danger">Hata</span>`
+                        : `<span class="kt-badge kt-badge-sm kt-badge-light">Bekliyor</span>`;
 
             return `
-              <div class="kt-card overflow-hidden" data-media-card="1">
-                <div class="relative aspect-square bg-muted">
-                  <label class="absolute top-2 left-2 z-10">
-                    <input type="checkbox"
-                      class="kt-checkbox kt-checkbox-sm"
-                      data-media-check="1"
-                      data-id="${esc(id)}"
-                      ${selectedIds.has(id) ? 'checked' : ''}>
-                  </label>
-
-                  <button type="button"
-                    class="absolute inset-0"
-                    data-action="open"
-                    data-id="${esc(id)}"
-                    data-url="${esc(m.url)}"
-                    data-name="${esc(m.original_name || '')}"
-                    data-mime="${esc(m.mime_type || '')}"
-                    data-size="${esc(m.size || 0)}"
-                    data-kind="${esc(kind)}">
-                    ${icon}
-                  </button>
+              <div class="kt-card p-3 flex items-center gap-3" data-qid="${esc(it.qid)}">
+                <div class="w-12 h-12 rounded overflow-hidden bg-muted shrink-0">
+                  ${it.kind === 'image'
+                ? `<img class="w-full h-full" style="object-fit:cover" src="${esc(it.previewUrl)}" alt="">`
+                : `<div class="w-full h-full grid place-items-center text-muted-foreground"><i class="ki-outline ki-document"></i></div>`}
                 </div>
 
-                <div class="p-3">
-                  <div class="text-sm font-medium truncate" title="${esc(m.original_name)}">${esc(m.original_name || '-')}</div>
-                  <div class="text-xs text-muted-foreground truncate">${esc(m.mime_type || '')} • ${formatBytes(m.size || 0)}</div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="text-sm font-medium truncate">${esc(name)}</div>
+                    ${badge}
+                  </div>
+                  <div class="text-xs text-muted-foreground truncate">${esc(mime)} • ${esc(size)}</div>
+                  ${it.error ? `<div class="text-xs text-danger mt-1">${esc(it.error)}</div>` : ''}
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-action="preview">
+                    <i class="ki-outline ki-eye"></i>
+                  </button>
+                  <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-action="remove">
+                    <i class="ki-outline ki-cross"></i>
+                  </button>
+                  <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-action="retry">
+                    <i class="ki-outline ki-arrows-circle"></i>
+                  </button>
                 </div>
               </div>
             `;
         }).join('');
     }
 
-    // -------------------------
-    // Tabs
-    // -------------------------
-    function switchTab(tab) {
-        const isUpload = tab === 'upload';
-        uploadPane.classList.toggle('hidden', !isUpload);
-        libraryPane.classList.toggle('hidden', isUpload);
+    async function uploadOne(it) {
+        it.status = 'uploading';
+        it.error = '';
+        renderQueue();
 
-        tabUploadBtn.classList.toggle('active', isUpload);
-        tabLibraryBtn.classList.toggle('active', !isUpload);
+        const fd = new FormData();
+        fd.append('file', it.file);
 
-        if (!isUpload) {
-            // library tab açıldıysa listeyi çek
-            fetchLibraryModal();
+        const res = await fetch('/admin/media/upload', {
+            method: 'POST',
+            headers: { ...(csrf ? { 'X-CSRF-TOKEN': csrf } : {}), 'Accept': 'application/json' },
+            body: fd
+        });
+
+        const j = await res.json().catch(() => ({}));
+
+        if (!res.ok || !j?.ok) {
+            it.status = 'error';
+            it.error = j?.error?.message || j?.message || 'Upload başarısız';
+            renderQueue();
+            return null;
+        }
+
+        it.status = 'success';
+        renderQueue();
+
+        const payload = j.data;
+        const inserted = Array.isArray(payload) ? payload : [payload];
+
+        recent = [...inserted, ...recent].slice(0, 30);
+        renderRecent();
+
+        return inserted;
+    }
+
+    async function uploadAll() {
+        if (busy) return;
+        busy = true;
+        setGlobalError('');
+
+        try {
+            for (const it of queue) {
+                if (it.status === 'success') continue;
+                await uploadOne(it);
+            }
+
+            state.page = 1;
+            await fetchList();
+        } finally {
+            busy = false;
         }
     }
 
+    // -------------------------
+    // Events
+    // -------------------------
     tabUploadBtn?.addEventListener('click', () => switchTab('upload'));
     tabLibraryBtn?.addEventListener('click', () => switchTab('library'));
 
-    // -------------------------
-    // Modal: search/type change + refresh
-    // -------------------------
-    if (libSearch) {
-        let libDeb = null;
-        libSearch.addEventListener('input', () => {
-            clearTimeout(libDeb);
-            libDeb = setTimeout(() => {
-                libState.page = 1;
-                fetchLibraryModal();
-            }, 250);
-        });
-    }
-    if (libType) {
-        libType.addEventListener('change', () => {
-            libState.page = 1;
-            fetchLibraryModal();
-        });
-    }
-    refreshLibraryBtn?.addEventListener('click', () => fetchLibraryModal());
+    dropzone?.addEventListener('click', () => filesInput.click());
 
-    // -------------------------
-    // Modal: delegation (checkbox/page/open/delete/bulk)
-    // -------------------------
-    libraryPane?.addEventListener('click', async (e) => {
-        const chrome = ensureModalLibraryChrome();
-
-        const pageBtn = e.target.closest('[data-action="lib-page"]');
-        if (pageBtn) {
-            const p = Number(pageBtn.getAttribute('data-page') || 1);
-            libState.page = Math.max(1, p);
-            await fetchLibraryModal();
-            return;
-        }
-
-        const delBtn = e.target.closest('[data-action="lib-delete"]');
-        if (delBtn) {
-            const id = delBtn.getAttribute('data-id');
-            await modalSingleDelete(id);
-            return;
-        }
-
-        const bulkBtn = e.target.closest('#mediaLibraryBulkDeleteBtn');
-        if (bulkBtn) {
-            const ids = [...libSelectedIds];
-            await modalBulkDelete(ids);
-            setModalBulkUI(chrome);
-            return;
-        }
-
-        const openBtn = e.target.closest('[data-action="lib-open"]');
-        if (openBtn) {
-            // burada senin lightbox/open mantığın neyse aynen bağlayabilirsin
-            // şimdilik sadece yeni sekmede aç:
-            const url = openBtn.getAttribute('data-url');
-            if (url) window.open(url, '_blank', 'noreferrer');
-            return;
-        }
+    dropzone?.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('ring-2', 'ring-primary');
     });
 
-    libraryPane?.addEventListener('change', (e) => {
-        const chrome = ensureModalLibraryChrome();
+    dropzone?.addEventListener('dragleave', () => {
+        dropzone.classList.remove('ring-2', 'ring-primary');
+    });
 
-        const cb = e.target.closest('input[data-lib-check="1"]');
-        if (cb) {
-            const id = String(cb.getAttribute('data-id') || '');
-            if (!id) return;
-            if (cb.checked) libSelectedIds.add(id);
-            else libSelectedIds.delete(id);
-            setModalBulkUI(chrome);
+    dropzone?.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('ring-2', 'ring-primary');
+        addFiles(e.dataTransfer?.files);
+    });
+
+    filesInput?.addEventListener('change', (e) => {
+        addFiles(e.target.files);
+        filesInput.value = '';
+    });
+
+    uploadList?.addEventListener('click', async (e) => {
+        const card = e.target.closest('[data-qid]');
+        if (!card) return;
+
+        const qid = card.getAttribute('data-qid');
+        const action = e.target.closest('[data-action]')?.getAttribute('data-action');
+        if (!qid || !action) return;
+
+        const it = queue.find(x => x.qid === qid);
+        if (!it) return;
+
+        if (action === 'preview') {
+            const items = queue.map(q => ({
+                url: q.previewUrl || '',
+                kind: q.kind || inferKindFromMimeOrExt(q.file?.type, q.file?.name),
+                title: q.file?.name || 'Dosya',
+                sub: `${q.file?.type || 'unknown'} • ${formatBytes(q.file?.size || 0)}`,
+                mime: q.file?.type || '',
+                name: q.file?.name || '',
+            }));
+            const idx = Math.max(0, queue.findIndex(x => x.qid === qid));
+            openLightbox(items, idx);
             return;
         }
 
-        const all = e.target.closest('#mediaLibraryCheckAll');
-        if (all) {
-            const on = !!all.checked;
-            const boxes = [...(libResults?.querySelectorAll('input[data-lib-check="1"]') || [])];
-            boxes.forEach(x => {
-                x.checked = on;
-                const id = String(x.getAttribute('data-id') || '');
-                if (!id) return;
-                if (on) libSelectedIds.add(id);
-                else libSelectedIds.delete(id);
-            });
-            setModalBulkUI(chrome);
+        if (action === 'remove') {
+            if (busy && it.status === 'uploading') return;
+            removeFromQueue(qid);
+            return;
         }
-    });
 
-    // -------------------------
-    // Page grid: search/filter/pagination/bulk
-    // -------------------------
-    searchInput?.addEventListener('input', () => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-            state.q = (searchInput.value || '').trim();
+        if (action === 'retry') {
+            if (busy) return;
+            if (it.status === 'success') return;
+            await uploadOne(it);
             state.page = 1;
-            fetchList();
-        }, 250);
+            await fetchList();
+            return;
+        }
     });
 
-    typeSelect?.addEventListener('change', () => {
-        state.type = typeSelect.value || '';
-        state.page = 1;
-        fetchList();
-    });
-
-    pagination?.addEventListener('click', (e) => {
-        const btn = e.target.closest('[data-action="page"]');
+    recentList?.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action="recent-open"]');
         if (!btn) return;
-        const p = Number(btn.getAttribute('data-page') || 1);
-        state.page = Math.max(1, p);
-        fetchList();
+
+        const items = [...recentList.querySelectorAll('[data-action="recent-open"]')].map(b => ({
+            url: b.getAttribute('data-url') || '',
+            kind: b.getAttribute('data-kind') || 'other',
+            title: b.getAttribute('data-name') || 'Medya',
+            sub: `${b.getAttribute('data-mime') || ''} • ${formatBytes(Number(b.getAttribute('data-size') || 0))}`,
+            mime: b.getAttribute('data-mime') || '',
+            name: b.getAttribute('data-name') || '',
+        }));
+
+        const idx = items.findIndex(x => x.url === (btn.getAttribute('data-url') || ''));
+        openLightbox(items, Math.max(0, idx));
     });
 
+    // Grid checkbox selection
     grid?.addEventListener('change', (e) => {
         const cb = e.target.closest('input[data-media-check="1"]');
         if (!cb) return;
+
         const id = String(cb.getAttribute('data-id') || '');
         if (!id) return;
+
         if (cb.checked) selectedIds.add(id);
         else selectedIds.delete(id);
+
         setBulkUI();
+    });
+
+    // ✅ ekstra garanti: bazı temalarda change gecikiyor → click ile de yakala
+    grid?.addEventListener('click', (e) => {
+        const cb = e.target.closest('input[data-media-check="1"]');
+        if (!cb) return;
+        queueMicrotask(() => {
+            const id = String(cb.getAttribute('data-id') || '');
+            if (!id) return;
+            if (cb.checked) selectedIds.add(id);
+            else selectedIds.delete(id);
+            setBulkUI();
+        });
+    });
+
+    // Grid open/delete (delegation)
+    grid?.addEventListener('click', async (e) => {
+        if (e.target.closest('input[data-media-check="1"]')) return;
+
+        const delBtn = e.target.closest('[data-action="delete"]');
+        if (delBtn) {
+            const id = delBtn.getAttribute('data-id');
+            if (!id) return;
+
+            if (!confirm('Bu medyayı silmek istiyor musun?')) return;
+
+            const res = await fetch(`/admin/media/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    ...(csrf ? { 'X-CSRF-TOKEN': csrf } : {}),
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (!res.ok) {
+                const j = await res.json().catch(() => ({}));
+                alert(j?.error?.message || j?.message || 'Silme başarısız');
+                return;
+            }
+
+            selectedIds.delete(String(id));
+            setBulkUI();
+
+            state.page = 1;
+            await fetchList();
+            recent = recent.filter(x => String(x.id) !== String(id));
+            renderRecent();
+            return;
+        }
+
+        const btn = e.target.closest('[data-action="open"]');
+        if (!btn) return;
+
+        const all = [...grid.querySelectorAll('[data-action="open"]')];
+
+        const keyToIndex = new Map();
+        const items = [];
+        const btnToIndex = new Map();
+
+        for (const b of all) {
+            const url = b.getAttribute('data-url') || '';
+            if (!url) continue;
+
+            const key = b.getAttribute('data-id') || url;
+
+            let uidx = keyToIndex.get(key);
+            if (uidx === undefined) {
+                uidx = items.length;
+                keyToIndex.set(key, uidx);
+                items.push({
+                    url,
+                    kind: b.getAttribute('data-kind') || inferKindFromMimeOrExt(b.getAttribute('data-mime'), b.getAttribute('data-name') || url),
+                    title: b.getAttribute('data-name') || 'Medya',
+                    sub: `${b.getAttribute('data-mime') || ''} • ${formatBytes(Number(b.getAttribute('data-size') || 0))}`,
+                    mime: b.getAttribute('data-mime') || '',
+                    name: b.getAttribute('data-name') || '',
+                });
+            }
+
+            btnToIndex.set(b, uidx);
+        }
+
+        const idx = btnToIndex.get(btn) ?? 0;
+        openLightbox(items, idx);
+    });
+
+    startBtn?.addEventListener('click', uploadAll);
+
+    clearBtn?.addEventListener('click', () => {
+        if (busy) return;
+        queue.forEach(it => {
+            if (it.previewUrl) {
+                try { URL.revokeObjectURL(it.previewUrl); } catch (_) { }
+            }
+        });
+        queue = [];
+        renderQueue();
+    });
+
+    refreshLibraryBtn?.addEventListener('click', async () => {
+        state.page = 1;
+        await fetchList();
+    });
+
+    searchInput?.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(async () => {
+            state.q = searchInput.value.trim();
+            state.page = 1;
+            await fetchList();
+        }, 250);
+    });
+
+    typeSelect?.addEventListener('change', async () => {
+        state.type = typeSelect.value || '';
+        state.page = 1;
+        await fetchList();
+    });
+
+    pagination?.addEventListener('click', async (e) => {
+        const btn = e.target.closest('[data-page]');
+        if (!btn) return;
+        const p = Number(btn.getAttribute('data-page') || 1);
+        if (!p || p === state.page) return;
+        state.page = p;
+        await fetchList();
     });
 
     checkAll?.addEventListener('change', () => {
@@ -810,15 +863,37 @@ export default function init() {
     bulkDeleteBtn?.addEventListener('click', async () => {
         const ids = [...selectedIds];
         if (!ids.length) return;
-        // page tarafındaki bulk delete de aynı endpoint
-        await modalBulkDelete(ids);
+
+        if (!confirm(`${ids.length} medya silinsin mi?`)) return;
+
+        const res = await fetch('/admin/media/bulk', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(csrf ? { 'X-CSRF-TOKEN': csrf } : {}),
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ ids })
+        });
+
+        if (!res.ok) {
+            const j = await res.json().catch(() => ({}));
+            alert(j?.error?.message || j?.message || 'Toplu silme başarısız');
+            return;
+        }
+
+        selectedIds.clear();
+        setBulkUI();
+        state.page = 1;
+        await fetchList();
+        recent = recent.filter(x => !ids.includes(String(x.id)));
+        renderRecent();
     });
 
-    // -------------------------
     // First load
-    // -------------------------
     switchTab('upload');
     renderRecent();
+    renderQueue();
     setBulkUI();
     fetchList();
 }
