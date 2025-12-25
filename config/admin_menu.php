@@ -8,6 +8,7 @@ return [
         'route' => 'admin.dashboard',
         'active'=> ['admin.dashboard'],
         'guard' => 'admin', // @admin
+        'style' => 'margin-inline-start: -5px;',
     ],
 
     [
@@ -23,6 +24,7 @@ return [
                 'perm'   => 'blog.view',
             ],
         ],
+        'style' => '',
     ],
 
     [
@@ -38,6 +40,7 @@ return [
                 'perm'   => 'media.view',
             ],
         ],
+        'style' => '',
     ],
 
     [
@@ -53,6 +56,7 @@ return [
                 'perm'   => 'category.view',
             ],
         ],
+        'style' => '',
     ],
 
     [
@@ -80,5 +84,6 @@ return [
                 'perm'   => 'permissions.view',
             ],
         ],
+        'style' => '',
     ],
 ];

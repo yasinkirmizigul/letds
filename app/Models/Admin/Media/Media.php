@@ -13,7 +13,7 @@ class Media extends Model
         'uuid',
         'disk',
         'path',
-        'variants',        // ✅ eklendi
+        'variants',
         'original_name',
         'mime_type',
         'size',
@@ -25,7 +25,7 @@ class Media extends Model
     ];
 
     protected $casts = [
-        'variants' => 'array', // ✅ eklendi
+        'variants' => 'array',
         'meta'     => 'array',
         'size'     => 'integer',
         'width'    => 'integer',
@@ -41,7 +41,6 @@ class Media extends Model
             return Storage::disk($disk)->url($variants[$variant]);
         }
 
-        // fallback sırası
         if (isset($variants['original']) && $variants['original']) {
             return Storage::disk($disk)->url($variants['original']);
         }
@@ -49,7 +48,6 @@ class Media extends Model
         return Storage::disk($disk)->url($this->path);
     }
 
-    // İstersen grid için bunu kullan:
     public function thumbUrl(): string
     {
         return $this->url('thumb');

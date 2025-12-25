@@ -1,7 +1,7 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    <div class="kt-container-fixed" data-page="categories.index">
+    <div class="kt-container-fixed max-w-[90%]" data-page="categories.index">
         <div class="grid gap-5 lg:gap-7.5">
 
             @includeIf('admin.partials._flash')
@@ -32,7 +32,7 @@
                 <div class="kt-card-content">
                     <div class="grid" id="categories_dt">
 
-                        <div class="kt-scrollable-x-auto">
+                        <div class="overflow-hidden">
                             <table class="kt-table table-auto kt-table-border w-full" id="categories_table">
                                 <thead>
                                 <tr>

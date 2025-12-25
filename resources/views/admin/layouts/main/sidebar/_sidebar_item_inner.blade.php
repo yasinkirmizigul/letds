@@ -2,6 +2,7 @@
     $type  = $item['type'] ?? 'single';
     $icon  = $item['icon'] ?? '';
     $title = $item['title'] ?? '';
+    $style = $item['style'] ?? '';
 @endphp
 
 @if($type === 'single')
@@ -10,10 +11,10 @@
             <a class="kt-menu-link kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 grow items-center gap-[14px] border border-transparent py-[8px] pe-[10px] ps-[10px] hover:rounded-lg"
                href="{{ isset($item['route']) ? route($item['route']) : '#' }}"
                tabindex="0">
-                <span class="kt-menu-icon w-[20px] items-start text-muted-foreground">
+                <span class="w-[20px] items-start text-muted-foreground">
                     <i class="{{ $icon }}"></i>
                 </span>
-                <span class="kt-menu-title text-sm font-medium text-foreground">{{ $title }}</span>
+                <span class="kt-menu-title text-sm font-medium text-foreground" style="{{ $style }}">{{ $title }}</span>
             </a>
         </div>
     </div>
@@ -25,7 +26,7 @@
 
         <div class="kt-menu-link flex grow cursor-pointer items-center gap-[10px] border border-transparent py-[6px] pe-[10px] ps-[10px]"
              tabindex="0">
-            <span class="kt-menu-icon w-[20px] items-start text-muted-foreground">
+            <span class="w-[20px] items-start text-muted-foreground">
                 <i class="{{ $icon }}"></i>
             </span>
 
@@ -63,7 +64,7 @@
                 {{-- Child guard/perm wrapper --}}
                 @if($childGuard === 'admin')
                     @admin
-                    @include('admin.layouts.main._sidebar_item_inner_child', [
+                    @include('admin.layouts.main.sidebar._sidebar_item_inner_child', [
                         'childTitle' => $childTitle,
                         'childRoute' => $childRoute,
                         'childIsActive' => $childIsActive,

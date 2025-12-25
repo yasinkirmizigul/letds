@@ -5,7 +5,7 @@
         $u = auth()->user();
         $myP = $u?->topRolePriority() ?? 0;
     @endphp
-    <div class="kt-container-fixed" data-page="roles.index">
+    <div class="kt-container-fixed max-w-[90%]" data-page="roles.index">
         @include('admin.partials._flash')
 
         <div class="flex items-center justify-between mb-4">
@@ -35,7 +35,7 @@
 
                 <div class="kt-card-content">
                     <div class="grid" id="roles_dt">
-                        <div class="kt-scrollable-x-auto">
+                        <div class="overflow-hidden">
                             <table class="kt-table table-auto kt-table-border w-full" id="roles_table">
                                 <thead>
                                 <tr>

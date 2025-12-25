@@ -2,11 +2,11 @@
 
 @section('content')
     <!-- Container -->
-    <div class="kt-container-fixed" id="contentContainer">
+    <div class="kt-container-fixed max-w-[90%]" id="contentContainer">
     </div>
     <!-- End of Container -->
     <!-- Container -->
-    <div class="kt-container-fixed">
+    <div class="kt-container-fixed max-w-[90%]">
         <div class="flex flex-wrap items-center justify-between gap-5 pb-7.5 lg:items-end">
             <div class="flex flex-col justify-center gap-2">
                 <h1 class="text-xl font-medium leading-none text-mono">
@@ -22,7 +22,7 @@
     </div>
     <!-- End of Container -->
     <!-- Container -->
-    <div class="kt-container-fixed">
+    <div class="kt-container-fixed max-w-[90%]">
         <div class="grid gap-5 lg:gap-7.5">
 
         </div>

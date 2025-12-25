@@ -38,17 +38,11 @@ class MediaService
 
         $extOriginal = strtolower($file->getClientOriginalExtension() ?: 'bin');
 
-        // ---------
         // ORIGINAL
-        // ---------
         $originalName = "{$uuid}.{$extOriginal}";
         $originalPath = "{$dir}/{$originalName}";
 
-        Storage::disk($disk)->putFileAs(
-            $dir,
-            $file,
-            $originalName
-        );
+        Storage::disk($disk)->putFileAs($dir, $file, $originalName);
 
         $variants = [
             'original' => $originalPath,
@@ -57,12 +51,9 @@ class MediaService
         $width = null;
         $height = null;
 
-        // -----------------
         // IMAGE VARIANTS
-        // -----------------
         if ($this->isImage($file)) {
             $img = $this->image->read($file->getRealPath());
-
             $width  = $img->width();
             $height = $img->height();
 
@@ -71,11 +62,7 @@ class MediaService
             $optimized->scaleDown(width: 1920);
 
             $optimizedPath = "{$dir}/{$uuid}.webp";
-            Storage::disk($disk)->put(
-                $optimizedPath,
-                (string) $optimized->toWebp(80)
-            );
-
+            Storage::disk($disk)->put($optimizedPath, (string) $optimized->toWebp(80));
             $variants['optimized'] = $optimizedPath;
 
             // thumb (400x400)
@@ -83,18 +70,14 @@ class MediaService
             $thumb->cover(400, 400);
 
             $thumbPath = "{$dir}/{$uuid}_thumb.webp";
-            Storage::disk($disk)->put(
-                $thumbPath,
-                (string) $thumb->toWebp(75)
-            );
-
+            Storage::disk($disk)->put($thumbPath, (string) $thumb->toWebp(75));
             $variants['thumb'] = $thumbPath;
         }
 
         return Media::create([
             'uuid'          => $uuid,
             'disk'          => $disk,
-            'path'          => $originalPath,   // single source of truth
+            'path'          => $originalPath,
             'variants'      => $variants,
             'original_name' => $file->getClientOriginalName(),
             'mime_type'     => $file->getClientMimeType(),

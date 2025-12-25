@@ -1,173 +1,184 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* =========================
+   THEME TOKENS (OKLCH palette'e bağlanır)
+   ========================= */
+:root{
+    --background: var(--color-zinc-100);
+    --foreground: var(--color-zinc-950);
+    --border: var(--color-zinc-200);
+    --muted-foreground: var(--color-gray-500);
+    --secondary-foreground: var(--color-zinc-950);
+}
+
+.dark{
+    --background: var(--color-zinc-950);
+    --foreground: var(--color-zinc-100);
+    --border: color-mix(in oklab, var(--color-zinc-100) 12%, var(--color-zinc-950));
+    --muted-foreground: var(--color-gray-500);
+    --secondary-foreground: var(--color-zinc-100);
+}
 
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
-/* Theme Custom Styles */
+/* =========================
+   BASE
+   ========================= */
 @layer base {
-  html {
-    scroll-behavior: smooth;
-  }
+    html { scroll-behavior: smooth; }
 
-  body {
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+    body {
+        background: var(--background);
+        color: var(--foreground);
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
 }
 
+/* =========================
+   COMPONENTS
+   ========================= */
 @layer components {
-  /* Theme Button Styles */
-  .kt-btn {
-    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
-  }
 
-  .kt-btn-primary {
-    @apply bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500;
-  }
+    /* Theme Button Styles */
+    .kt-btn {
+        @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+    }
 
-  .kt-btn-outline {
-    @apply border border-border bg-transparent text-foreground hover:bg-background hover:text-foreground;
-  }
+    .kt-btn-primary {
+        @apply text-white hover:opacity-95;
+        background: var(--color-violet-600);
+    }
 
-  .kt-btn-ghost {
-    @apply bg-transparent text-foreground hover:bg-background;
-  }
+    .kt-btn-outline {
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--foreground);
+    }
 
-  .kt-btn-icon {
-    @apply p-2;
-  }
+    .kt-btn-outline:hover {
+        background: color-mix(in oklab, var(--foreground) 4%, var(--background));
+    }
 
-  .kt-btn-sm {
-    @apply px-3 py-1.5 text-xs;
-  }
+    .kt-btn-ghost {
+        background: transparent;
+        color: var(--foreground);
+    }
 
-  /* Card Styles */
-  .kt-card {
-    @apply bg-background border border-border rounded-lg shadow-sm;
-  }
+    .kt-btn-ghost:hover {
+        background: color-mix(in oklab, var(--foreground) 4%, var(--background));
+    }
 
-  .kt-card-header {
-    @apply flex items-center justify-between p-5 border-b border-border;
-  }
+    .kt-btn-icon { @apply p-2; }
+    .kt-btn-sm { @apply px-3 py-1.5 text-xs; }
 
-  .kt-card-title {
-    @apply text-lg font-semibold text-foreground;
-  }
+    /* Card Styles */
+    .kt-card{
+        background: var(--background);
+        border: 1px solid var(--border);
+        border-radius: .75rem;
+        box-shadow: var(--tw-shadow-sm);
+    }
 
-  .kt-card-content {
-    @apply p-5;
-  }
+    .kt-card-header{
+        display:flex; align-items:center; justify-content:space-between;
+        padding: 1.25rem;
+        border-bottom: 1px solid var(--border);
+    }
 
-  .kt-card-footer {
-    @apply flex items-center justify-between p-5 border-t border-border;
-  }
+    .kt-card-footer{
+        display:flex; align-items:center; justify-content:space-between;
+        padding: 1.25rem;
+        border-top: 1px solid var(--border);
+    }
 
-  /* Menu Styles */
-  .kt-menu {
-    @apply bg-background border border-border rounded-lg shadow-lg;
-  }
+    .kt-card-title{
+        color: var(--foreground);
+        font-weight: 600;
+    }
 
-  .kt-menu-item {
-    @apply relative;
-  }
+    .kt-card-content { @apply p-5; }
 
-  .kt-menu-link {
-    @apply flex items-center px-4 py-2 text-sm text-foreground hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors;
-  }
+    /* Menu Styles */
+    .kt-menu{
+        background: var(--background);
+        border: 1px solid var(--border);
+        border-radius: .75rem;
+        box-shadow: var(--tw-shadow-lg);
+    }
 
-  .kt-menu-icon {
-    @apply w-5 h-5 mr-3 text-muted-foreground;
-  }
+    .kt-menu-item { @apply relative; }
 
-  .kt-menu-title {
-    @apply flex-1;
-  }
+    .kt-menu-link{
+        @apply flex items-center px-4 py-2 text-sm transition-colors;
+        color: var(--foreground);
+    }
 
-  .kt-menu-arrow {
-    @apply ml-auto;
-  }
+    .kt-menu-link:hover{
+        background: color-mix(in oklab, var(--foreground) 4%, var(--background));
+    }
 
-  /* Container Styles */
-  .kt-container-fixed {
-    @apply container mx-auto px-4 lg:px-8;
-  }
+    .kt-menu-icon{
+        @apply w-5 h-5 mr-3;
+        color: var(--muted-foreground);
+    }
 
-  /* Header Styles */
-  .kt-header {
-    @apply bg-background border-b border-border;
-  }
+    .kt-menu-title{ @apply flex-1; }
+    .kt-menu-arrow{ @apply ml-auto; }
 
-  /* Wrapper Styles */
-  .kt-wrapper {
-    @apply min-h-0;
-  }
+    /* Container Styles */
+    .kt-container-fixed { @apply container mx-auto px-4 lg:px-8; }
 
-  /* Link Styles */
-  .kt-link {
-    @apply text-blue-600 hover:text-blue-800 font-medium transition-colors;
-  }
+    /* Header Styles */
+    .kt-header{
+        background: var(--background);
+        border-bottom: 1px solid var(--border);
+    }
 
-  .kt-link-underlined {
-    @apply underline;
-  }
+    /* Wrapper Styles */
+    .kt-wrapper { @apply min-h-0; }
 
-  .kt-link-dashed {
-    @apply border-b border-dashed border-current;
-  }
+    /* Link Styles */
+    .kt-link { @apply font-medium transition-colors; color: var(--color-blue-700); }
+    .kt-link:hover { color: var(--color-blue-700); opacity: .9; }
 
-  /* Toggle Group */
-  .kt-toggle-group {
-    @apply inline-flex rounded-lg border border-border;
-  }
+    .kt-link-underlined { @apply underline; }
+    .kt-link-dashed { border-bottom: 1px dashed currentColor; }
 
-  .kt-toggle-group .kt-btn {
-    @apply rounded-none border-0 first:rounded-l-lg last:rounded-r-lg;
-  }
+    /* Toggle Group */
+    .kt-toggle-group { border: 1px solid var(--border); border-radius: .75rem; display:inline-flex; }
+    .kt-toggle-group .kt-btn { @apply rounded-none border-0 first:rounded-l-lg last:rounded-r-lg; }
 }
 
+/* =========================
+   UTILITIES
+   ========================= */
 @layer utilities {
-  /* Custom spacing utilities */
-  .space-x-2\.5 > * + * {
-    margin-left: 0.625rem;
-  }
+    .space-x-2\.5 > * + * { margin-left: 0.625rem; }
+    .gap-7\.5 { gap: 1.875rem; }
 
-  .gap-7\.5 {
-    gap: 1.875rem;
-  }
-
-  /* Hide scrollbar but allow scrolling */
-  .scrollbar-hidden {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  .scrollbar-hidden::-webkit-scrollbar {
-    display: none;
-  }
+    .scrollbar-hidden { -ms-overflow-style: none; scrollbar-width: none; }
+    .scrollbar-hidden::-webkit-scrollbar { display: none; }
 }
+
 /* ===================================================== */
 /* DataTables 2.x – Metronic Sort (Highlight + Animasyon) */
 /* ===================================================== */
 
-.kt-table thead th {
-    position: relative;
-}
+.kt-table thead th { position: relative; }
 
 /* sıralanabilir kolon */
 .kt-table thead th.dt-orderable-asc,
-.kt-table thead th.dt-orderable-desc {
-    cursor: pointer;
-}
+.kt-table thead th.dt-orderable-desc { cursor: pointer; }
 
 /* aktif sıralanan kolonun arka planı */
 .kt-table thead th.dt-ordering-asc,
 .kt-table thead th.dt-ordering-desc {
-    background-color: rgba(62, 151, 255, 0.06); /* Metronic primary çok hafif */
+    background-color: rgba(62, 151, 255, 0.06);
 }
 
 /* başlık metni hafif vurgulansın */
@@ -188,11 +199,8 @@
     margin-left: 10px;
     vertical-align: middle;
     opacity: .6;
-    transition:
-        opacity .15s ease,
-        transform .18s ease,
-        color .15s ease;
-    color: var(--kt-gray-500, #a1a5b7);
+    transition: opacity .15s ease, transform .18s ease, color .15s ease;
+    color: var(--muted-foreground);
 }
 
 /* pasif ↕ */
@@ -203,7 +211,7 @@
     line-height: 1;
 }
 
-/* hover animasyonu (hafif yukarı kayma) */
+/* hover animasyonu */
 .kt-table thead th.dt-orderable-asc:hover .dt-column-order,
 .kt-table thead th.dt-orderable-desc:hover .dt-column-order {
     opacity: .9;
@@ -214,7 +222,7 @@
 .kt-table thead th.dt-ordering-asc .dt-column-order::after {
     content: "↑";
     font-size: 15px;
-    color: var(--kt-primary, #3e97ff);
+    color: var(--color-violet-600);
     opacity: 1;
     animation: dt-sort-bounce-up .25s ease-out;
 }
@@ -223,69 +231,52 @@
 .kt-table thead th.dt-ordering-desc .dt-column-order::after {
     content: "↓";
     font-size: 15px;
-    color: var(--kt-primary, #3e97ff);
+    color: var(--color-violet-600);
     opacity: 1;
     animation: dt-sort-bounce-down .25s ease-out;
 }
 
-/* sıralanamayan kolon */
-.kt-table thead th.dt-orderable-none {
-    cursor: default;
-}
-
-th.dt-orderable-none .dt-column-order{
-    display:none !important;
-}
+.kt-table thead th.dt-orderable-none { cursor: default; }
+th.dt-orderable-none .dt-column-order{ display:none !important; }
 
 /* DataTables header: yatay + dikey ortala */
 table.kt-table thead th {
     vertical-align: middle !important;
-    padding-top: 0.75rem;   /* istersen */
-    padding-bottom: 0.75rem;/* istersen */
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
 }
 
 table.kt-table thead th .dt-column-header {
     display: flex;
-    align-items: center; /* dikey */
-    justify-content: center; /* yatay */
-    gap: .5rem; /* başlık + ikon arası */
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
     width: 100%;
 }
-table.kt-table  thead th .dt-column-order {
-    margin-left: 0 !important;
-}
+table.kt-table thead th .dt-column-order { margin-left: 0 !important; }
 
-/* Başlık yazısı ortada kalsın */
 table.kt-table thead th .dt-column-title {
     text-align: center;
     width: auto;
 }
 
-/* ------------------- */
-/* Keyframe animasyon */
-/* ------------------- */
-
 @keyframes dt-sort-bounce-up {
     0%   { transform: translateY(2px); opacity: .4; }
     100% { transform: translateY(0);   opacity: 1; }
 }
-
 @keyframes dt-sort-bounce-down {
     0%   { transform: translateY(-2px); opacity: .4; }
     100% { transform: translateY(0);    opacity: 1; }
 }
+
 /* JS gelene kadar enhanced blok gizli */
 html.js-loading [data-js-hide-until-ready] { visibility: hidden; }
 html.js-ready   [data-js-hide-until-ready] { visibility: visible; }
 
-/*
-[data-page="blog.index"] table.kt-table thead th .dt-column-header { }
-*/
-
 /* ===== App Loading State (single source of truth) ===== */
 html.js-loading { overflow: hidden; }
 
-/* App Lock Overlay (Metronic spinner kullanır) */
+/* App Lock Overlay */
 .app-lock{
     position: fixed;
     inset: 0;
@@ -312,22 +303,18 @@ html.js-ready .app-lock{
     padding: 1rem 1.25rem;
     border-radius: 1rem;
 }
+
 /* Lock spinner – bağımsız, garanti */
 .app-lock-spinner{
     width: 28px;
     height: 28px;
     border-radius: 9999px;
-    border: 3px solid rgba(0.55,0.24,262.88,.15);
-    border-top-color: rgba(0.55,0.24,262.88,.55);
+    border: 3px solid rgba(0,0,0,.12);
+    border-top-color: rgba(0,0,0,.55);
     animation: app-lock-spin .9s linear infinite;
 }
 
-@keyframes app-lock-spin {
-    to { transform: rotate(360deg); }
-}
-
 @keyframes app-lock-spin { to { transform: rotate(360deg); } }
-
 
 /* Optional: hide specific enhanced blocks until ready */
 html.js-loading [data-js-hide-until-ready] { visibility: hidden; }

@@ -1,7 +1,7 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    <div class="kt-container-fixed" data-page="categories.edit">
+    <div class="kt-container-fixed max-w-[90%]" data-page="categories.edit">
     <div class="grid gap-5 lg:gap-7.5">
 
             @includeIf('admin.partials._flash')

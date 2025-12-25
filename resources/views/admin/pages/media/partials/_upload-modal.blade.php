@@ -99,20 +99,110 @@
                 </div>
 
                 {{-- LIBRARY PANE --}}
+                {{-- Modal içinde: #mediaUploadPane ve #mediaLibraryPane tabları var varsayıyorum --}}
+
                 <div id="mediaLibraryPane" class="hidden">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="font-semibold text-mono">Son yüklenenler</div>
-                        <button type="button" class="kt-btn kt-btn-sm kt-btn-light" id="mediaRefreshLibrary">
-                            <i class="ki-outline ki-arrows-circle"></i> Yenile
-                        </button>
-                    </div>
+                    <div class="grid gap-5">
 
-                    <div id="mediaRecentList" class="grid gap-2"></div>
+                        {{-- ÜST BAR: Search + Filter + Refresh --}}
+                        <div class="kt-card">
+                            <div class="kt-card-content p-4 flex flex-col gap-4">
+                                <div class="flex flex-col md:flex-row md:items-center gap-3">
+                                    <div class="grow">
+                                        <div class="kt-input-icon">
+                                            <i class="ki-outline ki-magnifier"></i>
+                                            <input
+                                                id="mediaLibrarySearch"
+                                                type="text"
+                                                class="kt-input"
+                                                placeholder="Kütüphanede ara (dosya adı, başlık, alt...)">
+                                        </div>
+                                    </div>
 
-                    <div class="mt-4 text-xs text-muted-foreground">
-                        Not: Kütüphane grid’i sayfada zaten var. Buradaki liste sadece “modal içi hızlı erişim”.
+                                    <div class="w-full md:w-56">
+                                        <select id="mediaLibraryType" class="kt-select w-full">
+                                            <option value="">Tümü</option>
+                                            <option value="image">Görsel</option>
+                                            <option value="video">Video</option>
+                                            <option value="pdf">PDF</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="flex items-center gap-2">
+                                        <button type="button" id="mediaRefreshLibrary" class="kt-btn kt-btn-light">
+                                            <i class="ki-outline ki-arrows-circle"></i>
+                                            Yenile
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {{-- BULK BAR (başta gizli; JS açacak) --}}
+                                <div id="mediaLibraryBulkBar" class="hidden">
+                                    <div class="rounded-xl border border-border bg-background">
+                                        <div class="px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+                                            <label class="flex items-center gap-2">
+                                                <input type="checkbox" class="kt-checkbox kt-checkbox-sm" id="mediaLibraryCheckAll">
+                                                <span class="text-sm">Tümünü seç</span>
+                                            </label>
+
+                                            <div class="flex items-center gap-3">
+                                                <div class="text-sm">
+                                                    Seçili: <span class="font-semibold" id="mediaLibrarySelectedCount">0</span>
+                                                </div>
+
+                                                <button type="button" class="kt-btn kt-btn-sm kt-btn-danger" id="mediaLibraryBulkDeleteBtn">
+                                                    <i class="ki-outline ki-trash"></i>
+                                                    Toplu Sil
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        {{-- SON YÜKLENENLER --}}
+                        <div class="kt-card">
+                            <div class="kt-card-header py-4">
+                                <h3 class="kt-card-title">Son yüklenenler</h3>
+                                <div class="kt-card-toolbar">
+                                    <span class="text-xs text-muted-foreground">Bu liste tarayıcı (localStorage) bazlıdır</span>
+                                </div>
+                            </div>
+
+                            <div class="kt-card-content px-4 pb-4">
+                                <div id="mediaRecentList" class="flex flex-col gap-1">
+                                    {{-- JS dolduracak --}}
+                                    <div class="text-xs text-muted-foreground">Henüz yükleme yok.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- KÜTÜPHANE SONUÇLARI --}}
+                        <div class="kt-card">
+                            <div class="kt-card-header py-4">
+                                <h3 class="kt-card-title">Kütüphane</h3>
+                                <div class="kt-card-toolbar">
+                                    <span class="text-xs text-muted-foreground">Seçim + tekli silme + toplu silme burada</span>
+                                </div>
+                            </div>
+
+                            <div class="kt-card-content p-4">
+                                <div id="mediaLibraryResults" class="grid gap-3">
+                                    {{-- JS kartları basacak --}}
+                                    <div class="text-sm text-muted-foreground">Yükleniyor…</div>
+                                </div>
+
+                                <div id="mediaLibraryPagination" class="mt-4 flex items-center justify-center">
+                                    {{-- JS pagination basacak --}}
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
+
             </div>
         </div>
 

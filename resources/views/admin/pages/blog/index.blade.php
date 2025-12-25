@@ -1,7 +1,7 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    <div class="kt-container-fixed"
+    <div class="kt-container-fixed max-w-[90%]"
          data-page="blog.index"
          data-perpage="{{ $perPage ?? 25 }}">
 
@@ -72,7 +72,7 @@
                     <div class="grid"
                          id="blog_dt">
 
-                        <div class="kt-scrollable-x-auto">
+                        <div class="overflow-hidden">
                             <table class="kt-table table-auto kt-table-border w-full" id="blog_table">
                                 <thead>
                                 <tr>

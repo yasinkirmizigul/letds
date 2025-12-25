@@ -43,7 +43,7 @@
              data-kt-scrollable-wrappers="#sidebar_content"
              id="sidebar_scrollable">
 
-            <div class="kt-menu flex grow flex-col gap-1"
+            <div class="flex grow flex-col gap-1"
                  data-kt-menu="true"
                  data-kt-menu-accordion-expand-all="false"
                  id="sidebar_menu">

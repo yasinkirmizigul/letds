@@ -122,7 +122,6 @@ class MediaController extends Controller
         }
 
         $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
-
         $items = Media::query()->whereIn('id', $ids)->get();
 
         foreach ($items as $m) {
@@ -151,6 +150,7 @@ class MediaController extends Controller
             'id'            => $m->id,
             'uuid'          => $m->uuid,
             'url'           => $m->url(),
+            'thumb_url'     => $m->thumbUrl(), // ✅ eklendi
             'original_name' => $m->original_name,
             'mime_type'     => $m->mime_type,
             'size'          => (int) $m->size,

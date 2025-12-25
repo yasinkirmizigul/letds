@@ -1,7 +1,7 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    <div class="kt-container-fixed" data-page="media.index">
+    <div class="kt-container-fixed max-w-[90%]" data-page="media.index">
         <div class="grid gap-5 lg:gap-7.5">
 
             <div class="kt-card">
@@ -55,7 +55,7 @@
                         </div>
                     </div>
 
-                    <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-4 gap-4"></div>
+                    <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-6 gap-4"></div>
 
                     <div id="mediaEmpty" class="hidden">
                         <div class="kt-card mt-4">

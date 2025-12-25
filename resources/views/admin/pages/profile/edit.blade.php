@@ -4,7 +4,7 @@
     @php($u = $user ?? auth()->user())
     @php($avatarUrl = method_exists($u, 'avatarUrl') ? $u->avatarUrl() : asset('assets/media/avatars/blank.png'))
 
-    <div class="kt-container-fixed" data-page="profile.edit">
+    <div class="kt-container-fixed max-w-[90%]" data-page="profile.edit">
         @includeIf('admin.partials._flash')
 
         <div class="flex items-center justify-between mb-5">

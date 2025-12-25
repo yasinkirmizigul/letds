@@ -23,7 +23,7 @@
     </style>
 
     <div class="bg-center bg-cover bg-no-repeat hero-bg">
-        <div class="kt-container-fixed">
+        <div class="kt-container-fixed max-w-[90%]">
             <div class="flex flex-col items-center gap-2 lg:gap-3.5 py-4 lg:pt-5 lg:pb-10">
                 <img class="rounded-full border-3 border-green-500 size-[100px] shrink-0"
                      src="{{ $avatarUrl }}"
@@ -63,10 +63,10 @@
         </div>
     </div>
 
-    <div class="kt-container-fixed" data-page="profile.index">
+    <div class="kt-container-fixed max-w-[90%]" data-page="profile.index">
         <div class="flex items-center flex-wrap md:flex-nowrap lg:items-end justify-between border-b border-b-border gap-3 lg:gap-6 mb-5 lg:mb-10">
             <div class="grid">
-                <div class="kt-scrollable-x-auto">
+                <div class="overflow-hidden">
                     <div class="kt-menu gap-3" data-kt-menu="true">
                         <div class="kt-menu-item border-b-2 border-b-transparent kt-menu-item-active:border-b-primary kt-menu-item-here:border-b-primary here">
                             <a class="kt-menu-link gap-1.5 pb-2 lg:pb-4 px-2" href="{{ route('admin.profile.index') }}">
@@ -119,7 +119,7 @@
         </div>
     </div>
 
-    <div class="kt-container-fixed">
+    <div class="kt-container-fixed max-w-[90%]">
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-5 lg:gap-7.5">
             {{-- LEFT --}}
             <div class="col-span-1">
