@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AuditLog\AuditLogController;
 use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\TinyMceController;
+use App\Http\Controllers\Admin\TrashController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Admin\Dash\DashController;
@@ -245,7 +246,7 @@ Route::middleware(['auth', 'audit'])
                 ->name('togglePublish');
         });
 
-// Media
+        // Media
         Route::prefix('media')->as('media.')->group(function () {
 
             Route::get('/', [MediaController::class, 'index'])
@@ -289,7 +290,7 @@ Route::middleware(['auth', 'audit'])
                 ->name('bulkForceDestroy');
         });
 
-// Profile
+        // Profile
         Route::middleware(['auth'])
             ->prefix('profile')
             ->as('profile.')
@@ -317,6 +318,24 @@ Route::middleware(['auth', 'audit'])
                     ->middleware('permission:users.update')
                     ->name('avatar.remove');
             });
+
+        Route::prefix('trash')->as('trash.')->group(function () {
+            Route::get('/', [TrashController::class, 'index'])
+                ->middleware('permission:trash.view')
+                ->name('index');
+
+            Route::get('/list', [TrashController::class, 'list'])
+                ->middleware('permission:trash.view')
+                ->name('list');
+
+            Route::post('/bulk-restore', [TrashController::class, 'bulkRestore'])
+                ->middleware('permission:trash.view')
+                ->name('bulkRestore');
+
+            Route::post('/bulk-force-delete', [TrashController::class, 'bulkForceDestroy'])
+                ->middleware('permission:trash.view')
+                ->name('bulkForceDestroy');
+        });
 
         Route::prefix('audit-logs')->as('audit-logs.')->group(function () {
             Route::get('/', [AuditLogController::class, 'index'])

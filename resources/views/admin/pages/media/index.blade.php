@@ -68,7 +68,7 @@
                             <div class="flex items-center gap-2">
                                 @if($isTrash)
                                     <button type="button" class="kt-btn kt-btn-sm kt-btn-success" id="mediaBulkRestoreBtn" disabled>
-                                        <i class="ki-outline ki-arrow-circle-left"></i> Restore
+                                        <i class="ki-outline ki-arrow-circle-left"></i> Geri Yükle
                                     </button>
                                     <button type="button" class="kt-btn kt-btn-sm kt-btn-danger" id="mediaBulkForceDeleteBtn" disabled>
                                         <i class="ki-outline ki-trash"></i> Kalıcı Sil

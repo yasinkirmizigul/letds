@@ -18,6 +18,7 @@ import CategoriesIndex from './categories/index';
 import profileEdit from './profile/edit';
 import profileIndex from './profile/index';
 import mediaIndex from './media/index';
+import trashIndex from './trash/index';
 
 export function registerPages() {
     register('blog.create', BlogCreate);
@@ -44,4 +45,7 @@ export function registerPages() {
     register('profile.index', profileIndex);
 
     register('media.index', mediaIndex);
+
+    register('trash.index', trashIndex);
+
 }

@@ -95,4 +95,13 @@ return [
         'active'=> ['admin.audit-logs'],
         'style' => 'margin-inline-start: -5px;',
     ],
+
+    [
+        'type'  => 'single',
+        'title' => 'Silinenler',
+        'icon'  => 'ki-filled ki-trash text-lg',
+        'route' => 'admin.trash.index',
+        'active'=> ['admin.trash'],
+        'style' => 'margin-inline-start: -5px;',
+    ],
 ];
