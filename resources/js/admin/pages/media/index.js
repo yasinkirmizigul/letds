@@ -30,13 +30,20 @@ export default function init() {
     const typeSelect = root.querySelector('#mediaType');
     const perPageInput = root.querySelector('#mediaPerPage');
 
+    // Upload global title/alt + apply buttons (modal)
+    const titleInput = root.querySelector('#mediaTitle');
+    const altInput = root.querySelector('#mediaAlt');
+    const applyTitleAllBtn = root.querySelector('#mediaApplyTitleAll');
+    const applyAltAllBtn = root.querySelector('#mediaApplyAltAll');
+    const queueInfo = root.querySelector('#mediaQueueInfo');
+
     // Bulk UI
     const bulkBar = root.querySelector('#mediaBulkBar');
     const selectedCountEl = root.querySelector('#mediaSelectedCount');
     const checkAll = root.querySelector('#mediaCheckAll');
     const bulkDeleteBtn = root.querySelector('#mediaBulkDeleteBtn');
 
-    // Modal library (optional)
+    // Modal library (optional) - kept
     const libSearch = root.querySelector('#mediaLibSearch');
     const libType = root.querySelector('#mediaLibType');
     const libResults = root.querySelector('#mediaLibResults');
@@ -48,7 +55,8 @@ export default function init() {
     let busy = false;
     let debounceTimer = null;
 
-    let queue = []; // {qid,file,previewUrl,status,error,kind}
+    // ✅ queue item now includes title/alt/progress
+    let queue = []; // {qid,file,previewUrl,status,error,kind,progress,title,alt}
     let recent = []; // {id,url,thumb_url,kind,original_name,mime_type,size,name}
 
     const selectedIds = new Set(); // bulk selection
@@ -87,7 +95,7 @@ export default function init() {
         bulkBar.classList.toggle('hidden', n === 0);
 
         if (selectedCountEl) selectedCountEl.textContent = String(n);
-        if (bulkDeleteBtn) bulkDeleteBtn.disabled = (n === 0); // ✅ (senin bugın)
+        if (bulkDeleteBtn) bulkDeleteBtn.disabled = (n === 0);
 
         const boxes = [...grid.querySelectorAll('input[data-media-check="1"]')];
         const checked = boxes.filter(b => b.checked).length;
@@ -136,25 +144,21 @@ export default function init() {
     function switchTab(tab) {
         const isUpload = tab === 'upload';
 
-        // Pane toggle
         uploadPane?.classList.toggle('hidden', !isUpload);
         libraryPane?.classList.toggle('hidden', isUpload);
 
-        // Button state
         tabButtons.forEach(btn => {
             const t = btn.getAttribute('data-media-tab');
             const active = t === tab;
 
             btn.setAttribute('aria-selected', active ? 'true' : 'false');
-
-            // aktif görsel: istersen kt-btn-primary, değilse kt-btn-light
             btn.classList.toggle('kt-btn-primary', active);
             btn.classList.toggle('kt-btn-light', !active);
         });
     }
 
     // -------------------------
-    // Lightbox (CSS-class based: styles.css -> .media-lb*)
+    // Lightbox (kept)
     // -------------------------
     let lbOpen = false;
     let lbItems = [];
@@ -337,31 +341,21 @@ export default function init() {
         }).join('');
     }
 
-    // ✅ Kart: checkbox inline (top-2/left-2 yok), thumbnail daha büyük, Gör/Sil geri.
     function mediaCard(m) {
         const url = m.thumb_url || m.url;
         const kind = m.is_image ? 'image' : inferKindFromMimeOrExt(m.mime_type, m.original_name || m.url);
 
         const thumb = (kind === 'image')
             ? `<img src="${esc(url)}" class="w-full rounded-xl ring-1 ring-border" style="height:220px;object-fit:cover" alt="">`
-            : (kind === 'video')
-                ? `<div class="w-full rounded-xl bg-muted ring-1 ring-border flex items-center justify-center" style="height:220px">
-                       <i class="ki-outline ki-video text-3xl text-muted-foreground"></i>
-                   </div>`
-                : (kind === 'pdf')
-                    ? `<div class="w-full rounded-xl bg-muted ring-1 ring-border flex items-center justify-center" style="height:220px">
-                           <i class="ki-outline ki-file-sheet text-3xl text-muted-foreground"></i>
-                       </div>`
-                    : `<div class="w-full rounded-xl bg-muted ring-1 ring-border flex items-center justify-center" style="height:220px">
-                           <i class="ki-outline ki-file text-3xl text-muted-foreground"></i>
-                       </div>`;
+            : `<div class="w-full rounded-xl bg-muted ring-1 ring-border flex items-center justify-center" style="height:220px">
+                   <i class="ki-outline ki-file text-3xl text-muted-foreground"></i>
+               </div>`;
 
         return `
           <div class="kt-card relative">
-            <div class="absolute z-10" style="top:8px;left:8px;">
+            <div class="absolute z-9" style="top:8px;left:8px;">
                 <label class="inline-flex items-center gap-2 bg-background/80 backdrop-blur px-2 py-1 rounded-lg ring-1 ring-border">
                     <input type="checkbox" class="kt-checkbox kt-checkbox-sm" data-media-check="1" data-id="${esc(m.id)}">
-                    <span class="kt-checkbox-label"></span>
                 </label>
             </div>
 
@@ -488,11 +482,48 @@ export default function init() {
     }
 
     // -------------------------
-    // Upload queue (senin mevcut mantık: kısa bıraktım ama kaldırmadım)
+    // Upload: progress (XHR) + per-file title/alt
     // -------------------------
+    function updateQueueInfo() {
+        if (!queueInfo) return;
+        queueInfo.textContent = String(queue.length);
+    }
+
+    function xhrUpload({ formData, onProgress }) {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/admin/media/upload', true);
+            xhr.responseType = 'json';
+
+            if (csrf) xhr.setRequestHeader('X-CSRF-TOKEN', csrf);
+            xhr.setRequestHeader('Accept', 'application/json');
+
+            xhr.upload.onprogress = (e) => {
+                if (!onProgress) return;
+                const total = e.total || 0;
+                const loaded = e.loaded || 0;
+                const p = total ? Math.round((loaded / total) * 100) : 0;
+                onProgress(p);
+            };
+
+            xhr.onload = () => {
+                const status = xhr.status;
+                const json = xhr.response;
+                if (status >= 200 && status < 300) return resolve(json);
+                return reject(json || { message: 'Upload failed', status });
+            };
+
+            xhr.onerror = () => reject({ message: 'Network error' });
+            xhr.send(formData);
+        });
+    }
+
     function addFiles(fileList) {
         const files = [...(fileList || [])];
         if (!files.length) return;
+
+        const gTitle = (titleInput?.value || '').trim();
+        const gAlt = (altInput?.value || '').trim();
 
         for (const file of files) {
             const qid = crypto.randomUUID?.() || String(Date.now()) + Math.random();
@@ -505,6 +536,9 @@ export default function init() {
                 status: 'pending',
                 error: '',
                 kind: inferKindFromMimeOrExt(file.type, file.name),
+                progress: 0,
+                title: gTitle,
+                alt: gAlt,
             });
         }
         renderQueue();
@@ -522,7 +556,14 @@ export default function init() {
         renderQueue();
     }
 
+    function applyGlobalToAll(which) {
+        const val = (which === 'title' ? (titleInput?.value || '') : (altInput?.value || '')).trim();
+        queue.forEach(it => { it[which] = val; });
+        renderQueue();
+    }
+
     function renderQueue() {
+        updateQueueInfo();
         if (!uploadList) return;
 
         if (!queue.length) {
@@ -543,33 +584,48 @@ export default function init() {
                         ? `<span class="kt-badge kt-badge-sm kt-badge-danger">Hata</span>`
                         : `<span class="kt-badge kt-badge-sm kt-badge-light">Bekliyor</span>`;
 
+            const p = Math.max(0, Math.min(Number(it.progress || 0), 100));
+
             return `
-              <div class="kt-card p-3 flex items-center gap-3" data-qid="${esc(it.qid)}">
-                <div class="w-12 h-12 rounded overflow-hidden bg-muted shrink-0">
-                  ${it.kind === 'image'
+              <div class="kt-card p-3 grid gap-3" data-qid="${esc(it.qid)}">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded overflow-hidden bg-muted shrink-0">
+                    ${it.kind === 'image'
                 ? `<img class="w-full h-full" style="object-fit:cover" src="${esc(it.previewUrl)}" alt="">`
                 : `<div class="w-full h-full grid place-items-center text-muted-foreground"><i class="ki-outline ki-document"></i></div>`}
-                </div>
-
-                <div class="min-w-0 flex-1">
-                  <div class="flex items-center justify-between gap-2">
-                    <div class="text-sm font-medium truncate">${esc(name)}</div>
-                    ${badge}
                   </div>
-                  <div class="text-xs text-muted-foreground truncate">${esc(mime)} • ${esc(size)}</div>
-                  ${it.error ? `<div class="text-xs text-danger mt-1">${esc(it.error)}</div>` : ''}
+
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="text-sm font-medium truncate">${esc(name)}</div>
+                      ${badge}
+                    </div>
+                    <div class="text-xs text-muted-foreground truncate">${esc(mime)} • ${esc(size)}</div>
+
+                    <div class="mt-2" style="height:8px;background:rgba(0,0,0,.08);border-radius:999px;overflow:hidden;">
+                      <div style="height:8px;width:${p}%;background:rgb(0 186 197);"></div>
+                    </div>
+                    <div class="text-[11px] text-muted-foreground mt-1">${p}%</div>
+
+                    ${it.error ? `<div class="text-xs text-danger mt-1">${esc(it.error)}</div>` : ''}
+                  </div>
+
+                  <div class="flex items-center gap-2">
+                    <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-action="preview">
+                      <i class="ki-outline ki-eye"></i>
+                    </button>
+                    <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-action="remove">
+                      <i class="ki-outline ki-cross"></i>
+                    </button>
+                    <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-action="retry">
+                      <i class="ki-outline ki-arrows-circle"></i>
+                    </button>
+                  </div>
                 </div>
 
-                <div class="flex items-center gap-2">
-                  <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-action="preview">
-                    <i class="ki-outline ki-eye"></i>
-                  </button>
-                  <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-action="remove">
-                    <i class="ki-outline ki-cross"></i>
-                  </button>
-                  <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-action="retry">
-                    <i class="ki-outline ki-arrows-circle"></i>
-                  </button>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <input class="kt-input" data-q-field="title" value="${esc(it.title || '')}" placeholder="Bu dosya için başlık (opsiyonel)">
+                  <input class="kt-input" data-q-field="alt" value="${esc(it.alt || '')}" placeholder="Bu dosya için alt (opsiyonel)">
                 </div>
               </div>
             `;
@@ -579,36 +635,47 @@ export default function init() {
     async function uploadOne(it) {
         it.status = 'uploading';
         it.error = '';
+        it.progress = 0;
         renderQueue();
 
         const fd = new FormData();
         fd.append('file', it.file);
+        fd.append('title', (it.title || '').trim());
+        fd.append('alt', (it.alt || '').trim());
 
-        const res = await fetch('/admin/media/upload', {
-            method: 'POST',
-            headers: { ...(csrf ? { 'X-CSRF-TOKEN': csrf } : {}), 'Accept': 'application/json' },
-            body: fd
-        });
+        try {
+            const j = await xhrUpload({
+                formData: fd,
+                onProgress: (p) => {
+                    it.progress = p;
+                    renderQueue();
+                }
+            });
 
-        const j = await res.json().catch(() => ({}));
+            if (!j?.ok) {
+                it.status = 'error';
+                it.error = j?.error?.message || j?.message || 'Upload başarısız';
+                it.progress = 0;
+                renderQueue();
+                return null;
+            }
 
-        if (!res.ok || !j?.ok) {
+            it.status = 'success';
+            it.progress = 100;
+            renderQueue();
+
+            const inserted = Array.isArray(j.data) ? j.data : [j.data];
+            recent = [...inserted, ...recent].slice(0, 30);
+            renderRecent();
+
+            return inserted;
+        } catch (e) {
             it.status = 'error';
-            it.error = j?.error?.message || j?.message || 'Upload başarısız';
+            it.error = e?.error?.message || e?.message || 'Upload başarısız';
+            it.progress = 0;
             renderQueue();
             return null;
         }
-
-        it.status = 'success';
-        renderQueue();
-
-        const payload = j.data;
-        const inserted = Array.isArray(payload) ? payload : [payload];
-
-        recent = [...inserted, ...recent].slice(0, 30);
-        renderRecent();
-
-        return inserted;
     }
 
     async function uploadAll() {
@@ -621,7 +688,6 @@ export default function init() {
                 if (it.status === 'success') continue;
                 await uploadOne(it);
             }
-
             state.page = 1;
             await fetchList();
         } finally {
@@ -662,6 +728,24 @@ export default function init() {
         filesInput.value = '';
     });
 
+    applyTitleAllBtn?.addEventListener('click', () => applyGlobalToAll('title'));
+    applyAltAllBtn?.addEventListener('click', () => applyGlobalToAll('alt'));
+
+    uploadList?.addEventListener('input', (e) => {
+        const card = e.target.closest('[data-qid]');
+        if (!card) return;
+
+        const qid = card.getAttribute('data-qid');
+        const field = e.target.getAttribute('data-q-field');
+        if (!qid || !field) return;
+
+        const it = queue.find(x => x.qid === qid);
+        if (!it) return;
+
+        if (field === 'title') it.title = e.target.value;
+        if (field === 'alt') it.alt = e.target.value;
+    });
+
     uploadList?.addEventListener('click', async (e) => {
         const card = e.target.closest('[data-qid]');
         if (!card) return;
@@ -677,7 +761,7 @@ export default function init() {
             const items = queue.map(q => ({
                 url: q.previewUrl || '',
                 kind: q.kind || inferKindFromMimeOrExt(q.file?.type, q.file?.name),
-                title: q.file?.name || 'Dosya',
+                title: q.title || q.file?.name || 'Dosya',
                 sub: `${q.file?.type || 'unknown'} • ${formatBytes(q.file?.size || 0)}`,
                 mime: q.file?.type || '',
                 name: q.file?.name || '',
@@ -734,7 +818,6 @@ export default function init() {
         setBulkUI();
     });
 
-    // ✅ ekstra garanti: bazı temalarda change gecikiyor → click ile de yakala
     grid?.addEventListener('click', (e) => {
         const cb = e.target.closest('input[data-media-check="1"]');
         if (!cb) return;
@@ -747,7 +830,6 @@ export default function init() {
         });
     });
 
-    // Grid open/delete (delegation)
     grid?.addEventListener('click', async (e) => {
         if (e.target.closest('input[data-media-check="1"]')) return;
 

@@ -61,9 +61,27 @@
                                    multiple>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <input id="mediaTitle" type="text" class="kt-input" placeholder="Başlık (opsiyonel, tüm dosyalara)">
-                            <input id="mediaAlt" type="text" class="kt-input" placeholder="Alt (opsiyonel, tüm dosyalara)">
+                        {{-- Global Title/Alt (opsiyonel) + Hepsine Uygula --}}
+                        <div class="grid gap-3">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="grid gap-2">
+                                    <input id="mediaTitle" type="text" class="kt-input" placeholder="Başlık (opsiyonel, varsayılan)">
+                                    <button type="button" class="kt-btn kt-btn-sm kt-btn-light" id="mediaApplyTitleAll">
+                                        <i class="ki-outline ki-copy"></i> Başlığı hepsine uygula
+                                    </button>
+                                </div>
+
+                                <div class="grid gap-2">
+                                    <input id="mediaAlt" type="text" class="kt-input" placeholder="Alt (opsiyonel, varsayılan)">
+                                    <button type="button" class="kt-btn kt-btn-sm kt-btn-light" id="mediaApplyAltAll">
+                                        <i class="ki-outline ki-copy"></i> Alt’ı hepsine uygula
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="text-xs text-muted-foreground">
+                                İpucu: Her dosya satırında ayrıca ayrı başlık/alt girebilirsin. Satır içi alan boşsa global değer kullanılır.
+                            </div>
                         </div>
 
                         <div id="mediaUploadError" class="hidden text-sm text-destructive whitespace-pre-wrap"></div>
@@ -82,7 +100,7 @@
                             </div>
                         </div>
 
-                        <div id="mediaUploadList" class="gap-2 grid kt-scrollable" style="max-height: 52vh;"></div>
+                        <div id="mediaUploadList" class="gap-2 grid kt-scrollable-y-auto" style="max-height: 52vh;"></div>
                     </div>
                 </div>
 
