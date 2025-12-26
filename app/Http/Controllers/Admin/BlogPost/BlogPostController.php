@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Throwable;
 
 class BlogPostController extends Controller
@@ -40,6 +41,7 @@ class BlogPostController extends Controller
             'posts' => $posts,
             'q' => $q,
             'perPage' => $perPage,
+            'pageTitle' => 'Blog',
         ]);
     }
 
@@ -98,7 +100,10 @@ class BlogPostController extends Controller
             'slug'  => ['nullable','string','max:255'],
             'content' => ['nullable','string'],
             'category_ids' => ['nullable','array'],
-            'category_ids.*' => ['integer'],
+            'category_ids.*' => [
+                'integer',
+                Rule::exists('categories', 'id')->whereNull('deleted_at'),
+            ],
         ]);
 
         $slug = $data['slug'] ?: Str::slug($data['title']);
@@ -125,7 +130,10 @@ class BlogPostController extends Controller
             'slug'  => ['nullable','string','max:255'],
             'content' => ['nullable','string'],
             'category_ids' => ['nullable','array'],
-            'category_ids.*' => ['integer'],
+            'category_ids.*' => [
+                'integer',
+                Rule::exists('categories', 'id')->whereNull('deleted_at'),
+            ],
         ]);
 
         $slug = $data['slug'] ?: Str::slug($data['title']);

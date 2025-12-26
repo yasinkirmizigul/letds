@@ -413,7 +413,7 @@ export default function init({ root }) {
             selectedIds.clear();
             location.reload();
         } catch (e) {
-            notify('error', e?.message || 'Restore başarısız');
+            notify('error', e?.message || 'Geri yükleme başarısız');
         } finally {
             updateBulkUI();
         }

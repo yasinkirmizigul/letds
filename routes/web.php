@@ -114,9 +114,19 @@ Route::middleware(['auth', 'audit'])
 
         // Categories
         Route::prefix('categories')->as('categories.')->group(function () {
+
             Route::get('/', [CategoryController::class, 'index'])
                 ->middleware('permission:category.view')
                 ->name('index');
+
+            Route::get('/trash', [CategoryController::class, 'trash'])
+                ->middleware('permission:category.trash')
+                ->name('trash');
+
+            // JSON list (Media gibi)
+            Route::get('/list', [CategoryController::class, 'list'])
+                ->middleware('permission:category.view')
+                ->name('list');
 
             Route::get('/create', [CategoryController::class, 'create'])
                 ->middleware('permission:category.create')
@@ -134,16 +144,39 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:category.update')
                 ->name('update');
 
+            // Soft delete (single)
             Route::delete('/{category}', [CategoryController::class, 'destroy'])
                 ->middleware('permission:category.delete')
                 ->name('destroy');
+
+            // Restore (single)
+            Route::post('/{id}/restore', [CategoryController::class, 'restore'])
+                ->middleware('permission:category.restore')
+                ->name('restore');
+
+            // Force delete (single)
+            Route::delete('/{id}/force', [CategoryController::class, 'forceDestroy'])
+                ->middleware('permission:category.force_delete')
+                ->name('forceDestroy');
+
+            // Bulk
+            Route::post('/bulk-delete', [CategoryController::class, 'bulkDestroy'])
+                ->middleware('permission:category.delete')
+                ->name('bulkDestroy');
+
+            Route::post('/bulk-restore', [CategoryController::class, 'bulkRestore'])
+                ->middleware('permission:category.restore')
+                ->name('bulkRestore');
+
+            Route::post('/bulk-force-delete', [CategoryController::class, 'bulkForceDestroy'])
+                ->middleware('permission:category.force_delete')
+                ->name('bulkForceDestroy');
 
             Route::get('/check-slug', [CategoryController::class, 'checkSlug'])
                 ->middleware('permission:category.view')
                 ->name('checkSlug');
         });
 
-        // Blog
         // Blog
         Route::prefix('blog')->as('blog.')->group(function () {
 

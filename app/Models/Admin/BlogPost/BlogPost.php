@@ -42,9 +42,10 @@ class BlogPost extends Model
             : null;
     }
 
-    public function categories(): MorphToMany
+    public function categories()
     {
-        return $this->morphToMany(Category::class, 'categorizable', 'categorizables', 'categorizable_id', 'category_id')
-            ->withTimestamps();
+        return $this->belongsToMany(Category::class, 'categorizables', 'categorizable_id', 'category_id')
+            ->wherePivot('categorizable_type', self::class)
+            ->withTrashed(); // <-- önemli
     }
 }

@@ -7,25 +7,83 @@ use App\Http\Requests\Admin\Category\StoreCategoryRequest;
 use App\Http\Requests\Admin\Category\UpdateCategoryRequest;
 use App\Models\Admin\Category;
 use App\Support\CategoryTree;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
 {
-    public function index()
-    {
-        $categories = Category::query()
-            ->with(['parent:id,name'])
-            ->withCount(['blogPosts'])
-            ->orderBy('name')
-            ->get(['id','name','slug','parent_id','created_at']);
+    // -------------------------
+    // Pages
+    // -------------------------
 
+    public function index(): \Illuminate\View\View
+    {
         return view('admin.pages.categories.index', [
             'pageTitle' => 'Kategoriler',
-            'categories' => $categories,
+            'mode' => 'active',
         ]);
     }
+
+    public function trash(): \Illuminate\View\View
+    {
+        return view('admin.pages.categories.index', [
+            'pageTitle' => 'Kategoriler',
+            'mode' => 'trash',
+        ]);
+    }
+
+    // -------------------------
+    // JSON list (Media gibi)
+    // GET /admin/categories/list?mode=active|trash&q=...&perpage=25&page=1
+    // -------------------------
+
+    public function list(Request $request): JsonResponse
+    {
+        $mode = $request->string('mode', 'active')->toString();
+        $isTrash = $mode === 'trash';
+
+        $q = trim($request->string('q', '')->toString());
+        $perPage = max(1, min(200, (int) $request->input('perpage', 25)));
+
+        $query = $isTrash
+            ? Category::onlyTrashed()
+            : Category::query();
+
+        $query
+            ->with(['parent:id,name'])
+            ->withCount(['blogPosts'])
+            ->when($q !== '', function ($qq) use ($q) {
+                $qq->where(function ($w) use ($q) {
+                    $w->where('name', 'like', "%{$q}%")
+                        ->orWhere('slug', 'like', "%{$q}%");
+                });
+            })
+            ->orderBy('name');
+
+        $items = $query->paginate($perPage);
+
+        return response()->json([
+            'ok' => true,
+            'data' => $items->getCollection()->map(fn (Category $c) => [
+                'id' => $c->id,
+                'name' => $c->name,
+                'slug' => $c->slug,
+                'parent_name' => $c->parent?->name,
+                'blog_posts_count' => (int) ($c->blog_posts_count ?? 0),
+                'deleted_at' => optional($c->deleted_at)->toISOString(),
+            ])->values(),
+            'meta' => [
+                'current_page' => $items->currentPage(),
+                'last_page' => $items->lastPage(),
+                'per_page' => $items->perPage(),
+                'total' => $items->total(),
+            ],
+        ]);
+    }
+
+    // -------------------------
+    // CRUD (senin mevcut yapın)
+    // -------------------------
 
     public function create()
     {
@@ -54,19 +112,12 @@ class CategoryController extends Controller
 
     public function edit(Category $category)
     {
-        // 1) Tek query
         $all = CategoryTree::all();
-
-        // 2) RAM index
         $byParent = CategoryTree::indexByParent($all);
 
-        // 3) RAM’den descendant id’leri
         $descendantIds = CategoryTree::descendantIdsFromAll($category->id, $byParent);
-
-        // 4) kendisi + tüm altları exclude
         $excludeIds = array_merge([$category->id], $descendantIds);
 
-        // 5) parent options
         $parentOptions = CategoryTree::optionsFromIndex($byParent, $excludeIds);
 
         return view('admin.pages.categories.edit', [
@@ -90,26 +141,102 @@ class CategoryController extends Controller
             ->with('success', 'Kategori güncellendi.');
     }
 
+    // -------------------------
+    // Soft delete / trash ops
+    // -------------------------
 
     public function destroy(Category $category)
     {
         $hasChildren = Category::where('parent_id', $category->id)->exists();
-
         if ($hasChildren) {
             return back()->with('error', 'Bu kategorinin alt kategorileri var. Önce alt kategorileri taşıyın veya silin.');
         }
 
-        $category->delete();
+        $category->delete(); // soft delete
 
         return redirect()
             ->route('admin.categories.index')
             ->with('success', 'Kategori silindi.');
     }
 
-    /**
-     * ✅ Live slug check
-     * GET admin/categories/check-slug?slug=...&ignore=ID(optional)
-     */
+    public function restore(int $id): JsonResponse
+    {
+        $cat = Category::onlyTrashed()->findOrFail($id);
+        $cat->restore();
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function forceDestroy(int $id): JsonResponse
+    {
+        $cat = Category::onlyTrashed()->findOrFail($id);
+
+        $hasChildren = Category::withTrashed()->where('parent_id', $cat->id)->exists();
+        if ($hasChildren) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Bu kategorinin alt kategorileri var. Önce alt kategorileri taşıyın/silin.',
+            ], 422);
+        }
+
+        $cat->forceDelete();
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function bulkDestroy(Request $request): JsonResponse
+    {
+        $ids = $request->input('ids', []);
+        $ids = array_values(array_filter(array_map('intval', is_array($ids) ? $ids : [])));
+        if (!$ids) return response()->json(['ok' => true]);
+
+        $hasChild = Category::whereIn('parent_id', $ids)->exists();
+        if ($hasChild) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Seçim içinde alt kategorisi olan kayıt var. Önce altları taşıyın/silin.',
+            ], 422);
+        }
+
+        Category::whereIn('id', $ids)->delete();
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function bulkRestore(Request $request): JsonResponse
+    {
+        $ids = $request->input('ids', []);
+        $ids = array_values(array_filter(array_map('intval', is_array($ids) ? $ids : [])));
+        if (!$ids) return response()->json(['ok' => true]);
+
+        Category::onlyTrashed()->whereIn('id', $ids)->restore();
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function bulkForceDestroy(Request $request): JsonResponse
+    {
+        $ids = $request->input('ids', []);
+        $ids = array_values(array_filter(array_map('intval', is_array($ids) ? $ids : [])));
+        if (!$ids) return response()->json(['ok' => true]);
+
+        $hasChild = Category::withTrashed()->whereIn('parent_id', $ids)->exists();
+        if ($hasChild) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Seçim içinde alt kategorisi olan kayıt var. Önce altları taşıyın/silin.',
+            ], 422);
+        }
+
+        Category::onlyTrashed()->whereIn('id', $ids)->forceDelete();
+
+        return response()->json(['ok' => true]);
+    }
+
+    // -------------------------
+    // Slug check (senin mevcut)
+    // -------------------------
+
     public function checkSlug(Request $request)
     {
         $slug = trim((string) $request->query('slug', ''));
@@ -134,71 +261,4 @@ class CategoryController extends Controller
             'message' => $exists ? 'Bu slug zaten kullanılıyor.' : 'Slug uygun.',
         ]);
     }
-
-    // -------------------------
-    // Internals
-    // -------------------------
-
-    private function validated(Request $request, ?int $ignoreId = null): array
-    {
-        return $request->validate([
-            'name' => ['required','string','max:120'],
-            'slug' => [
-                'required','string','max:160',
-                Rule::unique('categories','slug')->ignore($ignoreId),
-            ],
-            'parent_id' => ['nullable','integer','exists:categories,id'],
-        ]);
-    }
-
-    /**
-     * Parent select için hiyerarşik option listesi üretir.
-     * excludeIds: edit ekranında kendisi + altları gibi hariç tutulacaklar.
-     *
-     * Output: [ ['id'=>1,'label'=>'A'], ['id'=>2,'label'=>'— B'], ... ]
-     */
-    private function treeOptions(array $excludeIds = []): array
-    {
-        $all = Category::query()
-            ->orderBy('name')
-            ->get(['id','name','parent_id']);
-
-        $byParent = [];
-        foreach ($all as $c) {
-            $byParent[$c->parent_id ?? 0][] = $c;
-        }
-
-        $out = [];
-        $walk = function ($parentId, $depth) use (&$walk, &$out, $byParent, $excludeIds) {
-            foreach (($byParent[$parentId] ?? []) as $c) {
-                if (in_array($c->id, $excludeIds, true)) {
-                    continue;
-                }
-
-                $out[] = [
-                    'id' => $c->id,
-                    'label' => str_repeat('— ', $depth) . $c->name,
-                ];
-
-                $walk($c->id, $depth + 1);
-            }
-        };
-
-        $walk(0, 0);
-
-        return $out;
-    }
-
-/*    private function audit(string $action, Category $category, ?array $before, ?array $after): void
-    {
-        // Audit log tablon yoksa bu satırı kaldırırsın; varsa “kurumsal kalite” budur.
-        CategoryAuditLog::create([
-            'category_id' => $category->id,
-            'user_id' => auth()->id(),
-            'action' => $action, // created/updated/deleted
-            'before' => $before,
-            'after' => $after,
-            'ip' => request()->ip(),
-        ]);
-    }*/
 }
