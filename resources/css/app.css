@@ -325,3 +325,4 @@ table.dt-kt-header-center thead th .dt-column-header { display:flex; align-items
 table.dt-kt-header-center thead th.text-right .dt-column-header { justify-content:flex-end; }
 table.dt-kt-header-center thead th.text-left .dt-column-header { justify-content:flex-start; }
 thead th.dt-orderable-none .dt-column-order { display:none !important; }
+@import "./kt-btn-bootstrap.css";

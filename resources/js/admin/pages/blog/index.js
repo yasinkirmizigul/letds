@@ -106,6 +106,22 @@ async function togglePublish(input) {
     }
 }
 
+function postJson(url, body) {
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': csrfToken(),
+        },
+        body: JSON.stringify(body),
+    }).then(async (res) => {
+        const j = await res.json().catch(() => ({}));
+        if (!res.ok || j?.ok === false) throw new Error(j?.error?.message || 'İşlem başarısız');
+        return j;
+    });
+}
+
 // -------- Custom pagination
 function renderPagination(api, host) {
     if (!host || !api) return;
@@ -172,6 +188,49 @@ export default function init({ root }) {
     const tableEl = root.querySelector('#blog_table');
     if (!tableEl) return;
 
+    const per = root?.dataset?.perpage
+        ? parseInt(root.dataset.perpage, 10)
+        : 25;
+
+    const bulkBar = root.querySelector('#blogBulkBar');
+    const selectedCountEl = root.querySelector('#blogSelectedCount');
+
+    const checkAll = root.querySelector('#blog_check_all');
+    const btnBulkDelete = root.querySelector('#blogBulkDeleteBtn');
+    const btnBulkRestore = root.querySelector('#blogBulkRestoreBtn');
+    const btnBulkForce = root.querySelector('#blogBulkForceDeleteBtn');
+
+    // DataTables paging’de seçim kaybolmasın diye global set
+    const selectedIds = new Set();
+
+    function updateBulkUI() {
+        const n = selectedIds.size;
+
+        if (bulkBar) bulkBar.classList.toggle('hidden', n === 0);
+        if (selectedCountEl) selectedCountEl.textContent = String(n);
+
+        if (btnBulkDelete) btnBulkDelete.disabled = n === 0;
+        if (btnBulkRestore) btnBulkRestore.disabled = n === 0;
+        if (btnBulkForce) btnBulkForce.disabled = n === 0;
+
+        // checkAll indeterminate
+        if (checkAll) {
+            const boxes = [...root.querySelectorAll('input.blog-check')];
+            const checked = boxes.filter(b => b.checked).length;
+
+            checkAll.indeterminate = checked > 0 && checked < boxes.length;
+            checkAll.checked = boxes.length > 0 && checked === boxes.length;
+        }
+    }
+
+    function applySelectionToCurrentPage() {
+        root.querySelectorAll('input.blog-check').forEach(cb => {
+            cb.checked = selectedIds.has(String(cb.value));
+        });
+        updateBulkUI();
+    }
+
+
     // 1) popover instance + delegation
     popEl = createPopover();
     ac = new AbortController();
@@ -207,24 +266,177 @@ export default function init({ root }) {
         info: '#blogInfo',
         pagination: '#blogPagination',
 
-        pageLength: 10,
+        pageLength: per,
         lengthMenu: [5, 10, 25, 50],
-        order: [[0, 'desc']],
+        order: [[1, 'desc']],
         dom: 't',
 
         emptyTemplate: '#dt-empty-blog',
         zeroTemplate: '#dt-zero-blog',
 
         columnDefs: [
-            { orderable: false, searchable: false, targets: [5, 6] },
-            { className: 'text-right', targets: [5, 6] },
+            { orderable: false, searchable: false, targets: [0] }, // checkbox
+            { className: 'text-right', targets: [6, 7] },
         ],
 
         onDraw: (dtApi) => {
             const host = root.querySelector('#blogPagination');
             renderPagination(dtApi || api, host);
+
+            // ✅ sayfa değişince checkboxlar doğru işaretlensin
+            applySelectionToCurrentPage();
         }
     });
+    // Checkbox change (delegation)
+    root.addEventListener('change', (e) => {
+        const cb = e.target;
+        if (!(cb instanceof HTMLInputElement)) return;
+
+        // tek tek seçim
+        if (cb.classList.contains('blog-check')) {
+            const id = String(cb.value || '');
+            if (!id) return;
+            if (cb.checked) selectedIds.add(id);
+            else selectedIds.delete(id);
+            updateBulkUI();
+            return;
+        }
+
+        // check all
+        if (cb.id === 'blog_check_all') {
+            const on = !!cb.checked;
+            root.querySelectorAll('input.blog-check').forEach(x => {
+                x.checked = on;
+                const id = String(x.value || '');
+                if (!id) return;
+                if (on) selectedIds.add(id);
+                else selectedIds.delete(id);
+            });
+            updateBulkUI();
+        }
+    }, { signal });
+    // --- Single row actions (delete / restore / force-delete) ---
+    root.addEventListener('click', async (e) => {
+        const btn = e.target?.closest?.('[data-action]');
+        if (!btn || !root.contains(btn)) return;
+
+        const action = btn.getAttribute('data-action');
+        const id = btn.getAttribute('data-id');
+        if (!action || !id) return;
+
+        // Bulk bar butonları da data-action kullanmıyor, sorun yok.
+        // double click koruması
+        if (btn.dataset.busy === '1') return;
+        btn.dataset.busy = '1';
+
+        try {
+            if (action === 'delete') {
+                if (!confirm('Bu yazı silinsin mi?')) return;
+
+                const res = await fetch(`/admin/blog/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken(),
+                    },
+                });
+                const j = await res.json().catch(() => ({}));
+                if (!res.ok || j?.ok === false) throw new Error(j?.error?.message || 'Silme başarısız');
+
+                notify('success', 'Silindi');
+                location.reload();
+                return;
+            }
+
+            if (action === 'restore') {
+                if (!confirm('Bu yazı geri yüklensin mi?')) return;
+
+                await postJson(`/admin/blog/${id}/restore`, {});
+                notify('success', 'Geri yüklendi');
+                location.reload();
+                return;
+            }
+
+            if (action === 'force-delete') {
+                if (!confirm('Bu yazı KALICI silinecek. Emin misin?')) return;
+
+                const res = await fetch(`/admin/blog/${id}/force`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken(),
+                    },
+                });
+                const j = await res.json().catch(() => ({}));
+                if (!res.ok || j?.ok === false) throw new Error(j?.error?.message || 'Kalıcı silme başarısız');
+
+                notify('success', 'Kalıcı silindi');
+                location.reload();
+                return;
+            }
+        } catch (err) {
+            notify('error', err?.message || 'İşlem başarısız');
+            console.error(err);
+        } finally {
+            btn.dataset.busy = '0';
+        }
+    }, { signal });
+
+    // Bulk actions
+    btnBulkDelete?.addEventListener('click', async () => {
+        const ids = [...selectedIds];
+        if (!ids.length) return;
+
+        if (!confirm(`${ids.length} kayıt silinsin mi?`)) return;
+
+        try {
+            await postJson('/admin/blog/bulk-delete', { ids });
+            notify('success', 'Silindi');
+            selectedIds.clear();
+            location.reload();
+        } catch (e) {
+            notify('error', e?.message || 'Silme başarısız');
+        } finally {
+            updateBulkUI();
+        }
+    });
+
+    btnBulkRestore?.addEventListener('click', async () => {
+        const ids = [...selectedIds];
+        if (!ids.length) return;
+
+        if (!confirm(`${ids.length} kayıt geri yüklensin mi?`)) return;
+
+        try {
+            await postJson('/admin/blog/bulk-restore', { ids });
+            notify('success', 'Geri yüklendi');
+            selectedIds.clear();
+            location.reload();
+        } catch (e) {
+            notify('error', e?.message || 'Restore başarısız');
+        } finally {
+            updateBulkUI();
+        }
+    });
+
+    btnBulkForce?.addEventListener('click', async () => {
+        const ids = [...selectedIds];
+        if (!ids.length) return;
+
+        if (!confirm(`${ids.length} kayıt KALICI silinecek. Emin misin?`)) return;
+
+        try {
+            await postJson('/admin/blog/bulk-force-delete', { ids });
+            notify('success', 'Kalıcı silindi');
+            selectedIds.clear();
+            location.reload();
+        } catch (e) {
+            notify('error', e?.message || 'Kalıcı silme başarısız');
+        } finally {
+            updateBulkUI();
+        }
+    });
+
 
     // 3) First render extras
     initCategoryAutoSubmit(root);

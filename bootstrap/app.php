@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\AuditRequestMiddleware;
 use App\Http\Middleware\PermissionMiddleware;
 use App\Http\Middleware\SuperAdminMiddleware;
 use Illuminate\Foundation\Application;
@@ -17,7 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'permission' => PermissionMiddleware::class,
             'superadmin' => SuperAdminMiddleware::class,
-            'admin'      => AdminMiddleware::class
+            'admin'      => AdminMiddleware::class,
+            'audit'      => AuditRequestMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

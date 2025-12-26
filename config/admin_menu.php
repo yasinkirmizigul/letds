@@ -86,4 +86,13 @@ return [
         ],
         'style' => '',
     ],
+
+    [
+        'type'  => 'single',
+        'title' => 'Loglar',
+        'icon'  => 'ki-filled ki-fingerprint-scanning text-lg',
+        'route' => 'admin.audit-logs.index',
+        'active'=> ['admin.audit-logs'],
+        'style' => 'margin-inline-start: -5px;',
+    ],
 ];

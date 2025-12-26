@@ -1,8 +1,18 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
+    @php
+        $mode = $mode ?? 'active';
+        $isTrash = $mode === 'trash';
+
+        $q = $q ?? '';
+        $selectedCategoryIds = $selectedCategoryIds ?? [];
+        $hasFilter = ($q !== '') || !empty($selectedCategoryIds);
+    @endphp
+
     <div class="kt-container-fixed max-w-[90%]"
          data-page="blog.index"
+         data-mode="{{ $mode }}"
          data-perpage="{{ $perPage ?? 25 }}">
 
         <div class="grid gap-5 lg:gap-7.5">
@@ -13,14 +23,18 @@
 
                 <div class="kt-card-header py-5 flex-wrap gap-4">
                     <div class="flex flex-col">
-                        <h3 class="kt-card-title">Blog Yazıları</h3>
+                        <h3 class="kt-card-title">
+                            {{ $isTrash ? 'Silinen Blog Yazıları' : 'Blog Yazıları' }}
+                        </h3>
                         <div class="text-sm text-muted-foreground">Blog yazılarını yönetin</div>
                     </div>
 
                     <div class="flex items-center gap-2 flex-wrap">
+
+                        {{-- Filtre --}}
                         <form method="GET"
                               data-blog-filter-form="true"
-                              action="{{ route('admin.blog.index') }}"
+                              action="{{ $isTrash ? route('admin.blog.trash') : route('admin.blog.index') }}"
                               class="flex items-center gap-2">
 
                             <input
@@ -29,7 +43,7 @@
                                 type="text"
                                 class="kt-input kt-input-sm"
                                 placeholder="Başlık / kısa bağlantı ara..."
-                                value="{{ $q ?? '' }}"
+                                value="{{ $q }}"
                             />
 
                             <select
@@ -44,7 +58,7 @@
                             >
                                 @foreach(($categoryOptions ?? []) as $opt)
                                     <option value="{{ $opt['id'] }}"
-                                        @selected(in_array($opt['id'], $selectedCategoryIds ?? [], true))>
+                                        @selected(in_array($opt['id'], $selectedCategoryIds, true))>
                                         {{ $opt['label'] }}
                                     </option>
                                 @endforeach
@@ -52,30 +66,63 @@
 
                             <button type="submit" class="kt-btn kt-btn-sm kt-btn-light">Filtrele</button>
 
-                            @php
-                                $hasFilter = !empty($q) || !empty($selectedCategoryIds);
-                            @endphp
-
                             @if($hasFilter)
-                                <a href="{{ route('admin.blog.index') }}" class="kt-btn kt-btn-sm kt-btn-mono">Temizle</a>
+                                <a href="{{ $isTrash ? route('admin.blog.trash') : route('admin.blog.index') }}"
+                                   class="kt-btn kt-btn-sm kt-btn-mono">Temizle</a>
                             @endif
                         </form>
 
+                        {{-- Toggle: Blog / Silinenler --}}
+                        <a href="{{ route('admin.blog.index') }}"
+                           class="kt-btn kt-btn-sm {{ $isTrash ? 'kt-btn-light' : 'kt-btn-primary' }}">
+                            Blog
+                        </a>
+
+                        <a href="{{ route('admin.blog.trash') }}"
+                           class="kt-btn kt-btn-sm {{ $isTrash ? 'kt-btn-primary' : 'kt-btn-light' }}">
+                            Silinenler
+                        </a>
+
                         @perm('blog.create')
-                            <a href="{{ route('admin.blog.create') }}" class="kt-btn kt-btn-sm kt-btn-primary">Yeni Yazı</a>
+                        <a href="{{ route('admin.blog.create') }}" class="kt-btn kt-btn-sm kt-btn-primary">Yeni Yazı</a>
                         @endperm
                     </div>
                 </div>
 
                 <div class="kt-card-content">
-                    {{-- ✅ Enhanced: JS hazır olana kadar gizli --}}
-                    <div class="grid"
-                         id="blog_dt">
+                    <div class="grid" id="blog_dt">
+
+                        {{-- Bulk bar (tek) --}}
+                        <div id="blogBulkBar" class="hidden kt-card mb-4">
+                            <div class="kt-card-content p-3 flex items-center justify-between gap-3">
+                                <div class="text-sm text-muted-foreground">
+                                    Seçili: <b id="blogSelectedCount">0</b>
+                                </div>
+
+                                <div class="flex items-center gap-2">
+                                    @if($isTrash)
+                                        <button type="button" class="kt-btn kt-btn-sm kt-btn-success" id="blogBulkRestoreBtn" disabled>
+                                            <i class="ki-outline ki-arrow-circle-left"></i> Geri Yükle
+                                        </button>
+                                        <button type="button" class="kt-btn kt-btn-sm kt-btn-destructive" id="blogBulkForceDeleteBtn" disabled>
+                                            <i class="ki-outline ki-trash"></i> Kalıcı Sil
+                                        </button>
+                                    @else
+                                        <button type="button" class="kt-btn kt-btn-sm kt-btn-destructive" id="blogBulkDeleteBtn" disabled>
+                                            <i class="ki-outline ki-trash"></i> Sil
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="overflow-hidden">
                             <table class="kt-table table-auto kt-table-border w-full" id="blog_table">
                                 <thead>
                                 <tr>
+                                    <th class="w-[55px] dt-orderable-none">
+                                        <input class="kt-checkbox kt-checkbox-sm" id="blog_check_all" type="checkbox">
+                                    </th>
                                     <th class="w-[80px]">ID</th>
                                     <th class="min-w-[360px]">Yazı</th>
                                     <th class="min-w-[280px]">Kısa Bağlantı</th>
@@ -93,6 +140,10 @@
                                     @endphp
 
                                     <tr data-row-id="{{ $p->id }}">
+                                        <td class="w-[55px]">
+                                            <input class="kt-checkbox kt-checkbox-sm blog-check" type="checkbox" value="{{ $p->id }}">
+                                        </td>
+
                                         <td class="text-sm text-secondary-foreground">{{ $p->id }}</td>
 
                                         <td>
@@ -137,14 +188,14 @@
                                                 </div>
 
                                                 @perm('blog.update')
-                                                    <label class="kt-switch kt-switch-sm">
-                                                        <input
-                                                            class="js-publish-toggle kt-switch kt-switch-mono"
-                                                            type="checkbox"
-                                                            data-url="{{ route('admin.blog.togglePublish', $p) }}"
-                                                            @checked($p->is_published)
-                                                        />
-                                                    </label>
+                                                <label class="kt-switch kt-switch-sm">
+                                                    <input
+                                                        class="js-publish-toggle kt-switch kt-switch-mono"
+                                                        type="checkbox"
+                                                        data-url="{{ route('admin.blog.togglePublish', $p) }}"
+                                                        @checked($p->is_published)
+                                                    />
+                                                </label>
                                                 @endperm
                                             </div>
 
@@ -159,30 +210,49 @@
                                             {{ $p->updated_at?->format('d.m.Y H:i') }}
                                         </td>
 
-                                        <td>
+                                        {{-- Edit --}}
+                                        <td class="text-end">
                                             @perm('blog.update')
-                                                <a href="{{ route('admin.blog.edit', $p) }}"
-                                                   class="kt-btn kt-btn-sm kt-btn-icon kt-btn-primary"
-                                                   title="Düzenle">
-                                                    <i class="ki-filled ki-notepad-edit"></i>
-                                                </a>
+                                            <a href="{{ route('admin.blog.edit', $p) }}"
+                                               class="kt-btn kt-btn-sm kt-btn-icon kt-btn-primary"
+                                               title="Düzenle">
+                                                <i class="ki-filled ki-notepad-edit"></i>
+                                            </a>
                                             @endperm
                                         </td>
 
-                                        <td>
-                                            @perm('blog.delete')
-                                                <form method="POST"
-                                                      action="{{ route('admin.blog.destroy', $p) }}"
-                                                      onsubmit="return confirm('Bu yazıyı silmek istiyor musunuz?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit"
-                                                            class="kt-btn kt-btn-sm kt-btn-icon kt-btn-destructive"
-                                                            title="Sil">
-                                                        <i class="ki-filled ki-trash"></i>
+                                        {{-- Actions --}}
+                                        <td class="text-end">
+                                            <div class="flex">
+                                                @if($isTrash)
+                                                    @perm('blog.restore')
+                                                    <button type="button"
+                                                            class="kt-btn kt-btn-sm kt-btn-success me-2.5"
+                                                            data-action="restore"
+                                                            data-id="{{ $p->id }}">
+                                                        <i class="ki-outline ki-arrow-circle-left"></i>
                                                     </button>
-                                                </form>
-                                            @endperm
+                                                    @endperm
+
+                                                    @perm('blog.force_delete')
+                                                    <button type="button"
+                                                            class="kt-btn kt-btn-sm kt-btn-destructive"
+                                                            data-action="force-delete"
+                                                            data-id="{{ $p->id }}">
+                                                        <i class="ki-outline ki-trash"></i>
+                                                    </button>
+                                                    @endperm
+                                                @else
+                                                    @perm('blog.delete')
+                                                    <button type="button"
+                                                            class="kt-btn kt-btn-sm kt-btn-destructive"
+                                                            data-action="delete"
+                                                            data-id="{{ $p->id }}">
+                                                        <i class="ki-outline ki-trash"></i>
+                                                    </button>
+                                                    @endperm
+                                                @endif
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -192,7 +262,7 @@
 
                         <template id="dt-empty-blog">
                             <tr data-kt-empty-row="true">
-                                <td colspan="7" class="py-12">
+                                <td colspan="8" class="py-12">
                                     <div class="flex flex-col items-center text-center gap-2">
                                         <i class="ki-outline ki-document text-3xl text-muted-foreground"></i>
                                         <div class="font-semibold">Henüz blog yazısı yok</div>
@@ -204,7 +274,7 @@
 
                         <template id="dt-zero-blog">
                             <tr data-kt-zero-row="true">
-                                <td colspan="7" class="py-12">
+                                <td colspan="8" class="py-12">
                                     <div class="flex flex-col items-center text-center gap-2">
                                         <i class="ki-outline ki-magnifier text-3xl text-muted-foreground"></i>
                                         <div class="font-semibold">Sonuç bulunamadı</div>
@@ -217,7 +287,7 @@
                         <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
                             <div class="flex items-center gap-2 order-2 md:order-1">
                                 Göster
-                                <select class="kt-select w-16" id="blogPageSize" name="perpage"></select>
+                                <select class="kt-select w-16" id="blogPageSize" name="perpage" data-kt-select="true"></select>
                                 / sayfa
                             </div>
 

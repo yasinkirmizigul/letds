@@ -17,12 +17,25 @@ class MediaController extends Controller
     {
         return view('admin.pages.media.index', [
             'pageTitle' => 'Medya Kütüphanesi',
+            'mode' => 'active',
+        ]);
+    }
+
+    public function trash()
+    {
+        return view('admin.pages.media.index', [
+            'pageTitle' => 'Silinen Medyalar',
+            'mode' => 'trash',
         ]);
     }
 
     public function list(Request $request): JsonResponse
     {
-        $q = Media::query()->latest('id');
+        $mode = $request->string('mode', 'active')->toString();
+
+        $q = $mode === 'trash'
+            ? Media::onlyTrashed()->latest('id')
+            : Media::query()->latest('id');
 
         if ($type = $request->string('type')->toString()) {
             if ($type === 'image') {
@@ -61,9 +74,9 @@ class MediaController extends Controller
     {
         try {
             $request->validate([
-                'file'      => ['required_without:files', 'file', 'max:20480'], // 20MB
+                'file'      => ['required_without:files', 'file', 'max:20480'],
                 'files'     => ['required_without:file', 'array'],
-                'files.*'   => ['file', 'max:20480'], // 20MB each
+                'files.*'   => ['file', 'max:20480'],
                 'title'     => ['nullable', 'string', 'max:255'],
                 'alt'       => ['nullable', 'string', 'max:255'],
             ]);
@@ -71,7 +84,6 @@ class MediaController extends Controller
             $title = $request->input('title');
             $alt   = $request->input('alt');
 
-            // Multi
             $files = $request->file('files');
             if (is_array($files) && count($files)) {
                 $uploaded = [];
@@ -83,23 +95,16 @@ class MediaController extends Controller
                     $uploaded[] = $this->mediaPayload($m);
                 }
 
-                return response()->json([
-                    'ok'   => true,
-                    'data' => $uploaded,
-                ]);
+                return response()->json(['ok' => true, 'data' => $uploaded]);
             }
 
-            // Single
             $file = $request->file('file');
             $m = $this->mediaService->store($file, [
                 'title' => $title,
                 'alt'   => $alt,
             ]);
 
-            return response()->json([
-                'ok'   => true,
-                'data' => $this->mediaPayload($m),
-            ]);
+            return response()->json(['ok' => true, 'data' => $this->mediaPayload($m)]);
         } catch (Throwable $e) {
             report($e);
             return response()->json([
@@ -109,38 +114,93 @@ class MediaController extends Controller
         }
     }
 
-    // ✅ TOPLU SİLME
-    public function bulkDestroy(Request $request): JsonResponse
-    {
-        $ids = $request->input('ids', []);
-
-        if (!is_array($ids) || count($ids) === 0) {
-            return response()->json([
-                'ok'    => false,
-                'error' => ['message' => 'Seçili kayıt yok.'],
-            ], 422);
-        }
-
-        $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
-        $items = Media::query()->whereIn('id', $ids)->get();
-
-        foreach ($items as $m) {
-            $this->mediaService->delete($m);
-        }
-
-        return response()->json([
-            'ok'   => true,
-            'data' => ['deleted' => $items->count()],
-        ]);
-    }
-
+    // Single soft delete
     public function destroy(Media $media): JsonResponse
     {
-        $this->mediaService->delete($media);
+        $media->delete();
 
         return response()->json([
             'ok'   => true,
             'data' => ['deleted' => true],
+        ]);
+    }
+
+    // Single restore
+    public function restore(int $id): JsonResponse
+    {
+        $m = Media::onlyTrashed()->findOrFail($id);
+        $m->restore();
+
+        return response()->json([
+            'ok'   => true,
+            'data' => ['restored' => true],
+        ]);
+    }
+
+    // Single force delete (db + file)
+    public function forceDestroy(int $id): JsonResponse
+    {
+        $m = Media::withTrashed()->findOrFail($id);
+        $m->forceDelete();
+
+        return response()->json([
+            'ok'   => true,
+            'data' => ['force_deleted' => true],
+        ]);
+    }
+
+    // Bulk soft delete
+    public function bulkDestroy(Request $request): JsonResponse
+    {
+        $ids = $request->input('ids', []);
+        if (!is_array($ids) || count($ids) === 0) {
+            return response()->json(['ok' => false, 'error' => ['message' => 'Seçili kayıt yok.']], 422);
+        }
+
+        $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
+        $count = Media::query()->whereIn('id', $ids)->delete(); // soft delete
+
+        return response()->json([
+            'ok'   => true,
+            'data' => ['deleted' => $count],
+        ]);
+    }
+
+    // Bulk restore
+    public function bulkRestore(Request $request): JsonResponse
+    {
+        $ids = $request->input('ids', []);
+        if (!is_array($ids) || count($ids) === 0) {
+            return response()->json(['ok' => false, 'error' => ['message' => 'Seçili kayıt yok.']], 422);
+        }
+
+        $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
+        $count = Media::onlyTrashed()->whereIn('id', $ids)->restore();
+
+        return response()->json([
+            'ok'   => true,
+            'data' => ['restored' => $count],
+        ]);
+    }
+
+    // Bulk force delete
+    public function bulkForceDestroy(Request $request): JsonResponse
+    {
+        $ids = $request->input('ids', []);
+        if (!is_array($ids) || count($ids) === 0) {
+            return response()->json(['ok' => false, 'error' => ['message' => 'Seçili kayıt yok.']], 422);
+        }
+
+        $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
+        $items = Media::withTrashed()->whereIn('id', $ids)->get();
+
+        foreach ($items as $m) {
+            $m->forceDelete();
+        }
+
+        return response()->json([
+            'ok'   => true,
+            'data' => ['force_deleted' => $items->count()],
         ]);
     }
 
@@ -150,7 +210,7 @@ class MediaController extends Controller
             'id'            => $m->id,
             'uuid'          => $m->uuid,
             'url'           => $m->url(),
-            'thumb_url'     => $m->thumbUrl(), // ✅ eklendi
+            'thumb_url'     => $m->thumbUrl(),
             'original_name' => $m->original_name,
             'mime_type'     => $m->mime_type,
             'size'          => (int) $m->size,
@@ -158,6 +218,7 @@ class MediaController extends Controller
             'height'        => $m->height,
             'is_image'      => $m->isImage(),
             'created_at'    => $m->created_at?->toDateTimeString(),
+            'deleted_at'    => $m->deleted_at?->toDateTimeString(),
         ];
     }
 }

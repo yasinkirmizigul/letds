@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AuditLog\AuditLogController;
 use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\TinyMceController;
 use Illuminate\Support\Facades\Route;
@@ -32,7 +33,7 @@ Route::post('/logout', [AuthController::class, 'logout'])
 | Admin
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth'])
+Route::middleware(['auth', 'audit'])
     ->prefix('admin')
     ->as('admin.')
     ->group(function () {
@@ -143,10 +144,22 @@ Route::middleware(['auth'])
         });
 
         // Blog
+        // Blog
         Route::prefix('blog')->as('blog.')->group(function () {
+
             Route::get('/', [BlogPostController::class, 'index'])
                 ->middleware('permission:blog.view')
                 ->name('index');
+
+            // ✅ Trash ekranı (aynı blade, mode=trash)
+            Route::get('/trash', [BlogPostController::class, 'trash'])
+                ->middleware('permission:blog.trash')
+                ->name('trash');
+
+            // ✅ (Opsiyonel) JSON list endpoint (ister şimdi kullan, ister sonra)
+            Route::get('/list', [BlogPostController::class, 'list'])
+                ->middleware('permission:blog.view')
+                ->name('list');
 
             Route::get('/create', [BlogPostController::class, 'create'])
                 ->middleware('permission:blog.create')
@@ -164,9 +177,35 @@ Route::middleware(['auth'])
                 ->middleware('permission:blog.update')
                 ->name('update');
 
+            // ✅ Soft delete (single)
             Route::delete('/{blogPost}', [BlogPostController::class, 'destroy'])
                 ->middleware('permission:blog.delete')
                 ->name('destroy');
+
+            // ✅ Restore (single)
+            Route::post('/{id}/restore', [BlogPostController::class, 'restore'])
+                ->middleware('permission:blog.restore')
+                ->name('restore');
+
+            // ✅ Force delete (single)
+            Route::delete('/{id}/force', [BlogPostController::class, 'forceDestroy'])
+                ->middleware('permission:blog.force_delete')
+                ->name('forceDestroy');
+
+            // ✅ Bulk soft delete
+            Route::post('/bulk-delete', [BlogPostController::class, 'bulkDestroy'])
+                ->middleware('permission:blog.delete')
+                ->name('bulkDestroy');
+
+            // ✅ Bulk restore
+            Route::post('/bulk-restore', [BlogPostController::class, 'bulkRestore'])
+                ->middleware('permission:blog.restore')
+                ->name('bulkRestore');
+
+            // ✅ Bulk force delete
+            Route::post('/bulk-force-delete', [BlogPostController::class, 'bulkForceDestroy'])
+                ->middleware('permission:blog.force_delete')
+                ->name('bulkForceDestroy');
 
             Route::patch('/{blogPost}/toggle-publish', [BlogPostController::class, 'togglePublish'])
                 ->middleware('permission:blog.update')
@@ -175,27 +214,46 @@ Route::middleware(['auth'])
 
 // Media
         Route::prefix('media')->as('media.')->group(function () {
+
             Route::get('/', [MediaController::class, 'index'])
                 ->middleware('permission:media.view')
                 ->name('index');
+
+            Route::get('/trash', [MediaController::class, 'trash'])
+                ->middleware('permission:media.trash')
+                ->name('trash');
 
             Route::get('/list', [MediaController::class, 'list'])
                 ->middleware('permission:media.view')
                 ->name('list');
 
             Route::post('/upload', [MediaController::class, 'upload'])
-                ->middleware('permission:media.upload')
+                ->middleware('permission:media.create') // yoksa media.view yap, ama bir tane standard seç
                 ->name('upload');
 
-            // ✅ BULK: önce + path doğru
-            Route::delete('/bulk', [MediaController::class, 'bulkDestroy'])
-                ->middleware('permission:media.delete')
-                ->name('bulkDestroy');
-
-            // ✅ tekil silme her zaman en sona
             Route::delete('/{media}', [MediaController::class, 'destroy'])
                 ->middleware('permission:media.delete')
                 ->name('destroy');
+
+            Route::post('/{id}/restore', [MediaController::class, 'restore'])
+                ->middleware('permission:media.restore')
+                ->name('restore');
+
+            Route::delete('/{id}/force', [MediaController::class, 'forceDestroy'])
+                ->middleware('permission:media.force_delete')
+                ->name('forceDestroy');
+
+            Route::post('/bulk-delete', [MediaController::class, 'bulkDestroy'])
+                ->middleware('permission:media.delete')
+                ->name('bulkDestroy');
+
+            Route::post('/bulk-restore', [MediaController::class, 'bulkRestore'])
+                ->middleware('permission:media.restore')
+                ->name('bulkRestore');
+
+            Route::post('/bulk-force-delete', [MediaController::class, 'bulkForceDestroy'])
+                ->middleware('permission:media.force_delete')
+                ->name('bulkForceDestroy');
         });
 
 // Profile
@@ -227,6 +285,17 @@ Route::middleware(['auth'])
                     ->name('avatar.remove');
             });
 
+        Route::prefix('audit-logs')->as('audit-logs.')->group(function () {
+            Route::get('/', [AuditLogController::class, 'index'])
+                ->middleware('permission:audit.view')
+                ->name('index');
+
+            Route::get('/{auditLog}', [AuditLogController::class, 'show'])
+                ->middleware('permission:audit.view')
+                ->name('show');
+        });
+
         // TinyMCE upload (admin grubu içinde zaten)
         Route::post('/tinymce/upload', [TinyMceController::class, 'upload'])->name('tinymce.upload');
+
     });

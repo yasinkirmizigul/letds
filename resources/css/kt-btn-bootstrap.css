@@ -1,0 +1,144 @@
+/* Bootstrap-like button variants for KT button naming
+   Works even if your project doesn't define these variants.
+*/
+
+:root{
+    --kt-btn-radius: 0.625rem;          /* ~rounded-xl */
+    --kt-btn-font: 600;
+    --kt-btn-pad-y: 0.55rem;
+    --kt-btn-pad-x: 0.95rem;
+    --kt-btn-gap: 0.5rem;
+
+    /* Base palette (bootstrap-ish) */
+    --kt-primary: #0d6efd;
+    --kt-success: #198754;
+    --kt-danger:  #dc3545;
+    --kt-warning: #ffc107;
+    --kt-info:    #0dcaf0;
+    --kt-dark:    #212529;
+    --kt-light:   #f8f9fa;
+
+    --kt-border:  rgba(0,0,0,.12);
+    --kt-text:    #111827;
+    --kt-white:   #ffffff;
+}
+
+/* ---------- Base .kt-btn ---------- */
+.kt-btn{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--kt-btn-gap);
+    padding: var(--kt-btn-pad-y) var(--kt-btn-pad-x);
+    border-radius: var(--kt-btn-radius);
+    font-weight: var(--kt-btn-font);
+    line-height: 1.1;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--kt-text);
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease, transform .05s ease;
+}
+
+.kt-btn:active{ transform: translateY(1px); }
+
+.kt-btn:focus{
+    outline: none;
+    box-shadow: 0 0 0 .2rem rgba(13,110,253,.25);
+}
+
+.kt-btn[disabled],
+.kt-btn:disabled{
+    opacity: .6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* sizes */
+.kt-btn.kt-btn-sm{
+    padding: .38rem .7rem;
+    border-radius: .55rem;
+    font-weight: 600;
+    font-size: .875rem;
+}
+
+/* ---------- Filled variants ---------- */
+.kt-btn-primary{
+    background: var(--kt-primary);
+    border-color: var(--kt-primary);
+    color: var(--kt-white);
+}
+.kt-btn-primary:hover{ background: #0b5ed7; border-color: #0a58ca; }
+.kt-btn-primary:focus{ box-shadow: 0 0 0 .2rem rgba(13,110,253,.35); }
+
+.kt-btn-success{
+    background: var(--kt-success);
+    border-color: var(--kt-success);
+    color: var(--kt-white);
+}
+.kt-btn-success:hover{ background: #157347; border-color: #146c43; }
+.kt-btn-success:focus{ box-shadow: 0 0 0 .2rem rgba(25,135,84,.35); }
+
+.kt-btn-danger,
+.kt-btn-destructive{ /* destructive alias */
+    background: var(--kt-danger);
+    border-color: var(--kt-danger);
+    color: var(--kt-white);
+}
+.kt-btn-danger:hover,
+.kt-btn-destructive:hover{ background: #bb2d3b; border-color: #b02a37; }
+.kt-btn-danger:focus,
+.kt-btn-destructive:focus{ box-shadow: 0 0 0 .2rem rgba(220,53,69,.35); }
+
+.kt-btn-warning{
+    background: var(--kt-warning);
+    border-color: var(--kt-warning);
+    color: #111;
+}
+.kt-btn-warning:hover{ background: #ffca2c; border-color: #ffc720; }
+.kt-btn-warning:focus{ box-shadow: 0 0 0 .2rem rgba(255,193,7,.35); }
+
+.kt-btn-info{
+    background: var(--kt-info);
+    border-color: var(--kt-info);
+    color: #111;
+}
+.kt-btn-info:hover{ background: #31d2f2; border-color: #25cff2; }
+.kt-btn-info:focus{ box-shadow: 0 0 0 .2rem rgba(13,202,240,.35); }
+
+.kt-btn-light{
+    background: var(--kt-light);
+    border-color: var(--kt-border);
+    color: var(--kt-dark);
+}
+.kt-btn-light:hover{ background: #e9ecef; border-color: rgba(0,0,0,.16); }
+.kt-btn-light:focus{ box-shadow: 0 0 0 .2rem rgba(248,249,250,.35); }
+
+/* ---------- Outline variants ---------- */
+.kt-btn-outline{
+    background: transparent;
+    border-color: var(--kt-border);
+    color: var(--kt-dark);
+}
+.kt-btn-outline:hover{
+    background: rgba(0,0,0,.04);
+    border-color: rgba(0,0,0,.18);
+}
+
+/* Outline color helpers (optional) */
+.kt-btn-outline-primary{ border-color: rgba(13,110,253,.45); color: var(--kt-primary); }
+.kt-btn-outline-primary:hover{ background: rgba(13,110,253,.08); border-color: rgba(13,110,253,.55); }
+
+.kt-btn-outline-success{ border-color: rgba(25,135,84,.45); color: var(--kt-success); }
+.kt-btn-outline-success:hover{ background: rgba(25,135,84,.08); border-color: rgba(25,135,84,.55); }
+
+.kt-btn-outline-danger{ border-color: rgba(220,53,69,.45); color: var(--kt-danger); }
+.kt-btn-outline-danger:hover{ background: rgba(220,53,69,.08); border-color: rgba(220,53,69,.55); }
+
+/* ---------- Icon alignment (ki-outline etc.) ---------- */
+.kt-btn i{
+    font-size: 1.1em;
+    line-height: 1;
+}
