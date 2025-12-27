@@ -41,12 +41,13 @@
                             Silinenler
                         </a>
                         @endperm
-
-                        @perm('category.create')
-                        <a href="{{ route('admin.categories.create') }}" class="kt-btn kt-btn-sm kt-btn-primary">
-                            Yeni Kategori
-                        </a>
-                        @endperm
+                        @if(!$isTrash)
+                            @perm('category.create')
+                            <a href="{{ route('admin.categories.create') }}" class="kt-btn kt-btn-sm kt-btn-primary">
+                                Yeni Kategori
+                            </a>
+                            @endperm
+                        @endif
                     </div>
                 </div>
 

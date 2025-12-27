@@ -10,6 +10,26 @@ class AuditLogController extends Controller
 {
     public function index(Request $request)
     {
+        $mode = request()->string('mode', 'all')->toString(); // all|system|user
+
+        $query = AuditLog::query()->latest('id');
+
+        if ($mode === 'system') {
+            // Kolon varsa is_system en temiz işaret
+            $query->where(function ($q) {
+                $q->where('is_system', 1)
+                    ->orWhere('method', 'CLI')
+                    ->orWhere('user_agent', 'CLI');
+            });
+        } elseif ($mode === 'user') {
+            $query->where(function ($q) {
+                $q->whereNull('is_system')
+                    ->orWhere('is_system', 0);
+            })->where(function ($q) {
+                $q->whereNull('method')->orWhere('method', '!=', 'CLI');
+            });
+        }
+
         $q = trim((string) $request->get('q', ''));
         $action = (string) $request->get('action', '');
         $status = (string) $request->get('status', '');

@@ -120,7 +120,19 @@ class TrashController extends Controller
             try {
                 $model = ($sources[$type]['model'])::onlyTrashed()->find($id);
                 if (!$model) { $failed[] = $it; continue; }
-                $model->restore();
+
+                // ✅ Dependency guard
+                $guard = $this->canForceDelete($type, $model);
+                if ($guard['ok'] !== true) {
+                    $failed[] = [
+                        'type' => $type,
+                        'id' => $id,
+                        'reason' => $guard['reason'] ?? 'Bağımlılık var',
+                    ];
+                    continue;
+                }
+
+                $model->forceDelete();
                 $done++;
             } catch (\Throwable $e) {
                 $failed[] = $it;
@@ -192,6 +204,7 @@ class TrashController extends Controller
                         'title' => $m->title ?: ($m->original_name ?: 'Media'),
                         'sub' => $m->mime_type ?: '',
                         'deleted_at' => optional($m->deleted_at)->toISOString(),
+                        'url' => route('admin.media.trash'),
                     ];
                 },
             ],
@@ -208,6 +221,7 @@ class TrashController extends Controller
                         'title' => $p->title ?: 'Blog',
                         'sub' => $p->slug ?: '',
                         'deleted_at' => optional($p->deleted_at)->toISOString(),
+                        'url' => route('admin.blog.edit', ['blogPost' => $p->id]),
                     ];
                 },
             ],
@@ -224,6 +238,7 @@ class TrashController extends Controller
                         'title' => $c->name ?: 'Kategori',
                         'sub' => $c->slug ?: '',
                         'deleted_at' => optional($c->deleted_at)->toISOString(),
+                        'url' => route('admin.categories.edit', ['category' => $c->id]),
                     ];
                 },
             ],
@@ -237,5 +252,37 @@ class TrashController extends Controller
             return (bool) $user->canAccess($perm);
         }
         return (bool) $user->can($perm);
+    }
+
+    private function canForceDelete(string $type, $model): array
+    {
+        // default allow
+        if ($type !== 'category') {
+            return ['ok' => true];
+        }
+
+        /** @var \App\Models\Admin\Category $model */
+        // 1) child category var mı? (trashed dahil)
+        $hasChild = \App\Models\Admin\Category::withTrashed()
+            ->where('parent_id', $model->id)
+            ->exists();
+
+        if ($hasChild) {
+            return ['ok' => false, 'reason' => 'Alt kategori var'];
+        }
+
+        // 2) Blog post bağlı mı? (pivot)
+        // Pivot tablon: categorizables
+        // morph type: App\Models\Admin\BlogPost\BlogPost
+        $hasBlog = \Illuminate\Support\Facades\DB::table('categorizables')
+            ->where('category_id', $model->id)
+            ->where('categorizable_type', \App\Models\Admin\BlogPost\BlogPost::class)
+            ->exists();
+
+        if ($hasBlog) {
+            return ['ok' => false, 'reason' => 'Blog yazılarına bağlı'];
+        }
+
+        return ['ok' => true];
     }
 }

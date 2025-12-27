@@ -38,12 +38,24 @@
                     <form class="flex flex-col md:flex-row gap-3 items-center">
                         <input class="kt-input w-full" name="q" value="{{ $filters['q'] ?? '' }}"
                                placeholder="Ara: route, uri, user, ip..." />
+                        @php($mode = request('mode', 'all'))
+
+                        <div class="flex items-center gap-2">
+                            <a class="kt-btn kt-btn-sm {{ $mode==='all'?'kt-btn-primary':'kt-btn-light' }}"
+                               href="{{ request()->fullUrlWithQuery(['mode'=>'all']) }}">Tümü</a>
+
+                            <a class="kt-btn kt-btn-sm {{ $mode==='user'?'kt-btn-primary':'kt-btn-light' }}"
+                               href="{{ request()->fullUrlWithQuery(['mode'=>'user']) }}">Kullanıcı</a>
+
+                            <a class="kt-btn kt-btn-sm {{ $mode==='system'?'kt-btn-primary':'kt-btn-light' }}"
+                               href="{{ request()->fullUrlWithQuery(['mode'=>'system']) }}">SYSTEM/CLI</a>
+                        </div>
 
                         <select class="kt-select w-full md:w-44" name="method"  data-kt-select="true"
                                 data-kt-select-placeholder="Metod"
                                 data-kt-select-config='{
-			"optionsClass": "kt-scrollable overflow-auto max-h-[250px]"
-		}'>
+                                    "optionsClass": "kt-scrollable overflow-auto max-h-[250px]"
+                                }'>
                             <option value="">Method</option>
                             @foreach(['GET','POST','PUT','PATCH','DELETE'] as $m)
                                 <option value="{{ $m }}" @selected(($filters['method'] ?? '') === $m)>{{ $m }}</option>
@@ -53,8 +65,8 @@
                         <select class="kt-select w-full md:w-44" name="action"  data-kt-select="true"
                                 data-kt-select-placeholder="Action"
                                 data-kt-select-config='{
-			"optionsClass": "kt-scrollable overflow-auto max-h-[250px]"
-		}'>
+                                    "optionsClass": "kt-scrollable overflow-auto max-h-[250px]"
+                                }'>
                             <option value="">Action</option>
                             <option value="request" @selected(($filters['action'] ?? '') === 'request')>request</option>
                         </select>
@@ -69,7 +81,6 @@
                                 <option value="{{ $pp }}" @selected(($filters['perpage'] ?? 25) == $pp)>{{ $pp }}</option>
                             @endforeach
                         </select>
-Audith
                         <button class="kt-btn kt-btn-primary" type="submit">Filtrele</button>
                         <a class="kt-btn kt-btn-light" href="{{ route('admin.audit-logs.index') }}">Sıfırla</a>
                     </form>

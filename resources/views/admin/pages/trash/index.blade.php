@@ -15,14 +15,15 @@
                         <div class="text-sm text-muted-foreground">Media / Blog / Category tek ekrandan restore / kalıcı sil</div>
                     </div>
 
-                    <div class="flex items-center gap-2 flex-wrap">
+                    <div class="flex items-center gap-2">
                         <input id="trashSearch" type="text" class="kt-input kt-input-sm" placeholder="Ara..." />
 
-                        <select id="trashType" class="kt-select w-44" data-kt-select="true">
+                        <select id="trashType" class="kt-select w-44" data-kt-select="true" data-kt-select-placeholder="Tür Seç"
+                        >
                             <option value="all">Tümü</option>
-                            <option value="media">Media</option>
+                            <option value="media">Medya</option>
                             <option value="blog">Blog</option>
-                            <option value="category">Category</option>
+                            <option value="category">Kategori</option>
                         </select>
                     </div>
                 </div>

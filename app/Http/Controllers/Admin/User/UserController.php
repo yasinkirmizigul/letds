@@ -28,7 +28,9 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::orderBy('name')->get();
-        return view('admin.pages.users.create', compact('roles'));
+        return view('admin.pages.users.create', [
+            'pageTitle' => 'Kullanıcı Ekle',
+        ], compact('roles'));
     }
 
     public function store(Request $request)
@@ -58,7 +60,9 @@ class UserController extends Controller
     {
         $roles = Role::orderBy('name')->get();
         $user->load('roles');
-        return view('admin.pages.users.edit', compact('user', 'roles'));
+        return view('admin.pages.users.edit', [
+            'pageTitle' => 'Kullanıcı Düzenle',
+        ], compact('user', 'roles'));
     }
 
     public function update(Request $request, User $user)

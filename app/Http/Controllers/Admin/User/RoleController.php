@@ -31,7 +31,9 @@ class RoleController extends Controller
         $permissions = Permission::orderBy('slug')->get()
             ->groupBy(fn($p) => explode('.', $p->slug, 2)[0] ?? 'other');
 
-        return view('admin.pages.roles.create', compact('permissions'));
+        return view('admin.pages.roles.create', [
+            'pageTitle' => 'Rol Ekle',
+        ], compact('permissions'));
     }
 
     public function edit(Role $role)
@@ -41,7 +43,9 @@ class RoleController extends Controller
         $permissions = Permission::orderBy('slug')->get()
             ->groupBy(fn($p) => explode('.', $p->slug, 2)[0] ?? 'other');
 
-        return view('admin.pages.roles.edit', compact('role','permissions'));
+        return view('admin.pages.roles.edit', [
+            'pageTitle' => 'Rol Düzenle',
+        ], compact('role','permissions'));
     }
 
     public function store(Request $request)

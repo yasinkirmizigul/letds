@@ -21,7 +21,9 @@ class PermissionController extends Controller
     public function create()
     {
         Rbac::bumpVersion();
-        return view('admin.pages.permissions.create');
+        return view('admin.pages.permissions.create', [
+            'pageTitle' => 'Role İzin Ekle',
+        ]);
     }
 
     public function store(Request $request)
@@ -38,7 +40,9 @@ class PermissionController extends Controller
 
     public function edit(Permission $permission)
     {
-        return view('admin.pages.permissions.edit', compact('permission'));
+        return view('admin.pages.permissions.edit', [
+            'pageTitle' => 'Role İzin Düzenle',
+        ], compact('permission'));
     }
 
     public function update(Request $request, Permission $permission)

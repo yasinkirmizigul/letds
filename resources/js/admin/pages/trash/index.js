@@ -85,6 +85,17 @@ export default function init() {
     function rowHtml(it) {
         const k = keyOf(it);
         const checked = state.selected.has(k) ? 'checked' : '';
+        const deletedText = (it.deleted_at || '').replace('T',' ').replace('Z','');
+
+        let purgeBadge = '';
+        if (typeof it.days_left === 'number') {
+            if (it.days_left <= 0) {
+                purgeBadge = `<span class="kt-badge kt-badge-sm kt-badge-destructive">Bugün silinir</span>`;
+            } else {
+                purgeBadge = `<span class="kt-badge kt-badge-sm kt-badge-light">${it.days_left} gün sonra</span>`;
+            }
+        }
+
 
         return `
         <tr data-row-key="${k}">
@@ -97,14 +108,28 @@ export default function init() {
             </td>
             <td>${badgeType(it.type)}</td>
             <td class="font-medium">${escapeHtml(it.title || '')}</td>
-            <td class="text-sm text-muted-foreground">${escapeHtml(it.sub || '')}</td>
-            <td class="text-sm text-muted-foreground">${escapeHtml((it.deleted_at || '').replace('T',' ').replace('Z',''))}</td>
+            <td class="text-sm text-muted-foreground">
+                <div class="flex flex-col gap-1">
+                    <div>${escapeHtml(deletedText)}</div>
+                    ${purgeBadge}
+                </div>
+            </td>
+                        <td class="text-sm text-muted-foreground">${escapeHtml((it.deleted_at || '').replace('T',' ').replace('Z',''))}</td>
             <td class="text-center">
                 <div class="inline-flex gap-2 justify-end">
-                    <button type="button" class="kt-btn kt-btn-sm kt-btn-success" data-action="restore" data-type="${it.type}" data-id="${it.id}">
-                        <i class="ki-outline ki-arrow-circle-left"></i>
+                    ${it.url ? `
+                        <a href="${it.url}" class="kt-btn kt-btn-sm kt-btn-light" title="Kaynağa git">
+                            <i class="ki-outline ki-exit-right"></i>
+                        </a>
+                    ` : ''}
+
+                    <button type="button" class="kt-btn kt-btn-sm kt-btn-success"
+                            data-action="restore" data-type="${it.type}" data-id="${it.id}">
+                        <i class="ki-outline ki-arrow-rotate-left"></i>
                     </button>
-                    <button type="button" class="kt-btn kt-btn-sm kt-btn-destructive" data-action="force-delete" data-type="${it.type}" data-id="${it.id}">
+
+                    <button type="button" class="kt-btn kt-btn-sm kt-btn-destructive"
+                            data-action="force-delete" data-type="${it.type}" data-id="${it.id}">
                         <i class="ki-outline ki-trash"></i>
                     </button>
                 </div>
@@ -313,7 +338,17 @@ export default function init() {
         try {
             const j = await postJson('/admin/trash/bulk-force-delete', { items });
             state.selected.clear();
-            notify('success', `Kalıcı silme: ${j.done || 0}`);
+
+            const done = j.done || 0;
+            const failed = Array.isArray(j.failed) ? j.failed : [];
+
+            if (failed.length) {
+                const sample = failed.slice(0, 3).map(x => `${x.type}#${x.id}: ${x.reason || 'bloklandı'}`).join(' | ');
+                notify('error', `Kalıcı silme: ${done} başarılı, ${failed.length} bloklandı. ${sample}`);
+            } else {
+                notify('success', `Kalıcı silme: ${done}`);
+            }
+
             load();
         } catch (e) {
             notify('error', e?.message || 'Kalıcı silme başarısız');

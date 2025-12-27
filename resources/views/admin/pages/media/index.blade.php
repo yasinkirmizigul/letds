@@ -16,15 +16,6 @@
                     </div>
 
                     <div class="flex items-center gap-2 ms-auto">
-                        <a href="{{ route('admin.media.index') }}"
-                           class="kt-btn {{ $isTrash ? 'kt-btn-light' : 'kt-btn-primary' }}">
-                            Medya
-                        </a>
-
-                        <a href="{{ route('admin.media.trash') }}"
-                           class="kt-btn {{ $isTrash ? 'kt-btn-primary' : 'kt-btn-light' }}">
-                            Silinenler
-                        </a>
 
                         <input id="mediaSearch" class="kt-input" placeholder="Ara..." />
 
@@ -37,6 +28,16 @@
                             <option value="video">Video</option>
                             <option value="pdf">PDF</option>
                         </select>
+
+                        <a href="{{ route('admin.media.index') }}"
+                           class="kt-btn {{ $isTrash ? 'kt-btn-light' : 'kt-btn-primary' }}">
+                            Medya
+                        </a>
+
+                        <a href="{{ route('admin.media.trash') }}"
+                           class="kt-btn {{ $isTrash ? 'kt-btn-primary' : 'kt-btn-light' }}">
+                            Silinenler
+                        </a>
 
                         @if(!$isTrash)
                             <button type="button" class="kt-btn kt-btn-primary" data-kt-modal-toggle="#mediaUploadModal">

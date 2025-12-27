@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\BlogPost;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\BlogPost\BlogPost;
+use App\Models\Admin\Category;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -90,7 +91,18 @@ class BlogPostController extends Controller
     // --- CRUD: Bunlar sende zaten vardı. Varsa kendi mevcut create/store/edit/update'ini koru. ---
     public function create()
     {
-        return view('admin.pages.blog.create');
+        $categories = Category::query()
+            ->orderBy('name')
+            ->get(['id', 'name', 'parent_id']);
+
+        $categoryOptions = $this->categoryOptions($categories);
+
+        return view('admin.pages.blog.create', [
+            'categories' => $categories,
+            'categoryOptions' => $categoryOptions,
+            'selectedCategoryIds' => [],
+            'pageTitle' => 'Yazı Ekle',
+        ]);
     }
 
     public function store(Request $request)
@@ -120,7 +132,31 @@ class BlogPostController extends Controller
 
     public function edit(BlogPost $blogPost)
     {
-        return view('admin.pages.blog.edit', ['post' => $blogPost]);
+        // edit ekranında seçili kategoriler görünmesi için
+        // (Category ilişkinde withTrashed yoksa bile en azından burada yakalamaya çalışırız)
+        try {
+            $blogPost->load(['categories' => fn ($q) => $q->withTrashed()]);
+        } catch (\Throwable $e) {
+            $blogPost->load('categories');
+        }
+
+        $categories = Category::query()
+            ->orderBy('name')
+            ->get(['id', 'name', 'parent_id']);
+
+        $categoryOptions = $this->categoryOptions($categories);
+
+        $selectedCategoryIds = $blogPost->categories
+            ? $blogPost->categories->pluck('id')->map(fn ($v) => (int) $v)->values()->all()
+            : [];
+
+        return view('admin.pages.blog.edit', [
+            'blogPost' => $blogPost,
+            'categories' => $categories,
+            'categoryOptions' => $categoryOptions,
+            'selectedCategoryIds' => $selectedCategoryIds,
+            'pageTitle' => 'Yazı Düzenle',
+        ]);
     }
 
     public function update(Request $request, BlogPost $blogPost)
@@ -257,5 +293,32 @@ class BlogPostController extends Controller
         }
 
         return $candidate;
+    }
+    private function categoryOptions($categories): array
+    {
+        // $categories: collection (id, name, parent_id)
+        $byParent = [];
+        foreach ($categories as $c) {
+            $pid = (int) ($c->parent_id ?? 0);
+            $byParent[$pid][] = $c;
+        }
+
+        $out = [];
+
+        $walk = function ($parentId, $depth) use (&$walk, &$out, $byParent) {
+            $list = $byParent[(int)$parentId] ?? [];
+            foreach ($list as $c) {
+                $prefix = str_repeat('— ', $depth);
+                $out[] = [
+                    'id' => (int) $c->id,
+                    'label' => $prefix . $c->name,
+                ];
+                $walk((int)$c->id, $depth + 1);
+            }
+        };
+
+        $walk(0, 0);
+
+        return $out;
     }
 }
