@@ -60,7 +60,7 @@
                         <div class="flex flex-col gap-2">
                             <label class="kt-form-label font-normal text-mono">İçerik</label>
                             <textarea id="content_editor" name="content" class="kt-input min-h-[320px]">
-                                {{ old('content', $blogPost->content ?? '') }}
+                                {{ old('content', '') }}
                             </textarea>
                             @error('content')
                             <div class="text-xs text-danger">{{ $message }}</div> @enderror

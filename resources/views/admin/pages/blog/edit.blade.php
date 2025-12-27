@@ -3,6 +3,7 @@
 @section('content')
     <div class="px-4 lg:px-6"
          data-page="blog.edit"
+         data-blog-id="{{ $blogPost->id }}"
          data-upload-url="{{ route('admin.tinymce.upload') }}"
          data-tinymce-src="{{ asset('assets/vendors/tinymce/tinymce.min.js') }}"
          data-tinymce-base="{{ asset('assets/vendors/tinymce') }}"
@@ -16,13 +17,25 @@
                 <div class="text-sm text-muted-foreground">ID: {{ $blogPost->id }} • Slug: {{ $blogPost->slug }}</div>
             </div>
 
-            <a href="{{ route('admin.blog.index') }}" class="kt-btn kt-btn-light">Geri</a>
+            <div class="flex items-center gap-2">
+                <a href="{{ route('admin.blog.index') }}" class="kt-btn kt-btn-light">Geri</a>
+
+                <button form="blog-update-form" class="kt-btn kt-btn-primary" type="submit">
+                    Güncelle
+                </button>
+
+                <form id="blog-delete-form" method="POST"
+                      action="{{ route('admin.blog.destroy', ['blogPost' => $blogPost->id]) }}">
+                    @csrf
+                    @method('DELETE')
+                    <button class="kt-btn kt-btn-danger" type="submit">Sil</button>
+                </form>
+            </div>
         </div>
 
         @php
-            $current = $blogPost->featured_image_path
-                ? asset('storage/'.$blogPost->featured_image_path)
-                : null;
+            $categories = $categories ?? collect();
+            $selectedCategoryIds = $selectedCategoryIds ?? [];
         @endphp
 
         <div class="kt-card">
@@ -41,83 +54,78 @@
                     {{-- Left --}}
                     <div class="lg:col-span-2 flex flex-col gap-6">
 
-                        {{-- Title + Slug auto toggle --}}
                         <div class="flex flex-col gap-2">
-                            <label class="kt-form-label font-normal text-mono mb-0">Başlık</label>
-
-                            <div class="flex items-center justify-between gap-3">
-                                <input
-                                    id="title"
-                                    name="title"
-                                    class="kt-input flex-1 @error('title') kt-input-invalid @enderror"
-                                    value="{{ old('title', $blogPost->title) }}"
-                                    required
-                                >
-
-                                <label class="inline-flex items-center gap-2 select-none">
-                                    <span class="text-sm text-muted-foreground text-nowrap">Slug otomatik</span>
-                                    <input
-                                        id="slug_auto_toggle"
-                                        type="checkbox"
-                                        class="kt-switch kt-switch-mono"
-                                        checked
-                                    >
-                                </label>
-                            </div>
-
+                            <label class="kt-form-label font-normal text-mono">Başlık</label>
+                            <input id="title" name="title"
+                                   class="kt-input @error('title') kt-input-invalid @enderror"
+                                   value="{{ old('title', $blogPost->title) }}">
                             @error('title')
                             <div class="text-xs text-danger">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        {{-- Slug + regen --}}
                         <div class="flex flex-col gap-2">
-                            <label class="kt-form-label font-normal text-mono mb-0">Slug</label>
-
-                            <div class="flex items-center justify-between gap-3">
-                                <input
-                                    id="slug"
-                                    name="slug"
-                                    class="kt-input flex-1 @error('slug') kt-input-invalid @enderror"
-                                    value="{{ old('slug', $blogPost->slug) }}"
-                                    required
-                                >
-
-                                <div class="flex items-center gap-2">
-                                    <span id="slug_mode_badge" class="kt-badge kt-badge-light hidden">Manuel</span>
-
-                                    <button type="button"
-                                            id="slug_regen_btn"
-                                            class="kt-btn kt-btn-light kt-btn-sm">
-                                        Başlıktan yeniden üret
-                                    </button>
-                                </div>
+                            <label class="kt-form-label font-normal text-mono">Slug</label>
+                            <div class="flex items-center gap-2">
+                                <input id="slug" name="slug"
+                                       class="kt-input @error('slug') kt-input-invalid @enderror"
+                                       value="{{ old('slug', $blogPost->slug) }}">
+                                <button type="button" id="slugifyBtn" class="kt-btn kt-btn-light">Oluştur</button>
                             </div>
-
                             @error('slug')
                             <div class="text-xs text-danger">{{ $message }}</div>
                             @enderror
-
-                            <div class="text-sm text-muted-foreground">
-                                URL Önizleme:
-                                <span class="font-medium">
-                                    {{ url('/blog') }}/
-                                    <span id="url_slug_preview">{{ old('slug', $blogPost->slug) }}</span>
-                                </span>
-                            </div>
+                            <div id="slugCheckHint" class="text-xs text-muted-foreground"></div>
                         </div>
 
-                        {{-- Content --}}
+                        <div class="flex flex-col gap-2">
+                            <label class="kt-form-label font-normal text-mono">Özet</label>
+                            <textarea name="excerpt" rows="3"
+                                      class="kt-textarea @error('excerpt') kt-input-invalid @enderror">{{ old('excerpt', $blogPost->excerpt) }}</textarea>
+                            @error('excerpt')
+                            <div class="text-xs text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <div class="flex flex-col gap-2">
                             <label class="kt-form-label font-normal text-mono">İçerik</label>
-                            <textarea
-                                id="content_editor"
-                                name="content"
-                                class="kt-input min-h-[320px] @error('content') kt-input-invalid @enderror"
-                            >{{ old('content', $blogPost->content ?? '') }}</textarea>
+                            <textarea id="content_editor" name="content"
+                                      class="kt-textarea @error('content') kt-input-invalid @enderror">{{ old('content', $blogPost->content) }}</textarea>
                             @error('content')
                             <div class="text-xs text-danger">{{ $message }}</div>
                             @enderror
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div class="flex flex-col gap-2">
+                                <label class="kt-form-label font-normal text-mono">Meta Title</label>
+                                <input name="meta_title"
+                                       class="kt-input @error('meta_title') kt-input-invalid @enderror"
+                                       value="{{ old('meta_title', $blogPost->meta_title) }}">
+                                @error('meta_title')
+                                <div class="text-xs text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="flex flex-col gap-2 lg:col-span-2">
+                                <label class="kt-form-label font-normal text-mono">Meta Description</label>
+                                <input name="meta_description"
+                                       class="kt-input @error('meta_description') kt-input-invalid @enderror"
+                                       value="{{ old('meta_description', $blogPost->meta_description) }}">
+                                @error('meta_description')
+                                <div class="text-xs text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="flex flex-col gap-2 lg:col-span-3">
+                                <label class="kt-form-label font-normal text-mono">Meta Keywords</label>
+                                <input name="meta_keywords"
+                                       class="kt-input @error('meta_keywords') kt-input-invalid @enderror"
+                                       value="{{ old('meta_keywords', $blogPost->meta_keywords) }}">
+                                @error('meta_keywords')
+                                <div class="text-xs text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
 
                     </div>
@@ -125,18 +133,17 @@
                     {{-- Right --}}
                     <div class="lg:col-span-1 flex flex-col gap-6">
 
-                        {{-- Categories (MISSING -> added) --}}
+                        {{-- Categories --}}
                         <div class="flex flex-col gap-2">
                             <label class="kt-form-label font-normal text-mono">Kategoriler</label>
 
                             <select name="category_ids[]" multiple
                                     class="kt-select @error('category_ids') kt-input-invalid @enderror"
                                     data-kt-select="true"
-                                    data-kt-select-placeholder="Kategoriler...">
-                                @foreach($categories as $cat)
-                                    <option value="{{ $cat->id }}"
-                                        @selected(collect(old('category_ids', $selectedCategoryIds ?? []))->contains($cat->id))>
-                                        {{ $cat->name }}
+                                    data-placeholder="Kategori seç">
+                                @foreach($categories as $c)
+                                    <option value="{{ $c->id }}" @selected(in_array($c->id, old('category_ids', $selectedCategoryIds)))>
+                                        {{ $c->name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -144,35 +151,38 @@
                             @error('category_ids')
                             <div class="text-xs text-danger">{{ $message }}</div>
                             @enderror
+                        </div>
 
-                            <div class="text-xs text-muted-foreground">
-                                Çoklu seçebilirsin. Ürün/galeri de aynı kategori yapısını kullanacak.
+                        {{-- Galleries --}}
+                        <div class="kt-card">
+                            <div class="kt-card-header py-5 flex-wrap gap-4">
+                                <div class="flex flex-col">
+                                    <h3 class="kt-card-title">Galeriler</h3>
+                                    <div class="text-sm text-muted-foreground">Blog’a galeri bağla, slot seç, sırala.</div>
+                                </div>
+
+                                <button type="button"
+                                        id="blogGalleryAttachBtn"
+                                        class="kt-btn kt-btn-sm kt-btn-light">
+                                    <i class="ki-outline ki-plus"></i> Ekle
+                                </button>
                             </div>
-                        </div>
 
-                        {{-- SEO: meta keywords (MISSING -> added) --}}
-                        <div class="flex flex-col gap-2">
-                            <label class="kt-form-label font-normal text-mono">Anahtar Kelimeler</label>
-                            <input class="kt-input @error('meta_keywords') kt-input-invalid @enderror"
-                                   name="meta_keywords"
-                                   value="{{ old('meta_keywords', $blogPost->meta_keywords ?? '') }}"
-                                   placeholder="örn: veri analizi, istatistik"/>
-                            @error('meta_keywords')
-                            <div class="text-xs text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
+                            <div class="kt-card-content p-5 flex flex-col gap-5">
+                                <div>
+                                    <div class="text-xs text-secondary-foreground mb-2">Main</div>
+                                    <div id="blogGalleriesMain" class="flex flex-col gap-2"></div>
+                                </div>
 
-                        {{-- SEO: meta description (MISSING -> added) --}}
-                        <div class="flex flex-col gap-2">
-                            <label class="kt-form-label font-normal text-mono">Açıklama</label>
-                            <textarea
-                                class="kt-input min-h-[90px] @error('meta_description') kt-input-invalid @enderror"
-                                name="meta_description"
-                                maxlength="255"
-                                placeholder="Google snippet için kısa açıklama...">{{ old('meta_description', $blogPost->meta_description ?? '') }}</textarea>
-                            @error('meta_description')
-                            <div class="text-xs text-danger">{{ $message }}</div>
-                            @enderror
+                                <div>
+                                    <div class="text-xs text-secondary-foreground mb-2">Sidebar</div>
+                                    <div id="blogGalleriesSidebar" class="flex flex-col gap-2"></div>
+                                </div>
+
+                                <div id="blogGalleriesEmpty" class="text-sm text-muted-foreground hidden">
+                                    Henüz galeri bağlı değil.
+                                </div>
+                            </div>
                         </div>
 
                         {{-- Featured image --}}
@@ -189,106 +199,67 @@
                             <div class="text-xs text-danger">{{ $message }}</div>
                             @enderror
 
-                            <div class="mt-2">
-                                <div class="text-sm text-muted-foreground mb-2">Mevcut / Önizleme</div>
-
-                                <div id="featured_placeholder"
-                                     class="rounded-xl border bg-muted {{ $current ? 'hidden' : '' }}"
-                                     style="width:100%; height:220px;"></div>
-
-                                <img id="featured_preview"
-                                     src="{{ $current ?? '' }}"
-                                     alt=""
-                                     class="{{ $current ? '' : 'hidden' }} rounded-xl border"
-                                     style="width:100%; height:220px; object-fit:cover;">
-                            </div>
-
-                            @if($current)
-                                <div class="text-sm text-muted-foreground">
-                                    Yeni görsel yüklersen eskisi otomatik silinir.
-                                </div>
+                            @if($blogPost->featuredImageUrl())
+                                <img id="featuredPreview"
+                                     src="{{ $blogPost->featuredImageUrl() }}"
+                                     class="rounded-md border border-border max-h-52 object-cover">
+                            @else
+                                <img id="featuredPreview" class="hidden rounded-md border border-border max-h-52 object-cover">
                             @endif
                         </div>
 
                         {{-- Publish --}}
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between border border-border rounded-md p-4">
                             <div class="flex flex-col">
-                                <span class="font-medium">Yayınla</span>
-                                <span class="text-sm text-muted-foreground">Açık olursa yayında</span>
+                                <span class="font-medium">Yayın Durumu</span>
+                                <span class="text-sm text-muted-foreground">{{ $blogPost->is_published ? 'Yayında' : 'Taslak' }}</span>
                             </div>
 
-                            <input type="checkbox"
-                                   name="is_published"
-                                   value="1"
-                                   class="kt-switch kt-switch-mono"
-                                @checked(old('is_published', $blogPost->is_published)) />
-                        </div>
-
-                        {{-- Buttons (same row: update + delete + cancel; no nested forms) --}}
-                        <div class="flex gap-2 justify-center">
-                            <button type="submit"
-                                    form="blog-update-form"
-                                    class="kt-btn kt-btn-primary">
-                                Güncelle
-                            </button>
-
-                            @perm('blog.delete')
-                                <button type="button"
-                                        class="kt-btn kt-btn-destructive"
-                                        data-kt-modal-target="#deleteBlogModal">
-                                    Sil
-                                </button>
-                            @endperm
-
-                            <a href="{{ route('admin.blog.index') }}" class="kt-btn kt-btn-light">İptal</a>
+                            <label class="kt-switch">
+                                <input type="checkbox" name="is_published" value="1" @checked(old('is_published', $blogPost->is_published))>
+                                <span class="kt-switch-slider"></span>
+                            </label>
                         </div>
 
                     </div>
+
                 </div>
             </form>
         </div>
 
-        {{-- DELETE FORM (separate) --}}
-        @perm('blog.delete')
-            <form id="blog-delete-form"
-                  method="POST"
-                  action="{{ route('admin.blog.destroy', ['blogPost' => $blogPost->id]) }}">
-                @csrf
-                @method('DELETE')
-            </form>
+        {{-- Gallery picker modal --}}
+        <div class="kt-modal kt-modal-center" id="blogGalleryPickerModal" data-kt-modal="true">
+            <div class="kt-modal-content max-w-[60%]" style="max-height: 90vh">
+                <div class="kt-modal-header">
+                    <h3 class="kt-modal-title">Galeri Seç</h3>
+                    <button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost" data-kt-modal-dismiss="true">
+                        <i class="ki-outline ki-cross"></i>
+                    </button>
+                </div>
 
-            {{-- DELETE MODAL --}}
-            <div id="deleteBlogModal"
-                 class="kt-modal hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                <div class="kt-card w-full max-w-md">
-                    <div class="kt-card-header">
-                        <h3 class="kt-card-title">Blog Yazısını Sil</h3>
+                <div class="kt-modal-body overflow-hidden p-7">
+                    <div class="flex items-center gap-3 mb-4">
+                        <input class="kt-input w-80" id="blogGalleryPickerSearch" placeholder="Ara: isim / slug">
+                        <select class="kt-select w-44" id="blogGalleryPickerSlot">
+                            <option value="main">Main</option>
+                            <option value="sidebar">Sidebar</option>
+                        </select>
+                        <button class="kt-btn kt-btn-light" id="blogGalleryPickerRefresh">Yenile</button>
                     </div>
 
-                    <div class="kt-card-content">
-                        <p class="text-sm text-muted-foreground">
-                            Bu blog yazısını silmek istediğine emin misin?
-                            <br>
-                            <strong>Bu işlem geri alınamaz.</strong>
-                        </p>
-                    </div>
+                    <div id="blogGalleryPickerEmpty" class="text-sm text-muted-foreground hidden">Kayıt yok.</div>
+                    <div id="blogGalleryPickerList" class="flex flex-col gap-2"></div>
 
-                    <div class="kt-card-footer flex justify-end gap-2">
-                        <button type="button"
-                                class="kt-btn kt-btn-light"
-                                data-kt-modal-close>
-                            Vazgeç
-                        </button>
-
-                        <button type="submit"
-                                form="blog-delete-form"
-                                class="kt-btn kt-btn-destructive">
-                            Evet, Sil
-                        </button>
+                    <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium mt-6">
+                        <span id="blogGalleryPickerInfo"></span>
+                        <div class="kt-datatable-pagination" id="blogGalleryPickerPagination"></div>
                     </div>
                 </div>
             </div>
-        @endperm
+        </div>
+
+        {{-- Media modal (gallery edit gibi ileride blog içinden item bakmak istersen hazır kalsın) --}}
+        @include('admin.pages.media.partials._upload-modal')
 
     </div>
 @endsection

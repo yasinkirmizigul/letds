@@ -6,6 +6,37 @@ import { AppInit } from './core/app-init';
 import { registerPages } from './admin/pages/index';
 import { initMediaPicker } from './core/media-picker';
 initMediaPicker();
+// Global: Media modal tab switch (upload/library)
+// Yeni dosya yok, sayfa bağımsız çalışır.
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-media-tab]');
+    if (!btn) return;
+
+    // Modal içinde çalış
+    const modal = btn.closest('#mediaUploadModal');
+    if (!modal) return;
+
+    const tab = btn.getAttribute('data-media-tab'); // upload | library
+    const uploadBtn = modal.querySelector('#mediaTabUpload');
+    const libBtn = modal.querySelector('#mediaTabLibrary');
+    const uploadPane = modal.querySelector('#mediaUploadPane');
+    const libPane = modal.querySelector('#mediaLibraryPane');
+
+    if (!uploadBtn || !libBtn || !uploadPane || !libPane) return;
+
+    const isUpload = tab === 'upload';
+
+    uploadBtn.setAttribute('aria-selected', isUpload ? 'true' : 'false');
+    libBtn.setAttribute('aria-selected', !isUpload ? 'true' : 'false');
+
+    uploadPane.classList.toggle('hidden', !isUpload);
+    libPane.classList.toggle('hidden', isUpload);
+
+    if (!isUpload) {
+        // library tab açıldı: listeyi yenilemek isteyen kodlar bunu yakalayabilir
+        modal.dispatchEvent(new CustomEvent('media:library:open', { bubbles: true }));
+    }
+});
 
 window.Alpine = Alpine;
 Alpine.start();

@@ -1,25 +1,21 @@
 <?php
 
-use App\Http\Controllers\Admin\AuditLog\AuditLogController;
 use App\Http\Controllers\Admin\Auth\AuthController;
-use App\Http\Controllers\Admin\TinyMceController;
-use App\Http\Controllers\Admin\TrashController;
-use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Admin\Gallery\BlogPostGalleryController;
+use App\Http\Controllers\Admin\Gallery\GalleryController;
+use App\Http\Controllers\Admin\Gallery\GalleryItemsController;
 use App\Http\Controllers\Admin\Dash\DashController;
 use App\Http\Controllers\Admin\User\RoleController;
 use App\Http\Controllers\Admin\User\PermissionController;
 use App\Http\Controllers\Admin\User\UserController;
-use App\Http\Controllers\Admin\BlogPost\BlogPostController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\BlogPost\BlogPostController;
 use App\Http\Controllers\Admin\Media\MediaController;
 use App\Http\Controllers\Admin\Profile\ProfileController;
+use App\Http\Controllers\Admin\TrashController;
+use App\Http\Controllers\Admin\AuditLog\AuditLogController;
+use App\Http\Controllers\Admin\TinyMceController;
 
-/*
-|--------------------------------------------------------------------------
-| Auth
-|--------------------------------------------------------------------------
-*/
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
@@ -44,6 +40,7 @@ Route::middleware(['auth', 'audit'])
         // Roles
         Route::middleware('permission:roles.view')->group(function () {
             Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
+
             Route::get('/roles/create', [RoleController::class, 'create'])
                 ->middleware('permission:roles.create')
                 ->name('roles.create');
@@ -62,12 +59,13 @@ Route::middleware(['auth', 'audit'])
 
             Route::delete('/roles/{role}', [RoleController::class, 'destroy'])
                 ->middleware('permission:roles.delete')
-                ->name('roles.destroy'); // ✅ FIX: admin.roles.destroy olur
+                ->name('roles.destroy');
         });
 
         // Permissions
         Route::middleware('permission:permissions.view')->group(function () {
             Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index');
+
             Route::get('/permissions/create', [PermissionController::class, 'create'])
                 ->middleware('permission:permissions.create')
                 ->name('permissions.create');
@@ -92,6 +90,7 @@ Route::middleware(['auth', 'audit'])
         // Users
         Route::middleware('permission:users.view')->group(function () {
             Route::get('/users', [UserController::class, 'index'])->name('users.index');
+
             Route::get('/users/create', [UserController::class, 'create'])
                 ->middleware('permission:users.create')
                 ->name('users.create');
@@ -115,7 +114,6 @@ Route::middleware(['auth', 'audit'])
 
         // Categories
         Route::prefix('categories')->as('categories.')->group(function () {
-
             Route::get('/', [CategoryController::class, 'index'])
                 ->middleware('permission:category.view')
                 ->name('index');
@@ -124,7 +122,6 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:category.trash')
                 ->name('trash');
 
-            // JSON list (Media gibi)
             Route::get('/list', [CategoryController::class, 'list'])
                 ->middleware('permission:category.view')
                 ->name('list');
@@ -145,22 +142,18 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:category.update')
                 ->name('update');
 
-            // Soft delete (single)
             Route::delete('/{category}', [CategoryController::class, 'destroy'])
                 ->middleware('permission:category.delete')
                 ->name('destroy');
 
-            // Restore (single)
             Route::post('/{id}/restore', [CategoryController::class, 'restore'])
                 ->middleware('permission:category.restore')
                 ->name('restore');
 
-            // Force delete (single)
             Route::delete('/{id}/force', [CategoryController::class, 'forceDestroy'])
                 ->middleware('permission:category.force_delete')
                 ->name('forceDestroy');
 
-            // Bulk
             Route::post('/bulk-delete', [CategoryController::class, 'bulkDestroy'])
                 ->middleware('permission:category.delete')
                 ->name('bulkDestroy');
@@ -180,17 +173,14 @@ Route::middleware(['auth', 'audit'])
 
         // Blog
         Route::prefix('blog')->as('blog.')->group(function () {
-
             Route::get('/', [BlogPostController::class, 'index'])
                 ->middleware('permission:blog.view')
                 ->name('index');
 
-            // ✅ Trash ekranı (aynı blade, mode=trash)
             Route::get('/trash', [BlogPostController::class, 'trash'])
                 ->middleware('permission:blog.trash')
                 ->name('trash');
 
-            // ✅ (Opsiyonel) JSON list endpoint (ister şimdi kullan, ister sonra)
             Route::get('/list', [BlogPostController::class, 'list'])
                 ->middleware('permission:blog.view')
                 ->name('list');
@@ -211,32 +201,26 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:blog.update')
                 ->name('update');
 
-            // ✅ Soft delete (single)
             Route::delete('/{blogPost}', [BlogPostController::class, 'destroy'])
                 ->middleware('permission:blog.delete')
                 ->name('destroy');
 
-            // ✅ Restore (single)
             Route::post('/{id}/restore', [BlogPostController::class, 'restore'])
                 ->middleware('permission:blog.restore')
                 ->name('restore');
 
-            // ✅ Force delete (single)
             Route::delete('/{id}/force', [BlogPostController::class, 'forceDestroy'])
                 ->middleware('permission:blog.force_delete')
                 ->name('forceDestroy');
 
-            // ✅ Bulk soft delete
             Route::post('/bulk-delete', [BlogPostController::class, 'bulkDestroy'])
                 ->middleware('permission:blog.delete')
                 ->name('bulkDestroy');
 
-            // ✅ Bulk restore
             Route::post('/bulk-restore', [BlogPostController::class, 'bulkRestore'])
                 ->middleware('permission:blog.restore')
                 ->name('bulkRestore');
 
-            // ✅ Bulk force delete
             Route::post('/bulk-force-delete', [BlogPostController::class, 'bulkForceDestroy'])
                 ->middleware('permission:blog.force_delete')
                 ->name('bulkForceDestroy');
@@ -248,7 +232,6 @@ Route::middleware(['auth', 'audit'])
 
         // Media
         Route::prefix('media')->as('media.')->group(function () {
-
             Route::get('/', [MediaController::class, 'index'])
                 ->middleware('permission:media.view')
                 ->name('index');
@@ -262,7 +245,7 @@ Route::middleware(['auth', 'audit'])
                 ->name('list');
 
             Route::post('/upload', [MediaController::class, 'upload'])
-                ->middleware('permission:media.create') // yoksa media.view yap, ama bir tane standard seç
+                ->middleware('permission:media.create')
                 ->name('upload');
 
             Route::delete('/{media}', [MediaController::class, 'destroy'])
@@ -290,30 +273,119 @@ Route::middleware(['auth', 'audit'])
                 ->name('bulkForceDestroy');
         });
 
+        // Galleries
+        Route::prefix('galleries')->as('galleries.')->group(function () {
+            Route::get('/', [GalleryController::class, 'index'])
+                ->middleware('permission:gallery.view')
+                ->name('index');
+
+            Route::get('/trash', [GalleryController::class, 'trash'])
+                ->middleware('permission:gallery.trash')
+                ->name('trash');
+
+            // JSON endpoints
+            Route::get('/list', [GalleryController::class, 'list'])
+                ->middleware('permission:gallery.view')
+                ->name('list');
+
+            Route::get('/{gallery}/items', [GalleryItemsController::class, 'items'])
+                ->middleware('permission:gallery.view')
+                ->name('items');
+
+            Route::post('/{gallery}/items', [GalleryItemsController::class, 'store'])
+                ->middleware('permission:gallery.update')
+                ->name('items.store');
+
+            Route::patch('/{gallery}/items/{item}', [GalleryItemsController::class, 'update'])
+                ->middleware('permission:gallery.update')
+                ->name('items.update');
+
+            Route::delete('/{gallery}/items/{item}', [GalleryItemsController::class, 'destroy'])
+                ->middleware('permission:gallery.update')
+                ->name('items.destroy');
+
+            Route::post('/{gallery}/items/reorder', [GalleryItemsController::class, 'reorder'])
+                ->middleware('permission:gallery.update')
+                ->name('items.reorder');
+
+            // CRUD
+            Route::get('/create', [GalleryController::class, 'create'])
+                ->middleware('permission:gallery.create')
+                ->name('create');
+
+            Route::post('/', [GalleryController::class, 'store'])
+                ->middleware('permission:gallery.create')
+                ->name('store');
+
+            Route::get('/{gallery}/edit', [GalleryController::class, 'edit'])
+                ->middleware('permission:gallery.update')
+                ->name('edit');
+
+            Route::put('/{gallery}', [GalleryController::class, 'update'])
+                ->middleware('permission:gallery.update')
+                ->name('update');
+
+            Route::delete('/{gallery}', [GalleryController::class, 'destroy'])
+                ->middleware('permission:gallery.delete')
+                ->name('destroy');
+
+            Route::post('/{id}/restore', [GalleryController::class, 'restore'])
+                ->middleware('permission:gallery.restore')
+                ->name('restore');
+
+            Route::delete('/{id}/force', [GalleryController::class, 'forceDestroy'])
+                ->middleware('permission:gallery.force_delete')
+                ->name('forceDestroy');
+
+            Route::post('/bulk-delete', [GalleryController::class, 'bulkDestroy'])
+                ->middleware('permission:gallery.delete')
+                ->name('bulkDestroy');
+
+            Route::post('/bulk-restore', [GalleryController::class, 'bulkRestore'])
+                ->middleware('permission:gallery.restore')
+                ->name('bulkRestore');
+
+            Route::post('/bulk-force-delete', [GalleryController::class, 'bulkForceDestroy'])
+                ->middleware('permission:gallery.force_delete')
+                ->name('bulkForceDestroy');
+        });
+
+        // Blog ↔ Galleries
+        Route::prefix('blog/{blogPost}/galleries')->as('blog.galleries.')->group(function () {
+            Route::get('/', [BlogPostGalleryController::class, 'index'])
+                ->middleware('permission:blog.update')
+                ->name('index');
+
+            Route::post('/attach', [BlogPostGalleryController::class, 'attach'])
+                ->middleware('permission:blog.update')
+                ->name('attach');
+
+            Route::post('/detach', [BlogPostGalleryController::class, 'detach'])
+                ->middleware('permission:blog.update')
+                ->name('detach');
+
+            Route::post('/slot', [BlogPostGalleryController::class, 'setSlot'])
+                ->middleware('permission:blog.update')
+                ->name('slot');
+
+            Route::post('/reorder', [BlogPostGalleryController::class, 'reorder'])
+                ->middleware('permission:blog.update')
+                ->name('reorder');
+        });
+
         // Profile
         Route::middleware(['auth'])
             ->prefix('profile')
             ->as('profile.')
             ->group(function () {
+                Route::get('/', [ProfileController::class, 'index'])->name('index');
+                Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
+                Route::put('/', [ProfileController::class, 'update'])->name('update');
 
-                // Profil özet sayfası
-                Route::get('/', [ProfileController::class, 'index'])
-                    ->name('index');
-
-                // Düzenleme formu
-                Route::get('/edit', [ProfileController::class, 'edit'])
-                    ->name('edit');
-
-                // Profil bilgilerini kaydet
-                Route::put('/', [ProfileController::class, 'update'])
-                    ->name('update');
-
-                // Avatar yükle
                 Route::post('/avatar', [ProfileController::class, 'updateAvatar'])
                     ->middleware('permission:users.update')
                     ->name('avatar');
 
-                // Avatar kaldır
                 Route::delete('/avatar', [ProfileController::class, 'removeAvatar'])
                     ->middleware('permission:users.update')
                     ->name('avatar.remove');
@@ -347,7 +419,5 @@ Route::middleware(['auth', 'audit'])
                 ->name('show');
         });
 
-        // TinyMCE upload (admin grubu içinde zaten)
         Route::post('/tinymce/upload', [TinyMceController::class, 'upload'])->name('tinymce.upload');
-
     });

@@ -43,6 +43,23 @@ return [
         'style' => '',
     ],
 
+    // ✅ NEW: Galleries
+    [
+        'type'     => 'accordion',
+        'title'    => 'Galeriler',
+        'icon'     => 'ki-filled ki-picture text-lg',
+        'perm'     => 'gallery.view',
+        'children' => [
+            [
+                'title'  => 'Galeriler',
+                'route'  => 'admin.galleries.index',
+                'active' => ['admin.galleries.*'],
+                'perm'   => 'gallery.view',
+            ],
+        ],
+        'style' => '',
+    ],
+
     [
         'type'     => 'accordion',
         'title'    => 'Kategoriler',

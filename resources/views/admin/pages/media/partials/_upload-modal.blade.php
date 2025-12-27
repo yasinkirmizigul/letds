@@ -13,7 +13,7 @@
                 <div class="flex items-center gap-2">
                     <button type="button"
                             id="mediaTabUpload"
-                            class="kt-btn kt-btn-sm kt-btn-light"
+                            class="kt-btn kt-btn-sm kt-btn-warning"
                             data-media-tab="upload"
                             aria-selected="true">
                         <i class="ki-outline ki-file-up"></i> Yükleme
@@ -21,7 +21,7 @@
 
                     <button type="button"
                             id="mediaTabLibrary"
-                            class="kt-btn kt-btn-sm kt-btn-light"
+                            class="kt-btn kt-btn-sm kt-btn-info"
                             data-media-tab="library"
                             aria-selected="false">
                         <i class="ki-outline ki-folder"></i> Kütüphane
@@ -36,7 +36,6 @@
             <div class="pt-6">
                 {{-- UPLOAD PANE --}}
                 <div id="mediaUploadPane">
-                    <div id="mediaLibraryResults" class="grid gap-2"></div>
                     <div class="grid gap-4">
                         <div id="mediaDropzone"
                              class="rounded-xl border border-dashed border-border bg-muted/10 p-6 cursor-pointer hover:bg-muted/20 transition">
@@ -94,7 +93,7 @@
                                 <button type="button" class="kt-btn kt-btn-light" id="mediaClearQueue">
                                     Temizle
                                 </button>
-                                <button type="button" class="kt-btn kt-btn-primary" id="mediaStartUpload">
+                                <button type="button" class="kt-btn kt-btn-success" id="mediaStartUpload">
                                     <i class="ki-outline ki-cloud-add"></i> Yüklemeyi Başlat
                                 </button>
                             </div>
@@ -105,7 +104,6 @@
                 </div>
 
                 {{-- LIBRARY PANE --}}
-                {{-- Modal içinde: #mediaUploadPane ve #mediaLibraryPane tabları var varsayıyorum --}}
 
                 <div id="mediaLibraryPane" class="hidden">
                     <div class="grid gap-5">
@@ -202,7 +200,7 @@
                             <div class="kt-card-content p-4">
                                 <div id="mediaLibraryResults" class="grid gap-3">
                                     {{-- JS kartları basacak --}}
-                                    <div class="text-sm text-muted-foreground">Yükleniyor…</div>
+                                    {{--<div class="text-sm text-muted-foreground">Yükleniyor…</div>--}}
                                 </div>
 
                                 <div id="mediaLibraryPagination" class="mt-4 flex items-center justify-center">

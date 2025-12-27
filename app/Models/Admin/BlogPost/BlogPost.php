@@ -3,6 +3,7 @@
 namespace App\Models\Admin\BlogPost;
 
 use App\Models\Admin\Category;
+use App\Models\Admin\Gallery\Gallery;
 use App\Models\Admin\User\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -11,30 +12,39 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class BlogPost extends Model
 {
     use SoftDeletes;
+
     protected $table = 'blog_posts';
+
     protected $fillable = [
         'title',
         'slug',
+        'excerpt',
         'content',
-        'meta_keywords',
-        'meta_description',
-        'featured_image_path',
         'is_published',
         'published_at',
+        'featured_image_path',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
+        'created_by',
+        'updated_by',
     ];
 
     protected $casts = [
         'is_published' => 'boolean',
         'published_at' => 'datetime',
-        'deleted_at' => 'datetime',
     ];
 
     public function author()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
-    // Görsel URL helper
+    public function editor()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
     public function featuredImageUrl(): ?string
     {
         return $this->featured_image_path
@@ -47,5 +57,18 @@ class BlogPost extends Model
         return $this->belongsToMany(Category::class, 'categorizables', 'categorizable_id', 'category_id')
             ->wherePivot('categorizable_type', self::class)
             ->withTrashed(); // <-- önemli
+    }
+
+    public function galleries(): MorphToMany
+    {
+        return $this->morphToMany(
+            Gallery::class,
+            'galleryable',
+            'galleryables',
+            'galleryable_id',
+            'gallery_id'
+        )
+            ->withPivot(['slot', 'sort_order'])
+            ->orderBy('pivot_sort_order');
     }
 }

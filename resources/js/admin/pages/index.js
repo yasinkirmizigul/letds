@@ -17,8 +17,13 @@ import CategoriesEdit from './categories/edit';
 import CategoriesIndex from './categories/index';
 import profileEdit from './profile/edit';
 import profileIndex from './profile/index';
+
 import mediaIndex from './media/index';
 import trashIndex from './trash/index';
+
+import galleriesIndex from './galleries/index';
+import galleriesCreate from './galleries/create';
+import galleriesEdit from './galleries/edit';
 
 export function registerPages() {
     register('blog.create', BlogCreate);
@@ -48,4 +53,7 @@ export function registerPages() {
 
     register('trash.index', trashIndex);
 
+    register('galleries.index', galleriesIndex);
+    register('galleries.create', galleriesCreate);
+    register('galleries.edit', galleriesEdit);
 }
