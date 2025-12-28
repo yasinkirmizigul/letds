@@ -15,59 +15,67 @@ class BlogPostGalleryController extends Controller
     public function index(BlogPost $blogPost): JsonResponse
     {
         $rows = DB::table('galleryables')
-            ->join('galleries', 'galleries.id', '=', 'galleryables.gallery_id')
             ->where('galleryable_type', BlogPost::class)
             ->where('galleryable_id', $blogPost->id)
             ->orderBy('slot')
             ->orderBy('sort_order')
-            ->select([
-                'galleryables.id as pivot_id',
-                'galleryables.gallery_id',
-                'galleryables.slot',
-                'galleryables.sort_order',
-                'galleries.name',
-                'galleries.slug',
-                'galleries.deleted_at',
-            ])
-            ->get();
+            ->get(['id','gallery_id','slot','sort_order']);
 
-        return response()->json(['ok' => true, 'data' => $rows]);
+        $galleryIds = $rows->pluck('gallery_id')->unique()->values()->all();
+        $galleries = Gallery::query()->whereIn('id', $galleryIds)->get()->keyBy('id');
+
+        $data = $rows->map(function ($r) use ($galleries) {
+            $g = $galleries->get($r->gallery_id);
+
+            return [
+                'pivot_id' => (int) $r->id,
+                'gallery_id' => (int) $r->gallery_id,
+                'slot' => (string) $r->slot,
+                'sort_order' => (int) $r->sort_order,
+                'gallery' => $g ? [
+                    'id' => $g->id,
+                    'name' => $g->name,
+                    'slug' => $g->slug,
+                    'description' => $g->description,
+                ] : null,
+            ];
+        })->values();
+
+        return response()->json(['ok' => true, 'data' => $data]);
     }
 
     public function attach(Request $request, BlogPost $blogPost): JsonResponse
     {
         $data = $request->validate([
             'gallery_id' => ['required','integer','exists:galleries,id'],
-            'slot'       => ['required','string','in:main,sidebar'],
+            'slot' => ['nullable','string','max:30'], // main/sidebar
         ]);
 
-        $gallery = Gallery::findOrFail($data['gallery_id']);
+        $slot = $data['slot'] ?: 'main';
 
-        // soft-deleted galeri attach edilmesin
-        if ($gallery->trashed()) {
-            return response()->json(['ok' => false, 'error' => ['message' => 'Silinmiş galeri bağlanamaz.']], 422);
-        }
-
+        // aynı galeri aynı slota zaten bağlı mı?
         $exists = DB::table('galleryables')
-            ->where('gallery_id', $gallery->id)
+            ->where('gallery_id', $data['gallery_id'])
             ->where('galleryable_type', BlogPost::class)
             ->where('galleryable_id', $blogPost->id)
-            ->where('slot', $data['slot'])
+            ->where('slot', $slot)
             ->exists();
 
-        if ($exists) return response()->json(['ok' => true]); // idempotent
+        if ($exists) {
+            return response()->json(['ok' => true, 'already' => true]);
+        }
 
         $max = (int) DB::table('galleryables')
             ->where('galleryable_type', BlogPost::class)
             ->where('galleryable_id', $blogPost->id)
-            ->where('slot', $data['slot'])
+            ->where('slot', $slot)
             ->max('sort_order');
 
         DB::table('galleryables')->insert([
-            'gallery_id' => $gallery->id,
+            'gallery_id' => $data['gallery_id'],
             'galleryable_type' => BlogPost::class,
             'galleryable_id' => $blogPost->id,
-            'slot' => $data['slot'],
+            'slot' => $slot,
             'sort_order' => $max + 1,
             'created_at' => now(),
             'updated_at' => now(),
@@ -75,8 +83,8 @@ class BlogPostGalleryController extends Controller
 
         AuditEvent::log('blog.gallery.attach', [
             'blog_post_id' => $blogPost->id,
-            'gallery_id'   => $gallery->id,
-            'slot'         => $data['slot'],
+            'gallery_id' => (int) $data['gallery_id'],
+            'slot' => $slot,
         ]);
 
         return response()->json(['ok' => true]);
@@ -86,22 +94,22 @@ class BlogPostGalleryController extends Controller
     {
         $data = $request->validate([
             'gallery_id' => ['required','integer'],
-            'slot'       => ['nullable','string','in:main,sidebar'],
+            'slot' => ['nullable','string','max:30'],
         ]);
 
-        $q = DB::table('galleryables')
+        $slot = $data['slot'] ?: 'main';
+
+        DB::table('galleryables')
+            ->where('gallery_id', $data['gallery_id'])
             ->where('galleryable_type', BlogPost::class)
             ->where('galleryable_id', $blogPost->id)
-            ->where('gallery_id', $data['gallery_id']);
-
-        if (!empty($data['slot'])) $q->where('slot', $data['slot']);
-
-        $q->delete();
+            ->where('slot', $slot)
+            ->delete();
 
         AuditEvent::log('blog.gallery.detach', [
             'blog_post_id' => $blogPost->id,
-            'gallery_id'   => $data['gallery_id'],
-            'slot'         => $data['slot'] ?? null,
+            'gallery_id' => (int) $data['gallery_id'],
+            'slot' => $slot,
         ]);
 
         return response()->json(['ok' => true]);
@@ -110,9 +118,9 @@ class BlogPostGalleryController extends Controller
     public function setSlot(Request $request, BlogPost $blogPost): JsonResponse
     {
         $data = $request->validate([
-            'gallery_id' => ['required','integer'],
-            'from_slot'  => ['required','string','in:main,sidebar'],
-            'to_slot'    => ['required','string','in:main,sidebar'],
+            'gallery_id' => ['required','integer','exists:galleries,id'],
+            'from_slot' => ['required','string','max:30'],
+            'to_slot' => ['required','string','max:30'],
         ]);
 
         if ($data['from_slot'] === $data['to_slot']) {
@@ -120,13 +128,26 @@ class BlogPostGalleryController extends Controller
         }
 
         $row = DB::table('galleryables')
+            ->where('gallery_id', $data['gallery_id'])
             ->where('galleryable_type', BlogPost::class)
             ->where('galleryable_id', $blogPost->id)
-            ->where('gallery_id', $data['gallery_id'])
             ->where('slot', $data['from_slot'])
-            ->first();
+            ->first(['id']);
 
-        if (!$row) return response()->json(['ok' => false], 404);
+        if (!$row) return response()->json(['ok' => false, 'error' => 'not_found'], 404);
+
+        // hedef slota zaten bağlıysa (unique constraint var) -> önce sil, sonra taşı
+        $existsTarget = DB::table('galleryables')
+            ->where('gallery_id', $data['gallery_id'])
+            ->where('galleryable_type', BlogPost::class)
+            ->where('galleryable_id', $blogPost->id)
+            ->where('slot', $data['to_slot'])
+            ->exists();
+
+        if ($existsTarget) {
+            DB::table('galleryables')->where('id', $row->id)->delete();
+            return response()->json(['ok' => true, 'merged' => true]);
+        }
 
         $max = (int) DB::table('galleryables')
             ->where('galleryable_type', BlogPost::class)
@@ -134,19 +155,17 @@ class BlogPostGalleryController extends Controller
             ->where('slot', $data['to_slot'])
             ->max('sort_order');
 
-        DB::table('galleryables')
-            ->where('id', $row->id)
-            ->update([
-                'slot' => $data['to_slot'],
-                'sort_order' => $max + 1,
-                'updated_at' => now(),
-            ]);
+        DB::table('galleryables')->where('id', $row->id)->update([
+            'slot' => $data['to_slot'],
+            'sort_order' => $max + 1,
+            'updated_at' => now(),
+        ]);
 
         AuditEvent::log('blog.gallery.slot', [
             'blog_post_id' => $blogPost->id,
-            'gallery_id'   => $data['gallery_id'],
-            'from'         => $data['from_slot'],
-            'to'           => $data['to_slot'],
+            'gallery_id' => (int) $data['gallery_id'],
+            'from' => $data['from_slot'],
+            'to' => $data['to_slot'],
         ]);
 
         return response()->json(['ok' => true]);
@@ -155,36 +174,45 @@ class BlogPostGalleryController extends Controller
     public function reorder(Request $request, BlogPost $blogPost): JsonResponse
     {
         $data = $request->validate([
-            'slot' => ['required','string','in:main,sidebar'],
-            'gallery_ids' => ['required','array','min:1'],
-            'gallery_ids.*' => ['integer'],
+            'slot' => ['required','string','max:30'],
+            'ids' => ['required','array','min:1'],
+            'ids.*' => ['integer'],
         ]);
 
         $slot = $data['slot'];
-        $ids  = $data['gallery_ids'];
+        $ids = $data['ids'];
 
-        $rows = DB::table('galleryables')
+        // sadece bu blog + slot içindekileri sıralayacağız
+        $existing = DB::table('galleryables')
             ->where('galleryable_type', BlogPost::class)
             ->where('galleryable_id', $blogPost->id)
             ->where('slot', $slot)
             ->whereIn('gallery_id', $ids)
-            ->get()
-            ->keyBy('gallery_id');
+            ->pluck('gallery_id')
+            ->all();
+
+        $existingSet = array_flip($existing);
 
         $order = 0;
         foreach ($ids as $gid) {
-            if (!isset($rows[$gid])) continue;
+            if (!isset($existingSet[$gid])) continue;
             $order++;
-            DB::table('galleryables')->where('id', $rows[$gid]->id)->update([
-                'sort_order' => $order,
-                'updated_at' => now(),
-            ]);
+
+            DB::table('galleryables')
+                ->where('galleryable_type', BlogPost::class)
+                ->where('galleryable_id', $blogPost->id)
+                ->where('slot', $slot)
+                ->where('gallery_id', $gid)
+                ->update([
+                    'sort_order' => $order,
+                    'updated_at' => now(),
+                ]);
         }
 
         AuditEvent::log('blog.gallery.reorder', [
             'blog_post_id' => $blogPost->id,
-            'slot'         => $slot,
-            'gallery_ids'  => $ids,
+            'slot' => $slot,
+            'gallery_ids' => $ids,
         ]);
 
         return response()->json(['ok' => true]);

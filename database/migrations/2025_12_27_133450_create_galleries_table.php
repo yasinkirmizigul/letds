@@ -9,18 +9,20 @@ return new class extends Migration {
     {
         Schema::create('galleries', function (Blueprint $table) {
             $table->id();
+
             $table->string('name', 180);
             $table->string('slug', 220)->unique();
             $table->text('description')->nullable();
 
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
 
             $table->timestamps();
             $table->softDeletes();
 
             $table->index(['deleted_at']);
             $table->index(['created_by']);
+            $table->index(['updated_by']);
         });
     }
 

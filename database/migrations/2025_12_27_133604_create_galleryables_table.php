@@ -13,11 +13,10 @@ return new class extends Migration {
             $table->foreignId('gallery_id')->constrained('galleries')->cascadeOnDelete();
 
             // morph target
-            $table->string('galleryable_type');
+            $table->string('galleryable_type', 191);
             $table->unsignedBigInteger('galleryable_id');
 
-            // blog içinde slot + sıra
-            $table->string('slot', 30)->default('main'); // main|sidebar
+            $table->string('slot', 30)->default('main'); // main/sidebar
             $table->unsignedInteger('sort_order')->default(0);
 
             $table->timestamps();
@@ -26,8 +25,11 @@ return new class extends Migration {
             $table->index(['gallery_id']);
             $table->index(['slot', 'sort_order']);
 
-            // aynı içerikte aynı galeri aynı slota bir kez (istersen slotu unique'ten çıkarıp tek kez attach zorlayabilirsin)
-            $table->unique(['gallery_id', 'galleryable_type', 'galleryable_id', 'slot'], 'uniq_galleryable_attach');
+            // aynı içerikte aynı galeri aynı slota bir kez
+            $table->unique(
+                ['gallery_id', 'galleryable_type', 'galleryable_id', 'slot'],
+                'uniq_galleryable_attach'
+            );
         });
     }
 

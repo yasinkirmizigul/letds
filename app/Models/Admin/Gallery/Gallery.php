@@ -14,8 +14,11 @@ class Gallery extends Model
     protected $table = 'galleries';
 
     protected $fillable = [
-        'name','slug','description',
-        'created_by','updated_by',
+        'name',
+        'slug',
+        'description',
+        'created_by',
+        'updated_by',
     ];
 
     public function items(): HasMany
@@ -25,9 +28,16 @@ class Gallery extends Model
             ->orderBy('id');
     }
 
-    public static function booted(): void
+    protected static function booted(): void
     {
         static::creating(function (self $g) {
+            if (!$g->slug) {
+                $g->slug = Str::slug($g->name);
+            }
+        });
+
+        static::updating(function (self $g) {
+            // slug boş bırakılırsa name'den üret (update sırasında da)
             if (!$g->slug) {
                 $g->slug = Str::slug($g->name);
             }

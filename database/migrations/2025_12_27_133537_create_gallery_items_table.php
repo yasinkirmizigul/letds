@@ -11,12 +11,10 @@ return new class extends Migration {
             $table->id();
 
             $table->foreignId('gallery_id')->constrained('galleries')->cascadeOnDelete();
-
-            $table->foreignId('media_id')->constrained('media');
+            $table->foreignId('media_id')->constrained('media')->restrictOnDelete();
 
             $table->unsignedInteger('sort_order')->default(0);
 
-            // override alanları (opsiyonel)
             $table->string('caption', 255)->nullable();
             $table->string('alt', 255)->nullable();
             $table->string('link_url', 2048)->nullable();
