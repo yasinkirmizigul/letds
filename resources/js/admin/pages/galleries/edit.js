@@ -21,6 +21,22 @@ function escapeHtml(s) {
         .replaceAll("'", '&#039;');
 }
 
+function nowTime() {
+    const d = new Date();
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    return `${hh}:${mm}`;
+}
+
+function firstValidationMessage(j) {
+    const errors = j?.errors || null;
+    if (!errors || typeof errors !== 'object') return '';
+    const firstKey = Object.keys(errors)[0];
+    const firstArr = firstKey ? errors[firstKey] : null;
+    if (Array.isArray(firstArr) && firstArr.length) return String(firstArr[0]);
+    return '';
+}
+
 async function req(url, method, body) {
     const res = await fetch(url, {
         method,
@@ -47,6 +63,11 @@ export default function init() {
 
     const listEl = root.querySelector('#galleryItemsList');
     const emptyEl = root.querySelector('#galleryItemsEmpty');
+
+    // Toplu kaydet UI
+    const saveAllBtn = root.querySelector('#gallerySaveAllBtn');
+    const dirtyCountEl = root.querySelector('#galleryDirtyCount');
+    const saveAllStatusEl = root.querySelector('#gallerySaveAllStatus');
 
     // Media modal elemanları (mevcut modal’ını “picker” gibi kullanıyoruz)
     const mediaTabLibrary = document.querySelector('#mediaTabLibrary');
@@ -77,6 +98,177 @@ export default function init() {
         }
     }
 
+    // ---------- Item UI / State helpers ----------
+    function setRowMsg(row, kind, text) {
+        const box = row.querySelector('.js-row-msg');
+        if (!box) return;
+
+        if (!text) {
+            box.classList.add('hidden');
+            box.innerHTML = '';
+            return;
+        }
+
+        const cls =
+            kind === 'error' ? 'text-destructive' :
+                kind === 'warn' ? 'text-warning' :
+                    'text-muted-foreground';
+
+        box.classList.remove('hidden');
+        box.innerHTML = `<div class="text-xs ${cls}">${escapeHtml(text)}</div>`;
+    }
+
+    function setRowBadge(row, state, extraText = '') {
+        const badge = row.querySelector('.js-row-badge');
+        if (!badge) return;
+
+        if (state === 'dirty') {
+            badge.className = 'js-row-badge inline-flex items-center gap-1 text-xs font-medium rounded-full px-2 py-1 bg-warning/10 text-warning';
+            badge.innerHTML = `<i class="ki-outline ki-pencil"></i><span>Değiştirildi</span>`;
+            return;
+        }
+
+        if (state === 'saving') {
+            badge.className = 'js-row-badge inline-flex items-center gap-1 text-xs font-medium rounded-full px-2 py-1 bg-primary/10 text-primary';
+            badge.innerHTML = `<span class="kt-spinner kt-spinner-xs kt-spinner-primary"></span><span>Kaydediliyor</span>`;
+            return;
+        }
+
+        if (state === 'saved') {
+            badge.className = 'js-row-badge inline-flex items-center gap-1 text-xs font-medium rounded-full px-2 py-1 bg-success/10 text-success';
+            badge.innerHTML = `<i class="ki-outline ki-check-circle"></i><span>Kaydedildi${extraText ? ' • ' + escapeHtml(extraText) : ''}</span>`;
+            return;
+        }
+
+        if (state === 'error') {
+            badge.className = 'js-row-badge inline-flex items-center gap-1 text-xs font-medium rounded-full px-2 py-1 bg-destructive/10 text-destructive';
+            badge.innerHTML = `<i class="ki-outline ki-cross-circle"></i><span>Hata</span>`;
+            return;
+        }
+
+        // none
+        badge.className = 'js-row-badge hidden';
+        badge.innerHTML = '';
+    }
+
+    function setSaveBtnState(row, state) {
+        const btn = row.querySelector('.js-save');
+        const icon = row.querySelector('.js-save-icon');
+        const text = row.querySelector('.js-save-text');
+        if (!btn || !icon || !text) return;
+
+        btn.dataset.state = state;
+
+        if (state === 'saving') {
+            btn.disabled = true;
+            icon.innerHTML = `<span class="kt-spinner kt-spinner-sm kt-spinner-light"></span>`;
+            text.textContent = 'Kaydediliyor';
+            return;
+        }
+
+        btn.disabled = false;
+
+        if (state === 'saved') {
+            icon.innerHTML = `<i class="ki-outline ki-check-circle text-success"></i>`;
+            text.textContent = 'Kaydedildi';
+            return;
+        }
+
+        if (state === 'error') {
+            icon.innerHTML = `<i class="ki-outline ki-cross-circle text-destructive"></i>`;
+            text.textContent = 'Tekrar Dene';
+            return;
+        }
+
+        // dirty/default
+        icon.innerHTML = `<i class="ki-outline ki-save-2"></i>`;
+        text.textContent = 'Kaydet';
+    }
+
+    function markDirty(row) {
+        if (!row) return;
+        row.dataset.dirty = '1';
+        row.dataset.savedAt = '';
+        setRowMsg(row, null, '');
+        setRowBadge(row, 'dirty');
+        setSaveBtnState(row, 'dirty');
+        updateSaveAllUI();
+    }
+
+    function markSaving(row) {
+        if (!row) return;
+        setRowMsg(row, null, '');
+        setRowBadge(row, 'saving');
+        setSaveBtnState(row, 'saving');
+    }
+
+    function markSaved(row) {
+        if (!row) return;
+        row.dataset.dirty = '';
+        row.dataset.savedAt = nowTime();
+        setRowMsg(row, null, '');
+        setRowBadge(row, 'saved', row.dataset.savedAt || '');
+        setSaveBtnState(row, 'saved');
+        updateSaveAllUI();
+    }
+
+    function markError(row, message) {
+        if (!row) return;
+        row.dataset.dirty = '1'; // hata varsa dirty say
+        setRowMsg(row, 'error', message || 'Kaydetme başarısız.');
+        setRowBadge(row, 'error');
+        setSaveBtnState(row, 'error');
+        updateSaveAllUI();
+    }
+
+    function getDirtyRows() {
+        return listEl ? [...listEl.querySelectorAll('[data-item-id][data-dirty="1"]')] : [];
+    }
+
+    function updateSaveAllUI() {
+        const n = getDirtyRows().length;
+
+        if (dirtyCountEl) {
+            dirtyCountEl.textContent = n ? `${n} değişiklik` : '';
+        }
+
+        if (saveAllBtn) {
+            const busy = saveAllBtn.dataset.busy === '1';
+            saveAllBtn.disabled = busy || n === 0;
+        }
+    }
+
+    function setSaveAllStatus(text, kind = 'info') {
+        if (!saveAllStatusEl) return;
+        if (!text) {
+            saveAllStatusEl.classList.add('hidden');
+            saveAllStatusEl.textContent = '';
+            return;
+        }
+
+        saveAllStatusEl.classList.remove('hidden');
+        saveAllStatusEl.className = 'text-xs font-medium';
+
+        if (kind === 'error') saveAllStatusEl.classList.add('text-destructive');
+        else if (kind === 'success') saveAllStatusEl.classList.add('text-success');
+        else saveAllStatusEl.classList.add('text-muted-foreground');
+
+        saveAllStatusEl.textContent = text;
+    }
+
+    function anyDirty() {
+        return getDirtyRows().length > 0;
+    }
+
+    // Sayfadan çıkarken uyarı (kullanıcıyı korur)
+    function beforeUnloadHandler(e) {
+        if (!anyDirty()) return;
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+    }
+
+    // ---------- Rendering ----------
     function itemRow(it) {
         const m = it.media;
         const kind = inferKind(m?.mime_type);
@@ -85,7 +277,7 @@ export default function init() {
         const mediaId = m?.id ?? '-';
 
         return `
-            <div class="rounded-xl border border-border bg-background p-4 grid gap-3" data-item-id="${it.id}">
+            <div class="rounded-xl border border-border bg-background p-4 grid gap-3" data-item-id="${it.id}" data-dirty="" data-saved-at="">
                 <div class="flex items-start justify-between gap-3">
                     <div class="flex items-start gap-3">
                         <div class="js-move-handle cursor-move select-none mt-1 text-muted-foreground">
@@ -100,21 +292,29 @@ export default function init() {
         }
                         </div>
 
-                        <div class="grid">
+                        <div class="grid gap-1">
                             <div class="font-medium">${title}</div>
-                            <div class="text-xs text-muted-foreground">Media #${mediaId}</div>
+                            <div class="text-xs text-muted-foreground flex items-center gap-2">
+                                <span>Media #${mediaId}</span>
+                                <span class="js-row-badge inline-flex items-center gap-1 text-xs font-medium rounded-full px-2 py-1 bg-success/10 text-success">
+                                    <i class="ki-outline ki-check-circle"></i><span>Kaydedildi</span>
+                                </span>
+                            </div>
                         </div>
                     </div>
 
                     <div class="flex items-center gap-2">
                         <button type="button" class="kt-btn kt-btn-sm kt-btn-light js-save">
-                            <i class="ki-outline ki-check"></i> Kaydet
+                            <span class="js-save-icon me-2"><i class="ki-outline ki-save-2"></i></span>
+                            <span class="js-save-text">Kaydet</span>
                         </button>
-                        <button type="button" class="kt-btn kt-btn-sm kt-btn-danger js-item-remove">
+                        <button type="button" class="kt-btn kt-btn-sm kt-btn-danger js-item-remove" title="Kaldır">
                             <i class="ki-outline ki-trash"></i>
                         </button>
                     </div>
                 </div>
+
+                <div class="js-row-msg hidden"></div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
                     <div class="grid gap-2">
@@ -152,12 +352,27 @@ export default function init() {
         if (!res.ok || !j?.ok) {
             listEl.innerHTML = '';
             emptyEl?.classList.remove('hidden');
+            setSaveAllStatus('', 'info');
+            updateSaveAllUI();
             return;
         }
 
         const items = Array.isArray(j.data) ? j.data : [];
         listEl.innerHTML = items.map(itemRow).join('');
         emptyEl?.classList.toggle('hidden', items.length > 0);
+
+        // İlk render sonrası: hepsi "kaydedildi" olsun
+        listEl.querySelectorAll('[data-item-id]').forEach(row => {
+            row.dataset.dirty = '';
+            row.dataset.savedAt = nowTime();
+            setRowBadge(row, 'saved', row.dataset.savedAt);
+            setSaveBtnState(row, 'saved');
+            setRowMsg(row, null, '');
+        });
+
+        updateSaveAllUI();
+        window.removeEventListener('beforeunload', beforeUnloadHandler);
+        window.addEventListener('beforeunload', beforeUnloadHandler);
 
         if (Sortable && listEl && !listEl.__sortable) {
             listEl.__sortable = new Sortable(listEl, {
@@ -169,13 +384,20 @@ export default function init() {
                         .filter(Boolean);
 
                     if (!ids.length) return;
-                    await req(`/admin/galleries/${galleryId}/items/reorder`, 'POST', { ids });
-                    // reorder sonrası tekrar çek: sort_order yazısını güncellemek istersen burada yaparsın
+
+                    const { res } = await req(`/admin/galleries/${galleryId}/items/reorder`, 'POST', { ids });
+                    if (!res.ok) {
+                        setSaveAllStatus('Sıralama kaydedilemedi.', 'error');
+                    } else {
+                        setSaveAllStatus('Sıralama kaydedildi.', 'success');
+                        setTimeout(() => setSaveAllStatus('', 'info'), 1500);
+                    }
                 }
             });
         }
     }
 
+    // ---------- Media picker ----------
     function mediaCard(m) {
         const kind = inferKind(m.mime_type);
         const thumb = m.thumb_url || m.url || '';
@@ -267,7 +489,6 @@ export default function init() {
         mediaResults.innerHTML = items.map(mediaCard).join('');
         renderPager(meta);
 
-        // bulk bar görünür kalsın; seçili sayacı güncelle
         if (mediaSelectedCount) mediaSelectedCount.textContent = String(selected.size);
         document.querySelector('#mediaLibraryBulkBar')?.classList.toggle('hidden', false);
     }
@@ -314,12 +535,19 @@ export default function init() {
         const ids = [...selected.values()];
         if (!ids.length) return;
 
-        await req(`/admin/galleries/${galleryId}/items`, 'POST', { media_ids: ids });
+        const { res, j } = await req(`/admin/galleries/${galleryId}/items`, 'POST', { media_ids: ids });
+
+        if (!res.ok || !j?.ok) {
+            setSaveAllStatus('Medya eklenemedi.', 'error');
+            return;
+        }
 
         selected.clear();
         if (mediaSelectedCount) mediaSelectedCount.textContent = '0';
 
         await fetchItems();
+        setSaveAllStatus('Medya eklendi.', 'success');
+        setTimeout(() => setSaveAllStatus('', 'info'), 1500);
     });
 
     // Library tab’a geçilince listeyi çek
@@ -327,6 +555,48 @@ export default function init() {
         pickerState.page = 1;
         fetchMediaList();
     });
+
+    // ---------- Dirty tracking: input/change ----------
+    listEl?.addEventListener('input', (e) => {
+        if (!e.target.closest('.js-caption, .js-alt, .js-link-url')) return;
+        const row = e.target.closest('[data-item-id]');
+        markDirty(row);
+    });
+
+    listEl?.addEventListener('change', (e) => {
+        if (!e.target.closest('.js-link-target')) return;
+        const row = e.target.closest('[data-item-id]');
+        markDirty(row);
+    });
+
+    // ---------- Save logic ----------
+    function buildPayloadFromRow(row) {
+        return {
+            caption: row.querySelector('.js-caption')?.value ?? '',
+            alt: row.querySelector('.js-alt')?.value ?? '',
+            link_url: row.querySelector('.js-link-url')?.value ?? '',
+            link_target: row.querySelector('.js-link-target')?.value ?? '',
+        };
+    }
+
+    async function saveOneRow(row) {
+        const itemId = Number(row.dataset.itemId);
+        if (!Number.isFinite(itemId)) return { ok: false, id: itemId, message: 'Invalid id' };
+
+        markSaving(row);
+
+        const payload = buildPayloadFromRow(row);
+        const { res, j } = await req(`/admin/galleries/${galleryId}/items/${itemId}`, 'PATCH', payload);
+
+        if (res.ok && j?.ok) {
+            markSaved(row);
+            return { ok: true, id: itemId };
+        }
+
+        const msg = (j?.message || firstValidationMessage(j) || 'Kaydetme başarısız.');
+        markError(row, msg);
+        return { ok: false, id: itemId, message: msg };
+    }
 
     // Item actions
     listEl?.addEventListener('click', async (e) => {
@@ -336,24 +606,80 @@ export default function init() {
         const itemId = Number(row.dataset.itemId);
 
         if (e.target.closest('.js-item-remove')) {
-            await req(`/admin/galleries/${galleryId}/items/${itemId}`, 'DELETE');
+            const { res } = await req(`/admin/galleries/${galleryId}/items/${itemId}`, 'DELETE');
+            if (!res.ok) {
+                markError(row, 'Silme başarısız.');
+                return;
+            }
             row.remove();
             emptyEl?.classList.toggle('hidden', listEl.querySelectorAll('[data-item-id]').length > 0);
+            updateSaveAllUI();
+            setSaveAllStatus('Öğe kaldırıldı.', 'success');
+            setTimeout(() => setSaveAllStatus('', 'info'), 1200);
             return;
         }
 
         if (e.target.closest('.js-save')) {
-            const caption = row.querySelector('.js-caption')?.value ?? '';
-            const alt = row.querySelector('.js-alt')?.value ?? '';
-            const link_url = row.querySelector('.js-link-url')?.value ?? '';
-            const link_target = row.querySelector('.js-link-target')?.value ?? '';
-
-            await req(`/admin/galleries/${galleryId}/items/${itemId}`, 'PATCH', {
-                caption, alt, link_url, link_target
-            });
-
+            await saveOneRow(row);
             return;
         }
+    });
+
+    // ---------- Bulk save ----------
+    saveAllBtn?.addEventListener('click', async () => {
+        const rows = getDirtyRows();
+        if (!rows.length) return;
+
+        saveAllBtn.dataset.busy = '1';
+        updateSaveAllUI();
+
+        setSaveAllStatus(`Kaydediliyor… (0/${rows.length})`, 'info');
+
+        // UI: hepsini saving göster
+        rows.forEach(r => markSaving(r));
+
+        const items = rows.map(r => {
+            const id = Number(r.dataset.itemId);
+            return { id, ...buildPayloadFromRow(r) };
+        }).filter(x => Number.isFinite(x.id));
+
+        const { res, j } = await req(`/admin/galleries/${galleryId}/items/bulk`, 'PATCH', { items });
+
+        if (!res.ok || !j?.ok) {
+            // bulk komple fail
+            const msg = (j?.message || firstValidationMessage(j) || 'Toplu kayıt başarısız.');
+            rows.forEach(r => markError(r, msg));
+            setSaveAllStatus(msg, 'error');
+            saveAllBtn.dataset.busy = '0';
+            updateSaveAllUI();
+            return;
+        }
+
+        const results = Array.isArray(j.results) ? j.results : [];
+        const byId = new Map(results.map(x => [Number(x.id), x]));
+
+        let okCount = 0;
+        let failCount = 0;
+
+        rows.forEach(r => {
+            const id = Number(r.dataset.itemId);
+            const rr = byId.get(id);
+
+            if (rr?.ok) {
+                okCount++;
+                markSaved(r);
+            } else {
+                failCount++;
+                const msg = rr?.message || 'Kaydetme başarısız.';
+                markError(r, msg);
+            }
+        });
+
+        setSaveAllStatus(`Bitti: ${okCount} başarılı, ${failCount} hatalı.`, failCount ? 'error' : 'success');
+        setTimeout(() => setSaveAllStatus('', 'info'), 2500);
+
+        saveAllBtn.dataset.busy = '0';
+        updateSaveAllUI();
     });
 
     ac = new AbortController();

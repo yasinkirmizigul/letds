@@ -78,8 +78,24 @@
 
             <div class="kt-card">
                 <div class="kt-card-header py-4">
-                    <h3 class="kt-card-title">Galeri Öğeleri</h3>
-                    <div class="kt-card-toolbar flex items-center gap-2">
+                    <div class="flex items-center gap-3">
+                        <h3 class="kt-card-title">Galeri Öğeleri</h3>
+
+                        {{-- Global status / dirty count --}}
+                        <div class="text-xs text-muted-foreground flex items-center gap-2">
+                            <span id="galleryDirtyCount"></span>
+                            <span id="gallerySaveAllStatus" class="hidden"></span>
+                        </div>
+                    </div>
+
+                    <div class="kt-card-toolbar flex items-center gap-2 flex-wrap">
+                        <button type="button"
+                                class="kt-btn kt-btn-sm kt-btn-primary"
+                                id="gallerySaveAllBtn"
+                                disabled>
+                            <i class="ki-outline ki-save-2"></i> Toplu Kaydet
+                        </button>
+
                         <button type="button"
                                 class="kt-btn kt-btn-sm kt-btn-light"
                                 data-kt-modal-toggle="#mediaUploadModal"

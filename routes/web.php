@@ -300,6 +300,10 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:gallery.update')
                 ->name('items.update');
 
+            Route::patch('/{gallery}/items/bulk', [GalleryItemsController::class, 'bulkUpdate'])
+                ->middleware('permission:gallery.update')
+                ->name('items.bulk');
+
             Route::delete('/{gallery}/items/{item}', [GalleryItemsController::class, 'destroy'])
                 ->middleware('permission:gallery.update')
                 ->name('items.destroy');

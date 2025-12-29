@@ -36,13 +36,13 @@ class GalleryItemsController extends Controller
         return response()->json([
             'ok' => true,
             'data' => $items->map(fn (GalleryItem $it) => [
-                'id'         => $it->id,
-                'sort_order' => (int) $it->sort_order,
-                'caption'    => $it->caption,
-                'alt'        => $it->alt,
-                'link_url'   => $it->link_url,
-                'link_target'=> $it->link_target,
-                'media'      => $it->media ? $this->mediaPayload($it->media) : null,
+                'id'          => $it->id,
+                'sort_order'  => (int) $it->sort_order,
+                'caption'     => $it->caption,
+                'alt'         => $it->alt,
+                'link_url'    => $it->link_url,
+                'link_target' => $it->link_target,
+                'media'       => $it->media ? $this->mediaPayload($it->media) : null,
             ])->values(),
         ]);
     }
@@ -50,8 +50,8 @@ class GalleryItemsController extends Controller
     public function store(Request $request, Gallery $gallery): JsonResponse
     {
         $data = $request->validate([
-            'media_ids' => ['required','array','min:1'],
-            'media_ids.*' => ['integer','exists:media,id'],
+            'media_ids'   => ['required', 'array', 'min:1'],
+            'media_ids.*' => ['integer', 'exists:media,id'],
         ]);
 
         $existing = $gallery->items()->pluck('media_id')->all();
@@ -60,13 +60,15 @@ class GalleryItemsController extends Controller
         $created = [];
 
         foreach ($data['media_ids'] as $mid) {
-            if (in_array($mid, $existing, true)) continue;
+            if (in_array($mid, $existing, true)) {
+                continue;
+            }
 
             $max++;
 
             $created[] = $gallery->items()->create([
-                'media_id'    => $mid,
-                'sort_order'  => $max,
+                'media_id'   => $mid,
+                'sort_order' => $max,
             ])->id;
         }
 
@@ -84,10 +86,10 @@ class GalleryItemsController extends Controller
         abort_if($item->gallery_id !== $gallery->id, 404);
 
         $data = $request->validate([
-            'caption' => ['nullable','string','max:255'],
-            'alt' => ['nullable','string','max:255'],
-            'link_url' => ['nullable','string','max:2048'],
-            'link_target' => ['nullable','string','max:20'],
+            'caption'     => ['nullable', 'string', 'max:255'],
+            'alt'         => ['nullable', 'string', 'max:255'],
+            'link_url'    => ['nullable', 'string', 'max:2048'],
+            'link_target' => ['nullable', 'string', 'max:20'],
         ]);
 
         $item->update($data);
@@ -98,6 +100,75 @@ class GalleryItemsController extends Controller
         ]);
 
         return response()->json(['ok' => true]);
+    }
+
+    /**
+     * PATCH /admin/galleries/{gallery}/items/bulk
+     * body: { items: [{id, caption, alt, link_url, link_target}, ...] }
+     */
+    public function bulkUpdate(Request $request, Gallery $gallery): JsonResponse
+    {
+        $data = $request->validate([
+            'items'               => ['required', 'array', 'min:1'],
+            'items.*.id'          => ['required', 'integer'],
+            'items.*.caption'     => ['nullable', 'string', 'max:255'],
+            'items.*.alt'         => ['nullable', 'string', 'max:255'],
+            'items.*.link_url'    => ['nullable', 'string', 'max:2048'],
+            'items.*.link_target' => ['nullable', 'string', 'max:20'],
+        ]);
+
+        $ids = collect($data['items'])->pluck('id')->unique()->values();
+
+        $items = $gallery->items()
+            ->whereIn('id', $ids)
+            ->get()
+            ->keyBy('id');
+
+        $results = [];
+
+        foreach ($data['items'] as $payload) {
+            $id = (int) $payload['id'];
+
+            /** @var GalleryItem|null $it */
+            $it = $items->get($id);
+
+            if (!$it) {
+                $results[] = [
+                    'id'      => $id,
+                    'ok'      => false,
+                    'message' => 'Item not found in this gallery',
+                ];
+                continue;
+            }
+
+            $update = [
+                'caption'     => $payload['caption'] ?? null,
+                'alt'         => $payload['alt'] ?? null,
+                'link_url'    => $payload['link_url'] ?? null,
+                'link_target' => $payload['link_target'] ?? null,
+            ];
+
+            try {
+                $it->update($update);
+                $results[] = ['id' => $id, 'ok' => true];
+            } catch (\Throwable $e) {
+                $results[] = [
+                    'id'      => $id,
+                    'ok'      => false,
+                    'message' => 'Update failed',
+                ];
+            }
+        }
+
+        AuditEvent::log('gallery.items.bulk_update', [
+            'gallery_id' => $gallery->id,
+            'ids'        => $ids->all(),
+        ]);
+
+        return response()->json([
+            'ok'      => true,
+            'results' => $results,
+        ]);
     }
 
     public function destroy(Gallery $gallery, GalleryItem $item): JsonResponse
@@ -118,7 +189,7 @@ class GalleryItemsController extends Controller
     public function reorder(Request $request, Gallery $gallery): JsonResponse
     {
         $data = $request->validate([
-            'ids'   => ['required','array','min:1'],
+            'ids'   => ['required', 'array', 'min:1'],
             'ids.*' => ['integer'],
         ]);
 
@@ -128,7 +199,9 @@ class GalleryItemsController extends Controller
 
         $order = 0;
         foreach ($ids as $id) {
-            if (!isset($items[$id])) continue;
+            if (!isset($items[$id])) {
+                continue;
+            }
             $order++;
             $items[$id]->update(['sort_order' => $order]);
         }
