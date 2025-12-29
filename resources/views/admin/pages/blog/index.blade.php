@@ -51,7 +51,7 @@
                                 name="category_ids[]"
                                 class="kt-select w-full"
                                 data-kt-select="true"
-                                data-kt-select-placeholder="Kategoriler..."
+                                data-kt-select-placeholder="Kategoriler"
                                 data-kt-select-multiple="true"
                                 data-kt-select-tags="false"
                                 data-kt-select-config='{"showSelectedCount": true}'

@@ -328,7 +328,7 @@ export default async function init({ root, dataset }) {
             </div>
 
             <div class="flex items-center gap-2">
-              <select class="kt-select kt-select-sm js-gal-slot">
+              <select class="kt-select kt-select-sm js-gal-slot" data-kt-select="true">
                 <option value="main" ${slot === 'main' ? 'selected' : ''}>main</option>
                 <option value="sidebar" ${slot === 'sidebar' ? 'selected' : ''}>sidebar</option>
               </select>

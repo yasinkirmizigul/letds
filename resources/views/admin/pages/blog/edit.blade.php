@@ -140,7 +140,7 @@
                             <select name="category_ids[]" multiple
                                     class="kt-select @error('category_ids') kt-input-invalid @enderror"
                                     data-kt-select="true"
-                                    data-placeholder="Kategori seç">
+                                    data-kt-select-placeholder="Kategori Listesi">
                                 @foreach($categories as $c)
                                     <option value="{{ $c->id }}" @selected(in_array($c->id, old('category_ids', $selectedCategoryIds)))>
                                         {{ $c->name }}
@@ -240,7 +240,7 @@
                 <div class="kt-modal-body overflow-hidden p-7">
                     <div class="flex items-center gap-3 mb-4">
                         <input class="kt-input w-80" id="blogGalleryPickerSearch" placeholder="Ara: isim / slug">
-                        <select class="kt-select w-44" id="blogGalleryPickerSlot">
+                        <select class="kt-select w-44" id="blogGalleryPickerSlot" data-kt-select="true" data-kt-select-placeholder="Seç">
                             <option value="main">Main</option>
                             <option value="sidebar">Sidebar</option>
                         </select>

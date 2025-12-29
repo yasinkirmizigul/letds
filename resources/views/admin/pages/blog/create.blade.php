@@ -76,7 +76,7 @@
                             <select name="category_ids[]" multiple
                                     class="kt-select @error('category_ids') kt-input-invalid @enderror"
                                     data-kt-select="true"
-                                    data-kt-select-placeholder="Kategoriler...">
+                                    data-kt-select-placeholder="Kategoriler">
                                 @foreach($categories as $cat)
                                     <option
                                         value="{{ $cat->id }}" @selected(collect(old('category_ids'))->contains($cat->id))>
