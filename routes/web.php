@@ -368,10 +368,6 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:blog.update')
                 ->name('detach');
 
-            Route::post('/slot', [BlogPostGalleryController::class, 'setSlot'])
-                ->middleware('permission:blog.update')
-                ->name('slot');
-
             Route::post('/reorder', [BlogPostGalleryController::class, 'reorder'])
                 ->middleware('permission:blog.update')
                 ->name('reorder');
