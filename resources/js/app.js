@@ -5,7 +5,9 @@ import Alpine from 'alpinejs';
 import { AppInit } from './core/app-init';
 import { registerPages } from './admin/pages/index';
 import { initMediaPicker } from './core/media-picker';
+import { initMediaUploadModal } from './core/media-upload-modal';
 initMediaPicker();
+initMediaUploadModal();
 // Global: Media modal tab switch (upload/library)
 // Yeni dosya yok, sayfa bağımsız çalışır.
 document.addEventListener('click', (e) => {

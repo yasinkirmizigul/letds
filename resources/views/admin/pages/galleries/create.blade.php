@@ -1,47 +1,69 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    <div class="px-4 lg:px-6" data-page="galleries.create">
-        @includeIf('admin.partials._flash')
+    <div class="kt-container-fixed" data-page="galleries.create">
+        <div class="grid gap-5 lg:gap-7.5">
 
-        <div class="flex items-center justify-between mb-5">
-            <div>
-                <h1 class="text-xl font-semibold">Yeni Galeri</h1>
-                <div class="text-sm text-muted-foreground">İsim ve açıklama oluştur.</div>
+            @includeIf('admin.partials._flash')
+
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <div>
+                    <h1 class="text-xl font-semibold">Yeni Galeri</h1>
+                    <div class="text-sm text-muted-foreground">İsim ve açıklama oluştur.</div>
+                </div>
+
+                <a href="{{ route('admin.galleries.index') }}" class="kt-btn kt-btn-light">
+                    <i class="ki-outline ki-left"></i> Geri
+                </a>
             </div>
-            <a href="{{ route('admin.galleries.index') }}" class="kt-btn kt-btn-light">Geri</a>
-        </div>
 
-        <div class="kt-card">
-            <form class="kt-card-content p-8 flex flex-col gap-6"
-                  method="POST"
-                  action="{{ route('admin.galleries.store') }}">
-                @csrf
+            <div class="kt-card">
+                <form class="kt-card-content p-7 grid gap-5"
+                      method="POST"
+                      action="{{ route('admin.galleries.store') }}">
+                    @csrf
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="flex flex-col gap-2">
-                        <label class="kt-form-label font-normal text-mono">İsim</label>
-                        <input name="name" class="kt-input @error('name') kt-input-invalid @enderror" value="{{ old('name') }}">
-                        @error('name') <div class="text-xs text-danger">{{ $message }}</div> @enderror
+                    <div class="grid gap-2">
+                        <label class="text-sm font-medium">İsim</label>
+                        <input type="text"
+                               name="name"
+                               class="kt-input"
+                               value="{{ old('name') }}"
+                               required>
+                        @error('name')
+                        <div class="text-sm text-destructive">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    <div class="flex flex-col gap-2">
-                        <label class="kt-form-label font-normal text-mono">Slug (opsiyonel)</label>
-                        <input name="slug" class="kt-input @error('slug') kt-input-invalid @enderror" value="{{ old('slug') }}">
-                        @error('slug') <div class="text-xs text-danger">{{ $message }}</div> @enderror
+                    <div class="grid gap-2">
+                        <label class="text-sm font-medium">Slug (opsiyonel)</label>
+                        <input type="text"
+                               name="slug"
+                               class="kt-input"
+                               value="{{ old('slug') }}">
+                        @error('slug')
+                        <div class="text-sm text-destructive">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    <div class="lg:col-span-2 flex flex-col gap-2">
-                        <label class="kt-form-label font-normal text-mono">Açıklama</label>
-                        <textarea name="description" rows="4" class="kt-textarea @error('description') kt-input-invalid @enderror">{{ old('description') }}</textarea>
-                        @error('description') <div class="text-xs text-danger">{{ $message }}</div> @enderror
+                    <div class="grid gap-2">
+                        <label class="text-sm font-medium">Açıklama</label>
+                        <textarea name="description"
+                                  class="kt-textarea"
+                                  rows="4">{{ old('description') }}</textarea>
+                        @error('description')
+                        <div class="text-sm text-destructive">{{ $message }}</div>
+                        @enderror
                     </div>
-                </div>
 
-                <div class="flex justify-end">
-                    <button class="kt-btn kt-btn-primary" type="submit">Kaydet</button>
-                </div>
-            </form>
+                    <div class="flex items-center justify-end gap-2">
+                        <button type="submit" class="kt-btn kt-btn-primary">
+                            <i class="ki-outline ki-check"></i> Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+
         </div>
     </div>
 @endsection

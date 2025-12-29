@@ -7,8 +7,8 @@
 
 @if($type === 'single')
     <div class="kt-menu-item {{ $isActive ? 'active' : '' }}">
-        <div class="kt-menu-label gap-[10px] border border-transparent py-[6px] pe-[10px]">
-            <a class="kt-menu-link kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 grow items-center gap-[14px] border border-transparent py-[8px] pe-[10px] ps-[10px] hover:rounded-lg"
+        <div class="kt-menu-label gap-[10px] border border-transparent">
+            <a class="kt-menu-link kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 grow items-center gap-[14px] border border-transparent py-[6px] pe-[10px] ps-[10px] hover:rounded-lg"
                href="{{ isset($item['route']) ? route($item['route']) : '#' }}"
                tabindex="0">
                 <span class="w-[20px] items-start text-muted-foreground">

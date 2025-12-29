@@ -198,7 +198,7 @@
                             </div>
 
                             <div class="kt-card-content p-4">
-                                <div id="mediaLibraryResults" class="grid gap-3">
+                                <div id="mediaLibraryResults" class="grid gap-3 kt-scrollable-y-auto" style="max-height: 40vh">
                                     {{-- JS kartları basacak --}}
                                     {{--<div class="text-sm text-muted-foreground">Yükleniyor…</div>--}}
                                 </div>

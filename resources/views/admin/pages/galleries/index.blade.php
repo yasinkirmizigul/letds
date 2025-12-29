@@ -3,44 +3,69 @@
 @section('content')
     @php($isTrash = ($mode ?? 'active') === 'trash')
 
-    <div class="kt-container-fixed max-w-[90%]"
+    <div class="kt-container-fixed"
          data-page="galleries.index"
-         data-mode="{{ $mode ?? 'active' }}">
+         data-mode="{{ $isTrash ? 'trash' : 'active' }}">
         <div class="grid gap-5 lg:gap-7.5">
 
             @includeIf('admin.partials._flash')
 
-            <div class="kt-card">
-                <div class="kt-card-header py-5 flex-wrap gap-4">
-                    <div class="flex flex-col">
-                        <h3 class="kt-card-title">{{ $isTrash ? 'Galeriler - Çöp Kutusu' : 'Galeriler' }}</h3>
-                        <div class="text-sm text-muted-foreground">Galeri oluştur, düzenle, içeriklere bağla.</div>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        @if(!$isTrash)
-                            <a class="kt-btn kt-btn-primary" href="{{ route('admin.galleries.create') }}">
-                                <i class="ki-outline ki-plus"></i> Yeni Galeri
-                            </a>
-                            <a class="kt-btn kt-btn-light" href="{{ route('admin.galleries.trash') }}">Çöp</a>
-                        @else
-                            <a class="kt-btn kt-btn-light" href="{{ route('admin.galleries.index') }}">Aktif</a>
-                        @endif
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <div>
+                    <h1 class="text-xl font-semibold">
+                        {{ $isTrash ? 'Galeriler - Çöp Kutusu' : 'Galeriler' }}
+                    </h1>
+                    <div class="text-sm text-muted-foreground">
+                        Galeri oluştur, düzenle, içeriklere bağla.
                     </div>
                 </div>
 
-                <div class="kt-card-content p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <input class="kt-input w-80" id="galleriesSearch" placeholder="Ara: isim / slug">
-                        <button class="kt-btn kt-btn-light" id="galleriesRefresh">Yenile</button>
+                <div class="flex items-center gap-2">
+                    @if(!$isTrash)
+                        <a href="{{ route('admin.galleries.create') }}" class="kt-btn kt-btn-primary">
+                            <i class="ki-outline ki-plus"></i> Yeni Galeri
+                        </a>
+                        <a href="{{ route('admin.galleries.trash') }}" class="kt-btn kt-btn-light">
+                            <i class="ki-outline ki-trash"></i> Çöp
+                        </a>
+                    @else
+                        <a href="{{ route('admin.galleries.index') }}" class="kt-btn kt-btn-light">
+                            <i class="ki-outline ki-archive"></i> Aktif
+                        </a>
+                    @endif
+
+                    <button type="button" id="galleriesRefresh" class="kt-btn kt-btn-light">
+                        <i class="ki-outline ki-arrows-circle"></i> Yenile
+                    </button>
+                </div>
+            </div>
+
+            <div class="kt-card kt-card-grid min-w-full">
+                <div class="kt-card-header py-5 flex-wrap gap-4">
+                    <div class="flex items-center gap-3 grow">
+                        <div class="flex flex-row kt-input-icon w-full max-w-[420px]">
+                            <i class="items-center ki-magnifier ki-outline me-2"></i>
+                            <input id="galleriesSearch"
+                                   type="text"
+                                   class="kt-input"
+                                   placeholder="Ara (isim / slug)">
+                        </div>
                     </div>
 
-                    <div id="galleriesEmpty" class="text-sm text-muted-foreground hidden">Kayıt yok.</div>
-                    <div id="galleriesList" class="flex flex-col gap-2"></div>
+                    <div class="flex items-center gap-4">
+                        <span id="galleriesInfo" class="text-sm text-muted-foreground"></span>
+                        <div id="galleriesPagination" class="kt-datatable-pagination"></div>
+                    </div>
+                </div>
 
-                    <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium mt-6">
-                        <span id="galleriesInfo"></span>
-                        <div class="kt-datatable-pagination" id="galleriesPagination"></div>
+                <div class="kt-card-content p-5">
+                    <div id="galleriesEmpty"
+                         class="hidden text-sm text-muted-foreground">
+                        Kayıt yok.
+                    </div>
+
+                    <div id="galleriesList" class="grid gap-3">
+                        {{-- JS doldurur --}}
                     </div>
                 </div>
             </div>

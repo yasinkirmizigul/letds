@@ -46,7 +46,7 @@ return [
     // ✅ NEW: Galleries
     [
         'type'     => 'accordion',
-        'title'    => 'Galeriler',
+        'title'    => 'Galeri',
         'icon'     => 'ki-filled ki-picture text-lg',
         'perm'     => 'gallery.view',
         'children' => [
@@ -62,7 +62,7 @@ return [
 
     [
         'type'     => 'accordion',
-        'title'    => 'Kategoriler',
+        'title'    => 'Kategori',
         'icon'     => 'ki-filled ki-document text-lg',
         'perm'     => 'category.view',
         'children' => [
