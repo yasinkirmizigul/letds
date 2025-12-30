@@ -4,11 +4,7 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 {{-- SEO istersen burayı doldurursun --}}
 <meta name="description" content="{{ $pageDescription ?? 'Yönetim Paneli' }}" />
-
-{{-- Fonts --}}
-<link rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
-
+<link rel="icon" type="image/x-icon" href="{{ asset('/assets/media/app/favicon.svg') }}">
 {{-- Vendor CSS --}}
 @stack('vendor_css')
 
