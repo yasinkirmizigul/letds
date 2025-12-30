@@ -2,7 +2,7 @@
 
 @section('content')
     @php($u = $user ?? auth()->user())
-    @php($avatarUrl = method_exists($u, 'avatarUrl') ? $u->avatarUrl() : asset('assets/media/avatars/blank.png'))
+    @php($avatarUrl = method_exists($u, 'avatarUrl') ? $u->avatarUrl() : asset('assets/media/blank.png'))
 
     <div class="kt-container-fixed max-w-[90%]" data-page="profile.edit">
         @includeIf('admin.partials._flash')
@@ -55,7 +55,7 @@
                                 <div
                                     data-kt-image-input-placeholder="true"
                                     class="kt-image-input-placeholder"
-                                    style="background-image:url('{{ asset('assets/media/avatars/blank.png') }}')"
+                                    style="background-image:url('{{ asset('assets/media/blank.png') }}')"
                                 >
                                     <div
                                         data-kt-image-input-preview="true"

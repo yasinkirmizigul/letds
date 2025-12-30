@@ -194,6 +194,6 @@ class User extends Authenticatable
         }
 
         // 3) default
-        return asset('assets/media/avatars/blank.png');
+        return asset('assets/media/blank.png');
     }
 }

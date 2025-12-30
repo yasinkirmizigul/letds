@@ -100,9 +100,9 @@ export function initMediaUploadModal(scope = document) {
             const p = Math.max(0, Math.min(100, Number(q.progress || 0)));
 
             const badge =
-                q.status === 'done' ? `<span class="kt-badge kt-badge-outline">OK</span>` :
-                    q.status === 'error' ? `<span class="kt-badge kt-badge-outline">Hata</span>` :
-                        q.status === 'uploading' ? `<span class="kt-badge kt-badge-outline">Yükleniyor</span>` :
+                q.status === 'done' ? `<span class="kt-badge kt-badge-outline bg-green-500">OK</span>` :
+                    q.status === 'error' ? `<span class="kt-badge kt-badge-outline bg-destructive">Hata</span>` :
+                        q.status === 'uploading' ? `<span class="kt-badge kt-badge-outline bg-yellow-500">Yükleniyor</span>` :
                             `<span class="kt-badge kt-badge-outline">Bekliyor</span>`;
 
             return `
