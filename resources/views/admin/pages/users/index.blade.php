@@ -32,7 +32,7 @@
                 <div class="kt-card-content">
                     <div class="grid" id="users_dt">
 
-                        <div class="overflow-hidden">
+                        <div class="kt-scrollable-x-auto overflow-y-hidden">
                             <table class="kt-table table-auto kt-table-border w-full" id="users_table">
                                 <thead>
                                 <tr>

@@ -110,6 +110,8 @@
                 order: [[1, 'desc']],
                 dom: 't',
                 autoWidth: false,
+                responsive: false,
+                scrollX: true,
 
                 emptyTemplate: null,
                 zeroTemplate: null,

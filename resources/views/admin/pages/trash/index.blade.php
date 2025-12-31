@@ -54,7 +54,7 @@
                         </div>
                     </div>
 
-                    <div class="overflow-hidden">
+                    <div class="kt-scrollable-x-auto overflow-y-hidden">
                         <table class="kt-table table-auto kt-table-border w-full" id="trash_table">
                             <thead>
                             <tr>

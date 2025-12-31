@@ -95,7 +95,7 @@
                             @endforeach
                         </div>
                     @endif
-                    <div class="overflow-x-auto">
+                    <div class="kt-scrollable-x-auto overflow-y-hidden">
                         <table class="kt-table">
                             <thead>
                             <tr>

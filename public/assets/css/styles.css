@@ -2914,7 +2914,7 @@
     line-height: var(--tw-leading, var(--text-sm--line-height));
   }
   .text-xl {
-    font-size: var(--text-xl);
+    font-size: var(--text-xl)!important;
     line-height: var(--tw-leading, var(--text-xl--line-height));
   }
   .text-xs {

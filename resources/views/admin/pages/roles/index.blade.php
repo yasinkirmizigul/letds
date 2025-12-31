@@ -35,7 +35,7 @@
 
                 <div class="kt-card-content">
                     <div class="grid" id="roles_dt">
-                        <div class="overflow-hidden">
+                        <div class="kt-scrollable-x-auto overflow-y-hidden">
                             <table class="kt-table table-auto kt-table-border w-full" id="roles_table">
                                 <thead>
                                 <tr>
