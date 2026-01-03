@@ -57,11 +57,10 @@
                                     class="kt-image-input-placeholder"
                                     style="background-image:url('{{ asset('assets/media/blank.png') }}')"
                                 >
-                                    <div
-                                        data-kt-image-input-preview="true"
-                                        class="kt-image-input-preview"
-                                        style="background-image:url('{{ $avatarUrl }}')"
-                                    ></div>
+                                    <div id="avatarPreview"
+                                         data-kt-image-input-preview="true"
+                                         class="kt-image-input-preview"
+                                         style="background-image:url('{{ $avatarUrl }}')"></div>
 
                                     <div class="flex items-center justify-center cursor-pointer h-6 left-0 right-0 bottom-0 bg-black/25 absolute">
                                         <i class="ki-filled ki-camera text-white text-sm"></i>
@@ -79,7 +78,12 @@
                                     Avatarı Kaydet
                                 </button>
 
-                                <button type="button" class="kt-btn kt-btn-light" data-kt-modal-toggle="#media_picker_modal">
+                                <button type="button"
+                                        class="kt-btn kt-btn-light"
+                                        data-media-picker="true"
+                                        data-media-picker-target="#avatar_media_id"
+                                        data-media-picker-preview="#avatarPreviewImg"
+                                        data-media-picker-mime="image/">
                                     <i class="ki-filled ki-some-files"></i>
                                     Medyadan Seç
                                 </button>

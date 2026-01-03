@@ -98,8 +98,12 @@ export function initMediaPicker() {
 
         const prev = document.querySelector(currentTarget.previewSel);
         if (prev && url) {
-            prev.src = url;
-            prev.classList.remove('hidden');
+            if (prev.tagName === 'IMG') {
+                prev.src = url;
+                prev.classList.remove('hidden');
+            } else {
+                prev.style.backgroundImage = `url('${url}')`;
+            }
         }
 
         // modal kapat
