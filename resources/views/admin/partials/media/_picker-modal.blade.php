@@ -1,6 +1,6 @@
 {{-- Global Media Picker Modal --}}
 <div class="kt-modal hidden" id="mediaPickerModal">
-    {{-- media-picker.js bunu click’leyerek açıyor --}}
+    {{-- media-picker.js bunu click ile açar --}}
     <button type="button" class="hidden" data-kt-modal-toggle="#mediaPickerModal"></button>
 
     <div class="kt-modal-dialog max-w-5xl">
@@ -29,7 +29,8 @@
                     </select>
                 </div>
 
-                <div id="mediaPickerGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
+                <div id="mediaPickerGrid"
+                     class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
             </div>
         </div>
     </div>
