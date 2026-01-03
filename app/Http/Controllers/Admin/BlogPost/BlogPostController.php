@@ -124,7 +124,14 @@ class BlogPostController extends Controller
         $post = BlogPost::create($data);
 
         if (method_exists($post, 'categories')) {
-            $post->categories()->sync($data['category_ids'] ?? []);
+            $ids = collect($data['category_ids'] ?? [])
+                ->filter()
+                ->map(fn($v) => (int) $v)
+                ->unique()
+                ->values()
+                ->all();
+
+            $post->categories()->sync($ids);
         }
 
         return redirect()->route('admin.blog.index')->with('success', 'Blog yazısı oluşturuldu.');
@@ -178,7 +185,14 @@ class BlogPostController extends Controller
         $blogPost->update($data);
 
         if (method_exists($blogPost, 'categories')) {
-            $blogPost->categories()->sync($data['category_ids'] ?? []);
+            $ids = collect($data['category_ids'] ?? [])
+                ->filter()
+                ->map(fn($v) => (int) $v)
+                ->unique()
+                ->values()
+                ->all();
+
+            $blogPost->categories()->sync($ids);
         }
 
         return redirect()->route('admin.blog.index')->with('success', 'Blog yazısı güncellendi.');

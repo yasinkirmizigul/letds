@@ -59,7 +59,7 @@
 
 {{-- NOT: Bunu uzun vadede Vite'a taşımalısın (resources/js/admin/...) --}}
 {{--<script src="{{ asset('assets/js/layouts/app.js') }}"></script>--}}
-
+@include('admin.pages.media.partials._picker-modal')
 @include('admin.layouts.partials.scripts')
 </body>
 </html>

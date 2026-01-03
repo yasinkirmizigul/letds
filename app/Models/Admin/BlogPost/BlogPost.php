@@ -52,11 +52,17 @@ class BlogPost extends Model
             : null;
     }
 
-    public function categories()
+    public function categories(): MorphToMany
     {
-        return $this->belongsToMany(Category::class, 'categorizables', 'categorizable_id', 'category_id')
-            ->wherePivot('categorizable_type', self::class)
-            ->withTrashed(); // <-- önemli
+        return $this->morphToMany(
+            Category::class,
+            'categorizable',     // morph name (migration'daki morphs('categorizable'))
+            'categorizables',    // pivot table
+            'categorizable_id',  // foreignPivotKey (BlogPost id)
+            'category_id'        // relatedPivotKey (Category id)
+        )
+            ->withTimestamps()
+            ->withTrashed(); // Category soft delete ise seçili olanları editte gösterebilmek için
     }
 
     public function galleries(): MorphToMany

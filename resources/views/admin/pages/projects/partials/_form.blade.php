@@ -50,7 +50,7 @@
 
             <div>
                 <label class="kt-form-label">Status</label>
-                <select class="kt-select" name="status" id="projectStatus">
+                <select class="kt-select" name="status" id="projectStatus" data-kt-select="true">
                     <option value="draft" @selected($st === 'draft')>draft</option>
                     <option value="active" @selected($st === 'active')>active</option>
                     <option value="archived" @selected($st === 'archived')>archived</option>
@@ -106,23 +106,31 @@
             <div class="kt-card-header">
                 <h3 class="kt-card-title">Kategoriler</h3>
             </div>
-            <div class="kt-card-content p-6 flex flex-col gap-2 max-h-[340px] overflow-auto">
-                @foreach($categories as $c)
-                    <label class="flex items-center gap-2">
-                        <input type="checkbox"
-                               class="kt-checkbox"
-                               name="category_ids[]"
-                               value="{{ $c->id }}"
-                            @checked(in_array((int)$c->id, old('category_ids', $selectedCategoryIds))) />
-                        <span>{{ $c->name }}</span>
-                    </label>
-                @endforeach
 
-                <div class="text-xs text-muted-foreground mt-2">
-                    Çoklu seçebilirsin.
-                </div>
+            <div class="kt-card-content p-6 flex flex-col gap-2">
+                <select name="category_ids[]" multiple
+                        class="kt-select @error('category_ids') kt-input-invalid @enderror"
+                        data-kt-select="true"
+                        data-kt-select-placeholder="Kategoriler"
+                        data-kt-select-multiple="true"
+                        data-kt-select-tags="true"
+                        data-kt-select-config='{
+                    "showSelectedCount": true,
+                    "enableSelectAll": true,
+                    "selectAllText": "Tümünü Seç",
+                    "clearAllText": "Tümünü Temizle"
+                }'>
+                    @foreach($categories as $c)
+                        <option value="{{ $c->id }}"
+                            @selected(in_array((int)$c->id, old('category_ids', $selectedCategoryIds)))>
+                            {{ $c->name }}
+                        </option>
+                    @endforeach
+                </select>
 
-                @error('category_ids') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                @error('category_ids')
+                <div class="text-danger text-sm mt-1">{{ $message }}</div>
+                @enderror
             </div>
         </div>
 
