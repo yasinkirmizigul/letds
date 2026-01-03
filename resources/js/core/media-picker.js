@@ -19,16 +19,16 @@ export function initMediaPicker() {
     let aborter = null;
     let lastRequestId = 0;
 
+    /**
+     * Deterministik modal açma:
+     * 1) KTModal (varsa) -> show()
+     * 2) Global opener (data-kt-modal-toggle="#mediaPickerModal") -> click
+     * 3) En kötü: hidden kaldır (best-effort)
+     */
     function showModal() {
-        // 1) Hidden toggle button inside modal (preferred)
-        const opener = modal.querySelector('[data-kt-modal-toggle="#mediaPickerModal"]');
-        if (opener) {
-            opener.click();
-            return true;
-        }
-
-        // 2) KTModal instance (if available in your bundle)
+        // 1) KTModal instance ile aç (en sağlam yol)
         try {
+            // Metronic/KTUI bazı bundle'larda getOrCreateInstance var
             if (window.KTModal && typeof window.KTModal.getOrCreateInstance === 'function') {
                 const inst = window.KTModal.getOrCreateInstance(modal);
                 if (inst && typeof inst.show === 'function') {
@@ -36,22 +36,43 @@ export function initMediaPicker() {
                     return true;
                 }
             }
-        } catch (_) {}
 
-        // 3) Fallback: remove hidden (best-effort)
+            // Bazı sürümlerde getInstance + new KTModal olabilir
+            if (window.KTModal && typeof window.KTModal.getInstance === 'function') {
+                const inst = window.KTModal.getInstance(modal) || new window.KTModal(modal);
+                if (inst && typeof inst.show === 'function') {
+                    inst.show();
+                    return true;
+                }
+            }
+        } catch (e) {
+            console.error('[media-picker] KTModal show hata:', e);
+        }
+
+        // 2) Toggle opener her zaman modalın içinde olmaz; document scope'ta ara
+        const opener =
+            document.querySelector('[data-kt-modal-toggle="#mediaPickerModal"]') ||
+            document.getElementById('mediaPickerModalOpener');
+
+        if (opener) {
+            opener.click();
+            return true;
+        }
+
+        // 3) En kötü fallback
         modal.classList.remove('hidden');
         return true;
     }
 
     function hideModal() {
-        // Prefer dismiss button
+        // 1) dismiss butonu varsa tıkla
         const dismiss = modal.querySelector('[data-kt-modal-dismiss="true"]');
         if (dismiss) {
             dismiss.click();
             return;
         }
 
-        // KTModal fallback
+        // 2) KTModal ile kapat
         try {
             if (window.KTModal && typeof window.KTModal.getOrCreateInstance === 'function') {
                 const inst = window.KTModal.getOrCreateInstance(modal);
@@ -60,8 +81,19 @@ export function initMediaPicker() {
                     return;
                 }
             }
-        } catch (_) {}
 
+            if (window.KTModal && typeof window.KTModal.getInstance === 'function') {
+                const inst = window.KTModal.getInstance(modal) || new window.KTModal(modal);
+                if (inst && typeof inst.hide === 'function') {
+                    inst.hide();
+                    return;
+                }
+            }
+        } catch (e) {
+            console.error('[media-picker] KTModal hide hata:', e);
+        }
+
+        // 3) fallback
         modal.classList.add('hidden');
     }
 
@@ -148,7 +180,7 @@ export function initMediaPicker() {
 
         state.page = 1;
         state.q = '';
-        state.type = (opts?.mime && opts.mime.startsWith('image/')) ? 'image' : '';
+        state.type = opts?.mime && opts.mime.startsWith('image/') ? 'image' : '';
 
         if (search) search.value = '';
         if (type) type.value = state.type;
