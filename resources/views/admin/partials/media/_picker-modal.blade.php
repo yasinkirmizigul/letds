@@ -1,9 +1,7 @@
 {{-- Global Media Picker Modal --}}
 <div class="kt-modal hidden" id="mediaPickerModal">
-    {{-- JS bunu click’leyerek açıyor --}}
-    <button type="button"
-            class="hidden"
-            data-kt-modal-toggle="#mediaPickerModal"></button>
+    {{-- media-picker.js bunu click’leyerek açıyor --}}
+    <button type="button" class="hidden" data-kt-modal-toggle="#mediaPickerModal"></button>
 
     <div class="kt-modal-dialog max-w-5xl">
         <div class="kt-modal-content">
@@ -23,7 +21,7 @@
                            id="mediaPickerSearch"
                            placeholder="Ara..."/>
 
-                    <select class="kt-select w-full md:w-[220px]" id="mediaPickerType" data-kt-select="true">
+                    <select class="kt-select w-full md:w-[220px]" id="mediaPickerType" data-kt-select="true" data-kt-select-placeholder="Medya Türü">
                         <option value="">Tümü</option>
                         <option value="image">Görsel</option>
                         <option value="video">Video</option>
@@ -31,9 +29,7 @@
                     </select>
                 </div>
 
-                <div id="mediaPickerGrid"
-                     class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                </div>
+                <div id="mediaPickerGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
             </div>
         </div>
     </div>

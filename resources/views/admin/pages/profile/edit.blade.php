@@ -22,86 +22,92 @@
 
             {{-- LEFT: Avatar --}}
             <div class="lg:col-span-1">
+                {{-- LEFT: Avatar --}}
                 <div class="kt-card">
-                    <div class="kt-card-header">
-                        <h3 class="kt-card-title">Avatar</h3>
+                    <div class="kt-card-header py-5">
+                        <h3 class="kt-card-title text-lg font-semibold">Avatar</h3>
                     </div>
 
-                    <div class="kt-card-content flex flex-col gap-4">
-
-                        {{-- Avatar FORM --}}
-                        <form id="avatarForm" method="POST" action="{{ route('admin.profile.avatar') }}" enctype="multipart/form-data" class="flex flex-col gap-4">
+                    <div class="kt-card-content p-6 flex flex-col gap-4">
+                        {{-- Avatar Update --}}
+                        {{-- Avatar --}}
+                        <form method="POST" action="{{ route('admin.profile.update') }}" class="flex flex-col gap-4">
                             @csrf
+                            @method('PUT')
 
-                            {{-- Media picker seçimi buraya yazılacak --}}
-                            <input type="hidden" name="media_id" id="avatar_media_id" value="">
+                            {{-- picker buraya id yazacak --}}
+                            <input type="hidden"
+                                   name="avatar_media_id"
+                                   id="avatarMediaId"
+                                   value="{{ old('avatar_media_id', $u->avatar_media_id) }}">
 
-                            {{-- KT Image Input --}}
-                            <div class="kt-image-input" data-kt-image-input="true">
-                                <input type="file" accept=".png,.jpg,.jpeg,.webp" name="avatar" />
+                            <div class="flex items-center gap-4">
 
-                                <button
-                                    type="button"
-                                    data-kt-tooltip="true"
-                                    data-kt-tooltip-trigger="hover"
-                                    data-kt-tooltip-placement="right"
-                                    data-kt-image-input-remove="true"
-                                    class="kt-image-input-remove"
-                                >
-                                    <i class="ki-filled ki-cross text-lg"></i>
-                                    <span data-kt-tooltip-content="true" class="kt-tooltip">Kaldır / Geri al</span>
-                                </button>
+                                <div class="kt-image-input"
+                                     data-kt-image-input="true">
 
-                                <div
-                                    data-kt-image-input-placeholder="true"
-                                    class="kt-image-input-placeholder"
-                                    style="background-image:url('{{ asset('assets/media/blank.png') }}')"
-                                >
+                                    {{-- PREVIEW (KTUI bunu şart koşuyor) --}}
                                     <div id="avatarPreview"
                                          data-kt-image-input-preview="true"
-                                         class="kt-image-input-preview"
-                                         style="background-image:url('{{ $avatarUrl }}')"></div>
-
-                                    <div class="flex items-center justify-center cursor-pointer h-6 left-0 right-0 bottom-0 bg-black/25 absolute">
-                                        <i class="ki-filled ki-camera text-white text-sm"></i>
+                                         class="kt-image-input-preview w-20 h-20 rounded-full border border-border bg-cover bg-center"
+                                         style="background-image:url('{{ $avatarUrl }}')">
                                     </div>
+
+                                    {{-- CHANGE (dosyadan seçmek istersen) --}}
+                                    <label class="kt-btn kt-btn-icon kt-btn-circle kt-btn-xs kt-btn-primary"
+                                           data-kt-image-input-action="change"
+                                           title="Dosyadan seç">
+                                        <i class="ki-filled ki-pencil"></i>
+                                        <input type="file" name="avatar_file" accept=".png,.jpg,.jpeg,.webp">
+                                        <input type="hidden" name="avatar_remove" value="0">
+                                    </label>
+
+                                    {{-- CANCEL --}}
+                                    <span class="kt-btn kt-btn-icon kt-btn-circle kt-btn-xs kt-btn-light"
+                                          data-kt-image-input-action="cancel"
+                                          title="İptal">
+                <i class="ki-filled ki-cross"></i>
+            </span>
+
+                                    {{-- REMOVE (KT UI remove) --}}
+                                    <span class="kt-btn kt-btn-icon kt-btn-circle kt-btn-xs kt-btn-danger"
+                                          data-kt-image-input-action="remove"
+                                          title="Kaldır">
+                <i class="ki-filled ki-trash"></i>
+            </span>
+                                </div>
+
+                                <div class="flex flex-wrap items-center gap-2">
+                                    {{-- Media picker ile seç --}}
+                                    <button type="button"
+                                            class="kt-btn kt-btn-light"
+                                            data-media-picker="true"
+                                            data-media-picker-target="#avatarMediaId"
+                                            data-media-picker-preview="#avatarPreview"
+                                            data-media-picker-mime="image/">
+                                        Medyadan Seç
+                                    </button>
+
+                                    <button type="submit" class="kt-btn kt-btn-primary">
+                                        Kaydet
+                                    </button>
                                 </div>
                             </div>
 
-                            @error('avatar')
-                            <div class="text-sm text-destructive">{{ $message }}</div>
+                            @error('avatar_media_id')
+                            <div class="text-xs text-danger">{{ $message }}</div>
                             @enderror
-
-                            <div class="flex flex-wrap gap-2">
-                                <button type="submit" class="kt-btn kt-btn-primary">
-                                    <i class="ki-filled ki-check"></i>
-                                    Avatarı Kaydet
-                                </button>
-
-                                <button type="button"
-                                        class="kt-btn kt-btn-light"
-                                        data-media-picker="true"
-                                        data-media-picker-target="#avatar_media_id"
-                                        data-media-picker-preview="#avatarPreviewImg"
-                                        data-media-picker-mime="image/">
-                                    <i class="ki-filled ki-some-files"></i>
-                                    Medyadan Seç
-                                </button>
-                            </div>
                         </form>
 
-                        {{-- Remove Avatar FORM --}}
-                        <form method="POST" action="{{ route('admin.profile.avatar.remove') }}">
+                        {{-- Tam kaldırma (DB’yi null’la) --}}
+                        <form method="POST" action="{{ route('admin.profile.avatar.remove') }}" class="mt-3">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="kt-btn kt-btn-outline w-full">
-                                <i class="ki-filled ki-trash"></i>
-                                Avatarı Kaldır
-                            </button>
+                            <button type="submit" class="kt-btn kt-btn-danger kt-btn-sm">Avatarı Kaldır</button>
                         </form>
 
-                        <div class="text-xs text-muted-foreground leading-5">
-                            Not: Avatar kaydı <b>avatar_media_id</b> üzerinden yapılır. Upload ettiğin görsel de otomatik media tablosuna kayıt açar.
+                        <div class="text-xs text-muted-foreground">
+                            Not: Avatar kaydı avatar_media_id üzerinden yapılır.
                         </div>
                     </div>
                 </div>
