@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Media\Media;
+use App\Support\Audit\AuditEvent;
+use App\Support\Audit\AuditWriter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -141,14 +143,24 @@ class ProfileController extends Controller
     public function removeAvatar()
     {
         $user = auth()->user();
+        if (!$user) abort(403);
 
         DB::transaction(function () use ($user) {
+            $oldMediaId = $user->avatar_media_id;
+            $oldAvatarPath = $user->avatar;
+
             $this->purgeUserAvatarMedia($user);
 
             $user->forceFill([
                 'avatar_media_id' => null,
                 'avatar' => null,
             ])->save();
+
+            AuditWriter::system('profile.avatar.removed', [
+                'user_id' => $user->id,
+                'old_avatar_media_id' => $oldMediaId,
+                'old_avatar' => $oldAvatarPath,
+            ]);
         });
 
         return back()->with('success', 'Avatar kaldırıldı.');
@@ -160,24 +172,30 @@ class ProfileController extends Controller
     private function purgeUserAvatarMedia($user): void
     {
         if (!$user->avatar_media_id) {
-            // eski sistemden kalan avatar string’i varsa da temizlemek istersen:
             if (!empty($user->avatar) && Storage::disk('public')->exists($user->avatar)) {
                 Storage::disk('public')->delete($user->avatar);
             }
             return;
         }
 
-        $media = Media::query()->find($user->avatar_media_id);
+        $mediaId = (int) $user->avatar_media_id;
+
+        $media = Media::query()->find($mediaId);
         if (!$media) {
             return;
         }
 
-        // Dosyayı sil
+        // mediables üzerinde kullanılıyorsa silme (reuse güvenliği)
+        $usageCount = DB::table('mediables')->where('media_id', $mediaId)->count();
+        if ($usageCount > 0) {
+            return;
+        }
+
         if ($media->disk && $media->path && Storage::disk($media->disk)->exists($media->path)) {
             Storage::disk($media->disk)->delete($media->path);
         }
 
-        // Media kaydını sil
         $media->delete();
     }
+
 }

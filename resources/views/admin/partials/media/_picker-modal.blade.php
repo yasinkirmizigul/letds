@@ -1,25 +1,29 @@
-<div class="kt-modal" id="mediaPickerModal" data-kt-modal="true">
+{{-- Global Media Picker Modal --}}
+<div class="kt-modal hidden" id="mediaPickerModal">
+    {{-- JS bunu click’leyerek açıyor --}}
+    <button type="button"
+            class="hidden"
+            data-kt-modal-toggle="#mediaPickerModal"></button>
+
     <div class="kt-modal-dialog max-w-5xl">
         <div class="kt-modal-content">
             <div class="kt-modal-header">
                 <h3 class="kt-modal-title">Medya Seç</h3>
+
                 <button type="button"
-                        class="hidden"
-                        id="mediaPickerOpener"
-                        data-kt-modal-toggle="#mediaPickerModal"></button>
-                <button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost" data-kt-modal-dismiss="true">
-                    <i class="ki-outline ki-cross"></i>
+                        class="kt-btn kt-btn-sm kt-btn-light"
+                        data-kt-modal-dismiss="true">
+                    Kapat
                 </button>
             </div>
 
-            <div class="kt-modal-body p-6">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="kt-input-group w-[320px]">
-                        <span class="kt-input-group-text"><i class="ki-outline ki-magnifier"></i></span>
-                        <input id="mediaPickerSearch" class="kt-input" placeholder="Ara...">
-                    </div>
+            <div class="kt-modal-body p-6 flex flex-col gap-4">
+                <div class="flex flex-col md:flex-row md:items-center gap-3">
+                    <input class="kt-input flex-1"
+                           id="mediaPickerSearch"
+                           placeholder="Ara..."/>
 
-                    <select id="mediaPickerType" class="kt-select w-[180px]" data-kt-select="true">
+                    <select class="kt-select w-full md:w-[220px]" id="mediaPickerType" data-kt-select="true">
                         <option value="">Tümü</option>
                         <option value="image">Görsel</option>
                         <option value="video">Video</option>
@@ -27,11 +31,9 @@
                     </select>
                 </div>
 
-                <div id="mediaPickerGrid" class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-4"></div>
-            </div>
-
-            <div class="kt-modal-footer justify-end gap-2">
-                <button class="kt-btn kt-btn-light" data-kt-modal-dismiss="true">Kapat</button>
+                <div id="mediaPickerGrid"
+                     class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                </div>
             </div>
         </div>
     </div>

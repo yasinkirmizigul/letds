@@ -166,9 +166,6 @@
                         </div>
                     </form>
                 </div>
-
-                {{-- Media Picker modal (sende zaten var) --}}
-                @include('admin.partials.media._picker-modal')
             </div>
 
         </div>

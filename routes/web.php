@@ -432,11 +432,13 @@ Route::middleware(['auth', 'audit'])
 
                 Route::delete('/avatar', [ProfileController::class, 'removeAvatar'])
                     ->middleware('permission:users.update')
-                    ->name('removeAvatar');
+                    ->name('avatar.remove');
             });
 
         Route::post('/tinymce/upload', [TinyMceController::class, 'upload'])
             ->name('tinymce.upload');
+        Route::get('media/trash', fn () => redirect()->route('admin.media.index', ['mode' => 'trash']))
+            ->name('media.trash');
     });
 
 // Public Projects
