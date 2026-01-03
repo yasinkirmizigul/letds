@@ -135,6 +135,9 @@
             </div>
         </div>
 
+        {{-- Gallery panel --}}
+        @include('admin.pages.projects.partials._gallery', ['project' => $project])
+
         <div class="kt-card kt-card-border">
             <div class="kt-card-header">
                 <h3 class="kt-card-title">Öne Çıkan Görsel</h3>

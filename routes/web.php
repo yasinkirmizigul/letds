@@ -321,6 +321,10 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:galleries.view')
                 ->name('index');
 
+            Route::get('/list', [GalleryController::class, 'list'])
+                ->middleware('permission:galleries.view')
+                ->name('list');
+
             Route::get('/create', [GalleryController::class, 'create'])
                 ->middleware('permission:galleries.create')
                 ->name('create');

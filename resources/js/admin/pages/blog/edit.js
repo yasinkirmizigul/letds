@@ -116,13 +116,44 @@ function observeThemeChanges(onChange) {
 
 function openModal(root, selector) {
     const modal = root.querySelector(selector);
-    if (modal) modal.classList.remove('hidden');
+    if (!modal) return;
+
+    // KTUI modal varsa onu kullan
+    try {
+        if (window.KTModal?.getOrCreateInstance) {
+            const inst = window.KTModal.getOrCreateInstance(modal);
+            inst?.show?.();
+            return;
+        }
+        if (window.KTModal?.getInstance) {
+            const inst = window.KTModal.getInstance(modal) || new window.KTModal(modal);
+            inst?.show?.();
+            return;
+        }
+    } catch {}
+
+    // fallback
+    modal.classList.remove('hidden');
 }
 
 function closeModal(modal) {
-    if (modal) modal.classList.add('hidden');
-}
+    if (!modal) return;
 
+    try {
+        if (window.KTModal?.getOrCreateInstance) {
+            const inst = window.KTModal.getOrCreateInstance(modal);
+            inst?.hide?.();
+            return;
+        }
+        if (window.KTModal?.getInstance) {
+            const inst = window.KTModal.getInstance(modal) || new window.KTModal(modal);
+            inst?.hide?.();
+            return;
+        }
+    } catch {}
+
+    modal.classList.add('hidden');
+}
 function setupFeaturedPreview(root, signal) {
     const input = root.querySelector('#featured_image');
     const img = root.querySelector('#featured_preview');
@@ -261,6 +292,15 @@ export default async function init({ root, dataset }) {
 
     // Modal delegation
     root.addEventListener('click', (e) => {
+
+        // ✅ NEW: data-kt-modal-toggle da yakala
+        const toggleBtn = e.target.closest('[data-kt-modal-toggle]');
+        if (toggleBtn && root.contains(toggleBtn)) {
+            const sel = toggleBtn.getAttribute('data-kt-modal-toggle');
+            if (sel) openModal(root, sel);
+            return;
+        }
+
         const openBtn = e.target.closest('[data-kt-modal-target]');
         if (openBtn && root.contains(openBtn)) {
             const sel = openBtn.getAttribute('data-kt-modal-target');
@@ -570,17 +610,7 @@ export default async function init({ root, dataset }) {
     }, { signal });
 
     // Modal açılınca picker’ı doldur
-    root.addEventListener('click', async (e) => {
-        const openBtn = e.target.closest('[data-kt-modal-target]');
-        if (!openBtn) return;
-        const sel = openBtn.getAttribute('data-kt-modal-target');
-        if (sel !== pickerModalId) return;
-
-        gState.page = 1;
-        gState.q = '';
-        if (pickerSearch) pickerSearch.value = '';
-        await fetchPicker();
-    }, { signal });
+    gState.q = '';
 
     // initial
     await fetchAttached();

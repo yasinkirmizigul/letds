@@ -99,14 +99,43 @@ function observeThemeChanges(onChange) {
     return obs;
 }
 
-
 function openModal(root, selector) {
     const modal = root.querySelector(selector);
-    if (modal) modal.classList.remove('hidden');
+    if (!modal) return;
+
+    try {
+        if (window.KTModal?.getOrCreateInstance) {
+            const inst = window.KTModal.getOrCreateInstance(modal);
+            inst?.show?.();
+            return;
+        }
+        if (window.KTModal?.getInstance) {
+            const inst = window.KTModal.getInstance(modal) || new window.KTModal(modal);
+            inst?.show?.();
+            return;
+        }
+    } catch {}
+
+    modal.classList.remove('hidden');
 }
 
 function closeModal(modal) {
-    if (modal) modal.classList.add('hidden');
+    if (!modal) return;
+
+    try {
+        if (window.KTModal?.getOrCreateInstance) {
+            const inst = window.KTModal.getOrCreateInstance(modal);
+            inst?.hide?.();
+            return;
+        }
+        if (window.KTModal?.getInstance) {
+            const inst = window.KTModal.getInstance(modal) || new window.KTModal(modal);
+            inst?.hide?.();
+            return;
+        }
+    } catch {}
+
+    modal.classList.add('hidden');
 }
 
 async function jreq(signal, url, method, body) {
@@ -150,7 +179,8 @@ export default async function init() {
 
     const projectId = root.getAttribute('data-id');
     if (!projectId) return;
-    // TinyMCE (blog standard selector)
+
+    // TinyMCE
     const ds = root.dataset;
     const tinymceSrc = ds.tinymceSrc;
     const tinymceBase = ds.tinymceBase;
@@ -176,7 +206,7 @@ export default async function init() {
         });
     }
 
-    // slug preview (Blog create ile aynı UX: URL önizleme canlı)
+    // slug preview
     const title = root.querySelector('#projectTitle');
     const slug = root.querySelector('#projectSlug');
     const genBtn = root.querySelector('#projectSlugGenBtn');
@@ -201,7 +231,6 @@ export default async function init() {
         setPrev(v);
     };
 
-
     if (slug) {
         setPrev(slug.value);
         slug.addEventListener('input', () => setPrev(slug.value.trim()), { signal });
@@ -214,7 +243,7 @@ export default async function init() {
         }, { signal });
     }
 
-    // modal delegation (blog edit ile aynı yaklaşım)
+    // modal delegation (legacy support: data-kt-modal-target/close)
     root.addEventListener('click', (e) => {
         const openBtn = e.target.closest('[data-kt-modal-target]');
         if (openBtn && root.contains(openBtn)) {
@@ -233,9 +262,7 @@ export default async function init() {
         if (modal) closeModal(modal);
     }, { signal });
 
-    // --------
     // Delete
-    // --------
     const delBtn = root.querySelector('#projectDeleteBtn');
     if (delBtn) {
         delBtn.addEventListener('click', async () => {
@@ -262,6 +289,7 @@ export default async function init() {
     const pickerEmpty = root.querySelector('#projectGalleryPickerEmpty');
     const pickerInfo = root.querySelector('#projectGalleryPickerInfo');
     const pickerPagination = root.querySelector('#projectGalleryPickerPagination');
+
     const galleryCard = root.querySelector('#projectGalleryCard');
     if (!galleryCard) return;
 
@@ -272,6 +300,7 @@ export default async function init() {
         detach: galleryCard.dataset.projectGalleriesDetachUrl,
         reorder: galleryCard.dataset.projectGalleriesReorderUrl,
     };
+
     if (!galleriesMain || !galleriesSidebar) return;
 
     function syncSlotSelects() {
@@ -290,6 +319,7 @@ export default async function init() {
 
     async function persistBothSlots() {
         syncSlotSelects();
+
         const main_ids = getIds(galleriesMain);
         const sidebar_ids = getIds(galleriesSidebar);
 
@@ -301,14 +331,17 @@ export default async function init() {
         if (!res.ok || !j?.ok) console.error('bulk reorder failed', res.status, j);
     }
 
+    // ✅ PATCH: slot’u render ederken select’e selected bas + data-slot yaz
     function attachedRow(r) {
+        const slot = (r.slot || 'main') === 'sidebar' ? 'sidebar' : 'main';
         const g = r.gallery || {};
         const name = escapeHtml(g.name ?? `Galeri #${r.gallery_id}`);
         const slug = escapeHtml(g.slug ?? '');
 
         return `
 <div class="flex items-center justify-between gap-3 border rounded-lg p-3"
-     data-gallery-id="${r.gallery_id}">
+     data-gallery-id="${r.gallery_id}"
+     data-slot="${slot}">
     <div class="min-w-0">
         <div class="font-medium truncate">${name}</div>
         <div class="text-xs text-muted-foreground">#${r.gallery_id} • ${slug}</div>
@@ -320,8 +353,8 @@ export default async function init() {
         </span>
 
         <select class="kt-select kt-select-sm w-[120px] js-gal-slot">
-            <option value="main">main</option>
-            <option value="sidebar">sidebar</option>
+            <option value="main" ${slot === 'main' ? 'selected' : ''}>main</option>
+            <option value="sidebar" ${slot === 'sidebar' ? 'selected' : ''}>sidebar</option>
         </select>
 
         <button type="button" class="kt-btn kt-btn-sm kt-btn-light js-detach">Kaldır</button>
@@ -389,6 +422,8 @@ export default async function init() {
         if (!row) return;
 
         const to = sel.value || 'main';
+        row.dataset.slot = to;
+
         if (to === 'main') galleriesMain.appendChild(row);
         else galleriesSidebar.appendChild(row);
 
@@ -436,6 +471,7 @@ export default async function init() {
         pickerPagination.innerHTML = `<div class="flex items-center gap-1">${parts.join('')}</div>`;
     }
 
+    // ✅ PATCH: fetch fail olunca visible mesaj bas + empty/info yönetimi
     async function fetchPicker() {
         if (!pickerList) return;
 
@@ -447,7 +483,15 @@ export default async function init() {
         });
 
         const { res, j } = await jreq(signal, `${URLS.list}?${qs.toString()}`, 'GET');
-        if (!res.ok || !j?.ok) return;
+        if (!res.ok || !j?.ok) {
+            pickerList.innerHTML = `<div class="text-sm text-muted-foreground p-3">
+                Liste alınamadı (${res.status})
+            </div>`;
+            if (pickerEmpty) pickerEmpty.classList.remove('hidden');
+            if (pickerInfo) pickerInfo.textContent = '';
+            if (pickerPagination) pickerPagination.innerHTML = '';
+            return;
+        }
 
         const items = Array.isArray(j.data) ? j.data : [];
         const meta = j.meta || {};
@@ -517,13 +561,24 @@ export default async function init() {
         await fetchAttached();
     }, { signal });
 
-    // Modal açılınca picker’ı doldur
+    // ✅ PATCH 1: Modal açılınca picker’ı doldur (data-kt-modal-target)
     root.addEventListener('click', async (e) => {
         const openBtn = e.target.closest('[data-kt-modal-target]');
         if (!openBtn) return;
 
         const sel = openBtn.getAttribute('data-kt-modal-target');
         if (sel !== pickerModalId) return;
+
+        gState.page = 1;
+        gState.q = '';
+        if (pickerSearch) pickerSearch.value = '';
+        await fetchPicker();
+    }, { signal });
+
+    // ✅ PATCH 2: Modal açılınca picker’ı doldur (data-kt-modal-toggle)  ← senin blade bunu kullanıyor
+    root.addEventListener('click', async (e) => {
+        const tgl = e.target.closest(`[data-kt-modal-toggle="${pickerModalId}"]`);
+        if (!tgl) return;
 
         gState.page = 1;
         gState.q = '';

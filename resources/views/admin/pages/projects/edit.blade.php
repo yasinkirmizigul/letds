@@ -4,7 +4,7 @@
     <div class="kt-container-fixed"
          data-page="projects.edit"
          data-id="{{ $project->id }}"
-         data-upload-url="{{ \Illuminate\Support\Facades\Route::has('admin.tinymce.upload') ? route('admin.tinymce.upload') : url('/admin/tinymce/upload') }}"
+         data-upload-url="{{ Route::has('admin.tinymce.upload') ? route('admin.tinymce.upload') : url('/admin/tinymce/upload') }}"
          data-tinymce-src="{{ asset('assets/vendors/tinymce/tinymce.min.js') }}"
          data-tinymce-base="{{ url('/assets/vendors/tinymce') }}"
          data-tinymce-lang-url="{{ asset('assets/vendors/tinymce/langs/tr.js') }}">
@@ -33,9 +33,6 @@
                 </div>
             </div>
         </form>
-
-        {{-- Gallery panel --}}
-        @include('admin.pages.projects.partials._gallery', ['project' => $project])
     </div>
 
     {{-- Media upload modal --}}

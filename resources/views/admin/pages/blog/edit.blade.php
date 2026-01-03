@@ -169,7 +169,7 @@
                                     <button type="button"
                                             class="kt-btn kt-btn-sm kt-btn-light"
                                             id="blogGalleryAttachBtn"
-                                            data-kt-modal-target="#blogGalleryPickerModal">
+                                            data-kt-modal-toggle="#blogGalleryPickerModal">
                                         <i class="ki-outline ki-plus"></i> Ekle
                                     </button>
                                 </div>
@@ -233,7 +233,9 @@
                                             </div>
 
                                             <div class="w-full md:w-56">
-                                                <select id="blogGalleryPickerSlot" class="kt-select w-full">
+                                                <select id="blogGalleryPickerSlot" class="kt-select w-full"
+                                                        data-kt-select="true"
+                                                        data-kt-select-placeholder="Galeri Konum">
                                                     <option value="main">Main</option>
                                                     <option value="sidebar">Sidebar</option>
                                                 </select>
@@ -304,37 +306,6 @@
 
                 </div>
             </form>
-        </div>
-
-        {{-- Gallery picker modal --}}
-        <div class="kt-modal kt-modal-center" id="blogGalleryPickerModal" data-kt-modal="true">
-            <div class="kt-modal-content max-w-[60%]" style="max-height: 90vh">
-                <div class="kt-modal-header">
-                    <h3 class="kt-modal-title">Galeri Seç</h3>
-                    <button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost" data-kt-modal-dismiss="true">
-                        <i class="ki-outline ki-cross"></i>
-                    </button>
-                </div>
-
-                <div class="kt-modal-body overflow-hidden p-7">
-                    <div class="flex items-center gap-3 mb-4">
-                        <input class="kt-input w-80" id="blogGalleryPickerSearch" placeholder="Ara: isim / slug">
-                        <select class="kt-select w-44" id="blogGalleryPickerSlot" data-kt-select="true" data-kt-select-placeholder="Seç">
-                            <option value="main">Main</option>
-                            <option value="sidebar">Sidebar</option>
-                        </select>
-                        <button class="kt-btn kt-btn-light" id="blogGalleryPickerRefresh">Yenile</button>
-                    </div>
-
-                    <div id="blogGalleryPickerEmpty" class="text-sm text-muted-foreground hidden">Kayıt yok.</div>
-                    <div id="blogGalleryPickerList" class="flex flex-col gap-2"></div>
-
-                    <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium mt-6">
-                        <span id="blogGalleryPickerInfo"></span>
-                        <div class="kt-datatable-pagination" id="blogGalleryPickerPagination"></div>
-                    </div>
-                </div>
-            </div>
         </div>
 
         {{-- Media modal (gallery edit gibi ileride blog içinden item bakmak istersen hazır kalsın) --}}
