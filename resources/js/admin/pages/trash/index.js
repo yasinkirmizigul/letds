@@ -23,6 +23,11 @@ export default function init() {
     const btnRes = root.querySelector('#trashBulkRestoreBtn');
     const btnForce = root.querySelector('#trashBulkForceDeleteBtn');
 
+
+    const listUrl = root.dataset.listUrl || '/admin/trash/list';
+    const bulkRestoreUrl = root.dataset.bulkRestoreUrl || '/admin/trash/bulk-restore';
+    const bulkForceUrl   = root.dataset.bulkForceDeleteUrl || '/admin/trash/bulk-force-delete';
+
     const state = {
         q: '',
         type: 'all',
@@ -114,7 +119,6 @@ export default function init() {
                     ${purgeBadge}
                 </div>
             </td>
-                        <td class="text-sm text-muted-foreground">${escapeHtml((it.deleted_at || '').replace('T',' ').replace('Z',''))}</td>
             <td class="text-center">
                 <div class="inline-flex gap-2 justify-end">
                     ${it.url ? `
@@ -202,7 +206,7 @@ export default function init() {
         params.set('perpage', String(state.per));
 
         try {
-            const j = await fetchJson(`/admin/trash/list?${params.toString()}`);
+            const j = await fetchJson(`${listUrl}?${params.toString()}`);
             const items = Array.isArray(j.data) ? j.data : [];
 
             state.total = j?.meta?.total || 0;
@@ -296,7 +300,7 @@ export default function init() {
         try {
             if (action === 'restore') {
                 if (!confirm('Geri yüklensin mi?')) return;
-                await postJson('/admin/trash/bulk-restore', { items: [{ type, id }] });
+                await postJson(bulkRestoreUrl, { items: [{ type, id }] });
                 state.selected.delete(`${type}:${id}`);
                 notify('success', 'Geri yükleme tamam');
                 load();
@@ -304,7 +308,7 @@ export default function init() {
 
             if (action === 'force-delete') {
                 if (!confirm('KALICI silinecek. Emin misin?')) return;
-                await postJson('/admin/trash/bulk-force-delete', { items: [{ type, id }] });
+                await postJson(bulkForceUrl, { items: [{ type, id }] });
                 state.selected.delete(`${type}:${id}`);
                 notify('success', 'Kalıcı silindi');
                 load();
@@ -321,7 +325,7 @@ export default function init() {
         if (!confirm(`${items.length} kayıt geri yüklensin mi?`)) return;
 
         try {
-            const j = await postJson('/admin/trash/bulk-restore', { items });
+            const j = await postJson(bulkRestoreUrl, { items });
             state.selected.clear();
             notify('success', `Geri yükleme: ${j.done || 0}`);
             load();
@@ -336,7 +340,7 @@ export default function init() {
         if (!confirm(`${items.length} kayıt KALICI silinecek. Emin misin?`)) return;
 
         try {
-            const j = await postJson('/admin/trash/bulk-force-delete', { items });
+            const j = await postJson(bulkForceUrl, { items });
             state.selected.clear();
 
             const done = j.done || 0;

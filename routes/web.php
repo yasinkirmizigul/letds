@@ -366,7 +366,20 @@ Route::middleware(['auth', 'audit'])
             Route::get('/', [TrashController::class, 'index'])
                 ->middleware('permission:trash.view')
                 ->name('index');
+
+            Route::get('/list', [TrashController::class, 'list'])
+                ->middleware('permission:trash.view')
+                ->name('list');
+
+            Route::post('/bulk-restore', [TrashController::class, 'bulkRestore'])
+                ->middleware('permission:trash.restore')
+                ->name('bulkRestore');
+
+            Route::post('/bulk-force-delete', [TrashController::class, 'bulkForceDestroy'])
+                ->middleware('permission:trash.force-delete')
+                ->name('bulkForceDestroy');
         });
+
 
         // Audit Logs
         Route::prefix('audit-logs')->as('audit-logs.')->group(function () {
