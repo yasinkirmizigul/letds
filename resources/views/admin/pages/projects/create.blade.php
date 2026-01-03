@@ -1,41 +1,33 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    <div class="kt-container-fixed" data-page="projects.create">
-        <div class="grid gap-5 lg:gap-7.5">
+    <div class="kt-container-fixed"
+         data-page="projects.create"
+         data-upload-url="{{ Route::has('admin.tinymce.upload') ? route('admin.tinymce.upload') : url('/admin/tinymce/upload') }}"
+         data-tinymce-src="{{ asset('assets/vendors/tinymce/tinymce.min.js') }}"
+         data-tinymce-base="{{ url('/assets/vendors/tinymce') }}"
+         data-tinymce-lang-url="{{ asset('assets/vendors/tinymce/langs/tr.js') }}">
 
-            @includeIf('admin.partials._flash')
+        @includeIf('admin.partials._flash')
 
-            <div class="flex items-center justify-between flex-wrap gap-3">
-                <div>
-                    <h1 class="text-xl font-semibold">{{ $pageTitle ?? 'Proje Ekle' }}</h1>
-                    <div class="text-sm text-muted-foreground">Başlık, içerik, SEO, kategori, görsel</div>
-                </div>
-                <a href="{{ route('admin.projects.index') }}" class="kt-btn kt-btn-light">Geri</a>
+        {{-- Başlık/desc/actions kısmını sende nasıl standard ise ona göre bırakıyorum --}}
+        <form method="POST" action="{{ route('admin.projects.store') }}" class="grid gap-5 lg:gap-7.5">
+            @csrf
+
+            @include('admin.pages.projects.partials._form', [
+                'project' => null,
+                'categories' => $categories ?? collect(),
+                'selectedCategoryIds' => $selectedCategoryIds ?? [],
+                'featuredMediaId' => null,
+            ])
+
+            <div class="flex items-center justify-end gap-3">
+                <button type="submit" class="kt-btn kt-btn-primary">Kaydet</button>
+                <a href="{{ route('admin.projects.index') }}" class="kt-btn kt-btn-light">İptal</a>
             </div>
-
-            <div class="kt-card">
-                <form class="kt-card-content p-8 flex flex-col gap-6"
-                      method="POST"
-                      action="{{ route('admin.projects.store') }}">
-                    @csrf
-
-                    @include('admin.pages.projects.partials._form', [
-                        'project' => null,
-                        'categories' => $categories ?? collect(),
-                        'selectedCategoryIds' => $selectedCategoryIds ?? [],
-                        'featuredMediaId' => null,
-                    ])
-
-                    <div class="flex items-center gap-2">
-                        <button class="kt-btn kt-btn-primary" type="submit">Kaydet</button>
-                        <a class="kt-btn kt-btn-light" href="{{ route('admin.projects.index') }}">İptal</a>
-                    </div>
-                </form>
-            </div>
-
-            {{-- Media upload modal (media picker buna ihtiyaç duyuyor) --}}
-            @include('admin.pages.media.partials._upload-modal')
-        </div>
+        </form>
     </div>
+
+    {{-- Media upload modal --}}
+    @include('admin.pages.media.partials._upload-modal')
 @endsection

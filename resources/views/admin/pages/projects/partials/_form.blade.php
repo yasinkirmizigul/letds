@@ -59,12 +59,14 @@
             </div>
         </div>
 
-        <div>
-            <label class="kt-form-label">İçerik</label>
-            <textarea class="kt-textarea min-h-[320px]"
+        <div class="flex flex-col gap-2">
+            <label class="kt-form-label font-normal text-mono">İçerik</label>
+            <textarea id="content_editor"
                       name="content"
-                      id="projectContent">{{ old('content', $project->content ?? '') }}</textarea>
-            @error('content') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                      class="kt-input min-h-[320px]">{{ old('content', $project->content ?? '') }}</textarea>
+            @error('content')
+            <div class="text-xs text-danger">{{ $message }}</div>
+            @enderror
         </div>
 
         <div class="kt-card kt-card-border">
@@ -115,11 +117,11 @@
                         data-kt-select-multiple="true"
                         data-kt-select-tags="true"
                         data-kt-select-config='{
-                    "showSelectedCount": true,
-                    "enableSelectAll": true,
-                    "selectAllText": "Tümünü Seç",
-                    "clearAllText": "Tümünü Temizle"
-                }'>
+                            "showSelectedCount": true,
+                            "enableSelectAll": true,
+                            "selectAllText": "Tümünü Seç",
+                            "clearAllText": "Tümünü Temizle"
+                        }'>
                     @foreach($categories as $c)
                         <option value="{{ $c->id }}"
                             @selected(in_array((int)$c->id, old('category_ids', $selectedCategoryIds)))>
@@ -127,9 +129,8 @@
                         </option>
                     @endforeach
                 </select>
-
                 @error('category_ids')
-                <div class="text-danger text-sm mt-1">{{ $message }}</div>
+                <div class="text-xs text-danger">{{ $message }}</div>
                 @enderror
             </div>
         </div>

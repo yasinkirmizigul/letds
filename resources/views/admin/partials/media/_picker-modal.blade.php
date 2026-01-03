@@ -3,6 +3,10 @@
         <div class="kt-modal-content">
             <div class="kt-modal-header">
                 <h3 class="kt-modal-title">Medya Seç</h3>
+                <button type="button"
+                        class="hidden"
+                        id="mediaPickerOpener"
+                        data-kt-modal-toggle="#mediaPickerModal"></button>
                 <button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost" data-kt-modal-dismiss="true">
                     <i class="ki-outline ki-cross"></i>
                 </button>
@@ -15,11 +19,11 @@
                         <input id="mediaPickerSearch" class="kt-input" placeholder="Ara...">
                     </div>
 
-                    <select id="mediaPickerType" class="kt-select w-[180px]">
+                    <select id="mediaPickerType" class="kt-select w-[180px]" data-kt-select="true">
                         <option value="">Tümü</option>
                         <option value="image">Görsel</option>
                         <option value="video">Video</option>
-                        <option value="doc">Doküman</option>
+                        <option value="pdf">Doküman</option>
                     </select>
                 </div>
 

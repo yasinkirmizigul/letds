@@ -15,13 +15,13 @@ export function initMediaPicker() {
         currentTarget = opts;
         state.page = 1;
         state.q = '';
-        state.type = 'image'; // avatar için default image
+        state.type = (opts?.mime && opts.mime.startsWith('image/')) ? 'image' : '';
         if (search) search.value = '';
         if (type) type.value = state.type;
 
         fetchList();
         // modal aç
-        const opener = document.querySelector('[data-kt-modal-toggle="#mediaPickerModal"]');
+        const opener = modal.querySelector('[data-kt-modal-toggle="#mediaPickerModal"]');
         if (opener) opener.click();
         else {
             // fallback: modal attribute ile açılmıyorsa, senin KT modal init'e göre açma gerekebilir

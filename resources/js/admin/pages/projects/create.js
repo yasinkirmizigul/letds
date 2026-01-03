@@ -1,69 +1,168 @@
-function slugify(s) {
-    return (s || '')
-        .toString()
-        .toLowerCase()
+let ac = null;
+let observer = null;
+
+function csrfToken() {
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    return meta ? meta.getAttribute('content') : '';
+}
+
+function getTheme() {
+    const root = document.documentElement;
+    const body = document.body;
+    const isDark = root.classList.contains('dark') || body.classList.contains('dark');
+    return isDark ? 'dark' : 'light';
+}
+
+function slugifyTR(str) {
+    return String(str || '')
         .trim()
+        .toLowerCase()
+        .replaceAll('ğ', 'g').replaceAll('ü', 'u').replaceAll('ş', 's')
+        .replaceAll('ı', 'i').replaceAll('ö', 'o').replaceAll('ç', 'c')
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9\s-]/g, '')
         .replace(/\s+/g, '-')
-        .replace(/[^\w\-]+/g, '')
-        .replace(/\-\-+/g, '-')
-        .replace(/^-+/, '')
-        .replace(/-+$/, '');
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
 }
 
-function setPreview(root, val) {
-    const prev = root.querySelector('#projectSlugPreview');
-    if (prev) prev.textContent = val || '';
+function loadScriptOnce(src) {
+    if (!src) return Promise.reject(new Error('tinymce src missing'));
+    if (document.querySelector(`script[data-once="${src}"]`)) return Promise.resolve();
+
+    return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src;
+        s.async = true;
+        s.dataset.once = src;
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error('Failed to load: ' + src));
+        document.head.appendChild(s);
+    });
 }
 
-export default function init() {
-    const root = document.querySelector('[data-page="projects.create"]');
-    if (!root) return;
+function safeTinyRemove(selector) {
+    try { window.tinymce?.remove?.(selector); } catch {}
+}
 
-    const title = root.querySelector('#projectTitle');
-    const slug = root.querySelector('#projectSlug');
-    const genBtn = root.querySelector('#projectSlugGenBtn');
+function initTiny({ selector, uploadUrl, baseUrl, langUrl }) {
+    if (!window.tinymce) return;
 
-    const applySlugFromTitle = () => {
-        if (!title || !slug) return;
-        const v = slugify(title.value);
-        slug.value = v;
-        setPreview(root, v);
+    const theme = getTheme();
+    safeTinyRemove(selector);
+
+    window.tinymce.init({
+        selector,
+        height: 420,
+        license_key: 'gpl',
+        base_url: baseUrl,
+        suffix: '.min',
+        language: 'tr',
+        language_url: langUrl,
+        skin: theme === 'dark' ? 'oxide-dark' : 'oxide',
+        content_css: theme === 'dark' ? 'dark' : 'default',
+        plugins: 'lists link image code table',
+        toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link image table | code',
+        menubar: false,
+        branding: false,
+        promotion: false,
+        automatic_uploads: true,
+        paste_data_images: true,
+        images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', uploadUrl);
+            xhr.withCredentials = true;
+            xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken());
+
+            xhr.upload.onprogress = (e) => {
+                if (e.lengthComputable) progress((e.loaded / e.total) * 100);
+            };
+
+            xhr.onload = () => {
+                if (xhr.status < 200 || xhr.status >= 300) return reject('Upload failed: ' + xhr.status);
+                let json;
+                try { json = JSON.parse(xhr.responseText); } catch { return reject('Invalid JSON'); }
+                if (!json || typeof json.location !== 'string') return reject('No location returned');
+                resolve(json.location);
+            };
+
+            xhr.onerror = () => reject('Network error');
+
+            const formData = new FormData();
+            formData.append('file', blobInfo.blob(), blobInfo.filename());
+            xhr.send(formData);
+        }),
+    });
+}
+
+function observeThemeChanges(onChange) {
+    let current = getTheme();
+    const obs = new MutationObserver(() => {
+        const next = getTheme();
+        if (next === current) return;
+        current = next;
+        onChange(next);
+    });
+
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+    return obs;
+}
+
+function setupSlugAuto(root, signal) {
+    const titleInput = root.querySelector('input[name="title"]');
+    const slugInput = root.querySelector('#slug');
+    const preview = root.querySelector('#url_slug_preview');
+    if (!titleInput || !slugInput) return;
+
+    let slugLocked = slugInput.value.trim().length > 0;
+
+    const setSlug = (val) => {
+        slugInput.value = val;
+        if (preview) preview.textContent = val || '';
     };
 
-    if (slug) {
-        setPreview(root, slug.value);
-        slug.addEventListener('input', () => setPreview(root, slug.value.trim()));
-    }
+    slugInput.addEventListener('input', () => {
+        const v = slugInput.value.trim();
+        slugLocked = v.length > 0;
+        if (preview) preview.textContent = v;
+    }, { signal });
 
-    if (genBtn) genBtn.addEventListener('click', applySlugFromTitle);
+    titleInput.addEventListener('input', () => {
+        if (slugLocked) return;
+        setSlug(slugifyTR(titleInput.value));
+    }, { signal });
 
-    // Blog’daki davranış: slug boşsa title blur’da üret
-    if (title && slug) {
-        title.addEventListener('blur', () => {
-            if (slug.value.trim() !== '') return;
-            applySlugFromTitle();
-        });
-    }
+    if (preview) preview.textContent = (slugInput.value || '').trim();
+}
 
-    // TinyMCE varsa devreye girsin
-    if (window.tinymce && typeof window.tinymce.init === 'function') {
-        try {
-            window.tinymce.init({ selector: '#projectContent' });
-        } catch (e) {}
-    }
+export default async function init({ root, dataset }) {
+    ac = new AbortController();
+    const { signal } = ac;
 
-    // featured clear
-    const clearBtn = root.querySelector('#projectFeaturedClearBtn');
-    const hid = root.querySelector('#projectFeaturedMediaId');
-    const img = root.querySelector('#projectFeaturedPreview');
+    setupSlugAuto(root, signal);
 
-    if (clearBtn && hid) {
-        clearBtn.addEventListener('click', () => {
-            hid.value = '';
-            if (img) {
-                img.src = '';
-                img.classList.add('hidden');
-            }
-        });
-    }
+    const selector = '#content_editor';
+    const uploadUrl = dataset.uploadUrl;
+    const tinymceSrc = dataset.tinymceSrc;
+    const baseUrl = dataset.tinymceBase;
+    const langUrl = dataset.tinymceLangUrl;
+
+    await loadScriptOnce(tinymceSrc);
+    initTiny({ selector, uploadUrl, baseUrl, langUrl });
+
+    observer = observeThemeChanges(() => {
+        initTiny({ selector, uploadUrl, baseUrl, langUrl });
+    });
+}
+
+export function destroy() {
+    try { observer?.disconnect(); } catch {}
+    observer = null;
+
+    try { ac?.abort(); } catch {}
+    ac = null;
+
+    safeTinyRemove('#content_editor');
 }
