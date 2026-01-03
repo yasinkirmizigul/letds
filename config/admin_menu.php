@@ -29,6 +29,22 @@ return [
 
     [
         'type'     => 'accordion',
+        'title'    => 'Projeler',
+        'icon'     => 'ki-filled ki-briefcase text-lg',
+        'perm'     => 'projects.view',
+        'children' => [
+            [
+                'title'  => 'Projeler',
+                'route'  => 'admin.projects.index',
+                'active' => ['admin.projects.*'],
+                'perm'   => 'projects.view',
+            ],
+        ],
+        'style' => '',
+    ],
+
+    [
+        'type'     => 'accordion',
         'title'    => 'Medya',
         'icon'     => 'ki-filled ki-screen text-lg',
         'perm'     => 'media.view',

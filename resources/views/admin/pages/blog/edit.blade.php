@@ -140,7 +140,15 @@
                             <select name="category_ids[]" multiple
                                     class="kt-select @error('category_ids') kt-input-invalid @enderror"
                                     data-kt-select="true"
-                                    data-kt-select-placeholder="Kategori Listesi">
+                                    data-kt-select-placeholder="Kategoriler"
+                                    data-kt-select-multiple="true"
+                                    data-kt-select-tags="true"
+                                    data-kt-select-config='{
+                                        "showSelectedCount": true,
+                                        "enableSelectAll": true,
+                                        "selectAllText": "Tümünü Seç",
+                                        "clearAllText": "Tümünü Temizle"
+                                      }'>
                                 @foreach($categories as $c)
                                     <option value="{{ $c->id }}" @selected(in_array($c->id, old('category_ids', $selectedCategoryIds)))>
                                         {{ $c->name }}

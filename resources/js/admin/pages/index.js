@@ -3,6 +3,12 @@ import { register } from '../../core/page-registry';
 import BlogCreate from './blog/create';
 import BlogEdit from './blog/edit';
 import BlogIndex from './blog/index';
+
+import ProjectsCreate from './projects/create';
+import ProjectsEdit from './projects/edit';
+import ProjectsIndex from './projects/index';
+import ProjectsTrash from './projects/trash';
+
 import PermissionsCreate from './permissions/create';
 import PermissionsEdit from './permissions/edit';
 import PermissionsIndex from './permissions/index';
@@ -29,6 +35,11 @@ export function registerPages() {
     register('blog.create', BlogCreate);
     register('blog.edit', BlogEdit);
     register('blog.index', BlogIndex);
+
+    register('projects.create', ProjectsCreate);
+    register('projects.edit', ProjectsEdit);
+    register('projects.index', ProjectsIndex);
+    register('projects.trash', ProjectsTrash);
 
     register('permissions.create', PermissionsCreate);
     register('permissions.edit', PermissionsEdit);

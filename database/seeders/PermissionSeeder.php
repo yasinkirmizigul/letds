@@ -12,9 +12,14 @@ class PermissionSeeder extends Seeder
         $slugs = [
             'admin.access',
 
+            // Users / Roles / Permissions (mevcut)
             'users.view','users.create','users.update','users.delete',
             'roles.view','roles.create','roles.update','roles.delete',
             'permissions.view','permissions.create','permissions.update','permissions.delete',
+
+            // Projects (yeni)
+            'projects.view','projects.create','projects.update','projects.delete',
+            'projects.trash','projects.restore','projects.force_delete','projects.state_change',
         ];
 
         foreach ($slugs as $slug) {

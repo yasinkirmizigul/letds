@@ -76,7 +76,15 @@
                             <select name="category_ids[]" multiple
                                     class="kt-select @error('category_ids') kt-input-invalid @enderror"
                                     data-kt-select="true"
-                                    data-kt-select-placeholder="Kategoriler">
+                                    data-kt-select-placeholder="Kategoriler"
+                                    data-kt-select-multiple="true"
+                                    data-kt-select-tags="true"
+                                    data-kt-select-config='{
+                                        "showSelectedCount": true,
+                                        "enableSelectAll": true,
+                                        "selectAllText": "Tümünü Seç",
+                                        "clearAllText": "Tümünü Temizle"
+                                      }'>
                                 @foreach($categories as $cat)
                                     <option
                                         value="{{ $cat->id }}" @selected(collect(old('category_ids'))->contains($cat->id))>
@@ -86,8 +94,7 @@
                             </select>
                             @error('category_ids')
                             <div class="text-xs text-danger">{{ $message }}</div> @enderror
-                            <div class="text-xs text-muted-foreground">Çoklu seçebilirsin. Ürün/galeri de aynı kategori
-                                yapısını kullanacak.
+                            <div class="text-xs text-muted-foreground">Çoklu seçebilirsin.
                             </div>
                         </div>
 
