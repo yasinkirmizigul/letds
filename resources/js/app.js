@@ -40,6 +40,23 @@ document.addEventListener('click', (e) => {
     }
 });
 
+// KTUI ImageInput: file dialog cancel guard
+document.addEventListener('change', (e) => {
+    const input = e.target;
+    if (!(input instanceof HTMLInputElement)) return;
+    if (input.type !== 'file') return;
+
+    const wrap = input.closest('[data-kt-image-input]');
+    if (!wrap) return;
+
+    // Kullanıcı dosya seçmeyi iptal ettiyse files boş gelir.
+    // KTUI bazen bunu kontrol etmiyor ve readAsDataURL(undefined) ile patlıyor.
+    if (!input.files || input.files.length === 0) {
+        e.stopImmediatePropagation(); // KTUI handler'ını engelle
+        // opsiyonel: input.value = '';  // state temizliği istersen
+    }
+}, true); // CAPTURE: KTUI'den önce yakala
+
 window.Alpine = Alpine;
 Alpine.start();
 
