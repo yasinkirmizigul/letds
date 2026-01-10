@@ -42,7 +42,7 @@
                     </div>
 
                     <div class="ms-auto flex items-center gap-2">
-                        <select id="projectsPageSize" class="kt-select w-24"></select>
+                        <select id="projectsPageSize" class="kt-select w-24" data-kt-select="true"></select>
                     </div>
                 </div>
 

@@ -456,6 +456,8 @@ Route::middleware(['auth', 'audit'])
             ->name('tinymce.upload');
         Route::get('media/trash', fn () => redirect()->route('admin.media.index', ['mode' => 'trash']))
             ->name('media.trash');
+        Route::get('galleries/trash', fn () => redirect()->route('admin.galleries.index', ['mode' => 'trash']))
+            ->name('galleries.trash');
     });
 
 // Public Projects
