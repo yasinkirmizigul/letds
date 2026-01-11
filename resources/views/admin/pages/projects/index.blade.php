@@ -71,8 +71,8 @@
                     </div>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table id="projects_table" class="kt-table">
+                <div class="kt-scrollable-x-auto overflow-y-hidden">
+                    <table id="projects_table" class="kt-table table-auto kt-table-border w-full">
                         <thead>
                         <tr class="text-xs text-muted-foreground">
                             <th class="w-[55px] dt-orderable-none">
