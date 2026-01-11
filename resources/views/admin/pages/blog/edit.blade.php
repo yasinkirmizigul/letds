@@ -161,133 +161,29 @@
                             @enderror
                         </div>
 
-                        {{-- Galleries --}}
-                        <div class="kt-card">
-                            <div class="kt-card-header py-4">
-                                <h3 class="kt-card-title">Galeriler</h3>
-                                <div class="kt-card-toolbar flex items-center gap-2">
-                                    <button type="button"
-                                            class="kt-btn kt-btn-sm kt-btn-light"
-                                            id="blogGalleryAttachBtn"
-                                            data-kt-modal-toggle="#blogGalleryPickerModal">
-                                        <i class="ki-outline ki-plus"></i> Ekle
-                                    </button>
-                                </div>
-                            </div>
+                        @include('admin.components.gallery-manager', [
+                          'id' => 'blog-' . $blogPost->id,
+                          'title' => 'Galeriler',
+                          'routes' => [
+                            'list' => route('admin.galleries.list'),
+                            'index' => route('admin.blog.galleries.index', $blogPost),
+                            'attach' => route('admin.blog.galleries.attach', $blogPost),
+                            'detach' => route('admin.blog.galleries.detach', $blogPost),
+                            'reorder' => route('admin.blog.galleries.reorder', $blogPost),
+                          ],
+                          'slots' => [
+                            'main' => 'Ana',
+                            'sidebar' => 'Sidebar',
+                          ],
+                        ])
 
-                            <div class="kt-card-content p-4 grid gap-4">
-                                <div class="text-xs text-muted-foreground">
-                                    Blog’a galeri bağla, slot seç, sırala.
-                                </div>
-
-                                <div id="blogGalleriesEmpty" class="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">
-                                    Henüz galeri bağlı değil.
-                                </div>
-
-                                <div class="grid gap-3">
-                                    <div class="rounded-xl border border-border bg-background">
-                                        <button type="button"
-                                                class="w-full px-4 py-3 flex items-center justify-between"
-                                                data-acc="main">
-                                            <div class="font-medium">Main</div>
-                                            <span class="kt-badge kt-badge-outline">Sürükle-bırak</span>
-                                        </button>
-                                        <div class="px-4 pb-4 pt-2">
-                                            <div id="blogGalleriesMain" class="grid gap-2"></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="rounded-xl border border-border bg-background">
-                                        <button type="button"
-                                                class="w-full px-4 py-3 flex items-center justify-between"
-                                                data-acc="sidebar">
-                                            <div class="font-medium">Sidebar</div>
-                                            <span class="kt-badge kt-badge-outline">Sürükle-bırak</span>
-                                        </button>
-                                        <div class="px-4 pb-4 pt-2">
-                                            <div id="blogGalleriesSidebar" class="grid gap-2"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- Gallery picker modal --}}
-                        <div class="kt-modal kt-modal-center hidden" id="blogGalleryPickerModal">
-                            <div class="kt-modal-content max-w-[900px]" style="max-height: 92vh">
-                                <div class="kt-modal-header">
-                                    <h3 class="kt-modal-title">Galeri Seç</h3>
-                                    <button type="button" class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost" data-kt-modal-close="true">
-                                        <i class="ki-outline ki-cross"></i>
-                                    </button>
-                                </div>
-
-                                <div class="kt-modal-body p-6 overflow-auto">
-                                    <div class="grid gap-4">
-                                        <div class="flex flex-col md:flex-row md:items-center gap-3">
-                                            <div class="grow">
-                                                <input id="blogGalleryPickerSearch"
-                                                       type="text"
-                                                       class="kt-input"
-                                                       placeholder="Galeride ara (isim/slug)"/>
-                                            </div>
-
-                                            <div class="w-full md:w-56">
-                                                <select id="blogGalleryPickerSlot" class="kt-select w-full"
-                                                        data-kt-select="true"
-                                                        data-kt-select-placeholder="Galeri Konum">
-                                                    <option value="main">Main</option>
-                                                    <option value="sidebar">Sidebar</option>
-                                                </select>
-                                            </div>
-
-                                            <button type="button" id="blogGalleryPickerRefresh" class="kt-btn kt-btn-light">
-                                                <i class="ki-outline ki-arrows-circle"></i> Yenile
-                                            </button>
-                                        </div>
-
-                                        <div class="flex items-center justify-between text-xs text-muted-foreground">
-                                            <div id="blogGalleryPickerInfo">0-0 / 0</div>
-                                            <div id="blogGalleryPickerPagination" class="flex items-center gap-1"></div>
-                                        </div>
-
-                                        <div id="blogGalleryPickerEmpty"
-                                             class="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">
-                                            Kayıt yok.
-                                        </div>
-
-                                        <div id="blogGalleryPickerList" class="grid gap-2"></div>
-                                    </div>
-                                </div>
-
-                                <div class="kt-modal-footer justify-end gap-2">
-                                    <button type="button" class="kt-btn kt-btn-light" data-kt-modal-close="true">Kapat</button>
-                                </div>
-                            </div>
-                        </div>
 
                         {{-- Featured image --}}
-                        <div class="flex flex-col gap-2">
-                            <label class="kt-form-label font-normal text-mono">Öne Çıkan Görsel</label>
-
-                            <input id="featured_image"
-                                   type="file"
-                                   name="featured_image"
-                                   accept="image/*"
-                                   class="kt-input @error('featured_image') kt-input-invalid @enderror">
-
-                            @error('featured_image')
-                            <div class="text-xs text-danger">{{ $message }}</div>
-                            @enderror
-
-                            @if($blogPost->featuredImageUrl())
-                                <img id="featuredPreview"
-                                     src="{{ $blogPost->featuredImageUrl() }}"
-                                     class="rounded-md border border-border max-h-52 object-cover">
-                            @else
-                                <img id="featuredPreview" class="hidden rounded-md border border-border max-h-52 object-cover">
-                            @endif
-                        </div>
+                        @include('admin.components.featured-image-manager', [
+                            'name' => 'featured_image',
+                            'currentUrl' => $blogPost?->featured_image_url,
+                            'title' => 'Öne Çıkan Görsel',
+                        ])
 
                         {{-- Publish --}}
                         <div class="flex items-center justify-between border border-border rounded-md p-4">

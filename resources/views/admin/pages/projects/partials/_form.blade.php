@@ -138,43 +138,12 @@
         {{-- Gallery panel --}}
         @include('admin.pages.projects.partials._gallery', ['project' => $project])
 
-        <div class="kt-card kt-card-border">
-            <div class="kt-card-header">
-                <h3 class="kt-card-title">Öne Çıkan Görsel</h3>
-            </div>
-
-            <div class="kt-card-content p-6 flex flex-col gap-3">
-                <input type="hidden"
-                       name="featured_media_id"
-                       id="projectFeaturedMediaId"
-                       value="{{ old('featured_media_id', $featuredMediaId ?? '') }}"/>
-
-                <img id="projectFeaturedPreview"
-                     class="rounded-lg border hidden"
-                     alt="preview"/>
-
-                <div class="flex items-center gap-2">
-                    <button type="button"
-                            class="kt-btn kt-btn-light"
-                            data-media-picker="true"
-                            data-media-picker-target="#projectFeaturedMediaId"
-                            data-media-picker-preview="#projectFeaturedPreview"
-                            data-media-picker-mime="image/">
-                        Media’dan Seç
-                    </button>
-
-                    <button type="button"
-                            class="kt-btn kt-btn-light"
-                            id="projectFeaturedClearBtn">
-                        Temizle
-                    </button>
-                </div>
-
-                @error('featured_media_id') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
-            </div>
-        </div>
-
-        <div class="kt-card kt-card-border">
+        @include('admin.components.featured-image-manager', [
+                'name' => 'featured_image',
+                'currentUrl' => $project?->featured_image_url,
+                'title' => 'Öne Çıkan Görsel',
+            ])
+                    <div class="kt-card kt-card-border">
             <div class="kt-card-header">
                 <h3 class="kt-card-title">Appointment</h3>
             </div>

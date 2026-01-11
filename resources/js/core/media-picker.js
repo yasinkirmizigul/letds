@@ -3,7 +3,7 @@ export function initMediaPicker() {
     if (window.__mediaPickerInitBound) return;
     window.__mediaPickerInitBound = true;
 
-    let state = { page: 1, perpage: 24, q: '', type: '' };
+    let state = {page: 1, perpage: 24, q: '', type: ''};
     let currentTarget = null; // {inputSel, previewSel, mime}
 
     const modal = document.getElementById('mediaPickerModal');
@@ -121,7 +121,7 @@ export function initMediaPicker() {
 
         try {
             const res = await fetch(`/admin/media/list?${qs.toString()}`, {
-                headers: { Accept: 'application/json' },
+                headers: {Accept: 'application/json'},
                 signal: aborter.signal,
             });
 
@@ -202,7 +202,7 @@ export function initMediaPicker() {
 
             if (!inputSel || !previewSel) return;
 
-            openPicker({ inputSel, previewSel, mime });
+            openPicker({inputSel, previewSel, mime});
         },
         true
     );
@@ -246,7 +246,15 @@ export function initMediaPicker() {
                 else if (inst?.update) inst.update();
             }
         }
-
+        document.dispatchEvent(new CustomEvent('media:pick', {
+            bubbles: true,
+            detail: {
+                id,
+                url,
+                mime,
+                target: currentTarget, // {inputSel, previewSel, mime}
+            },
+        }));
         hideModal();
     });
 
