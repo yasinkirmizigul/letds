@@ -1,4 +1,5 @@
 import Sortable from 'sortablejs';
+
 export default function initGalleryManager(root = document) {
     const managers = [...root.querySelectorAll('[data-gallery-manager]')];
     if (!managers.length) return;
@@ -153,6 +154,42 @@ function mountOne(mgr) {
         });
     }
 
+    function ensureKTSelects(scopeEl) {
+        try {
+            scopeEl.querySelectorAll('select[data-kt-select="true"]').forEach((el) => {
+                if (el.__ktSelectInited) return;
+                el.__ktSelectInited = true;
+                window.KTSelect?.getOrCreateInstance?.(el);
+            });
+        } catch {}
+    }
+
+    // ✅ FIX: slot select değişince ilgili container'a taşı
+    function bindSlotSelectHandlers(scopeEl) {
+        scopeEl.querySelectorAll('select.js-gal-slot').forEach((sel) => {
+            if (sel.__gmSlotBound) return;
+            sel.__gmSlotBound = true;
+
+            sel.addEventListener('change', async () => {
+                const row = sel.closest('[data-gallery-id]');
+                if (!row) return;
+
+                const to = (sel.value || 'main') === 'sidebar' ? 'sidebar' : 'main';
+                const from = (row.dataset.slot || 'main') === 'sidebar' ? 'sidebar' : 'main';
+
+                if (to === from) return;
+
+                // DOM'u taşı
+                row.dataset.slot = to;
+                if (to === 'main') galleriesMain.appendChild(row);
+                else galleriesSidebar.appendChild(row);
+
+                // persist
+                await persistBothSlots();
+            });
+        });
+    }
+
     async function fetchAttached() {
         const { res, j } = await jreq(URLS.index, 'GET');
         if (!res.ok || !j?.ok) return;
@@ -169,6 +206,8 @@ function mountOne(mgr) {
         const total = main.length + side.length;
         if (galleriesEmpty) galleriesEmpty.classList.toggle('hidden', total > 0);
 
+        // ✅ render sonrası handler + sortable
+        bindSlotSelectHandlers(mgr);
         ensureSortables();
         syncSlotSelects();
     }
@@ -293,21 +332,6 @@ function mountOne(mgr) {
         }
     });
 
-    mgr.addEventListener('change', async (e) => {
-        const sel = e.target.closest('.js-gal-slot');
-        if (!sel) return;
-
-        const row = sel.closest('[data-gallery-id]');
-        if (!row) return;
-
-        const to = sel.value || 'main';
-        row.dataset.slot = to;
-        if (to === 'main') galleriesMain.appendChild(row);
-        else galleriesSidebar.appendChild(row);
-
-        await persistBothSlots();
-    });
-
     pickerRefresh?.addEventListener('click', async () => {
         gState.page = 1;
         await fetchPicker();
@@ -331,15 +355,6 @@ function mountOne(mgr) {
             try { window.KTModal?.getOrCreateInstance?.(modalEl)?.show?.(); } catch {}
         }
     });
-    function ensureKTSelects(scopeEl) {
-        try {
-            scopeEl.querySelectorAll('select[data-kt-select="true"]').forEach((el) => {
-                if (el.__ktSelectInited) return;
-                el.__ktSelectInited = true;
-                window.KTSelect?.getOrCreateInstance?.(el);
-            });
-        } catch {}
-    }
 
     // boot
     fetchAttached();
