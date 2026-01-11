@@ -75,11 +75,8 @@
                     <table id="projects_table" class="kt-table">
                         <thead>
                         <tr class="text-xs text-muted-foreground">
-                            <th class="w-10">
-                                <label class="kt-checkbox">
-                                    <input type="checkbox" id="projects_check_all">
-                                    <span></span>
-                                </label>
+                            <th class="w-[55px] dt-orderable-none">
+                                <input class="kt-checkbox kt-checkbox-sm" id="projects_check_all" type="checkbox">
                             </th>
                             <th>Proje</th>
                             <th>Slug</th>
@@ -96,13 +93,9 @@
                             @endphp
 
                             <tr data-id="{{ $p->id }}">
-                                <td>
-                                    <label class="kt-checkbox">
-                                        <input type="checkbox" class="projects-check" value="{{ $p->id }}">
-                                        <span></span>
-                                    </label>
+                                <td class="w-[55px]">
+                                    <input class="kt-checkbox kt-checkbox-sm projects-check" type="checkbox" value="{{ $p->id }}">
                                 </td>
-
                                 <td>
                                     <div class="flex items-center gap-3">
                                         <div class="w-11 h-11 rounded-xl overflow-hidden border border-border bg-muted/30 shrink-0">
