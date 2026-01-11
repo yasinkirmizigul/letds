@@ -13,7 +13,8 @@
 
         <form method="POST"
               action="{{ route('admin.projects.update', $project) }}"
-              class="grid gap-5 lg:gap-7.5">
+              class="grid gap-5 lg:gap-7.5"
+              enctype="multipart/form-data">
             @csrf
             @method('PUT')
 

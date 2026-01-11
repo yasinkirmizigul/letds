@@ -441,4 +441,41 @@ class ProjectController extends Controller
             'media_id' => (int) $mediaId,
         ]);
     }
+    public function bulkDelete(Request $request)
+    {
+        $data = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer'],
+        ]);
+
+        Project::query()
+            ->whereIn('id', $data['ids'])
+            ->delete();
+
+        return response()->json(['ok' => true]);
+    }
+
+    public function bulkForceDelete(Request $request)
+    {
+        $data = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer'],
+        ]);
+
+        $ids = $data['ids'];
+
+        // 1) Bu projelerin mediables featured/gallery gibi pivotlarını temizle (varsa)
+        DB::table('mediables')
+            ->where('mediable_type', Project::class)
+            ->whereIn('mediable_id', $ids)
+            ->delete();
+
+        // 2) Kalıcı sil
+        Project::onlyTrashed()
+            ->whereIn('id', $ids)
+            ->forceDelete();
+
+        return response()->json(['ok' => true]);
+    }
+
 }

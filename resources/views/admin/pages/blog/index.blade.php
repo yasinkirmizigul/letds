@@ -136,7 +136,7 @@
                                 <tbody>
                                 @foreach($posts as $p)
                                     @php
-                                        $img = $p->featured_image_path ? asset('storage/'.$p->featured_image_path) : null;
+                                        $img = $p->featuredMediaUrl() ?: ($p->featured_image_path ? asset('storage/'.$p->featured_image_path) : null);
                                     @endphp
 
                                     <tr data-row-id="{{ $p->id }}">

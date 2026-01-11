@@ -8,6 +8,7 @@ use App\Models\Admin\Category;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Throwable;
@@ -116,12 +117,29 @@ class BlogPostController extends Controller
                 'integer',
                 Rule::exists('categories', 'id')->whereNull('deleted_at'),
             ],
+            'featured_media_id' => ['nullable', 'integer'],
+            'featured_image' => ['nullable', 'image', 'max:5120'],
         ]);
 
         $slug = $data['slug'] ?: Str::slug($data['title']);
         $data['slug'] = $this->uniqueSlug($slug);
 
         $post = BlogPost::create($data);
+        // ✅ Featured: önce upload varsa legacy path’e kaydet (fallback), sonra featured_media_id set edildiyse pivot’a yaz
+        if ($request->hasFile('featured_image')) {
+            // legacy path (istersen ileride kaldırırsın)
+            if ($post->featured_image_path) {
+                Storage::disk('public')->delete($post->featured_image_path);
+            }
+            $path = $request->file('featured_image')->store('blog/featured', 'public');
+            $post->featured_image_path = $path;
+            $post->save();
+
+            // upload seçilince media_id sıfırlansın (tek kaynak seç)
+            $this->syncFeaturedMedia($post, null);
+        } else {
+            $this->syncFeaturedMedia($post, $request->input('featured_media_id') ? (int)$request->input('featured_media_id') : null);
+        }
 
         if (method_exists($post, 'categories')) {
             $ids = collect($data['category_ids'] ?? [])
@@ -177,12 +195,33 @@ class BlogPostController extends Controller
                 'integer',
                 Rule::exists('categories', 'id')->whereNull('deleted_at'),
             ],
+            'featured_media_id' => ['nullable', 'integer'],
+            'featured_image' => ['nullable', 'image', 'max:5120'],
         ]);
 
         $slug = $data['slug'] ?: Str::slug($data['title']);
         $data['slug'] = $this->uniqueSlug($slug, $blogPost->id);
 
         $blogPost->update($data);
+
+        if ($request->hasFile('featured_image')) {
+
+            if ($blogPost->featured_image_path) {
+                Storage::disk('public')->delete($blogPost->featured_image_path);
+            }
+
+            $path = $request->file('featured_image')->store('blog/featured', 'public');
+            $blogPost->featured_image_path = $path;
+            $blogPost->save();
+
+            // upload -> media pivot temizle
+            $this->syncFeaturedMedia($blogPost, null);
+
+        } else {
+            // library seçimi -> pivot güncelle
+            $featuredMediaId = $request->input('featured_media_id');
+            $this->syncFeaturedMedia($blogPost, $featuredMediaId ? (int)$featuredMediaId : null);
+        }
 
         if (method_exists($blogPost, 'categories')) {
             $ids = collect($data['category_ids'] ?? [])
@@ -334,5 +373,27 @@ class BlogPostController extends Controller
         $walk(0, 0);
 
         return $out;
+    }
+    private function syncFeaturedMedia(BlogPost $post, ?int $mediaId): void
+    {
+        DB::table('mediables')
+            ->where('mediable_type', BlogPost::class)
+            ->where('mediable_id', $post->id)
+            ->where('collection', 'featured')
+            ->delete();
+
+        if (!$mediaId) {
+            return;
+        }
+
+        DB::table('mediables')->insert([
+            'media_id' => $mediaId,
+            'mediable_type' => BlogPost::class,
+            'mediable_id' => $post->id,
+            'collection' => 'featured',
+            'order' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }

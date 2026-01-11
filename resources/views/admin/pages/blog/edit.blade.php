@@ -180,9 +180,10 @@
 
                         {{-- Featured image --}}
                         @include('admin.components.featured-image-manager', [
-                            'name' => 'featured_image',
-                            'currentUrl' => $blogPost?->featured_image_url,
-                            'title' => 'Öne Çıkan Görsel',
+                            'fileName' => 'featured_image',
+                            'mediaIdName' => 'featured_media_id',
+                            'currentMediaId' => $blogPost->featuredMediaOne()?->id,
+                            'currentUrl' => $blogPost->featuredMediaUrl() ?? $blogPost->featured_image_url,
                         ])
 
                         {{-- Publish --}}

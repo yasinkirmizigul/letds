@@ -436,6 +436,16 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:projects.update')
                 ->name('index');
 
+            // Bulk actions
+            Route::post('/projects/bulk-delete', [ProjectController::class, 'bulkDelete'])
+                ->name('projects.bulkDelete');
+
+            Route::post('/projects/bulk-restore', [ProjectController::class, 'bulkRestore'])
+                ->name('projects.bulkRestore');
+
+            Route::post('/projects/bulk-force-delete', [ProjectController::class, 'bulkForceDelete'])
+                ->name('projects.bulkForceDelete');
+
             Route::post('/attach', [ProjectGalleryController::class, 'attach'])
                 ->middleware('permission:projects.update')
                 ->name('attach');
@@ -469,9 +479,9 @@ Route::middleware(['auth', 'audit'])
 
         Route::post('/tinymce/upload', [TinyMceController::class, 'upload'])
             ->name('tinymce.upload');
-        Route::get('media/trash', fn () => redirect()->route('admin.media.index', ['mode' => 'trash']))
+        Route::get('media/trash', fn() => redirect()->route('admin.media.index', ['mode' => 'trash']))
             ->name('media.trash');
-        Route::get('galleries/trash', fn () => redirect()->route('admin.galleries.index', ['mode' => 'trash']))
+        Route::get('galleries/trash', fn() => redirect()->route('admin.galleries.index', ['mode' => 'trash']))
             ->name('galleries.trash');
     });
 

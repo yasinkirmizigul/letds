@@ -90,7 +90,7 @@ export default function initFeaturedImageManager(root = document) {
 
             // sadece image
             if (mime && !String(mime).startsWith('image/')) return;
-
+            if (!id && !url) return;
             // library seçildi -> upload temizle + objectURL revoke
             cleanupObjectUrl(state);
             safeClearFileInput(input);

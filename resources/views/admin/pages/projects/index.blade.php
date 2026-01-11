@@ -1,129 +1,193 @@
+{{-- resources/views/admin/pages/projects/index.blade.php --}}
 @extends('admin.layouts.main.app')
 
 @section('content')
     @php
-        $mode = $mode ?? 'active'; // active|trash
+        $mode = request()->routeIs('admin.projects.trash') ? 'trash' : 'active';
+        $per = (int)request('perpage', 25);
     @endphp
 
-    <div class="kt-container-fixed"
-         data-page="{{ $mode === 'trash' ? 'projects.trash' : 'projects.index' }}"
-         data-mode="{{ $mode }}"
-         data-perpage="{{ $perPage ?? 25 }}">
-        <div class="grid gap-5 lg:gap-7.5">
+    <div
+        data-page="{{ $mode === 'trash' ? 'projects.trash' : 'projects.index' }}"
+        data-perpage="{{ $per }}"
+        class="grid gap-5 lg:gap-7.5"
+    >
+        <div class="kt-card">
+            <div class="kt-card-header flex-wrap gap-3">
+                <div class="kt-card-title flex flex-wrap items-center gap-3">
+                    <h3 class="text-base font-semibold">
+                        {{ $mode === 'trash' ? 'Projeler (Çöp)' : 'Projeler' }}
+                    </h3>
 
-            @includeIf('admin.partials._flash')
+                    <div class="relative">
+                        <input id="projectsSearch" type="text" class="kt-input kt-input-sm w-64"
+                               placeholder="Ara..."
+                               value="{{ request('q') }}">
+                    </div>
 
-            <div class="flex items-center justify-between flex-wrap gap-3">
-                <div class="flex flex-col">
-                    <h1 class="text-xl font-semibold">{{ $pageTitle ?? 'Projeler' }}</h1>
-                    <div class="text-sm text-muted-foreground">
-                        {{ $mode === 'trash' ? 'Çöp Kutusu' : 'Aktif Liste' }}
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-muted-foreground">Sayfa başı</span>
+                        <select id="projectsPageSize" class="kt-select kt-select-sm w-20" data-kt-select="true"></select>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2">
-                    @if($mode !== 'trash')
-                        <a href="{{ route('admin.projects.create') }}" class="kt-btn kt-btn-primary">Yeni Proje</a>
-                        <a href="{{ route('admin.projects.trash') }}" class="kt-btn kt-btn-light">Çöp</a>
+                <div class="kt-card-toolbar flex flex-wrap items-center gap-2">
+                    @if($mode === 'trash')
+                        <a href="{{ route('admin.projects.index') }}" class="kt-btn kt-btn-light kt-btn-sm">
+                            <i class="ki-outline ki-arrow-left"></i> Aktif
+                        </a>
                     @else
-                        <a href="{{ route('admin.projects.index') }}" class="kt-btn kt-btn-light">Aktif Liste</a>
+                        <a href="{{ route('admin.projects.trash') }}" class="kt-btn kt-btn-light kt-btn-sm">
+                            <i class="ki-outline ki-trash"></i> Çöp
+                        </a>
+
+                        <a href="{{ route('admin.projects.create') }}" class="kt-btn kt-btn-primary kt-btn-sm">
+                            <i class="ki-outline ki-plus"></i> Yeni Proje
+                        </a>
                     @endif
                 </div>
             </div>
 
-            <div class="kt-card kt-card-grid min-w-full">
-                <div class="kt-card-header py-5 flex-wrap gap-4">
-                    <div class="flex items-center gap-2">
-                        <input id="projectsSearch"
-                               class="kt-input w-72"
-                               value="{{ $q ?? '' }}"
-                               placeholder="Ara: başlık / slug" />
-                        <button id="projectsSearchBtn" class="kt-btn kt-btn-light">Ara</button>
+            <div class="kt-card-content p-0">
+                {{-- Bulk bar --}}
+                <div id="projectsBulkBar" class="hidden border-b border-border bg-muted/10 px-6 py-3 flex items-center justify-between gap-3">
+                    <div class="text-sm">
+                        <span class="font-semibold" id="projectsSelectedCount">0</span> kayıt seçildi
                     </div>
 
-                    <div class="ms-auto flex items-center gap-2">
-                        <select id="projectsPageSize" class="kt-select w-24" data-kt-select="true"></select>
+                    <div class="flex items-center gap-2">
+                        @if($mode === 'trash')
+                            <button type="button" id="projectsBulkRestoreBtn" class="kt-btn kt-btn-sm kt-btn-light" disabled>
+                                <i class="ki-outline ki-arrows-circle"></i> Geri Yükle
+                            </button>
+                            <button type="button" id="projectsBulkForceDeleteBtn" class="kt-btn kt-btn-sm kt-btn-danger" disabled>
+                                <i class="ki-outline ki-trash"></i> Kalıcı Sil
+                            </button>
+                        @else
+                            <button type="button" id="projectsBulkDeleteBtn" class="kt-btn kt-btn-sm kt-btn-danger" disabled>
+                                <i class="ki-outline ki-trash"></i> Sil
+                            </button>
+                        @endif
                     </div>
                 </div>
 
-                <div class="kt-card-content">
-                    <div class="overflow-x-auto">
-                        <table class="kt-table" id="projectsTable">
-                            <thead>
-                            <tr>
-                                <th class="w-[70px]">ID</th>
-                                <th>Başlık</th>
-                                <th class="w-[160px]">Status</th>
-                                <th class="w-[220px] text-right">İşlem</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @forelse($projects as $p)
-                                <tr data-id="{{ $p->id }}">
-                                    <td>{{ $p->id }}</td>
+                <div class="overflow-x-auto">
+                    <table id="projects_table" class="kt-table">
+                        <thead>
+                        <tr class="text-xs text-muted-foreground">
+                            <th class="w-10">
+                                <label class="kt-checkbox">
+                                    <input type="checkbox" id="projects_check_all">
+                                    <span></span>
+                                </label>
+                            </th>
+                            <th>Proje</th>
+                            <th>Slug</th>
+                            <th>Tarih</th>
+                            <th>İşlemler</th>
+                        </tr>
+                        </thead>
 
-                                    <td class="font-medium">
-                                        <div class="flex flex-col">
-                                            <a href="{{ route('admin.projects.edit', $p) }}" class="hover:underline">
-                                                {{ $p->title }}
-                                            </a>
-                                            <span class="text-xs text-muted-foreground">{{ $p->slug }}</span>
-                                        </div>
-                                    </td>
+                        <tbody>
+                        @foreach($projects as $p)
+                            @php
+                                // featured preview: Media pivot -> fallback legacy
+                                $img = $p->featuredMediaUrl() ?: ($p->featured_image_path ? asset('storage/'.$p->featured_image_path) : null);
+                            @endphp
 
-                                    <td>
-                                        <span class="kt-badge kt-badge-light">{{ $p->status }}</span>
-                                    </td>
+                            <tr data-id="{{ $p->id }}">
+                                <td>
+                                    <label class="kt-checkbox">
+                                        <input type="checkbox" class="projects-check" value="{{ $p->id }}">
+                                        <span></span>
+                                    </label>
+                                </td>
 
-                                    <td class="text-right">
-                                        <div class="flex justify-end gap-2">
-                                            @if($mode !== 'trash')
-                                                <a class="kt-btn kt-btn-sm kt-btn-light"
-                                                   href="{{ route('admin.projects.edit', $p) }}">
-                                                    Düzenle
+                                <td>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-11 h-11 rounded-xl overflow-hidden border border-border bg-muted/30 shrink-0">
+                                            @if($img)
+                                                <a href="javascript:void(0)"
+                                                   class="block w-full h-full js-img-popover"
+                                                   data-popover-img="{{ $img }}">
+                                                    <img src="{{ $img }}" class="w-full h-full object-cover" alt="">
                                                 </a>
-
-                                                <button type="button"
-                                                        class="kt-btn kt-btn-sm kt-btn-danger"
-                                                        data-action="delete">
-                                                    Sil
-                                                </button>
                                             @else
-                                                <button type="button"
-                                                        class="kt-btn kt-btn-sm kt-btn-light"
-                                                        data-action="restore">
-                                                    Restore
-                                                </button>
-
-                                                <button type="button"
-                                                        class="kt-btn kt-btn-sm kt-btn-danger"
-                                                        data-action="force-delete">
-                                                    Force
-                                                </button>
+                                                <div class="w-full h-full grid place-items-center text-muted-foreground">
+                                                    <i class="ki-outline ki-picture text-xl"></i>
+                                                </div>
                                             @endif
                                         </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted-foreground py-10">
-                                        Kayıt bulunamadı.
-                                    </td>
-                                </tr>
-                            @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+
+                                        <div class="grid">
+                                            <a class="font-semibold hover:underline"
+                                               href="{{ route('admin.projects.edit', $p->id) }}">
+                                                {{ $p->title }}
+                                            </a>
+                                            <div class="text-xs text-muted-foreground">
+                                                #{{ $p->id }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="text-sm text-muted-foreground">
+                                    {{ $p->slug }}
+                                </td>
+
+                                <td class="text-right text-sm text-muted-foreground">
+                                    {{ $p->updated_at?->format('d.m.Y H:i') }}
+                                </td>
+
+                                <td class="text-right">
+                                    <div class="inline-flex items-center gap-1">
+                                        <a class="kt-btn kt-btn-sm kt-btn-light"
+                                           href="{{ route('admin.projects.edit', $p->id) }}">
+                                            <i class="ki-outline ki-pencil"></i>
+                                        </a>
+
+                                        @if($mode === 'trash')
+                                            <button type="button" class="kt-btn kt-btn-sm kt-btn-light"
+                                                    data-action="restore" data-id="{{ $p->id }}">
+                                                <i class="ki-outline ki-arrows-circle"></i>
+                                            </button>
+
+                                            <button type="button" class="kt-btn kt-btn-sm kt-btn-danger"
+                                                    data-action="force-delete" data-id="{{ $p->id }}">
+                                                <i class="ki-outline ki-trash"></i>
+                                            </button>
+                                        @else
+                                            <button type="button" class="kt-btn kt-btn-sm kt-btn-danger"
+                                                    data-action="delete" data-id="{{ $p->id }}">
+                                                <i class="ki-outline ki-trash"></i>
+                                            </button>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
                 </div>
 
-                <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
-                    <div class="order-2 md:order-1">
-                        {{ $projects->firstItem() ?? 0 }}-{{ $projects->lastItem() ?? 0 }} / {{ $projects->total() }}
+                {{-- empty/zero templates --}}
+                <template id="dt-empty-projects">
+                    <div class="p-10 grid place-items-center text-muted-foreground gap-3">
+                        <i class="ki-outline ki-folder text-3xl"></i>
+                        <div class="font-medium">Kayıt yok</div>
                     </div>
+                </template>
 
-                    <div class="order-1 md:order-2">
-                        {{ $projects->links() }}
+                <template id="dt-zero-projects">
+                    <div class="p-10 grid place-items-center text-muted-foreground gap-3">
+                        <i class="ki-outline ki-magnifier text-3xl"></i>
+                        <div class="font-medium">Sonuç bulunamadı</div>
                     </div>
+                </template>
+
+                <div class="px-6 py-4 flex items-center justify-between gap-3">
+                    <div id="projectsInfo" class="text-xs text-muted-foreground"></div>
+                    <div id="projectsPagination" class="flex items-center justify-end gap-2"></div>
                 </div>
             </div>
         </div>

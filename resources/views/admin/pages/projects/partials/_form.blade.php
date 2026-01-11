@@ -137,13 +137,14 @@
 
         {{-- Gallery panel --}}
         @include('admin.pages.projects.partials._gallery', ['project' => $project])
-
         @include('admin.components.featured-image-manager', [
-                'name' => 'featured_image',
-                'currentUrl' => $project?->featured_image_url,
-                'title' => 'Öne Çıkan Görsel',
-            ])
-                    <div class="kt-card kt-card-border">
+            'fileName' => 'featured_image',
+            'mediaIdName' => 'featured_media_id',
+            'currentUrl' => $blogPost->featured_image_url,
+            'currentMediaId' => null,
+            'title' => 'Öne Çıkan Görsel',
+        ])
+        <div class="kt-card kt-card-border">
             <div class="kt-card-header">
                 <h3 class="kt-card-title">Appointment</h3>
             </div>

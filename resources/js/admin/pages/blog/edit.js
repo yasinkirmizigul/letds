@@ -6,6 +6,8 @@ import initLibraryAttach from '@/core/library-attach';
 let ac = null;
 let observer = null;
 let lastObjectUrl = null;
+let mountedRoot = null;
+
 function csrfToken() {
     const meta = document.querySelector('meta[name="csrf-token"]');
     return meta ? meta.getAttribute('content') : '';
@@ -236,6 +238,7 @@ function lockSubmitButtons(root, formId) {
 }
 
 export default async function init({root, dataset}) {
+    mountedRoot = root;
     ac = new AbortController();
     const {signal} = ac;
 
@@ -334,5 +337,6 @@ export function destroy() {
         lastObjectUrl = null;
     }
     // featured-image-manager cleanup
-    destroyFeaturedImageManager(document);
+    destroyFeaturedImageManager(mountedRoot || document);
+    mountedRoot = null;
 }
