@@ -99,8 +99,11 @@
                         <button type="button"
                                 class="kt-btn kt-btn-sm kt-btn-light"
                                 data-kt-modal-toggle="#mediaUploadModal"
-                                onclick="document.querySelector('#mediaTabLibrary')?.click();">
-                            <i class="ki-outline ki-folder"></i> Medya’dan Ekle
+                                data-library-attach="true"
+                                data-library-attach-url="{{ url('/admin/galleries/'.$gallery->id.'/items') }}"
+                                data-library-attach-payload="media_ids"
+                        >
+                            Medya’dan Ekle
                         </button>
                     </div>
                 </div>

@@ -127,3 +127,18 @@ body { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif; }
     }
     .media-lb__nav { bottom: 10px; }
 }
+select.js-gal-slot{
+    width: max-content;
+    min-width: 8rem;   /* istersen 7-9rem */
+}
+[data-featured-image-manager] select.js-gal-slot,
+select.js-gal-slot{
+    width: max-content;
+    min-width: 8rem;
+}
+
+select.js-gal-slot + .kt-select,
+select.js-gal-slot ~ .kt-select{
+    width: max-content;
+    min-width: 8rem;
+}

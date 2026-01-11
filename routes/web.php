@@ -348,18 +348,33 @@ Route::middleware(['auth', 'audit'])
 
         // Gallery Items
         Route::prefix('galleries/{gallery}/items')->as('galleries.items.')->group(function () {
-            Route::get('/', [GalleryItemsController::class, 'index'])
-                ->middleware('permission:galleries.update')
-                ->name('index');
 
+            // GET /admin/galleries/{gallery}/items  -> items()
+            Route::get('/', [GalleryItemsController::class, 'items'])
+                ->middleware('permission:galleries.update')
+                ->name('items');
+
+            // POST /admin/galleries/{gallery}/items -> store()
             Route::post('/', [GalleryItemsController::class, 'store'])
                 ->middleware('permission:galleries.update')
                 ->name('store');
 
+            // PATCH /admin/galleries/{gallery}/items/{item} -> update()
+            Route::patch('/{item}', [GalleryItemsController::class, 'update'])
+                ->middleware('permission:galleries.update')
+                ->name('update');
+
+            // PATCH /admin/galleries/{gallery}/items/bulk -> bulkUpdate()
+            Route::patch('/bulk', [GalleryItemsController::class, 'bulkUpdate'])
+                ->middleware('permission:galleries.update')
+                ->name('bulk');
+
+            // POST /admin/galleries/{gallery}/items/reorder -> reorder()
             Route::post('/reorder', [GalleryItemsController::class, 'reorder'])
                 ->middleware('permission:galleries.update')
                 ->name('reorder');
 
+            // DELETE /admin/galleries/{gallery}/items/{item} -> destroy()
             Route::delete('/{item}', [GalleryItemsController::class, 'destroy'])
                 ->middleware('permission:galleries.update')
                 ->name('destroy');

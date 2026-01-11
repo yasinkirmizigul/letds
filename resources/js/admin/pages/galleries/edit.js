@@ -1,4 +1,5 @@
 import Sortable from 'sortablejs';
+import { initMediaUploadModal } from '@/core/media-upload-modal';
 
 let ac = null;
 
@@ -306,6 +307,96 @@ export default function init() {
     });
 
     ac = new AbortController();
+    // Media Upload Modal (Library -> Use Selected) ile galeriye ekleme
+    initMediaUploadModal(document);
+
+    const uploadModal = document.getElementById('mediaUploadModal');
+    if (uploadModal && !uploadModal.__galleryAttachBound) {
+        uploadModal.__galleryAttachBound = true;
+
+        async function hideUploadModal() {
+            // 1) dismiss butonu varsa
+            const dismiss = uploadModal.querySelector('[data-kt-modal-dismiss="true"]');
+            if (dismiss) {
+                dismiss.click();
+                return;
+            }
+
+            // 2) KTModal varsa
+            try {
+                if (window.KTModal && typeof window.KTModal.getOrCreateInstance === 'function') {
+                    const inst = window.KTModal.getOrCreateInstance(uploadModal);
+                    if (inst?.hide) return inst.hide();
+                }
+                if (window.KTModal && typeof window.KTModal.getInstance === 'function') {
+                    const inst = window.KTModal.getInstance(uploadModal) || new window.KTModal(uploadModal);
+                    if (inst?.hide) return inst.hide();
+                }
+            } catch {}
+
+            // 3) fallback
+            uploadModal.classList.add('hidden');
+        }
+
+        uploadModal.addEventListener('media:library:useSelected', async (e) => {
+            const ids = e?.detail?.ids || [];
+            if (!Array.isArray(ids) || ids.length === 0) return;
+
+            // UI feedback: Use button'u kısa süre kilitle
+            const useBtn = uploadModal.querySelector('#mediaLibraryUseSelectedBtn');
+            const oldHtml = useBtn?.innerHTML;
+            if (useBtn) {
+                useBtn.disabled = true;
+                useBtn.innerHTML = `<i class="ki-outline ki-loading"></i> Ekleniyor (${ids.length})`;
+            }
+
+            const { res, j } = await req(
+                `/admin/galleries/${galleryId}/items`,
+                'POST',
+                { media_ids: ids }
+            );
+
+            const ok = res.ok && j?.ok;
+
+            if (useBtn) {
+                if (ok) {
+                    useBtn.innerHTML = `<i class="ki-outline ki-check-circle text-success"></i> Eklendi`;
+                } else {
+                    useBtn.innerHTML = `<i class="ki-outline ki-cross-circle text-destructive"></i> Hata`;
+                }
+            }
+
+            if (!ok) {
+                console.error('[galleries.edit] attach failed', res.status, j);
+                // butonu geri al
+                if (useBtn) {
+                    setTimeout(() => {
+                        useBtn.innerHTML = oldHtml || 'Seçilenleri Kullan';
+                        useBtn.disabled = false;
+                    }, 1200);
+                }
+                return;
+            }
+
+            // Listeyi yenile
+            await fetchItems();
+
+            // Selection temizle (aşağıda media-upload-modal.js patch’i var)
+            uploadModal.dispatchEvent(new CustomEvent('media:library:clearSelection', { bubbles: true }));
+
+            // Modal kapat
+            await hideUploadModal();
+
+            // Butonu geri al
+            if (useBtn) {
+                setTimeout(() => {
+                    useBtn.innerHTML = oldHtml || 'Seçilenleri Kullan';
+                    useBtn.disabled = false;
+                }, 400);
+            }
+        });
+    }
+
     fetchItems();
 }
 

@@ -118,7 +118,7 @@ function mountOne(mgr) {
     </div>
 
     <div class="flex items-center gap-2">
-        <select class="kt-select kt-select-sm js-gal-slot" data-kt-select="true">
+        <select class="kt-select kt-select-sm js-gal-slot w-auto min-w-[8rem]" data-kt-select="true">
             <option value="main" ${slot === 'main' ? 'selected' : ''}>main</option>
             <option value="sidebar" ${slot === 'sidebar' ? 'selected' : ''}>sidebar</option>
         </select>
@@ -164,6 +164,8 @@ function mountOne(mgr) {
         galleriesMain.innerHTML = main.map(attachedRow).join('');
         galleriesSidebar.innerHTML = side.map(attachedRow).join('');
 
+        ensureKTSelects(mgr);
+
         const total = main.length + side.length;
         if (galleriesEmpty) galleriesEmpty.classList.toggle('hidden', total > 0);
 
@@ -186,12 +188,12 @@ function mountOne(mgr) {
         }
 
         const mk = (p, label, disabled = false, active = false) => `
-<button type="button"
-        class="kt-btn kt-btn-sm ${active ? 'kt-btn-primary' : 'kt-btn-light'}"
-        ${disabled ? 'disabled' : ''}
-        data-page="${p}">
-    ${label}
-</button>`;
+            <button type="button"
+                    class="kt-btn kt-btn-sm ${active ? 'kt-btn-primary' : 'kt-btn-light'}"
+                    ${disabled ? 'disabled' : ''}
+                    data-page="${p}">
+                ${label}
+            </button>`;
 
         const parts = [];
         parts.push(mk(current - 1, '‹', current <= 1));
@@ -329,6 +331,15 @@ function mountOne(mgr) {
             try { window.KTModal?.getOrCreateInstance?.(modalEl)?.show?.(); } catch {}
         }
     });
+    function ensureKTSelects(scopeEl) {
+        try {
+            scopeEl.querySelectorAll('select[data-kt-select="true"]').forEach((el) => {
+                if (el.__ktSelectInited) return;
+                el.__ktSelectInited = true;
+                window.KTSelect?.getOrCreateInstance?.(el);
+            });
+        } catch {}
+    }
 
     // boot
     fetchAttached();

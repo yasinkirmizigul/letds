@@ -533,6 +533,11 @@ export function initMediaUploadModal(scope = document) {
         const isLibVisible = libPane && !libPane.classList.contains('hidden');
         if (isLibVisible) fetchLibrary();
     });
+    modal.addEventListener('media:library:clearSelection', () => {
+        selected.clear();
+        applySelectionToLibrary();
+        updateLibraryBulkUI();
+    });
 
     // “Use selected” button (if exists, we emit event; consumer handles attach)
     const useBtn = modal.querySelector('#mediaLibraryUseSelectedBtn');

@@ -47,12 +47,12 @@
                 Henüz galeri eklenmemiş.
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="grid grid-cols-1 gap-7">
                 <div class="grid gap-3">
                     <div class="font-medium">{{ $slots['main'] ?? 'Ana' }}</div>
                     <div data-gm="slot-main" class="grid gap-3" data-slot="main"></div>
                 </div>
-
+                <div class="h-px bg-border"></div>
                 <div class="grid gap-3">
                     <div class="font-medium">{{ $slots['sidebar'] ?? 'Sidebar' }}</div>
                     <div data-gm="slot-sidebar" class="grid gap-3" data-slot="sidebar"></div>

@@ -1,5 +1,6 @@
 import initGalleryManager from '@/core/gallery-manager';
 import initFeaturedImageManager, { destroyFeaturedImageManager } from '@/core/featured-image-manager'
+import initLibraryAttach from '@/core/library-attach';
 import { initMediaPicker } from '@/core/media-picker';
 let ac = null;
 
@@ -271,6 +272,7 @@ export default async function init() {
     initMediaPicker();
     // ✅ NEW: Gallery Manager (component + ortak JS)
     initGalleryManager(root);
+    initLibraryAttach(root);
     initFeaturedImageManager(root);
 }
 

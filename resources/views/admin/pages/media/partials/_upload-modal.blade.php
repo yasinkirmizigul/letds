@@ -159,6 +159,13 @@
                                                     Seçili: <span class="font-semibold" id="mediaLibrarySelectedCount">0</span>
                                                 </div>
 
+                                                <button type="button"
+                                                        id="mediaLibraryUseSelectedBtn"
+                                                        class="kt-btn kt-btn-sm kt-btn-primary"
+                                                        disabled>
+                                                    <i class="ki-outline ki-check"></i> Seçilenleri Kullan
+                                                </button>
+
                                                 <button type="button" class="kt-btn kt-btn-sm kt-btn-danger" id="mediaLibraryBulkDeleteBtn">
                                                     <i class="ki-outline ki-trash"></i>
                                                     Toplu Sil
