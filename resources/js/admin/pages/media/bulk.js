@@ -37,7 +37,7 @@ export function attachBulkActions({
         if (!confirm(`${ids.length} medya silinsin mi?`)) return;
 
         try {
-            await req('/admin/media/bulk-delete', 'POST', { ids });
+            await req('/admin/media/bulk-delete', 'DELETE', { ids });
 
             selectedIds.clear();
             setBulkUI();
@@ -77,7 +77,7 @@ export function attachBulkActions({
         if (!confirm(`${ids.length} medya KALICI olarak silinecek. Emin misin?`)) return;
 
         try {
-            await req('/admin/media/bulk-force-delete', 'POST', { ids });
+            await req('/admin/media/bulk-force-delete', 'DELETE', { ids });
 
             selectedIds.clear();
             setBulkUI();

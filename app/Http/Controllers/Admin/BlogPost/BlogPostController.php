@@ -23,15 +23,34 @@ class BlogPostController extends Controller
         $q = $request->string('q')->toString();
         $perPage = max(1, min(100, (int) $request->input('perpage', 25)));
 
-        $query = $isTrash
-            ? BlogPost::onlyTrashed()
-            : BlogPost::query();
+        // ✅ seçili kategoriler (GET: category_ids[])
+        $selectedCategoryIds = collect($request->input('category_ids', []))
+            ->filter(fn ($v) => $v !== null && $v !== '')
+            ->map(fn ($v) => (int) $v)
+            ->filter(fn ($v) => $v > 0)
+            ->unique()
+            ->values()
+            ->all();
+
+        // ✅ kategori options (view blogCategoryFilter bunu istiyor)
+        $categories = \App\Models\Admin\Category::query()
+            ->orderBy('name')
+            ->get(['id', 'name', 'parent_id']);
+        $categoryOptions = $this->categoryOptions($categories);
+
+        $query = $isTrash ? BlogPost::onlyTrashed() : BlogPost::query();
 
         $posts = $query
             ->when($q !== '', function ($qq) use ($q) {
                 $qq->where(function ($w) use ($q) {
                     $w->where('title', 'like', "%{$q}%")
                         ->orWhere('slug', 'like', "%{$q}%");
+                });
+            })
+            // ✅ kategori filtresi (relation varsa)
+            ->when(!empty($selectedCategoryIds) && method_exists(BlogPost::class, 'categories'), function ($qq) use ($selectedCategoryIds) {
+                $qq->whereHas('categories', function ($c) use ($selectedCategoryIds) {
+                    $c->whereIn('categories.id', $selectedCategoryIds);
                 });
             })
             ->orderByDesc('updated_at')
@@ -43,9 +62,12 @@ class BlogPostController extends Controller
             'posts' => $posts,
             'q' => $q,
             'perPage' => $perPage,
+            'categoryOptions' => $categoryOptions,
+            'selectedCategoryIds' => $selectedCategoryIds,
             'pageTitle' => 'Blog',
         ]);
     }
+
 
     public function trash(Request $request)
     {

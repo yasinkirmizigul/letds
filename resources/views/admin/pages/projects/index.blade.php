@@ -27,7 +27,8 @@
 
                     <div class="flex items-center gap-2">
                         <span class="text-sm text-muted-foreground">Sayfa başı</span>
-                        <select id="projectsPageSize" class="kt-select kt-select-sm w-20" data-kt-select="true"></select>
+                        <select id="projectsPageSize" class="kt-select kt-select-sm w-20"
+                                data-kt-select="true"></select>
                     </div>
                 </div>
 
@@ -50,21 +51,25 @@
 
             <div class="kt-card-content p-0">
                 {{-- Bulk bar --}}
-                <div id="projectsBulkBar" class="hidden border-b border-border bg-muted/10 px-6 py-3 flex items-center justify-between gap-3">
+                <div id="projectsBulkBar"
+                     class="hidden border-b border-border bg-muted/10 px-6 py-3 flex items-center justify-between gap-3">
                     <div class="text-sm">
                         <span class="font-semibold" id="projectsSelectedCount">0</span> kayıt seçildi
                     </div>
 
                     <div class="flex items-center gap-2">
                         @if($mode === 'trash')
-                            <button type="button" id="projectsBulkRestoreBtn" class="kt-btn kt-btn-sm kt-btn-light" disabled>
+                            <button type="button" id="projectsBulkRestoreBtn" class="kt-btn kt-btn-sm kt-btn-light"
+                                    disabled>
                                 <i class="ki-outline ki-arrows-circle"></i> Geri Yükle
                             </button>
-                            <button type="button" id="projectsBulkForceDeleteBtn" class="kt-btn kt-btn-sm kt-btn-danger" disabled>
+                            <button type="button" id="projectsBulkForceDeleteBtn" class="kt-btn kt-btn-sm kt-btn-danger"
+                                    disabled>
                                 <i class="ki-outline ki-trash"></i> Kalıcı Sil
                             </button>
                         @else
-                            <button type="button" id="projectsBulkDeleteBtn" class="kt-btn kt-btn-sm kt-btn-danger" disabled>
+                            <button type="button" id="projectsBulkDeleteBtn" class="kt-btn kt-btn-sm kt-btn-danger"
+                                    disabled>
                                 <i class="ki-outline ki-trash"></i> Sil
                             </button>
                         @endif
@@ -94,11 +99,13 @@
 
                             <tr data-id="{{ $p->id }}">
                                 <td class="w-[55px]">
-                                    <input class="kt-checkbox kt-checkbox-sm projects-check" type="checkbox" value="{{ $p->id }}">
+                                    <input class="kt-checkbox kt-checkbox-sm projects-check" type="checkbox"
+                                           value="{{ $p->id }}">
                                 </td>
                                 <td>
                                     <div class="flex items-center gap-3">
-                                        <div class="w-11 h-11 rounded-xl overflow-hidden border border-border bg-muted/30 shrink-0">
+                                        <div
+                                            class="w-11 h-11 rounded-xl overflow-hidden border border-border bg-muted/30 shrink-0">
                                             @if($img)
                                                 <a href="javascript:void(0)"
                                                    class="block w-full h-full js-img-popover"
@@ -106,7 +113,8 @@
                                                     <img src="{{ $img }}" class="w-full h-full object-cover" alt="">
                                                 </a>
                                             @else
-                                                <div class="w-full h-full grid place-items-center text-muted-foreground">
+                                                <div
+                                                    class="w-full h-full grid place-items-center text-muted-foreground">
                                                     <i class="ki-outline ki-picture text-xl"></i>
                                                 </div>
                                             @endif

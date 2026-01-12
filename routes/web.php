@@ -306,6 +306,10 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:media.view')
                 ->name('index');
 
+            Route::get('/trash', [MediaController::class, 'trash'])
+                ->middleware('permission:media.trash')
+                ->name('trash');
+
             Route::get('/list', [MediaController::class, 'list'])
                 ->middleware('permission:media.view')
                 ->name('list');
@@ -314,10 +318,26 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:media.create')
                 ->name('upload');
 
+            // ✅ bulk route’lar önce (/{media} yutmasın)
+            Route::delete('/bulk-delete', [MediaController::class, 'bulkDestroy'])
+                ->middleware('permission:media.delete')
+                ->name('bulkDestroy');
+
+            Route::post('/bulk-restore', [MediaController::class, 'bulkRestore'])
+                ->middleware('permission:media.restore') // ayrı permission istiyorsan
+                ->name('bulkRestore');
+
+            Route::delete('/bulk-force-delete', [MediaController::class, 'bulkForceDestroy'])
+                ->middleware('permission:media.forceDelete') // ayrı permission istiyorsan
+                ->name('bulkForceDestroy');
+
+            // ✅ en son tekil delete + constraint
             Route::delete('/{media}', [MediaController::class, 'destroy'])
+                ->whereNumber('media')
                 ->middleware('permission:media.delete')
                 ->name('destroy');
         });
+
 
         // Galleries
         Route::prefix('galleries')->as('galleries.')->group(function () {
@@ -483,10 +503,10 @@ Route::middleware(['auth', 'audit'])
 
         Route::post('/tinymce/upload', [TinyMceController::class, 'upload'])
             ->name('tinymce.upload');
-        Route::get('media/trash', fn() => redirect()->route('admin.media.index', ['mode' => 'trash']))
-            ->name('media.trash');
-        Route::get('galleries/trash', fn() => redirect()->route('admin.galleries.index', ['mode' => 'trash']))
-            ->name('galleries.trash');
+        /*        Route::get('media/trash', fn() => redirect()->route('admin.media.index', ['mode' => 'trash']))
+                    ->name('media.trash');
+                Route::get('galleries/trash', fn() => redirect()->route('admin.galleries.index', ['mode' => 'trash']))
+                    ->name('galleries.trash');*/
     });
 
 // Public Projects

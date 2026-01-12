@@ -21,7 +21,8 @@
                    name="title"
                    id="projectTitle"
                    value="{{ old('title', $project->title ?? '') }}"/>
-            @error('title') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+            @error('title')
+            <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -45,7 +46,8 @@
                     </span>
                 </div>
 
-                @error('slug') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                @error('slug')
+                <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
             </div>
 
             <div>
@@ -55,7 +57,8 @@
                     <option value="active" @selected($st === 'active')>active</option>
                     <option value="archived" @selected($st === 'archived')>archived</option>
                 </select>
-                @error('status') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                @error('status')
+                <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
             </div>
         </div>
 
@@ -79,14 +82,16 @@
                     <input class="kt-input"
                            name="meta_title"
                            value="{{ old('meta_title', $project->meta_title ?? '') }}"/>
-                    @error('meta_title') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                    @error('meta_title')
+                    <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                 </div>
 
                 <div>
                     <label class="kt-form-label">Meta Description</label>
                     <textarea class="kt-textarea"
                               name="meta_description">{{ old('meta_description', $project->meta_description ?? '') }}</textarea>
-                    @error('meta_description') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                    @error('meta_description')
+                    <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                 </div>
 
                 <div>
@@ -94,7 +99,8 @@
                     <input class="kt-input"
                            name="meta_keywords"
                            value="{{ old('meta_keywords', $project->meta_keywords ?? '') }}"/>
-                    @error('meta_keywords') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                    @error('meta_keywords')
+                    <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
                 </div>
             </div>
         </div>
@@ -153,7 +159,8 @@
                        name="appointment_id"
                        placeholder="opsiyonel"
                        value="{{ old('appointment_id', $project->appointment_id ?? '') }}"/>
-                @error('appointment_id') <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                @error('appointment_id')
+                <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
             </div>
         </div>
 
