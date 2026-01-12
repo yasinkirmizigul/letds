@@ -9,7 +9,7 @@
                 <img class="max-h-[25px] w-full" src="assets/media/app/mini-logo.svg" />
             </a>--}}
             <div class="flex items-center">
-                <button class="kt-btn kt-btn-icon kt-btn-mono" data-kt-drawer-toggle="#sidebar">
+                <button class="kt-btn kt-btn-icon kt-btn-light" data-kt-drawer-toggle="#sidebar">
                     <i class="ki-filled ki-menu">
                     </i>
                 </button>

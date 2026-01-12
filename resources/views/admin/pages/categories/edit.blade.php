@@ -135,7 +135,7 @@
                                         </button>
                                     @endperm
 
-                                    <a href="{{ route('admin.categories.index') }}" class="kt-btn kt-btn-mono">İptal</a>
+                                    <a href="{{ route('admin.categories.index') }}" class="kt-btn kt-btn-light">İptal</a>
                                 </div>
 
                             </div>
@@ -175,7 +175,7 @@
 
                         <div class="kt-card-footer flex justify-end gap-2">
                             <button type="button"
-                                    class="kt-btn kt-btn-mono"
+                                    class="kt-btn kt-btn-light"
                                     data-kt-modal-close>
                                 Vazgeç
                             </button>

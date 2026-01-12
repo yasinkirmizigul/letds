@@ -238,7 +238,7 @@
                                         {{ now()->format('d M, Y') }}
                                     </td>
                                     <td class="text-start">
-                                        <button class="kt-btn kt-btn-sm kt-btn-mono" type="button" disabled>Düzenle</button>
+                                        <button class="kt-btn kt-btn-sm kt-btn-light" type="button" disabled>Düzenle</button>
                                     </td>
                                 </tr>
                                 </tbody>

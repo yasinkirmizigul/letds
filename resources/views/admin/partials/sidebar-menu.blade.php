@@ -1149,7 +1149,7 @@
 							Spaces
 						</span>
 					</div>
-					<a class="kt-btn kt-btn-mono kt-btn-sm kt-btn-icon kt-btn-icon-sm text-muted-foreground hover:text-foreground me-1.25" href="#">
+					<a class="kt-btn kt-btn-light kt-btn-sm kt-btn-icon kt-btn-icon-sm text-muted-foreground hover:text-foreground me-1.25" href="#">
 						<i class="ki-filled ki-plus">
 						</i>
 					</a>

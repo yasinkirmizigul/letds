@@ -129,6 +129,10 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:category.view')
                 ->name('index');
 
+            Route::get('/list', [CategoryController::class, 'list'])
+                ->middleware('permission:category.list')
+                ->name('categories.list');
+
             Route::get('/trash', [CategoryController::class, 'trash'])
                 ->middleware('permission:category.trash')
                 ->name('trash');

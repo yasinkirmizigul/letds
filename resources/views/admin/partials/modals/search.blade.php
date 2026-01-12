@@ -36,7 +36,7 @@
                 </div>
                 <div class="kt-menu -mt-px" data-kt-menu="true">
                     <div class="kt-menu-item" data-kt-menu-item-toggle="dropdown" data-kt-menu-item-trigger="click" data-kt-menu-item-placement="bottom-end" data-kt-menu-item-placement-rtl="bottom-start" data-kt-menu-item-offset="0, 10px">
-                        <button class="kt-menu-toggle kt-btn kt-btn-icon kt-btn-mono">
+                        <button class="kt-menu-toggle kt-btn kt-btn-icon kt-btn-secondary">
                             <i class="ki-filled ki-setting-2">
                             </i>
                         </button>

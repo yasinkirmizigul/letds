@@ -68,7 +68,7 @@
 
                             @if($hasFilter)
                                 <a href="{{ $isTrash ? route('admin.blog.trash') : route('admin.blog.index') }}"
-                                   class="kt-btn kt-btn-sm kt-btn-mono">Temizle</a>
+                                   class="kt-btn kt-btn-sm kt-btn-light">Temizle</a>
                             @endif
                         </form>
 
