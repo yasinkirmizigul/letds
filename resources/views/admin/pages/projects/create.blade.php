@@ -31,4 +31,3 @@
     {{-- Media upload modal --}}
     @include('admin.pages.media.partials._upload-modal')
 @endsection
-s

@@ -141,15 +141,19 @@
             </div>
         </div>
 
-        {{-- Gallery panel --}}
-        @include('admin.pages.projects.partials._gallery', ['project' => $project])
+        {{-- Gallery panel (create'te project yok; sadece edit'te göster) --}}
+        @if($project?->id)
+            @include('admin.pages.projects.partials._gallery', ['project' => $project])
+        @endif
+
         @include('admin.components.featured-image-manager', [
             'fileName' => 'featured_image',
             'mediaIdName' => 'featured_media_id',
-            'currentUrl' => $blogPost->featured_image_url,
-            'currentMediaId' => null,
+            'currentUrl' => ($project?->featuredMediaUrl()) ?? ($project?->featured_image_url),
+            'currentMediaId' => $featuredMediaId, // varsa formdan geliyor
             'title' => 'Öne Çıkan Görsel',
         ])
+
         <div class="kt-card kt-card-border">
             <div class="kt-card-header">
                 <h3 class="kt-card-title">Appointment</h3>

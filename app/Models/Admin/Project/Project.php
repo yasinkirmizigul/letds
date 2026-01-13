@@ -90,9 +90,12 @@ class Project extends Model
     public function featuredMediaUrl(): ?string
     {
         $m = $this->featuredMediaOne();
-        if (!$m) return null;
+        if ($m) {
+            return $m->url('optimized');
+        }
 
-        return $m->url('optimized');
+        // legacy fallback (eski kayıtlar bozulmasın)
+        return $this->featuredImageUrl();
     }
 
     public function isDraft(): bool
@@ -108,5 +111,11 @@ class Project extends Model
     public function isArchived(): bool
     {
         return ($this->status ?? 'draft') === 'archived';
+    }
+    public function featuredImageUrl(): ?string
+    {
+        return $this->featured_image_path
+            ? asset('storage/' . $this->featured_image_path)
+            : null;
     }
 }

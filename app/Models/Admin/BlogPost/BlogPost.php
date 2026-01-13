@@ -113,6 +113,8 @@ class BlogPost extends Model
     }
     public function featuredImageUrl(): ?string
     {
-        return $this->featured_image_url;
+        return $this->featured_image_path
+            ? asset('storage/' . $this->featured_image_path)
+            : null;
     }
 }

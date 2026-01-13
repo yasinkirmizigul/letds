@@ -50,38 +50,29 @@ function initTiny({ selector, uploadUrl, baseUrl, langUrl }) {
     if (!window.tinymce) return;
 
     const theme = getTheme();
-
     safeTinyRemove(selector);
 
     window.tinymce.init({
         selector,
         height: 420,
-
         license_key: 'gpl',
         base_url: baseUrl,
         suffix: '.min',
-
         language: 'tr',
         language_url: langUrl,
-
         skin: theme === 'dark' ? 'oxide-dark' : 'oxide',
         content_css: theme === 'dark' ? 'dark' : 'default',
-
         plugins: 'lists link image code table',
         toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link image table | code',
         menubar: false,
-
         branding: false,
         promotion: false,
-
         automatic_uploads: true,
         paste_data_images: true,
-
         images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.open('POST', uploadUrl);
             xhr.withCredentials = true;
-
             xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken());
 
             xhr.upload.onprogress = (e) => {
@@ -90,13 +81,10 @@ function initTiny({ selector, uploadUrl, baseUrl, langUrl }) {
 
             xhr.onload = () => {
                 if (xhr.status < 200 || xhr.status >= 300) return reject('Upload failed: ' + xhr.status);
-
                 let json;
                 try { json = JSON.parse(xhr.responseText); }
                 catch { return reject('Invalid JSON'); }
-
                 if (!json || typeof json.location !== 'string') return reject('No location returned');
-
                 resolve(json.location);
             };
 

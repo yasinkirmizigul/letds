@@ -149,8 +149,10 @@ export default async function init({ root, dataset }) {
     const baseUrl = dataset.tinymceBase;
     const langUrl = dataset.tinymceLangUrl;
 
-    await loadScriptOnce(tinymceSrc);
-    initTiny({ selector, uploadUrl, baseUrl, langUrl });
+    if (tinymceSrc && baseUrl && langUrl && uploadUrl && document.querySelector(selector)) {
+        await loadScriptOnce(tinymceSrc);
+        initTiny({ selector, uploadUrl, baseUrl, langUrl });
+    }
 
     observer = observeThemeChanges(() => {
         initTiny({ selector, uploadUrl, baseUrl, langUrl });
