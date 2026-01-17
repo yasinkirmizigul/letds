@@ -239,6 +239,10 @@ Route::middleware(['auth', 'audit'])
             Route::patch('/{blogPost}/toggle-publish', [BlogPostController::class, 'togglePublish'])
                 ->middleware('permission:blog.update')
                 ->name('togglePublish');
+
+            Route::get('/check-slug', [BlogPostController::class, 'checkSlug'])
+                ->middleware(['permission:blog.view']) // en az view
+                ->name('checkSlug');
         });
 
         // Projects (Blog ile aynı trash() -> index(mode=trash) mantığı)
@@ -298,6 +302,10 @@ Route::middleware(['auth', 'audit'])
             Route::patch('/{project}/change-status', [ProjectController::class, 'changeStatus'])
                 ->middleware('permission:projects.state_change')
                 ->name('changeStatus');
+
+            Route::get('/check-slug', [\App\Http\Controllers\Admin\Project\ProjectController::class, 'checkSlug'])
+                ->middleware(['permission:projects.view']) // en az view
+                ->name('checkSlug');
         });
 
         // Media

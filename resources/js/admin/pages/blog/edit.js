@@ -1,6 +1,7 @@
+import { initSlugManager } from '@/core/slug-manager';
 import initGalleryManager from '@/core/gallery-manager';
 import initFeaturedImageManager, {destroyFeaturedImageManager} from '@/core/featured-image-manager';
-import { initMediaPicker } from '@/core/media-picker';
+import {initMediaPicker} from '@/core/media-picker';
 import initLibraryAttach from '@/core/library-attach';
 
 let ac = null;
@@ -18,19 +19,6 @@ function getTheme() {
     const body = document.body;
     const isDark = root.classList.contains('dark') || body.classList.contains('dark');
     return isDark ? 'dark' : 'light';
-}
-
-function slugifyTR(str) {
-    return String(str || '')
-        .trim()
-        .toLowerCase()
-        .replaceAll('ğ', 'g').replaceAll('ü', 'u').replaceAll('ş', 's')
-        .replaceAll('ı', 'i').replaceAll('ö', 'o').replaceAll('ç', 'c')
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '');
 }
 
 function loadScriptOnce(src) {
@@ -51,8 +39,7 @@ function loadScriptOnce(src) {
 function safeTinyRemove(selector) {
     try {
         window.tinymce?.remove?.(selector);
-    } catch {
-    }
+    } catch {}
 }
 
 function initTiny({selector, uploadUrl, baseUrl, langUrl}) {
@@ -92,11 +79,8 @@ function initTiny({selector, uploadUrl, baseUrl, langUrl}) {
                 if (xhr.status < 200 || xhr.status >= 300) return reject('Upload failed: ' + xhr.status);
 
                 let json;
-                try {
-                    json = JSON.parse(xhr.responseText);
-                } catch {
-                    return reject('Invalid JSON');
-                }
+                try { json = JSON.parse(xhr.responseText); }
+                catch { return reject('Invalid JSON'); }
                 if (!json || typeof json.location !== 'string') return reject('No location returned');
 
                 resolve(json.location);
@@ -129,7 +113,6 @@ function openModal(root, selector) {
     const modal = root.querySelector(selector);
     if (!modal) return;
 
-    // KTUI modal varsa onu kullan
     try {
         if (window.KTModal?.getOrCreateInstance) {
             const inst = window.KTModal.getOrCreateInstance(modal);
@@ -141,10 +124,8 @@ function openModal(root, selector) {
             inst?.show?.();
             return;
         }
-    } catch {
-    }
+    } catch {}
 
-    // fallback
     modal.classList.remove('hidden');
 }
 
@@ -162,72 +143,9 @@ function closeModal(modal) {
             inst?.hide?.();
             return;
         }
-    } catch {
-    }
+    } catch {}
 
     modal.classList.add('hidden');
-}
-
-function setupSlugUI(root, signal) {
-    const titleInput = root.querySelector('#title') || root.querySelector('input[name="title"]');
-    const slugInput = root.querySelector('#slug');
-    const toggle = root.querySelector('#slug_auto_toggle');
-    const regenBtn = root.querySelector('#slug_regen_btn');
-    const badge = root.querySelector('#slug_mode_badge');
-    const preview = root.querySelector('#url_slug_preview');
-
-    if (!slugInput) return;
-
-    const syncPreview = () => {
-        if (preview) preview.textContent = (slugInput.value || '').trim();
-    };
-    const setManualMode = (isManual) => {
-        if (badge) badge.classList.toggle('hidden', !isManual);
-        slugInput.style.boxShadow = isManual ? '0 0 0 2px rgba(245, 158, 11, .35)' : '';
-    };
-    const applyAutoSlug = () => {
-        if (!titleInput) return;
-        slugInput.value = slugifyTR(titleInput.value);
-        syncPreview();
-    };
-
-    syncPreview();
-    setManualMode(false);
-
-    slugInput.addEventListener('input', () => {
-        const v = slugInput.value.trim();
-        if (toggle && toggle.checked && v.length > 0) {
-            toggle.checked = false;
-            setManualMode(true);
-        }
-        syncPreview();
-    }, {signal});
-
-    if (titleInput && toggle) {
-        titleInput.addEventListener('input', () => {
-            if (!toggle.checked) return;
-            if (slugInput.value.trim().length > 0) return;
-            applyAutoSlug();
-        }, {signal});
-
-        toggle.addEventListener('change', () => {
-            const isAuto = toggle.checked;
-            setManualMode(!isAuto);
-            if (isAuto) {
-                slugInput.value = '';
-                applyAutoSlug();
-            }
-        }, {signal});
-    }
-
-    if (regenBtn && toggle) {
-        regenBtn.addEventListener('click', () => {
-            toggle.checked = true;
-            setManualMode(false);
-            slugInput.value = '';
-            applyAutoSlug();
-        }, {signal});
-    }
 }
 
 function lockSubmitButtons(root, formId) {
@@ -242,9 +160,18 @@ export default async function init({root, dataset}) {
     ac = new AbortController();
     const {signal} = ac;
 
-    setupSlugUI(root, signal);
+    initSlugManager(
+        root,
+        {
+            sourceSelector: '#title',
+            slugSelector: '#slug',
+            autoSelector: '#slug_auto',
+            regenSelector: '#slug_regen',
+            previewSelector: '#url_slug_preview',
+        },
+        signal
+    );
 
-    // TinyMCE (blog blade: data-tinymce-src/base/lang-url + data-upload-url)
     const ds = root.dataset;
     const tinymceSrc = ds.tinymceSrc;
     const tinymceBase = ds.tinymceBase;
@@ -252,8 +179,7 @@ export default async function init({root, dataset}) {
     const uploadUrl = ds.uploadUrl;
 
     if (tinymceSrc && tinymceBase && tinymceLangUrl && uploadUrl) {
-        await loadScriptOnce(tinymceSrc).catch(() => {
-        });
+        await loadScriptOnce(tinymceSrc).catch(() => {});
         initTiny({
             selector: '#content_editor',
             uploadUrl,
@@ -270,7 +196,7 @@ export default async function init({root, dataset}) {
             });
         });
     }
-    // Modal delegation
+
     root.addEventListener('click', (e) => {
         const toggleBtn = e.target.closest('[data-kt-modal-toggle]');
         if (toggleBtn && root.contains(toggleBtn)) {
@@ -296,7 +222,6 @@ export default async function init({root, dataset}) {
         if (modal) closeModal(modal);
     }, {signal});
 
-    // Prevent double submit
     const updateForm = root.querySelector('#blog-update-form');
     if (updateForm) updateForm.addEventListener('submit', () => lockSubmitButtons(root, 'blog-update-form'), {
         signal,
@@ -309,7 +234,6 @@ export default async function init({root, dataset}) {
         once: true
     });
 
-    // ✅ NEW: Gallery Manager (component + ortak JS)
     initMediaPicker();
     initGalleryManager(root);
     initLibraryAttach(root);
@@ -317,26 +241,17 @@ export default async function init({root, dataset}) {
 }
 
 export function destroy() {
-    try {
-        ac?.abort();
-    } catch {
-    }
+    try { ac?.abort(); } catch {}
     ac = null;
 
-    try {
-        observer?.disconnect?.();
-    } catch {
-    }
+    try { observer?.disconnect?.(); } catch {}
     observer = null;
 
     if (lastObjectUrl) {
-        try {
-            URL.revokeObjectURL(lastObjectUrl);
-        } catch {
-        }
+        try { URL.revokeObjectURL(lastObjectUrl); } catch {}
         lastObjectUrl = null;
     }
-    // featured-image-manager cleanup
+
     destroyFeaturedImageManager(mountedRoot || document);
     mountedRoot = null;
 }

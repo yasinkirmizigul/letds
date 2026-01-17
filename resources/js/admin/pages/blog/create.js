@@ -1,3 +1,5 @@
+import { initSlugManager } from '@/core/slug-manager';
+
 let ac = null;
 let observer = null;
 let lastObjectUrl = null;
@@ -14,6 +16,7 @@ function getTheme() {
     return isDark ? 'dark' : 'light';
 }
 
+// (Legacy helpers kept intentionally: no method loss, no surprise removals)
 function slugifyTR(str) {
     return String(str || '')
         .trim()
@@ -125,6 +128,7 @@ function setupFeaturedPreview(root, signal) {
     }, { signal });
 }
 
+// kept (legacy) – no longer called, but not deleted to avoid "method loss" surprises
 function setupSlugAuto(root, signal) {
     const titleInput = root.querySelector('input[name="title"]');
     const slugInput = root.querySelector('#slug');
@@ -173,7 +177,16 @@ export default async function init({ root, dataset }) {
     const { signal } = ac;
 
     setupFeaturedPreview(root, signal);
-    setupSlugAuto(root, signal);
+
+    // ✅ NEW: standard slug behavior (Category/Project/Blog same)
+    initSlugManager(root, {
+        sourceSelector: '#title',
+        slugSelector: '#slug',
+        autoSelector: '#slug_auto',
+        regenSelector: '#slug_regen',
+        previewSelector: '#url_slug_preview',
+        generateOnInit: false,
+    }, signal);
 
     const selector = '#content_editor';
     const uploadUrl = dataset.uploadUrl;

@@ -3,26 +3,23 @@
 @section('content')
     <div class="px-4 lg:px-6"
          data-page="blog.edit"
-         data-blog-id="{{ $blogPost->id }}"
-         data-upload-url="{{ route('admin.tinymce.upload') }}"
          data-tinymce-src="{{ asset('assets/vendors/tinymce/tinymce.min.js') }}"
          data-tinymce-base="{{ asset('assets/vendors/tinymce') }}"
-         data-tinymce-lang-url="{{ asset('assets/vendors/tinymce/langs/tr.js') }}">
+         data-tinymce-lang-url="{{ asset('assets/vendors/tinymce/langs/tr.js') }}"
+         data-upload-url="{{ route('admin.tinymce.upload') }}">
 
         @includeIf('admin.partials._flash')
 
         <div class="flex items-center justify-between mb-5">
             <div>
                 <h1 class="text-xl font-semibold">Blog Düzenle</h1>
-                <div class="text-sm text-muted-foreground">ID: {{ $blogPost->id }} • Slug: {{ $blogPost->slug }}</div>
+                <div class="text-sm text-muted-foreground">#{{ $blogPost->id }} • {{ $blogPost->title }}</div>
             </div>
 
             <div class="flex items-center gap-2">
                 <a href="{{ route('admin.blog.index') }}" class="kt-btn kt-btn-light">Geri</a>
 
-                <button form="blog-update-form" class="kt-btn kt-btn-primary" type="submit">
-                    Güncelle
-                </button>
+                <button class="kt-btn kt-btn-primary" type="submit" form="blog-update-form">Kaydet</button>
 
                 <form id="blog-delete-form" method="POST"
                       action="{{ route('admin.blog.destroy', ['blogPost' => $blogPost->id]) }}">
@@ -39,8 +36,6 @@
         @endphp
 
         <div class="kt-card">
-
-            {{-- UPDATE FORM (buttons are outside and linked via form="...") --}}
             <form id="blog-update-form"
                   class="kt-card-content p-8 flex flex-col gap-6"
                   method="POST"
@@ -66,15 +61,30 @@
 
                         <div class="flex flex-col gap-2">
                             <label class="kt-form-label font-normal text-mono">Slug</label>
+
                             <div class="flex items-center gap-2">
                                 <input id="slug" name="slug"
                                        class="kt-input @error('slug') kt-input-invalid @enderror"
                                        value="{{ old('slug', $blogPost->slug) }}">
-                                <button type="button" id="slugifyBtn" class="kt-btn kt-btn-light">Oluştur</button>
+
+                                <button type="button" id="slug_regen" class="kt-btn kt-btn-light">Oluştur</button>
+
+                                <label class="kt-switch shrink-0" title="Otomatik slug">
+                                    <input type="checkbox" id="slug_auto" checked>
+                                    <span class="kt-switch-slider"></span>
+                                </label>
                             </div>
+
                             @error('slug')
                             <div class="text-xs text-danger">{{ $message }}</div>
                             @enderror
+
+                            <div class="text-sm text-muted-foreground">
+                                URL Önizleme:
+                                <span class="font-medium">{{ url('/blog') }}/<span
+                                        id="url_slug_preview">{{ old('slug', $blogPost->slug) }}</span></span>
+                            </div>
+
                             <div id="slugCheckHint" class="text-xs text-muted-foreground"></div>
                         </div>
 
@@ -133,34 +143,25 @@
                     {{-- Right --}}
                     <div class="lg:col-span-1 flex flex-col gap-6">
 
-                        {{-- Categories --}}
                         <div class="flex flex-col gap-2">
                             <label class="kt-form-label font-normal text-mono">Kategoriler</label>
 
                             <select name="category_ids[]" multiple
-                                    class="kt-select @error('category_ids') kt-input-invalid @enderror"
+                                    class="hidden"
                                     data-kt-select="true"
                                     data-kt-select-placeholder="Kategoriler"
                                     data-kt-select-multiple="true"
                                     data-kt-select-tags="true"
-                                    data-kt-select-config='{
-                                        "showSelectedCount": true,
-                                        "enableSelectAll": true,
-                                        "selectAllText": "Tümünü Seç",
-                                        "clearAllText": "Tümünü Temizle"
-                                      }'>
+                                    data-kt-select-config='{"showSelectedCount":true,"enableSelectAll":true,"selectAllText":"Tümünü Seç","clearAllText":"Tümünü Temizle"}'>
                                 @foreach($categories as $c)
                                     <option value="{{ $c->id }}" @selected(in_array($c->id, old('category_ids', $selectedCategoryIds)))>
                                         {{ $c->name }}
                                     </option>
                                 @endforeach
                             </select>
-
-                            @error('category_ids')
-                            <div class="text-xs text-danger">{{ $message }}</div>
-                            @enderror
                         </div>
 
+                        {{-- Gallery (shared component) --}}
                         @include('admin.components.gallery-manager', [
                           'id' => 'blog-' . $blogPost->id,
                           'title' => 'Galeriler',
@@ -177,10 +178,9 @@
                           ],
                         ])
 
-
-                        {{-- Featured image --}}
+                        {{-- Featured image (component) --}}
                         @include('admin.components.featured-image-manager', [
-                            'fileName' => 'featured_image',
+                            'name' => 'featured_image',
                             'mediaIdName' => 'featured_media_id',
                             'currentMediaId' => $blogPost->featuredMediaOne()?->id,
                             'currentUrl' => $blogPost->featuredMediaUrl() ?? $blogPost->featured_image_url,
@@ -205,8 +205,6 @@
             </form>
         </div>
 
-        {{-- Media modal (gallery edit gibi ileride blog içinden item bakmak istersen hazır kalsın) --}}
         @include('admin.pages.media.partials._upload-modal')
-
     </div>
 @endsection

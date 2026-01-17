@@ -19,10 +19,11 @@
             <label class="kt-form-label">Başlık</label>
             <input class="kt-input"
                    name="title"
-                   id="projectTitle"
+                   id="title"
                    value="{{ old('title', $project->title ?? '') }}"/>
             @error('title')
-            <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+            <div class="text-danger text-sm mt-1">{{ $message }}</div>
+            @enderror
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -32,22 +33,29 @@
                 <div class="flex items-center gap-2">
                     <input class="kt-input"
                            name="slug"
-                           id="projectSlug"
+                           id="slug"
                            value="{{ $slugVal }}"/>
-                    <button type="button" class="kt-btn kt-btn-light shrink-0" id="projectSlugGenBtn">
-                        Otomatik
+
+                    <label class="kt-switch shrink-0" title="Otomatik Slug">
+                        <input type="checkbox" id="slug_auto" checked>
+                        <span class="kt-switch-slider"></span>
+                    </label>
+
+                    <button type="button" class="kt-btn kt-btn-light shrink-0" id="slug_regen">
+                        Oluştur
                     </button>
                 </div>
 
                 <div class="text-xs text-muted-foreground mt-2">
                     URL Önizleme:
                     <span class="font-medium">
-                        {{ url('/projects') }}/<span id="projectSlugPreview">{{ $slugVal }}</span>
+                        {{ url('/projects') }}/<span id="url_slug_preview">{{ $slugVal }}</span>
                     </span>
                 </div>
 
                 @error('slug')
-                <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                <div class="text-danger text-sm mt-1">{{ $message }}</div>
+                @enderror
             </div>
 
             <div>
@@ -58,7 +66,8 @@
                     <option value="archived" @selected($st === 'archived')>archived</option>
                 </select>
                 @error('status')
-                <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                <div class="text-danger text-sm mt-1">{{ $message }}</div>
+                @enderror
             </div>
         </div>
 
@@ -83,7 +92,8 @@
                            name="meta_title"
                            value="{{ old('meta_title', $project->meta_title ?? '') }}"/>
                     @error('meta_title')
-                    <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                    <div class="text-danger text-sm mt-1">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div>
@@ -91,7 +101,8 @@
                     <textarea class="kt-textarea"
                               name="meta_description">{{ old('meta_description', $project->meta_description ?? '') }}</textarea>
                     @error('meta_description')
-                    <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                    <div class="text-danger text-sm mt-1">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div>
@@ -100,7 +111,8 @@
                            name="meta_keywords"
                            value="{{ old('meta_keywords', $project->meta_keywords ?? '') }}"/>
                     @error('meta_keywords')
-                    <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                    <div class="text-danger text-sm mt-1">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
         </div>
@@ -150,7 +162,7 @@
             'fileName' => 'featured_image',
             'mediaIdName' => 'featured_media_id',
             'currentUrl' => ($project?->featuredMediaUrl()) ?? ($project?->featured_image_url),
-            'currentMediaId' => $featuredMediaId, // varsa formdan geliyor
+            'currentMediaId' => $featuredMediaId,
             'title' => 'Öne Çıkan Görsel',
         ])
 
@@ -164,7 +176,8 @@
                        placeholder="opsiyonel"
                        value="{{ old('appointment_id', $project->appointment_id ?? '') }}"/>
                 @error('appointment_id')
-                <div class="text-danger text-sm mt-1">{{ $message }}</div> @enderror
+                <div class="text-danger text-sm mt-1">{{ $message }}</div>
+                @enderror
             </div>
         </div>
 

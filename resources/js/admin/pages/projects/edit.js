@@ -1,15 +1,16 @@
+import { initSlugManager } from '@/core/slug-manager';
 import initGalleryManager from '@/core/gallery-manager';
-import initFeaturedImageManager, { destroyFeaturedImageManager } from '@/core/featured-image-manager'
+import initFeaturedImageManager, { destroyFeaturedImageManager } from '@/core/featured-image-manager';
 import initLibraryAttach from '@/core/library-attach';
 import { initMediaPicker } from '@/core/media-picker';
+
 let ac = null;
+let tinyObserver = null;
 
 function csrfToken() {
     const meta = document.querySelector('meta[name="csrf-token"]');
     return meta ? meta.getAttribute('content') : '';
 }
-
-let tinyObserver = null;
 
 function getTheme() {
     const root = document.documentElement;
@@ -141,23 +142,6 @@ function closeModal(modal) {
     modal.classList.add('hidden');
 }
 
-async function jreq(signal, url, method, body) {
-    const res = await fetch(url, {
-        method,
-        headers: {
-            'X-CSRF-TOKEN': csrfToken(),
-            'Accept': 'application/json',
-            ...(body ? { 'Content-Type': 'application/json' } : {}),
-        },
-        body: body ? JSON.stringify(body) : undefined,
-        credentials: 'same-origin',
-        signal,
-    });
-
-    const j = await res.json().catch(() => ({}));
-    return { res, j };
-}
-
 export default async function init() {
     const root = document.querySelector('[data-page="projects.edit"]');
     if (!root) return;
@@ -194,42 +178,14 @@ export default async function init() {
         });
     }
 
-    // slug preview
-    const title = root.querySelector('#projectTitle');
-    const slug = root.querySelector('#projectSlug');
-    const genBtn = root.querySelector('#projectSlugGenBtn');
-    const prev = root.querySelector('#projectSlugPreview');
-
-    const slugify = (s) => (s || '')
-        .toString()
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, '-')
-        .replace(/[^\w\-]+/g, '')
-        .replace(/\-\-+/g, '-')
-        .replace(/^-+/, '')
-        .replace(/-+$/, '');
-
-    const setPrev = (v) => { if (prev) prev.textContent = v || ''; };
-
-    const applyFromTitle = () => {
-        if (!title || !slug) return;
-        const v = slugify(title.value);
-        slug.value = v;
-        setPrev(v);
-    };
-
-    if (slug) {
-        setPrev(slug.value);
-        slug.addEventListener('input', () => setPrev(slug.value.trim()), { signal });
-    }
-    if (genBtn) genBtn.addEventListener('click', applyFromTitle, { signal });
-    if (title && slug) {
-        title.addEventListener('blur', () => {
-            if (slug.value.trim() !== '') return;
-            applyFromTitle();
-        }, { signal });
-    }
+    // ✅ Category-like slug behavior (standard selectors)
+    initSlugManager(root, {
+        sourceSelector: '#title',
+        slugSelector: '#slug',
+        autoSelector: '#slug_auto',
+        regenSelector: '#slug_regen',
+        previewSelector: '#url_slug_preview',
+    }, signal);
 
     // modal delegation (support: data-kt-modal-toggle + data-kt-modal-target)
     root.addEventListener('click', (e) => {
@@ -257,20 +213,7 @@ export default async function init() {
         if (modal) closeModal(modal);
     }, { signal });
 
-    // Delete
-    const delBtn = root.querySelector('#projectDeleteBtn');
-    if (delBtn) {
-        delBtn.addEventListener('click', async () => {
-            const ok = confirm('Bu projeyi silmek istiyor musun?');
-            if (!ok) return;
-
-            const { j } = await jreq(signal, `/admin/projects/${projectId}`, 'DELETE');
-            if (j?.ok) window.location.href = '/admin/projects';
-        }, { signal });
-    }
-
     initMediaPicker();
-    // ✅ NEW: Gallery Manager (component + ortak JS)
     initGalleryManager(root);
     initLibraryAttach(root);
     initFeaturedImageManager(root);

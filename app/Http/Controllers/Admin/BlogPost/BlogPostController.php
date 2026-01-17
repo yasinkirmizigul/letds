@@ -418,4 +418,28 @@ class BlogPostController extends Controller
             'updated_at' => now(),
         ]);
     }
+    public function checkSlug(Request $request)
+    {
+        $slug = trim((string) $request->query('slug', ''));
+        $ignoreId = $request->integer('ignore');
+
+        if ($slug === '') {
+            return response()->json([
+                'ok' => false,
+                'available' => false,
+                'message' => 'Slug boş olamaz.',
+            ]);
+        }
+
+        $exists = BlogPost::query()
+            ->when($ignoreId, fn($q) => $q->whereKeyNot($ignoreId))
+            ->where('slug', $slug)
+            ->exists();
+
+        return response()->json([
+            'ok' => true,
+            'available' => !$exists,
+            'message' => $exists ? 'Bu slug zaten kullanılıyor.' : 'Slug uygun.',
+        ]);
+    }
 }
