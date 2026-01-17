@@ -1,6 +1,13 @@
+// resources/js/core/library-attach.js
+
 import { initMediaUploadModal } from '@/core/media-upload-modal';
 
+function csrfToken() {
+    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+}
+
 export default function initLibraryAttach(root = document) {
+    // modal global => document scope
     initMediaUploadModal(document);
 
     const modal = document.getElementById('mediaUploadModal');
@@ -10,10 +17,9 @@ export default function initLibraryAttach(root = document) {
     if (modal.__libraryAttachBound) return;
     modal.__libraryAttachBound = true;
 
-    // hangi endpoint’e bağlayacağız? son tıklanan attach butonu belirler
+    // son tıklanan attach butonu hedefi belirler
     let currentAttach = null;
 
-    // attach butonlarını dinle
     document.addEventListener('click', (e) => {
         const btn = e.target.closest('[data-library-attach="true"]');
         if (!btn) return;
@@ -56,7 +62,6 @@ export default function initLibraryAttach(root = document) {
             useBtn.innerHTML = `<i class="ki-outline ki-loading"></i> Ekleniyor (${ids.length})`;
         }
 
-        // global req helper yoksa fetch kullan
         const body = { [currentAttach.payloadKey]: ids };
 
         let res, j;
@@ -64,10 +69,12 @@ export default function initLibraryAttach(root = document) {
             res = await fetch(currentAttach.url, {
                 method: 'POST',
                 headers: {
+                    Accept: 'application/json',
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                    'X-CSRF-TOKEN': csrfToken(),
                 },
+                credentials: 'same-origin',
                 body: JSON.stringify(body),
             });
             j = await res.json().catch(() => ({}));
@@ -95,13 +102,13 @@ export default function initLibraryAttach(root = document) {
             return;
         }
 
-        // selection temizle
+        // selection temizle (upload-modal bunu dinliyor)
         modal.dispatchEvent(new CustomEvent('media:library:clearSelection', { bubbles: true }));
 
         // modal kapat
         await hideModal();
 
-        // sayfalara haber ver: "attach bitti"
+        // sayfalara haber ver: attach bitti
         document.dispatchEvent(new CustomEvent('media:library:attached', {
             bubbles: true,
             detail: { ids, url: currentAttach.url },

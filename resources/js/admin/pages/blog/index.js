@@ -1,5 +1,5 @@
-let ac = null;
 let popEl = null;
+
 function csrfToken() {
     const meta = document.querySelector('meta[name="csrf-token"]');
     return meta ? meta.getAttribute('content') : '';
@@ -106,7 +106,7 @@ async function togglePublish(input) {
     }
 }
 
-function postJson(url, body) {
+function postJson(url, body, signal) {
     return fetch(url, {
         method: 'POST',
         headers: {
@@ -115,6 +115,8 @@ function postJson(url, body) {
             'X-CSRF-TOKEN': csrfToken(),
         },
         body: JSON.stringify(body),
+        signal,
+        credentials: 'same-origin',
     }).then(async (res) => {
         const j = await res.json().catch(() => ({}));
         if (!res.ok || j?.ok === false) throw new Error(j?.error?.message || 'İşlem başarısız');
@@ -152,7 +154,7 @@ function renderPagination(api, host) {
     host.appendChild(makeBtn('›', Math.min(pages - 1, page + 1), page === pages - 1));
 }
 
-function initPageSizeFromDataset(root) {
+function initPageSizeFromDataset(ctx, root) {
     const per = root?.dataset?.perpage ? parseInt(root.dataset.perpage, 10) : 25;
 
     const selPage = root.querySelector('#blogPageSize');
@@ -163,7 +165,7 @@ function initPageSizeFromDataset(root) {
     selPage.innerHTML = options.map(v => `<option value="${v}">${v}</option>`).join('');
     selPage.value = String(per);
 
-    selPage.addEventListener('change', () => {
+    const handler = () => {
         let hidden = form.querySelector('input[name="perpage"]');
         if (!hidden) {
             hidden = document.createElement('input');
@@ -173,18 +175,23 @@ function initPageSizeFromDataset(root) {
         }
         hidden.value = selPage.value;
         form.requestSubmit();
-    }, { once: false });
+    };
+
+    selPage.addEventListener('change', handler, { signal: ctx.signal });
 }
 
-function initCategoryAutoSubmit(root) {
+function initCategoryAutoSubmit(ctx, root) {
     const sel = root.querySelector('#blogCategoryFilter');
     if (!sel) return;
-    sel.addEventListener('change', () => sel.closest('form')?.requestSubmit());
+    sel.addEventListener('change', () => sel.closest('form')?.requestSubmit(), { signal: ctx.signal });
 }
 
 // ====== default page init (registry-friendly)
-export default function init({ root }) {
-    // 0) guard
+export default function init(ctx) {
+    const root = ctx.root;
+    const signal = ctx.signal;
+
+    // guard
     const tableEl = root.querySelector('#blog_table');
     if (!tableEl) return;
 
@@ -200,7 +207,6 @@ export default function init({ root }) {
     const btnBulkRestore = root.querySelector('#blogBulkRestoreBtn');
     const btnBulkForce = root.querySelector('#blogBulkForceDeleteBtn');
 
-    // DataTables paging’de seçim kaybolmasın diye global set
     const selectedIds = new Set();
 
     function updateBulkUI() {
@@ -213,7 +219,6 @@ export default function init({ root }) {
         if (btnBulkRestore) btnBulkRestore.disabled = n === 0;
         if (btnBulkForce) btnBulkForce.disabled = n === 0;
 
-        // checkAll indeterminate
         if (checkAll) {
             const boxes = [...root.querySelectorAll('input.blog-check')];
             const checked = boxes.filter(b => b.checked).length;
@@ -230,13 +235,14 @@ export default function init({ root }) {
         updateBulkUI();
     }
 
-
-    // 1) popover instance + delegation
+    // popover instance
     popEl = createPopover();
-    ac = new AbortController();
-    const { signal } = ac;
+    ctx.cleanup(() => {
+        try { popEl?.remove(); } catch {}
+        popEl = null;
+    });
 
-    // listeners
+    // Popover listeners
     root.addEventListener('mouseover', (e) => {
         const a = e.target?.closest?.('.js-img-popover');
         if (!a || !root.contains(a)) return;
@@ -252,13 +258,15 @@ export default function init({ root }) {
         hideImgPopover(popEl);
     }, { signal });
 
+    // Publish toggle
     root.addEventListener('change', (e) => {
         const cb = e.target;
         if (!(cb instanceof HTMLInputElement)) return;
         if (!cb.classList.contains('js-publish-toggle')) return;
         togglePublish(cb);
     }, { signal });
-    // 2) DataTable init
+
+    // DataTable init
     const api = window.initDataTable?.({
         root,
         table: '#blog_table',
@@ -275,24 +283,27 @@ export default function init({ root }) {
         zeroTemplate: '#dt-zero-blog',
 
         columnDefs: [
-            { orderable: false, searchable: false, targets: [0] }, // checkbox
+            { orderable: false, searchable: false, targets: [0] },
             { className: 'text-right', targets: [6, 7] },
         ],
+
+        // ✅ yeni
+        signal: ctx.signal,
+        cleanup: (fn) => ctx.cleanup(fn),
 
         onDraw: (dtApi) => {
             const host = root.querySelector('#blogPagination');
             renderPagination(dtApi || api, host);
-
-            // ✅ sayfa değişince checkboxlar doğru işaretlensin
             applySelectionToCurrentPage();
         }
     });
-    // Checkbox change (delegation)
+
+
+    // Checkbox selection
     root.addEventListener('change', (e) => {
         const cb = e.target;
         if (!(cb instanceof HTMLInputElement)) return;
 
-        // tek tek seçim
         if (cb.classList.contains('blog-check')) {
             const id = String(cb.value || '');
             if (!id) return;
@@ -302,7 +313,6 @@ export default function init({ root }) {
             return;
         }
 
-        // check all
         if (cb.id === 'blog_check_all') {
             const on = !!cb.checked;
             root.querySelectorAll('input.blog-check').forEach(x => {
@@ -315,7 +325,8 @@ export default function init({ root }) {
             updateBulkUI();
         }
     }, { signal });
-    // --- Single row actions (delete / restore / force-delete) ---
+
+    // Single row actions
     root.addEventListener('click', async (e) => {
         const btn = e.target?.closest?.('[data-action]');
         if (!btn || !root.contains(btn)) return;
@@ -324,8 +335,6 @@ export default function init({ root }) {
         const id = btn.getAttribute('data-id');
         if (!action || !id) return;
 
-        // Bulk bar butonları da data-action kullanmıyor, sorun yok.
-        // double click koruması
         if (btn.dataset.busy === '1') return;
         btn.dataset.busy = '1';
 
@@ -339,6 +348,7 @@ export default function init({ root }) {
                         'Accept': 'application/json',
                         'X-CSRF-TOKEN': csrfToken(),
                     },
+                    signal,
                 });
                 const j = await res.json().catch(() => ({}));
                 if (!res.ok || j?.ok === false) throw new Error(j?.error?.message || 'Silme başarısız');
@@ -351,7 +361,7 @@ export default function init({ root }) {
             if (action === 'restore') {
                 if (!confirm('Bu yazı geri yüklensin mi?')) return;
 
-                await postJson(`/admin/blog/${id}/restore`, {});
+                await postJson(`/admin/blog/${id}/restore`, {}, signal);
                 notify('success', 'Geri yüklendi');
                 location.reload();
                 return;
@@ -366,6 +376,7 @@ export default function init({ root }) {
                         'Accept': 'application/json',
                         'X-CSRF-TOKEN': csrfToken(),
                     },
+                    signal,
                 });
                 const j = await res.json().catch(() => ({}));
                 if (!res.ok || j?.ok === false) throw new Error(j?.error?.message || 'Kalıcı silme başarısız');
@@ -390,7 +401,7 @@ export default function init({ root }) {
         if (!confirm(`${ids.length} kayıt silinsin mi?`)) return;
 
         try {
-            await postJson('/admin/blog/bulk-delete', { ids });
+            await postJson('/admin/blog/bulk-delete', { ids }, signal);
             notify('success', 'Silindi');
             selectedIds.clear();
             location.reload();
@@ -399,7 +410,7 @@ export default function init({ root }) {
         } finally {
             updateBulkUI();
         }
-    });
+    }, { signal });
 
     btnBulkRestore?.addEventListener('click', async () => {
         const ids = [...selectedIds];
@@ -408,7 +419,7 @@ export default function init({ root }) {
         if (!confirm(`${ids.length} kayıt geri yüklensin mi?`)) return;
 
         try {
-            await postJson('/admin/blog/bulk-restore', { ids });
+            await postJson('/admin/blog/bulk-restore', { ids }, signal);
             notify('success', 'Geri yüklendi');
             selectedIds.clear();
             location.reload();
@@ -417,7 +428,7 @@ export default function init({ root }) {
         } finally {
             updateBulkUI();
         }
-    });
+    }, { signal });
 
     btnBulkForce?.addEventListener('click', async () => {
         const ids = [...selectedIds];
@@ -426,7 +437,7 @@ export default function init({ root }) {
         if (!confirm(`${ids.length} kayıt KALICI silinecek. Emin misin?`)) return;
 
         try {
-            await postJson('/admin/blog/bulk-force-delete', { ids });
+            await postJson('/admin/blog/bulk-force-delete', { ids }, signal);
             notify('success', 'Kalıcı silindi');
             selectedIds.clear();
             location.reload();
@@ -435,26 +446,15 @@ export default function init({ root }) {
         } finally {
             updateBulkUI();
         }
-    });
+    }, { signal });
 
-
-    // 3) First render extras
-    initCategoryAutoSubmit(root);
-    initPageSizeFromDataset(root);
+    // init extras
+    initCategoryAutoSubmit(ctx, root);
+    initPageSizeFromDataset(ctx, root);
     renderPagination(api, root.querySelector('#blogPagination'));
-
-    // 4) Optional cleanup hook (MPA’da şart değil ama düzgün)
-    window.addEventListener('beforeunload', () => {
-        try { ac.abort(); } catch {}
-        try { popEl.remove(); } catch {}
-    }, { once: true });
-
 }
 
 export function destroy() {
-    try { ac?.abort(); } catch {}
     try { popEl?.remove(); } catch {}
-
-    ac = null;
     popEl = null;
 }

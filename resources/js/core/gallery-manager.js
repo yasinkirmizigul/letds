@@ -1,13 +1,123 @@
+// resources/js/core/gallery-manager.js
 import Sortable from 'sortablejs';
 
-export default function initGalleryManager(root = document) {
-    const managers = [...root.querySelectorAll('[data-gallery-manager]')];
-    if (!managers.length) return;
+function escapeHtml(str) {
+    return String(str ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+}
 
-    managers.forEach((mgr) => mountOne(mgr));
+function csrfToken() {
+    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+}
+
+async function jreq(url, method, body, signal = null) {
+    const res = await fetch(url, {
+        method,
+        headers: {
+            'X-CSRF-TOKEN': csrfToken(),
+            Accept: 'application/json',
+            ...(body ? { 'Content-Type': 'application/json' } : {}),
+        },
+        body: body ? JSON.stringify(body) : undefined,
+        credentials: 'same-origin',
+        signal,
+    });
+
+    const j = await res.json().catch(() => ({}));
+    return { res, j };
+}
+
+function getIds(container) {
+    return [...container.querySelectorAll('[data-gallery-id]')]
+        .map((el) => Number(el.dataset.galleryId))
+        .filter(Boolean);
+}
+
+function ensureKTSelects(scopeEl) {
+    try {
+        scopeEl.querySelectorAll('select[data-kt-select="true"]').forEach((el) => {
+            if (el.__ktSelectInited) return;
+            el.__ktSelectInited = true;
+            window.KTSelect?.getOrCreateInstance?.(el);
+        });
+    } catch {}
+}
+
+function attachedRowHtml(r) {
+    const slot = (r.slot || 'main') === 'sidebar' ? 'sidebar' : 'main';
+    const g = r.gallery || {};
+    const name = escapeHtml(g.name ?? `Galeri #${r.gallery_id}`);
+    const slug = escapeHtml(g.slug ?? '');
+
+    return `
+    <div class="kt-card kt-card-border p-3 flex items-center gap-3" data-gallery-id="${Number(r.gallery_id)}" data-slot="${slot}">
+      <div class="cursor-move js-gal-handle kt-text-muted">
+        <i class="ki-outline ki-drag"></i>
+      </div>
+
+      <div class="flex-1 min-w-0">
+        <div class="font-medium truncate">${name}</div>
+        <div class="text-xs kt-text-muted truncate">#${Number(r.gallery_id)} • ${slug}</div>
+      </div>
+
+      <div class="w-36">
+        <select class="kt-select js-gal-slot" data-kt-select="true">
+          <option value="main">main</option>
+          <option value="sidebar">sidebar</option>
+        </select>
+      </div>
+
+      <button type="button" class="kt-btn kt-btn-sm kt-btn-light js-detach">
+        Kaldır
+      </button>
+    </div>
+  `;
+}
+
+function renderPager(meta) {
+    const current = Number(meta.current_page || 1);
+    const last = Number(meta.last_page || 1);
+
+    if (last <= 1) return '';
+
+    const mk = (p, label, disabled = false, active = false) => {
+        const cls = [
+            'kt-btn kt-btn-sm',
+            active ? 'kt-btn-primary' : 'kt-btn-light',
+            disabled ? 'opacity-60 pointer-events-none' : '',
+        ].join(' ');
+        return `<button type="button" class="${cls}" data-page="${p}">${escapeHtml(label)}</button>`;
+    };
+
+    const parts = [];
+    parts.push(mk(current - 1, '‹', current <= 1));
+
+    const start = Math.max(1, current - 2);
+    const end = Math.min(last, current + 2);
+
+    if (start > 1) parts.push(mk(1, '1', false, current === 1));
+    if (start > 2) parts.push(`<span class="px-2 kt-text-muted">…</span>`);
+
+    for (let p = start; p <= end; p++) parts.push(mk(p, String(p), false, p === current));
+
+    if (end < last - 1) parts.push(`<span class="px-2 kt-text-muted">…</span>`);
+    if (end < last) parts.push(mk(last, String(last), false, current === last));
+
+    parts.push(mk(current + 1, '›', current >= last));
+
+    return `<div class="flex flex-wrap gap-2 items-center justify-center">${parts.join('')}</div>`;
 }
 
 function mountOne(mgr) {
+    // idempotent: varsa önce temizle
+    if (typeof mgr.__gmCleanup === 'function') {
+        try { mgr.__gmCleanup(); } catch {}
+    }
+
     const id = mgr.dataset.gmId || 'gm';
 
     const URLS = {
@@ -43,46 +153,34 @@ function mountOne(mgr) {
 
     if (!galleriesMain || !galleriesSidebar || !pickerList) return;
 
-    // ---- helpers
-    const escapeHtml = (s) => String(s ?? '')
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
+    // ---- state
+    const gState = { page: 1, perpage: 10, q: '' };
 
-    const csrfToken = () => document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+    const cleanupFns = [];
+    let debounceTimer = null;
 
-    async function jreq(url, method, body) {
-        const res = await fetch(url, {
-            method,
-            headers: {
-                'X-CSRF-TOKEN': csrfToken(),
-                'Accept': 'application/json',
-                ...(body ? { 'Content-Type': 'application/json' } : {}),
-            },
-            body: body ? JSON.stringify(body) : undefined,
-            credentials: 'same-origin',
-        });
+    // picker request guard
+    let pickerAbort = null;
+    let pickerReqId = 0;
 
-        const j = await res.json().catch(() => ({}));
-        return { res, j };
-    }
-
-    function getIds(container) {
-        return [...container.querySelectorAll('[data-gallery-id]')]
-            .map(el => Number(el.dataset.galleryId))
-            .filter(Boolean);
+    function cleanupTransient() {
+        if (debounceTimer) {
+            clearTimeout(debounceTimer);
+            debounceTimer = null;
+        }
+        if (pickerAbort) {
+            pickerAbort.abort();
+            pickerAbort = null;
+        }
     }
 
     function syncSlotSelects() {
-        galleriesMain.querySelectorAll('[data-gallery-id]').forEach(el => {
+        galleriesMain.querySelectorAll('[data-gallery-id]').forEach((el) => {
             el.dataset.slot = 'main';
             const sel = el.querySelector('.js-gal-slot');
             if (sel) sel.value = 'main';
         });
-
-        galleriesSidebar.querySelectorAll('[data-gallery-id]').forEach(el => {
+        galleriesSidebar.querySelectorAll('[data-gallery-id]').forEach((el) => {
             el.dataset.slot = 'sidebar';
             const sel = el.querySelector('.js-gal-slot');
             if (sel) sel.value = 'sidebar';
@@ -93,42 +191,8 @@ function mountOne(mgr) {
         syncSlotSelects();
         const main_ids = getIds(galleriesMain);
         const sidebar_ids = getIds(galleriesSidebar);
-
         const { res, j } = await jreq(URLS.reorder, 'POST', { main_ids, sidebar_ids });
         if (!res.ok || !j?.ok) console.error('[gallery-manager] reorder failed', res.status, j);
-    }
-
-    function attachedRow(r) {
-        const slot = (r.slot || 'main') === 'sidebar' ? 'sidebar' : 'main';
-        const g = r.gallery || {};
-        const name = escapeHtml(g.name ?? `Galeri #${r.gallery_id}`);
-        const slug = escapeHtml(g.slug ?? '');
-
-        return `
-<div class="rounded-xl border border-border bg-background p-3 flex items-start justify-between gap-3"
-     data-gallery-id="${r.gallery_id}"
-     data-slot="${slot}">
-    <div class="flex items-start gap-3">
-        <div class="js-gal-handle cursor-move select-none text-muted-foreground mt-1" title="Sırala / Taşı">
-            <i class="ki-outline ki-menu"></i>
-        </div>
-        <div class="grid">
-            <div class="font-semibold">${name}</div>
-            <div class="text-xs text-muted-foreground">#${r.gallery_id} • ${slug}</div>
-        </div>
-    </div>
-
-    <div class="flex items-center gap-2">
-        <select class="kt-select kt-select-sm js-gal-slot w-auto min-w-[8rem]" data-kt-select="true">
-            <option value="main" ${slot === 'main' ? 'selected' : ''}>main</option>
-            <option value="sidebar" ${slot === 'sidebar' ? 'selected' : ''}>sidebar</option>
-        </select>
-
-        <button type="button" class="kt-btn kt-btn-sm kt-btn-danger js-detach">
-            <i class="ki-outline ki-trash"></i>
-        </button>
-    </div>
-</div>`;
     }
 
     function ensureSortables() {
@@ -152,40 +216,41 @@ function mountOne(mgr) {
             animation: 150,
             onEnd: persistBothSlots,
         });
+
+        cleanupFns.push(() => {
+            try { galleriesMain.__sortable?.destroy?.(); } catch {}
+            try { galleriesSidebar.__sortable?.destroy?.(); } catch {}
+            galleriesMain.__sortable = null;
+            galleriesSidebar.__sortable = null;
+        });
     }
 
-    function ensureKTSelects(scopeEl) {
-        try {
-            scopeEl.querySelectorAll('select[data-kt-select="true"]').forEach((el) => {
-                if (el.__ktSelectInited) return;
-                el.__ktSelectInited = true;
-                window.KTSelect?.getOrCreateInstance?.(el);
-            });
-        } catch {}
-    }
-
-    // ✅ FIX: slot select değişince ilgili container'a taşı
     function bindSlotSelectHandlers(scopeEl) {
         scopeEl.querySelectorAll('select.js-gal-slot').forEach((sel) => {
-            if (sel.__gmSlotBound) return;
-            sel.__gmSlotBound = true;
+            // DOM flag yerine handler ref sakla
+            if (sel.__gmSlotHandler) return;
 
-            sel.addEventListener('change', async () => {
+            const onChange = async () => {
                 const row = sel.closest('[data-gallery-id]');
                 if (!row) return;
 
                 const to = (sel.value || 'main') === 'sidebar' ? 'sidebar' : 'main';
                 const from = (row.dataset.slot || 'main') === 'sidebar' ? 'sidebar' : 'main';
-
                 if (to === from) return;
 
-                // DOM'u taşı
                 row.dataset.slot = to;
                 if (to === 'main') galleriesMain.appendChild(row);
                 else galleriesSidebar.appendChild(row);
 
-                // persist
                 await persistBothSlots();
+            };
+
+            sel.__gmSlotHandler = onChange;
+            sel.addEventListener('change', onChange);
+
+            cleanupFns.push(() => {
+                try { sel.removeEventListener('change', sel.__gmSlotHandler); } catch {}
+                sel.__gmSlotHandler = null;
             });
         });
     }
@@ -195,66 +260,40 @@ function mountOne(mgr) {
         if (!res.ok || !j?.ok) return;
 
         const rows = Array.isArray(j.data) ? j.data : [];
-        const main = rows.filter(x => (x.slot || 'main') === 'main');
-        const side = rows.filter(x => (x.slot || 'main') === 'sidebar');
+        const main = rows.filter((x) => (x.slot || 'main') === 'main');
+        const side = rows.filter((x) => (x.slot || 'main') === 'sidebar');
 
-        galleriesMain.innerHTML = main.map(attachedRow).join('');
-        galleriesSidebar.innerHTML = side.map(attachedRow).join('');
+        galleriesMain.innerHTML = main.map(attachedRowHtml).join('');
+        galleriesSidebar.innerHTML = side.map(attachedRowHtml).join('');
 
         ensureKTSelects(mgr);
 
         const total = main.length + side.length;
         if (galleriesEmpty) galleriesEmpty.classList.toggle('hidden', total > 0);
 
-        // ✅ render sonrası handler + sortable
         bindSlotSelectHandlers(mgr);
         ensureSortables();
         syncSlotSelects();
     }
 
-    // ---- Picker
-    const gState = { page: 1, perpage: 10, q: '' };
-
-    function renderPager(meta) {
-        if (!pickerPagination) return;
-
-        const current = Number(meta.current_page || 1);
-        const last = Number(meta.last_page || 1);
-
-        if (last <= 1) {
-            pickerPagination.innerHTML = '';
-            return;
-        }
-
-        const mk = (p, label, disabled = false, active = false) => `
-            <button type="button"
-                    class="kt-btn kt-btn-sm ${active ? 'kt-btn-primary' : 'kt-btn-light'}"
-                    ${disabled ? 'disabled' : ''}
-                    data-page="${p}">
-                ${label}
-            </button>`;
-
-        const parts = [];
-        parts.push(mk(current - 1, '‹', current <= 1));
-
-        const start = Math.max(1, current - 2);
-        const end = Math.min(last, current + 2);
-
-        if (start > 1) parts.push(mk(1, '1', false, current === 1));
-        if (start > 2) parts.push(`<span class="px-2 text-muted-foreground">…</span>`);
-
-        for (let p = start; p <= end; p++) parts.push(mk(p, String(p), false, p === current));
-
-        if (end < last - 1) parts.push(`<span class="px-2 text-muted-foreground">…</span>`);
-        if (end < last) parts.push(mk(last, String(last), false, current === last));
-
-        parts.push(mk(current + 1, '›', current >= last));
-
-        pickerPagination.innerHTML = `<div class="flex items-center gap-1">${parts.join('')}</div>`;
+    function renderPickerError(message) {
+        pickerList.innerHTML = `
+          <div class="kt-text-muted kt-text-sm py-6 text-center">
+            ${escapeHtml(message)}
+          </div>
+        `;
+        if (pickerEmpty) pickerEmpty.classList.remove('hidden');
+        if (pickerInfo) pickerInfo.textContent = '';
+        if (pickerPagination) pickerPagination.innerHTML = '';
     }
 
     async function fetchPicker() {
         if (!pickerList) return;
+
+        const myReq = ++pickerReqId;
+
+        if (pickerAbort) pickerAbort.abort();
+        pickerAbort = new AbortController();
 
         const qs = new URLSearchParams({
             page: String(gState.page),
@@ -263,50 +302,62 @@ function mountOne(mgr) {
             mode: 'active',
         });
 
-        const { res, j } = await jreq(`${URLS.list}?${qs.toString()}`, 'GET');
+        let res, j;
+        try {
+            ({ res, j } = await jreq(`${URLS.list}?${qs.toString()}`, 'GET', null, pickerAbort.signal));
+        } catch (e) {
+            if (e?.name === 'AbortError') return;
+            renderPickerError('İstek hatası');
+            return;
+        }
+
+        if (myReq !== pickerReqId) return;
+
         if (!res.ok || !j?.ok) {
-            pickerList.innerHTML = `<div class="text-sm text-muted-foreground p-3">Liste alınamadı (${res.status})</div>`;
-            if (pickerEmpty) pickerEmpty.classList.remove('hidden');
-            if (pickerInfo) pickerInfo.textContent = '';
-            if (pickerPagination) pickerPagination.innerHTML = '';
+            renderPickerError(`Liste alınamadı (${res.status})`);
             return;
         }
 
         const items = Array.isArray(j.data) ? j.data : [];
         const meta = j.meta || {};
 
-        pickerList.innerHTML = items.map(g => `
-<div class="p-3 flex items-center justify-between gap-3">
-    <div class="min-w-0">
-        <div class="font-medium truncate">${escapeHtml(g.name)}</div>
-        <div class="text-xs text-muted-foreground">${escapeHtml(g.slug || '')}</div>
-    </div>
-
-    <button type="button"
-            class="kt-btn kt-btn-sm kt-btn-primary js-picker-attach"
-            data-gallery-id="${g.id}">
-        Bağla
-    </button>
-</div>
-`).join('');
+        pickerList.innerHTML = items
+            .map((g) => {
+                const gid = Number(g.id || g.gallery_id || 0);
+                const name = escapeHtml(g.name || '-');
+                const slug = escapeHtml(g.slug || '');
+                return `
+                  <div class="kt-card kt-card-border p-3 flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                      <div class="font-medium truncate">${name}</div>
+                      <div class="text-xs kt-text-muted truncate">${slug}</div>
+                    </div>
+                    <button type="button" class="kt-btn kt-btn-sm kt-btn-primary js-picker-attach" data-gallery-id="${gid}">
+                      Bağla
+                    </button>
+                  </div>
+                `;
+            })
+            .join('');
 
         if (pickerEmpty) pickerEmpty.classList.toggle('hidden', items.length > 0);
 
-        const from = items.length ? ((Number(meta.current_page || 1) - 1) * Number(meta.per_page || items.length) + 1) : 0;
-        const to = items.length ? (from + items.length - 1) : 0;
-        if (pickerInfo) pickerInfo.textContent = `${from}-${to} / ${meta.total ?? items.length}`;
+        const from = items.length
+            ? (Number(meta.current_page || 1) - 1) * Number(meta.per_page || items.length) + 1
+            : 0;
+        const to = items.length ? from + items.length - 1 : 0;
 
-        renderPager(meta);
+        if (pickerInfo) pickerInfo.textContent = `${from}-${to} / ${meta.total ?? items.length}`;
+        if (pickerPagination) pickerPagination.innerHTML = renderPager(meta);
     }
 
-    // ---- Events (scoped to mgr)
-    mgr.addEventListener('click', async (e) => {
+    // ---- Events (scoped) ----
+    const onMgrClick = async (e) => {
         const detachBtn = e.target.closest('.js-detach');
         if (detachBtn) {
             const row = detachBtn.closest('[data-gallery-id]');
             const gid = Number(row?.dataset.galleryId);
             if (!gid) return;
-
             await jreq(URLS.detach, 'POST', { gallery_id: gid });
             await fetchAttached();
             return;
@@ -317,7 +368,6 @@ function mountOne(mgr) {
             const gid = Number(attachPick.dataset.galleryId);
             const slot = pickerSlot?.value || 'main';
             if (!gid) return;
-
             await jreq(URLS.attach, 'POST', { gallery_id: gid, slot });
             await fetchAttached();
             return;
@@ -330,21 +380,34 @@ function mountOne(mgr) {
             gState.page = p;
             await fetchPicker();
         }
+    };
+
+    mgr.addEventListener('click', onMgrClick);
+    cleanupFns.push(() => {
+        try { mgr.removeEventListener('click', onMgrClick); } catch {}
     });
 
-    pickerRefresh?.addEventListener('click', async () => {
+    const onRefresh = async () => {
         gState.page = 1;
         await fetchPicker();
-    });
+    };
 
-    pickerSearch?.addEventListener('input', async () => {
-        gState.q = pickerSearch.value || '';
-        gState.page = 1;
-        await fetchPicker();
-    });
+    const onSearchDebounced = () => {
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(async () => {
+            gState.q = pickerSearch?.value || '';
+            gState.page = 1;
+            await fetchPicker();
+        }, 250);
+    };
 
-    // attach button: modal açıkken listeyi deterministik çek
-    attachBtn?.addEventListener('click', async () => {
+    pickerRefresh?.addEventListener('click', onRefresh);
+    if (pickerRefresh) cleanupFns.push(() => pickerRefresh.removeEventListener('click', onRefresh));
+
+    pickerSearch?.addEventListener('input', onSearchDebounced);
+    if (pickerSearch) cleanupFns.push(() => pickerSearch.removeEventListener('input', onSearchDebounced));
+
+    const onAttachBtn = async () => {
         gState.page = 1;
         gState.q = '';
         if (pickerSearch) pickerSearch.value = '';
@@ -354,8 +417,55 @@ function mountOne(mgr) {
         if (modalEl) {
             try { window.KTModal?.getOrCreateInstance?.(modalEl)?.show?.(); } catch {}
         }
-    });
+    };
 
-    // boot
+    attachBtn?.addEventListener('click', onAttachBtn);
+    if (attachBtn) cleanupFns.push(() => attachBtn.removeEventListener('click', onAttachBtn));
+
+    // modal kapanınca transient temizle (best-effort)
+    const modalEl = document.querySelector(pickerModalSel);
+    if (modalEl) {
+        const onHidden = () => cleanupTransient();
+        modalEl.addEventListener('hidden', onHidden);
+        cleanupFns.push(() => {
+            try { modalEl.removeEventListener('hidden', onHidden); } catch {}
+        });
+    }
+
+    // ---- boot ----
     fetchAttached();
+
+    // attach cleanup to element for idempotency + external destroy
+    mgr.__gmCleanup = () => {
+        cleanupTransient();
+
+        cleanupFns.reverse().forEach((fn) => {
+            try { fn(); } catch {}
+        });
+        cleanupFns.length = 0;
+
+        // sortable destroy (ek garanti)
+        try { galleriesMain.__sortable?.destroy?.(); } catch {}
+        try { galleriesSidebar.__sortable?.destroy?.(); } catch {}
+        galleriesMain.__sortable = null;
+        galleriesSidebar.__sortable = null;
+
+        mgr.__gmCleanup = null;
+    };
+}
+
+export default function initGalleryManager(root = document) {
+    const managers = [...root.querySelectorAll('[data-gallery-manager]')];
+    if (!managers.length) return;
+    managers.forEach((mgr) => mountOne(mgr));
+}
+
+export function destroyGalleryManager(root = document) {
+    const managers = [...root.querySelectorAll('[data-gallery-manager]')];
+    if (!managers.length) return;
+    managers.forEach((mgr) => {
+        if (typeof mgr.__gmCleanup === 'function') {
+            try { mgr.__gmCleanup(); } catch {}
+        }
+    });
 }

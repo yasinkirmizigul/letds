@@ -13,6 +13,7 @@ export function register(name, module) {
     if (registry.has(name)) {
         console.warn(`[pages] Duplicate register for "${name}". Overwriting.`);
     }
+
     registry.set(name, module);
 }
 
@@ -26,37 +27,43 @@ let current = {
 export async function bootPage(pageName, ctx) {
     if (!pageName) return;
 
-    // same page guard
-    if (current.booted && current.name === pageName) {
-        return;
-    }
+    const samePage = current.booted && current.name === pageName;
+    const sameRoot = samePage && current.ctx?.root === ctx?.root;
 
-    // destroy previous page
-    if (current.destroy) {
-        try {
-            await current.destroy(current.ctx);
-        } catch (e) {
-            console.warn('[pages] destroy failed:', e);
+    // Aynı page + aynı root => gerçekten yapacak iş yok
+    if (samePage && sameRoot) return;
+
+    // destroy previous page module
+    if (current.booted) {
+        if (current.destroy) {
+            try {
+                await current.destroy(current.ctx);
+            } catch (e) {
+                console.warn('[pages] destroy failed:', e);
+            }
+        }
+
+        // run ctx-level cleanup stack (if exists)
+        if (typeof current.ctx?.destroyAll === 'function') {
+            try {
+                await current.ctx.destroyAll();
+            } catch (e) {
+                console.warn('[pages] ctx.destroyAll failed:', e);
+            }
         }
     }
 
     const mod = registry.get(pageName);
+
     if (!mod) {
         console.warn(`[pages] No module registered for: ${pageName}`);
         current = { name: pageName, destroy: null, ctx, booted: false };
         return;
     }
 
-    // 🔥 KRİTİK DÜZELTME
-    const init =
-        (typeof mod === 'function')
-            ? mod
-            : (mod.default ?? mod.init);
-
-    const destroy =
-        (typeof mod === 'object' && typeof mod.destroy === 'function')
-            ? mod.destroy
-            : null;
+    // KRİTİK DÜZELTME
+    const init = (typeof mod === 'function') ? mod : (mod.default ?? mod.init);
+    const destroy = (typeof mod === 'object' && typeof mod.destroy === 'function') ? mod.destroy : null;
 
     if (typeof init !== 'function') {
         console.warn(`[pages] Module for "${pageName}" has no init() / default export`, mod);
@@ -73,4 +80,3 @@ export async function bootPage(pageName, ctx) {
         booted: true,
     };
 }
-

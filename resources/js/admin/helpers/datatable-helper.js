@@ -1,5 +1,20 @@
 /* global jQuery */
 (function (w) {
+    // ---- internal: per-element binding guard (no DOM pollution)
+    const bound = new WeakMap(); // Element -> Set(keys)
+
+    function markBound(el, key) {
+        if (!el) return false;
+        let set = bound.get(el);
+        if (!set) {
+            set = new Set();
+            bound.set(el, set);
+        }
+        if (set.has(key)) return true; // already bound
+        set.add(key);
+        return false;
+    }
+
     function tplHtml(selector, fallbackHtml, root = document) {
         const el = root.querySelector(selector) || document.querySelector(selector);
         if (!el) return (fallbackHtml || '').trim();
@@ -49,7 +64,7 @@
         if (rowHtml) tbody.innerHTML = rowHtml;
     }
 
-    function renderPagination(api, hostSelector, root = document) {
+    function renderPagination(api, hostSelector, root = document, signal) {
         const host = root.querySelector(hostSelector);
         if (!host || !api) return;
 
@@ -72,7 +87,10 @@
                 btn.className += ' opacity-60 pointer-events-none';
             }
             btn.textContent = label;
-            btn.addEventListener('click', () => api.page(targetPage).draw('page'));
+
+            // IMPORTANT: bind with signal if available
+            btn.addEventListener('click', () => api.page(targetPage).draw('page'), signal ? { signal } : undefined);
+
             return btn;
         };
 
@@ -94,6 +112,22 @@
         host.appendChild(wrap);
     }
 
+    function safeDestroyDt(dt) {
+        try {
+            if (dt && typeof dt.destroy === 'function') dt.destroy(true); // true => remove added elements
+        } catch (e) {
+            console.warn('[initDataTable] destroy failed:', e);
+        }
+    }
+
+    /**
+     * initDataTable(opts)
+     *
+     * Backward compatible: eski kullanım bozulmaz.
+     * Yeni opsiyonlar:
+     * - signal: AbortSignal (ctx.signal)
+     * - cleanup(fn): ctx.cleanup(fn)
+     */
     function initDataTable(opts) {
         const o = Object.assign(
             {
@@ -138,11 +172,17 @@
                 rowChecks: null,
 
                 headerCenter: true,
+
+                // new:
+                signal: null, // AbortSignal
+                cleanup: null, // function(fn)
             },
             opts || {}
         );
 
         const root = o.root || document;
+        const signal = o.signal || null;
+        const cleanup = (typeof o.cleanup === 'function') ? o.cleanup : null;
 
         if (!o.table) return null;
 
@@ -156,7 +196,10 @@
 
         const $table = jQuery(tableEl);
 
-        if (jQuery.fn.dataTable.isDataTable($table)) return $table.DataTable();
+        // If already inited: just return instance (do NOT rebind handlers)
+        if (jQuery.fn.dataTable.isDataTable($table)) {
+            return $table.DataTable();
+        }
 
         const emptyHtml = o.emptyTemplate ? tplHtml(o.emptyTemplate, o.emptyFallback, root) : o.emptyFallback;
         const zeroHtml  = o.zeroTemplate  ? tplHtml(o.zeroTemplate,  o.zeroFallback,  root) : o.zeroFallback;
@@ -190,7 +233,7 @@
                     }
                 }
 
-                if (o.pagination) renderPagination(api, o.pagination, root);
+                if (o.pagination) renderPagination(api, o.pagination, root, signal);
 
                 if (typeof o.onDraw === 'function') o.onDraw(api);
 
@@ -203,21 +246,27 @@
 
         $table.removeClass('dataTable no-footer');
 
+        // ensure dt destroyed on page cleanup (if provided)
+        if (cleanup) {
+            cleanup(() => safeDestroyDt(dt));
+        }
+
         // search bind (root scoped)
         if (o.search) {
             const s = root.querySelector(o.search);
-            if (s && !s._dtBound) {
-                s._dtBound = true;
-                s.addEventListener('input', (e) => dt.search(e.target.value || '').draw());
+            if (s && !markBound(s, `dt:search:${o.table}`)) {
+                s.addEventListener(
+                    'input',
+                    (e) => dt.search(e.target.value || '').draw(),
+                    signal ? { signal } : undefined
+                );
             }
         }
 
         // page size bind (client-side mode only)
         if (o.pageSize) {
             const sel = root.querySelector(o.pageSize);
-            if (sel && !sel._dtBound) {
-                sel._dtBound = true;
-
+            if (sel && !markBound(sel, `dt:pagesize:${o.table}`)) {
                 sel.innerHTML = '';
                 (o.lengthMenu || [5, 10, 25, 50]).forEach((n) => {
                     const opt = document.createElement('option');
@@ -227,19 +276,27 @@
                 });
 
                 sel.value = String(dt.page.len());
-                sel.addEventListener('change', (e) => dt.page.len(Number(e.target.value)).draw());
+
+                sel.addEventListener(
+                    'change',
+                    (e) => dt.page.len(Number(e.target.value)).draw(),
+                    signal ? { signal } : undefined
+                );
             }
         }
 
         // check-all (root scoped)
         if (o.checkAll && o.rowChecks) {
             const checkAllEl = root.querySelector(o.checkAll);
-            if (checkAllEl && !checkAllEl._dtBound) {
-                checkAllEl._dtBound = true;
-                checkAllEl.addEventListener('change', () => {
-                    const checked = checkAllEl.checked;
-                    root.querySelectorAll(o.rowChecks).forEach(cb => (cb.checked = checked));
-                });
+            if (checkAllEl && !markBound(checkAllEl, `dt:checkall:${o.table}`)) {
+                checkAllEl.addEventListener(
+                    'change',
+                    () => {
+                        const checked = checkAllEl.checked;
+                        root.querySelectorAll(o.rowChecks).forEach(cb => (cb.checked = checked));
+                    },
+                    signal ? { signal } : undefined
+                );
             }
         }
 

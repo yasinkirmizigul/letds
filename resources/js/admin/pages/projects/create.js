@@ -108,10 +108,10 @@ export default async function init({ root }) {
     initSlugManager(root, {
         sourceSelector: '#title',
         slugSelector: '#slug',
+        previewSelector: '#url_slug_preview',
         autoSelector: '#slug_auto',
         regenSelector: '#slug_regen',
-        previewSelector: '#url_slug_preview',
-        generateOnInit: false,
+        generateOnInit: true,
     }, signal);
 
     // TinyMCE

@@ -1,352 +1,229 @@
-export default function init() {
-    const root = document.querySelector('[data-page="categories.index"]');
-    if (!root) return;
+function csrfToken() {
+    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+}
 
-    const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-    const mode = root.dataset.mode || 'active';
-    const isTrash = mode === 'trash';
+async function jsonReq(url, method = 'GET', body = null, signal = null) {
+    const res = await fetch(url, {
+        method,
+        headers: {
+            Accept: 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            ...(csrfToken() ? { 'X-CSRF-TOKEN': csrfToken() } : {}),
+            ...(body ? { 'Content-Type': 'application/json' } : {}),
+        },
+        body: body ? JSON.stringify(body) : undefined,
+        credentials: 'same-origin',
+        signal,
+    });
 
-    const tbody = root.querySelector('#categoriesTbody');
-    const searchInput = root.querySelector('#categoriesSearch');
+    const j = await res.json().catch(() => ({}));
+    return { res, j };
+}
 
-    const perSelect = root.querySelector('#categoriesPageSize');
-    const infoEl = root.querySelector('#categoriesInfo');
-    const pagEl = root.querySelector('#categoriesPagination');
+function esc(s) {
+    return String(s ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
 
-    const tplEmpty = root.querySelector('#dt-empty-categories');
-    const tplZero = root.querySelector('#dt-zero-categories');
+function badgeState(state) {
+    const s = String(state || '').toLowerCase();
+    if (s === 'active') return `<span class="kt-badge kt-badge-outline bg-green-500">Aktif</span>`;
+    if (s === 'passive') return `<span class="kt-badge kt-badge-outline bg-muted">Pasif</span>`;
+    return `<span class="kt-badge kt-badge-outline">-</span>`;
+}
 
-    const bulkBar = root.querySelector('#categoriesBulkBar');
-    const selectedCountEl = root.querySelector('#categoriesSelectedCount');
+// idempotent binding without DOM flags
+const bound = new WeakMap(); // root -> Set(keys)
+function markBound(root, key) {
+    let s = bound.get(root);
+    if (!s) { s = new Set(); bound.set(root, s); }
+    if (s.has(key)) return true;
+    s.add(key);
+    return false;
+}
 
-    const checkAllHead = root.querySelector('#categories_check_all_head');
-    const checkAllBar = root.querySelector('#categories_check_all');
+export default function init(ctx) {
+    const root = ctx.root;
+    const signal = ctx.signal;
 
-    const btnDel = root.querySelector('#categoriesBulkDeleteBtn');
-    const btnRes = root.querySelector('#categoriesBulkRestoreBtn');
-    const btnForce = root.querySelector('#categoriesBulkForceDeleteBtn');
+    // page guard
+    const pageEl = root.querySelector('[data-page="categories.index"]');
+    if (!pageEl) return;
+
+    const listEl = pageEl.querySelector('#categoriesList');
+    const infoEl = pageEl.querySelector('#categoriesInfo');
+    const pagEl = pageEl.querySelector('#categoriesPagination');
+
+    const qInput = pageEl.querySelector('#categoriesSearch');
+    const stateSel = pageEl.querySelector('#categoriesState');
+    const perSel = pageEl.querySelector('#categoriesPerPage');
+
+    const btnCreate = pageEl.querySelector('#categoriesCreateBtn');
+
+    if (!listEl) return;
 
     const state = {
         q: '',
+        state: '',
         page: 1,
-        per: Number(root.dataset.perpage || 25),
-        last: 1,
+        perpage: Number(perSel?.value || 25) || 25,
+        last_page: 1,
         total: 0,
-        selected: new Set(),
-        loading: false
     };
 
-    function notify(type, msg) {
-        if (window.notify) return window.notify(type, msg);
-        if (type === 'error') alert(msg);
-        else console.log(msg);
-    }
+    let debounceTimer = null;
 
-    async function fetchJson(url, opts = {}) {
-        const res = await fetch(url, {
-            ...opts,
-            headers: {
-                ...(opts.headers || {}),
-                'Accept': 'application/json',
-                ...(csrf ? { 'X-CSRF-TOKEN': csrf } : {}),
-            }
-        });
-        const j = await res.json().catch(() => ({}));
-        if (!res.ok || j?.ok === false) throw new Error(j?.message || 'İşlem başarısız');
-        return j;
-    }
-
-    async function postJson(url, body, method = 'POST') {
-        return fetchJson(url, {
-            method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body || {})
-        });
-    }
-
-    function renderEmpty(kind) {
-        tbody.innerHTML = '';
-        const tpl = kind === 'zero' ? tplZero : tplEmpty;
-        const row = tpl?.content?.firstElementChild?.cloneNode(true);
-        if (row) tbody.appendChild(row);
-    }
-
-    function rowHtml(it) {
-        const checked = state.selected.has(String(it.id)) ? 'checked' : '';
-        const editBtn = !isTrash
-            ? `<a class="kt-btn kt-btn-light kt-btn-sm" href="/admin/categories/${it.id}/edit">Düzenle</a>`
-            : '';
-
-        const delBtn = !isTrash
-            ? `<button type="button" class="kt-btn kt-btn-destructive kt-btn-sm" data-action="delete" data-id="${it.id}">Sil</button>`
-            : '';
-
-        const restoreBtn = isTrash
-            ? `<button type="button" class="kt-btn kt-btn-sm kt-btn-success" data-action="restore" data-id="${it.id}">
-                    <i class="ki-outline ki-arrow-circle-left"></i>
-               </button>`
-            : '';
-
-        const forceBtn = isTrash
-            ? `<button type="button" class="kt-btn kt-btn-sm kt-btn-destructive" data-action="force-delete" data-id="${it.id}">
-                    <i class="ki-outline ki-trash"></i>
-               </button>`
-            : '';
-
-        return `
-        <tr data-row-id="${it.id}">
-            <td class="w-[55px]">
-                <input class="kt-checkbox kt-checkbox-sm categories-check" type="checkbox" value="${it.id}" ${checked}>
-            </td>
-            <td class="font-medium">${escapeHtml(it.name || '')}</td>
-            <td class="text-sm text-muted-foreground">${escapeHtml(it.slug || '')}</td>
-            <td class="text-sm text-muted-foreground">${escapeHtml(it.parent_name || '-')}</td>
-            <td class="text-sm text-secondary-foreground">${Number(it.blog_posts_count || 0)}</td>
-            <td class="text-center">
-                <div class="inline-flex gap-2 justify-end">
-                    ${editBtn}
-                    ${delBtn}
-                    ${restoreBtn}
-                    ${forceBtn}
-                </div>
-            </td>
-        </tr>`;
-    }
-
-    function escapeHtml(s) {
-        return String(s).replace(/[&<>"']/g, (m) => ({
-            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
-        }[m]));
-    }
-
-    function updateBulkUI() {
-        const n = state.selected.size;
-
-        bulkBar?.classList.toggle('hidden', n === 0);
-        if (selectedCountEl) selectedCountEl.textContent = String(n);
-
-        if (btnDel) btnDel.disabled = n === 0;
-        if (btnRes) btnRes.disabled = n === 0;
-        if (btnForce) btnForce.disabled = n === 0;
-
-        const boxes = [...root.querySelectorAll('input.categories-check')];
-        const checked = boxes.filter(b => b.checked).length;
-
-        const allChecked = boxes.length > 0 && checked === boxes.length;
-        const ind = checked > 0 && checked < boxes.length;
-
-        if (checkAllHead) { checkAllHead.indeterminate = ind; checkAllHead.checked = allChecked; }
-        if (checkAllBar) { checkAllBar.indeterminate = ind; checkAllBar.checked = allChecked; }
-    }
-
-    function renderPagination() {
-        if (!pagEl) return;
-        pagEl.innerHTML = '';
-
-        const mkBtn = (label, page, disabled = false, active = false) => {
-            const b = document.createElement('button');
-            b.type = 'button';
-            b.className = 'kt-btn kt-btn-sm ' + (active ? 'kt-btn-primary' : 'kt-btn-light');
-            b.textContent = label;
-            b.disabled = disabled;
-            b.addEventListener('click', () => {
-                state.page = page;
-                load();
-            });
-            return b;
-        };
-
-        const prev = mkBtn('‹', Math.max(1, state.page - 1), state.page <= 1);
-        const next = mkBtn('›', Math.min(state.last, state.page + 1), state.page >= state.last);
-
-        pagEl.appendChild(prev);
-
-        // basit sayfa aralığı
-        const start = Math.max(1, state.page - 2);
-        const end = Math.min(state.last, state.page + 2);
-
-        for (let p = start; p <= end; p++) {
-            pagEl.appendChild(mkBtn(String(p), p, false, p === state.page));
-        }
-
-        pagEl.appendChild(next);
-    }
-
-    function renderInfo() {
+    function setInfo(text) {
         if (!infoEl) return;
-        const from = state.total === 0 ? 0 : ((state.page - 1) * state.per) + 1;
-        const to = Math.min(state.total, state.page * state.per);
-        infoEl.textContent = `${from}-${to} / ${state.total}`;
+        infoEl.textContent = text || '';
     }
 
-    async function load() {
-        if (state.loading) return;
-        state.loading = true;
+    function renderPagination(meta) {
+        if (!pagEl) return;
 
-        const params = new URLSearchParams();
-        params.set('mode', isTrash ? 'trash' : 'active');
-        params.set('q', state.q);
-        params.set('page', String(state.page));
-        params.set('perpage', String(state.per));
+        const current = Number(meta.current_page || 1) || 1;
+        const last = Number(meta.last_page || 1) || 1;
 
-        try {
-            const j = await fetchJson(`/admin/categories/list?${params.toString()}`);
-            const items = Array.isArray(j.data) ? j.data : [];
-
-            state.total = j?.meta?.total || 0;
-            state.last = j?.meta?.last_page || 1;
-
-            if (!items.length) {
-                renderEmpty(state.q ? 'zero' : 'empty');
-            } else {
-                tbody.innerHTML = items.map(rowHtml).join('');
-            }
-
-            renderPagination();
-            renderInfo();
-            updateBulkUI();
-        } catch (e) {
-            notify('error', e?.message || 'Liste yüklenemedi');
-        } finally {
-            state.loading = false;
-        }
-    }
-
-    // perpage select
-    function initPerSelect() {
-        if (!perSelect) return;
-        const opts = [10, 25, 50, 100, 200];
-        perSelect.innerHTML = opts.map(v => `<option value="${v}">${v}</option>`).join('');
-        perSelect.value = String(state.per);
-
-        perSelect.addEventListener('change', () => {
-            state.per = Number(perSelect.value || 25);
-            state.page = 1;
-            load();
-        });
-    }
-
-    // search (debounce)
-    let t = null;
-    searchInput?.addEventListener('input', () => {
-        clearTimeout(t);
-        t = setTimeout(() => {
-            state.q = (searchInput.value || '').trim();
-            state.page = 1;
-            load();
-        }, 250);
-    });
-
-    // selection
-    root.addEventListener('change', (e) => {
-        const el = e.target;
-
-        if (el === checkAllHead || el === checkAllBar) {
-            const on = !!el.checked;
-            [...root.querySelectorAll('input.categories-check')].forEach(cb => {
-                cb.checked = on;
-                const id = String(cb.value);
-                if (on) state.selected.add(id);
-                else state.selected.delete(id);
-            });
-            updateBulkUI();
+        if (last <= 1) {
+            pagEl.innerHTML = '';
             return;
         }
 
-        if (el?.classList?.contains('categories-check')) {
-            const id = String(el.value);
-            if (el.checked) state.selected.add(id);
-            else state.selected.delete(id);
-            updateBulkUI();
+        const btn = (p, label, disabled = false, active = false) => `
+          <button type="button"
+                  class="kt-btn kt-btn-sm ${active ? 'kt-btn-primary' : 'kt-btn-light'}"
+                  data-page="${p}"
+                  ${disabled ? 'disabled' : ''}>${label}</button>
+        `;
+
+        const parts = [];
+        parts.push(btn(current - 1, '‹', current <= 1));
+
+        const start = Math.max(1, current - 2);
+        const end = Math.min(last, current + 2);
+
+        if (start > 1) parts.push(btn(1, '1', false, current === 1));
+        if (start > 2) parts.push(`<span class="px-2 text-muted-foreground">…</span>`);
+
+        for (let p = start; p <= end; p++) parts.push(btn(p, String(p), false, p === current));
+
+        if (end < last - 1) parts.push(`<span class="px-2 text-muted-foreground">…</span>`);
+        if (end < last) parts.push(btn(last, String(last), false, current === last));
+
+        parts.push(btn(current + 1, '›', current >= last));
+
+        pagEl.innerHTML = `<div class="flex items-center gap-1 justify-center">${parts.join('')}</div>`;
+    }
+
+    function rowHtml(item) {
+        return `
+          <div class="kt-card">
+            <div class="kt-card-content p-4 flex items-start justify-between gap-4">
+              <div class="grid gap-1">
+                <div class="font-medium">${esc(item.name || '-')}</div>
+                <div class="text-xs text-muted-foreground">#${esc(item.id)} • ${esc(item.slug || '')}</div>
+              </div>
+
+              <div class="flex items-center gap-2">
+                ${badgeState(item.state)}
+                <a class="kt-btn kt-btn-sm kt-btn-light" href="${esc(item.edit_url || '#')}">
+                  <i class="ki-outline ki-pencil"></i> Düzenle
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+    }
+
+    async function fetchList() {
+        const qs = new URLSearchParams({
+            q: state.q || '',
+            state: state.state || '',
+            page: String(state.page),
+            perpage: String(state.perpage),
+        });
+
+        const { res, j } = await jsonReq(`/admin/categories/list?${qs.toString()}`, 'GET', null, signal);
+
+        if (!res.ok || !j?.ok) {
+            listEl.innerHTML = `<div class="text-sm text-muted-foreground">Liste alınamadı.</div>`;
+            setInfo('');
+            renderPagination({ current_page: 1, last_page: 1 });
+            return;
         }
-    });
 
-    // single actions (delete/restore/force)
-    root.addEventListener('click', async (e) => {
-        const btn = e.target?.closest?.('[data-action]');
-        if (!btn) return;
+        const items = Array.isArray(j.data) ? j.data : [];
+        const meta = j.meta || {};
 
-        const action = btn.getAttribute('data-action');
-        const id = btn.getAttribute('data-id');
-        if (!id) return;
+        state.last_page = Number(meta.last_page || 1) || 1;
+        state.total = Number(meta.total || 0) || 0;
 
-        try {
-            if (action === 'delete') {
-                if (!confirm('Kategori silinsin mi?')) return;
-                // normal delete: form yok, fetch ile yap
-                await postJson(`/admin/categories/${id}`, {}, 'DELETE');
-                notify('success', 'Silindi');
-                state.selected.delete(String(id));
-                load();
-            }
+        listEl.innerHTML = items.length ? items.map(rowHtml).join('') : `<div class="text-sm text-muted-foreground">Kayıt yok.</div>`;
 
-            if (action === 'restore') {
-                if (!confirm('Geri yüklensin mi?')) return;
-                await postJson(`/admin/categories/${id}/restore`, {});
-                notify('success', 'Geri yüklendi');
-                state.selected.delete(String(id));
-                load();
-            }
-
-            if (action === 'force-delete') {
-                if (!confirm('KALICI silinecek. Emin misin?')) return;
-                await postJson(`/admin/categories/${id}/force`, {}, 'DELETE');
-                notify('success', 'Kalıcı silindi');
-                state.selected.delete(String(id));
-                load();
-            }
-        } catch (err) {
-            notify('error', err?.message || 'İşlem başarısız');
+        if (meta && typeof meta.from !== 'undefined') {
+            setInfo(`${meta.from || 0}-${meta.to || 0} / ${meta.total || 0}`);
+        } else {
+            setInfo(state.total ? `Toplam: ${state.total}` : '');
         }
-    });
 
-    // bulk actions
-    btnDel?.addEventListener('click', async () => {
-        const ids = [...state.selected];
-        if (!ids.length) return;
-        if (!confirm(`${ids.length} kategori silinsin mi?`)) return;
+        renderPagination(meta);
+    }
 
-        try {
-            await postJson('/admin/categories/bulk-delete', { ids });
-            state.selected.clear();
-            notify('success', 'Silindi');
-            load();
-        } catch (e) {
-            notify('error', e?.message || 'Silme başarısız');
-        }
-    });
+    // ---- bindings (idempotent + signal)
+    if (qInput && !markBound(pageEl, 'q')) {
+        qInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                state.q = (qInput.value || '').trim();
+                state.page = 1;
+                fetchList();
+            }, 250);
+        }, { signal });
 
-    btnRes?.addEventListener('click', async () => {
-        const ids = [...state.selected];
-        if (!ids.length) return;
-        if (!confirm(`${ids.length} kategori geri yüklensin mi?`)) return;
+        ctx.cleanup(() => {
+            if (debounceTimer) clearTimeout(debounceTimer);
+            debounceTimer = null;
+        });
+    }
 
-        try {
-            await postJson('/admin/categories/bulk-restore', { ids });
-            state.selected.clear();
-            notify('success', 'Geri yüklendi');
-            load();
-        } catch (e) {
-            notify('error', e?.message || 'Geri yükleme başarısız');
-        }
-    });
+    if (stateSel && !markBound(pageEl, 'state')) {
+        stateSel.addEventListener('change', () => {
+            state.state = stateSel.value || '';
+            state.page = 1;
+            fetchList();
+        }, { signal });
+    }
 
-    btnForce?.addEventListener('click', async () => {
-        const ids = [...state.selected];
-        if (!ids.length) return;
-        if (!confirm(`${ids.length} kategori KALICI silinecek. Emin misin?`)) return;
+    if (perSel && !markBound(pageEl, 'per')) {
+        perSel.addEventListener('change', () => {
+            state.perpage = Number(perSel.value || 25) || 25;
+            state.page = 1;
+            fetchList();
+        }, { signal });
+    }
 
-        try {
-            await postJson('/admin/categories/bulk-force-delete', { ids });
-            state.selected.clear();
-            notify('success', 'Kalıcı silindi');
-            load();
-        } catch (e) {
-            notify('error', e?.message || 'Kalıcı silme başarısız');
-        }
-    });
+    if (pagEl && !markBound(pageEl, 'pagination')) {
+        pagEl.addEventListener('click', (e) => {
+            const b = e.target.closest('button[data-page]');
+            if (!b) return;
+            const p = Number(b.getAttribute('data-page') || 1);
+            if (!Number.isFinite(p) || p < 1) return;
+            if (p === state.page) return;
+            state.page = p;
+            fetchList();
+        }, { signal });
+    }
 
-    // boot
-    initPerSelect();
-    load();
+    // Create button - sadece guard (varsa)
+    if (btnCreate && !markBound(pageEl, 'create')) {
+        btnCreate.addEventListener('click', () => {
+            // burada özel bir şey yok; link/button zaten çalışır.
+        }, { signal });
+    }
+
+    fetchList();
 }

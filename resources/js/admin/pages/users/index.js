@@ -1,4 +1,7 @@
-export default function init({ root }) {
+export default function init(ctx) {
+    const root = ctx.root;
+    const signal = ctx.signal;
+
     const table = root.querySelector('#users_table');
     if (!table) return;
 
@@ -21,21 +24,20 @@ export default function init({ root }) {
         ],
         checkAll: '#users_check_all',
         rowChecks: '.users_row_check',
+
+        // ✅ yeni standart
+        signal,
+        cleanup: (fn) => ctx.cleanup(fn),
     });
 
-    const ac = new AbortController();
-    const { signal } = ac;
-
+    // delete confirm (signal ile otomatik cleanup)
     root.addEventListener('submit', (e) => {
         const form = e.target;
         if (!(form instanceof HTMLFormElement)) return;
         if (!form.matches('form[data-confirm="delete-user"]')) return;
 
-        if (!confirm('Bu kullanıcıyı silmek istiyor musunuz?')) e.preventDefault();
+        if (!confirm('Bu kullanıcıyı silmek istiyor musunuz?')) {
+            e.preventDefault();
+        }
     }, { signal });
-
-    // isteğe bağlı: MPA'da şart değil ama hijyen
-    window.addEventListener('beforeunload', () => {
-        try { ac.abort(); } catch {}
-    }, { once: true });
 }

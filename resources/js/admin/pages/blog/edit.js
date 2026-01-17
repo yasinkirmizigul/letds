@@ -1,13 +1,8 @@
-import initSlugManager from '@/core/slug-manager';
-import initGalleryManager from '@/core/gallery-manager';
-import initFeaturedImageManager, {destroyFeaturedImageManager} from '@/core/featured-image-manager';
-import {initMediaPicker} from '@/core/media-picker';
-import initLibraryAttach from '@/core/library-attach';
+// resources/js/admin/pages/blog/edit.js
 
-let ac = null;
-let observer = null;
-let lastObjectUrl = null;
-let mountedRoot = null;
+import initSlugManager from '@/core/slug-manager';
+import initGalleryManager, {destroyGalleryManager} from '@/core/gallery-manager';
+import initLibraryAttach from '@/core/library-attach';
 
 function csrfToken() {
     const meta = document.querySelector('meta[name="csrf-token"]');
@@ -39,13 +34,16 @@ function loadScriptOnce(src) {
 function safeTinyRemove(selector) {
     try {
         window.tinymce?.remove?.(selector);
-    } catch {}
+    } catch {
+    }
 }
 
 function initTiny({selector, uploadUrl, baseUrl, langUrl}) {
     if (!window.tinymce) return;
 
     const theme = getTheme();
+
+    // güvenli: aynı selector tekrar init edilirse önce kaldır
     safeTinyRemove(selector);
 
     window.tinymce.init({
@@ -65,38 +63,44 @@ function initTiny({selector, uploadUrl, baseUrl, langUrl}) {
         promotion: false,
         automatic_uploads: true,
         paste_data_images: true,
-        images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', uploadUrl);
-            xhr.withCredentials = true;
-            xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken());
 
-            xhr.upload.onprogress = (e) => {
-                if (e.lengthComputable) progress((e.loaded / e.total) * 100);
-            };
+        images_upload_handler: (blobInfo, progress) =>
+            new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', uploadUrl);
+                xhr.withCredentials = true;
+                xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken());
 
-            xhr.onload = () => {
-                if (xhr.status < 200 || xhr.status >= 300) return reject('Upload failed: ' + xhr.status);
+                xhr.upload.onprogress = (e) => {
+                    if (e.lengthComputable) progress((e.loaded / e.total) * 100);
+                };
 
-                let json;
-                try { json = JSON.parse(xhr.responseText); }
-                catch { return reject('Invalid JSON'); }
-                if (!json || typeof json.location !== 'string') return reject('No location returned');
+                xhr.onload = () => {
+                    if (xhr.status < 200 || xhr.status >= 300) return reject('Upload failed: ' + xhr.status);
 
-                resolve(json.location);
-            };
+                    let json;
+                    try {
+                        json = JSON.parse(xhr.responseText);
+                    } catch {
+                        return reject('Invalid JSON');
+                    }
 
-            xhr.onerror = () => reject('Network error');
+                    if (!json || typeof json.location !== 'string') return reject('No location returned');
+                    resolve(json.location);
+                };
 
-            const formData = new FormData();
-            formData.append('file', blobInfo.blob(), blobInfo.filename());
-            xhr.send(formData);
-        }),
+                xhr.onerror = () => reject('Network error');
+
+                const formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.filename());
+                xhr.send(formData);
+            }),
     });
 }
 
 function observeThemeChanges(onChange) {
     let current = getTheme();
+
     const obs = new MutationObserver(() => {
         const next = getTheme();
         if (next === current) return;
@@ -106,6 +110,7 @@ function observeThemeChanges(onChange) {
 
     obs.observe(document.documentElement, {attributes: true, attributeFilter: ['class']});
     obs.observe(document.body, {attributes: true, attributeFilter: ['class']});
+
     return obs;
 }
 
@@ -124,7 +129,8 @@ function openModal(root, selector) {
             inst?.show?.();
             return;
         }
-    } catch {}
+    } catch {
+    }
 
     modal.classList.remove('hidden');
 }
@@ -143,7 +149,8 @@ function closeModal(modal) {
             inst?.hide?.();
             return;
         }
-    } catch {}
+    } catch {
+    }
 
     modal.classList.add('hidden');
 }
@@ -155,29 +162,37 @@ function lockSubmitButtons(root, formId) {
     });
 }
 
-export default async function init({root, dataset}) {
-    mountedRoot = root;
-    ac = new AbortController();
-    const {signal} = ac;
+export default async function init(ctx) {
+    const root = ctx.root;
+    const signal = ctx.signal;
 
+    // slug manager (signal destekli)
+    initSlugManager(
+        root,
+        {
+            sourceSelector: '#title',
+            slugSelector: '#slug',
+            previewSelector: '#url_slug_preview',
+            autoSelector: '#slug_auto',
+            regenSelector: '#slug_regen',
+            generateOnInit: true,
+        },
+        signal
+    );
 
-    initSlugManager(root, {
-        sourceSelector: '#title',
-        slugSelector: '#slug',
-        previewSelector: '#url_slug_preview',
-        autoSelector: '#slug_auto',      // varsa
-        regenSelector: '#slug_regen',    // BLOG'DA bu!
-        generateOnInit: false,
-    }, signal);
-
+    // tiny setup
     const ds = root.dataset;
     const tinymceSrc = ds.tinymceSrc;
     const tinymceBase = ds.tinymceBase;
     const tinymceLangUrl = ds.tinymceLangUrl;
     const uploadUrl = ds.uploadUrl;
 
+    let themeObserver = null;
+
     if (tinymceSrc && tinymceBase && tinymceLangUrl && uploadUrl) {
-        await loadScriptOnce(tinymceSrc).catch(() => {});
+        await loadScriptOnce(tinymceSrc).catch(() => {
+        });
+
         initTiny({
             selector: '#content_editor',
             uploadUrl,
@@ -185,7 +200,7 @@ export default async function init({root, dataset}) {
             langUrl: tinymceLangUrl,
         });
 
-        observer = observeThemeChanges(() => {
+        themeObserver = observeThemeChanges(() => {
             initTiny({
                 selector: '#content_editor',
                 uploadUrl,
@@ -193,63 +208,69 @@ export default async function init({root, dataset}) {
                 langUrl: tinymceLangUrl,
             });
         });
+
+        ctx.cleanup(() => {
+            try {
+                themeObserver?.disconnect?.();
+            } catch {
+            }
+            themeObserver = null;
+
+            // editor instance temizliği
+            safeTinyRemove('#content_editor');
+        });
     }
 
-    root.addEventListener('click', (e) => {
-        const toggleBtn = e.target.closest('[data-kt-modal-toggle]');
-        if (toggleBtn && root.contains(toggleBtn)) {
-            const sel = toggleBtn.getAttribute('data-kt-modal-toggle');
-            if (sel) openModal(root, sel);
-            return;
-        }
+    // modal helpers (page scoped)
+    root.addEventListener(
+        'click',
+        (e) => {
+            const toggleBtn = e.target.closest('[data-kt-modal-toggle]');
+            if (toggleBtn && root.contains(toggleBtn)) {
+                const sel = toggleBtn.getAttribute('data-kt-modal-toggle');
+                if (sel) openModal(root, sel);
+                return;
+            }
 
-        const openBtn = e.target.closest('[data-kt-modal-target]');
-        if (openBtn && root.contains(openBtn)) {
-            const sel = openBtn.getAttribute('data-kt-modal-target');
-            if (sel) openModal(root, sel);
-            return;
-        }
+            const openBtn = e.target.closest('[data-kt-modal-target]');
+            if (openBtn && root.contains(openBtn)) {
+                const sel = openBtn.getAttribute('data-kt-modal-target');
+                if (sel) openModal(root, sel);
+                return;
+            }
 
-        const closeBtn = e.target.closest('[data-kt-modal-close]');
-        if (closeBtn && root.contains(closeBtn)) {
-            closeModal(closeBtn.closest('.kt-modal'));
-            return;
-        }
+            const closeBtn = e.target.closest('[data-kt-modal-close]');
+            if (closeBtn && root.contains(closeBtn)) {
+                closeModal(closeBtn.closest('.kt-modal'));
+                return;
+            }
 
-        const modal = e.target.classList?.contains('kt-modal') ? e.target : null;
-        if (modal) closeModal(modal);
-    }, {signal});
+            const modal = e.target.classList?.contains('kt-modal') ? e.target : null;
+            if (modal) closeModal(modal);
+        },
+        {signal}
+    );
 
+    // submit locks
     const updateForm = root.querySelector('#blog-update-form');
-    if (updateForm) updateForm.addEventListener('submit', () => lockSubmitButtons(root, 'blog-update-form'), {
-        signal,
-        once: true
-    });
+    if (updateForm) {
+        updateForm.addEventListener('submit', () => lockSubmitButtons(root, 'blog-update-form'), {signal, once: true});
+    }
 
     const deleteForm = root.querySelector('#blog-delete-form');
-    if (deleteForm) deleteForm.addEventListener('submit', () => lockSubmitButtons(root, 'blog-delete-form'), {
-        signal,
-        once: true
-    });
-
-    initMediaPicker();
-    initGalleryManager(root);
-    initLibraryAttach(root);
-    initFeaturedImageManager(root);
-}
-
-export function destroy() {
-    try { ac?.abort(); } catch {}
-    ac = null;
-
-    try { observer?.disconnect?.(); } catch {}
-    observer = null;
-
-    if (lastObjectUrl) {
-        try { URL.revokeObjectURL(lastObjectUrl); } catch {}
-        lastObjectUrl = null;
+    if (deleteForm) {
+        deleteForm.addEventListener('submit', () => lockSubmitButtons(root, 'blog-delete-form'), {signal, once: true});
     }
 
-    destroyFeaturedImageManager(mountedRoot || document);
-    mountedRoot = null;
+    // page-scoped heavy modules
+    initGalleryManager(root);
+    ctx.cleanup(() => destroyGalleryManager(root));
+
+    initLibraryAttach(root);
+}
+
+export function destroy(ctx) {
+    // Page-registry önce destroy(ctx), sonra ctx.destroyAll() çağırıyor.
+    // Bu destroy içinde ekstra bir şey yapmana gerek yok.
+    // (ctx.destroyAll cleanup stack'i çalıştırır)
 }

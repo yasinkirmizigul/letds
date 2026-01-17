@@ -182,9 +182,10 @@ export default async function init() {
     initSlugManager(root, {
         sourceSelector: '#title',
         slugSelector: '#slug',
+        previewSelector: '#url_slug_preview',
         autoSelector: '#slug_auto',
         regenSelector: '#slug_regen',
-        previewSelector: '#url_slug_preview',
+        generateOnInit: true,
     }, signal);
 
     // modal delegation (support: data-kt-modal-toggle + data-kt-modal-target)

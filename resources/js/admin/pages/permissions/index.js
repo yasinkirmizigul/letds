@@ -1,4 +1,7 @@
-export default function init({ root }) {
+export default function init(ctx) {
+    const root = ctx.root;
+    const signal = ctx.signal;
+
     const table = root.querySelector('#permissions_table');
     if (!table) return;
 
@@ -21,5 +24,9 @@ export default function init({ root }) {
         columnDefs: [
             { className: 'text-center', targets: [2] },
         ],
+
+        // ✅ yeni standart
+        signal,
+        cleanup: (fn) => ctx.cleanup(fn),
     });
 }

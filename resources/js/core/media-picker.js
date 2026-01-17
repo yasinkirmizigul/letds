@@ -1,114 +1,139 @@
-export function initMediaPicker() {
-    // idempotent: page-registry yeniden init etse bile çift bind olmasın
-    if (window.__mediaPickerInitBound) return;
-    window.__mediaPickerInitBound = true;
+function escapeHtml(str) {
+    return String(str ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+}
 
-    let state = {page: 1, perpage: 24, q: '', type: ''};
-    let currentTarget = null; // {inputSel, previewSel, mime}
+function escapeAttr(str) {
+    return escapeHtml(str).replaceAll('`', '&#96;');
+}
 
-    const modal = document.getElementById('mediaPickerModal');
-    if (!modal) return;
+function getPickerEls(scope = document) {
+    const modal = scope.getElementById?.('mediaPickerModal') || document.getElementById('mediaPickerModal');
+    if (!modal) return null;
 
     const grid = modal.querySelector('#mediaPickerGrid');
     const search = modal.querySelector('#mediaPickerSearch');
     const type = modal.querySelector('#mediaPickerType');
 
-    if (!grid) return;
+    if (!grid) return null;
+
+    return { modal, grid, search, type };
+}
+
+/**
+ * Deterministik modal açma:
+ * 1) KTModal (varsa) -> show()
+ * 2) Global opener -> click()
+ * 3) Fallback: hidden kaldır
+ */
+function showModal(modal) {
+    try {
+        if (window.KTModal && typeof window.KTModal.getOrCreateInstance === 'function') {
+            const inst = window.KTModal.getOrCreateInstance(modal);
+            if (inst && typeof inst.show === 'function') {
+                inst.show();
+                return true;
+            }
+        }
+        if (window.KTModal && typeof window.KTModal.getInstance === 'function') {
+            const inst = window.KTModal.getInstance(modal) || new window.KTModal(modal);
+            if (inst && typeof inst.show === 'function') {
+                inst.show();
+                return true;
+            }
+        }
+    } catch (e) {
+        console.error('[media-picker] KTModal show error:', e);
+    }
+
+    const opener =
+        document.querySelector('[data-kt-modal-toggle="#mediaPickerModal"]') ||
+        document.getElementById('mediaPickerModalOpener');
+
+    if (opener) {
+        opener.click();
+        return true;
+    }
+
+    modal.classList.remove('hidden');
+    return true;
+}
+
+function hideModal(modal) {
+    const dismiss = modal.querySelector('[data-kt-modal-dismiss="true"]');
+    if (dismiss) {
+        dismiss.click();
+        return;
+    }
+
+    try {
+        if (window.KTModal && typeof window.KTModal.getOrCreateInstance === 'function') {
+            const inst = window.KTModal.getOrCreateInstance(modal);
+            if (inst && typeof inst.hide === 'function') {
+                inst.hide();
+                return;
+            }
+        }
+        if (window.KTModal && typeof window.KTModal.getInstance === 'function') {
+            const inst = window.KTModal.getInstance(modal) || new window.KTModal(modal);
+            if (inst && typeof inst.hide === 'function') {
+                inst.hide();
+                return;
+            }
+        }
+    } catch (e) {
+        console.error('[media-picker] KTModal hide error:', e);
+    }
+
+    modal.classList.add('hidden');
+}
+
+// ===== Singleton holder (module-level)
+let __inited = false;
+
+export function initMediaPicker(scope = document) {
+    // 🔥 KRİTİK: modal yokken init etme
+    const els = getPickerEls(scope);
+    if (!els) return;
+
+    if (__inited) return;
+    __inited = true;
+
+    const { modal, grid, search, type } = els;
+
+    let state = { page: 1, perpage: 24, q: '', type: '' };
+    let currentTarget = null; // { inputSel, previewSel, mime }
 
     let debounceTimer = null;
     let aborter = null;
     let lastRequestId = 0;
 
-    /**
-     * Deterministik modal açma:
-     * 1) KTModal (varsa) -> show()
-     * 2) Global opener (data-kt-modal-toggle="#mediaPickerModal") -> click
-     * 3) En kötü: hidden kaldır (best-effort)
-     */
-    function showModal() {
-        // 1) KTModal instance ile aç (en sağlam yol)
-        try {
-            // Metronic/KTUI bazı bundle'larda getOrCreateInstance var
-            if (window.KTModal && typeof window.KTModal.getOrCreateInstance === 'function') {
-                const inst = window.KTModal.getOrCreateInstance(modal);
-                if (inst && typeof inst.show === 'function') {
-                    inst.show();
-                    return true;
-                }
-            }
-
-            // Bazı sürümlerde getInstance + new KTModal olabilir
-            if (window.KTModal && typeof window.KTModal.getInstance === 'function') {
-                const inst = window.KTModal.getInstance(modal) || new window.KTModal(modal);
-                if (inst && typeof inst.show === 'function') {
-                    inst.show();
-                    return true;
-                }
-            }
-        } catch (e) {
-            console.error('[media-picker] KTModal show hata:', e);
+    function cleanupTransient() {
+        if (debounceTimer) {
+            clearTimeout(debounceTimer);
+            debounceTimer = null;
         }
-
-        // 2) Toggle opener her zaman modalın içinde olmaz; document scope'ta ara
-        const opener =
-            document.querySelector('[data-kt-modal-toggle="#mediaPickerModal"]') ||
-            document.getElementById('mediaPickerModalOpener');
-
-        if (opener) {
-            opener.click();
-            return true;
+        if (aborter) {
+            aborter.abort();
+            aborter = null;
         }
-
-        // 3) En kötü fallback
-        modal.classList.remove('hidden');
-        return true;
-    }
-
-    function hideModal() {
-        // 1) dismiss butonu varsa tıkla
-        const dismiss = modal.querySelector('[data-kt-modal-dismiss="true"]');
-        if (dismiss) {
-            dismiss.click();
-            return;
-        }
-
-        // 2) KTModal ile kapat
-        try {
-            if (window.KTModal && typeof window.KTModal.getOrCreateInstance === 'function') {
-                const inst = window.KTModal.getOrCreateInstance(modal);
-                if (inst && typeof inst.hide === 'function') {
-                    inst.hide();
-                    return;
-                }
-            }
-
-            if (window.KTModal && typeof window.KTModal.getInstance === 'function') {
-                const inst = window.KTModal.getInstance(modal) || new window.KTModal(modal);
-                if (inst && typeof inst.hide === 'function') {
-                    inst.hide();
-                    return;
-                }
-            }
-        } catch (e) {
-            console.error('[media-picker] KTModal hide hata:', e);
-        }
-
-        // 3) fallback
-        modal.classList.add('hidden');
     }
 
     function renderEmpty(message = 'Kayıt yok') {
         grid.innerHTML = `
-            <div class="col-span-full py-10 text-center text-muted-foreground text-sm">
-                ${escapeHtml(message)}
-            </div>
+          <div class="kt-text-muted kt-text-sm py-6 text-center">
+            ${escapeHtml(message)}
+          </div>
         `;
     }
 
     async function fetchList() {
         const reqId = ++lastRequestId;
 
-        // cancel previous
         if (aborter) aborter.abort();
         aborter = new AbortController();
 
@@ -121,7 +146,8 @@ export function initMediaPicker() {
 
         try {
             const res = await fetch(`/admin/media/list?${qs.toString()}`, {
-                headers: {Accept: 'application/json'},
+                headers: { Accept: 'application/json' },
+                credentials: 'same-origin',
                 signal: aborter.signal,
             });
 
@@ -146,26 +172,32 @@ export function initMediaPicker() {
 
             grid.innerHTML = items
                 .map((m) => {
+                    const id = String(m.id ?? '');
+                    const url = String(m.url ?? '');
+                    // backend bazen mime, bazen mime_type döndürebilir
+                    const mime = String(m.mime ?? m.mime_type ?? '');
+                    const title = m.original_name ?? m.title ?? '-';
+
                     const thumb = m.is_image
-                        ? `<img src="${escapeAttr(m.url)}" class="w-full h-28 object-cover rounded-lg" alt="">`
-                        : `<div class="w-full h-28 rounded-lg flex items-center justify-center bg-muted">
-                               <i class="ki-outline ki-file text-2xl"></i>
+                        ? `<img class="w-full h-28 object-cover rounded-lg" src="${escapeAttr(url)}" alt="${escapeAttr(title)}">`
+                        : `<div class="w-full h-28 rounded-lg kt-bg-muted flex items-center justify-center text-sm kt-text-muted">
+                             ${escapeHtml((mime || 'file').toUpperCase())}
                            </div>`;
 
-                    const title = m.original_name ?? '-';
-
                     return `
-                        <button type="button"
-                                class="kt-card overflow-hidden text-left"
-                                data-pick="1"
-                                data-id="${escapeAttr(String(m.id))}"
-                                data-url="${escapeAttr(m.url)}"
-                                data-mime="${escapeAttr(m.mime_type || '')}">
-                          <div class="kt-card-content p-3 grid gap-2">
-                            ${thumb}
-                            <div class="text-xs font-medium truncate">${escapeHtml(String(title))}</div>
-                          </div>
-                        </button>
+                      <button type="button"
+                        class="kt-card kt-card-border w-full text-left hover:shadow-sm transition"
+                        data-pick="1"
+                        data-id="${escapeAttr(id)}"
+                        data-url="${escapeAttr(url)}"
+                        data-mime="${escapeAttr(mime)}"
+                        title="${escapeAttr(title)}"
+                      >
+                        <div class="p-2 space-y-2">
+                          ${thumb}
+                          <div class="text-xs truncate">${escapeHtml(String(title))}</div>
+                        </div>
+                      </button>
                     `;
                 })
                 .join('');
@@ -180,20 +212,24 @@ export function initMediaPicker() {
 
         state.page = 1;
         state.q = '';
-        state.type = opts?.mime && opts.mime.startsWith('image/') ? 'image' : '';
+        state.type = opts?.mime && String(opts.mime).startsWith('image/') ? 'image' : '';
 
         if (search) search.value = '';
         if (type) type.value = state.type;
 
-        showModal();
+        showModal(modal);
         fetchList();
     }
 
-    // Trigger: herhangi bir yerde data-media-picker="true" olan buton
+    // ---- Global trigger (delegation) ----
+    // buton: data-media-picker="true"
+    // target: data-media-picker-target="CSS_SELECTOR"
+    // preview: data-media-picker-preview="CSS_SELECTOR"
+    // mime: data-media-picker-mime="image/*" gibi
     document.addEventListener(
         'click',
         (e) => {
-            const btn = e.target.closest?.('[data-media-picker="true"]');
+            const btn = e.target?.closest?.('[data-media-picker="true"]');
             if (!btn) return;
 
             const inputSel = btn.getAttribute('data-media-picker-target');
@@ -202,63 +238,68 @@ export function initMediaPicker() {
 
             if (!inputSel || !previewSel) return;
 
-            openPicker({inputSel, previewSel, mime});
+            openPicker({ inputSel, previewSel, mime });
         },
         true
     );
 
-    // Seçim
+    // ---- Pick ----
     grid.addEventListener('click', (e) => {
-        const pick = e.target.closest?.('[data-pick="1"]');
+        const pick = e.target?.closest?.('[data-pick="1"]');
         if (!pick || !currentTarget) return;
 
-        const id = pick.getAttribute('data-id');
-        const url = pick.getAttribute('data-url');
+        const id = pick.getAttribute('data-id') || '';
+        const url = pick.getAttribute('data-url') || '';
         const mime = pick.getAttribute('data-mime') || '';
 
-        // mime kısıtı (avatar: image/*)
-        if (currentTarget.mime && currentTarget.mime.startsWith('image/') && !mime.startsWith('image/')) {
+        if (currentTarget.mime && String(currentTarget.mime).startsWith('image/') && !String(mime).startsWith('image/')) {
             alert('Sadece görsel seçebilirsin.');
             return;
         }
 
-        const input = document.querySelector(currentTarget.inputSel);
-        if (input) input.value = id ?? '';
+        let input = null;
+        let prev = null;
 
-        const prev = document.querySelector(currentTarget.previewSel);
+        try { input = document.querySelector(currentTarget.inputSel); } catch {}
+        try { prev = document.querySelector(currentTarget.previewSel); } catch {}
+
+        if (input) input.value = id;
+
         if (prev && url) {
             if (prev.tagName === 'IMG') {
                 prev.src = url;
                 prev.classList.remove('hidden');
+                prev.toggleAttribute('hidden', false);
             } else {
                 prev.style.backgroundImage = `url('${url}')`;
             }
 
-            // KTImageInput state update
-            const root = prev.closest?.('[data-kt-image-input]');
-            if (root && window.KTImageInput) {
+            // KTUI ImageInput state update (best effort)
+            const wrap = prev.closest?.('[data-kt-image-input]');
+            if (wrap && window.KTImageInput) {
                 const inst =
                     typeof window.KTImageInput.getOrCreateInstance === 'function'
-                        ? window.KTImageInput.getOrCreateInstance(root)
-                        : window.KTImageInput.getInstance?.(root);
+                        ? window.KTImageInput.getOrCreateInstance(wrap)
+                        : window.KTImageInput.getInstance?.(wrap);
 
                 if (inst?.setPreviewUrl) inst.setPreviewUrl(url);
                 else if (inst?.update) inst.update();
             }
         }
-        document.dispatchEvent(new CustomEvent('media:pick', {
-            bubbles: true,
-            detail: {
-                id,
-                url,
-                mime,
-                target: currentTarget, // {inputSel, previewSel, mime}
-            },
-        }));
-        hideModal();
+
+        document.dispatchEvent(
+            new CustomEvent('media:pick', {
+                bubbles: true,
+                detail: { id, url, mime, target: currentTarget },
+            })
+        );
+
+        hideModal(modal);
+        cleanupTransient();
+        currentTarget = null;
     });
 
-    // filtreler
+    // ---- Filters ----
     if (search) {
         search.addEventListener('input', () => {
             clearTimeout(debounceTimer);
@@ -278,17 +319,17 @@ export function initMediaPicker() {
         });
     }
 
-    // helpers
-    function escapeHtml(str) {
-        return String(str)
-            .replaceAll('&', '&amp;')
-            .replaceAll('<', '&lt;')
-            .replaceAll('>', '&gt;')
-            .replaceAll('"', '&quot;')
-            .replaceAll("'", '&#039;');
-    }
+    // ---- Modal kapanınca transient reset ----
+    modal.addEventListener('hidden', () => {
+        cleanupTransient();
+        currentTarget = null;
+    });
 
-    function escapeAttr(str) {
-        return escapeHtml(str).replaceAll('`', '&#096;');
-    }
+    // optional: ESC / dismiss fallback
+    modal.addEventListener('click', (e) => {
+        const d = e.target.closest('[data-kt-modal-dismiss="true"]');
+        if (!d) return;
+        cleanupTransient();
+        currentTarget = null;
+    });
 }

@@ -1,4 +1,4 @@
-<div class="kt-modal kt-modal-center" id="mediaUploadModal" data-kt-modal="true">
+<div class="kt-modal kt-modal-center" id="mediaUploadModal" data-kt-modal="true" data-media-bulk-delete-url="/admin/media/bulkDelete">
     <div class="kt-modal-content max-w-[60%]" style="max-height: 97vh">
         <div class="kt-modal-header">
             <h3 class="kt-modal-title">Medya</h3>

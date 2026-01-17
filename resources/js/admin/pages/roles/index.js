@@ -1,4 +1,7 @@
-export default function init({ root }) {
+export default function init(ctx) {
+    const root = ctx.root;
+    const signal = ctx.signal;
+
     const modal = document.getElementById('roleDeleteModal');
     if (!modal) return;
 
@@ -24,9 +27,7 @@ export default function init({ root }) {
     }
 
     function setDangerMode(isDanger) {
-        if (alertWrap) {
-            alertWrap.classList.toggle('text-danger', isDanger);
-        }
+        if (alertWrap) alertWrap.classList.toggle('text-danger', isDanger);
 
         if (usersWrap) {
             usersWrap.classList.toggle('text-danger', isDanger);
@@ -64,6 +65,7 @@ export default function init({ root }) {
         }, 1000);
     }
 
+    // ✅ daha önce global listener idi, şimdi ctx.signal ile cleanup garanti
     document.addEventListener('click', function (e) {
         const btn = e.target.closest('[data-kt-modal-toggle="#roleDeleteModal"]');
         if (!btn) return;
@@ -83,11 +85,11 @@ export default function init({ root }) {
         const isDanger = usersCount > 0;
         setDangerMode(isDanger);
 
-        // 🔥 Panic click engelleme
+        // panic click engelleme
         if (isDanger) {
-            disableConfirm(2); // 2 saniye
+            disableConfirm(2);
         }
-    });
+    }, { signal });
 
     confirmBtn?.addEventListener('click', function () {
         if (confirmBtn.disabled) return;
@@ -95,10 +97,12 @@ export default function init({ root }) {
 
         const form = document.getElementById('role_delete_form_' + currentRoleId);
         if (form) form.submit();
-    });
+    }, { signal });
 
-    // Modal kapanınca state temizle
-    modal.addEventListener('hidden', resetTimers);
+    // Modal kapanınca state temizle (signal)
+    modal.addEventListener('hidden', resetTimers, { signal });
+
+    // ----- DataTable
     const table = root.querySelector('#roles_table');
     if (!table) return;
 
@@ -123,5 +127,9 @@ export default function init({ root }) {
             { className: 'text-right', targets: [3] },
             { className: 'text-center', targets: [2] },
         ],
+
+        // ✅ yeni standart
+        signal,
+        cleanup: (fn) => ctx.cleanup(fn),
     });
 }

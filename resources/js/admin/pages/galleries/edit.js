@@ -1,8 +1,6 @@
 import Sortable from 'sortablejs';
 import { initMediaUploadModal } from '@/core/media-upload-modal';
 
-let ac = null;
-
 function csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 }
@@ -24,7 +22,7 @@ function escapeHtml(s) {
         .replace(/'/g, '&#039;');
 }
 
-async function req(url, method, body) {
+async function req(url, method, body, signal) {
     const res = await fetch(url, {
         method,
         headers: {
@@ -33,7 +31,7 @@ async function req(url, method, body) {
             ...(body ? { 'Content-Type': 'application/json' } : {}),
         },
         body: body ? JSON.stringify(body) : undefined,
-        signal: ac?.signal,
+        signal,
         credentials: 'same-origin',
     });
 
@@ -41,20 +39,22 @@ async function req(url, method, body) {
     return { res, j };
 }
 
-export default function init() {
-    const root = document.querySelector('[data-page="galleries.edit"]');
-    if (!root) return;
+export default function init(ctx) {
+    const root = ctx.root;
+    const signal = ctx.signal;
 
-    const galleryId = root.dataset.galleryId;
+    const pageRoot = root?.querySelector?.('[data-page="galleries.edit"]') || document.querySelector('[data-page="galleries.edit"]');
+    if (!pageRoot) return;
+
+    const galleryId = pageRoot.dataset.galleryId;
     if (!galleryId) return;
 
-    const listEl = root.querySelector('#galleryItemsList');
-    const emptyEl = root.querySelector('#galleryItemsEmpty');
+    const listEl = pageRoot.querySelector('#galleryItemsList');
+    const emptyEl = pageRoot.querySelector('#galleryItemsEmpty');
     const saveAllBtn = document.getElementById('gallerySaveAllBtn');
 
     if (!listEl) return;
 
-    // “dirty” takibi: satır değişti mi?
     const dirtyIds = new Set();
 
     function setSaveAllEnabled() {
@@ -67,7 +67,7 @@ export default function init() {
         if (!itemId) return;
         dirtyIds.add(itemId);
         row.dataset.dirty = '1';
-        row.classList.add('ring-1', 'ring-border'); // çok abartma, hafif görsel ipucu
+        row.classList.add('ring-1', 'ring-border');
         setSaveAllEnabled();
     }
 
@@ -89,7 +89,6 @@ export default function init() {
         const link_url = row.querySelector('.js-link-url')?.value ?? '';
         const link_target = row.querySelector('.js-link-target')?.value ?? '';
 
-        // UI feedback
         let oldHtml = null;
         if (btn) {
             oldHtml = btn.innerHTML;
@@ -100,7 +99,8 @@ export default function init() {
         const { res, j } = await req(
             `/admin/galleries/${galleryId}/items/${itemId}`,
             'PATCH',
-            { caption, alt, link_url, link_target }
+            { caption, alt, link_url, link_target },
+            signal
         );
 
         const ok = res.ok && j?.ok;
@@ -215,14 +215,18 @@ export default function init() {
                     .filter(Boolean);
                 if (!ids.length) return;
 
-                await req(`/admin/galleries/${galleryId}/items/reorder`, 'POST', { ids });
-                // reorder başarılıysa satırları dirty yapma; sadece sıralama
+                await req(`/admin/galleries/${galleryId}/items/reorder`, 'POST', { ids }, signal);
             }
+        });
+
+        ctx.cleanup(() => {
+            try { listEl.__sortable?.destroy(); } catch {}
+            listEl.__sortable = null;
         });
     }
 
     async function fetchItems() {
-        const { res, j } = await req(`/admin/galleries/${galleryId}/items`, 'GET');
+        const { res, j } = await req(`/admin/galleries/${galleryId}/items`, 'GET', null, signal);
         if (!res.ok || !j?.ok) {
             listEl.innerHTML = '';
             emptyEl?.classList.remove('hidden');
@@ -233,7 +237,6 @@ export default function init() {
         listEl.innerHTML = items.map(itemRow).join('');
         emptyEl?.classList.toggle('hidden', items.length > 0);
 
-        // yeni liste gelince dirty reset
         dirtyIds.clear();
         setSaveAllEnabled();
 
@@ -252,7 +255,7 @@ export default function init() {
         ) {
             markRowDirty(row);
         }
-    });
+    }, { signal });
 
     // Save / delete
     listEl.addEventListener('click', async (e) => {
@@ -262,7 +265,7 @@ export default function init() {
         if (e.target.closest('.js-item-remove')) {
             e.preventDefault();
             const itemId = Number(row.dataset.itemId);
-            await req(`/admin/galleries/${galleryId}/items/${itemId}`, 'DELETE');
+            await req(`/admin/galleries/${galleryId}/items/${itemId}`, 'DELETE', null, signal);
             row.remove();
             emptyEl?.classList.toggle('hidden', listEl.querySelectorAll('[data-item-id]').length > 0);
             dirtyIds.delete(itemId);
@@ -275,7 +278,7 @@ export default function init() {
             e.preventDefault();
             await saveRow(row, saveBtn);
         }
-    });
+    }, { signal });
 
     // Toplu Kaydet
     saveAllBtn?.addEventListener('click', async () => {
@@ -285,7 +288,6 @@ export default function init() {
         saveAllBtn.disabled = true;
         saveAllBtn.innerHTML = `<i class="ki-outline ki-loading"></i> Kaydediliyor (${dirtyIds.size})`;
 
-        // Sadece dirty olanları sırayla kaydet (backend’e bulk endpoint yazmadan güvenli çözüm)
         const rows = [...listEl.querySelectorAll('[data-item-id][data-dirty="1"]')];
 
         let fail = 0;
@@ -304,10 +306,9 @@ export default function init() {
             saveAllBtn.innerHTML = old;
             setSaveAllEnabled();
         }, 1200);
-    });
+    }, { signal });
 
-    ac = new AbortController();
-    // Media Upload Modal (Library -> Use Selected) ile galeriye ekleme
+    // Media Upload Modal
     initMediaUploadModal(document);
 
     const uploadModal = document.getElementById('mediaUploadModal');
@@ -315,26 +316,17 @@ export default function init() {
         uploadModal.__galleryAttachBound = true;
 
         async function hideUploadModal() {
-            // 1) dismiss butonu varsa
             const dismiss = uploadModal.querySelector('[data-kt-modal-dismiss="true"]');
             if (dismiss) {
                 dismiss.click();
                 return;
             }
 
-            // 2) KTModal varsa
             try {
-                if (window.KTModal && typeof window.KTModal.getOrCreateInstance === 'function') {
-                    const inst = window.KTModal.getOrCreateInstance(uploadModal);
-                    if (inst?.hide) return inst.hide();
-                }
-                if (window.KTModal && typeof window.KTModal.getInstance === 'function') {
-                    const inst = window.KTModal.getInstance(uploadModal) || new window.KTModal(uploadModal);
-                    if (inst?.hide) return inst.hide();
-                }
+                const inst = window.KTModal?.getOrCreateInstance?.(uploadModal);
+                if (inst?.hide) return inst.hide();
             } catch {}
 
-            // 3) fallback
             uploadModal.classList.add('hidden');
         }
 
@@ -342,7 +334,6 @@ export default function init() {
             const ids = e?.detail?.ids || [];
             if (!Array.isArray(ids) || ids.length === 0) return;
 
-            // UI feedback: Use button'u kısa süre kilitle
             const useBtn = uploadModal.querySelector('#mediaLibraryUseSelectedBtn');
             const oldHtml = useBtn?.innerHTML;
             if (useBtn) {
@@ -353,7 +344,8 @@ export default function init() {
             const { res, j } = await req(
                 `/admin/galleries/${galleryId}/items`,
                 'POST',
-                { media_ids: ids }
+                { media_ids: ids },
+                signal
             );
 
             const ok = res.ok && j?.ok;
@@ -368,7 +360,6 @@ export default function init() {
 
             if (!ok) {
                 console.error('[galleries.edit] attach failed', res.status, j);
-                // butonu geri al
                 if (useBtn) {
                     setTimeout(() => {
                         useBtn.innerHTML = oldHtml || 'Seçilenleri Kullan';
@@ -378,16 +369,11 @@ export default function init() {
                 return;
             }
 
-            // Listeyi yenile
             await fetchItems();
 
-            // Selection temizle (aşağıda media-upload-modal.js patch’i var)
             uploadModal.dispatchEvent(new CustomEvent('media:library:clearSelection', { bubbles: true }));
-
-            // Modal kapat
             await hideUploadModal();
 
-            // Butonu geri al
             if (useBtn) {
                 setTimeout(() => {
                     useBtn.innerHTML = oldHtml || 'Seçilenleri Kullan';
@@ -401,6 +387,5 @@ export default function init() {
 }
 
 export function destroy() {
-    try { ac?.abort(); } catch {}
-    ac = null;
+    // ctx zaten abort ediyor; burada ekstra bir şey gerekmiyor
 }

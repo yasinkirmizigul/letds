@@ -83,8 +83,8 @@
                             <th class="w-[55px] dt-orderable-none">
                                 <input class="kt-checkbox kt-checkbox-sm" id="projects_check_all" type="checkbox">
                             </th>
-                            <th>Proje</th>
-                            <th>Slug</th>
+                            <th class="min-w-[360px]">Proje</th>
+                            <th class="min-w-[280px]">Kısa Bağlantı</th>
                             <th>Tarih</th>
                             <th>İşlemler</th>
                         </tr>

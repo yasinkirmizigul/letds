@@ -9,11 +9,9 @@ function cleanupObjectUrl(state) {
 function togglePreviewUI({ img, ph, hasSrc }) {
     if (!img || !ph) return;
 
-    // ✅ kesin: attribute her zaman kazanır
     img.toggleAttribute('hidden', !hasSrc);
     ph.toggleAttribute('hidden', !!hasSrc);
 
-    // sınıf da kalsın (bazı yerlerde styling için)
     img.classList.toggle('hidden', !hasSrc);
     ph.classList.toggle('hidden', !!hasSrc);
 }
@@ -28,30 +26,22 @@ function getHost(el) {
 }
 
 function ensureHostInited(host, states) {
-    if (!host || host.__featuredInited) return;
+    if (!host || host.__fimHostInited) return;
 
-    const input = host.querySelector('[data-featured-input]');
-    const mediaId = host.querySelector('[data-featured-media-id]');
     const img = host.querySelector('[data-featured-preview]');
     const ph = host.querySelector('[data-featured-placeholder]');
-
     if (!img || !ph) return;
 
-    host.__featuredInited = true;
+    host.__fimHostInited = true;
 
     const state = { lastObjectUrl: null };
     states.set(host, state);
 
-    // initial state
     const initialHas = !!String(img.getAttribute('src') || '').trim();
     togglePreviewUI({ img, ph, hasSrc: initialHas });
-
-    // file input varsa, initial mediaId varsa bile preview url yoksa placeholder görünsün
-    if (!initialHas) togglePreviewUI({ img, ph, hasSrc: false });
 }
 
-// ---- Delegated handlers (works even if init order is messy) ----
-
+// ---- Delegated handlers ----
 function handleFileChange(e, states) {
     const input = e.target;
     if (!input?.matches?.('[data-featured-input]')) return;
@@ -67,7 +57,6 @@ function handleFileChange(e, states) {
     const mediaId = host.querySelector('[data-featured-media-id]');
     const img = host.querySelector('[data-featured-preview]');
     const ph = host.querySelector('[data-featured-placeholder]');
-
     if (!img || !ph) return;
 
     const file = input.files && input.files[0] ? input.files[0] : null;
@@ -126,7 +115,6 @@ function handleMediaPick(e, states) {
     if (mime && !String(mime).startsWith('image/')) return;
     if (!id && !url) return;
 
-    // media-picker tarafı selector gönderiyorsa: direkt hedef input’u bul
     const inputSel = d?.target?.inputSel || '';
     if (!inputSel) return;
 
@@ -158,50 +146,45 @@ function handleMediaPick(e, states) {
     }
 }
 
-// ---- Public API ----
+// ---- singleton listener binding (with removable refs) ----
+function ensureGlobalListeners() {
+    if (window.__fim_listeners_bound) return;
 
-export default function initFeaturedImageManager(root = document) {
-    // singleton guards (duplicate listeners istemiyorsun)
-    if (window.__fim_inited) {
-        // ama yeni DOM eklendiyse host init ederiz
-        root.querySelectorAll('[data-featured-image-manager="1"]').forEach((h) => {
-            if (!h.__featuredInited) window.__fim_states && ensureHostInited(h, window.__fim_states);
-        });
-        return;
-    }
+    window.__fim_listeners_bound = true;
 
-    window.__fim_inited = true;
-    const states = new WeakMap();
-    window.__fim_states = states;
+    if (!window.__fim_states) window.__fim_states = new WeakMap();
+    const states = window.__fim_states;
 
-    // init existing hosts
-    root.querySelectorAll('[data-featured-image-manager="1"]').forEach((h) => ensureHostInited(h, states));
+    const onChange = (e) => handleFileChange(e, states);
+    const onClick = (e) => handleClearClick(e, states);
+    const onPick = (e) => handleMediaPick(e, states);
 
-    // delegated listeners
-    document.addEventListener('change', (e) => handleFileChange(e, states), true);
-    document.addEventListener('click', (e) => handleClearClick(e, states), true);
-    document.addEventListener('media:pick', (e) => handleMediaPick(e, states));
+    window.__fim_handlers = { onChange, onClick, onPick };
 
-    // observe new hosts (page-registry / modal render vb.)
-    const obs = new MutationObserver((mutations) => {
-        for (const m of mutations) {
-            for (const n of m.addedNodes || []) {
-                if (!(n instanceof HTMLElement)) continue;
-                if (n.matches?.('[data-featured-image-manager="1"]')) ensureHostInited(n, states);
-                n.querySelectorAll?.('[data-featured-image-manager="1"]').forEach((h) => ensureHostInited(h, states));
-            }
-        }
-    });
-
-    obs.observe(document.documentElement, { childList: true, subtree: true });
-    window.__fim_obs = obs;
+    document.addEventListener('change', onChange, true);
+    document.addEventListener('click', onClick, true);
+    document.addEventListener('media:pick', onPick);
 }
 
-export function destroyFeaturedImageManager() {
-    // hard reset (debug için)
-    try { window.__fim_obs?.disconnect?.(); } catch {}
-    window.__fim_obs = null;
+// ---- Public API ----
+export default function initFeaturedImageManager(root = document) {
+    ensureGlobalListeners();
 
-    window.__fim_inited = false;
-    window.__fim_states = null;
+    const states = window.__fim_states;
+    root.querySelectorAll('[data-featured-image-manager="1"]').forEach((h) => ensureHostInited(h, states));
+}
+
+// ✅ NAMED EXPORT: senin edit.js bunu import ediyor
+export function destroyFeaturedImageManager() {
+    const h = window.__fim_handlers;
+    if (h) {
+        try { document.removeEventListener('change', h.onChange, true); } catch {}
+        try { document.removeEventListener('click', h.onClick, true); } catch {}
+        try { document.removeEventListener('media:pick', h.onPick); } catch {}
+    }
+
+    window.__fim_handlers = null;
+    window.__fim_listeners_bound = false;
+
+    try { window.__fim_states = new WeakMap(); } catch {}
 }

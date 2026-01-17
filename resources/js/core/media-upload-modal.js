@@ -1,5 +1,3 @@
-// resources/js/core/media-upload-modal.js
-
 function csrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 }
@@ -33,7 +31,7 @@ function inferKind(mime, nameOrUrl) {
     return 'other';
 }
 
-async function jsonReq(url, method, bodyObj) {
+async function jsonReq(url, method, bodyObj, signal = null) {
     const res = await fetch(url, {
         method,
         headers: {
@@ -44,29 +42,33 @@ async function jsonReq(url, method, bodyObj) {
         },
         credentials: 'same-origin',
         body: bodyObj ? JSON.stringify(bodyObj) : undefined,
+        signal,
     });
 
     const j = await res.json().catch(() => ({}));
     return { res, j };
 }
 
+function btnBusy(btn, on, htmlOn) {
+    if (!btn) return;
+    btn.disabled = !!on;
+    btn.classList.toggle('opacity-60', !!on);
+    btn.classList.toggle('pointer-events-none', !!on);
+    if (on && htmlOn) btn.innerHTML = htmlOn;
+}
+
 /**
  * Global modal init. Safe to call multiple times.
- * Expects modal ids:
- *  - #mediaUploadModal
- *  - Upload: #mediaDropzone, #mediaFiles (or #mediaFile), #mediaUploadList, #mediaStartUpload, #mediaClearQueue
- *  - Apply All: #mediaApplyTitleAll, #mediaApplyAltAll, plus inputs #mediaTitle, #mediaAlt
- *  - Library: #mediaLibraryPane, #mediaLibraryResults, #mediaLibraryPagination
- *            #mediaLibrarySearch, #mediaLibraryType, #mediaRefreshLibrary
- *            #mediaLibraryBulkBar, #mediaLibrarySelectedCount, #mediaLibraryCheckAll
  */
 export function initMediaUploadModal(scope = document) {
     const modal = scope.querySelector('#mediaUploadModal');
-    if (!modal || modal.__mediaUploadInited) return;
+    if (!modal) return;
+
+    if (modal.__mediaUploadInited) return;
     modal.__mediaUploadInited = true;
 
     // -----------------------------
-    // UPLOAD PANE (Dropzone + queue)
+    // UPLOAD PANE
     // -----------------------------
     const dz = modal.querySelector('#mediaDropzone');
     const input = modal.querySelector('#mediaFiles') || modal.querySelector('#mediaFile');
@@ -91,6 +93,13 @@ export function initMediaUploadModal(scope = document) {
         errBox.classList.toggle('hidden', !msg);
     }
 
+    function resetUploadQueue() {
+        if (uploading) return;
+        queue = [];
+        setError('');
+        renderQueue();
+    }
+
     function renderQueue() {
         if (!uploadList) return;
 
@@ -100,10 +109,13 @@ export function initMediaUploadModal(scope = document) {
             const p = Math.max(0, Math.min(100, Number(q.progress || 0)));
 
             const badge =
-                q.status === 'done' ? `<span class="kt-badge kt-badge-outline bg-green-500">OK</span>` :
-                    q.status === 'error' ? `<span class="kt-badge kt-badge-outline bg-destructive">Hata</span>` :
-                        q.status === 'uploading' ? `<span class="kt-badge kt-badge-outline bg-yellow-500">Yükleniyor</span>` :
-                            `<span class="kt-badge kt-badge-outline">Bekliyor</span>`;
+                q.status === 'done'
+                    ? `<span class="kt-badge kt-badge-outline bg-green-500">OK</span>`
+                    : q.status === 'error'
+                        ? `<span class="kt-badge kt-badge-outline bg-destructive">Hata</span>`
+                        : q.status === 'uploading'
+                            ? `<span class="kt-badge kt-badge-outline bg-yellow-500">Yükleniyor</span>`
+                            : `<span class="kt-badge kt-badge-outline">Bekliyor</span>`;
 
             return `
                 <div class="rounded-xl border border-border bg-background p-4 grid gap-3" data-i="${idx}">
@@ -160,14 +172,14 @@ export function initMediaUploadModal(scope = document) {
     function applyTitleAll() {
         const v = (titleEl?.value || '').trim();
         if (!queue.length) return;
-        queue.forEach(q => { q.title = v; }); // “hepsine uygula” = hepsine overwrite
+        queue.forEach(q => { q.title = v; });
         renderQueue();
     }
 
     function applyAltAll() {
         const v = (altEl?.value || '').trim();
         if (!queue.length) return;
-        queue.forEach(q => { q.alt = v; }); // hepsine overwrite
+        queue.forEach(q => { q.alt = v; });
         renderQueue();
     }
 
@@ -180,7 +192,6 @@ export function initMediaUploadModal(scope = document) {
         const fd = new FormData();
         fd.append('file', q.file);
 
-        // satır boşsa, global’i kullan
         const t = (q.title || '').trim() || (titleEl?.value || '').trim();
         const a = (q.alt || '').trim() || (altEl?.value || '').trim();
         if (t) fd.append('title', t);
@@ -226,7 +237,7 @@ export function initMediaUploadModal(scope = document) {
 
         input.addEventListener('change', () => {
             if (input.files?.length) addFiles(input.files);
-            input.value = ''; // aynı dosyayı tekrar seçebil
+            input.value = '';
         });
     }
 
@@ -247,6 +258,7 @@ export function initMediaUploadModal(scope = document) {
         const row = btn.closest('[data-i]');
         const i = Number(row?.dataset.i);
         if (!Number.isFinite(i)) return;
+        if (uploading) return;
         queue.splice(i, 1);
         renderQueue();
     });
@@ -256,9 +268,7 @@ export function initMediaUploadModal(scope = document) {
 
     clearBtn?.addEventListener('click', () => {
         if (uploading) return;
-        queue = [];
-        setError('');
-        renderQueue();
+        resetUploadQueue();
     });
 
     startBtn?.addEventListener('click', async () => {
@@ -266,8 +276,9 @@ export function initMediaUploadModal(scope = document) {
         if (!queue.length) return;
 
         uploading = true;
-        startBtn.disabled = true;
-        if (clearBtn) clearBtn.disabled = true;
+        btnBusy(startBtn, true, `<i class="ki-outline ki-loading"></i> Yükleniyor...`);
+        if (clearBtn) btnBusy(clearBtn, true);
+
         setError('');
 
         for (const q of queue) {
@@ -276,17 +287,16 @@ export function initMediaUploadModal(scope = document) {
         }
 
         uploading = false;
-        startBtn.disabled = false;
-        if (clearBtn) clearBtn.disabled = false;
+        btnBusy(startBtn, false);
+        if (clearBtn) btnBusy(clearBtn, false);
 
-        // upload bitti -> library açıldıysa yenilemek isteyen dinleyebilir
         modal.dispatchEvent(new CustomEvent('media:upload:done', { bubbles: true }));
     });
 
     renderQueue();
 
     // -----------------------------
-    // LIBRARY PANE (checkAll + select + pagination)
+    // LIBRARY PANE
     // -----------------------------
     const libPane = modal.querySelector('#mediaLibraryPane');
     const libResults = modal.querySelector('#mediaLibraryResults');
@@ -300,6 +310,14 @@ export function initMediaUploadModal(scope = document) {
     const libSelectedCount = modal.querySelector('#mediaLibrarySelectedCount');
     const libCheckAll = modal.querySelector('#mediaLibraryCheckAll');
 
+    const useBtn = modal.querySelector('#mediaLibraryUseSelectedBtn');
+    const bulkDeleteBtn = modal.querySelector('#mediaLibraryBulkDeleteBtn');
+
+    const bulkDeleteUrl =
+        modal.getAttribute('data-media-bulk-delete-url') ||
+        modal.dataset.mediaBulkDeleteUrl ||
+        '/admin/media/bulk-delete';
+
     const picker = {
         q: '',
         type: '',
@@ -309,21 +327,54 @@ export function initMediaUploadModal(scope = document) {
         total: 0,
     };
 
-    const selected = new Set(); // number ids
+    const selected = new Set();
+    let libraryBusy = false;
+
+    let libAborter = null;
+    let libRequestId = 0;
+    let debounceTimer = null;
+
+    function cleanupLibraryTransient() {
+        if (debounceTimer) {
+            clearTimeout(debounceTimer);
+            debounceTimer = null;
+        }
+        if (libAborter) {
+            libAborter.abort();
+            libAborter = null;
+        }
+    }
+
+    function setLibraryBusy(on) {
+        libraryBusy = !!on;
+        btnBusy(useBtn, on, on ? `<i class="ki-outline ki-loading"></i> İşleniyor...` : null);
+        btnBusy(bulkDeleteBtn, on, on ? `<i class="ki-outline ki-loading"></i> Siliniyor...` : null);
+
+        if (libResults) {
+            libResults.classList.toggle('opacity-60', on);
+            libResults.classList.toggle('pointer-events-none', on);
+        }
+        if (libPagination) {
+            libPagination.classList.toggle('opacity-60', on);
+            libPagination.classList.toggle('pointer-events-none', on);
+        }
+        if (libCheckAll) libCheckAll.disabled = on ? true : false;
+    }
+
+    function clearSelection() {
+        selected.clear();
+        applySelectionToLibrary();
+        updateLibraryBulkUI();
+    }
 
     function updateLibraryBulkUI() {
         const n = selected.size;
 
-        // Bulk bar hep açık kalsın
         if (libBulkBar) libBulkBar.classList.remove('hidden');
-
         if (libSelectedCount) libSelectedCount.textContent = String(n);
 
-        // Bulk bar içindeki aksiyonları selection yokken disable et
-        const useBtn = modal.querySelector('#mediaLibraryUseSelectedBtn');
-        const bulkDeleteBtn = modal.querySelector('#mediaLibraryBulkDeleteBtn');
-        if (useBtn) useBtn.disabled = (n === 0);
-        if (bulkDeleteBtn) bulkDeleteBtn.disabled = (n === 0);
+        if (useBtn) useBtn.disabled = libraryBusy || (n === 0);
+        if (bulkDeleteBtn) bulkDeleteBtn.disabled = libraryBusy || (n === 0);
 
         if (!libResults || !libCheckAll) return;
 
@@ -331,7 +382,6 @@ export function initMediaUploadModal(scope = document) {
         const total = boxes.length;
         const checked = boxes.filter(b => b.checked).length;
 
-        // Liste boşsa: checkAll kapalı + disabled
         if (total === 0) {
             libCheckAll.indeterminate = false;
             libCheckAll.checked = false;
@@ -339,12 +389,10 @@ export function initMediaUploadModal(scope = document) {
             return;
         }
 
-        // Liste doluysa: aktif
-        libCheckAll.disabled = false;
+        libCheckAll.disabled = libraryBusy ? true : false;
         libCheckAll.indeterminate = checked > 0 && checked < total;
         libCheckAll.checked = checked === total;
     }
-
 
     function applySelectionToLibrary() {
         if (!libResults) return;
@@ -356,14 +404,15 @@ export function initMediaUploadModal(scope = document) {
     }
 
     function mediaCard(m) {
-        const kind = inferKind(m.mime_type, m.original_name || m.url);
+        const kind = inferKind(m.mime_type || m.mime, m.original_name || m.url);
         const thumb = m.thumb_url || m.url || '';
         const title = esc(m.original_name || m.title || 'Medya');
-
         const checked = selected.has(Number(m.id)) ? 'checked' : '';
 
         return `
-            <label class="rounded-xl border border-border bg-background px-4 py-3 flex items-center gap-3 cursor-pointer">
+            <label class="rounded-xl border border-border bg-background px-4 py-3 flex items-center gap-3 cursor-pointer"
+                   data-media-card="1"
+                   data-id="${Number(m.id)}">
                 <input type="checkbox"
                        class="kt-checkbox kt-checkbox-sm"
                        data-media-check="1"
@@ -428,6 +477,11 @@ export function initMediaUploadModal(scope = document) {
     async function fetchLibrary() {
         if (!libResults) return;
 
+        const reqId = ++libRequestId;
+
+        if (libAborter) libAborter.abort();
+        libAborter = new AbortController();
+
         const qs = new URLSearchParams({
             page: String(picker.page),
             perpage: String(picker.perpage),
@@ -436,7 +490,9 @@ export function initMediaUploadModal(scope = document) {
             mode: 'active',
         });
 
-        const { res, j } = await jsonReq(`/admin/media/list?${qs.toString()}`, 'GET');
+        const { res, j } = await jsonReq(`/admin/media/list?${qs.toString()}`, 'GET', null, libAborter.signal);
+
+        if (reqId !== libRequestId) return;
 
         if (!res.ok || !j?.ok) {
             libResults.innerHTML = `<div class="text-sm text-muted-foreground">Liste alınamadı.</div>`;
@@ -459,7 +515,6 @@ export function initMediaUploadModal(scope = document) {
         applySelectionToLibrary();
     }
 
-    // checkbox toggle
     libResults?.addEventListener('change', (e) => {
         const cb = e.target.closest('input[data-media-check="1"]');
         if (!cb) return;
@@ -473,7 +528,6 @@ export function initMediaUploadModal(scope = document) {
         updateLibraryBulkUI();
     });
 
-    // check all
     libCheckAll?.addEventListener('change', () => {
         if (!libResults) return;
 
@@ -490,7 +544,6 @@ export function initMediaUploadModal(scope = document) {
         updateLibraryBulkUI();
     });
 
-    // pagination click
     libPagination?.addEventListener('click', (e) => {
         const b = e.target.closest('button[data-page]');
         if (!b) return;
@@ -499,9 +552,6 @@ export function initMediaUploadModal(scope = document) {
         picker.page = p;
         fetchLibrary();
     });
-
-    // search/type/refresh
-    let debounceTimer = null;
 
     libSearch?.addEventListener('input', () => {
         clearTimeout(debounceTimer);
@@ -518,39 +568,54 @@ export function initMediaUploadModal(scope = document) {
         fetchLibrary();
     });
 
-    libRefresh?.addEventListener('click', () => {
-        fetchLibrary();
-    });
+    libRefresh?.addEventListener('click', () => fetchLibrary());
 
-    // library tab opened (app.js emits this) :contentReference[oaicite:4]{index=4}
     modal.addEventListener('media:library:open', () => {
         picker.page = 1;
         fetchLibrary();
     });
 
-    // upload done -> if library is visible, refresh
     modal.addEventListener('media:upload:done', () => {
         const isLibVisible = libPane && !libPane.classList.contains('hidden');
         if (isLibVisible) fetchLibrary();
     });
-    modal.addEventListener('media:library:clearSelection', () => {
-        selected.clear();
-        applySelectionToLibrary();
-        updateLibraryBulkUI();
-    });
 
-    // “Use selected” button (if exists, we emit event; consumer handles attach)
-    const useBtn = modal.querySelector('#mediaLibraryUseSelectedBtn');
-    useBtn?.addEventListener('click', () => {
+    modal.addEventListener('media:library:clearSelection', () => clearSelection());
+
+    async function bulkDeleteSelected() {
         const ids = [...selected.values()];
         if (!ids.length) return;
 
-        modal.dispatchEvent(new CustomEvent('media:library:useSelected', {
-            bubbles: true,
-            detail: { ids },
-        }));
+        const ok = confirm(`${ids.length} adet medya silinecek. Emin misin?`);
+        if (!ok) return;
+
+        setLibraryBusy(true);
+
+        const { res, j } = await jsonReq(bulkDeleteUrl, 'DELETE', { ids });
+
+        setLibraryBusy(false);
+
+        if (!res.ok || !j?.ok) {
+            alert(j?.error?.message || j?.message || `Silme başarısız (HTTP ${res.status})`);
+            return;
+        }
+
+        clearSelection();
+        await fetchLibrary();
+    }
+
+    bulkDeleteBtn?.addEventListener('click', () => {
+        if (libraryBusy) return;
+        bulkDeleteSelected();
     });
 
-    // init bulk ui state
+    // ---- modal kapanınca: transient reset + queue/selection reset ----
+    modal.addEventListener('hidden', () => {
+        cleanupLibraryTransient();
+        // KAPANINCA reset (stabilite için):
+        if (!uploading) resetUploadQueue();
+        clearSelection();
+    });
+
     updateLibraryBulkUI();
 }

@@ -184,9 +184,9 @@ export default async function init({ root, dataset }) {
         sourceSelector: '#title',
         slugSelector: '#slug',
         previewSelector: '#url_slug_preview',
-        autoSelector: '#slug_auto',      // varsa
-        regenSelector: '#slug_regen',    // BLOG'DA bu!
-        generateOnInit: false,
+        autoSelector: '#slug_auto',
+        regenSelector: '#slug_regen',
+        generateOnInit: true,
     }, signal);
 
     const selector = '#content_editor';

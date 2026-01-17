@@ -1,365 +1,263 @@
-export default function init() {
-    const root = document.querySelector('[data-page="trash.index"]');
-    if (!root) return;
+function csrfToken() {
+    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+}
 
-    const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+async function jsonReq(url, method = 'GET', body = null, signal = null) {
+    const res = await fetch(url, {
+        method,
+        headers: {
+            Accept: 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            ...(csrfToken() ? { 'X-CSRF-TOKEN': csrfToken() } : {}),
+            ...(body ? { 'Content-Type': 'application/json' } : {}),
+        },
+        body: body ? JSON.stringify(body) : undefined,
+        credentials: 'same-origin',
+        signal,
+    });
 
-    const tbody = root.querySelector('#trashTbody');
-    const searchInput = root.querySelector('#trashSearch');
-    const typeSelect = root.querySelector('#trashType');
+    const j = await res.json().catch(() => ({}));
+    return { res, j };
+}
 
-    const perSelect = root.querySelector('#trashPageSize');
-    const infoEl = root.querySelector('#trashInfo');
-    const pagEl = root.querySelector('#trashPagination');
+function esc(s) {
+    return String(s ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
 
-    const tplEmpty = root.querySelector('#dt-empty-trash');
-    const tplZero = root.querySelector('#dt-zero-trash');
+const bound = new WeakMap(); // root->Set(keys)
+function markBound(root, key) {
+    let s = bound.get(root);
+    if (!s) { s = new Set(); bound.set(root, s); }
+    if (s.has(key)) return true;
+    s.add(key);
+    return false;
+}
 
-    const bulkBar = root.querySelector('#trashBulkBar');
-    const selectedCountEl = root.querySelector('#trashSelectedCount');
-    const checkAllHead = root.querySelector('#trash_check_all_head');
-    const checkAllBar = root.querySelector('#trash_check_all');
+export default function init(ctx) {
+    const root = ctx.root;
+    const signal = ctx.signal;
 
-    const btnRes = root.querySelector('#trashBulkRestoreBtn');
-    const btnForce = root.querySelector('#trashBulkForceDeleteBtn');
+    const pageEl = root.querySelector('[data-page="trash.index"]');
+    if (!pageEl) return;
 
+    const listEl = pageEl.querySelector('#trashList');
+    const infoEl = pageEl.querySelector('#trashInfo');
+    const pagEl = pageEl.querySelector('#trashPagination');
 
-    const listUrl = root.dataset.listUrl || '/admin/trash/list';
-    const bulkRestoreUrl = root.dataset.bulkRestoreUrl || '/admin/trash/bulk-restore';
-    const bulkForceUrl   = root.dataset.bulkForceDeleteUrl || '/admin/trash/bulk-force-delete';
+    const qInput = pageEl.querySelector('#trashSearch');
+    const typeSel = pageEl.querySelector('#trashType');
+    const perSel = pageEl.querySelector('#trashPerPage');
+
+    if (!listEl) return;
 
     const state = {
         q: '',
-        type: 'all',
+        type: '',
         page: 1,
-        per: Number(root.dataset.perpage || 25),
-        last: 1,
+        perpage: Number(perSel?.value || 25) || 25,
+        last_page: 1,
         total: 0,
-        selected: new Map(), // key = `${type}:${id}` => {type,id}
-        loading: false,
     };
 
-    function notify(type, msg) {
-        if (window.notify) return window.notify(type, msg);
-        if (type === 'error') alert(msg);
-        else console.log(msg);
-    }
+    let debounceTimer = null;
 
-    async function fetchJson(url, opts = {}) {
-        const res = await fetch(url, {
-            ...opts,
-            headers: {
-                ...(opts.headers || {}),
-                'Accept': 'application/json',
-                ...(csrf ? { 'X-CSRF-TOKEN': csrf } : {}),
-            }
-        });
-        const j = await res.json().catch(() => ({}));
-        if (!res.ok || j?.ok === false) throw new Error(j?.message || 'İşlem başarısız');
-        return j;
-    }
-
-    async function postJson(url, body, method = 'POST') {
-        return fetchJson(url, {
-            method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body || {})
-        });
-    }
-
-    function escapeHtml(s) {
-        return String(s).replace(/[&<>"']/g, (m) => ({
-            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
-        }[m]));
-    }
-
-    function badgeType(t) {
-        const map = { media: 'Media', blog: 'Blog', category: 'Category' };
-        return `<span class="kt-badge kt-badge-sm kt-badge-light">${map[t] || t}</span>`;
-    }
-
-    function keyOf(it) { return `${it.type}:${it.id}`; }
-
-    function renderEmpty(kind) {
-        tbody.innerHTML = '';
-        const tpl = kind === 'zero' ? tplZero : tplEmpty;
-        const row = tpl?.content?.firstElementChild?.cloneNode(true);
-        if (row) tbody.appendChild(row);
-    }
-
-    function rowHtml(it) {
-        const k = keyOf(it);
-        const checked = state.selected.has(k) ? 'checked' : '';
-        const deletedText = (it.deleted_at || '').replace('T',' ').replace('Z','');
-
-        let purgeBadge = '';
-        if (typeof it.days_left === 'number') {
-            if (it.days_left <= 0) {
-                purgeBadge = `<span class="kt-badge kt-badge-sm kt-badge-destructive">Bugün silinir</span>`;
-            } else {
-                purgeBadge = `<span class="kt-badge kt-badge-sm kt-badge-light">${it.days_left} gün sonra</span>`;
-            }
-        }
-
-
-        return `
-        <tr data-row-key="${k}">
-            <td class="w-[55px]">
-                <input class="kt-checkbox kt-checkbox-sm trash-check"
-                       type="checkbox"
-                       data-type="${it.type}"
-                       data-id="${it.id}"
-                       ${checked}>
-            </td>
-            <td>${badgeType(it.type)}</td>
-            <td class="font-medium">${escapeHtml(it.title || '')}</td>
-            <td class="text-sm text-muted-foreground">
-                <div class="flex flex-col gap-1">
-                    <div>${escapeHtml(deletedText)}</div>
-                    ${purgeBadge}
-                </div>
-            </td>
-            <td class="text-center">
-                <div class="inline-flex gap-2 justify-end">
-                    ${it.url ? `
-                        <a href="${it.url}" class="kt-btn kt-btn-sm kt-btn-light" title="Kaynağa git">
-                            <i class="ki-outline ki-exit-right"></i>
-                        </a>
-                    ` : ''}
-
-                    <button type="button" class="kt-btn kt-btn-sm kt-btn-success"
-                            data-action="restore" data-type="${it.type}" data-id="${it.id}">
-                        <i class="ki-outline ki-arrow-rotate-left"></i>
-                    </button>
-
-                    <button type="button" class="kt-btn kt-btn-sm kt-btn-destructive"
-                            data-action="force-delete" data-type="${it.type}" data-id="${it.id}">
-                        <i class="ki-outline ki-trash"></i>
-                    </button>
-                </div>
-            </td>
-        </tr>`;
-    }
-
-    function updateBulkUI() {
-        const n = state.selected.size;
-
-        bulkBar?.classList.toggle('hidden', n === 0);
-        if (selectedCountEl) selectedCountEl.textContent = String(n);
-
-        if (btnRes) btnRes.disabled = n === 0;
-        if (btnForce) btnForce.disabled = n === 0;
-
-        const boxes = [...root.querySelectorAll('input.trash-check')];
-        const checked = boxes.filter(b => b.checked).length;
-
-        const allChecked = boxes.length > 0 && checked === boxes.length;
-        const ind = checked > 0 && checked < boxes.length;
-
-        if (checkAllHead) { checkAllHead.indeterminate = ind; checkAllHead.checked = allChecked; }
-        if (checkAllBar) { checkAllBar.indeterminate = ind; checkAllBar.checked = allChecked; }
-    }
-
-    function renderPagination() {
-        if (!pagEl) return;
-        pagEl.innerHTML = '';
-
-        const mkBtn = (label, page, disabled = false, active = false) => {
-            const b = document.createElement('button');
-            b.type = 'button';
-            b.className = 'kt-btn kt-btn-sm ' + (active ? 'kt-btn-primary' : 'kt-btn-light');
-            b.textContent = label;
-            b.disabled = disabled;
-            b.addEventListener('click', () => {
-                state.page = page;
-                load();
-            });
-            return b;
-        };
-
-        pagEl.appendChild(mkBtn('‹', Math.max(1, state.page - 1), state.page <= 1));
-
-        const start = Math.max(1, state.page - 2);
-        const end = Math.min(state.last, state.page + 2);
-        for (let p = start; p <= end; p++) {
-            pagEl.appendChild(mkBtn(String(p), p, false, p === state.page));
-        }
-
-        pagEl.appendChild(mkBtn('›', Math.min(state.last, state.page + 1), state.page >= state.last));
-    }
-
-    function renderInfo() {
+    function setInfo(text) {
         if (!infoEl) return;
-        const from = state.total === 0 ? 0 : ((state.page - 1) * state.per) + 1;
-        const to = Math.min(state.total, state.page * state.per);
-        infoEl.textContent = `${from}-${to} / ${state.total}`;
+        infoEl.textContent = text || '';
     }
 
-    async function load() {
-        if (state.loading) return;
-        state.loading = true;
+    function renderPagination(meta) {
+        if (!pagEl) return;
 
-        const params = new URLSearchParams();
-        params.set('type', state.type);
-        params.set('q', state.q);
-        params.set('page', String(state.page));
-        params.set('perpage', String(state.per));
+        const current = Number(meta.current_page || 1) || 1;
+        const last = Number(meta.last_page || 1) || 1;
 
-        try {
-            const j = await fetchJson(`${listUrl}?${params.toString()}`);
-            const items = Array.isArray(j.data) ? j.data : [];
-
-            state.total = j?.meta?.total || 0;
-            state.last = j?.meta?.last_page || 1;
-
-            if (!items.length) {
-                renderEmpty(state.q ? 'zero' : 'empty');
-            } else {
-                tbody.innerHTML = items.map(rowHtml).join('');
-            }
-
-            renderPagination();
-            renderInfo();
-            updateBulkUI();
-        } catch (e) {
-            notify('error', e?.message || 'Liste yüklenemedi');
-        } finally {
-            state.loading = false;
-        }
-    }
-
-    function initPerSelect() {
-        if (!perSelect) return;
-        const opts = [10, 25, 50, 100];
-        perSelect.innerHTML = opts.map(v => `<option value="${v}">${v}</option>`).join('');
-        perSelect.value = String(state.per);
-
-        perSelect.addEventListener('change', () => {
-            state.per = Number(perSelect.value || 25);
-            state.page = 1;
-            load();
-        });
-    }
-
-    // search debounce
-    let t = null;
-    searchInput?.addEventListener('input', () => {
-        clearTimeout(t);
-        t = setTimeout(() => {
-            state.q = (searchInput.value || '').trim();
-            state.page = 1;
-            load();
-        }, 250);
-    });
-
-    typeSelect?.addEventListener('change', () => {
-        state.type = String(typeSelect.value || 'all');
-        state.page = 1;
-        state.selected.clear();
-        updateBulkUI();
-        load();
-    });
-
-    // checkbox changes
-    root.addEventListener('change', (e) => {
-        const el = e.target;
-
-        if (el === checkAllHead || el === checkAllBar) {
-            const on = !!el.checked;
-            [...root.querySelectorAll('input.trash-check')].forEach(cb => {
-                cb.checked = on;
-                const it = { type: cb.dataset.type, id: Number(cb.dataset.id) };
-                const k = `${it.type}:${it.id}`;
-                if (on) state.selected.set(k, it);
-                else state.selected.delete(k);
-            });
-            updateBulkUI();
+        if (last <= 1) {
+            pagEl.innerHTML = '';
             return;
         }
 
-        if (el?.classList?.contains('trash-check')) {
-            const it = { type: el.dataset.type, id: Number(el.dataset.id) };
-            const k = `${it.type}:${it.id}`;
-            if (el.checked) state.selected.set(k, it);
-            else state.selected.delete(k);
-            updateBulkUI();
+        const btn = (p, label, disabled = false, active = false) => `
+          <button type="button"
+                  class="kt-btn kt-btn-sm ${active ? 'kt-btn-primary' : 'kt-btn-light'}"
+                  data-page="${p}"
+                  ${disabled ? 'disabled' : ''}>${label}</button>
+        `;
+
+        const parts = [];
+        parts.push(btn(current - 1, '‹', current <= 1));
+
+        const start = Math.max(1, current - 2);
+        const end = Math.min(last, current + 2);
+
+        if (start > 1) parts.push(btn(1, '1', false, current === 1));
+        if (start > 2) parts.push(`<span class="px-2 text-muted-foreground">…</span>`);
+
+        for (let p = start; p <= end; p++) parts.push(btn(p, String(p), false, p === current));
+
+        if (end < last - 1) parts.push(`<span class="px-2 text-muted-foreground">…</span>`);
+        if (end < last) parts.push(btn(last, String(last), false, current === last));
+
+        parts.push(btn(current + 1, '›', current >= last));
+
+        pagEl.innerHTML = `<div class="flex items-center gap-1 justify-center">${parts.join('')}</div>`;
+    }
+
+    function rowHtml(item) {
+        // item: { id, type, title/name, deleted_at, restore_url, force_url }
+        const title = esc(item.title || item.name || '-');
+        const type = esc(item.type || '-');
+        const deletedAt = esc(item.deleted_at || '');
+
+        return `
+          <div class="kt-card">
+            <div class="kt-card-content p-4 flex items-start justify-between gap-4">
+              <div class="grid gap-1">
+                <div class="font-medium">${title}</div>
+                <div class="text-xs text-muted-foreground">${type} • Silinme: ${deletedAt}</div>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button type="button"
+                        class="kt-btn kt-btn-sm kt-btn-success"
+                        data-act="restore"
+                        data-id="${esc(item.id)}">
+                  <i class="ki-outline ki-arrow-circle-left"></i> Geri Al
+                </button>
+
+                <button type="button"
+                        class="kt-btn kt-btn-sm kt-btn-destructive"
+                        data-act="force"
+                        data-id="${esc(item.id)}">
+                  <i class="ki-outline ki-trash"></i> Kalıcı Sil
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+    }
+
+    async function fetchList() {
+        const qs = new URLSearchParams({
+            q: state.q || '',
+            type: state.type || '',
+            page: String(state.page),
+            perpage: String(state.perpage),
+        });
+
+        const { res, j } = await jsonReq(`/admin/trash/list?${qs.toString()}`, 'GET', null, signal);
+
+        if (!res.ok || !j?.ok) {
+            listEl.innerHTML = `<div class="text-sm text-muted-foreground">Liste alınamadı.</div>`;
+            setInfo('');
+            renderPagination({ current_page: 1, last_page: 1 });
+            return;
         }
-    });
 
-    // single actions
-    root.addEventListener('click', async (e) => {
-        const btn = e.target?.closest?.('[data-action]');
-        if (!btn) return;
+        const items = Array.isArray(j.data) ? j.data : [];
+        const meta = j.meta || {};
 
-        const action = btn.dataset.action;
-        const type = btn.dataset.type;
-        const id = Number(btn.dataset.id);
+        state.last_page = Number(meta.last_page || 1) || 1;
+        state.total = Number(meta.total || 0) || 0;
 
-        if (!type || !id) return;
+        listEl.innerHTML = items.length ? items.map(rowHtml).join('') : `<div class="text-sm text-muted-foreground">Kayıt yok.</div>`;
 
-        try {
-            if (action === 'restore') {
-                if (!confirm('Geri yüklensin mi?')) return;
-                await postJson(bulkRestoreUrl, { items: [{ type, id }] });
-                state.selected.delete(`${type}:${id}`);
-                notify('success', 'Geri yükleme tamam');
-                load();
-            }
-
-            if (action === 'force-delete') {
-                if (!confirm('KALICI silinecek. Emin misin?')) return;
-                await postJson(bulkForceUrl, { items: [{ type, id }] });
-                state.selected.delete(`${type}:${id}`);
-                notify('success', 'Kalıcı silindi');
-                load();
-            }
-        } catch (err) {
-            notify('error', err?.message || 'İşlem başarısız');
+        if (meta && typeof meta.from !== 'undefined') {
+            setInfo(`${meta.from || 0}-${meta.to || 0} / ${meta.total || 0}`);
+        } else {
+            setInfo(state.total ? `Toplam: ${state.total}` : '');
         }
-    });
 
-    // bulk buttons
-    btnRes?.addEventListener('click', async () => {
-        const items = [...state.selected.values()];
-        if (!items.length) return;
-        if (!confirm(`${items.length} kayıt geri yüklensin mi?`)) return;
+        renderPagination(meta);
+    }
 
-        try {
-            const j = await postJson(bulkRestoreUrl, { items });
-            state.selected.clear();
-            notify('success', `Geri yükleme: ${j.done || 0}`);
-            load();
-        } catch (e) {
-            notify('error', e?.message || 'Geri yükleme başarısız');
+    async function doRestore(id) {
+        const ok = confirm('Bu kayıt geri yüklensin mi?');
+        if (!ok) return;
+
+        const { res, j } = await jsonReq(`/admin/trash/${id}/restore`, 'POST', {}, signal);
+        if (!res.ok || !j?.ok) {
+            alert(j?.error?.message || j?.message || 'Geri yükleme başarısız');
+            return;
         }
-    });
+        fetchList();
+    }
 
-    btnForce?.addEventListener('click', async () => {
-        const items = [...state.selected.values()];
-        if (!items.length) return;
-        if (!confirm(`${items.length} kayıt KALICI silinecek. Emin misin?`)) return;
+    async function doForce(id) {
+        const ok = confirm('Bu kayıt KALICI silinecek. Emin misin?');
+        if (!ok) return;
 
-        try {
-            const j = await postJson(bulkForceUrl, { items });
-            state.selected.clear();
-
-            const done = j.done || 0;
-            const failed = Array.isArray(j.failed) ? j.failed : [];
-
-            if (failed.length) {
-                const sample = failed.slice(0, 3).map(x => `${x.type}#${x.id}: ${x.reason || 'bloklandı'}`).join(' | ');
-                notify('error', `Kalıcı silme: ${done} başarılı, ${failed.length} bloklandı. ${sample}`);
-            } else {
-                notify('success', `Kalıcı silme: ${done}`);
-            }
-
-            load();
-        } catch (e) {
-            notify('error', e?.message || 'Kalıcı silme başarısız');
+        const { res, j } = await jsonReq(`/admin/trash/${id}/force`, 'DELETE', null, signal);
+        if (!res.ok || !j?.ok) {
+            alert(j?.error?.message || j?.message || 'Kalıcı silme başarısız');
+            return;
         }
-    });
+        fetchList();
+    }
 
-    // boot
-    initPerSelect();
-    load();
+    // ---- bindings (idempotent + signal)
+    if (qInput && !markBound(pageEl, 'q')) {
+        qInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                state.q = (qInput.value || '').trim();
+                state.page = 1;
+                fetchList();
+            }, 250);
+        }, { signal });
+
+        ctx.cleanup(() => {
+            if (debounceTimer) clearTimeout(debounceTimer);
+            debounceTimer = null;
+        });
+    }
+
+    if (typeSel && !markBound(pageEl, 'type')) {
+        typeSel.addEventListener('change', () => {
+            state.type = typeSel.value || '';
+            state.page = 1;
+            fetchList();
+        }, { signal });
+    }
+
+    if (perSel && !markBound(pageEl, 'per')) {
+        perSel.addEventListener('change', () => {
+            state.perpage = Number(perSel.value || 25) || 25;
+            state.page = 1;
+            fetchList();
+        }, { signal });
+    }
+
+    if (pagEl && !markBound(pageEl, 'pagination')) {
+        pagEl.addEventListener('click', (e) => {
+            const b = e.target.closest('button[data-page]');
+            if (!b) return;
+            const p = Number(b.getAttribute('data-page') || 1);
+            if (!Number.isFinite(p) || p < 1) return;
+            if (p === state.page) return;
+            state.page = p;
+            fetchList();
+        }, { signal });
+    }
+
+    // actions
+    if (!markBound(pageEl, 'actions')) {
+        listEl.addEventListener('click', (e) => {
+            const b = e.target.closest('button[data-act]');
+            if (!b) return;
+            const id = b.getAttribute('data-id');
+            const act = b.getAttribute('data-act');
+            if (!id || !act) return;
+
+            if (act === 'restore') doRestore(id);
+            if (act === 'force') doForce(id);
+        }, { signal });
+    }
+
+    fetchList();
 }

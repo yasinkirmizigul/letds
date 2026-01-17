@@ -2,9 +2,16 @@ import { createMediaList } from './list';
 import { attachBulkActions } from './bulk';
 import { attachGridActions } from './actions';
 
-export default function init() {
-    const root = document.querySelector('[data-page="media.index"]');
-    if (!root) return;
+export default function init(ctx) {
+    // Standard: init(ctx)
+    // Bu sayfa değilse çık
+    if (ctx?.page && ctx.page !== 'media.index') return;
+
+    const root = ctx.root;
+    const signal = ctx.signal;
+
+    // Fallback: eğer page name geçmiyorsa selector ile kontrol et
+    if (!root || !(root instanceof HTMLElement) || root.getAttribute('data-page') !== 'media.index') return;
 
     const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
@@ -74,7 +81,7 @@ export default function init() {
     }
 
     function setBulkUI() {
-        if (!bulkBar) return;
+        if (!bulkBar || !grid) return;
 
         const n = selectedIds.size;
         bulkBar.classList.toggle('hidden', n === 0);
@@ -88,7 +95,6 @@ export default function init() {
             checkAll.checked = boxes.length > 0 && checked === boxes.length;
         }
 
-        // Butonları enable/disable
         const btnDel = root.querySelector('#mediaBulkDeleteBtn');
         const btnRes = root.querySelector('#mediaBulkRestoreBtn');
         const btnForce = root.querySelector('#mediaBulkForceDeleteBtn');
@@ -99,6 +105,7 @@ export default function init() {
     }
 
     function applySelectionToGrid() {
+        if (!grid) return;
         grid.querySelectorAll('input[data-media-check="1"]').forEach(cb => {
             const id = String(cb.getAttribute('data-id') || '');
             cb.checked = selectedIds.has(id);
@@ -106,7 +113,9 @@ export default function init() {
         setBulkUI();
     }
 
-    // Lightbox minimal (seninkini koruyorum)
+    // -----------------------------
+    // Lightbox (page-scoped + cleanup)
+    // -----------------------------
     let lbOpen = false;
     let lbItems = [];
     let lbIndex = 0;
@@ -115,33 +124,33 @@ export default function init() {
     lb.id = 'mediaLightbox';
     lb.className = 'media-lb hidden';
     lb.innerHTML = `
-    <div class="media-lb__bg" data-lb-backdrop></div>
-    <div class="media-lb__panel" role="dialog" aria-modal="true">
-      <div class="media-lb__top">
-        <div class="media-lb__meta">
-          <div class="media-lb__title" data-lb-title></div>
-          <div class="media-lb__sub" data-lb-sub></div>
+        <div class="media-lb__bg" data-lb-backdrop></div>
+        <div class="media-lb__panel" role="dialog" aria-modal="true">
+          <div class="media-lb__top">
+            <div class="media-lb__meta">
+              <div class="media-lb__title" data-lb-title></div>
+              <div class="media-lb__sub" data-lb-sub></div>
+            </div>
+            <div class="media-lb__actions">
+              <a class="kt-btn kt-btn-sm kt-btn-light" href="#" target="_blank" rel="noreferrer" data-lb-open>
+                <i class="ki-outline ki-fasten"></i>
+              </a>
+              <button class="kt-btn kt-btn-sm kt-btn-light" type="button" data-lb-close>
+                <i class="ki-outline ki-cross"></i>
+              </button>
+            </div>
+          </div>
+          <div class="media-lb__body" data-lb-body></div>
+          <div class="media-lb__nav">
+            <button class="kt-btn kt-btn-sm kt-btn-light" type="button" data-lb-prev>
+              <i class="ki-outline ki-arrow-left"></i>
+            </button>
+            <button class="kt-btn kt-btn-sm kt-btn-light" type="button" data-lb-next>
+              <i class="ki-outline ki-arrow-right"></i>
+            </button>
+          </div>
         </div>
-        <div class="media-lb__actions">
-          <a class="kt-btn kt-btn-sm kt-btn-light" href="#" target="_blank" rel="noreferrer" data-lb-open>
-            <i class="ki-outline ki-fasten"></i>
-          </a>
-          <button class="kt-btn kt-btn-sm kt-btn-light" type="button" data-lb-close>
-            <i class="ki-outline ki-cross"></i>
-          </button>
-        </div>
-      </div>
-      <div class="media-lb__body" data-lb-body></div>
-      <div class="media-lb__nav">
-        <button class="kt-btn kt-btn-sm kt-btn-light" type="button" data-lb-prev>
-          <i class="ki-outline ki-arrow-left"></i>
-        </button>
-        <button class="kt-btn kt-btn-sm kt-btn-light" type="button" data-lb-next>
-          <i class="ki-outline ki-arrow-right"></i>
-        </button>
-      </div>
-    </div>
-  `;
+    `;
     document.body.appendChild(lb);
 
     const lbTitle = lb.querySelector('[data-lb-title]');
@@ -154,11 +163,13 @@ export default function init() {
     const lbOpenLink = lb.querySelector('[data-lb-open]');
 
     function stopAllMedia() {
-        lbBody?.querySelectorAll('video,audio').forEach(m => {
-            try { m.pause(); } catch (_) {}
-            try { m.currentTime = 0; } catch (_) {}
-        });
-        lbBody.innerHTML = '';
+        try {
+            lbBody?.querySelectorAll('video,audio').forEach(m => {
+                try { m.pause(); } catch (_) {}
+                try { m.currentTime = 0; } catch (_) {}
+            });
+        } catch (_) {}
+        if (lbBody) lbBody.innerHTML = '';
     }
 
     function renderLightbox() {
@@ -167,12 +178,14 @@ export default function init() {
 
         stopAllMedia();
 
-        lbTitle.textContent = it.title || it.name || 'Önizleme';
-        lbSub.textContent = it.sub || '';
+        if (lbTitle) lbTitle.textContent = it.title || it.name || 'Önizleme';
+        if (lbSub) lbSub.textContent = it.sub || '';
         const url = it.url || '#';
-        lbOpenLink.href = url;
+        if (lbOpenLink) lbOpenLink.href = url;
 
         const kind = it.kind || inferKindFromMimeOrExt(it.mime, it.name || url);
+
+        if (!lbBody) return;
 
         if (kind === 'image') {
             lbBody.innerHTML = `<img class="media-lb__img" src="${esc(url)}" alt="${esc(it.title || it.name || '')}">`;
@@ -180,10 +193,10 @@ export default function init() {
         }
         if (kind === 'video') {
             lbBody.innerHTML = `
-        <video class="media-lb__video" controls playsinline>
-          <source src="${esc(url)}" type="${esc(it.mime || 'video/mp4')}">
-        </video>
-      `;
+                <video class="media-lb__video" controls playsinline>
+                  <source src="${esc(url)}" type="${esc(it.mime || 'video/mp4')}">
+                </video>
+            `;
             return;
         }
         if (kind === 'pdf') {
@@ -192,12 +205,12 @@ export default function init() {
         }
 
         lbBody.innerHTML = `
-      <div class="media-lb__other">
-        <i class="ki-outline ki-document"></i>
-        <div class="media-lb__other-title">${esc(it.title || it.name || 'Dosya')}</div>
-        <a class="kt-btn kt-btn-light" href="${esc(url)}" target="_blank" rel="noreferrer">Aç</a>
-      </div>
-    `;
+            <div class="media-lb__other">
+              <i class="ki-outline ki-document"></i>
+              <div class="media-lb__other-title">${esc(it.title || it.name || 'Dosya')}</div>
+              <a class="kt-btn kt-btn-light" href="${esc(url)}" target="_blank" rel="noreferrer">Aç</a>
+            </div>
+        `;
     }
 
     function openLightbox(items, index = 0) {
@@ -228,16 +241,23 @@ export default function init() {
         renderLightbox();
     }
 
-    lbBackdrop.addEventListener('click', closeLightbox);
-    lbClose.addEventListener('click', closeLightbox);
-    lbPrev.addEventListener('click', lbPrevFn);
-    lbNext.addEventListener('click', lbNextFn);
+    // Lightbox listeners (signal ile)
+    lbBackdrop?.addEventListener('click', closeLightbox, { signal });
+    lbClose?.addEventListener('click', closeLightbox, { signal });
+    lbPrev?.addEventListener('click', lbPrevFn, { signal });
+    lbNext?.addEventListener('click', lbNextFn, { signal });
 
     window.addEventListener('keydown', (e) => {
         if (!lbOpen) return;
         if (e.key === 'Escape') closeLightbox();
         if (e.key === 'ArrowLeft') lbPrevFn();
         if (e.key === 'ArrowRight') lbNextFn();
+    }, { signal });
+
+    // sayfa kapanınca lightbox DOM temizliği
+    ctx.cleanup(() => {
+        try { closeLightbox(); } catch {}
+        try { lb.remove(); } catch {}
     });
 
     function mediaCard(m) {
@@ -248,73 +268,73 @@ export default function init() {
         const thumb = (kind === 'image')
             ? `<img src="${esc(url)}" class="w-full rounded-xl ring-1 ring-border" style="height:220px;object-fit:cover" alt="">`
             : `<div class="w-full rounded-xl bg-muted ring-1 ring-border flex items-center justify-center" style="height:220px">
-           <i class="ki-outline ki-file text-3xl text-muted-foreground"></i>
-         </div>`;
+                   <i class="ki-outline ki-file text-3xl text-muted-foreground"></i>
+               </div>`;
 
         const actionButtons = isTrash
             ? `
-        <button type="button" class="kt-btn kt-btn-sm kt-btn-success"
-          data-action="restore" data-id="${esc(m.id)}" title="Geri Yükle">
-          <i class="ki-outline ki-arrow-circle-left"></i>
-        </button>
-        <button type="button" class="kt-btn kt-btn-sm kt-btn-destructive"
-          data-action="force-delete" data-id="${esc(m.id)}" title="Kalıcı Sil">
-          <i class="ki-outline ki-trash"></i>
-        </button>
-      `
+                <button type="button" class="kt-btn kt-btn-sm kt-btn-success"
+                  data-action="restore" data-id="${esc(m.id)}" title="Geri Yükle">
+                  <i class="ki-outline ki-arrow-circle-left"></i>
+                </button>
+                <button type="button" class="kt-btn kt-btn-sm kt-btn-destructive"
+                  data-action="force-delete" data-id="${esc(m.id)}" title="Kalıcı Sil">
+                  <i class="ki-outline ki-trash"></i>
+                </button>
+              `
             : `
-        <button type="button" class="kt-btn kt-btn-sm kt-btn-destructive"
-          data-action="delete" data-id="${esc(m.id)}" title="Sil">
-          <i class="ki-outline ki-trash"></i>
-        </button>
-      `;
+                <button type="button" class="kt-btn kt-btn-sm kt-btn-destructive"
+                  data-action="delete" data-id="${esc(m.id)}" title="Sil">
+                  <i class="ki-outline ki-trash"></i>
+                </button>
+              `;
 
         return `
-      <div class="kt-card relative">
-        <div class="absolute z-9" style="top:8px;left:8px;">
-          <label class="inline-flex items-center gap-2 bg-background/80 backdrop-blur px-2 py-1 rounded-lg ring-1 ring-border">
-            <input type="checkbox" class="kt-checkbox kt-checkbox-sm" data-media-check="1" data-id="${esc(m.id)}">
-          </label>
-        </div>
+            <div class="kt-card relative">
+              <div class="absolute z-9" style="top:8px;left:8px;">
+                <label class="inline-flex items-center gap-2 bg-background/80 backdrop-blur px-2 py-1 rounded-lg ring-1 ring-border">
+                  <input type="checkbox" class="kt-checkbox kt-checkbox-sm" data-media-check="1" data-id="${esc(m.id)}">
+                </label>
+              </div>
 
-        <div class="kt-card-content p-3">
-          <button type="button" class="w-full text-left"
-            data-action="open"
-            data-url="${esc(m.url)}"
-            data-thumb="${esc(url)}"
-            data-name="${esc(m.original_name || '')}"
-            data-mime="${esc(m.mime_type || '')}"
-            data-size="${esc(m.size || 0)}"
-            data-kind="${esc(kind)}">
-            ${thumb}
-          </button>
+              <div class="kt-card-content p-3">
+                <button type="button" class="w-full text-left"
+                  data-action="open"
+                  data-url="${esc(m.url)}"
+                  data-thumb="${esc(url)}"
+                  data-name="${esc(m.original_name || '')}"
+                  data-mime="${esc(m.mime_type || '')}"
+                  data-size="${esc(m.size || 0)}"
+                  data-kind="${esc(kind)}">
+                  ${thumb}
+                </button>
 
-          <div class="mt-3">
-            <div class="text-sm font-medium truncate" title="${esc(m.original_name)}">${esc(m.original_name || '-')}</div>
-            <div class="text-xs text-muted-foreground truncate">${esc(m.mime_type || '')} • ${formatBytes(m.size || 0)}</div>
-          </div>
+                <div class="mt-3">
+                  <div class="text-sm font-medium truncate" title="${esc(m.original_name)}">${esc(m.original_name || '-')}</div>
+                  <div class="text-xs text-muted-foreground truncate">${esc(m.mime_type || '')} • ${formatBytes(m.size || 0)}</div>
+                </div>
 
-          <div class="mt-3 flex items-center justify-between gap-2">
-            <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-action="open"
-              data-url="${esc(m.url)}"
-              data-thumb="${esc(url)}"
-              data-name="${esc(m.original_name)}"
-              data-mime="${esc(m.mime_type || '')}"
-              data-size="${esc(m.size || 0)}"
-              data-kind="${esc(kind)}">
-              <i class="ki-outline ki-eye"></i> Gör
-            </button>
+                <div class="mt-3 flex items-center justify-between gap-2">
+                  <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-action="open"
+                    data-url="${esc(m.url)}"
+                    data-thumb="${esc(url)}"
+                    data-name="${esc(m.original_name)}"
+                    data-mime="${esc(m.mime_type || '')}"
+                    data-size="${esc(m.size || 0)}"
+                    data-kind="${esc(kind)}">
+                    <i class="ki-outline ki-eye"></i> Gör
+                  </button>
 
-            <div class="flex items-center gap-2">
-              ${actionButtons}
-              <a href="${esc(m.url)}" target="_blank" rel="noreferrer" class="kt-btn kt-btn-sm kt-btn-outline" title="Link">
-                <i class="ki-outline ki-fasten"></i>
-              </a>
+                  <div class="flex items-center gap-2">
+                    ${actionButtons}
+                    <a href="${esc(m.url)}" target="_blank" rel="noreferrer" class="kt-btn kt-btn-sm kt-btn-outline" title="Link">
+                      <i class="ki-outline ki-fasten"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-    `;
+        `;
     }
 
     const { fetchList } = createMediaList({
@@ -329,6 +349,8 @@ export default function init() {
         mediaCard,
     });
 
+    // Bu helper’lar senin mevcut çalışan sistemin:
+    // Bozmamak için dokunmuyorum. (İstersen bir sonraki adımda signal/cleanup uyumlu hale getiririz.)
     attachBulkActions({
         root,
         csrf,
@@ -336,6 +358,8 @@ export default function init() {
         setBulkUI,
         fetchList,
         state,
+        signal, // opsiyonel: helper kullanmıyorsa bile sorun değil
+        cleanup: (fn) => ctx.cleanup(fn), // opsiyonel
     });
 
     attachGridActions({
@@ -349,8 +373,11 @@ export default function init() {
         openLightbox,
         formatBytes,
         inferKindFromMimeOrExt,
+        signal, // opsiyonel
+        cleanup: (fn) => ctx.cleanup(fn), // opsiyonel
     });
 
+    // Seçim checkbox (signal ile)
     grid?.addEventListener('change', (e) => {
         const cb = e.target.closest('input[data-media-check="1"]');
         if (!cb) return;
@@ -359,9 +386,11 @@ export default function init() {
         if (cb.checked) selectedIds.add(id);
         else selectedIds.delete(id);
         setBulkUI();
-    });
+    }, { signal });
 
+    // Check all (signal ile)
     checkAll?.addEventListener('change', () => {
+        if (!grid) return;
         const boxes = [...grid.querySelectorAll('input[data-media-check="1"]')];
         const on = !!checkAll.checked;
         boxes.forEach(cb => {
@@ -372,8 +401,9 @@ export default function init() {
             else selectedIds.delete(id);
         });
         setBulkUI();
-    });
+    }, { signal });
 
+    // Search debounce (signal + cleanup)
     searchInput?.addEventListener('input', () => {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(async () => {
@@ -381,14 +411,21 @@ export default function init() {
             state.page = 1;
             await fetchList();
         }, 250);
+    }, { signal });
+
+    ctx.cleanup(() => {
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = null;
     });
 
+    // Type change (signal ile)
     typeSelect?.addEventListener('change', async () => {
         state.type = typeSelect.value || '';
         state.page = 1;
         await fetchList();
-    });
+    }, { signal });
 
+    // Pagination (signal ile)
     pagination?.addEventListener('click', async (e) => {
         const btn = e.target.closest('[data-page]');
         if (!btn) return;
@@ -396,7 +433,7 @@ export default function init() {
         if (!p || p === state.page) return;
         state.page = p;
         await fetchList();
-    });
+    }, { signal });
 
     setBulkUI();
     fetchList();
