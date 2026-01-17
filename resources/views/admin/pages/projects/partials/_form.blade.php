@@ -36,8 +36,11 @@
                            id="slug"
                            value="{{ $slugVal }}"/>
 
-                    <label class="kt-switch shrink-0" title="Otomatik Slug">
-                        <input type="checkbox" id="slug_auto" checked>
+                    <label class="kt-switch shrink-0" title="Otomatik slug">
+                        <input
+                            type="checkbox"
+                            class="kt-switch" id="slug_auto" checked
+                        >
                         <span class="kt-switch-slider"></span>
                     </label>
 

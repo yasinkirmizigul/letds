@@ -1,4 +1,4 @@
-import { initSlugManager } from '@/core/slug-manager';
+import initSlugManager from '@/core/slug-manager';
 import initGalleryManager from '@/core/gallery-manager';
 import initFeaturedImageManager, { destroyFeaturedImageManager } from '@/core/featured-image-manager';
 import initLibraryAttach from '@/core/library-attach';

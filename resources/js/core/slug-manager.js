@@ -1,6 +1,4 @@
-
-
-let ac = null;
+// resources/js/core/slug-manager.js
 
 export function slugifyTR(str) {
     return String(str || '')
@@ -12,163 +10,90 @@ export function slugifyTR(str) {
         .replace(/[^a-z0-9\s-]/g, '')
         .replace(/\s+/g, '-')
         .replace(/-+/g, '-')
-        .replace(/^-+|-+$/g, '');
-}
-
-function debounce(fn, wait = 300) {
-    let t = null;
-    return (...args) => {
-        clearTimeout(t);
-        t = setTimeout(() => fn(...args), wait);
-    };
-}
-
-async function checkSlug({checkUrl, slug, ignoreId, hintEl, signal}) {
-    if (!checkUrl || !hintEl) return;
-
-    const qs = new URLSearchParams();
-    qs.set('slug', slug || '');
-    if (ignoreId) qs.set('ignore', String(ignoreId));
-
-    hintEl.textContent = slug ? 'Kontrol ediliyor...' : '';
-    hintEl.classList.remove('text-danger', 'text-success');
-    hintEl.classList.add('text-muted-foreground');
-
-    try {
-        const res = await fetch(`${checkUrl}?${qs.toString()}`, {
-            method: 'GET',
-            headers: {'Accept': 'application/json'},
-            signal,
-        });
-
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-        const data = await res.json();
-        const msg = data?.message ?? '';
-
-        hintEl.textContent = msg;
-        hintEl.classList.remove('text-muted-foreground');
-
-        if (data?.ok && data?.available) {
-            hintEl.classList.add('text-success');
-            hintEl.classList.remove('text-danger');
-        } else {
-            hintEl.classList.add('text-danger');
-            hintEl.classList.remove('text-success');
-        }
-    } catch (e) {
-        if (signal?.aborted) return;
-        hintEl.textContent = 'Slug kontrolü başarısız.';
-        hintEl.classList.remove('text-muted-foreground', 'text-success');
-        hintEl.classList.add('text-danger');
-    }
+        .replace(/^-|-$/g, '');
 }
 
 /**
- * initSlugManager
- * - duplicate id / global DOM yok: root altında query yapar
- * - "auto" açıkken title => slug
- * - slug elle yazılırsa auto kilitlenir (kategori mantığıyla aynı)
- * - slugify butonu elle üretir
- * - preview textContent günceller
- * - (opsiyonel) checkUrl varsa slug uygunluk kontrolü yapar
+ * Slug sync (Blog/Project/Category unified)
+ *
+ * - If slug has value (or user typed) -> locked (won't be overwritten)
+ * - If slug cleared -> unlock
+ * - If auto checkbox exists:
+ *     - when auto OFF -> never overwrite slug on source typing
+ *     - when auto ON -> overwrite (unless locked is desired; here auto implies overwrite)
+ * - Regen always generates (ignores lock)
  */
-export function initSlugManager({
-                                    root,
-                                    titleSelector = 'input[name="title"]',
-                                    slugSelector = '#slug',
-                                    previewSelector = '#url_slug_preview',
-                                    autoSelector = '#slug_auto',
-                                    slugifyBtnSelector = '#slugifyBtn',
-                                    hintSelector = '#slugCheckHint',
-                                    checkUrl = null,
-                                    ignoreId = null,
-                                } = {}) {
+export default function initSlugManager(root, opts = {}, signal) {
     if (!root) return;
 
-    ac = new AbortController();
-    const {signal} = ac;
+    const {
+        sourceSelector = '#title',
+        slugSelector = '#slug',
+        previewSelector = '#url_slug_preview',
+        autoSelector = '#slug_auto',     // optional
+        regenSelector = '#slug_regen',   // optional
+        generateOnInit = false,
+    } = opts;
 
-    const titleEl = root.querySelector(titleSelector);
-    const slugEl = root.querySelector(slugSelector);
-    const previewEl = root.querySelector(previewSelector);
-    const autoEl = root.querySelector(autoSelector);
-    const slugifyBtn = root.querySelector(slugifyBtnSelector);
-    const hintEl = root.querySelector(hintSelector);
+    const source = root.querySelector(sourceSelector);
+    const slug = root.querySelector(slugSelector);
+    const preview = root.querySelector(previewSelector);
+    const auto = root.querySelector(autoSelector);
+    const regen = root.querySelector(regenSelector);
 
-    if (!slugEl) return;
+    if (!slug) return;
+
+    let locked = (slug.value || '').trim().length > 0;
 
     const setPreview = () => {
-        if (!previewEl) return;
-        previewEl.textContent = (slugEl.value || '').trim();
+        if (!preview) return;
+        preview.textContent = (slug.value || '').trim();
     };
 
-    let locked = (slugEl.value || '').trim().length > 0;
+    const generate = () => {
+        if (!source) return;
+        slug.value = slugifyTR(source.value);
+        setPreview();
+        locked = (slug.value || '').trim().length > 0; // keep consistent
+    };
 
-    const doCheck = debounce(() => {
-        const v = (slugEl.value || '').trim();
-        if (!v) {
-            if (hintEl) hintEl.textContent = '';
-            return;
-        }
-        checkSlug({checkUrl, slug: v, ignoreId, hintEl, signal});
-    }, 350);
-
-    // init preview + initial check
+    // init preview
     setPreview();
-    if (checkUrl && (slugEl.value || '').trim()) doCheck();
 
-    // slug typing => lock + preview + check
-    slugEl.addEventListener('input', () => {
-        const v = (slugEl.value || '').trim();
+    // optional initial generate
+    if (generateOnInit) {
+        const canAuto = auto ? auto.checked : true;
+        if (canAuto && !(slug.value || '').trim()) generate();
+    }
+
+    // slug manual typing -> lock/unlock
+    slug.addEventListener('input', () => {
+        const v = (slug.value || '').trim();
         locked = v.length > 0;
         setPreview();
-        if (checkUrl) doCheck();
-    }, {signal});
+    }, signal ? { signal } : undefined);
 
-    // title typing => if auto enabled + not locked => update slug
-    if (titleEl) {
-        titleEl.addEventListener('input', () => {
-            const autoOn = autoEl ? !!autoEl.checked : true;
-            if (!autoOn) return;
-            if (locked) return;
+    // source typing
+    source?.addEventListener('input', () => {
+        // if auto exists and is OFF => do nothing
+        if (auto && !auto.checked) return;
 
-            slugEl.value = slugifyTR(titleEl.value);
-            setPreview();
-            if (checkUrl) doCheck();
-        }, {signal});
-    }
+        // if auto doesn't exist: keep old behavior (don't overwrite if locked)
+        if (!auto && locked) return;
 
-    // auto toggle off => stop generating, on => generate immediately (if not locked)
-    if (autoEl) {
-        autoEl.addEventListener('change', () => {
-            if (!autoEl.checked) return;
-            if (!titleEl) return;
-            if (locked) return;
+        // if auto exists and is ON: generate even if locked (auto means follow source)
+        generate();
+    }, signal ? { signal } : undefined);
 
-            slugEl.value = slugifyTR(titleEl.value);
-            setPreview();
-            if (checkUrl) doCheck();
-        }, {signal});
-    }
+    // auto toggle: when ON -> generate immediately
+    auto?.addEventListener('change', () => {
+        if (!auto.checked) return;
+        generate();
+    }, signal ? { signal } : undefined);
 
-    // slugify button
-    if (slugifyBtn) {
-        slugifyBtn.addEventListener('click', () => {
-            if (!titleEl) return;
-
-            slugEl.value = slugifyTR(titleEl.value);
-            locked = true; // butona basınca artık “elle set edilmiş” say
-            setPreview();
-            if (checkUrl) doCheck();
-        }, {signal});
-    }
-}
-
-export function destroySlugManager() {
-    try {
-        ac?.abort();
-    } catch {
-    }
-    ac = null;
+    // regen button: always generate
+    regen?.addEventListener('click', (e) => {
+        e.preventDefault();
+        generate();
+    }, signal ? { signal } : undefined);
 }

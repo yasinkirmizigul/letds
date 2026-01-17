@@ -19,7 +19,6 @@
 
     $hasImage = !empty($currentUrl);
 @endphp
-
 <div class="kt-card"
      data-featured-image-manager="1"
      data-featured-uid="{{ $uid }}">

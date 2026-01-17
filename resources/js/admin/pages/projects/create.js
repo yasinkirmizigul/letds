@@ -1,4 +1,4 @@
-import { initSlugManager } from '@/core/slug-manager';
+import initSlugManager from '@/core/slug-manager';
 
 let ac = null;
 let observer = null;

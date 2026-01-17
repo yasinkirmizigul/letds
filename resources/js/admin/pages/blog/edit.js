@@ -1,4 +1,4 @@
-import { initSlugManager } from '@/core/slug-manager';
+import initSlugManager from '@/core/slug-manager';
 import initGalleryManager from '@/core/gallery-manager';
 import initFeaturedImageManager, {destroyFeaturedImageManager} from '@/core/featured-image-manager';
 import {initMediaPicker} from '@/core/media-picker';
@@ -160,17 +160,15 @@ export default async function init({root, dataset}) {
     ac = new AbortController();
     const {signal} = ac;
 
-    initSlugManager(
-        root,
-        {
-            sourceSelector: '#title',
-            slugSelector: '#slug',
-            autoSelector: '#slug_auto',
-            regenSelector: '#slug_regen',
-            previewSelector: '#url_slug_preview',
-        },
-        signal
-    );
+
+    initSlugManager(root, {
+        sourceSelector: '#title',
+        slugSelector: '#slug',
+        previewSelector: '#url_slug_preview',
+        autoSelector: '#slug_auto',      // varsa
+        regenSelector: '#slug_regen',    // BLOG'DA bu!
+        generateOnInit: false,
+    }, signal);
 
     const ds = root.dataset;
     const tinymceSrc = ds.tinymceSrc;

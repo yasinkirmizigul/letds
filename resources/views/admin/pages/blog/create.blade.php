@@ -61,7 +61,10 @@
                                 <button type="button" id="slug_regen" class="kt-btn kt-btn-light">Oluştur</button>
 
                                 <label class="kt-switch shrink-0" title="Otomatik slug">
-                                    <input type="checkbox" id="slug_auto" checked>
+                                    <input
+                                        type="checkbox"
+                                        class="kt-switch" id="slug_auto" checked
+                                    >
                                     <span class="kt-switch-slider"></span>
                                 </label>
                             </div>
@@ -176,10 +179,20 @@
                                 <span class="text-sm text-muted-foreground">Açık olursa yayında</span>
                             </div>
 
-                            <label class="kt-switch">
-                                <input type="checkbox" name="is_published" value="1" @checked(old('is_published'))>
-                                <span class="kt-switch-slider"></span>
-                            </label>
+                            <div class="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    class="kt-switch"
+                                    name="is_published"
+                                    value="1"
+                                    @checked(old('is_published'))
+                                >
+                                <label class="kt-label">
+                                    <span class="ms-2 text-sm text-muted-foreground">
+                                        Yayında
+                                    </span>
+                                </label>
+                            </div>
                         </div>
 
                         <button type="submit" class="kt-btn kt-btn-primary">

@@ -1,4 +1,4 @@
-import { initSlugManager } from '@/core/slug-manager';
+import initSlugManager from '@/core/slug-manager';
 
 let ac = null;
 let observer = null;
@@ -179,12 +179,13 @@ export default async function init({ root, dataset }) {
     setupFeaturedPreview(root, signal);
 
     // ✅ NEW: standard slug behavior (Category/Project/Blog same)
+
     initSlugManager(root, {
         sourceSelector: '#title',
         slugSelector: '#slug',
-        autoSelector: '#slug_auto',
-        regenSelector: '#slug_regen',
         previewSelector: '#url_slug_preview',
+        autoSelector: '#slug_auto',      // varsa
+        regenSelector: '#slug_regen',    // BLOG'DA bu!
         generateOnInit: false,
     }, signal);
 
