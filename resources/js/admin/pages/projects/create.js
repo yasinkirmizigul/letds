@@ -100,6 +100,71 @@ function observeThemeChanges(onChange) {
     return obs;
 }
 
+function initStatusFeaturedUI(root, signal) {
+    // status badge preview
+    const select = root.querySelector('[data-status-select]');
+    const badge = root.querySelector('[data-status-badge]');
+    let opts = {};
+    try {
+        opts = root.dataset.statusOptions ? JSON.parse(root.dataset.statusOptions) : {};
+    } catch { opts = {}; }
+
+    function applyStatus() {
+        if (!select || !badge) return;
+        const key = select.value;
+        const o = opts[key] || opts['appointment_pending'] || null;
+
+        const badgeClass = (o && o.badge) ? o.badge : 'kt-badge kt-badge-sm kt-badge-light';
+        const label = (o && o.label) ? o.label : key;
+
+        badge.className = `${badgeClass} whitespace-nowrap`;
+        badge.textContent = label;
+    }
+
+    if (select && badge) {
+        applyStatus();
+        select.addEventListener('change', () => {
+            applyStatus();
+            // seçimi hissedilir yap
+            badge.classList.add('animate-pulse');
+            window.setTimeout(() => badge.classList.remove('animate-pulse'), 450);
+        }, { signal });
+    }
+
+    // featured UI (client-only feedback)
+    const ft = root.querySelector('[data-featured-toggle]');
+    const lbl = root.querySelector('.js-featured-label');
+    const fb = root.querySelector('.js-featured-badge');
+
+    function applyFeatured() {
+        if (!ft) return;
+        const on = !!ft.checked;
+
+        if (lbl) lbl.textContent = on ? 'Anasayfada' : 'Kapalı';
+
+        if (fb) {
+            if (on) {
+                fb.hidden = false;
+                requestAnimationFrame(() => {
+                    fb.classList.remove('opacity-0');
+                    fb.classList.add('opacity-100');
+                });
+            } else {
+                fb.classList.remove('opacity-100');
+                fb.classList.add('opacity-0');
+                window.setTimeout(() => {
+                    if (!ft.checked) fb.hidden = true;
+                }, 200);
+            }
+        }
+    }
+
+    if (ft) {
+        applyFeatured();
+        ft.addEventListener('change', applyFeatured, { signal });
+    }
+}
+
 export default async function init({ root }) {
     ac = new AbortController();
     const { signal } = ac;
@@ -113,6 +178,8 @@ export default async function init({ root }) {
         regenSelector: '#slug_regen',
         generateOnInit: true,
     }, signal);
+
+    initStatusFeaturedUI(root, signal);
 
     // TinyMCE
     const ds = root.dataset;

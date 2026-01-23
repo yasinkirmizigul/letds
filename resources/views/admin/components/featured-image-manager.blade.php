@@ -53,12 +53,12 @@
                  class="{{ $hasImage ? '' : 'hidden' }} w-full h-full object-cover">
         </div>
 
-        <div class="flex flex-wrap items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2 p-5">
             {{-- ✅ Blog için: Upload --}}
             <input type="file"
                    name="{{ $fileName }}"
                    accept="image/*"
-                   class="kt-input"
+                   class="kt-input mb-3"
                    data-featured-input>
 
             {{-- ✅ Media library’den seç --}}
@@ -81,7 +81,7 @@
             </button>
         </div>
 
-        <div class="text-xs text-muted-foreground">
+        <div class="text-xs text-muted-foreground p-3">
             Dosya yükleyebilir veya kütüphaneden seçebilirsin.
             Kütüphaneden seçim yapınca dosya seçimi temizlenir; dosya seçince de mediaId temizlenir.
         </div>

@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class ProjectController extends Controller
 {
@@ -106,6 +107,14 @@ class ProjectController extends Controller
     {
         $data = $request->validated();
 
+        // Status (create/edit formdan gelecek)
+        $status = (string)($request->input('status') ?? Project::STATUS_APPOINTMENT_PENDING);
+
+        $data = array_merge($data, [
+            'status' => $status,
+        ]);
+
+        // Slug
         $slug = $data['slug'] ?: Str::slug($data['title']);
         $data['slug'] = $this->uniqueSlug($slug);
 
@@ -115,16 +124,52 @@ class ProjectController extends Controller
         $categoryIds = $data['category_ids'] ?? [];
         unset($data['category_ids']);
 
-        $project = Project::create($data);
+        // Featured (max 5) - DB seviyesinde garanti
+        $makeFeatured = (bool) $request->boolean('is_featured');
 
-        // categories
-        if (method_exists($project, 'categories')) {
-            $project->categories()->sync($categoryIds);
+        // status whitelist (model kaynağıyla aynı)
+        if (!array_key_exists($status, Project::STATUS_OPTIONS)) {
+            return back()->withErrors(['status' => 'Geçersiz durum seçimi.'])->withInput();
         }
 
-        // featured media (mediables: collection=featured)
-        if ($featuredMediaId) {
-            $this->syncFeaturedMedia($project, (int) $featuredMediaId);
+        $project = DB::transaction(function () use ($data, $categoryIds, $featuredMediaId, $makeFeatured) {
+            if ($makeFeatured) {
+                // aynı anda 5 sınırını aşmasın (concurrency-safe)
+                $count = Project::where('is_featured', true)->lockForUpdate()->count();
+                if ($count >= 5) {
+                    return null; // dışarıda handle edeceğiz
+                }
+            }
+
+            $project = Project::create($data);
+
+            // categories
+            if (method_exists($project, 'categories')) {
+                $project->categories()->sync($categoryIds);
+            }
+
+            // featured media
+            if ($featuredMediaId) {
+                $this->syncFeaturedMedia($project, (int) $featuredMediaId);
+            }
+
+            // featured flag
+            if ($makeFeatured) {
+                $project->is_featured = true;
+                $project->featured_at = now();
+            } else {
+                $project->is_featured = false;
+                $project->featured_at = null;
+            }
+            $project->save();
+
+            return $project;
+        });
+
+        if (!$project) {
+            return back()->withErrors([
+                'is_featured' => 'En fazla 5 proje anasayfada görünebilir.'
+            ])->withInput();
         }
 
         AuditEvent::log('projects.create', [
@@ -136,6 +181,7 @@ class ProjectController extends Controller
             ->route('admin.projects.index')
             ->with('success', 'Proje oluşturuldu.');
     }
+
 
     public function edit(Project $project)
     {
@@ -176,6 +222,14 @@ class ProjectController extends Controller
     {
         $data = $request->validated();
 
+        // Status
+        $status = (string)($request->input('status') ?? ($project->status ?? Project::STATUS_APPOINTMENT_PENDING));
+        if (!array_key_exists($status, Project::STATUS_OPTIONS)) {
+            return back()->withErrors(['status' => 'Geçersiz durum seçimi.'])->withInput();
+        }
+        $data['status'] = $status;
+
+        // Slug
         $slug = $data['slug'] ?: Str::slug($data['title']);
         $data['slug'] = $this->uniqueSlug($slug, $project->id);
 
@@ -185,27 +239,56 @@ class ProjectController extends Controller
         $categoryIds = $data['category_ids'] ?? [];
         unset($data['category_ids']);
 
-        $oldStatus = (string) ($project->status ?? 'draft');
+        $oldStatus = (string) ($project->status ?? Project::STATUS_APPOINTMENT_PENDING);
 
-        $project->update($data);
+        // Featured (max 5) - concurrency-safe
+        $makeFeatured = (bool) $request->boolean('is_featured');
 
-        if (method_exists($project, 'categories')) {
-            $project->categories()->sync($categoryIds);
+        $res = DB::transaction(function () use ($project, $data, $categoryIds, $featuredMediaId, $makeFeatured) {
+            $project->refresh();
+
+            if ($makeFeatured && !$project->is_featured) {
+                $count = Project::where('is_featured', true)->lockForUpdate()->count();
+                if ($count >= 5) {
+                    return null;
+                }
+            }
+
+            $project->update($data);
+
+            if (method_exists($project, 'categories')) {
+                $project->categories()->sync($categoryIds);
+            }
+
+            $this->syncFeaturedMedia($project, $featuredMediaId ? (int) $featuredMediaId : null);
+
+            if ($makeFeatured) {
+                $project->is_featured = true;
+                $project->featured_at = $project->featured_at ?: now();
+            } else {
+                $project->is_featured = false;
+                $project->featured_at = null;
+            }
+            $project->save();
+
+            return $project;
+        });
+
+        if (!$res) {
+            return back()->withErrors([
+                'is_featured' => 'En fazla 5 proje anasayfada görünebilir.'
+            ])->withInput();
         }
-
-        // featured media
-        $this->syncFeaturedMedia($project, $featuredMediaId ? (int) $featuredMediaId : null);
 
         AuditEvent::log('projects.update', [
             'project_id' => (int) $project->id,
         ]);
 
-        // status değişimi update içinden de gelmiş olabilir
         if (($data['status'] ?? null) && $oldStatus !== $data['status']) {
-            AuditEvent::log('projects.state.change', [
+            AuditEvent::log('projects.workflow.change', [
                 'project_id' => (int) $project->id,
                 'from' => $oldStatus,
-                'to' => (string) $data['status'],
+                'to'   => (string) $data['status'],
             ]);
         }
 
@@ -343,29 +426,6 @@ class ProjectController extends Controller
         return response()->json(['ok' => true, 'data' => ['force_deleted' => $projects->count()]]);
     }
 
-    public function changeStatus(Request $request, Project $project): JsonResponse
-    {
-        $data = $request->validate([
-            'status' => ['required', 'string', \Illuminate\Validation\Rule::in(['draft', 'active', 'archived'])],
-        ]);
-
-        $from = (string) ($project->status ?? 'draft');
-        $to = (string) $data['status'];
-
-        if ($from !== $to) {
-            $project->status = $to;
-            $project->save();
-
-            AuditEvent::log('projects.state.change', [
-                'project_id' => (int) $project->id,
-                'from' => $from,
-                'to' => $to,
-            ]);
-        }
-
-        return response()->json(['ok' => true, 'data' => ['status' => $project->status]]);
-    }
-
     private function uniqueSlug(string $slug, ?int $ignoreId = null): string
     {
         $base = Str::slug($slug);
@@ -500,5 +560,75 @@ class ProjectController extends Controller
             'available' => !$exists,
             'message' => $exists ? 'Bu slug zaten kullanılıyor.' : 'Slug uygun.',
         ]);
+    }
+
+    public function updateStatus(Request $request, Project $project): JsonResponse
+    {
+        $data = $request->validate([
+            'status' => ['required', 'string', Rule::in(array_keys(Project::STATUS_OPTIONS))],
+        ]);
+
+        $from = (string)($project->status ?? Project::STATUS_APPOINTMENT_PENDING);
+        $to   = (string)$data['status'];
+
+        if ($from !== $to) {
+            $project->status = $to;
+            $project->save();
+
+            AuditEvent::log('projects.workflow.change', [
+                'project_id' => (int)$project->id,
+                'from' => $from,
+                'to'   => $to,
+            ]);
+        }
+
+        return response()->json([
+            'ok' => true,
+            'data' => [
+                'id' => $project->id,
+                'status' => $project->status,
+                'status_label' => Project::statusLabel($project->status),
+                'status_badge' => Project::statusBadgeClass($project->status),
+            ],
+        ]);
+    }
+
+    public function toggleFeatured(Request $request, Project $project): JsonResponse
+    {
+        $make = (bool)$request->boolean('is_featured');
+
+        $res = DB::transaction(function () use ($project, $make) {
+            $project->refresh();
+
+            if ($make) {
+                if (!$project->is_featured) {
+                    $count = Project::where('is_featured', true)->lockForUpdate()->count();
+                    if ($count >= 5) {
+                        return response()->json([
+                            'ok' => false,
+                            'error' => ['message' => 'En fazla 5 proje anasayfada görünebilir.']
+                        ], 422);
+                    }
+                }
+
+                $project->is_featured = true;
+                $project->featured_at = now();
+            } else {
+                $project->is_featured = false;
+                $project->featured_at = null;
+            }
+
+            $project->save();
+
+            return response()->json([
+                'ok' => true,
+                'data' => [
+                    'id' => $project->id,
+                    'is_featured' => (bool)$project->is_featured,
+                ],
+            ]);
+        });
+
+        return $res;
     }
 }

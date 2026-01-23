@@ -25,7 +25,7 @@ function notify(type, text) {
     console.log(type.toUpperCase() + ': ' + text);
 }
 
-function createPopover() {
+function createImgPopover() {
     const el = document.createElement('div');
     el.style.position = 'fixed';
     el.style.zIndex = 9999;
@@ -35,6 +35,7 @@ function createPopover() {
     document.body.appendChild(el);
     return el;
 }
+
 function showImgPopover(popEl, anchor, imgUrl) {
     const img = popEl.querySelector('img');
     img.src = imgUrl;
@@ -49,9 +50,9 @@ function showImgPopover(popEl, anchor, imgUrl) {
 }
 function hideImgPopover(popEl) { popEl.style.display = 'none'; }
 
-function postJson(url, body) {
+function postJson(url, body, method = 'POST') {
     return fetch(url, {
-        method: 'POST',
+        method,
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -60,11 +61,114 @@ function postJson(url, body) {
         body: JSON.stringify(body),
     }).then(async (res) => {
         const j = await res.json().catch(() => ({}));
-        if (!res.ok || j?.ok === false) throw new Error(j?.error?.message || 'İşlem başarısız');
+        if (!res.ok || j?.ok === false) {
+            const msg = j?.error?.message || 'İşlem başarısız';
+            const err = new Error(msg);
+            err.status = res.status;
+            err.payload = j;
+            throw err;
+        }
         return j;
     });
 }
 
+// --- status menu ---
+const STATUS_OPTIONS = [
+    ['appointment_pending', 'Randevu Bekliyor',   'kt-badge kt-badge-sm kt-badge-light-warning'],
+    ['appointment_scheduled', 'Randevu Planlandı','kt-badge kt-badge-sm kt-badge-light-primary'],
+    ['appointment_done', 'Randevu Tamamlandı',    'kt-badge kt-badge-sm kt-badge-light-success'],
+    ['dev_pending', 'Geliştirme Bekliyor',        'kt-badge kt-badge-sm kt-badge-light-warning'],
+    ['dev_in_progress', 'Geliştirme Devam',       'kt-badge kt-badge-sm kt-badge-primary'],
+    ['delivered', 'Teslim Edildi',                'kt-badge kt-badge-sm kt-badge-info'],
+    ['approved', 'Onaylandı',                     'kt-badge kt-badge-sm kt-badge-light-success'],
+    ['closed', 'Kapatıldı',                       'kt-badge kt-badge-sm kt-badge-light'],
+];
+
+function createStatusPopover() {
+    const el = document.createElement('div');
+    el.style.position = 'fixed';
+    el.style.zIndex = 10000;
+    el.style.display = 'none';
+
+    // animasyon için hazır class
+    el.className = 'kt-card shadow-lg p-2 w-[260px] transition transform duration-150 ease-out';
+
+    el.innerHTML = `
+      <div class="text-xs text-muted-foreground px-2 py-1">Durum seç</div>
+      <div class="grid gap-1" data-status-menu></div>
+    `;
+
+    document.body.appendChild(el);
+    return el;
+}
+
+function showStatusPopover(pop, anchor, projectId, currentStatus) {
+    const menu = pop.querySelector('[data-status-menu]');
+    if (!menu) return;
+
+    menu.innerHTML = STATUS_OPTIONS.map(([key, label, cls]) => {
+        const isActive = key === currentStatus;
+
+        const base =
+            'w-full flex items-center justify-between gap-2 px-2 py-2 rounded-lg ' +
+            'transition duration-150 ease-out ' +
+            'hover:bg-muted/40 hover:scale-[1.01] active:scale-[0.99] ' +
+            'cursor-pointer ' +
+            'focus:outline-none focus-visible:ring-2 focus-visible:ring-border';
+
+        const active = 'bg-muted/40 ring-1 ring-border';
+
+        return `
+          <button type="button"
+                  class="${base} ${isActive ? active : ''}"
+                  data-status-pick="${key}"
+                  data-project-id="${projectId}"
+                  aria-current="${isActive ? 'true' : 'false'}"
+                  ${isActive ? 'data-active="1"' : ''}>
+            <span class="${cls}">${label}</span>
+
+            <span class="text-muted-foreground ${isActive ? '' : 'opacity-0'} transition-opacity duration-150">
+              <i class="ki-outline ki-check-circle"></i>
+            </span>
+          </button>
+        `;
+    }).join('');
+
+    const r = anchor.getBoundingClientRect();
+    const top = Math.min(window.innerHeight - 320, Math.max(10, r.bottom + 6));
+    const left = Math.min(window.innerWidth - 280, Math.max(10, r.left));
+
+    pop.style.top = top + 'px';
+    pop.style.left = left + 'px';
+
+    // açılış animasyonu
+    pop.style.opacity = '0';
+    pop.style.transform = 'translateY(-4px)';
+    pop.style.display = 'block';
+
+    requestAnimationFrame(() => {
+        pop.style.opacity = '1';
+        pop.style.transform = 'translateY(0)';
+
+        // seçili olana focus (seçili belli olsun)
+        const activeBtn = pop.querySelector('[data-active="1"]');
+        activeBtn?.focus?.();
+    });
+}
+
+function hideStatusPopover(pop) {
+    if (!pop) return;
+    if (pop.style.display !== 'block') return;
+
+    // kapanış animasyonu
+    pop.style.opacity = '0';
+    pop.style.transform = 'translateY(-4px)';
+    window.setTimeout(() => {
+        pop.style.display = 'none';
+    }, 120);
+}
+
+// --- pagination ---
 function renderPagination(api, host) {
     if (!host || !api) return;
 
@@ -114,11 +218,7 @@ export default function init({ root }) {
     const tableEl = root.querySelector('#projects_table');
     if (!tableEl) return;
 
-    const mode = root.getAttribute('data-page') === 'projects.trash' ? 'trash' : 'active';
-
-    const per = root?.dataset?.perpage
-        ? parseInt(root.dataset.perpage, 10)
-        : 25;
+    const per = root?.dataset?.perpage ? parseInt(root.dataset.perpage, 10) : 25;
 
     const bulkBar = root.querySelector('#projectsBulkBar');
     const selectedCountEl = root.querySelector('#projectsSelectedCount');
@@ -157,10 +257,38 @@ export default function init({ root }) {
         updateBulkUI();
     }
 
-    // popover delegation
-    popEl = createPopover();
     ac = new AbortController();
     const { signal } = ac;
+
+    // popover delegation (image preview)
+    popEl = createImgPopover();
+    const statusPop = createStatusPopover();
+
+    // popover click (status select)
+    statusPop.addEventListener('click', async (e) => {
+        const pick = e.target?.closest?.('[data-status-pick]');
+        if (!pick) return;
+
+        const status = pick.getAttribute('data-status-pick');
+        const pid = pick.getAttribute('data-project-id');
+        if (!pid || !status) return;
+
+        try {
+            const j = await postJson(`/admin/projects/${pid}/status`, { status }, 'PATCH');
+
+            const btn = root.querySelector(`.js-status-trigger[data-project-id="${pid}"]`);
+            if (btn) {
+                btn.setAttribute('data-status', j.data.status);
+                btn.className = `${j.data.status_badge} js-status-trigger`;
+                btn.innerHTML = `${j.data.status_label} <i class="ki-outline ki-down ml-1"></i>`;
+            }
+
+            notify('success', 'Durum güncellendi');
+            hideStatusPopover(statusPop);
+        } catch (err) {
+            notify('error', err?.message || 'Durum güncellenemedi');
+        }
+    }, { signal });
 
     root.addEventListener('mouseover', (e) => {
         const a = e.target?.closest?.('.js-img-popover');
@@ -177,7 +305,7 @@ export default function init({ root }) {
         hideImgPopover(popEl);
     }, { signal });
 
-    // datatable init (same pattern as blog)
+    // datatable init
     const api = window.initDataTable?.({
         root,
         table: '#projects_table',
@@ -193,9 +321,11 @@ export default function init({ root }) {
         emptyTemplate: '#dt-empty-projects',
         zeroTemplate: '#dt-zero-projects',
 
+        // ⚠️ targets: senin gerçek kolonlarına göre gerekirse düzelt
         columnDefs: [
-            { orderable: false, searchable: false, targets: [0, 4] },
-            { className: 'text-right', targets: [3, 4] },
+            { orderable: false, searchable: false, targets: [0, 6] },
+            { className: 'text-right', targets: [5, 6] },
+            { className: 'text-center', targets: [4] },
         ],
 
         onDraw: (dtApi) => {
@@ -233,8 +363,29 @@ export default function init({ root }) {
         }
     }, { signal });
 
-    // single row actions (same blog pattern)
+    // close status popover on outside click
+    document.addEventListener('click', (e) => {
+        if (statusPop.style.display === 'block') {
+            const inside = statusPop.contains(e.target);
+            const trig = e.target?.closest?.('.js-status-trigger');
+            if (!inside && !trig) hideStatusPopover(statusPop);
+        }
+    }, { signal });
+
     root.addEventListener('click', async (e) => {
+        // open status menu
+        const trig = e.target?.closest?.('.js-status-trigger');
+        if (trig && root.contains(trig)) {
+            const pid = trig.getAttribute('data-project-id');
+            const st = trig.getAttribute('data-status') || 'appointment_pending';
+
+            // önce kapat (aynı anda iki popover açık kalmasın)
+            hideStatusPopover(statusPop);
+            showStatusPopover(statusPop, trig, pid, st);
+            return;
+        }
+
+        // row actions
         const btn = e.target?.closest?.('[data-action]');
         if (!btn || !root.contains(btn)) return;
 
@@ -291,7 +442,53 @@ export default function init({ root }) {
         }
     }, { signal });
 
-    // bulk actions endpoints -> controller’da yoksa ekleyeceğiz
+    root.addEventListener('change', async (e) => {
+        const t = e.target;
+
+        const ft = t?.closest?.('.js-featured-toggle');
+        if (ft && root.contains(ft)) {
+            const pid = ft.getAttribute('data-project-id');
+            if (!pid) return;
+
+            const on = !!ft.checked;
+            ft.disabled = true;
+
+            try {
+                await postJson(`/admin/projects/${pid}/featured`, { is_featured: on }, 'PATCH');
+                updateFeaturedBadge(ft, on);
+                notify('success', on ? 'Anasayfa için işaretlendi' : 'Anasayfadan kaldırıldı');
+            } catch (err) {
+                ft.checked = !on;
+                updateFeaturedBadge(ft, !on);
+                notify('error', err?.message || 'İşlem başarısız');
+            } finally {
+                ft.disabled = false;
+            }
+        }
+    }, { signal });
+
+    function updateFeaturedBadge(ft, isOn) {
+        const wrap = ft.closest('.flex.items-center.gap-2') || ft.parentElement;
+        const badge = wrap?.querySelector?.('.js-featured-badge');
+        if (!badge) return;
+
+        if (isOn) {
+            badge.hidden = false;
+            requestAnimationFrame(() => {
+                badge.classList.remove('opacity-0');
+                badge.classList.add('opacity-100');
+            });
+        } else {
+            badge.classList.remove('opacity-100');
+            badge.classList.add('opacity-0');
+
+            window.setTimeout(() => {
+                if (!ft.checked) badge.hidden = true;
+            }, 200);
+        }
+    }
+
+    // ✅ bulk actions (NEW ROUTES)
     btnBulkDelete?.addEventListener('click', async () => {
         const ids = [...selectedIds];
         if (!ids.length) return;
@@ -299,7 +496,7 @@ export default function init({ root }) {
         if (!confirm(`${ids.length} kayıt silinsin mi?`)) return;
 
         try {
-            await postJson('/admin/projects/bulk-delete', { ids });
+            await postJson('/admin/projects/bulk-destroy', { ids });
             notify('success', 'Silindi');
             selectedIds.clear();
             location.reload();
@@ -335,7 +532,7 @@ export default function init({ root }) {
         if (!confirm(`${ids.length} kayıt KALICI silinecek. Emin misin?`)) return;
 
         try {
-            await postJson('/admin/projects/bulk-force-delete', { ids });
+            await postJson('/admin/projects/bulk-force-destroy', { ids });
             notify('success', 'Kalıcı silindi');
             selectedIds.clear();
             location.reload();
@@ -346,13 +543,13 @@ export default function init({ root }) {
         }
     });
 
-    // init extras
     initPageSizeFromDataset(root);
     renderPagination(api, root.querySelector('#projectsPagination'));
 
     window.addEventListener('beforeunload', () => {
         try { ac.abort(); } catch {}
         try { popEl.remove(); } catch {}
+        try { statusPop.remove(); } catch {}
     }, { once: true });
 }
 

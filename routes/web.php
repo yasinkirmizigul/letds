@@ -245,8 +245,12 @@ Route::middleware(['auth', 'audit'])
                 ->name('checkSlug');
         });
 
-        // Projects (Blog ile aynı trash() -> index(mode=trash) mantığı)
+        // =========================
+        // Projects (clean section)
+        // =========================
         Route::prefix('projects')->as('projects.')->group(function () {
+
+            // pages
             Route::get('/', [ProjectController::class, 'index'])
                 ->middleware('permission:projects.view')
                 ->name('index');
@@ -255,10 +259,12 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:projects.trash')
                 ->name('trash');
 
+            // datatable/json list
             Route::get('/list', [ProjectController::class, 'list'])
                 ->middleware('permission:projects.view')
                 ->name('list');
 
+            // create/store
             Route::get('/create', [ProjectController::class, 'create'])
                 ->middleware('permission:projects.create')
                 ->name('create');
@@ -267,6 +273,7 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:projects.create')
                 ->name('store');
 
+            // edit/update
             Route::get('/{project}/edit', [ProjectController::class, 'edit'])
                 ->middleware('permission:projects.update')
                 ->name('edit');
@@ -275,19 +282,22 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:projects.update')
                 ->name('update');
 
+            // delete (soft)
             Route::delete('/{project}', [ProjectController::class, 'destroy'])
                 ->middleware('permission:projects.delete')
                 ->name('destroy');
 
-            Route::post('/{id}/restore', [ProjectController::class, 'restore'])
+            // restore / force delete
+            Route::post('/{project}/restore', [ProjectController::class, 'restore'])
                 ->middleware('permission:projects.restore')
                 ->name('restore');
 
-            Route::delete('/{id}/force', [ProjectController::class, 'forceDestroy'])
+            Route::delete('/{project}/force', [ProjectController::class, 'forceDestroy'])
                 ->middleware('permission:projects.force_delete')
                 ->name('forceDestroy');
 
-            Route::post('/bulk-delete', [ProjectController::class, 'bulkDestroy'])
+            // bulk actions
+            Route::post('/bulk-destroy', [ProjectController::class, 'bulkDestroy'])
                 ->middleware('permission:projects.delete')
                 ->name('bulkDestroy');
 
@@ -295,17 +305,24 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:projects.restore')
                 ->name('bulkRestore');
 
-            Route::post('/bulk-force-delete', [ProjectController::class, 'bulkForceDestroy'])
+            Route::post('/bulk-force-destroy', [ProjectController::class, 'bulkForceDestroy'])
                 ->middleware('permission:projects.force_delete')
                 ->name('bulkForceDestroy');
 
-            Route::patch('/{project}/change-status', [ProjectController::class, 'changeStatus'])
-                ->middleware('permission:projects.state_change')
-                ->name('changeStatus');
-
-            Route::get('/check-slug', [\App\Http\Controllers\Admin\Project\ProjectController::class, 'checkSlug'])
-                ->middleware(['permission:projects.view']) // en az view
+            // helpers
+            Route::get('/check-slug', [ProjectController::class, 'checkSlug'])
+                ->middleware('permission:projects.view')
                 ->name('checkSlug');
+
+            // workflow status (dropdown)
+            Route::patch('/{project}/status', [ProjectController::class, 'updateStatus'])
+                ->middleware('permission:projects.update') // istersen: projects.state_change
+                ->name('status');
+
+            // featured toggle (max 5 enforced in backend)
+            Route::patch('/{project}/featured', [ProjectController::class, 'toggleFeatured'])
+                ->middleware('permission:projects.update')
+                ->name('featured');
         });
 
         // Media
