@@ -45,30 +45,74 @@ export default function init(ctx) {
     const pageEl = root.querySelector('[data-page="trash.index"]');
     if (!pageEl) return;
 
-    const listEl = pageEl.querySelector('#trashList');
+    // ---- Blade id’leri (senin index.blade.php ile uyumlu)
+    const tbodyEl = pageEl.querySelector('#trashTbody');
     const infoEl = pageEl.querySelector('#trashInfo');
     const pagEl = pageEl.querySelector('#trashPagination');
 
     const qInput = pageEl.querySelector('#trashSearch');
     const typeSel = pageEl.querySelector('#trashType');
-    const perSel = pageEl.querySelector('#trashPerPage');
+    const perSel = pageEl.querySelector('#trashPageSize');
 
-    if (!listEl) return;
+    const bulkBar = pageEl.querySelector('#trashBulkBar');
+    const checkAllHead = pageEl.querySelector('#trash_check_all_head');
+    const checkAllBar = pageEl.querySelector('#trash_check_all');
+    const selectedCountEl = pageEl.querySelector('#trashSelectedCount');
+    const bulkRestoreBtn = pageEl.querySelector('#trashBulkRestoreBtn');
+    const bulkForceBtn = pageEl.querySelector('#trashBulkForceDeleteBtn');
 
+    const tplEmpty = pageEl.querySelector('#dt-empty-trash');
+    const tplZero = pageEl.querySelector('#dt-zero-trash');
+
+    if (!tbodyEl) return;
+
+    // ---- URL’ler Blade’den gelsin
+    const URLS = {
+        list: pageEl.dataset.listUrl || '/admin/trash/list',
+        bulkRestore: pageEl.dataset.bulkRestoreUrl || '/admin/trash/bulk-restore',
+        bulkForce: pageEl.dataset.bulkForceDeleteUrl || '/admin/trash/bulk-force-delete',
+    };
+
+    // ---- state
     const state = {
         q: '',
-        type: '',
+        type: (typeSel?.value || 'all'),
         page: 1,
-        perpage: Number(perSel?.value || 25) || 25,
+        perpage: Number(pageEl.dataset.perpage || perSel?.value || 25) || 25,
         last_page: 1,
         total: 0,
     };
 
+    const selected = new Set(); // id list (trash item id değil, entity id değil — backend ne döndürüyorsa onu kullanırız)
     let debounceTimer = null;
 
     function setInfo(text) {
         if (!infoEl) return;
         infoEl.textContent = text || '';
+    }
+
+    function setBulkUI() {
+        const c = selected.size;
+
+        if (selectedCountEl) selectedCountEl.textContent = String(c);
+
+        if (bulkRestoreBtn) bulkRestoreBtn.disabled = c === 0;
+        if (bulkForceBtn) bulkForceBtn.disabled = c === 0;
+
+        if (bulkBar) {
+            if (c > 0) bulkBar.classList.remove('hidden');
+            else bulkBar.classList.add('hidden');
+        }
+
+        // head checkbox state (basit)
+        if (checkAllHead) checkAllHead.checked = c > 0 && tbodyEl.querySelectorAll('input[data-act="chk"]').length === c;
+        if (checkAllBar) checkAllBar.checked = checkAllHead?.checked || false;
+    }
+
+    function cloneTpl(tpl) {
+        if (!tpl) return '';
+        const node = tpl.content?.firstElementChild;
+        return node ? node.outerHTML : '';
     }
 
     function renderPagination(meta) {
@@ -108,54 +152,107 @@ export default function init(ctx) {
         pagEl.innerHTML = `<div class="flex items-center gap-1 justify-center">${parts.join('')}</div>`;
     }
 
+    // Backend’den beklenen item şekli:
+    // { id, type, title/name, deleted_at, restore_url, force_url }
     function rowHtml(item) {
-        // item: { id, type, title/name, deleted_at, restore_url, force_url }
-        const title = esc(item.title || item.name || '-');
+        const id = esc(item.id);
         const type = esc(item.type || '-');
+        const title = esc(item.title || item.name || '-');
         const deletedAt = esc(item.deleted_at || '');
 
+        const restoreUrl = esc(item.restore_url || '');
+        const forceUrl = esc(item.force_url || '');
+
+        // restore_url/force_url boşsa butonlar disable olsun (tasarım olarak doğru)
+        const restoreDisabled = restoreUrl ? '' : 'disabled';
+        const forceDisabled = forceUrl ? '' : 'disabled';
+
+        const checked = selected.has(String(item.id)) ? 'checked' : '';
+
         return `
-          <div class="kt-card">
-            <div class="kt-card-content p-4 flex items-start justify-between gap-4">
-              <div class="grid gap-1">
-                <div class="font-medium">${title}</div>
-                <div class="text-xs text-muted-foreground">${type} • Silinme: ${deletedAt}</div>
-              </div>
+          <tr data-row-id="${id}">
+            <td class="w-[55px]">
+              <input type="checkbox"
+                     class="kt-checkbox kt-checkbox-sm"
+                     data-act="chk"
+                     data-id="${id}"
+                     ${checked}>
+            </td>
 
-              <div class="flex items-center gap-2">
+            <td class="min-w-[160px]">
+              <span class="kt-badge kt-badge-light">${type}</span>
+            </td>
+
+            <td class="min-w-[320px]">
+              <div class="font-medium">${title}</div>
+              <div class="text-xs text-muted-foreground">#${id}</div>
+            </td>
+
+            <td class="min-w-[180px]">
+              <span class="text-sm text-muted-foreground">${deletedAt}</span>
+            </td>
+
+            <td class="w-[160px] text-end">
+              <div class="flex items-center justify-end gap-2">
                 <button type="button"
-                        class="kt-btn kt-btn-sm kt-btn-success"
+                        class="kt-btn kt-btn-sm kt-btn-light"
                         data-act="restore"
-                        data-id="${esc(item.id)}">
-                  <i class="ki-outline ki-arrow-circle-left"></i> Geri Al
+                        data-id="${id}"
+                        data-url="${restoreUrl}"
+                        ${restoreDisabled}>
+                  <i class="ki-outline ki-arrow-circle-left"></i>
                 </button>
 
                 <button type="button"
-                        class="kt-btn kt-btn-sm kt-btn-destructive"
+                        class="kt-btn kt-btn-sm kt-btn-danger"
                         data-act="force"
-                        data-id="${esc(item.id)}">
-                  <i class="ki-outline ki-trash"></i> Kalıcı Sil
+                        data-id="${id}"
+                        data-url="${forceUrl}"
+                        ${forceDisabled}>
+                  <i class="ki-outline ki-trash"></i>
                 </button>
               </div>
-            </div>
-          </div>
+            </td>
+          </tr>
         `;
     }
 
+    function fillPerPageSelect() {
+        if (!perSel) return;
+
+        // Blade boş bırakmış; JS doldursun
+        const options = [10, 25, 50, 100];
+        perSel.innerHTML = options.map((n) => {
+            const sel = n === state.perpage ? 'selected' : '';
+            return `<option value="${n}" ${sel}>${n}</option>`;
+        }).join('');
+    }
+
     async function fetchList() {
+        // typeSel "all" ise backend’e boş gönder (daha temiz)
+        const type = (state.type === 'all') ? '' : state.type;
+
         const qs = new URLSearchParams({
             q: state.q || '',
-            type: state.type || '',
+            type: type,
             page: String(state.page),
             perpage: String(state.perpage),
         });
 
-        const { res, j } = await jsonReq(`/admin/trash/list?${qs.toString()}`, 'GET', null, signal);
+        const { res, j } = await jsonReq(`${URLS.list}?${qs.toString()}`, 'GET', null, signal);
 
         if (!res.ok || !j?.ok) {
-            listEl.innerHTML = `<div class="text-sm text-muted-foreground">Liste alınamadı.</div>`;
+            tbodyEl.innerHTML = `
+              <tr>
+                <td colspan="5" class="py-10 text-center text-muted-foreground">
+                  Liste alınamadı.
+                </td>
+              </tr>
+            `;
             setInfo('');
             renderPagination({ current_page: 1, last_page: 1 });
+            selected.clear();
+            setBulkUI();
             return;
         }
 
@@ -165,7 +262,19 @@ export default function init(ctx) {
         state.last_page = Number(meta.last_page || 1) || 1;
         state.total = Number(meta.total || 0) || 0;
 
-        listEl.innerHTML = items.length ? items.map(rowHtml).join('') : `<div class="text-sm text-muted-foreground">Kayıt yok.</div>`;
+        // Liste değişince, artık görünmeyen seçili id’leri temizle (basit yaklaşım)
+        const visibleIds = new Set(items.map((x) => String(x?.id)));
+        for (const id of Array.from(selected)) {
+            if (!visibleIds.has(id)) selected.delete(id);
+        }
+
+        if (!items.length) {
+            // Arama varken zero, değilse empty
+            const isSearch = Boolean(state.q) || Boolean(type);
+            tbodyEl.innerHTML = isSearch ? cloneTpl(tplZero) : cloneTpl(tplEmpty);
+        } else {
+            tbodyEl.innerHTML = items.map(rowHtml).join('');
+        }
 
         if (meta && typeof meta.from !== 'undefined') {
             setInfo(`${meta.from || 0}-${meta.to || 0} / ${meta.total || 0}`);
@@ -174,33 +283,45 @@ export default function init(ctx) {
         }
 
         renderPagination(meta);
+        setBulkUI();
     }
 
-    async function doRestore(id) {
-        const ok = confirm('Bu kayıt geri yüklensin mi?');
+    async function doSingleAction(url, method, confirmText) {
+        if (!url) return;
+
+        const ok = confirm(confirmText);
         if (!ok) return;
 
-        const { res, j } = await jsonReq(`/admin/trash/${id}/restore`, 'POST', {}, signal);
+        const { res, j } = await jsonReq(url, method, (method === 'POST' ? {} : null), signal);
         if (!res.ok || !j?.ok) {
-            alert(j?.error?.message || j?.message || 'Geri yükleme başarısız');
+            alert(j?.error?.message || j?.message || 'İşlem başarısız');
             return;
         }
-        fetchList();
+
+        await fetchList();
     }
 
-    async function doForce(id) {
-        const ok = confirm('Bu kayıt KALICI silinecek. Emin misin?');
+    async function doBulk(url, confirmText) {
+        const ids = Array.from(selected).map((x) => Number(x)).filter((x) => Number.isFinite(x));
+        if (!ids.length) return;
+
+        const ok = confirm(confirmText);
         if (!ok) return;
 
-        const { res, j } = await jsonReq(`/admin/trash/${id}/force`, 'DELETE', null, signal);
+        const { res, j } = await jsonReq(url, 'POST', { ids }, signal);
         if (!res.ok || !j?.ok) {
-            alert(j?.error?.message || j?.message || 'Kalıcı silme başarısız');
+            alert(j?.error?.message || j?.message || 'İşlem başarısız');
             return;
         }
-        fetchList();
+
+        selected.clear();
+        setBulkUI();
+        await fetchList();
     }
 
-    // ---- bindings (idempotent + signal)
+    // ---- bindings
+    fillPerPageSelect();
+
     if (qInput && !markBound(pageEl, 'q')) {
         qInput.addEventListener('input', () => {
             clearTimeout(debounceTimer);
@@ -219,7 +340,7 @@ export default function init(ctx) {
 
     if (typeSel && !markBound(pageEl, 'type')) {
         typeSel.addEventListener('change', () => {
-            state.type = typeSel.value || '';
+            state.type = typeSel.value || 'all';
             state.page = 1;
             fetchList();
         }, { signal });
@@ -245,17 +366,62 @@ export default function init(ctx) {
         }, { signal });
     }
 
-    // actions
-    if (!markBound(pageEl, 'actions')) {
-        listEl.addEventListener('click', (e) => {
-            const b = e.target.closest('button[data-act]');
-            if (!b) return;
-            const id = b.getAttribute('data-id');
-            const act = b.getAttribute('data-act');
-            if (!id || !act) return;
+    // checkbox + actions (tbody delegasyon)
+    if (!markBound(pageEl, 'tbody-actions')) {
+        tbodyEl.addEventListener('click', (e) => {
+            const btn = e.target.closest('button[data-act]');
+            if (btn) {
+                const act = btn.getAttribute('data-act');
+                const url = btn.getAttribute('data-url') || '';
 
-            if (act === 'restore') doRestore(id);
-            if (act === 'force') doForce(id);
+                if (act === 'restore') doSingleAction(url, 'POST', 'Bu kayıt geri yüklensin mi?');
+                if (act === 'force') doSingleAction(url, 'DELETE', 'Bu kayıt KALICI silinecek. Emin misin?');
+
+                return;
+            }
+
+            const chk = e.target.closest('input[type="checkbox"][data-act="chk"]');
+            if (chk) {
+                const id = chk.getAttribute('data-id');
+                if (!id) return;
+
+                if (chk.checked) selected.add(String(id));
+                else selected.delete(String(id));
+
+                setBulkUI();
+            }
+        }, { signal });
+    }
+
+    // check all
+    const toggleAll = (checked) => {
+        tbodyEl.querySelectorAll('input[type="checkbox"][data-act="chk"]').forEach((c) => {
+            c.checked = checked;
+            const id = c.getAttribute('data-id');
+            if (!id) return;
+            if (checked) selected.add(String(id));
+            else selected.delete(String(id));
+        });
+        setBulkUI();
+    };
+
+    if (checkAllHead && !markBound(pageEl, 'checkall-head')) {
+        checkAllHead.addEventListener('change', () => toggleAll(checkAllHead.checked), { signal });
+    }
+    if (checkAllBar && !markBound(pageEl, 'checkall-bar')) {
+        checkAllBar.addEventListener('change', () => toggleAll(checkAllBar.checked), { signal });
+    }
+
+    // bulk buttons
+    if (bulkRestoreBtn && !markBound(pageEl, 'bulk-restore')) {
+        bulkRestoreBtn.addEventListener('click', () => {
+            doBulk(URLS.bulkRestore, 'Seçili kayıtlar geri yüklensin mi?');
+        }, { signal });
+    }
+
+    if (bulkForceBtn && !markBound(pageEl, 'bulk-force')) {
+        bulkForceBtn.addEventListener('click', () => {
+            doBulk(URLS.bulkForce, 'Seçili kayıtlar KALICI silinecek. Emin misin?');
         }, { signal });
     }
 
