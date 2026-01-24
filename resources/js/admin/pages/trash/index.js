@@ -32,7 +32,10 @@ function esc(s) {
 const bound = new WeakMap(); // root->Set(keys)
 function markBound(root, key) {
     let s = bound.get(root);
-    if (!s) { s = new Set(); bound.set(root, s); }
+    if (!s) {
+        s = new Set();
+        bound.set(root, s);
+    }
     if (s.has(key)) return true;
     s.add(key);
     return false;
@@ -42,10 +45,15 @@ export default function init(ctx) {
     const root = ctx.root;
     const signal = ctx.signal;
 
-    const pageEl = root.querySelector('[data-page="trash.index"]');
+    // 🔥 KRİTİK FIX:
+    // ctx.root bazen zaten page container oluyor.
+    const pageEl = (root?.matches?.('[data-page="trash.index"]'))
+        ? root
+        : root.querySelector?.('[data-page="trash.index"]');
+
     if (!pageEl) return;
 
-    // ---- Blade id’leri (senin index.blade.php ile uyumlu)
+    // ---- Blade id’leri (trash/index.blade.php ile uyumlu)
     const tbodyEl = pageEl.querySelector('#trashTbody');
     const infoEl = pageEl.querySelector('#trashInfo');
     const pagEl = pageEl.querySelector('#trashPagination');
@@ -66,7 +74,7 @@ export default function init(ctx) {
 
     if (!tbodyEl) return;
 
-    // ---- URL’ler Blade’den gelsin
+    // ---- URL’ler Blade’den gelsin (Blade’de data-* var) :contentReference[oaicite:1]{index=1}
     const URLS = {
         list: pageEl.dataset.listUrl || '/admin/trash/list',
         bulkRestore: pageEl.dataset.bulkRestoreUrl || '/admin/trash/bulk-restore',
@@ -83,7 +91,7 @@ export default function init(ctx) {
         total: 0,
     };
 
-    const selected = new Set(); // id list (trash item id değil, entity id değil — backend ne döndürüyorsa onu kullanırız)
+    const selected = new Set();
     let debounceTimer = null;
 
     function setInfo(text) {
@@ -95,7 +103,6 @@ export default function init(ctx) {
         const c = selected.size;
 
         if (selectedCountEl) selectedCountEl.textContent = String(c);
-
         if (bulkRestoreBtn) bulkRestoreBtn.disabled = c === 0;
         if (bulkForceBtn) bulkForceBtn.disabled = c === 0;
 
@@ -104,8 +111,10 @@ export default function init(ctx) {
             else bulkBar.classList.add('hidden');
         }
 
-        // head checkbox state (basit)
-        if (checkAllHead) checkAllHead.checked = c > 0 && tbodyEl.querySelectorAll('input[data-act="chk"]').length === c;
+        if (checkAllHead) {
+            const totalCbs = tbodyEl.querySelectorAll('input[data-act="chk"]').length;
+            checkAllHead.checked = c > 0 && totalCbs > 0 && totalCbs === c;
+        }
         if (checkAllBar) checkAllBar.checked = checkAllHead?.checked || false;
     }
 
@@ -127,10 +136,10 @@ export default function init(ctx) {
         }
 
         const btn = (p, label, disabled = false, active = false) => `
-          <button type="button"
-                  class="kt-btn kt-btn-sm ${active ? 'kt-btn-primary' : 'kt-btn-light'}"
-                  data-page="${p}"
-                  ${disabled ? 'disabled' : ''}>${label}</button>
+            <button type="button"
+                    class="kt-btn kt-btn-sm ${active ? 'kt-btn-primary' : 'kt-btn-light'}"
+                    data-page="${p}"
+                    ${disabled ? 'disabled' : ''}>${label}</button>
         `;
 
         const parts = [];
@@ -152,8 +161,6 @@ export default function init(ctx) {
         pagEl.innerHTML = `<div class="flex items-center gap-1 justify-center">${parts.join('')}</div>`;
     }
 
-    // Backend’den beklenen item şekli:
-    // { id, type, title/name, deleted_at, restore_url, force_url }
     function rowHtml(item) {
         const id = esc(item.id);
         const type = esc(item.type || '-');
@@ -163,64 +170,63 @@ export default function init(ctx) {
         const restoreUrl = esc(item.restore_url || '');
         const forceUrl = esc(item.force_url || '');
 
-        // restore_url/force_url boşsa butonlar disable olsun (tasarım olarak doğru)
         const restoreDisabled = restoreUrl ? '' : 'disabled';
         const forceDisabled = forceUrl ? '' : 'disabled';
 
         const checked = selected.has(String(item.id)) ? 'checked' : '';
 
         return `
-          <tr data-row-id="${id}">
-            <td class="w-[55px]">
-              <input type="checkbox"
-                     class="kt-checkbox kt-checkbox-sm"
-                     data-act="chk"
-                     data-id="${id}"
-                     ${checked}>
-            </td>
+            <tr data-row-id="${id}">
+                <td class="w-[55px]">
+                    <input type="checkbox"
+                       class="kt-checkbox kt-checkbox-sm"
+                       data-act="chk"
+                       data-id="${id}"
+                       data-type="${esc(item.type || '')}"
+                       ${checked}>
+                </td>
 
-            <td class="min-w-[160px]">
-              <span class="kt-badge kt-badge-light">${type}</span>
-            </td>
+                <td class="min-w-[160px]">
+                    <span class="kt-badge kt-badge-light">${type}</span>
+                </td>
 
-            <td class="min-w-[320px]">
-              <div class="font-medium">${title}</div>
-              <div class="text-xs text-muted-foreground">#${id}</div>
-            </td>
+                <td class="min-w-[320px]">
+                    <div class="font-medium">${title}</div>
+                    <div class="text-xs text-muted-foreground">#${id}</div>
+                </td>
 
-            <td class="min-w-[180px]">
-              <span class="text-sm text-muted-foreground">${deletedAt}</span>
-            </td>
+                <td class="min-w-[180px]">
+                    <span class="text-sm text-muted-foreground">${deletedAt}</span>
+                </td>
 
-            <td class="w-[160px] text-end">
-              <div class="flex items-center justify-end gap-2">
-                <button type="button"
-                        class="kt-btn kt-btn-sm kt-btn-light"
-                        data-act="restore"
-                        data-id="${id}"
-                        data-url="${restoreUrl}"
-                        ${restoreDisabled}>
-                  <i class="ki-outline ki-arrow-circle-left"></i>
-                </button>
+                <td class="w-[160px] text-end">
+                    <div class="flex items-center justify-end gap-2">
+                        <button type="button"
+                                class="kt-btn kt-btn-sm kt-btn-light"
+                                data-act="restore"
+                                data-id="${id}"
+                                data-url="${restoreUrl}"
+                                ${restoreDisabled}>
+                            <i class="ki-outline ki-arrow-circle-left"></i>
+                        </button>
 
-                <button type="button"
-                        class="kt-btn kt-btn-sm kt-btn-danger"
-                        data-act="force"
-                        data-id="${id}"
-                        data-url="${forceUrl}"
-                        ${forceDisabled}>
-                  <i class="ki-outline ki-trash"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
+                        <button type="button"
+                                class="kt-btn kt-btn-sm kt-btn-danger"
+                                data-act="force"
+                                data-id="${id}"
+                                data-url="${forceUrl}"
+                                ${forceDisabled}>
+                            <i class="ki-outline ki-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
         `;
     }
 
     function fillPerPageSelect() {
         if (!perSel) return;
 
-        // Blade boş bırakmış; JS doldursun
         const options = [10, 25, 50, 100];
         perSel.innerHTML = options.map((n) => {
             const sel = n === state.perpage ? 'selected' : '';
@@ -229,25 +235,25 @@ export default function init(ctx) {
     }
 
     async function fetchList() {
-        // typeSel "all" ise backend’e boş gönder (daha temiz)
-        const type = (state.type === 'all') ? '' : state.type;
+        const type = (state.type === 'all') ? null : state.type;
 
         const qs = new URLSearchParams({
             q: state.q || '',
-            type: type,
             page: String(state.page),
             perpage: String(state.perpage),
         });
+
+        if (type) qs.set('type', type);
 
         const { res, j } = await jsonReq(`${URLS.list}?${qs.toString()}`, 'GET', null, signal);
 
         if (!res.ok || !j?.ok) {
             tbodyEl.innerHTML = `
-              <tr>
-                <td colspan="5" class="py-10 text-center text-muted-foreground">
-                  Liste alınamadı.
-                </td>
-              </tr>
+                <tr>
+                    <td colspan="5" class="py-10 text-center text-muted-foreground">
+                        Liste alınamadı.
+                    </td>
+                </tr>
             `;
             setInfo('');
             renderPagination({ current_page: 1, last_page: 1 });
@@ -262,14 +268,12 @@ export default function init(ctx) {
         state.last_page = Number(meta.last_page || 1) || 1;
         state.total = Number(meta.total || 0) || 0;
 
-        // Liste değişince, artık görünmeyen seçili id’leri temizle (basit yaklaşım)
         const visibleIds = new Set(items.map((x) => String(x?.id)));
         for (const id of Array.from(selected)) {
             if (!visibleIds.has(id)) selected.delete(id);
         }
 
         if (!items.length) {
-            // Arama varken zero, değilse empty
             const isSearch = Boolean(state.q) || Boolean(type);
             tbodyEl.innerHTML = isSearch ? cloneTpl(tplZero) : cloneTpl(tplEmpty);
         } else {
@@ -289,8 +293,7 @@ export default function init(ctx) {
     async function doSingleAction(url, method, confirmText) {
         if (!url) return;
 
-        const ok = confirm(confirmText);
-        if (!ok) return;
+        if (!confirm(confirmText)) return;
 
         const { res, j } = await jsonReq(url, method, (method === 'POST' ? {} : null), signal);
         if (!res.ok || !j?.ok) {
@@ -302,22 +305,102 @@ export default function init(ctx) {
     }
 
     async function doBulk(url, confirmText) {
-        const ids = Array.from(selected).map((x) => Number(x)).filter((x) => Number.isFinite(x));
-        if (!ids.length) return;
+        const items = Array.from(selected)
+            .map((k) => {
+                const [type, id] = String(k).split('|');
+                const nid = Number(id);
+                if (!type || !Number.isFinite(nid)) return null;
+                return { type, id: nid, key: `${type}|${nid}` };
+            })
+            .filter(Boolean);
 
-        const ok = confirm(confirmText);
-        if (!ok) return;
+        if (!items.length) return;
 
-        const { res, j } = await jsonReq(url, 'POST', { ids }, signal);
-        if (!res.ok || !j?.ok) {
-            alert(j?.error?.message || j?.message || 'İşlem başarısız');
-            return;
-        }
+        if (!confirm(confirmText)) return;
 
+        // ---- OPTIMISTIC UI: seçili satırları DOM’dan kaldır, state’i yedekle
+        const backup = {
+            keys: new Set(selected),
+            rows: [], // { key, node, nextSibling, parent }
+        };
+
+        const keyToRow = (key) => {
+            // checkbox üzerinde data-id + data-type var
+            const [t, id] = String(key).split('|');
+            return tbodyEl.querySelector(`input[data-act="chk"][data-id="${CSS.escape(id)}"][data-type="${CSS.escape(t)}"]`)?.closest('tr');
+        };
+
+        backup.keys.forEach((key) => {
+            const row = keyToRow(key);
+            if (!row) return;
+
+            backup.rows.push({
+                key,
+                node: row,
+                parent: row.parentNode,
+                nextSibling: row.nextSibling,
+            });
+
+            row.remove(); // optimistic remove
+        });
+
+        // UI state
         selected.clear();
         setBulkUI();
-        await fetchList();
+
+        // Eğer tabloda hiç satır kalmadıysa boş template bas (şimdilik basit)
+        if (!tbodyEl.querySelector('tr')) {
+            // arama varsa zero, değilse empty
+            const isSearch = Boolean(state.q) || (state.type && state.type !== 'all');
+            tbodyEl.innerHTML = isSearch ? cloneTpl(tplZero) : cloneTpl(tplEmpty);
+        }
+
+        try {
+            const payload = { items: items.map(({ type, id }) => ({ type, id })) };
+            const { res, j } = await jsonReq(url, 'POST', payload, signal);
+
+            if (!res.ok || !j?.ok) {
+                const msg = j?.error?.message || j?.message || 'İşlem başarısız';
+                throw new Error(msg);
+            }
+
+            // Başarılıysa: server tarafındaki gerçek state’i çek (sayfa/total/boş durum doğru olsun)
+            await fetchList();
+        } catch (e) {
+            // ---- ROLLBACK: kaldırdıklarını geri koy
+            // önce template basıldıysa sil
+            // (rows’u eski yerine insert edeceğiz)
+            if (!backup.rows.length) return;
+
+            // Eğer tbody içi template ile dolduysa temizle (basit kontrol)
+            // Template'ler genelde tek satır ve colspan içerir; en garantisi:
+            const onlyTemplate = tbodyEl.querySelectorAll('tr').length === 1
+                && tbodyEl.querySelector('tr td[colspan]');
+            if (onlyTemplate) tbodyEl.innerHTML = '';
+
+            backup.rows.forEach(({ node, parent, nextSibling }) => {
+                if (!parent) return;
+                if (nextSibling) parent.insertBefore(node, nextSibling);
+                else parent.appendChild(node);
+            });
+
+            // seçimi geri yükle
+            selected.clear();
+            backup.keys.forEach((k) => selected.add(k));
+
+            // checkboxları tekrar işaretle
+            tbodyEl.querySelectorAll('input[data-act="chk"]').forEach((chk) => {
+                const id = chk.getAttribute('data-id');
+                const type = chk.getAttribute('data-type') || '';
+                const key = `${type}|${id}`;
+                chk.checked = selected.has(key);
+            });
+
+            setBulkUI();
+            alert(e?.message || 'İşlem başarısız');
+        }
     }
+
 
     // ---- bindings
     fillPerPageSelect();
@@ -332,7 +415,7 @@ export default function init(ctx) {
             }, 250);
         }, { signal });
 
-        ctx.cleanup(() => {
+        ctx.cleanup?.(() => {
             if (debounceTimer) clearTimeout(debounceTimer);
             debounceTimer = null;
         });
@@ -358,15 +441,16 @@ export default function init(ctx) {
         pagEl.addEventListener('click', (e) => {
             const b = e.target.closest('button[data-page]');
             if (!b) return;
+
             const p = Number(b.getAttribute('data-page') || 1);
             if (!Number.isFinite(p) || p < 1) return;
+
             if (p === state.page) return;
             state.page = p;
             fetchList();
         }, { signal });
     }
 
-    // checkbox + actions (tbody delegasyon)
     if (!markBound(pageEl, 'tbody-actions')) {
         tbodyEl.addEventListener('click', (e) => {
             const btn = e.target.closest('button[data-act]');
@@ -376,31 +460,37 @@ export default function init(ctx) {
 
                 if (act === 'restore') doSingleAction(url, 'POST', 'Bu kayıt geri yüklensin mi?');
                 if (act === 'force') doSingleAction(url, 'DELETE', 'Bu kayıt KALICI silinecek. Emin misin?');
-
                 return;
             }
 
             const chk = e.target.closest('input[type="checkbox"][data-act="chk"]');
             if (chk) {
                 const id = chk.getAttribute('data-id');
-                if (!id) return;
+                const type = chk.getAttribute('data-type') || '';
+                if (!id || !type) return;
 
-                if (chk.checked) selected.add(String(id));
-                else selected.delete(String(id));
+                const key = `${type}|${id}`;
+
+                if (chk.checked) selected.add(key);
+                else selected.delete(key);
 
                 setBulkUI();
             }
         }, { signal });
     }
 
-    // check all
     const toggleAll = (checked) => {
         tbodyEl.querySelectorAll('input[type="checkbox"][data-act="chk"]').forEach((c) => {
             c.checked = checked;
             const id = c.getAttribute('data-id');
-            if (!id) return;
-            if (checked) selected.add(String(id));
-            else selected.delete(String(id));
+            const type = c.getAttribute('data-type') || '';
+            if (!id || !type) return;
+
+            const key = `${type}|${id}`;
+
+            if (checked) selected.add(key);
+            else selected.delete(key);
+
         });
         setBulkUI();
     };
@@ -412,7 +502,6 @@ export default function init(ctx) {
         checkAllBar.addEventListener('change', () => toggleAll(checkAllBar.checked), { signal });
     }
 
-    // bulk buttons
     if (bulkRestoreBtn && !markBound(pageEl, 'bulk-restore')) {
         bulkRestoreBtn.addEventListener('click', () => {
             doBulk(URLS.bulkRestore, 'Seçili kayıtlar geri yüklensin mi?');

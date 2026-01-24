@@ -93,10 +93,10 @@ class TrashController extends Controller
             ],
         ]);
     }
-
     public function bulkRestore(Request $request): JsonResponse
     {
         $items = $request->input('items', []);
+
         if (!is_array($items) || !count($items)) {
             return response()->json(['ok' => true, 'done' => 0, 'denied' => [], 'failed' => []]);
         }
@@ -110,32 +110,39 @@ class TrashController extends Controller
 
         foreach ($items as $it) {
             $type = (string)($it['type'] ?? '');
-            $id = (int)($it['id'] ?? 0);
+            $id   = (int)($it['id'] ?? 0);
 
-            if (!$id || !isset($sources[$type])) { $failed[] = $it; continue; }
+            if (!$id || !isset($sources[$type])) {
+                $failed[] = $it;
+                continue;
+            }
 
             $perm = $sources[$type]['perm_restore'] ?? null;
-            if ($perm && !$this->userCan($user, $perm)) { $denied[] = $it; continue; }
+            if ($perm && !$this->userCan($user, $perm)) {
+                $denied[] = $it;
+                continue;
+            }
 
             try {
-                $model = ($sources[$type]['model'])::onlyTrashed()->find($id);
-                if (!$model) { $failed[] = $it; continue; }
+                $modelClass = $sources[$type]['model'];
 
-                // ✅ Dependency guard
-                $guard = $this->canForceDelete($type, $model);
-                if ($guard['ok'] !== true) {
-                    $failed[] = [
-                        'type' => $type,
-                        'id' => $id,
-                        'reason' => $guard['reason'] ?? 'Bağımlılık var',
-                    ];
+                /** @var \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\SoftDeletes $model */
+                $model = $modelClass::onlyTrashed()->find($id);
+
+                if (!$model) {
+                    $failed[] = $it;
                     continue;
                 }
 
-                $model->forceDelete();
+                // ✅ GERÇEK RESTORE
+                $model->restore();
                 $done++;
             } catch (\Throwable $e) {
-                $failed[] = $it;
+                $failed[] = [
+                    'type' => $type,
+                    'id' => $id,
+                    'reason' => $e->getMessage(),
+                ];
             }
         }
 
@@ -146,6 +153,7 @@ class TrashController extends Controller
             'failed' => $failed,
         ]);
     }
+
 
     public function bulkForceDestroy(Request $request): JsonResponse
     {
