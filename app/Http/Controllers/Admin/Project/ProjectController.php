@@ -99,6 +99,7 @@ class ProjectController extends Controller
             'categories' => $categories,
             'categoryOptions' => $categoryOptions,
             'selectedCategoryIds' => [],
+            'statusOptions' => Project::statusOptionsSorted(),
             'pageTitle' => 'Proje Ekle',
         ]);
     }
@@ -126,7 +127,14 @@ class ProjectController extends Controller
 
         // Featured (max 5) - DB seviyesinde garanti
         $makeFeatured = (bool) $request->boolean('is_featured');
-
+        if ($makeFeatured) {
+            $count = Project::where('is_featured', true)->lockForUpdate()->count();
+            if ($count >= 5) {
+                return back()->withErrors([
+                    'is_featured' => 'En fazla 5 proje aynı anda anasayfada görünebilir.'
+                ])->withInput();
+            }
+        }
         // status whitelist (model kaynağıyla aynı)
         if (!array_key_exists($status, Project::STATUS_OPTIONS)) {
             return back()->withErrors(['status' => 'Geçersiz durum seçimi.'])->withInput();
@@ -140,6 +148,7 @@ class ProjectController extends Controller
                     return null; // dışarıda handle edeceğiz
                 }
             }
+
 
             $project = Project::create($data);
 
@@ -214,6 +223,7 @@ class ProjectController extends Controller
             'categoryOptions' => $categoryOptions,
             'selectedCategoryIds' => $selectedCategoryIds,
             'featuredMediaId' => $featuredMediaId ?: null,
+            'statusOptions' => Project::statusOptionsSorted(),
             'pageTitle' => 'Proje Düzenle',
         ]);
     }
@@ -244,6 +254,14 @@ class ProjectController extends Controller
         // Featured (max 5) - concurrency-safe
         $makeFeatured = (bool) $request->boolean('is_featured');
 
+        if ($makeFeatured && !(bool) $project->is_featured) {
+            $count = Project::where('is_featured', true)->lockForUpdate()->count();
+            if ($count >= 5) {
+                return back()->withErrors([
+                    'is_featured' => 'En fazla 5 proje aynı anda anasayfada görünebilir.'
+                ])->withInput();
+            }
+        }
         $res = DB::transaction(function () use ($project, $data, $categoryIds, $featuredMediaId, $makeFeatured) {
             $project->refresh();
 

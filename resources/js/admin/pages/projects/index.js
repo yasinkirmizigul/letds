@@ -73,16 +73,44 @@ function postJson(url, body, method = 'POST') {
 }
 
 // --- status menu ---
-const STATUS_OPTIONS = [
-    ['appointment_pending', 'Randevu Bekliyor',   'kt-badge kt-badge-sm kt-badge-light-warning'],
-    ['appointment_scheduled', 'Randevu Planlandı','kt-badge kt-badge-sm kt-badge-light-primary'],
-    ['appointment_done', 'Randevu Tamamlandı',    'kt-badge kt-badge-sm kt-badge-light-success'],
-    ['dev_pending', 'Geliştirme Bekliyor',        'kt-badge kt-badge-sm kt-badge-light-warning'],
-    ['dev_in_progress', 'Geliştirme Devam',       'kt-badge kt-badge-sm kt-badge-primary'],
-    ['delivered', 'Teslim Edildi',                'kt-badge kt-badge-sm kt-badge-info'],
-    ['approved', 'Onaylandı',                     'kt-badge kt-badge-sm kt-badge-light-success'],
-    ['closed', 'Kapatıldı',                       'kt-badge kt-badge-sm kt-badge-light'],
-];
+// ✅ single source: read from Blade dataset: data-status-options='{"key":{"label","badge","order"},...}'
+let STATUS_OPTIONS_CACHE = null;
+
+function getStatusOptions(root) {
+    if (STATUS_OPTIONS_CACHE?.length) return STATUS_OPTIONS_CACHE;
+
+    // dataset parse
+    try {
+        const raw = root?.dataset?.statusOptions;
+        if (raw) {
+            const obj = JSON.parse(raw);
+
+            const arr = Object.entries(obj).map(([key, opt]) => ({
+                key,
+                label: opt?.label ?? key,
+                badge: opt?.badge ?? 'kt-badge kt-badge-sm kt-badge-light',
+                order: Number(opt?.order ?? 0),
+            }));
+
+            arr.sort((a, b) => (a.order - b.order) || String(a.label).localeCompare(String(b.label)));
+            STATUS_OPTIONS_CACHE = arr.map(x => [x.key, x.label, x.badge]);
+            if (STATUS_OPTIONS_CACHE.length) return STATUS_OPTIONS_CACHE;
+        }
+    } catch (_) {}
+
+    // fallback (should not happen if Blade injects)
+    STATUS_OPTIONS_CACHE = [
+        ['appointment_pending', 'Randevu Bekliyor',   'kt-badge kt-badge-sm kt-badge-light-warning'],
+        ['appointment_scheduled', 'Randevu Planlandı','kt-badge kt-badge-sm kt-badge-light-primary'],
+        ['appointment_done', 'Randevu Tamamlandı',    'kt-badge kt-badge-sm kt-badge-light-success'],
+        ['dev_pending', 'Geliştirme Bekliyor',        'kt-badge kt-badge-sm kt-badge-light-warning'],
+        ['dev_in_progress', 'Geliştirme Devam',       'kt-badge kt-badge-sm kt-badge-primary'],
+        ['delivered', 'Teslim Edildi',                'kt-badge kt-badge-sm kt-badge-info'],
+        ['approved', 'Onaylandı',                     'kt-badge kt-badge-sm kt-badge-light-success'],
+        ['closed', 'Kapatıldı',                       'kt-badge kt-badge-sm kt-badge-light'],
+    ];
+    return STATUS_OPTIONS_CACHE;
+}
 
 function createStatusPopover() {
     const el = document.createElement('div');
@@ -102,11 +130,13 @@ function createStatusPopover() {
     return el;
 }
 
-function showStatusPopover(pop, anchor, projectId, currentStatus) {
+function showStatusPopover(pop, anchor, projectId, currentStatus, root) {
     const menu = pop.querySelector('[data-status-menu]');
     if (!menu) return;
 
-    menu.innerHTML = STATUS_OPTIONS.map(([key, label, cls]) => {
+    const options = getStatusOptions(root);
+
+    menu.innerHTML = options.map(([key, label, cls]) => {
         const isActive = key === currentStatus;
 
         const base =
@@ -218,6 +248,9 @@ export default function init({ root }) {
     const tableEl = root.querySelector('#projects_table');
     if (!tableEl) return;
 
+    // warm cache once
+    getStatusOptions(root);
+
     const per = root?.dataset?.perpage ? parseInt(root.dataset.perpage, 10) : 25;
 
     const bulkBar = root.querySelector('#projectsBulkBar');
@@ -321,7 +354,6 @@ export default function init({ root }) {
         emptyTemplate: '#dt-empty-projects',
         zeroTemplate: '#dt-zero-projects',
 
-        // ⚠️ targets: senin gerçek kolonlarına göre gerekirse düzelt
         columnDefs: [
             { orderable: false, searchable: false, targets: [0, 6] },
             { className: 'text-right', targets: [5, 6] },
@@ -379,9 +411,8 @@ export default function init({ root }) {
             const pid = trig.getAttribute('data-project-id');
             const st = trig.getAttribute('data-status') || 'appointment_pending';
 
-            // önce kapat (aynı anda iki popover açık kalmasın)
             hideStatusPopover(statusPop);
-            showStatusPopover(statusPop, trig, pid, st);
+            showStatusPopover(statusPop, trig, pid, st, root);
             return;
         }
 
@@ -488,7 +519,7 @@ export default function init({ root }) {
         }
     }
 
-    // ✅ bulk actions (NEW ROUTES)
+    // ✅ bulk actions
     btnBulkDelete?.addEventListener('click', async () => {
         const ids = [...selectedIds];
         if (!ids.length) return;

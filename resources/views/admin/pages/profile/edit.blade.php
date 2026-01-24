@@ -150,7 +150,7 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="flex flex-col gap-2">
-                                    <label class="kt-form-label">İsim</label>
+                                    <label class="kt-form-label  mb-3">İsim</label>
                                     <input class="kt-input @error('name') kt-input-invalid @enderror"
                                            name="name"
                                            value="{{ old('name', $u->name ?? '') }}">
@@ -158,7 +158,7 @@
                                 </div>
 
                                 <div class="flex flex-col gap-2">
-                                    <label class="kt-form-label">Email</label>
+                                    <label class="kt-form-label  mb-3">Email</label>
                                     <input class="kt-input @error('email') kt-input-invalid @enderror"
                                            name="email"
                                            value="{{ old('email', $u->email ?? '') }}">

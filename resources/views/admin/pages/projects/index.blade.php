@@ -5,11 +5,15 @@
     @php
         $mode = request()->routeIs('admin.projects.trash') ? 'trash' : 'active';
         $per  = (int) request('perpage', 25);
+
+        // ✅ single source: Project model
+        $statusOptions = \App\Models\Admin\Project\Project::statusOptionsSorted();
     @endphp
 
     <div
         data-page="{{ $mode === 'trash' ? 'projects.trash' : 'projects.index' }}"
         data-perpage="{{ $per }}"
+        data-status-options='@json($statusOptions)'
         class="grid gap-5 lg:gap-7.5"
     >
         {{-- Bulk bar (BLOG İLE AYNI: ayrı kt-card) --}}
@@ -21,17 +25,14 @@
 
                 <div class="flex items-center gap-2">
                     @if($mode === 'trash')
-                        <button type="button" id="projectsBulkRestoreBtn" class="kt-btn kt-btn-sm kt-btn-light"
-                                disabled>
+                        <button type="button" id="projectsBulkRestoreBtn" class="kt-btn kt-btn-sm kt-btn-light" disabled>
                             <i class="ki-outline ki-arrows-circle"></i> Geri Yükle
                         </button>
-                        <button type="button" id="projectsBulkForceDeleteBtn" class="kt-btn kt-btn-sm kt-btn-danger"
-                                disabled>
+                        <button type="button" id="projectsBulkForceDeleteBtn" class="kt-btn kt-btn-sm kt-btn-danger" disabled>
                             <i class="ki-outline ki-trash"></i> Kalıcı Sil
                         </button>
                     @else
-                        <button type="button" id="projectsBulkDeleteBtn" class="kt-btn kt-btn-sm kt-btn-danger"
-                                disabled>
+                        <button type="button" id="projectsBulkDeleteBtn" class="kt-btn kt-btn-sm kt-btn-danger" disabled>
                             <i class="ki-outline ki-trash"></i> Sil
                         </button>
                     @endif
@@ -104,20 +105,17 @@
                         <tbody>
                         @foreach($projects as $p)
                             @php
-                                // featured preview: Media pivot -> fallback legacy
                                 $img = $p->featuredMediaUrl() ?: ($p->featured_image_path ? asset('storage/'.$p->featured_image_path) : null);
                             @endphp
 
                             <tr data-id="{{ $p->id }}">
                                 <td class="w-[55px]">
-                                    <input class="kt-checkbox kt-checkbox-sm projects-check" type="checkbox"
-                                           value="{{ $p->id }}">
+                                    <input class="kt-checkbox kt-checkbox-sm projects-check" type="checkbox" value="{{ $p->id }}">
                                 </td>
 
                                 <td>
                                     <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-11 h-11 rounded-xl overflow-hidden border border-border bg-muted/30 shrink-0">
+                                        <div class="w-11 h-11 rounded-xl overflow-hidden border border-border bg-muted/30 shrink-0">
                                             @if($img)
                                                 <a href="javascript:void(0)"
                                                    class="block w-full h-full js-img-popover"
@@ -125,8 +123,7 @@
                                                     <img src="{{ $img }}" class="w-full h-full object-cover" alt="">
                                                 </a>
                                             @else
-                                                <div
-                                                    class="w-full h-full grid place-items-center text-muted-foreground">
+                                                <div class="w-full h-full grid place-items-center text-muted-foreground">
                                                     <i class="ki-outline ki-picture text-xl"></i>
                                                 </div>
                                             @endif
@@ -213,7 +210,7 @@
                     </table>
                 </div>
 
-                {{-- empty/zero templates (aynı kalır) --}}
+                {{-- empty/zero templates --}}
                 <template id="dt-empty-projects">
                     <div class="p-10 grid place-items-center text-muted-foreground gap-3">
                         <i class="ki-outline ki-folder text-3xl"></i>
@@ -228,7 +225,7 @@
                     </div>
                 </template>
 
-                <div class="px-6 py-4 flex items-center justify-between gap-3 border-t border-border">
+                <div class="px-6 py-4 flex items-center justify-between gap-3">
                     <div id="projectsInfo" class="text-xs text-muted-foreground"></div>
                     <div id="projectsPagination" class="flex items-center justify-end gap-2"></div>
                 </div>

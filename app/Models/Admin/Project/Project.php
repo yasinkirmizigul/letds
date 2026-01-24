@@ -14,6 +14,7 @@ class Project extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
     protected $fillable = [
         'title',
         'slug',
@@ -34,33 +35,89 @@ class Project extends Model
     ];
 
     // --- Status constants
-    public const STATUS_APPOINTMENT_PENDING   = 'appointment_pending';
-    public const STATUS_APPOINTMENT_SCHEDULED = 'appointment_scheduled';
-    public const STATUS_APPOINTMENT_DONE      = 'appointment_done';
+    public const STATUS_APPOINTMENT_PENDING    = 'appointment_pending';
+    public const STATUS_APPOINTMENT_SCHEDULED  = 'appointment_scheduled';
+    public const STATUS_APPOINTMENT_DONE       = 'appointment_done';
 
-    public const STATUS_DEV_PENDING           = 'dev_pending';
-    public const STATUS_DEV_IN_PROGRESS       = 'dev_in_progress';
+    public const STATUS_DEV_PENDING            = 'dev_pending';
+    public const STATUS_DEV_IN_PROGRESS        = 'dev_in_progress';
 
-    public const STATUS_DELIVERED             = 'delivered';
-    public const STATUS_APPROVED              = 'approved';
-    public const STATUS_CLOSED                = 'closed';
+    public const STATUS_DELIVERED              = 'delivered';
+    public const STATUS_APPROVED               = 'approved';
+    public const STATUS_CLOSED                 = 'closed';
 
+    /**
+     * ✅ Single source of truth:
+     * - label: UI text
+     * - badge: KTUI badge class
+     * - order: dropdown sorting
+     */
     public const STATUS_OPTIONS = [
-        self::STATUS_APPOINTMENT_PENDING   => 'Randevu Bekliyor',
-        self::STATUS_APPOINTMENT_SCHEDULED => 'Randevu Planlandı',
-        self::STATUS_APPOINTMENT_DONE      => 'Randevu Tamamlandı',
+        self::STATUS_APPOINTMENT_PENDING => [
+            'label' => 'Randevu Bekliyor',
+            'badge' => 'kt-badge kt-badge-sm kt-badge-light-warning',
+            'order' => 10,
+        ],
+        self::STATUS_APPOINTMENT_SCHEDULED => [
+            'label' => 'Randevu Planlandı',
+            'badge' => 'kt-badge kt-badge-sm kt-badge-light-primary',
+            'order' => 20,
+        ],
+        self::STATUS_APPOINTMENT_DONE => [
+            'label' => 'Randevu Tamamlandı',
+            'badge' => 'kt-badge kt-badge-sm kt-badge-light-success',
+            'order' => 30,
+        ],
 
-        self::STATUS_DEV_PENDING           => 'Geliştirme Bekliyor',
-        self::STATUS_DEV_IN_PROGRESS       => 'Geliştirme Devam',
+        self::STATUS_DEV_PENDING => [
+            'label' => 'Geliştirme Bekliyor',
+            'badge' => 'kt-badge kt-badge-sm kt-badge-light-warning',
+            'order' => 40,
+        ],
+        self::STATUS_DEV_IN_PROGRESS => [
+            'label' => 'Geliştirme Devam',
+            'badge' => 'kt-badge kt-badge-sm kt-badge-primary',
+            'order' => 50,
+        ],
 
-        self::STATUS_DELIVERED             => 'Teslim Edildi',
-        self::STATUS_APPROVED              => 'Onaylandı',
-        self::STATUS_CLOSED                => 'Kapatıldı',
+        self::STATUS_DELIVERED => [
+            'label' => 'Teslim Edildi',
+            'badge' => 'kt-badge kt-badge-sm kt-badge-info',
+            'order' => 60,
+        ],
+        self::STATUS_APPROVED => [
+            'label' => 'Onaylandı',
+            'badge' => 'kt-badge kt-badge-sm kt-badge-success',
+            'order' => 70,
+        ],
+        self::STATUS_CLOSED => [
+            'label' => 'Kapatıldı',
+            'badge' => 'kt-badge kt-badge-sm kt-badge-light',
+            'order' => 80,
+        ],
     ];
+
+    public static function statusOptionsSorted(): array
+    {
+        $opts = self::STATUS_OPTIONS;
+        uasort($opts, fn ($a, $b) => ($a['order'] ?? 0) <=> ($b['order'] ?? 0));
+        return $opts;
+    }
+
+    public static function statusLabel(?string $key): string
+    {
+        $key = $key ?: self::STATUS_APPOINTMENT_PENDING;
+        return self::STATUS_OPTIONS[$key]['label'] ?? $key;
+    }
+
+    public static function statusBadgeClass(?string $key): string
+    {
+        $key = $key ?: self::STATUS_APPOINTMENT_PENDING;
+        return self::STATUS_OPTIONS[$key]['badge'] ?? 'kt-badge kt-badge-sm kt-badge-light';
+    }
 
     /**
      * Categories: categorizables (morphs)
-     * Migration: category_id + morphs('categorizable') :contentReference[oaicite:1]{index=1}
      */
     public function categories(): MorphToMany
     {
@@ -77,7 +134,6 @@ class Project extends Model
 
     /**
      * Galleries: galleryables (slot + sort_order)
-     * BlogPost modelindeki pattern ile aynı. :contentReference[oaicite:2]{index=2}
      */
     public function galleries(): MorphToMany
     {
@@ -95,7 +151,6 @@ class Project extends Model
 
     /**
      * Featured image: Media’dan seçilecek (mediables, collection=featured).
-     * Schema: media_id + morphs('mediable') + collection + order :contentReference[oaicite:3]{index=3}
      */
     public function featuredMedia(): MorphToMany
     {
@@ -128,6 +183,14 @@ class Project extends Model
         return $this->featuredImageUrl();
     }
 
+    public function featuredImageUrl(): ?string
+    {
+        return $this->featured_image_path
+            ? asset('storage/' . $this->featured_image_path)
+            : null;
+    }
+
+    // legacy helpers (istersen sonra sileriz)
     public function isDraft(): bool
     {
         return ($this->status ?? 'draft') === 'draft';
@@ -141,33 +204,5 @@ class Project extends Model
     public function isArchived(): bool
     {
         return ($this->status ?? 'draft') === 'archived';
-    }
-    public function featuredImageUrl(): ?string
-    {
-        return $this->featured_image_path
-            ? asset('storage/' . $this->featured_image_path)
-            : null;
-    }
-    public static function statusLabel(?string $key): string
-    {
-        $key = $key ?: self::STATUS_APPOINTMENT_PENDING;
-        return self::STATUS_OPTIONS[$key] ?? $key;
-    }
-
-    public static function statusBadgeClass(?string $key): string
-    {
-        return match ($key) {
-            self::STATUS_APPOINTMENT_PENDING   => 'kt-badge kt-badge-sm kt-badge-light-warning',
-            self::STATUS_APPOINTMENT_SCHEDULED => 'kt-badge kt-badge-sm kt-badge-light-primary',
-            self::STATUS_APPOINTMENT_DONE      => 'kt-badge kt-badge-sm kt-badge-light-success',
-
-            self::STATUS_DEV_PENDING           => 'kt-badge kt-badge-sm kt-badge-light-warning',
-            self::STATUS_DEV_IN_PROGRESS       => 'kt-badge kt-badge-sm kt-badge-primary',
-
-            self::STATUS_DELIVERED             => 'kt-badge kt-badge-sm kt-badge-info',
-            self::STATUS_APPROVED              => 'kt-badge kt-badge-sm kt-badge-success',
-            self::STATUS_CLOSED                => 'kt-badge kt-badge-sm kt-badge-light',
-            default                            => 'kt-badge kt-badge-sm kt-badge-light',
-        };
     }
 }

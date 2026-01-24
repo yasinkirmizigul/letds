@@ -16,7 +16,7 @@
     <div class="lg:col-span-2 flex flex-col gap-6">
 
         <div>
-            <label class="kt-form-label">Başlık</label>
+            <label class="kt-form-label mb-3">Başlık</label>
             <input class="kt-input"
                    name="title"
                    id="title"
@@ -28,7 +28,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label class="kt-form-label">Slug</label>
+                <label class="kt-form-label mb-3">Slug</label>
 
                 <div class="flex items-center gap-2">
                     <input class="kt-input"
@@ -62,7 +62,7 @@
             </div>
 
             <div>
-                <label class="kt-form-label">Status</label>
+                <label class="kt-form-label  mb-3">Status</label>
                 <select class="kt-select" name="status" id="projectStatus" data-kt-select="true">
                     <option value="draft" @selected($st === 'draft')>draft</option>
                     <option value="active" @selected($st === 'active')>active</option>
@@ -90,7 +90,7 @@
             </div>
             <div class="kt-card-content p-6 flex flex-col gap-4">
                 <div>
-                    <label class="kt-form-label">Meta Title</label>
+                    <label class="kt-form-label  mb-3">Meta Title</label>
                     <input class="kt-input"
                            name="meta_title"
                            value="{{ old('meta_title', $project->meta_title ?? '') }}"/>
@@ -100,7 +100,7 @@
                 </div>
 
                 <div>
-                    <label class="kt-form-label">Meta Description</label>
+                    <label class="kt-form-label  mb-3">Meta Description</label>
                     <textarea class="kt-textarea"
                               name="meta_description">{{ old('meta_description', $project->meta_description ?? '') }}</textarea>
                     @error('meta_description')
@@ -109,7 +109,7 @@
                 </div>
 
                 <div>
-                    <label class="kt-form-label">Meta Keywords</label>
+                    <label class="kt-form-label  mb-3">Meta Keywords</label>
                     <input class="kt-input"
                            name="meta_keywords"
                            value="{{ old('meta_keywords', $project->meta_keywords ?? '') }}"/>
@@ -169,9 +169,9 @@
             'title' => 'Öne Çıkan Görsel',
         ])
 
-        <div class="kt-card kt-card-border">
+{{--        <div class="kt-card kt-card-border">
             <div class="kt-card-header">
-                <h3 class="kt-card-title">Appointment</h3>
+                <h3 class="kt-card-title">Randevu</h3>
             </div>
             <div class="kt-card-content p-6">
                 <input class="kt-input"
@@ -182,7 +182,7 @@
                 <div class="text-danger text-sm mt-1">{{ $message }}</div>
                 @enderror
             </div>
-        </div>
+        </div>--}}
 
     </div>
 </div>

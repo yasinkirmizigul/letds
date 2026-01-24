@@ -101,7 +101,7 @@ function observeThemeChanges(onChange) {
 }
 
 function initStatusFeaturedUI(root, signal) {
-    // status badge preview
+    // ---------- STATUS ----------
     const select = root.querySelector('[data-status-select]');
     const badge = root.querySelector('[data-status-badge]');
     let opts = {};
@@ -111,13 +111,22 @@ function initStatusFeaturedUI(root, signal) {
 
     function applyStatus() {
         if (!select || !badge) return;
+
         const key = select.value;
         const o = opts[key] || opts['appointment_pending'] || null;
 
         const badgeClass = (o && o.badge) ? o.badge : 'kt-badge kt-badge-sm kt-badge-light';
         const label = (o && o.label) ? o.label : key;
 
-        badge.className = `${badgeClass} whitespace-nowrap`;
+        // sadece kt-badge ile başlayan classları temizle
+        [...badge.classList].forEach(c => {
+            if (c.startsWith('kt-badge')) badge.classList.remove(c);
+        });
+
+        // yeni kt-badge classlarını ekle
+        badgeClass.split(/\s+/).forEach(c => c && badge.classList.add(c));
+
+        // label
         badge.textContent = label;
     }
 
@@ -125,38 +134,34 @@ function initStatusFeaturedUI(root, signal) {
         applyStatus();
         select.addEventListener('change', () => {
             applyStatus();
-            // seçimi hissedilir yap
             badge.classList.add('animate-pulse');
             window.setTimeout(() => badge.classList.remove('animate-pulse'), 450);
         }, { signal });
     }
 
-    // featured UI (client-only feedback)
+    // ---------- FEATURED ----------
     const ft = root.querySelector('[data-featured-toggle]');
     const lbl = root.querySelector('.js-featured-label');
-    const fb = root.querySelector('.js-featured-badge');
 
     function applyFeatured() {
-        if (!ft) return;
+        if (!ft || !lbl) return;
+
         const on = !!ft.checked;
 
-        if (lbl) lbl.textContent = on ? 'Anasayfada' : 'Kapalı';
+        lbl.textContent = on ? 'Anasayfada' : 'Kapalı';
 
-        if (fb) {
-            if (on) {
-                fb.hidden = false;
-                requestAnimationFrame(() => {
-                    fb.classList.remove('opacity-0');
-                    fb.classList.add('opacity-100');
-                });
-            } else {
-                fb.classList.remove('opacity-100');
-                fb.classList.add('opacity-0');
-                window.setTimeout(() => {
-                    if (!ft.checked) fb.hidden = true;
-                }, 200);
-            }
+        // 🔥 Asıl düzeltme burada
+        lbl.classList.remove('kt-badge-light-success', 'kt-badge-light', 'text-muted-foreground');
+
+        if (on) {
+            lbl.classList.add('kt-badge-light-success');
+        } else {
+            lbl.classList.add('kt-badge-light', 'text-muted-foreground');
         }
+
+        // küçük animasyon
+        lbl.classList.add('animate-pulse');
+        window.setTimeout(() => lbl.classList.remove('animate-pulse'), 300);
     }
 
     if (ft) {
@@ -164,6 +169,7 @@ function initStatusFeaturedUI(root, signal) {
         ft.addEventListener('change', applyFeatured, { signal });
     }
 }
+
 
 export default async function init({ root }) {
     ac = new AbortController();
