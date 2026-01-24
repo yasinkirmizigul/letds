@@ -127,6 +127,7 @@
                                     <th class="min-w-[360px]">Yazı</th>
                                     <th class="min-w-[280px]">Kısa Bağlantı</th>
                                     <th class="min-w-[280px]">Durum</th>
+                                    <th class="w-[200px] text-center">Anasayfa</th>
                                     <th class="min-w-[190px]">Güncelleme Tarihi</th>
                                     <th class="w-[60px]"></th>
                                     <th class="w-[60px]"></th>
@@ -203,6 +204,36 @@
                                                 @if($p->published_at)
                                                     Yayın Tarihi: {{ $p->published_at->format('d.m.Y H:i') }}
                                                 @endif
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="flex flex-col gap-1">
+                                                <div class="flex items-center justify-between gap-3">
+                                                    <div class="js-featured-badge">
+                                                        @if($p->is_featured)
+                                                            <span class="kt-badge kt-badge-sm kt-badge-light-success">Anasayfada</span>
+                                                        @else
+                                                            <span class="kt-badge kt-badge-sm kt-badge-light text-muted-foreground">Kapalı</span>
+                                                        @endif
+                                                    </div>
+
+                                                    @perm('blog.update')
+                                                    <label class="kt-switch kt-switch-sm">
+                                                        <input
+                                                            class="js-featured-toggle kt-switch kt-switch-mono"
+                                                            type="checkbox"
+                                                            data-url="{{ route('admin.blog.toggleFeatured', $p) }}"
+                                                            @checked($p->is_featured)
+                                                        />
+                                                    </label>
+                                                    @endperm
+                                                </div>
+
+                                                <div class="text-sm text-muted-foreground mt-1 js-featured-at">
+                                                    @if($p->featured_at)
+                                                        Seçim: {{ $p->featured_at->format('d.m.Y H:i') }}
+                                                    @endif
+                                                </div>
                                             </div>
                                         </td>
 

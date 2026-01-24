@@ -23,6 +23,8 @@ class BlogPost extends Model
         'content',
         'is_published',
         'published_at',
+        'is_featured',
+        'featured_at',
         'featured_image_path',
         'meta_title',
         'meta_description',
@@ -34,6 +36,8 @@ class BlogPost extends Model
     protected $casts = [
         'is_published' => 'boolean',
         'published_at' => 'datetime',
+        'is_featured' => 'boolean',
+        'featured_at' => 'datetime',
     ];
 
     public function author()

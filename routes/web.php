@@ -182,7 +182,7 @@ Route::middleware(['auth', 'audit'])
                 ->name('checkSlug');
         });
 
-        // Blog
+        /// Blog
         Route::prefix('blog')->as('blog.')->group(function () {
             Route::get('/', [BlogPostController::class, 'index'])
                 ->middleware('permission:blog.view')
@@ -240,10 +240,15 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:blog.update')
                 ->name('togglePublish');
 
+            Route::patch('/{blogPost}/toggle-featured', [BlogPostController::class, 'toggleFeatured'])
+                ->middleware('permission:blog.update')
+                ->name('toggleFeatured');
+
             Route::get('/check-slug', [BlogPostController::class, 'checkSlug'])
                 ->middleware(['permission:blog.view']) // en az view
                 ->name('checkSlug');
         });
+
 
         // =========================
         // Projects (clean section)

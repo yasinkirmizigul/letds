@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Throwable;
@@ -141,12 +142,41 @@ class BlogPostController extends Controller
             ],
             'featured_media_id' => ['nullable', 'integer'],
             'featured_image' => ['nullable', 'image', 'max:5120'],
+            'excerpt' => ['nullable','string'],
+            'meta_title' => ['nullable','string','max:255'],
+            'meta_description' => ['nullable','string'],
+            'meta_keywords' => ['nullable','string'],
+            'is_published' => ['nullable','boolean'],
+            'is_featured' => ['nullable','boolean'],
         ]);
 
         $slug = $data['slug'] ?: Str::slug($data['title']);
         $data['slug'] = $this->uniqueSlug($slug);
 
-        $post = BlogPost::create($data);
+        $postPublished = (bool) $request->boolean('is_published');
+        $postFeatured  = (bool) $request->boolean('is_featured');
+
+        $post = DB::transaction(function () use ($data, $postPublished, $postFeatured) {
+            if ($postFeatured) {
+                $this->guardFeaturedLimit(null);
+                $data['is_featured'] = true;
+                $data['featured_at'] = now();
+            } else {
+                $data['is_featured'] = false;
+                $data['featured_at'] = null;
+            }
+
+            if ($postPublished) {
+                $data['is_published'] = true;
+                $data['published_at'] = now();
+            } else {
+                $data['is_published'] = false;
+                $data['published_at'] = null;
+            }
+
+            return BlogPost::create($data);
+        });
+
         // ✅ Featured: önce upload varsa legacy path’e kaydet (fallback), sonra featured_media_id set edildiyse pivot’a yaz
         if ($request->hasFile('featured_image')) {
             // legacy path (istersen ileride kaldırırsın)
@@ -219,12 +249,43 @@ class BlogPostController extends Controller
             ],
             'featured_media_id' => ['nullable', 'integer'],
             'featured_image' => ['nullable', 'image', 'max:5120'],
+            'excerpt' => ['nullable','string'],
+            'meta_title' => ['nullable','string','max:255'],
+            'meta_description' => ['nullable','string'],
+            'meta_keywords' => ['nullable','string'],
+            'is_published' => ['nullable','boolean'],
+            'is_featured' => ['nullable','boolean'],
         ]);
 
         $slug = $data['slug'] ?: Str::slug($data['title']);
         $data['slug'] = $this->uniqueSlug($slug, $blogPost->id);
 
-        $blogPost->update($data);
+        $postPublished = (bool) $request->boolean('is_published');
+        $postFeatured  = (bool) $request->boolean('is_featured');
+
+        DB::transaction(function () use (&$blogPost, $data, $postPublished, $postFeatured) {
+            $blogPost = BlogPost::query()->lockForUpdate()->findOrFail($blogPost->id);
+
+            if ($postFeatured) {
+                $this->guardFeaturedLimit($blogPost->id);
+                $data['is_featured'] = true;
+                $data['featured_at'] = $blogPost->featured_at ?? now();
+            } else {
+                $data['is_featured'] = false;
+                $data['featured_at'] = null;
+            }
+
+            if ($postPublished) {
+                $data['is_published'] = true;
+                $data['published_at'] = $blogPost->published_at ?? now();
+            } else {
+                $data['is_published'] = false;
+                $data['published_at'] = null;
+            }
+
+            $blogPost->update($data);
+        });
+
 
         if ($request->hasFile('featured_image')) {
 
@@ -343,12 +404,82 @@ class BlogPostController extends Controller
         return response()->json(['ok' => true, 'data' => ['force_deleted' => $posts->count()]]);
     }
 
-    public function togglePublish(BlogPost $blogPost): JsonResponse
+    public function togglePublish(Request $request, BlogPost $blogPost): JsonResponse
     {
-        $blogPost->is_published = !$blogPost->is_published;
-        $blogPost->save();
+        $payload = $request->validate([
+            'is_published' => ['required', 'boolean'],
+        ]);
 
-        return response()->json(['ok' => true, 'data' => ['is_published' => (bool) $blogPost->is_published]]);
+        return DB::transaction(function () use ($blogPost, $payload) {
+            $blogPost = BlogPost::query()->lockForUpdate()->findOrFail($blogPost->id);
+
+            $want = (bool) $payload['is_published'];
+
+            $blogPost->is_published = $want;
+            $blogPost->published_at = $want ? ($blogPost->published_at ?? now()) : null;
+            $blogPost->save();
+
+            $badgeHtml = $blogPost->is_published
+                ? '<span class="kt-badge kt-badge-sm kt-badge-success">Yayında</span>'
+                : '<span class="kt-badge kt-badge-sm kt-badge-light">Taslak</span>';
+
+            return response()->json([
+                'ok' => true,
+                'is_published' => (bool) $blogPost->is_published,
+                'published_at' => $blogPost->published_at ? $blogPost->published_at->format('d.m.Y H:i') : null,
+                'badge_html' => $badgeHtml,
+            ]);
+        });
+    }
+
+    public function toggleFeatured(Request $request, BlogPost $blogPost): JsonResponse
+    {
+        $payload = $request->validate([
+            'is_featured' => ['required', 'boolean'],
+        ]);
+
+        return DB::transaction(function () use ($blogPost, $payload) {
+            $blogPost = BlogPost::query()->lockForUpdate()->findOrFail($blogPost->id);
+
+            $want = (bool) $payload['is_featured'];
+
+            if ($want) {
+                $this->guardFeaturedLimit($blogPost->id);
+                $blogPost->is_featured = true;
+                $blogPost->featured_at = $blogPost->featured_at ?? now();
+            } else {
+                $blogPost->is_featured = false;
+                $blogPost->featured_at = null;
+            }
+
+            $blogPost->save();
+
+            $badgeHtml = $blogPost->is_featured
+                ? '<span class="kt-badge kt-badge-sm kt-badge-light-success">Anasayfada</span>'
+                : '<span class="kt-badge kt-badge-sm kt-badge-light text-muted-foreground">Kapalı</span>';
+
+            return response()->json([
+                'ok' => true,
+                'is_featured' => (bool) $blogPost->is_featured,
+                'featured_at' => $blogPost->featured_at ? $blogPost->featured_at->format('d.m.Y H:i') : null,
+                'badge_html' => $badgeHtml,
+            ]);
+        });
+    }
+
+
+    private function guardFeaturedLimit(?int $exceptId = null): void
+    {
+        $q = BlogPost::query()->where('is_featured', true)->lockForUpdate();
+        if ($exceptId) {
+            $q->where('id', '!=', $exceptId);
+        }
+
+        if ($q->count() >= 5) {
+            throw ValidationException::withMessages([
+                'is_featured' => 'Aynı anda en fazla 5 blog anasayfada gösterilebilir.',
+            ]);
+        }
     }
 
     private function uniqueSlug(string $slug, ?int $ignoreId = null): string

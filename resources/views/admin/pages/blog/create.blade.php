@@ -173,27 +173,66 @@
                         <div class="text-xs text-danger">{{ $message }}</div>
                         @enderror
 
-                        <div class="flex items-center justify-between border border-border rounded-md p-4">
-                            <div class="flex flex-col">
-                                <span class="font-medium">Yayınla</span>
-                                <span class="text-sm text-muted-foreground">Açık olursa yayında</span>
-                            </div>
+                        <div class="border border-border rounded-md p-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex flex-col">
+                                        <span class="font-medium">Durum</span>
+                                        <span class="text-sm text-muted-foreground">Yayında / Taslak</span>
+                                    </div>
 
-                            <div class="flex items-center gap-2">
-                                <input
-                                    type="checkbox"
-                                    class="kt-switch"
-                                    name="is_published"
-                                    value="1"
-                                    @checked(old('is_published'))
-                                >
-                                <label class="kt-label">
-                                    <span class="ms-2 text-sm text-muted-foreground">
-                                        Yayında
-                                    </span>
-                                </label>
+                                    <div class="flex items-center gap-2">
+                                        <label class="kt-switch kt-switch-sm">
+                                            <input
+                                                type="checkbox"
+                                                class="kt-switch js-status-toggle-ui"
+                                                id="blog_is_published"
+                                                name="is_published"
+                                                value="1"
+                                                @checked(old('is_published'))
+                                            >
+                                        </label>
+
+                                        <span id="blog_publish_badge"
+                                              class="kt-badge kt-badge-sm { old('is_published') ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }">
+                    { old('is_published') ? 'Yayında' : 'Taslak' }
+                </span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <div class="flex flex-col">
+                                        <span class="font-medium">Anasayfa</span>
+                                        <span class="text-sm text-muted-foreground">En fazla 5</span>
+                                    </div>
+
+                                    <div class="flex items-center gap-2">
+                                        <label class="kt-switch kt-switch-sm">
+                                            <input
+                                                type="checkbox"
+                                                class="kt-switch js-featured-toggle-ui"
+                                                id="blog_is_featured"
+                                                name="is_featured"
+                                                value="1"
+                                                @checked(old('is_featured'))
+                                            >
+                                        </label>
+
+                                        <span id="blog_featured_badge"
+                                              class="kt-badge kt-badge-sm { old('is_featured') ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }">
+                    { old('is_featured') ? 'Anasayfada' : 'Kapalı' }
+                </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
+                        @error('is_published')
+                        <div class="text-xs text-danger mt-2">{ $message }</div>
+                        @enderror
+                        @error('is_featured')
+                        <div class="text-xs text-danger mt-2">{ $message }</div>
+                        @enderror
 
                         <button type="submit" class="kt-btn kt-btn-primary">
                             Kaydet

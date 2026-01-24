@@ -1,3 +1,40 @@
+
+function initStatusFeaturedUI(root, signal) {
+    const pubToggle = root.querySelector('#blog_is_published');
+    const pubBadge  = root.querySelector('#blog_publish_badge');
+
+    const featToggle = root.querySelector('#blog_is_featured');
+    const featBadge  = root.querySelector('#blog_featured_badge');
+
+    const pulse = (el) => {
+        if (!el) return;
+        el.classList.add('animate-pulse');
+        window.setTimeout(() => el.classList.remove('animate-pulse'), 450);
+    };
+
+    const setBadge = (badge, isOn, onText, offText) => {
+        if (!badge) return;
+        badge.classList.remove('kt-badge-light-success', 'kt-badge-light', 'text-muted-foreground');
+        if (isOn) {
+            badge.classList.add('kt-badge-light-success');
+            badge.textContent = onText;
+        } else {
+            badge.classList.add('kt-badge-light', 'text-muted-foreground');
+            badge.textContent = offText;
+        }
+    };
+
+    const sync = () => {
+        if (pubToggle && pubBadge) setBadge(pubBadge, !!pubToggle.checked, 'Yayında', 'Taslak');
+        if (featToggle && featBadge) setBadge(featBadge, !!featToggle.checked, 'Anasayfada', 'Kapalı');
+    };
+
+    sync();
+
+    pubToggle?.addEventListener('change', () => { pulse(pubBadge); sync(); }, { signal });
+    featToggle?.addEventListener('change', () => { pulse(featBadge); sync(); }, { signal });
+}
+
 // resources/js/admin/pages/blog/edit.js
 
 import initSlugManager from '@/core/slug-manager';

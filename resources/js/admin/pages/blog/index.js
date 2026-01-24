@@ -106,6 +106,59 @@ async function togglePublish(input) {
     }
 }
 
+async function toggleFeatured(input) {
+    const url = input.dataset.url;
+    const row = input.closest('tr');
+    const badgeWrap = row?.querySelector('.js-featured-badge') ?? null;
+    const featuredAt = row?.querySelector('.js-featured-at') ?? null;
+
+    const nextVal = input.checked ? 1 : 0;
+    const rollback = !input.checked;
+
+    input.disabled = true;
+    row?.classList.add('opacity-50');
+
+    try {
+        const res = await fetch(url, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrfToken(),
+            },
+            body: JSON.stringify({ is_featured: nextVal }),
+        });
+
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+
+        const data = await res.json();
+        if (!data?.ok) throw new Error('Invalid response');
+
+        if (badgeWrap && data.badge_html) badgeWrap.innerHTML = data.badge_html;
+
+        if (featuredAt) {
+            featuredAt.textContent = (data.is_featured && data.featured_at)
+                ? ('Seçim: ' + data.featured_at)
+                : '';
+        }
+
+        notify('success', data.is_featured ? 'Anasayfada gösteriliyor' : 'Anasayfadan kaldırıldı');
+    } catch (e) {
+        input.checked = rollback;
+
+        const msg =
+            String(e.message).includes('HTTP 403') ? 'Yetkin yok (403).' :
+                String(e.message).includes('HTTP 422') ? 'Limit aşıldı (en fazla 5).' :
+                    'İşlem başarısız.';
+
+        notify('error', msg);
+    } finally {
+        input.disabled = false;
+        row?.classList.remove('opacity-50');
+    }
+}
+
+
 function postJson(url, body, signal) {
     return fetch(url, {
         method: 'POST',
@@ -266,6 +319,14 @@ export default function init(ctx) {
         togglePublish(cb);
     }, { signal });
 
+    // Featured toggle
+    root.addEventListener('change', (e) => {
+        const cb = e.target;
+        if (!(cb instanceof HTMLInputElement)) return;
+        if (!cb.classList.contains('js-featured-toggle')) return;
+        toggleFeatured(cb);
+    }, { signal });
+
     // DataTable init
     const api = window.initDataTable?.({
         root,
@@ -284,7 +345,7 @@ export default function init(ctx) {
 
         columnDefs: [
             { orderable: false, searchable: false, targets: [0] },
-            { className: 'text-right', targets: [6, 7] },
+            { className: 'text-right', targets: [7, 8] },
         ],
 
         // ✅ yeni

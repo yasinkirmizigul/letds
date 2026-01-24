@@ -80,7 +80,7 @@
                         data-gm="picker-search"
                     />
 
-                    <select class="kt-select w-full md:w-56" data-gm="picker-slot" data-kt-select="true">
+                    <select class="kt-select w-full md:w-56" data-gm="picker-slot" data-kt-select="true" data-kt-select-placeholder="Galeri Konum">
                         @foreach($slots as $k => $label)
                             <option value="{{ $k }}">{{ $k }}</option>
                         @endforeach

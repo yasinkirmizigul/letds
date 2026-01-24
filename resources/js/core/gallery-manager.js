@@ -54,9 +54,14 @@ function attachedRowHtml(r) {
     const slug = escapeHtml(g.slug ?? '');
 
     return `
-    <div class="kt-card kt-card-border p-3 flex items-center gap-3" data-gallery-id="${Number(r.gallery_id)}" data-slot="${slot}">
-      <div class="cursor-move js-gal-handle kt-text-muted">
-        <i class="ki-outline ki-drag"></i>
+    <div class="kt-card kt-card-border p-3 flex flex-row items-center gap-3 js-gal-row" data-gallery-id="${Number(r.gallery_id)}" data-slot="${slot}">
+      <div class="cursor-move js-gal-handle kt-text-muted flex">
+            <i class="ki-duotone ki-dots-square-vertical text-xl">
+             <span class="path1"></span>
+             <span class="path2"></span>
+             <span class="path3"></span>
+             <span class="path4"></span>
+            </i>
       </div>
 
       <div class="flex-1 min-w-0">
@@ -65,7 +70,7 @@ function attachedRowHtml(r) {
       </div>
 
       <div class="w-36">
-        <select class="kt-select js-gal-slot" data-kt-select="true">
+        <select class="kt-select js-gal-slot" data-gm-slot-select="1" data-kt-select="true">
           <option value="main">main</option>
           <option value="sidebar">sidebar</option>
         </select>
@@ -174,17 +179,63 @@ function mountOne(mgr) {
         }
     }
 
+    function syncKtSelectUI(sel, value) {
+        // 1) native select
+        sel.value = value;
+
+        // 2) KTSelect instance varsa onu dene
+        try {
+            const KT = window.KTSelect || window.ktSelect;
+            const inst =
+                (KT?.getInstance && KT.getInstance(sel)) ||
+                (sel.ktSelectInstance ?? null);
+
+            if (inst) {
+                if (typeof inst.setValue === 'function') inst.setValue(value);
+                if (typeof inst.update === 'function') inst.update();
+                if (typeof inst.render === 'function') inst.render();
+            }
+        } catch {}
+
+        // 3) Wrapper DOM’unu manuel güncelle (en garantisi)
+        const wrapper = sel.closest('[data-kt-select-wrapper], .kt-select-wrapper');
+        if (!wrapper) return;
+
+        const display =
+            wrapper.querySelector('[data-kt-select-placeholder]') ||
+            wrapper.querySelector('[data-kt-select-display]') ||
+            wrapper.querySelector('.kt-select-display');
+
+        if (display) display.textContent = value;
+
+        // option list’te selected state’i düzelt
+        wrapper.querySelectorAll('[data-kt-select-option]').forEach((li) => {
+            const liVal = li.getAttribute('data-value');
+            const isOn = liVal === value;
+            li.setAttribute('aria-selected', isOn ? 'true' : 'false');
+            if (isOn) li.classList.add('is-selected');
+            else li.classList.remove('is-selected');
+        });
+    }
+
     function syncSlotSelects() {
-        galleriesMain.querySelectorAll('[data-gallery-id]').forEach((el) => {
-            el.dataset.slot = 'main';
-            const sel = el.querySelector('.js-gal-slot');
-            if (sel) sel.value = 'main';
-        });
-        galleriesSidebar.querySelectorAll('[data-gallery-id]').forEach((el) => {
-            el.dataset.slot = 'sidebar';
-            const sel = el.querySelector('.js-gal-slot');
-            if (sel) sel.value = 'sidebar';
-        });
+        const setSlot = (row, slot) => {
+            row.dataset.slot = slot;
+
+            // 🔥 class’a değil data attribute’a güveniyoruz
+            const sel = row.querySelector('select[data-gm-slot-select="1"]');
+            if (!sel) return;
+
+            // “change” handler tekrar row taşımasın
+            sel.__gmSilent = true;
+
+            syncKtSelectUI(sel, slot);
+
+            sel.__gmSilent = false;
+        };
+
+        galleriesMain.querySelectorAll('[data-gallery-id]').forEach((row) => setSlot(row, 'main'));
+        galleriesSidebar.querySelectorAll('[data-gallery-id]').forEach((row) => setSlot(row, 'sidebar'));
     }
 
     async function persistBothSlots() {
@@ -205,15 +256,25 @@ function mountOne(mgr) {
 
         galleriesMain.__sortable = new Sortable(galleriesMain, {
             group: { name: groupName, pull: true, put: true },
-            handle: '.js-gal-handle',
+
+            // 🔥 Artık kartın her yerinden sürüklenir
+            draggable: '[data-gallery-id]',
+
             animation: 150,
+
+            // Select, buton vs sürüklemeyi tetiklemesin
+            filter: 'select, option, button, .js-detach, .js-gal-slot, .kt-select-wrapper',
+            preventOnFilter: true,
+
             onEnd: persistBothSlots,
         });
 
         galleriesSidebar.__sortable = new Sortable(galleriesSidebar, {
             group: { name: groupName, pull: true, put: true },
-            handle: '.js-gal-handle',
+            draggable: '[data-gallery-id]',
             animation: 150,
+            filter: 'select, option, button, .js-detach, .js-gal-slot, .kt-select-wrapper',
+            preventOnFilter: true,
             onEnd: persistBothSlots,
         });
 
@@ -225,12 +286,14 @@ function mountOne(mgr) {
         });
     }
 
+
     function bindSlotSelectHandlers(scopeEl) {
-        scopeEl.querySelectorAll('select.js-gal-slot').forEach((sel) => {
-            // DOM flag yerine handler ref sakla
+        scopeEl.querySelectorAll('select[data-gm-slot-select="1"]').forEach((sel) => {
             if (sel.__gmSlotHandler) return;
 
             const onChange = async () => {
+                if (sel.__gmSilent) return;
+
                 const row = sel.closest('[data-gallery-id]');
                 if (!row) return;
 
@@ -254,6 +317,7 @@ function mountOne(mgr) {
             });
         });
     }
+
 
     async function fetchAttached() {
         const { res, j } = await jreq(URLS.index, 'GET');
