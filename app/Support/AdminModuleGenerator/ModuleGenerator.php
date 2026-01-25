@@ -64,29 +64,7 @@ class ModuleGenerator
             $force
         );
 
-        // 3) Requests
-        $created[] = $this->writeFromStub(
-            "{$stubsRoot}/request.store.stub",
-            app_path("Http/Requests/Admin/{$context['store_request']}.php"),
-            $context,
-            $force
-        );
-        $created[] = $this->writeFromStub(
-            "{$stubsRoot}/request.update.stub",
-            app_path("Http/Requests/Admin/{$context['update_request']}.php"),
-            $context,
-            $force
-        );
-
-        // 4) Policy
-        $created[] = $this->writeFromStub(
-            "{$stubsRoot}/policy.stub",
-            app_path("Policies/{$context['policy']}.php"),
-            $context,
-            $force
-        );
-
-        // 5) Controller
+        // 3) Controller
         $created[] = $this->writeFromStub(
             "{$stubsRoot}/controller.stub",
             app_path("Http/Controllers/Admin/{$context['controller']}.php"),
@@ -94,16 +72,118 @@ class ModuleGenerator
             $force
         );
 
+        // 4) Requests
+        $created[] = $this->writeFromStub(
+            "{$stubsRoot}/request.store.stub",
+            app_path("Http/Requests/Admin/{$context['store_request']}.php"),
+            $context,
+            $force
+        );
+
+        $created[] = $this->writeFromStub(
+            "{$stubsRoot}/request.update.stub",
+            app_path("Http/Requests/Admin/{$context['update_request']}.php"),
+            $context,
+            $force
+        );
+
+        // 5) Policy
+        $created[] = $this->writeFromStub(
+            "{$stubsRoot}/policy.stub",
+            app_path("Policies/{$context['policy']}.php"),
+            $context,
+            $force
+        );
+
         // 6) Permission seeder
         $created[] = $this->writeFromStub(
-            "{$stubsRoot}/seeder.permissions.stub",
+            "{$stubsRoot}/permission.seeder.stub",
             database_path("seeders/{$context['permission_seeder']}.php"),
             $context,
             $force
         );
 
-        // 7) Routes module file
-        $routesModuleFile = rtrim($cfg['routes_modules_path'], '/')."/{$context['route_name_plural']}.php";
+        // 7) Views
+        $created[] = $this->writeFromStub(
+            "{$stubsRoot}/views/index.stub",
+            resource_path("views/admin/pages/{$context['module_kebab_plural']}/index.blade.php"),
+            $context,
+            $force
+        );
+
+        $created[] = $this->writeFromStub(
+            "{$stubsRoot}/views/create.stub",
+            resource_path("views/admin/pages/{$context['module_kebab_plural']}/create.blade.php"),
+            $context,
+            $force
+        );
+
+        $created[] = $this->writeFromStub(
+            "{$stubsRoot}/views/edit.stub",
+            resource_path("views/admin/pages/{$context['module_kebab_plural']}/edit.blade.php"),
+            $context,
+            $force
+        );
+
+        $created[] = $this->writeFromStub(
+            "{$stubsRoot}/views/trash.stub",
+            resource_path("views/admin/pages/{$context['module_kebab_plural']}/trash.blade.php"),
+            $context,
+            $force
+        );
+
+        $created[] = $this->writeFromStub(
+            "{$stubsRoot}/views/partials/form.stub",
+            resource_path("views/admin/pages/{$context['module_kebab_plural']}/partials/_form.blade.php"),
+            $context,
+            $force
+        );
+
+        $created[] = $this->writeFromStub(
+            "{$stubsRoot}/views/partials/status-featured.stub",
+            resource_path("views/admin/pages/{$context['module_kebab_plural']}/partials/_status_featured.blade.php"),
+            $context,
+            $force
+        );
+
+        $created[] = $this->writeFromStub(
+            "{$stubsRoot}/views/partials/meta.stub",
+            resource_path("views/admin/pages/{$context['module_kebab_plural']}/partials/_meta.blade.php"),
+            $context,
+            $force
+        );
+
+        // 8) JS
+        $created[] = $this->writeFromStub(
+            "{$stubsRoot}/js/index.stub",
+            resource_path("js/admin/pages/{$context['module_kebab_plural']}/index.js"),
+            $context,
+            $force
+        );
+
+        $created[] = $this->writeFromStub(
+            "{$stubsRoot}/js/create.stub",
+            resource_path("js/admin/pages/{$context['module_kebab_plural']}/create.js"),
+            $context,
+            $force
+        );
+
+        $created[] = $this->writeFromStub(
+            "{$stubsRoot}/js/edit.stub",
+            resource_path("js/admin/pages/{$context['module_kebab_plural']}/edit.js"),
+            $context,
+            $force
+        );
+
+        $created[] = $this->writeFromStub(
+            "{$stubsRoot}/js/trash.stub",
+            resource_path("js/admin/pages/{$context['module_kebab_plural']}/trash.js"),
+            $context,
+            $force
+        );
+
+        // 9) Routes module file
+        $routesModuleFile = rtrim($cfg['routes_modules_path'], '/\\').DIRECTORY_SEPARATOR."{$context['module_kebab_plural']}.php";
         $created[] = $this->writeFromStub(
             "{$stubsRoot}/routes.module.stub",
             $routesModuleFile,
@@ -111,8 +191,8 @@ class ModuleGenerator
             $force
         );
 
-        // 8) Menu module file
-        $menuModuleFile = rtrim($cfg['menu_modules_path'], '/')."/{$context['route_name_plural']}.php";
+        // 10) Menu module file
+        $menuModuleFile = rtrim($cfg['menu_modules_path'], '/\\').DIRECTORY_SEPARATOR."{$context['module_kebab_plural']}.php";
         $created[] = $this->writeFromStub(
             "{$stubsRoot}/menu.module.stub",
             $menuModuleFile,
@@ -120,61 +200,26 @@ class ModuleGenerator
             $force
         );
 
-        // 9) Views
-        $viewsBase = resource_path("views/admin/pages/{$context['module_kebab_plural']}");
-        $created[] = $this->writeFromStub("{$stubsRoot}/views/index.stub", "{$viewsBase}/index.blade.php", $context, $force);
-        $created[] = $this->writeFromStub("{$stubsRoot}/views/create.stub", "{$viewsBase}/create.blade.php", $context, $force);
-        $created[] = $this->writeFromStub("{$stubsRoot}/views/edit.stub", "{$viewsBase}/edit.blade.php", $context, $force);
-        $created[] = $this->writeFromStub("{$stubsRoot}/views/trash.stub", "{$viewsBase}/trash.blade.php", $context, $force);
-        $created[] = $this->writeFromStub("{$stubsRoot}/views/partials/_form.stub", "{$viewsBase}/partials/_form.blade.php", $context, $force);
-        $created[] = $this->writeFromStub("{$stubsRoot}/views/partials/_status_featured.stub", "{$viewsBase}/partials/_status_featured.blade.php", $context, $force);
-        $created[] = $this->writeFromStub("{$stubsRoot}/views/partials/_meta.stub", "{$viewsBase}/partials/_meta.blade.php", $context, $force);
-
-        // 10) JS
-        $jsBase = resource_path("js/admin/pages/{$context['module_kebab_plural']}");
-        $created[] = $this->writeFromStub("{$stubsRoot}/js/index.stub", "{$jsBase}/index.js", $context, $force);
-        $created[] = $this->writeFromStub("{$stubsRoot}/js/create.stub", "{$jsBase}/create.js", $context, $force);
-        $created[] = $this->writeFromStub("{$stubsRoot}/js/edit.stub", "{$jsBase}/edit.js", $context, $force);
-        $created[] = $this->writeFromStub("{$stubsRoot}/js/trash.stub", "{$jsBase}/trash.js", $context, $force);
-
-        // Summarize created / skipped
-        $created = array_values(array_filter($created));
-        $skipped = array_filter($created, fn($x) => ($x['status'] ?? '') === 'skipped');
-
         // Optional patching
         if ($patch) {
-            // Routes patch
-            $routesWeb = $cfg['patching']['routes_web_file'];
-            $routesMarker = $cfg['patching']['routes_marker'];
-            $includeLine = "require __DIR__ . '/admin/modules/{$context['route_name_plural']}.php';";
-
-            [$ok, $msg] = $this->patcher->patchAfterMarker($routesWeb, $routesMarker, $includeLine);
-            $notes[] = $msg;
-
-            // Menu patch
-            $menuFile = $cfg['patching']['menu_file'];
-            $menuMarker = $cfg['patching']['menu_marker'];
-            $menuInclude = "\$__moduleMenuFiles[] = __DIR__ . '/admin_menu/modules/{$context['route_name_plural']}.php';";
-
-            [$ok2, $msg2] = $this->patcher->patchAfterMarker($menuFile, $menuMarker, $menuInclude);
-            $notes[] = $msg2;
-
-            // If menu marker patched, ensure loader exists: we do NOT auto-inject a loader block (too risky).
-            $notes[] = "If your config/admin_menu.php does not already load \$__moduleMenuFiles, add the loader block from docs below once.";
+            $patchResult = $this->patcher->patch($context, $cfg);
+            $notes = array_merge($notes, $patchResult['notes'] ?? []);
         } else {
-            $notes[] = "Patching disabled. Routes/menu module files were generated, but no existing files were modified.";
+            $notes[] = 'Patching disabled (--no-patch). Routes/menu markers not touched.';
         }
 
-        $message = "Admin module generated: {$context['model']} (table: {$context['table']})";
+        $countCreated = count(array_filter($created, fn($c) => ($c['status'] ?? '') === 'created'));
+        $countSkipped = count(array_filter($created, fn($c) => ($c['status'] ?? '') === 'skipped'));
 
         return (object)[
             'ok' => true,
-            'message' => $message,
+            'message' => "Admin module generated: {$context['module_label_plural']} (created: {$countCreated}, skipped: {$countSkipped})",
             'notes' => $notes,
+            'created' => $created,
         ];
     }
 
-    protected function buildContext(ModuleNamer $n, array $cfg): array
+    function buildContext(ModuleNamer $n, array $cfg): array
     {
         $model = $n->model();
         $table = $n->table();
@@ -185,6 +230,11 @@ class ModuleGenerator
         $permissionKey = $n->permissionKey();       // portfolios
         $permPrefix = $cfg['permission']['name_prefix'] ?? 'admin';
 
+        $ajaxSave = (bool)($cfg['defaults']['ajax_save'] ?? false);
+        $statusOptions = $cfg['defaults']['statuses'] ?? [
+            'draft' => ['label' => 'Taslak', 'badge' => 'kt-badge kt-badge-sm kt-badge-light'],
+            'published' => ['label' => 'Yayınlandı', 'badge' => 'kt-badge kt-badge-sm kt-badge-success'],
+        ];
         return [
             // Names
             'model' => $model,
@@ -210,10 +260,14 @@ class ModuleGenerator
             'permission_guard' => $cfg['permission']['guard_name'] ?? 'web',
             'permission_driver' => $cfg['permission']['driver'] ?? 'spatie',
             'permission_prefix' => $permPrefix,
-            'permission_key' => $permissionKey, // admin.portfolios.view
+            'permission_key' => $permissionKey,
 
             // Defaults
             'featured_limit' => (int)($cfg['defaults']['featured_limit'] ?? 6),
+            'statuses' => $cfg['defaults']['statuses'] ?? [],
+            'ajax_save' => (bool)($cfg['defaults']['ajax_save'] ?? false),
+            'ajax_save_attr' => ((bool)($cfg['defaults']['ajax_save'] ?? false)) ? 'data-ajax-save' : '',
+            'status_options_php' => var_export($statusOptions, true),
         ];
     }
 
@@ -252,7 +306,9 @@ class ModuleGenerator
     protected function ensureDir(string $path): void
     {
         if (!is_dir($path)) {
-            @mkdir($path, 0775, true);
+            if (!mkdir($path, 0775, true) && !is_dir($path)) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $path));
+            }
         }
     }
 }

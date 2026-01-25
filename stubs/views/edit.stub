@@ -1,41 +1,44 @@
 @extends('admin.layouts.app')
 
-@section('title', '{{ module_label_singular }} Düzenle')
+@section('title', '{{ module_label_singular }} / Düzenle')
 
 @section('content')
-<div class="kt-container-fixed">
-    <form id="{{ route_name_plural }}Form"
+<div class="kt-container-fixed"
+     data-page="{{ module_kebab_plural }}.edit"
+     data-item-id="{{ $item->id }}"
+     data-slug-check-url="{{ route('{{ admin_prefix }}.{{ route_name_plural }}.checkSlug') }}"
+     data-featured-limit-url="{{ route('{{ admin_prefix }}.{{ route_name_plural }}.checkFeaturedLimit') }}">
+
+    <form method="POST"
+          action="{{ route('{{ admin_prefix }}.{{ route_name_plural }}.update', $item->id) }}"
           data-module-form
-          data-update-url="{{ route('{{ admin_prefix }}.{{ route_name_plural }}.update', ${{ model_var }}) }}">
+          {{ ajax_save_attr }}>
         @csrf
         @method('PUT')
 
-        <div class="grid lg:grid-cols-12 gap-5">
+        <div class="grid gap-5 lg:grid-cols-12">
 
             <div class="lg:col-span-8">
-                <div class="kt-card">
-                    <div class="kt-card-header py-4">
-                        <h3 class="kt-card-title">{{ module_label_singular }} Bilgileri</h3>
-                    </div>
-                    <div class="kt-card-body p-5">
-                        @include('admin.pages.{{ module_kebab_plural }}.partials._form', ['mode' => 'edit', '{{ model_var }}' => ${{ model_var }}])
-                    </div>
-                </div>
+                @include('admin.pages.{{ module_kebab_plural }}.partials._form')
             </div>
 
             <div class="lg:col-span-4 grid gap-5">
-                @include('admin.pages.{{ module_kebab_plural }}.partials._status_featured', ['mode' => 'edit', '{{ model_var }}' => ${{ model_var }}])
-                @include('admin.pages.{{ module_kebab_plural }}.partials._meta', ['mode' => 'edit', '{{ model_var }}' => ${{ model_var }}])
+                @include('admin.pages.{{ module_kebab_plural }}.partials._status_featured')
+                @include('admin.pages.{{ module_kebab_plural }}.partials._meta')
             </div>
 
         </div>
 
-        <div class="mt-5 flex justify-end gap-2">
-            <a href="{{ route('{{ admin_prefix }}.{{ route_name_plural }}.index') }}" class="kt-btn kt-btn-light">Geri</a>
+        <div class="mt-5 flex items-center gap-2">
             <button type="submit" class="kt-btn kt-btn-primary">
-                <i class="ki-outline ki-check"></i> Kaydet
+                Güncelle
             </button>
+            <a href="{{ route('{{ admin_prefix }}.{{ route_name_plural }}.index') }}"
+               class="kt-btn kt-btn-light">
+                Vazgeç
+            </a>
         </div>
     </form>
+
 </div>
 @endsection

@@ -3,7 +3,7 @@
 @section('title', '{{ module_label_plural }} / Çöp')
 
 @section('content')
-<div class="kt-container-fixed">
+<div class="kt-container-fixed" data-page="{{ module_kebab_plural }}.trash">
 
     <div class="kt-card">
         <div class="kt-card-header py-4">
@@ -44,18 +44,18 @@
                    data-bulk-restore-url="{{ route('{{ admin_prefix }}.{{ route_name_plural }}.bulkRestore') }}"
                    data-bulk-force-url="{{ route('{{ admin_prefix }}.{{ route_name_plural }}.bulkForce') }}">
                 <thead>
-                <tr>
-                    <th style="width: 5%">
-                        <label class="kt-form-check kt-form-check-sm">
-                            <input class="kt-checkbox" type="checkbox" data-check-all>
-                        </label>
-                    </th>
-                    <th style="width: 8%">#</th>
-                    <th>Başlık</th>
-                    <th style="width: 18%">Silinme</th>
-                    <th style="width: 16%">Kısıt</th>
-                    <th style="width: 18%">İşlem</th>
-                </tr>
+                    <tr>
+                        <th style="width: 5%">
+                            <label class="kt-form-check kt-form-check-sm">
+                                <input class="kt-checkbox" type="checkbox" data-check-all>
+                            </label>
+                        </th>
+                        <th style="width: 8%">#</th>
+                        <th>Başlık</th>
+                        <th style="width: 18%">Silinme</th>
+                        <th style="width: 16%">Kısıt</th>
+                        <th style="width: 18%">İşlem</th>
+                    </tr>
                 </thead>
             </table>
 
@@ -64,5 +64,6 @@
             </div>
         </div>
     </div>
+
 </div>
 @endsection

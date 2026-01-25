@@ -2,59 +2,100 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class {{ model }} extends Model
 {
     use SoftDeletes;
 
+    protected $table = '{{ table }}';
+
     protected $fillable = [
-    'title',
-    'slug',
-    'status',
-    'is_featured',
-    'meta_title',
-    'meta_description',
-    'sort_order',
-];
+        'title',
+        'slug',
+        'status',
+        'is_featured',
+        'meta_title',
+        'meta_description',
+        'content',
+    ];
 
     protected $casts = [
-    'is_featured' => 'boolean',
-];
+        'is_featured' => 'boolean',
+        'deleted_at' => 'datetime',
+    ];
 
-    // Scopes
-    public function scopePublished(Builder $q): Builder
-{
-    return $q->where('status', 'published');
-}
+    /*
+    |--------------------------------------------------------------------------
+    | Scopes
+    |--------------------------------------------------------------------------
+    */
+    public function scopePublished($q)
+    {
+        return $q->where('status', 'published');
+    }
 
-    public function scopeDraft(Builder $q): Builder
-{
-    return $q->where('status', 'draft');
-}
+    public function scopeDraft($q)
+    {
+        return $q->where('status', 'draft');
+    }
 
-    public function scopeFeatured(Builder $q): Builder
-{
-    return $q->where('is_featured', true);
-}
+    public function scopeFeatured($q)
+    {
+        return $q->where('is_featured', true);
+    }
 
-    // Example relationship placeholders (safe, no dependency)
-    // public function user() { return $this->belongsTo(User::class); }
-    /**
-     * Force delete öncesi bağlı kayıt kontrol listesi.
-     *
-     * Örnek:
-     * return [
-     *   ['relation' => 'galleryItems', 'label' => 'Galeri öğeleri'],
-     *   ['relation' => 'comments', 'label' => 'Yorumlar'],
-     * ];
-     *
-     * İlişki methodları Model içinde tanımlı olmalı (hasMany/belongsToMany vs).
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | Model Events
+    |--------------------------------------------------------------------------
+    | - slug boşsa title’dan üret
+    | - slug güncellemede elle boşaltılırsa yine üret
+    */
+    protected static function booted()
+    {
+        static::saving(function (self $m) {
+            $m->slug = trim((string) $m->slug);
+
+            if ($m->slug === '') {
+                $m->slug = Str::slug((string) $m->title);
+            }
+        });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Force Delete Blockers (Kurumsal)
+    |--------------------------------------------------------------------------
+    | Trash ekranında "kalıcı silme" butonunu engellemek için.
+    |
+    | Controller şu şekilde kullanıyor:
+    | - relation() count > 0 ise can_force_delete = false
+    | - label gösteriliyor
+    |
+    | Varsayılan boş: force delete serbest.
+    |
+    | Örnek kullanım (override):
+    | return [
+    |   ['relation' => 'galleryItems', 'label' => 'Galeri'],
+    |   ['relation' => 'comments', 'label' => 'Yorumlar'],
+    | ];
+    */
     public function forceDeleteBlockers(): array
-{
-    return [];
-}
+    {
+        return [];
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Example Relationships (Placeholder)
+    |--------------------------------------------------------------------------
+    | Burayı modülüne göre düzenlersin.
+    */
+    // public function galleryItems()
+    // {
+    //     return $this->hasMany(GalleryItem::class, 'model_id');
+    // }
 }

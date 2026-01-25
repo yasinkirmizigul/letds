@@ -1,39 +1,61 @@
 @php
-$item = ${{ model_var }} ?? null;
-$status = old('status', $item?->status ?? 'draft');
-$featured = (bool) old('is_featured', (bool)($item?->is_featured ?? false));
+    // Generator buraya gerçek php array string basıyor:
+    $statusOptions = {{ status_options_php }};
+    $currentKey = old('status', $item->status ?? 'draft');
+    $current = $statusOptions[$currentKey] ?? null;
 @endphp
 
-<div class="kt-card">
+<div class="kt-card" data-status-map='@json($statusOptions)'>
     <div class="kt-card-header py-4">
-        <h3 class="kt-card-title">Durum & Öne Çıkan</h3>
+        <h3 class="kt-card-title">Durum &amp; Öne Çıkan</h3>
     </div>
-    <div class="kt-card-body grid gap-4 p-5">
 
+    <div class="kt-card-body grid gap-5 p-5">
+
+        {{-- Status --}}
         <div class="grid gap-2">
             <label class="kt-label" for="status">Durum</label>
-            <select class="kt-select w-full"
-                    name="status"
-                    id="status"
-                    data-status-select>
-                <option value="draft" {{ $status === 'draft' ? 'selected' : '' }}>Taslak</option>
-                <option value="published" {{ $status === 'published' ? 'selected' : '' }}>Yayında</option>
-            </select>
+
+            <div class="flex items-center gap-3">
+                <select id="status"
+                        name="status"
+                        class="kt-select w-full"
+                        data-status-select>
+                    @foreach($statusOptions as $key => $st)
+                        <option value="{{ $key }}"
+                            {{ $currentKey === $key ? 'selected' : '' }}>
+                            {{ $st['label'] ?? $key }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <span class="{{ $current['badge'] ?? 'kt-badge kt-badge-sm kt-badge-light' }} whitespace-nowrap"
+                      data-status-badge>
+                    {{ $current['label'] ?? $currentKey }}
+                </span>
+            </div>
         </div>
 
-        <label class="kt-form-check kt-form-check-sm flex items-center gap-2">
-            <input type="checkbox"
-                   class="kt-checkbox"
-                   name="is_featured"
-                   value="1"
-                   {{ $featured ? 'checked' : '' }}
-            data-featured-toggle>
-            <span class="kt-form-check-label">Öne Çıkan</span>
-        </label>
+        {{-- Featured --}}
+        <div class="flex items-center justify-between">
+            <div class="grid gap-1">
+                <div class="font-medium">Öne Çıkan</div>
+                <div class="text-xs opacity-70">Limit doluysa otomatik engellenir.</div>
+            </div>
 
-        <div class="flex items-center gap-2">
-            <span class="kt-badge kt-badge-sm kt-badge-light" data-featured-badge>featured: {{ $featured ? 'yes' : 'no' }}</span>
-            <span class="kt-badge kt-badge-sm kt-badge-light" data-status-badge>status: {{ $status }}</span>
+            <div class="flex items-center gap-3">
+                <input type="checkbox"
+                       name="is_featured"
+                       value="1"
+                       class="kt-switch"
+                       data-featured-toggle
+                       {{ old('is_featured', $item->is_featured ?? false) ? 'checked' : '' }}>
+
+                <span class="kt-badge kt-badge-sm kt-badge-light whitespace-nowrap"
+                      data-featured-badge>
+                    {{ old('is_featured', $item->is_featured ?? false) ? 'Öne Çıkan' : 'Normal' }}
+                </span>
+            </div>
         </div>
 
     </div>

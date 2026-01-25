@@ -42,11 +42,26 @@ return [
     |--------------------------------------------------------------------------
     */
     'defaults' => [
-        'status_values' => ['draft', 'published'],
-        'featured_limit' => 6, // you can enforce in controller
-        'soft_deletes' => true,
-    ],
 
+        // Formlar varsayılan olarak AJAX save kullansın mı
+        'ajax_save' => false,
+
+        // Aynı anda kaç featured olabilir (0 = sınırsız)
+        'featured_limit' => 1,
+
+        // 🔥 YENİ: Status seçenekleri
+        'statuses' => [
+            'draft' => [
+                'label' => 'Taslak',
+                'badge' => 'kt-badge kt-badge-sm kt-badge-light',
+            ],
+            'published' => [
+                'label' => 'Yayınlandı',
+                'badge' => 'kt-badge kt-badge-sm kt-badge-success',
+            ],
+        ],
+
+    ],
     /*
     |--------------------------------------------------------------------------
     | Marker-based patching (optional, safe)

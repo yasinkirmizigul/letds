@@ -1,69 +1,263 @@
-export default function init() {
-    const form = document.querySelector('[data-module-form]');
-    if (!form) return;
+function qs(sel, root = document) {
+    return root.querySelector(sel);
+}
 
-    const titleEl = form.querySelector('[data-title-input]');
-    const slugEl = form.querySelector('[data-slug-input]');
-    const statusEl = form.querySelector('[data-status-select]');
-    const featuredEl = form.querySelector('[data-featured-toggle]');
-    const statusBadge = form.querySelector('[data-status-badge]');
-    const featuredBadge = form.querySelector('[data-featured-badge]');
-
-    const slugify = (s) => (s || '')
-        .toString()
+function slugifyTR(str) {
+    if (!str) return '';
+    return String(str)
         .trim()
         .toLowerCase()
-        .replace(/[ğ]/g,'g').replace(/[ü]/g,'u').replace(/[ş]/g,'s')
-        .replace(/[ı]/g,'i').replace(/[ö]/g,'o').replace(/[ç]/g,'c')
-        .replace(/[^a-z0-9]+/g,'-')
-        .replace(/^-+|-+$/g,'');
+        .replace(/ğ/g, 'g')
+        .replace(/ü/g, 'u')
+        .replace(/ş/g, 's')
+        .replace(/ı/g, 'i')
+        .replace(/ö/g, 'o')
+        .replace(/ç/g, 'c')
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+}
+
+function getCsrf() {
+    return (
+        window.csrfToken ||
+        document.querySelector('meta[name="csrf-token"]')?.content ||
+        ''
+    );
+}
+
+async function fetchJson(url, opts = {}) {
+    const res = await fetch(url, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+            ...(opts.headers || {})
+        },
+        ...opts,
+    });
+    const json = await res.json().catch(() => null);
+
+    if (!res.ok) {
+        const msg = json?.message || 'İşlem başarısız';
+        const err = new Error(msg);
+        err.payload = json;
+        throw err;
+    }
+
+    return json;
+}
+
+async function checkSlugUnique(url, slug) {
+    if (!url || !slug) return { ok: true };
+    const full = url + '?slug=' + encodeURIComponent(slug);
+    return fetchJson(full);
+}
+
+async function checkFeaturedLimit(url) {
+    if (!url) return { ok: true };
+    return fetchJson(url);
+}
+
+function setInvalid(el, isInvalid, message = '') {
+    if (!el) return;
+    el.classList.toggle('is-invalid', !!isInvalid);
+
+    const msgEl = el.closest('.form-group, .kt-form-control, .kt-field')?.querySelector('[data-field-error]');
+    if (msgEl) msgEl.textContent = isInvalid ? (message || 'Geçersiz') : '';
+}
+
+function updateFeaturedPreview(isFeatured) {
+    const el = qs('[data-featured-badge]');
+    if (!el) return;
+
+    el.textContent = isFeatured ? 'Öne Çıkan' : 'Normal';
+    el.classList.toggle('kt-badge-primary', !!isFeatured);
+    el.classList.toggle('kt-badge-light', !isFeatured);
+}
+
+function clampText(s, n) {
+    s = String(s || '');
+    return s.length > n ? s.slice(0, n) : s;
+}
+
+export default function init() {
+    const pageRoot = qs('[data-page]');
+    const form = qs('[data-module-form]');
+    if (!pageRoot || !form) return;
+
+    const titleEl = qs('[data-title-input]') || qs('input[name="title"]', form);
+    const slugEl = qs('[data-slug-input]') || qs('input[name="slug"]', form);
+    const statusEl = qs('[data-status-select]') || qs('select[name="status"]', form);
+    const featuredEl = qs('[data-featured-toggle]') || qs('input[name="is_featured"]', form);
+
+    const slugCheckUrl = pageRoot.getAttribute('data-slug-check-url') || '';
+    const featuredLimitUrl = pageRoot.getAttribute('data-featured-limit-url') || '';
+
+    // ---------------- Status map from Blade (data-status-map='@json(...)')
+    const statusCard = qs('[data-status-map]');
+    let statusMap = null;
+    try {
+        const raw = statusCard?.getAttribute('data-status-map');
+        statusMap = raw ? JSON.parse(raw) : null;
+    } catch (e) {
+        statusMap = null;
+    }
+
+    function applyStatusPreview(val) {
+        const badge = qs('[data-status-badge]');
+        if (!badge) return;
+
+        const key = val || 'draft';
+        const st = statusMap?.[key];
+
+        if (st?.badge) badge.className = st.badge + ' whitespace-nowrap';
+        else badge.className = 'kt-badge kt-badge-sm kt-badge-light whitespace-nowrap';
+
+        badge.textContent = st?.label || key;
+    }
+
+    // ---------------- Title -> Slug (slug’a dokunulursa sync durur)
+    let slugTouched = false;
+    if (slugEl) {
+        slugEl.addEventListener('input', () => { slugTouched = true; });
+    }
 
     if (titleEl && slugEl) {
-        titleEl.addEventListener('input', () => {
-            if (slugEl.dataset.touched === '1') return;
-            slugEl.value = slugify(titleEl.value);
-        });
+        const syncSlug = () => {
+            if (slugTouched) return;
+            slugEl.value = slugifyTR(titleEl.value);
+        };
+        titleEl.addEventListener('input', syncSlug);
+        titleEl.addEventListener('blur', syncSlug);
+    }
 
-        slugEl.addEventListener('input', () => {
-            slugEl.dataset.touched = '1';
+    // ---------------- Status preview
+    if (statusEl) {
+        applyStatusPreview(statusEl.value);
+        statusEl.addEventListener('change', () => applyStatusPreview(statusEl.value));
+    }
+
+    // ---------------- Featured preview + limit check
+    if (featuredEl) {
+        const getVal = () => {
+            if (featuredEl.type === 'checkbox') return featuredEl.checked;
+            return String(featuredEl.value) === '1' || String(featuredEl.value) === 'true';
+        };
+
+        updateFeaturedPreview(getVal());
+
+        featuredEl.addEventListener('change', async () => {
+            const val = getVal();
+            updateFeaturedPreview(val);
+
+            if (!val) return;
+            if (!featuredLimitUrl) return;
+
+            try {
+                const res = await checkFeaturedLimit(featuredLimitUrl);
+                if (res?.ok === false) {
+                    alert(res.message || 'Öne çıkan limiti dolu');
+                    if (featuredEl.type === 'checkbox') featuredEl.checked = false;
+                    else featuredEl.value = '0';
+                    updateFeaturedPreview(false);
+                }
+            } catch (e) {
+                alert(e?.message || 'Featured kontrolü başarısız');
+                if (featuredEl.type === 'checkbox') featuredEl.checked = false;
+                else featuredEl.value = '0';
+                updateFeaturedPreview(false);
+            }
         });
     }
 
-    const updateBadges = () => {
-        if (statusBadge && statusEl) statusBadge.textContent = `status: ${statusEl.value}`;
-        if (featuredBadge && featuredEl) featuredBadge.textContent = `featured: ${featuredEl.checked ? 'yes' : 'no'}`;
-    };
+    // ---------------- Slug live check (debounce)
+    if (slugEl && slugCheckUrl) {
+        let timer;
+        slugEl.addEventListener('input', () => {
+            clearTimeout(timer);
 
-    if (statusEl) statusEl.addEventListener('change', updateBadges);
-    if (featuredEl) featuredEl.addEventListener('change', updateBadges);
-    updateBadges();
+            const val = slugEl.value;
+            if (!val) {
+                setInvalid(slugEl, false);
+                return;
+            }
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const url = form.getAttribute('data-store-url');
-        if (!url) return;
-
-        const fd = new FormData(form);
-
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': window.csrfToken || document.querySelector('meta[name="csrf-token"]')?.content || '',
-            },
-            body: fd
+            timer = setTimeout(async () => {
+                try {
+                    const res = await checkSlugUnique(slugCheckUrl, val);
+                    if (res?.ok === false) setInvalid(slugEl, true, res.message || 'Bu slug kullanılıyor');
+                    else setInvalid(slugEl, false);
+                } catch (e) {
+                    setInvalid(slugEl, false);
+                }
+            }, 500);
         });
+    }
 
-        const json = await res.json().catch(() => null);
+    // ---------------- META counters + SEO preview
+    const metaTitleEl = qs('[data-meta-title-input]');
+    const metaDescEl  = qs('[data-meta-desc-input]');
+    const metaTitleCount = qs('[data-meta-title-count]');
+    const metaDescCount  = qs('[data-meta-desc-count]');
+    const seoTitle = qs('[data-seo-title-preview]');
+    const seoDesc  = qs('[data-seo-desc-preview]');
+    const seoSlug  = qs('[data-seo-slug-preview]');
 
-        if (!res.ok || !json?.ok) {
-            alert(json?.message || 'Save failed');
-            return;
-        }
+    function refreshSeoPreview() {
+        const titleVal = metaTitleEl?.value || (titleEl?.value || '');
+        const descVal  = metaDescEl?.value || '';
 
-        if (json.redirect) location.href = json.redirect;
-        else alert(json.message || 'Saved');
-    });
+        if (metaTitleCount) metaTitleCount.textContent = String((metaTitleEl?.value || '').length);
+        if (metaDescCount)  metaDescCount.textContent  = String((metaDescEl?.value || '').length);
+
+        if (seoTitle) seoTitle.textContent = clampText(titleVal || 'Başlık', 60);
+        if (seoDesc)  seoDesc.textContent  = clampText(descVal || 'Açıklama...', 160);
+
+        const slugVal = (slugEl?.value || '');
+        if (seoSlug) seoSlug.textContent = slugVal;
+    }
+
+    if (metaTitleEl) metaTitleEl.addEventListener('input', refreshSeoPreview);
+    if (metaDescEl)  metaDescEl.addEventListener('input', refreshSeoPreview);
+    if (slugEl)      slugEl.addEventListener('input', refreshSeoPreview);
+    if (titleEl)     titleEl.addEventListener('input', refreshSeoPreview);
+
+    refreshSeoPreview();
+
+    // ---------------- AJAX save (opsiyonel)
+    if (form.hasAttribute('data-ajax-save')) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) submitBtn.disabled = true;
+
+            try {
+                const res = await fetch(form.action, {
+                    method: (form.getAttribute('method') || 'POST').toUpperCase(),
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': getCsrf(),
+                    },
+                    body: new FormData(form),
+                });
+
+                const json = await res.json().catch(() => null);
+
+                if (!res.ok || !json?.ok) {
+                    alert(json?.message || 'Kaydetme başarısız');
+                    return;
+                }
+
+                if (json.redirect) window.location.href = json.redirect;
+                else window.location.reload();
+            } catch (err) {
+                alert(err?.message || 'Kaydetme başarısız');
+            } finally {
+                if (submitBtn) submitBtn.disabled = false;
+            }
+        });
+    }
 }

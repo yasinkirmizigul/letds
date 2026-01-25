@@ -1,0 +1,57 @@
+@php
+    $metaTitle = old('meta_title', $item->meta_title ?? '');
+    $metaDesc  = old('meta_description', $item->meta_description ?? '');
+@endphp
+
+<div class="kt-card">
+    <div class="kt-card-header py-4">
+        <h3 class="kt-card-title">Meta / SEO</h3>
+    </div>
+
+    <div class="kt-card-body grid gap-5 p-5">
+
+        <div class="grid gap-2">
+            <div class="flex items-center justify-between">
+                <label class="kt-label" for="meta_title">Meta Title</label>
+                <span class="text-xs opacity-70"><span data-meta-title-count>0</span>/60</span>
+            </div>
+
+            <input id="meta_title"
+                   type="text"
+                   name="meta_title"
+                   class="kt-input"
+                   value="{{ $metaTitle }}"
+                   data-meta-title-input>
+        </div>
+
+        <div class="grid gap-2">
+            <div class="flex items-center justify-between">
+                <label class="kt-label" for="meta_description">Meta Description</label>
+                <span class="text-xs opacity-70"><span data-meta-desc-count>0</span>/160</span>
+            </div>
+
+            <textarea id="meta_description"
+                      name="meta_description"
+                      class="kt-textarea"
+                      rows="4"
+                      data-meta-desc-input>{{ $metaDesc }}</textarea>
+        </div>
+
+        {{-- SEO Preview (Google benzeri) --}}
+        <div class="rounded-xl border p-4 grid gap-1">
+            <div class="text-xs opacity-70">
+                <span data-seo-url-preview>{{ config('app.url') }}</span> /
+                <span data-seo-slug-preview>{{ old('slug', $item->slug ?? '') }}</span>
+            </div>
+
+            <div class="text-base font-semibold leading-snug" data-seo-title-preview>
+                {{ $metaTitle ?: (old('title', $item->title ?? '') ?: 'Başlık') }}
+            </div>
+
+            <div class="text-sm opacity-80" data-seo-desc-preview>
+                {{ $metaDesc ?: 'Açıklama...' }}
+            </div>
+        </div>
+
+    </div>
+</div>

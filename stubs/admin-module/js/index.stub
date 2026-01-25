@@ -1,89 +1,144 @@
+function qs(sel, root = document) {
+    return root.querySelector(sel);
+}
+
+async function postJson(url, method = 'POST', payload = {}) {
+    const csrf =
+        window.csrfToken ||
+        document.querySelector('meta[name="csrf-token"]')?.content ||
+        '';
+
+    const res = await fetch(url, {
+        method,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrf,
+        },
+        body: JSON.stringify(payload || {}),
+    });
+
+    const json = await res.json().catch(() => null);
+
+    if (!res.ok || !json?.ok) {
+        const msg = json?.message || 'İşlem başarısız';
+        const err = new Error(msg);
+        err.payload = json;
+        throw err;
+    }
+
+    return json;
+}
+
 export default function init() {
-    const tableEl = document.querySelector('[data-module-table]');
+    const root = qs('[data-page]');
+    if (!root) return;
+
+    const tableEl = qs('[data-module-table]');
     if (!tableEl) return;
 
     const ajaxUrl = tableEl.getAttribute('data-ajax');
+    if (!ajaxUrl) return;
 
-    // If you already have a global helper: window.initDataTable(...)
-    if (typeof window.initDataTable === 'function') {
-        window.initDataTable(tableEl, {
-            serverSide: true,
-            processing: true,
-            ajax: ajaxUrl,
-            columns: [
-                { data: 'id', title: '#', width: '8%' },
-                { data: 'title', title: 'Başlık' },
-                {
-                    data: 'status',
-                    title: 'Durum',
-                    width: '12%',
-                    render: (d) => `<span class="kt-badge kt-badge-sm kt-badge-light">${d}</span>`
-                },
-                {
-                    data: 'is_featured',
-                    title: 'Öne Çıkan',
-                    width: '12%',
-                    render: (d) => {
-                        const v = d ? 'yes' : 'no';
-                        return `<span class="kt-badge kt-badge-sm kt-badge-light">featured: ${v}</span>`;
-                    }
-                },
-                { data: 'updated_at', title: 'Güncelleme', width: '18%' },
-                {
-                    data: null,
-                    title: 'İşlem',
-                    width: '10%',
-                    orderable: false,
-                    render: (d, t, row) => {
-                        return `
-                          <div class="flex items-center gap-2">
-                            <a class="kt-btn kt-btn-sm kt-btn-light" href="${row.edit_url}">
-                              <i class="ki-outline ki-pencil"></i>
-                            </a>
-                            <button class="kt-btn kt-btn-sm kt-btn-light" type="button"
-                                    data-delete
-                                    data-url="${row.delete_url}">
-                              <i class="ki-outline ki-trash"></i>
-                            </button>
-                          </div>
-                        `;
-                    }
-                }
-            ],
-        });
-
-        document.addEventListener('click', async (e) => {
-            const btn = e.target.closest('[data-delete]');
-            if (!btn) return;
-
-            const url = btn.getAttribute('data-url');
-            if (!url) return;
-
-            if (!confirm('Silinsin mi? (Trash)')) return;
-
-            const res = await fetch(url, {
-                method: 'DELETE',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': window.csrfToken || document.querySelector('meta[name="csrf-token"]')?.content || '',
-                    'Accept': 'application/json',
-                }
-            });
-
-            const json = await res.json().catch(() => null);
-            if (!res.ok || !json?.ok) {
-                alert(json?.message || 'Delete failed');
-                return;
-            }
-
-            // reload if your helper exposes dt instance globally, otherwise refresh page
-            if (typeof window.reloadDataTable === 'function') window.reloadDataTable(tableEl);
-            else location.reload();
-        });
-
+    if (typeof window.initDataTable !== 'function') {
+        console.warn('initDataTable helper not found. {{ module_label_plural }} table not initialized.');
         return;
     }
 
-    // Fallback: if helper is missing, avoid crashing the page.
-    console.warn('initDataTable helper not found. Table not initialized.');
+    // ✅ Server-side DT
+    window.initDataTable(tableEl, {
+        serverSide: true,
+        processing: true,
+        ajax: ajaxUrl,
+
+        columns: [
+            { data: 'id', title: '#', width: '8%' },
+
+            // Başlık
+            {
+                data: 'title',
+                title: 'Başlık',
+                render: (d) => d || ''
+            },
+
+            // Durum (backend status_badge dönerse HTML render edilir)
+            {
+                data: 'status_badge',
+                title: 'Durum',
+                width: '12%',
+                orderable: false,
+                render: (d, t, row) => {
+                    if (d) return d;
+                    // fallback
+                    const s = row.status || 'draft';
+                    const cls = s === 'published'
+                        ? 'kt-badge kt-badge-sm kt-badge-success'
+                        : 'kt-badge kt-badge-sm kt-badge-light';
+                    return `<span class="${cls}">${s}</span>`;
+                }
+            },
+
+            // Güncelleme
+            {
+                data: 'updated_at',
+                title: 'Güncelleme',
+                width: '18%',
+                render: (d) => d || ''
+            },
+
+            // İşlem (backend actions dönerse HTML render edilir)
+            {
+                data: 'actions',
+                title: 'İşlem',
+                width: '18%',
+                orderable: false,
+                searchable: false,
+                render: (d, t, row) => {
+                    if (d) return d;
+
+                    // fallback (minimum kurumsal butonlar)
+                    const editUrl = row.edit_url;
+                    const trashUrl = row.trash_url; // soft delete endpoint
+                    return `
+                      <div class="flex items-center gap-2">
+                        ${editUrl ? `
+                          <a class="kt-btn kt-btn-sm kt-btn-light" href="${editUrl}">
+                            <i class="ki-outline ki-pencil"></i>
+                            Düzenle
+                          </a>` : ''
+                        }
+                        ${trashUrl ? `
+                          <button class="kt-btn kt-btn-sm kt-btn-light"
+                                  type="button"
+                                  data-soft-delete
+                                  data-url="${trashUrl}">
+                            <i class="ki-outline ki-trash"></i>
+                            Sil
+                          </button>` : ''
+                        }
+                      </div>
+                    `;
+                }
+            }
+        ],
+    });
+
+    document.addEventListener('click', async (e) => {
+        const delBtn = e.target.closest('[data-soft-delete]');
+        if (!delBtn) return;
+
+        const url = delBtn.getAttribute('data-url');
+        if (!url) return;
+
+        if (!confirm('Kayıt silinsin mi? (Çöp kutusuna taşınacak)')) return;
+
+        try {
+            // Laravel resource destroy genelde DELETE bekler
+            await postJson(url, 'DELETE', {});
+            location.reload();
+        } catch (err) {
+            alert(err?.message || 'Silme başarısız');
+        }
+    });
 }
