@@ -1,0 +1,277 @@
+<?php
+
+namespace {{ controller_namespace }};
+
+use App\Http\Controllers\Controller;
+use {{ request_namespace }}\{{ store_request }};
+use {{ request_namespace }}\{{ update_request }};
+use {{ model_namespace }}\{{ model }};
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
+class {{ controller }} extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('can:{{ permission_prefix }}.{{ permission_key }}.view')->only(['index', 'trash']);
+        $this->middleware('can:{{ permission_prefix }}.{{ permission_key }}.create')->only(['create', 'store']);
+        $this->middleware('can:{{ permission_prefix }}.{{ permission_key }}.update')->only(['edit', 'update']);
+        $this->middleware('can:{{ permission_prefix }}.{{ permission_key }}.delete')->only(['destroy']);
+        $this->middleware('can:{{ permission_prefix }}.{{ permission_key }}.restore')->only(['restore', 'bulkRestore']);
+        $this->middleware('can:{{ permission_prefix }}.{{ permission_key }}.force')->only(['forceDelete', 'bulkForceDelete']);
+    }
+
+    public function index(Request $request)
+    {
+        if ($request->ajax()) {
+            $q = {{ model }}::query();
+
+            $search = $request->input('search.value');
+            if (is_string($search) && $search !== '') {
+                $q->where(function ($qq) use ($search) {
+                    $qq->where('title', 'like', "%{$search}%")
+                       ->orWhere('slug', 'like', "%{$search}%");
+                });
+            }
+
+            $recordsTotal = {{ model }}::query()->count();
+            $recordsFiltered = $q->count();
+
+            $orderCol = (int) $request->input('order.0.column', 0);
+            $orderDir = $request->input('order.0.dir', 'desc') === 'asc' ? 'asc' : 'desc';
+
+            $columns = [
+                0 => 'id',
+                1 => 'title',
+                2 => 'status',
+                3 => 'is_featured',
+                4 => 'updated_at',
+            ];
+
+            $orderBy = $columns[$orderCol] ?? 'id';
+            $q->orderBy($orderBy, $orderDir);
+
+            $start = (int) $request->input('start', 0);
+            $length = (int) $request->input('length', 10);
+
+            $rows = $q->skip($start)->take($length)->get();
+
+            return response()->json([
+                'draw' => (int) $request->input('draw', 1),
+                'recordsTotal' => $recordsTotal,
+                'recordsFiltered' => $recordsFiltered,
+                'data' => $rows->map(fn ($r) => [
+                    'id' => $r->id,
+                    'title' => $r->title,
+                    'slug' => $r->slug,
+                    'status' => $r->status,
+                    'is_featured' => (bool) $r->is_featured,
+                    'updated_at' => optional($r->updated_at)->toDateTimeString(),
+                    'edit_url' => route('{{ admin_prefix }}.{{ route_name_plural }}.edit', $r),
+                    'delete_url' => route('{{ admin_prefix }}.{{ route_name_plural }}.destroy', $r),
+                ])->values(),
+            ]);
+        }
+
+        return view('admin.pages.{{ module_kebab_plural }}.index');
+    }
+
+    public function create()
+    {
+        return view('admin.pages.{{ module_kebab_plural }}.create', [
+            '{{ model_var }}' => new {{ model }}(),
+        ]);
+    }
+
+    public function store({{ store_request }} $request)
+    {
+        $data = $request->validated();
+
+        if (empty($data['slug'] ?? null)) {
+            $data['slug'] = Str::slug($data['title'] ?? '');
+        }
+
+        $this->enforceFeaturedLimit(null, $data);
+
+        $item = {{ model }}::create($data);
+
+        return response()->json([
+            'ok' => true,
+            'message' => '{{ module_label_singular }} created.',
+            'id' => $item->id,
+            'redirect' => route('{{ admin_prefix }}.{{ route_name_plural }}.edit', $item),
+        ]);
+    }
+
+    public function edit({{ model }} ${{ model_var }})
+    {
+        return view('admin.pages.{{ module_kebab_plural }}.edit', compact('{{ model_var }}'));
+    }
+
+    public function update({{ update_request }} $request, {{ model }} ${{ model_var }})
+    {
+        $data = $request->validated();
+
+        $this->enforceFeaturedLimit(${{ model_var }}, $data);
+
+        ${{ model_var }}->update($data);
+
+        return response()->json([
+            'ok' => true,
+            'message' => '{{ module_label_singular }} updated.',
+        ]);
+    }
+
+    public function destroy({{ model }} ${{ model_var }})
+    {
+        ${{ model_var }}->delete();
+
+        return response()->json([
+            'ok' => true,
+            'message' => '{{ module_label_singular }} moved to trash.',
+        ]);
+    }
+
+    public function trash(Request $request)
+    {
+        if ($request->ajax()) {
+            $rows = {{ model }}::onlyTrashed()->orderByDesc('deleted_at')->get();
+
+            return response()->json([
+                'ok' => true,
+                'data' => $rows->map(function ($r) {
+                    [$canForce, $reason] = $this->forceDeleteEligibility($r);
+
+                    return [
+                        'id' => $r->id,
+                        'title' => $r->title,
+                        'deleted_at' => optional($r->deleted_at)->toDateTimeString(),
+                        'restore_url' => route('{{ admin_prefix }}.{{ route_name_plural }}.restore', $r->id),
+                        'force_url' => route('{{ admin_prefix }}.{{ route_name_plural }}.force', $r->id),
+                        'can_force_delete' => $canForce,
+                        'force_block_reason' => $reason,
+                    ];
+                })->values(),
+            ]);
+        }
+
+        return view('admin.pages.{{ module_kebab_plural }}.trash');
+    }
+
+    public function restore(int $id)
+    {
+        $m = {{ model }}::onlyTrashed()->findOrFail($id);
+        $m->restore();
+
+        return response()->json(['ok' => true, 'message' => 'Restored.']);
+    }
+
+    public function forceDelete(int $id)
+    {
+        $m = {{ model }}::onlyTrashed()->findOrFail($id);
+
+        [$canForce, $reason] = $this->forceDeleteEligibility($m);
+        if (!$canForce) {
+            return response()->json(['ok' => false, 'message' => $reason ?: 'Force delete blocked.'], 422);
+        }
+
+        $m->forceDelete();
+
+        return response()->json(['ok' => true, 'message' => 'Permanently deleted.']);
+    }
+
+    public function bulkRestore(Request $request)
+    {
+        $ids = array_values(array_filter((array) $request->input('ids', []), fn($x) => is_numeric($x)));
+        if (!$ids) return response()->json(['ok' => false, 'message' => 'No ids provided.'], 422);
+
+        {{ model }}::onlyTrashed()->whereIn('id', $ids)->restore();
+
+        return response()->json(['ok' => true, 'message' => 'Bulk restored.']);
+    }
+
+    public function bulkForceDelete(Request $request)
+    {
+        $ids = array_values(array_filter((array) $request->input('ids', []), fn($x) => is_numeric($x)));
+        if (!$ids) return response()->json(['ok' => false, 'message' => 'No ids provided.'], 422);
+
+        $items = {{ model }}::onlyTrashed()->whereIn('id', $ids)->get();
+
+        $blocked = [];
+        foreach ($items as $m) {
+            [$canForce, $reason] = $this->forceDeleteEligibility($m);
+            if (!$canForce) {
+                $blocked[] = ['id' => $m->id, 'reason' => $reason ?: 'Blocked'];
+            }
+        }
+
+        if (!empty($blocked)) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Some items are blocked from force delete.',
+                'blocked' => $blocked,
+            ], 422);
+        }
+
+        foreach ($items as $m) {
+            $m->forceDelete();
+        }
+
+        return response()->json(['ok' => true, 'message' => 'Bulk permanently deleted.']);
+    }
+
+    private function enforceFeaturedLimit(?{{ model }} $current, array $data): void
+    {
+        if (empty($data['is_featured'])) return;
+
+        // limit 0 => unlimited
+        if ((int) {{ featured_limit }} === 0) return;
+
+        $isTurningOn = $current ? (!$current->is_featured) : true;
+        if (!$isTurningOn) return;
+
+        $featuredCount = {{ model }}::query()->where('is_featured', true)->count();
+        if ($featuredCount >= (int) {{ featured_limit }}) {
+            abort(response()->json([
+                'ok' => false,
+                'message' => 'Featured limit reached ({{ featured_limit }}).',
+            ], 422));
+        }
+    }
+
+    /**
+     * Kurumsal force delete eligibility:
+     * - Model::forceDeleteBlockers() => [['relation'=>'x','label'=>'Y'],...]
+     * - relation count > 0 ise blokla.
+     */
+    private function forceDeleteEligibility({{ model }} $m): array
+    {
+        if (!method_exists($m, 'forceDeleteBlockers')) {
+            return [true, null];
+        }
+
+        $blockers = (array) $m->forceDeleteBlockers();
+        foreach ($blockers as $b) {
+            $relation = $b['relation'] ?? null;
+            $label = $b['label'] ?? (string) $relation;
+
+            if (!$relation || !method_exists($m, $relation)) continue;
+
+            try {
+                $rel = $m->{$relation}();
+                if ($rel instanceof Relation) {
+                    $cnt = $rel->count();
+                    if ($cnt > 0) {
+                        return [false, "{$label} bağlı ({$cnt})"];
+                    }
+                }
+            } catch (\Throwable $e) {
+                // ilişki hatası => force delete'ı bloklamak daha güvenli
+                return [false, "{$label} kontrol edilemedi"];
+            }
+        }
+
+        return [true, null];
+    }
+}

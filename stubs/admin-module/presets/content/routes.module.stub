@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\{{ controller }};
+use {{ controller_namespace }}\{{ controller }};
 
 Route::prefix('{{ admin_prefix }}')
     ->name('{{ admin_prefix }}.')
@@ -9,25 +9,23 @@ Route::prefix('{{ admin_prefix }}')
 
         // Module: {{ module_label_plural }}
         Route::get('{{ module_kebab_plural }}', [{{ controller }}::class, 'index'])->name('{{ route_name_plural }}.index');
-
-        // DataTable list (server-side)
-        Route::get('{{ module_kebab_plural }}/list', [{{ controller }}::class, 'index'])->name('{{ route_name_plural }}.list');
-
         Route::get('{{ module_kebab_plural }}/create', [{{ controller }}::class, 'create'])->name('{{ route_name_plural }}.create');
         Route::post('{{ module_kebab_plural }}', [{{ controller }}::class, 'store'])->name('{{ route_name_plural }}.store');
 
-        Route::get('{{ module_kebab_plural }}/{id}/edit', [{{ controller }}::class, 'edit'])->whereNumber('id')->name('{{ route_name_plural }}.edit');
-        Route::put('{{ module_kebab_plural }}/{id}', [{{ controller }}::class, 'update'])->whereNumber('id')->name('{{ route_name_plural }}.update');
-        Route::delete('{{ module_kebab_plural }}/{id}', [{{ controller }}::class, 'destroy'])->whereNumber('id')->name('{{ route_name_plural }}.destroy');
+        Route::get('{{ module_kebab_plural }}/{{ route_param_braced }}/edit', [{{ controller }}::class, 'edit'])
+            ->name('{{ route_name_plural }}.edit');
 
-        // Slug + featured checks
-        Route::get('{{ module_kebab_plural }}/check-slug', [{{ controller }}::class, 'checkSlug'])->name('{{ route_name_plural }}.checkSlug');
-        Route::get('{{ module_kebab_plural }}/check-featured-limit', [{{ controller }}::class, 'checkFeaturedLimit'])->name('{{ route_name_plural }}.checkFeaturedLimit');
+        Route::put('{{ module_kebab_plural }}/{{ route_param_braced }}', [{{ controller }}::class, 'update'])
+            ->name('{{ route_name_plural }}.update');
+
+        Route::delete('{{ module_kebab_plural }}/{{ route_param_braced }}', [{{ controller }}::class, 'destroy'])
+            ->name('{{ route_name_plural }}.destroy');
 
         // Trash ops
         Route::get('{{ module_kebab_plural }}/trash', [{{ controller }}::class, 'trash'])->name('{{ route_name_plural }}.trash');
         Route::post('{{ module_kebab_plural }}/{id}/restore', [{{ controller }}::class, 'restore'])->whereNumber('id')->name('{{ route_name_plural }}.restore');
         Route::delete('{{ module_kebab_plural }}/{id}/force', [{{ controller }}::class, 'forceDelete'])->whereNumber('id')->name('{{ route_name_plural }}.force');
+
         Route::post('{{ module_kebab_plural }}/bulk/restore', [{{ controller }}::class, 'bulkRestore'])->name('{{ route_name_plural }}.bulkRestore');
         Route::delete('{{ module_kebab_plural }}/bulk/force', [{{ controller }}::class, 'bulkForceDelete'])->name('{{ route_name_plural }}.bulkForce');
     });

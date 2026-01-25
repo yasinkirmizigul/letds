@@ -1,0 +1,34 @@
+<?php
+
+use Illuminate\Support\Str;
+
+return [
+    [
+        'key' => '{{ route_name_plural }}',
+        'label' => '{{ module_label_plural }}',
+        'icon' => 'ki-outline ki-abstract-26', // istersen preset bazlı değiştirilebilir
+        'route' => 'admin.{{ route_name_plural }}.index',
+        'permission' => '{{ permission_prefix }}.{{ permission_key }}.view',
+
+        'children' => [
+            [
+                'key' => '{{ route_name_plural }}.all',
+                'label' => 'Tümü',
+                'route' => 'admin.{{ route_name_plural }}.index',
+                'permission' => '{{ permission_prefix }}.{{ permission_key }}.view',
+            ],
+            [
+                'key' => '{{ route_name_plural }}.create',
+                'label' => 'Yeni Ekle',
+                'route' => 'admin.{{ route_name_plural }}.create',
+                'permission' => '{{ permission_prefix }}.{{ permission_key }}.create',
+            ],
+            [
+                'key' => '{{ route_name_plural }}.trash',
+                'label' => 'Çöp Kutusu',
+                'route' => 'admin.{{ route_name_plural }}.trash',
+                'permission' => '{{ permission_prefix }}.{{ permission_key }}.delete',
+            ],
+        ],
+    ],
+];

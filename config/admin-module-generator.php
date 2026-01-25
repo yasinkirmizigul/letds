@@ -13,13 +13,35 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Presets (Kurumsal)
+    |--------------------------------------------------------------------------
+    | - content: basit içerik modülü (title/slug/meta/status/featured/content)
+    | - product: ileride e-ticaret ürün şablonu (sku/price/stock/...)
+    |
+    | Varsayılan preset: content
+    */
+    'default_preset' => env('ADMIN_MODULE_DEFAULT_PRESET', 'content'),
+
+    'presets' => [
+        'content' => [
+            'label' => 'Content Module',
+            'stubs_path' => base_path('stubs/admin-module/presets/content'),
+        ],
+        'product' => [
+            'label' => 'Product Module (E-commerce)',
+            'stubs_path' => base_path('stubs/admin-module/presets/product'),
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Namespaces
     |--------------------------------------------------------------------------
     */
     'controller_namespace' => 'App\\Http\\Controllers\\Admin',
     'request_namespace'    => 'App\\Http\\Requests\\Admin',
-    'policy_namespace'     => 'App\\Policies',
-    'model_namespace'      => 'App\\Models',
+    'policy_namespace'     => 'App\\Policies\\Admin',
+    'model_namespace'      => 'App\\Models\\Admin',
 
     /*
     |--------------------------------------------------------------------------
@@ -33,7 +55,7 @@ return [
     'permission' => [
         'driver' => env('ADMIN_MODULE_PERMISSION_DRIVER', 'spatie'),
         'guard_name' => env('ADMIN_MODULE_PERMISSION_GUARD', 'web'),
-        'name_prefix' => 'admin', // e.g. admin.portfolios.view
+        'name_prefix' => 'admin', // e.g. admin.products.view
     ],
 
     /*
@@ -49,7 +71,7 @@ return [
         // Aynı anda kaç featured olabilir (0 = sınırsız)
         'featured_limit' => 1,
 
-        // 🔥 YENİ: Status seçenekleri
+        // Status seçenekleri (badge + label)
         'statuses' => [
             'draft' => [
                 'label' => 'Taslak',
@@ -60,8 +82,8 @@ return [
                 'badge' => 'kt-badge kt-badge-sm kt-badge-success',
             ],
         ],
-
     ],
+
     /*
     |--------------------------------------------------------------------------
     | Marker-based patching (optional, safe)

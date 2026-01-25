@@ -1,0 +1,38 @@
+<?php
+
+namespace {{ request_namespace }};
+
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+class {{ store_request }} extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'title' => ['required', 'string', 'max:255'],
+            'slug'  => ['required', 'string', 'max:255', 'unique:{{ table }},slug'],
+            'status' => ['required', Rule::in(['draft', 'published'])],
+            'is_featured' => ['sometimes', 'boolean'],
+
+            'meta_title' => ['nullable', 'string', 'max:255'],
+            'meta_description' => ['nullable', 'string', 'max:255'],
+
+            'sort_order' => ['nullable', 'integer', 'min:0'],
+            'content' => ['nullable', 'string'],
+        ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'is_featured' => (bool) $this->input('is_featured', false),
+            'sort_order'  => (int) $this->input('sort_order', 0),
+        ]);
+    }
+}

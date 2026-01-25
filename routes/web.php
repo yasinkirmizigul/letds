@@ -549,6 +549,7 @@ Route::middleware(['auth', 'audit'])
     });
 
 // [ADMIN_MODULE_ROUTES]
+require __DIR__ . '/admin/modules/test_products.php';
 
 // Public Projects
 Route::get('/projects/{slug}', [ProjectPublicController::class, 'show'])

@@ -30,6 +30,10 @@ import trashIndex from './trash/index';
 import galleriesIndex from './galleries/index';
 import galleriesCreate from './galleries/create';
 import galleriesEdit from './galleries/edit';
+import TestProductCreate from './test-products/create';
+import TestProductEdit from './test-products/edit';
+import TestProductIndex from './test-products/index';
+import TestProductTrash from './test-products/trash';
 
 export function registerPages() {
     register('blog.create', BlogCreate);
@@ -67,4 +71,8 @@ export function registerPages() {
     register('galleries.index', galleriesIndex);
     register('galleries.create', galleriesCreate);
     register('galleries.edit', galleriesEdit);
+    register('test-products.create', TestProductCreate);
+    register('test-products.edit', TestProductEdit);
+    register('test-products.index', TestProductIndex);
+    register('test-products.trash', TestProductTrash);
 }
