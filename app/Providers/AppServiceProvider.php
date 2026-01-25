@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Console\Commands\MakeAdminModule;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
@@ -47,5 +48,11 @@ class AppServiceProvider extends ServiceProvider
             $u = auth()->user();
             return $u && $u->canAccessAdmin();
         });
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                MakeAdminModule::class,
+            ]);
+        }
     }
 }

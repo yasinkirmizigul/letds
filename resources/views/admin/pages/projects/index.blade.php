@@ -225,7 +225,7 @@
                     </div>
                 </template>
 
-                <div class="px-6 py-4 flex items-center justify-between gap-3">
+                <div class="px-6 py-4 flex items-center justify-between gap-3 border-t border-border">
                     <div id="projectsInfo" class="text-xs text-muted-foreground"></div>
                     <div id="projectsPagination" class="flex items-center justify-end gap-2"></div>
                 </div>

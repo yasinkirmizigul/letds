@@ -1,0 +1,28 @@
+@php
+$item = ${{ model_var }} ?? null;
+@endphp
+
+<div class="grid gap-4">
+
+    <div class="grid gap-2">
+        <label class="kt-label" for="title">Başlık</label>
+        <input type="text"
+               class="kt-input"
+               name="title"
+               id="title"
+               value="{{ old('title', $item?->title) }}"
+               data-title-input>
+    </div>
+
+    <div class="grid gap-2">
+        <label class="kt-label" for="slug">Slug</label>
+        <input type="text"
+               class="kt-input"
+               name="slug"
+               id="slug"
+               value="{{ old('slug', $item?->slug) }}"
+               data-slug-input>
+        <div class="text-xs opacity-70">Otomatik üretim için başlıkla senkron çalışır.</div>
+    </div>
+
+</div>

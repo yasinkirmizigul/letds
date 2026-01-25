@@ -1,0 +1,47 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+
+class {{ permission_seeder }} extends Seeder
+{
+    public function run(): void
+{
+    $driver = '{{ permission_driver }}';
+    $guard = '{{ permission_guard }}';
+
+    $perms = [
+        '{{ permission_prefix }}.{{ permission_key }}.view',
+        '{{ permission_prefix }}.{{ permission_key }}.create',
+        '{{ permission_prefix }}.{{ permission_key }}.update',
+        '{{ permission_prefix }}.{{ permission_key }}.delete',
+        '{{ permission_prefix }}.{{ permission_key }}.restore',
+        '{{ permission_prefix }}.{{ permission_key }}.force',
+    ];
+
+    $permissionClass = null;
+
+    if ($driver === 'spatie' && class_exists(\Spatie\Permission\Models\Permission::class)) {
+        $permissionClass = \Spatie\Permission\Models\Permission::class;
+    } elseif ($driver === 'custom' && class_exists(\App\Models\Permission::class)) {
+        $permissionClass = \App\Models\Permission::class;
+    } elseif (class_exists(\Spatie\Permission\Models\Permission::class)) {
+        $permissionClass = \Spatie\Permission\Models\Permission::class;
+    } elseif (class_exists(\App\Models\Permission::class)) {
+        $permissionClass = \App\Models\Permission::class;
+    }
+
+    if (!$permissionClass) {
+        // No-op: permission model not found.
+        return;
+    }
+
+    foreach ($perms as $name) {
+        $permissionClass::query()->firstOrCreate(
+            ['name' => $name, 'guard_name' => $guard],
+            ['name' => $name, 'guard_name' => $guard]
+        );
+    }
+}
+}

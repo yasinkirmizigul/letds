@@ -137,4 +137,26 @@ return [
         'active'=> ['admin.trash'],
         'style' => 'margin-inline-start: -5px;',
     ],
+    // [ADMIN_MODULE_MENU]
 ];
+$__moduleMenuFiles = $__moduleMenuFiles ?? [];
+
+$modulesDir = __DIR__ . '/admin_menu/modules';
+if (is_dir($modulesDir)) {
+    foreach (glob($modulesDir.'/*.php') as $f) {
+        $__moduleMenuFiles[] = $f;
+    }
+}
+
+$moduleItems = [];
+foreach (array_unique($__moduleMenuFiles) as $f) {
+    $items = require $f;
+    if (is_array($items)) {
+        $moduleItems = array_merge($moduleItems, $items);
+    }
+}
+
+// Son olarak kendi $menu array’ine ekle:
+$menu = array_merge($menu ?? [], $moduleItems);
+
+return $menu;

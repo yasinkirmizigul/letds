@@ -1,0 +1,23 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\{{ controller }};
+
+Route::prefix('{{ admin_prefix }}')
+    ->name('{{ admin_prefix }}.')
+    ->group(function () {
+
+        // Module: {{ module_label_plural }}
+        Route::get('{{ module_kebab_plural }}', [{{ controller }}::class, 'index'])->name('{{ route_name_plural }}.index');
+        Route::get('{{ module_kebab_plural }}/create', [{{ controller }}::class, 'create'])->name('{{ route_name_plural }}.create');
+        Route::post('{{ module_kebab_plural }}', [{{ controller }}::class, 'store'])->name('{{ route_name_plural }}.store');
+        Route::get('{{ module_kebab_plural }}/{{ route_name_plural }}/edit', [{{ controller }}::class, 'edit'])->name('{{ route_name_plural }}.edit');
+        Route::put('{{ module_kebab_plural }}/{{ route_name_plural }}', [{{ controller }}::class, 'update'])->name('{{ route_name_plural }}.update');
+        Route::delete('{{ module_kebab_plural }}/{{ route_name_plural }}', [{{ controller }}::class, 'destroy'])->name('{{ route_name_plural }}.destroy');
+        // Trash ops
+        Route::get('{{ module_kebab_plural }}/trash', [{{ controller }}::class, 'trash'])->name('{{ route_name_plural }}.trash');
+        Route::post('{{ module_kebab_plural }}/{id}/restore', [{{ controller }}::class, 'restore'])->whereNumber('id')->name('{{ route_name_plural }}.restore');
+        Route::delete('{{ module_kebab_plural }}/{id}/force', [{{ controller }}::class, 'forceDelete'])->whereNumber('id')->name('{{ route_name_plural }}.force');
+        Route::post('{{ module_kebab_plural }}/bulk/restore', [{{ controller }}::class, 'bulkRestore'])->name('{{ route_name_plural }}.bulkRestore');
+        Route::delete('{{ module_kebab_plural }}/bulk/force', [{{ controller }}::class, 'bulkForceDelete'])->name('{{ route_name_plural }}.bulkForce');
+    });

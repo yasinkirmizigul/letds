@@ -1,0 +1,275 @@
+export default function init() {
+    const tableEl = document.querySelector('[data-module-trash-table]');
+    if (!tableEl) return;
+
+    const ajaxUrl = tableEl.getAttribute('data-ajax');
+    const bulkRestoreUrl = tableEl.getAttribute('data-bulk-restore-url');
+    const bulkForceUrl = tableEl.getAttribute('data-bulk-force-url');
+
+    const checkAllEl = tableEl.querySelector('[data-check-all]');
+    const selectedCountEl = document.querySelector('[data-selected-count]');
+    const bulkRestoreBtn = document.querySelector('[data-bulk-restore]');
+    const bulkForceBtn = document.querySelector('[data-bulk-force]');
+
+    const csrf =
+        window.csrfToken ||
+        document.querySelector('meta[name="csrf-token"]')?.content ||
+        '';
+
+    const getSelectedIds = () => {
+        const checks = tableEl.querySelectorAll('tbody input[type="checkbox"][data-row-check]:checked');
+        return Array.from(checks).map((c) => c.value).filter(Boolean);
+    };
+
+    const getForceEligibleSelectedIds = () => {
+        const checks = tableEl.querySelectorAll('tbody input[type="checkbox"][data-row-check]:checked');
+        const ids = [];
+        const blocked = [];
+
+        checks.forEach((c) => {
+            const tr = c.closest('tr');
+            const forceBtn = tr?.querySelector('[data-force]');
+            const canForce = forceBtn && !forceBtn.disabled && forceBtn.getAttribute('data-can-force') !== 'false';
+
+            if (canForce) ids.push(c.value);
+            else blocked.push(c.value);
+        });
+
+        return { ids, blocked };
+    };
+
+    const updateBulkUI = () => {
+        const ids = getSelectedIds();
+        const c = ids.length;
+
+        if (selectedCountEl) selectedCountEl.textContent = `Seçili: ${c}`;
+        if (bulkRestoreBtn) bulkRestoreBtn.disabled = c === 0;
+        if (bulkForceBtn) bulkForceBtn.disabled = c === 0;
+
+        // check-all state
+        if (checkAllEl) {
+            const allChecks = tableEl.querySelectorAll('tbody input[type="checkbox"][data-row-check]');
+            const total = allChecks.length;
+            const checked = tableEl.querySelectorAll('tbody input[type="checkbox"][data-row-check]:checked').length;
+
+            checkAllEl.indeterminate = checked > 0 && checked < total;
+            checkAllEl.checked = total > 0 && checked === total;
+        }
+    };
+
+    const fetchTrash = async () => {
+        const res = await fetch(ajaxUrl, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+            },
+        });
+
+        const json = await res.json().catch(() => null);
+        if (!res.ok || !json?.ok) throw new Error(json?.message || 'Trash list failed');
+        return json.data || [];
+    };
+
+    const postJson = async (url, method, payload) => {
+        const res = await fetch(url, {
+            method,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrf,
+            },
+            body: JSON.stringify(payload || {}),
+        });
+
+        const json = await res.json().catch(() => null);
+        if (!res.ok || !json?.ok) throw new Error(json?.message || 'Request failed');
+        return json;
+    };
+
+    const initTable = async () => {
+        let data = [];
+        try {
+            data = await fetchTrash();
+        } catch (e) {
+            alert(e?.message || 'Trash list failed');
+            return;
+        }
+
+        if (typeof window.initDataTable === 'function') {
+            window.initDataTable(tableEl, {
+                serverSide: false,
+                processing: false,
+                data,
+                columns: [
+                    {
+                        data: null,
+                        title: '',
+                        width: '5%',
+                        orderable: false,
+                        render: (d, t, row) => {
+                            return `
+        <label class="kt-form-check kt-form-check-sm">
+          <input class="kt-checkbox"
+                 type="checkbox"
+                 data-row-check
+                 value="${row.id}">
+        </label>
+      `;
+                        }
+                    },
+                    { data: 'id', title: '#', width: '8%' },
+                    { data: 'title', title: 'Başlık' },
+                    { data: 'deleted_at', title: 'Silinme', width: '18%' },
+
+                    // ✅ NEW: Restriction column
+                    {
+                        data: null,
+                        title: 'Kısıt',
+                        width: '16%',
+                        orderable: false,
+                        render: (d, t, row) => {
+                            if (row.can_force_delete === false) {
+                                const msg = row.force_block_reason || 'Bağlı kayıt var';
+                                // light badge kurumsal; istersen warning sınıfı kullanırız
+                                return `<span class="kt-badge kt-badge-sm kt-badge-light" title="${msg}">${msg}</span>`;
+                            }
+                            return `<span class="kt-badge kt-badge-sm kt-badge-light">OK</span>`;
+                        }
+                    },
+
+                    // Actions
+                    {
+                        data: null,
+                        title: 'İşlem',
+                        width: '18%',
+                        orderable: false,
+                        render: (d, t, row) => {
+                            const forceDisabled = row.can_force_delete === false;
+                            const forceTitle = forceDisabled ? (row.force_block_reason || 'Bağlı kayıt var') : 'Kalıcı sil';
+                            return `
+                                <div class="flex items-center gap-2">
+                                  <button class="kt-btn kt-btn-sm kt-btn-light"
+                                          type="button"
+                                          data-restore
+                                          data-url="${row.restore_url}">
+                                    <i class="ki-outline ki-arrow-rotate-left"></i>
+                                    Restore
+                                  </button>
+
+                                  <button class="kt-btn kt-btn-sm kt-btn-light ${forceDisabled ? 'opacity-50 cursor-not-allowed' : ''}"
+                                          type="button"
+                                          ${forceDisabled ? 'disabled' : ''}
+                                          title="${forceTitle}"
+                                          data-force
+                                          data-can-force="${!forceDisabled}"
+                                          data-url="${row.force_url}">
+                                    <i class="ki-outline ki-trash"></i>
+                                    Force Delete
+                                  </button>
+                                </div>
+                              `;
+                        }
+                    }
+                ],
+
+            });
+
+            // table draw sonrası checkbox state
+            setTimeout(updateBulkUI, 0);
+
+            return;
+        }
+
+        console.warn('initDataTable helper not found. Trash table not initialized.');
+    };
+
+    // Check-all
+    if (checkAllEl) {
+        checkAllEl.addEventListener('change', () => {
+            const checks = tableEl.querySelectorAll('tbody input[type="checkbox"][data-row-check]');
+            checks.forEach((c) => { c.checked = checkAllEl.checked; });
+            updateBulkUI();
+        });
+    }
+
+    // Row checkbox change
+    tableEl.addEventListener('change', (e) => {
+        const rowCheck = e.target.closest('input[type="checkbox"][data-row-check]');
+        if (!rowCheck) return;
+        updateBulkUI();
+    });
+
+    // Single / Bulk actions
+    document.addEventListener('click', async (e) => {
+        const restoreBtn = e.target.closest('[data-restore]');
+        const forceBtn = e.target.closest('[data-force]');
+        const bulkRestore = e.target.closest('[data-bulk-restore]');
+        const bulkForce = e.target.closest('[data-bulk-force]');
+
+        try {
+            // bulk restore
+            if (bulkRestore) {
+                const ids = getSelectedIds();
+                if (!ids.length) return;
+                await postJson(bulkRestoreUrl, 'POST', { ids });
+                location.reload();
+                return;
+            }
+
+            // bulk force delete
+            if (bulkForce) {
+                const { ids, blocked } = getForceEligibleSelectedIds();
+                if (!ids.length) {
+                    alert('Seçili kayıtların hiçbiri kalıcı silinemez (bağlı kayıt var).');
+                    return;
+                }
+
+                if (blocked.length) {
+                    alert(`Bazı kayıtlar bağlı kayıt nedeniyle atlandı: ${blocked.slice(0,10).join(', ')}${blocked.length>10?' ...':''}`);
+                }
+
+                if (!confirm('Kalıcı silinsin mi?')) return;
+
+                const json = await postJson(bulkForceUrl, 'DELETE', { ids });
+
+                if (json?.failed && Object.keys(json.failed).length) {
+                    const lines = Object.entries(json.failed)
+                        .slice(0, 10)
+                        .map(([id, msg]) => `#${id}: ${msg}`);
+                    alert(`Bazı kayıtlar silinemedi:\n\n${lines.join('\n')}${Object.keys(json.failed).length > 10 ? '\n...' : ''}`);
+                }
+
+                location.reload();
+                return;
+            }
+
+
+            // single restore
+            if (restoreBtn) {
+                const url = restoreBtn.getAttribute('data-url');
+                if (!url) return;
+                await postJson(url, 'POST', {});
+                location.reload();
+                return;
+            }
+
+            // single force
+            if (forceBtn) {
+                if (forceBtn.getAttribute('data-can-force') === 'false' || forceBtn.disabled) return;
+                const url = forceBtn.getAttribute('data-url');
+                if (!url) return;
+                if (!confirm('Kalıcı olarak silinsin mi?')) return;
+
+                await postJson(url, 'DELETE', {});
+                location.reload();
+                return;
+            }
+        } catch (err) {
+            alert(err?.message || 'İşlem başarısız');
+        }
+    });
+
+    initTable();
+    updateBulkUI();
+}

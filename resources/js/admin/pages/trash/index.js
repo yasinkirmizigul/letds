@@ -8,8 +8,8 @@ async function jsonReq(url, method = 'GET', body = null, signal = null) {
         headers: {
             Accept: 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
-            ...(csrfToken() ? { 'X-CSRF-TOKEN': csrfToken() } : {}),
-            ...(body ? { 'Content-Type': 'application/json' } : {}),
+            ...(csrfToken() ? {'X-CSRF-TOKEN': csrfToken()} : {}),
+            ...(body ? {'Content-Type': 'application/json'} : {}),
         },
         body: body ? JSON.stringify(body) : undefined,
         credentials: 'same-origin',
@@ -17,7 +17,7 @@ async function jsonReq(url, method = 'GET', body = null, signal = null) {
     });
 
     const j = await res.json().catch(() => ({}));
-    return { res, j };
+    return {res, j};
 }
 
 function esc(s) {
@@ -39,6 +39,124 @@ function markBound(root, key) {
     if (s.has(key)) return true;
     s.add(key);
     return false;
+}
+
+/**
+ * ✅ KTUI modal (dependency-free) — sayfayı bozmadan kullan.
+ */
+let __trashModalEl = null;
+
+function ensureTrashModal() {
+    if (__trashModalEl) return __trashModalEl;
+
+    const el = document.createElement('div');
+    el.id = 'trashNoticeModal';
+    el.className = 'fixed inset-0 z-[9999] hidden';
+    el.innerHTML = `
+<div class="absolute inset-0 bg-black/50"></div>
+<div class="absolute inset-0 flex items-center justify-center p-4">
+  <div class="kt-card w-full max-w-2xl shadow-lg rounded-2xl overflow-hidden">
+    <div class="kt-card-header py-4 px-5 flex items-center justify-between">
+      <div class="flex items-center gap-3 min-w-0">
+        <span class="size-2.5 rounded-full bg-primary/80 shrink-0" data-tone-dot></span>
+        <h3 class="kt-card-title text-base font-semibold truncate" data-title>Bilgi</h3>
+      </div>
+      <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-close>
+        <i class="ki-outline ki-cross"></i>
+      </button>
+    </div>
+    <div class="kt-card-body px-5 py-4 text-sm text-foreground" data-body></div>
+    <div class="kt-card-footer px-5 py-4 flex items-center justify-end gap-2">
+      <button type="button" class="kt-btn kt-btn-light" data-close>Kapat</button>
+    </div>
+  </div>
+</div>
+`;
+    document.body.appendChild(el);
+
+    const close = () => {
+        el.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+    };
+
+    el.addEventListener('click', (e) => {
+        const t = e.target;
+        if (t?.closest?.('[data-close]')) close();
+        if (t === el.firstElementChild) close(); // backdrop
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !el.classList.contains('hidden')) close();
+    });
+
+    __trashModalEl = el;
+    return el;
+}
+
+function showTrashModal({title = 'Bilgi', html = '', tone = 'info'} = {}) {
+    const el = ensureTrashModal();
+
+    const titleEl = el.querySelector('[data-title]');
+    const bodyEl = el.querySelector('[data-body]');
+    const dotEl = el.querySelector('[data-tone-dot]');
+
+    if (titleEl) titleEl.textContent = title;
+    if (bodyEl) bodyEl.innerHTML = html;
+
+    if (dotEl) {
+        dotEl.classList.remove('bg-primary/80', 'bg-green-500/80', 'bg-red-500/80', 'bg-yellow-500/80');
+        if (tone === 'success') dotEl.classList.add('bg-green-500/80');
+        else if (tone === 'danger' || tone === 'error') dotEl.classList.add('bg-red-500/80');
+        else if (tone === 'warning') dotEl.classList.add('bg-yellow-500/80');
+        else dotEl.classList.add('bg-primary/80');
+    }
+
+    el.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+}
+
+function buildErrorMessage(j, fallback = 'İşlem başarısız') {
+    if (!j) return fallback;
+    let msg = j.message || j.error?.message || fallback;
+
+    if (j.usage?.summary) {
+        msg += '\nKullanım: ' + j.usage.summary;
+    }
+
+    return msg;
+}
+
+function showUsageModal(j, fallbackTitle = 'İşlem engellendi') {
+    const msg = buildErrorMessage(j, fallbackTitle);
+
+    let html = `<div class="whitespace-pre-line">${esc(msg).replace(/\n/g, '<br>')}</div>`;
+
+    const details = j?.usage?.details;
+    if (details && typeof details === 'object' && Object.keys(details).length) {
+        const rows = Object.entries(details)
+            .map(([k, v]) => `
+<tr class="border-t border-border">
+  <td class="py-2 pr-3 text-muted-foreground">${esc(k)}</td>
+  <td class="py-2 text-end font-medium">${esc(v)}</td>
+</tr>
+            `.trim())
+            .join('');
+
+        html += `
+<div class="mt-4">
+  <div class="text-sm font-medium mb-2">Kullanım Detayı</div>
+  <div class="kt-card kt-card-border">
+    <div class="kt-card-body p-0">
+      <table class="w-full text-sm">
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  </div>
+</div>
+        `.trim();
+    }
+
+    showTrashModal({title: fallbackTitle, html, tone: 'warning'});
 }
 
 export default function init(ctx) {
@@ -74,7 +192,7 @@ export default function init(ctx) {
 
     if (!tbodyEl) return;
 
-    // ---- URL’ler Blade’den gelsin (Blade’de data-* var) :contentReference[oaicite:1]{index=1}
+    // ---- URL’ler Blade’den gelsin (Blade’de data-* var)
     const URLS = {
         list: pageEl.dataset.listUrl || '/admin/trash/list',
         bulkRestore: pageEl.dataset.bulkRestoreUrl || '/admin/trash/bulk-restore',
@@ -245,7 +363,7 @@ export default function init(ctx) {
 
         if (type) qs.set('type', type);
 
-        const { res, j } = await jsonReq(`${URLS.list}?${qs.toString()}`, 'GET', null, signal);
+        const {res, j} = await jsonReq(`${URLS.list}?${qs.toString()}`, 'GET', null, signal);
 
         if (!res.ok || !j?.ok) {
             tbodyEl.innerHTML = `
@@ -256,7 +374,7 @@ export default function init(ctx) {
                 </tr>
             `;
             setInfo('');
-            renderPagination({ current_page: 1, last_page: 1 });
+            renderPagination({current_page: 1, last_page: 1});
             selected.clear();
             setBulkUI();
             return;
@@ -292,12 +410,21 @@ export default function init(ctx) {
 
     async function doSingleAction(url, method, confirmText) {
         if (!url) return;
-
         if (!confirm(confirmText)) return;
 
-        const { res, j } = await jsonReq(url, method, (method === 'POST' ? {} : null), signal);
+        const {res, j} = await jsonReq(url, method, (method === 'POST' ? {} : null), signal);
+
         if (!res.ok || !j?.ok) {
-            alert(j?.error?.message || j?.message || 'İşlem başarısız');
+            // ✅ alert yerine modal (usage varsa tablo da gösterir)
+            if (j?.usage?.summary || (j?.usage?.details && Object.keys(j.usage.details).length)) {
+                showUsageModal(j, 'İşlem engellendi');
+            } else {
+                showTrashModal({
+                    title: 'İşlem başarısız',
+                    html: `<div class="whitespace-pre-line">${esc(buildErrorMessage(j)).replace(/\n/g, '<br>')}</div>`,
+                    tone: 'danger'
+                });
+            }
             return;
         }
 
@@ -310,22 +437,19 @@ export default function init(ctx) {
                 const [type, id] = String(k).split('|');
                 const nid = Number(id);
                 if (!type || !Number.isFinite(nid)) return null;
-                return { type, id: nid, key: `${type}|${nid}` };
+                return {type, id: nid, key: `${type}|${nid}`};
             })
             .filter(Boolean);
 
         if (!items.length) return;
-
         if (!confirm(confirmText)) return;
 
-        // ---- OPTIMISTIC UI: seçili satırları DOM’dan kaldır, state’i yedekle
         const backup = {
             keys: new Set(selected),
-            rows: [], // { key, node, nextSibling, parent }
+            rows: [],
         };
 
         const keyToRow = (key) => {
-            // checkbox üzerinde data-id + data-type var
             const [t, id] = String(key).split('|');
             return tbodyEl.querySelector(`input[data-act="chk"][data-id="${CSS.escape(id)}"][data-type="${CSS.escape(t)}"]`)?.closest('tr');
         };
@@ -333,74 +457,64 @@ export default function init(ctx) {
         backup.keys.forEach((key) => {
             const row = keyToRow(key);
             if (!row) return;
-
-            backup.rows.push({
-                key,
-                node: row,
-                parent: row.parentNode,
-                nextSibling: row.nextSibling,
-            });
-
-            row.remove(); // optimistic remove
+            backup.rows.push({key, node: row, parent: row.parentNode, nextSibling: row.nextSibling});
+            row.remove();
         });
 
-        // UI state
         selected.clear();
         setBulkUI();
 
-        // Eğer tabloda hiç satır kalmadıysa boş template bas (şimdilik basit)
-        if (!tbodyEl.querySelector('tr')) {
-            // arama varsa zero, değilse empty
-            const isSearch = Boolean(state.q) || (state.type && state.type !== 'all');
-            tbodyEl.innerHTML = isSearch ? cloneTpl(tplZero) : cloneTpl(tplEmpty);
-        }
-
         try {
-            const payload = { items: items.map(({ type, id }) => ({ type, id })) };
-            const { res, j } = await jsonReq(url, 'POST', payload, signal);
+            const payload = {items: items.map(({type, id}) => ({type, id}))};
+            const {res, j} = await jsonReq(url, 'POST', payload, signal);
 
-            if (!res.ok || !j?.ok) {
-                const msg = j?.error?.message || j?.message || 'İşlem başarısız';
-                throw new Error(msg);
+            if (!res.ok || !j?.ok) throw new Error(buildErrorMessage(j));
+
+            // ✅ alert yerine modal + özet
+            let html = `<div class="font-medium">${esc(`${j.done || 0} kayıt işlendi.`)}</div>`;
+
+            if (j.failed?.length) {
+                const list = j.failed.slice(0, 8).map(f => `
+                    <li class="flex items-start justify-between gap-3">
+                        <span class="text-muted-foreground">${esc(`${f.type}#${f.id}`)}</span>
+                        <span class="text-end">${esc(f.reason || 'Hata')}</span>
+                    </li>
+                `).join('');
+                html += `
+                    <div class="mt-3">
+                        <div class="text-sm font-medium mb-2">${esc(`${j.failed.length} kayıt engellendi`)}</div>
+                        <ul class="space-y-1 text-sm">${list}</ul>
+                    </div>
+                `;
             }
 
-            // Başarılıysa: server tarafındaki gerçek state’i çek (sayfa/total/boş durum doğru olsun)
+            if (j.denied?.length) {
+                html += `<div class="mt-3 text-sm text-muted-foreground">${esc(`${j.denied.length} kayıt için yetki yok.`)}</div>`;
+            }
+
+            showTrashModal({title: 'Toplu işlem sonucu', html, tone: 'info'});
             await fetchList();
+
         } catch (e) {
-            // ---- ROLLBACK: kaldırdıklarını geri koy
-            // önce template basıldıysa sil
-            // (rows’u eski yerine insert edeceğiz)
-            if (!backup.rows.length) return;
+            if (backup.rows.length) {
+                tbodyEl.innerHTML = '';
+                backup.rows.forEach(({node, parent, nextSibling}) => {
+                    if (nextSibling) parent.insertBefore(node, nextSibling);
+                    else parent.appendChild(node);
+                });
 
-            // Eğer tbody içi template ile dolduysa temizle (basit kontrol)
-            // Template'ler genelde tek satır ve colspan içerir; en garantisi:
-            const onlyTemplate = tbodyEl.querySelectorAll('tr').length === 1
-                && tbodyEl.querySelector('tr td[colspan]');
-            if (onlyTemplate) tbodyEl.innerHTML = '';
+                selected.clear();
+                backup.keys.forEach((k) => selected.add(k));
+                setBulkUI();
+            }
 
-            backup.rows.forEach(({ node, parent, nextSibling }) => {
-                if (!parent) return;
-                if (nextSibling) parent.insertBefore(node, nextSibling);
-                else parent.appendChild(node);
+            showTrashModal({
+                title: 'İşlem başarısız',
+                html: `<div class="whitespace-pre-line">${esc(e?.message || 'İşlem başarısız').replace(/\n/g, '<br>')}</div>`,
+                tone: 'danger'
             });
-
-            // seçimi geri yükle
-            selected.clear();
-            backup.keys.forEach((k) => selected.add(k));
-
-            // checkboxları tekrar işaretle
-            tbodyEl.querySelectorAll('input[data-act="chk"]').forEach((chk) => {
-                const id = chk.getAttribute('data-id');
-                const type = chk.getAttribute('data-type') || '';
-                const key = `${type}|${id}`;
-                chk.checked = selected.has(key);
-            });
-
-            setBulkUI();
-            alert(e?.message || 'İşlem başarısız');
         }
     }
-
 
     // ---- bindings
     fillPerPageSelect();
@@ -413,7 +527,7 @@ export default function init(ctx) {
                 state.page = 1;
                 fetchList();
             }, 250);
-        }, { signal });
+        }, {signal});
 
         ctx.cleanup?.(() => {
             if (debounceTimer) clearTimeout(debounceTimer);
@@ -426,7 +540,7 @@ export default function init(ctx) {
             state.type = typeSel.value || 'all';
             state.page = 1;
             fetchList();
-        }, { signal });
+        }, {signal});
     }
 
     if (perSel && !markBound(pageEl, 'per')) {
@@ -434,7 +548,7 @@ export default function init(ctx) {
             state.perpage = Number(perSel.value || 25) || 25;
             state.page = 1;
             fetchList();
-        }, { signal });
+        }, {signal});
     }
 
     if (pagEl && !markBound(pageEl, 'pagination')) {
@@ -448,7 +562,7 @@ export default function init(ctx) {
             if (p === state.page) return;
             state.page = p;
             fetchList();
-        }, { signal });
+        }, {signal});
     }
 
     if (!markBound(pageEl, 'tbody-actions')) {
@@ -476,7 +590,7 @@ export default function init(ctx) {
 
                 setBulkUI();
             }
-        }, { signal });
+        }, {signal});
     }
 
     const toggleAll = (checked) => {
@@ -496,22 +610,22 @@ export default function init(ctx) {
     };
 
     if (checkAllHead && !markBound(pageEl, 'checkall-head')) {
-        checkAllHead.addEventListener('change', () => toggleAll(checkAllHead.checked), { signal });
+        checkAllHead.addEventListener('change', () => toggleAll(checkAllHead.checked), {signal});
     }
     if (checkAllBar && !markBound(pageEl, 'checkall-bar')) {
-        checkAllBar.addEventListener('change', () => toggleAll(checkAllBar.checked), { signal });
+        checkAllBar.addEventListener('change', () => toggleAll(checkAllBar.checked), {signal});
     }
 
     if (bulkRestoreBtn && !markBound(pageEl, 'bulk-restore')) {
         bulkRestoreBtn.addEventListener('click', () => {
             doBulk(URLS.bulkRestore, 'Seçili kayıtlar geri yüklensin mi?');
-        }, { signal });
+        }, {signal});
     }
 
     if (bulkForceBtn && !markBound(pageEl, 'bulk-force')) {
         bulkForceBtn.addEventListener('click', () => {
             doBulk(URLS.bulkForce, 'Seçili kayıtlar KALICI silinecek. Emin misin?');
-        }, { signal });
+        }, {signal});
     }
 
     fetchList();

@@ -1,0 +1,69 @@
+export default function init() {
+    const form = document.querySelector('[data-module-form]');
+    if (!form) return;
+
+    const titleEl = form.querySelector('[data-title-input]');
+    const slugEl = form.querySelector('[data-slug-input]');
+    const statusEl = form.querySelector('[data-status-select]');
+    const featuredEl = form.querySelector('[data-featured-toggle]');
+    const statusBadge = form.querySelector('[data-status-badge]');
+    const featuredBadge = form.querySelector('[data-featured-badge]');
+
+    const slugify = (s) => (s || '')
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replace(/[ğ]/g,'g').replace(/[ü]/g,'u').replace(/[ş]/g,'s')
+        .replace(/[ı]/g,'i').replace(/[ö]/g,'o').replace(/[ç]/g,'c')
+        .replace(/[^a-z0-9]+/g,'-')
+        .replace(/^-+|-+$/g,'');
+
+    if (titleEl && slugEl) {
+        titleEl.addEventListener('input', () => {
+            if (slugEl.dataset.touched === '1') return;
+            slugEl.value = slugify(titleEl.value);
+        });
+
+        slugEl.addEventListener('input', () => {
+            slugEl.dataset.touched = '1';
+        });
+    }
+
+    const updateBadges = () => {
+        if (statusBadge && statusEl) statusBadge.textContent = `status: ${statusEl.value}`;
+        if (featuredBadge && featuredEl) featuredBadge.textContent = `featured: ${featuredEl.checked ? 'yes' : 'no'}`;
+    };
+
+    if (statusEl) statusEl.addEventListener('change', updateBadges);
+    if (featuredEl) featuredEl.addEventListener('change', updateBadges);
+    updateBadges();
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const url = form.getAttribute('data-store-url');
+        if (!url) return;
+
+        const fd = new FormData(form);
+
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': window.csrfToken || document.querySelector('meta[name="csrf-token"]')?.content || '',
+            },
+            body: fd
+        });
+
+        const json = await res.json().catch(() => null);
+
+        if (!res.ok || !json?.ok) {
+            alert(json?.message || 'Save failed');
+            return;
+        }
+
+        if (json.redirect) location.href = json.redirect;
+        else alert(json.message || 'Saved');
+    });
+}

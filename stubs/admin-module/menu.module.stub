@@ -1,0 +1,11 @@
+<?php
+
+return [
+    [
+        'title' => '{{ module_label_plural }}',
+        'icon'  => 'ki-outline ki-briefcase', // change per module
+        'route' => '{{ admin_prefix }}.{{ route_name_plural }}.index',
+        'permission' => '{{ permission_prefix }}.{{ permission_key }}.view',
+        'active' => ['{{ admin_prefix }}.{{ route_name_plural }}.*'],
+    ],
+];

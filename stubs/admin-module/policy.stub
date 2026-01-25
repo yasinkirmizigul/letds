@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Policies;
+
+use App\Models\User;
+use App\Models\{{ model }};
+
+class {{ policy }}
+{
+    protected function perm(string $action): string
+{
+    return '{{ permission_prefix }}.{{ permission_key }}.' . $action;
+}
+
+    public function viewAny(User $user): bool
+{
+    return $user->can($this->perm('view'));
+}
+
+    public function view(User $user, {{ model }} ${{ model_var }}): bool
+    {
+        return $user->can($this->perm('view'));
+    }
+
+    public function create(User $user): bool
+{
+    return $user->can($this->perm('create'));
+}
+
+    public function update(User $user, {{ model }} ${{ model_var }}): bool
+    {
+        return $user->can($this->perm('update'));
+    }
+
+    public function delete(User $user, {{ model }} ${{ model_var }}): bool
+    {
+        return $user->can($this->perm('delete'));
+    }
+
+    public function restore(User $user, {{ model }} ${{ model_var }}): bool
+    {
+        return $user->can($this->perm('restore'));
+    }
+
+    public function forceDelete(User $user, {{ model }} ${{ model_var }}): bool
+    {
+        return $user->can($this->perm('force'));
+    }
+}

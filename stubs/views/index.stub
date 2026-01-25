@@ -1,0 +1,46 @@
+@extends('admin.layouts.app')
+
+@section('title', '{{ module_label_plural }}')
+
+@section('content')
+<div class="kt-container-fixed">
+
+    <div class="kt-card">
+        <div class="kt-card-header py-4">
+            <h3 class="kt-card-title">{{ module_label_plural }}</h3>
+            <div class="kt-card-toolbar flex items-center gap-2">
+                <a href="{{ route('{{ admin_prefix }}.{{ route_name_plural }}.create') }}"
+                   class="kt-btn kt-btn-sm kt-btn-primary">
+                    <i class="ki-outline ki-plus"></i>
+                    Yeni
+                </a>
+
+                <a href="{{ route('{{ admin_prefix }}.{{ route_name_plural }}.trash') }}"
+                   class="kt-btn kt-btn-sm kt-btn-light">
+                    <i class="ki-outline ki-trash"></i>
+                    Çöp
+                </a>
+            </div>
+        </div>
+
+        <div class="kt-card-body p-5">
+            <table id="{{ route_name_plural }}_table"
+                   class="kt-table table-auto kt-table-border w-full"
+                   data-module-table
+                   data-ajax="{{ route('{{ admin_prefix }}.{{ route_name_plural }}.index') }}">
+                <thead>
+                <tr>
+                    <th style="width: 8%">#</th>
+                    <th>Başlık</th>
+                    <th style="width: 12%">Durum</th>
+                    <th style="width: 12%">Öne Çıkan</th>
+                    <th style="width: 18%">Güncelleme</th>
+                    <th style="width: 10%">İşlem</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+</div>
+@endsection

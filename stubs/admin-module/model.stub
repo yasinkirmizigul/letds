@@ -1,0 +1,60 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class {{ model }} extends Model
+{
+    use SoftDeletes;
+
+    protected $fillable = [
+    'title',
+    'slug',
+    'status',
+    'is_featured',
+    'meta_title',
+    'meta_description',
+    'sort_order',
+];
+
+    protected $casts = [
+    'is_featured' => 'boolean',
+];
+
+    // Scopes
+    public function scopePublished(Builder $q): Builder
+{
+    return $q->where('status', 'published');
+}
+
+    public function scopeDraft(Builder $q): Builder
+{
+    return $q->where('status', 'draft');
+}
+
+    public function scopeFeatured(Builder $q): Builder
+{
+    return $q->where('is_featured', true);
+}
+
+    // Example relationship placeholders (safe, no dependency)
+    // public function user() { return $this->belongsTo(User::class); }
+    /**
+     * Force delete öncesi bağlı kayıt kontrol listesi.
+     *
+     * Örnek:
+     * return [
+     *   ['relation' => 'galleryItems', 'label' => 'Galeri öğeleri'],
+     *   ['relation' => 'comments', 'label' => 'Yorumlar'],
+     * ];
+     *
+     * İlişki methodları Model içinde tanımlı olmalı (hasMany/belongsToMany vs).
+     */
+    public function forceDeleteBlockers(): array
+{
+    return [];
+}
+}

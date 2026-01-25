@@ -451,6 +451,15 @@ Route::middleware(['auth', 'audit'])
             Route::post('/bulk-force-delete', [TrashController::class, 'bulkForceDestroy'])
                 ->middleware('permission:trash.force-delete')
                 ->name('bulkForceDestroy');
+
+            Route::post('/{type}/{id}/restore', [TrashController::class, 'restore'])
+                ->middleware('permission:trash.restore')
+                ->name('restoreOne');
+
+            Route::delete('/{type}/{id}', [TrashController::class, 'forceDestroy'])
+                ->middleware('permission:trash.force-delete')
+                ->name('forceDestroyOne');
+
         });
 
 
@@ -538,6 +547,8 @@ Route::middleware(['auth', 'audit'])
                 Route::get('galleries/trash', fn() => redirect()->route('admin.galleries.index', ['mode' => 'trash']))
                     ->name('galleries.trash');*/
     });
+
+// [ADMIN_MODULE_ROUTES]
 
 // Public Projects
 Route::get('/projects/{slug}', [ProjectPublicController::class, 'show'])

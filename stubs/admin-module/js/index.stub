@@ -1,0 +1,89 @@
+export default function init() {
+    const tableEl = document.querySelector('[data-module-table]');
+    if (!tableEl) return;
+
+    const ajaxUrl = tableEl.getAttribute('data-ajax');
+
+    // If you already have a global helper: window.initDataTable(...)
+    if (typeof window.initDataTable === 'function') {
+        window.initDataTable(tableEl, {
+            serverSide: true,
+            processing: true,
+            ajax: ajaxUrl,
+            columns: [
+                { data: 'id', title: '#', width: '8%' },
+                { data: 'title', title: 'Başlık' },
+                {
+                    data: 'status',
+                    title: 'Durum',
+                    width: '12%',
+                    render: (d) => `<span class="kt-badge kt-badge-sm kt-badge-light">${d}</span>`
+                },
+                {
+                    data: 'is_featured',
+                    title: 'Öne Çıkan',
+                    width: '12%',
+                    render: (d) => {
+                        const v = d ? 'yes' : 'no';
+                        return `<span class="kt-badge kt-badge-sm kt-badge-light">featured: ${v}</span>`;
+                    }
+                },
+                { data: 'updated_at', title: 'Güncelleme', width: '18%' },
+                {
+                    data: null,
+                    title: 'İşlem',
+                    width: '10%',
+                    orderable: false,
+                    render: (d, t, row) => {
+                        return `
+                          <div class="flex items-center gap-2">
+                            <a class="kt-btn kt-btn-sm kt-btn-light" href="${row.edit_url}">
+                              <i class="ki-outline ki-pencil"></i>
+                            </a>
+                            <button class="kt-btn kt-btn-sm kt-btn-light" type="button"
+                                    data-delete
+                                    data-url="${row.delete_url}">
+                              <i class="ki-outline ki-trash"></i>
+                            </button>
+                          </div>
+                        `;
+                    }
+                }
+            ],
+        });
+
+        document.addEventListener('click', async (e) => {
+            const btn = e.target.closest('[data-delete]');
+            if (!btn) return;
+
+            const url = btn.getAttribute('data-url');
+            if (!url) return;
+
+            if (!confirm('Silinsin mi? (Trash)')) return;
+
+            const res = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': window.csrfToken || document.querySelector('meta[name="csrf-token"]')?.content || '',
+                    'Accept': 'application/json',
+                }
+            });
+
+            const json = await res.json().catch(() => null);
+            if (!res.ok || !json?.ok) {
+                alert(json?.message || 'Delete failed');
+                return;
+            }
+
+            // reload if your helper exposes dt instance globally, otherwise refresh page
+            if (typeof window.reloadDataTable === 'function') window.reloadDataTable(tableEl);
+            else location.reload();
+        });
+
+        return;
+    }
+
+    // Fallback: if helper is missing, avoid crashing the page.
+    console.warn('initDataTable helper not found. Table not initialized.');
+}

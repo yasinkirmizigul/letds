@@ -1,0 +1,41 @@
+@extends('admin.layouts.app')
+
+@section('title', '{{ module_label_singular }} Düzenle')
+
+@section('content')
+<div class="kt-container-fixed">
+    <form id="{{ route_name_plural }}Form"
+          data-module-form
+          data-update-url="{{ route('{{ admin_prefix }}.{{ route_name_plural }}.update', ${{ model_var }}) }}">
+        @csrf
+        @method('PUT')
+
+        <div class="grid lg:grid-cols-12 gap-5">
+
+            <div class="lg:col-span-8">
+                <div class="kt-card">
+                    <div class="kt-card-header py-4">
+                        <h3 class="kt-card-title">{{ module_label_singular }} Bilgileri</h3>
+                    </div>
+                    <div class="kt-card-body p-5">
+                        @include('admin.pages.{{ module_kebab_plural }}.partials._form', ['mode' => 'edit', '{{ model_var }}' => ${{ model_var }}])
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-4 grid gap-5">
+                @include('admin.pages.{{ module_kebab_plural }}.partials._status_featured', ['mode' => 'edit', '{{ model_var }}' => ${{ model_var }}])
+                @include('admin.pages.{{ module_kebab_plural }}.partials._meta', ['mode' => 'edit', '{{ model_var }}' => ${{ model_var }}])
+            </div>
+
+        </div>
+
+        <div class="mt-5 flex justify-end gap-2">
+            <a href="{{ route('{{ admin_prefix }}.{{ route_name_plural }}.index') }}" class="kt-btn kt-btn-light">Geri</a>
+            <button type="submit" class="kt-btn kt-btn-primary">
+                <i class="ki-outline ki-check"></i> Kaydet
+            </button>
+        </div>
+    </form>
+</div>
+@endsection
