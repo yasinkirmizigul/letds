@@ -37,7 +37,7 @@ class CategoryController extends Controller
     // GET /admin/categories/list?mode=active|trash&q=...&perpage=25&page=1
     // -------------------------
 
-    public function list(Request $request): JsonResponse
+    public function listLegacy(Request $request)
     {
         $mode = $request->string('mode', 'active')->toString();
         $isTrash = $mode === 'trash';
@@ -80,6 +80,49 @@ class CategoryController extends Controller
             ],
         ]);
     }
+
+    public function list(Request $request)
+    {
+        $draw   = (int) $request->input('draw', 1);
+        $start  = (int) $request->input('start', 0);
+        $length = (int) $request->input('length', 10);
+        $search = trim((string) $request->input('search.value', ''));
+
+        $q = Category::query()
+            ->with('parent:id,name')
+            ->withCount('blogPosts');
+
+        if ($search !== '') {
+            $q->where(function ($w) use ($search) {
+                $w->where('name', 'like', "%{$search}%")
+                    ->orWhere('slug', 'like', "%{$search}%");
+            });
+        }
+
+        $recordsTotal = Category::count();
+        $recordsFiltered = (clone $q)->count();
+
+        $items = $q->skip($start)->take($length)->get();
+
+        $data = $items->map(function ($c) {
+            return [
+                'checkbox' => '<input type="checkbox" class="kt-checkbox" data-row-check value="'.$c->id.'">',
+                'name' => e($c->name),
+                'slug' => e($c->slug),
+                'parent_name' => e(optional($c->parent)->name),
+                'blog_posts_count' => (int) $c->blog_posts_count,
+                'actions' => view('admin.pages.categories.partials._actions', compact('c'))->render(),
+            ];
+        });
+
+        return response()->json([
+            'draw' => $draw,
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
+            'data' => $data,
+        ]);
+    }
+
 
     // -------------------------
     // CRUD (senin mevcut yapın)
@@ -261,4 +304,38 @@ class CategoryController extends Controller
             'message' => $exists ? 'Bu slug zaten kullanılıyor.' : 'Slug uygun.',
         ]);
     }
+
+    public function trashList(Request $request)
+    {
+        $draw   = (int) $request->input('draw', 1);
+        $start  = (int) $request->input('start', 0);
+        $length = (int) $request->input('length', 10);
+
+        $q = Category::onlyTrashed()
+            ->with('parent:id,name')
+            ->withCount('blogPosts');
+
+        $recordsTotal = Category::onlyTrashed()->count();
+        $recordsFiltered = (clone $q)->count();
+
+        $items = $q->skip($start)->take($length)->get();
+
+        $data = $items->map(function ($c) {
+            return [
+                'name' => e($c->name),
+                'slug' => e($c->slug),
+                'parent_name' => e(optional($c->parent)->name),
+                'deleted_at' => optional($c->deleted_at)->format('d.m.Y H:i'),
+                'actions' => view('admin.pages.categories.partials._trash_actions', compact('c'))->render(),
+            ];
+        });
+
+        return response()->json([
+            'draw' => $draw,
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
+            'data' => $data,
+        ]);
+    }
+
 }

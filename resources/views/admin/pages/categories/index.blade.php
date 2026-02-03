@@ -92,7 +92,9 @@
                         </div>
 
                         <div class="kt-scrollable-x-auto overflow-y-hidden">
-                            <table class="kt-table table-auto kt-table-border w-full" id="categories_table">
+                            <table id="categories_table"
+                                   class="kt-table table-auto kt-table-border w-full"
+                                   data-ajax="{{ route('admin.categories.list') }}">
                                 <thead>
                                 <tr>
                                     <th class="w-[55px] dt-orderable-none">

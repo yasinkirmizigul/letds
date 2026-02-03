@@ -62,7 +62,7 @@
 
                 <div class="kt-card-content p-0">
                     <div class="overflow-x-auto">
-                        <table class="kt-table">
+                        <table class="kt-table table-auto kt-table-border w-full">
                             <thead>
                             <tr>
                                 <th class="w-[55px]">

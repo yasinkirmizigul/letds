@@ -129,7 +129,7 @@
                             <h3 class="kt-card-title">Hakkında</h3>
                         </div>
                         <div class="kt-card-content pt-4 pb-3">
-                            <table class="kt-table-auto">
+                            <table class="kt-table table-auto kt-table-border w-full">
                                 <tbody>
                                 <tr>
                                     <td class="text-sm text-secondary-foreground pb-3.5 pe-3">Email</td>

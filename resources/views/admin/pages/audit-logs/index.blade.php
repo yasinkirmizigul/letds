@@ -96,7 +96,7 @@
                         </div>
                     @endif
                     <div class="kt-scrollable-x-auto overflow-y-hidden">
-                        <table class="kt-table">
+                        <table class="kt-table table-auto kt-table-border w-full">
                             <thead>
                             <tr>
                                 <th>ID</th>

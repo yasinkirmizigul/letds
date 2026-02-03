@@ -168,7 +168,7 @@ class ModuleGenerator
         }
 
         // 7) Routes module file
-        $routesModuleFile = rtrim($cfg['routes_modules_path'], '/\\') . DIRECTORY_SEPARATOR . "{$context['route_name_plural']}.php";
+        $routesModuleFile = rtrim($cfg['routes_modules_path'], '/\\') . DIRECTORY_SEPARATOR . "{$context['route_module_file']}.php";
         $this->writeFromStub("{$stubsRoot}/routes.module.stub", $routesModuleFile, $context, $force);
 
         // 8) Menu module file
@@ -194,7 +194,7 @@ class ModuleGenerator
         if ($patch) {
             $routesWeb = $cfg['patching']['routes_web_file'] ?? base_path('routes/web.php');
             $routesMarker = $cfg['patching']['routes_marker'] ?? '// [ADMIN_MODULE_ROUTES]';
-            $includeLine = "require __DIR__ . '/admin/modules/{$context['route_name_plural']}.php';";
+            $includeLine = "require __DIR__ . '/admin/modules/{$context['route_module_file']}.php';";
 
             [$ok, $msg] = $this->patcher->patchAfterMarker($routesWeb, $routesMarker, $includeLine);
             $notes[] = $msg;
@@ -305,6 +305,7 @@ class ModuleGenerator
             'store_request_path' => "{$requestDir}/{$storeRequest}.php",
             'update_request_path' => "{$requestDir}/{$updateRequest}.php",
             'policy_path' => "{$policyDir}/{$policyClass}.php",
+            'route_module_file' => Str::snake($n->studlyPlural()),
         ];
     }
 

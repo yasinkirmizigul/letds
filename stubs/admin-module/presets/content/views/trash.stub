@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('admin.layouts.main.app')
 
 @section('title', '{{ module_label_plural }} / Çöp')
 

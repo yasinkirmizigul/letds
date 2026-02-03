@@ -1,6 +1,5 @@
 /* global jQuery */
 (function (w) {
-    // ---- internal: per-element binding guard (no DOM pollution)
     const bound = new WeakMap(); // Element -> Set(keys)
 
     function markBound(el, key) {
@@ -10,7 +9,7 @@
             set = new Set();
             bound.set(el, set);
         }
-        if (set.has(key)) return true; // already bound
+        if (set.has(key)) return true;
         set.add(key);
         return false;
     }
@@ -24,13 +23,12 @@
 
     function isTrTemplate(html) {
         const t = (html || '').trim().toLowerCase();
-        return t.startsWith('<tr') || t.startsWith('<tr ');
+        return t.startsWith('<tr');
     }
 
     function normalizeRowTemplate(html, colCount) {
         const t = document.createElement('tbody');
-        t.innerHTML = html.trim();
-
+        t.innerHTML = (html || '').trim();
         const tr = t.querySelector('tr');
         if (!tr) return null;
 
@@ -47,7 +45,6 @@
         const tbody = tableEl.querySelector('tbody');
         if (!tbody) return;
 
-        // Normal durumda dokunma
         if (info.recordsTotal > 0 && info.recordsDisplay > 0) return;
 
         let rowHtml = '';
@@ -87,10 +84,7 @@
                 btn.className += ' opacity-60 pointer-events-none';
             }
             btn.textContent = label;
-
-            // IMPORTANT: bind with signal if available
             btn.addEventListener('click', () => api.page(targetPage).draw('page'), signal ? { signal } : undefined);
-
             return btn;
         };
 
@@ -114,26 +108,40 @@
 
     function safeDestroyDt(dt) {
         try {
-            if (dt && typeof dt.destroy === 'function') dt.destroy(true); // true => remove added elements
+            if (dt && typeof dt.destroy === 'function') dt.destroy(true);
         } catch (e) {
             console.warn('[initDataTable] destroy failed:', e);
         }
     }
 
+    function resolveTableEl(table, root = document) {
+        if (!table) return null;
+        if (typeof table === 'string') return root.querySelector(table);
+        if (table instanceof Element) return table;
+        if (w.jQuery && table && table.jquery && table[0] instanceof Element) return table[0];
+        return null;
+    }
+
     /**
-     * initDataTable(opts)
-     *
-     * Backward compatible: eski kullanım bozulmaz.
-     * Yeni opsiyonlar:
-     * - signal: AbortSignal (ctx.signal)
-     * - cleanup(fn): ctx.cleanup(fn)
+     * ✅ Backward compatible wrapper:
+     * - initDataTable(opts)
+     * - initDataTable(tableElOrSelector, opts)  <-- eski/yanlış kullanımları da kaldırır
      */
-    function initDataTable(opts) {
+    function initDataTable(arg1, arg2) {
+        let opts = null;
+
+        if (typeof arg1 === 'string' || arg1 instanceof Element || (w.jQuery && arg1?.jquery)) {
+            opts = Object.assign({}, arg2 || {});
+            opts.table = arg1;
+        } else {
+            opts = Object.assign({}, arg1 || {});
+        }
+
         const o = Object.assign(
             {
                 root: document,
-
                 table: null,
+
                 search: null,
                 pageSize: null,
                 info: null,
@@ -143,9 +151,15 @@
                 lengthMenu: [5, 10, 25, 50],
                 order: [[1, 'desc']],
                 dom: 't',
-                autoWidth: false,
+                autoWidth: true,
                 responsive: false,
-                scrollX: true,
+                scrollX: false,
+
+                // ✅ server-side fields
+                serverSide: false,
+                processing: true,
+                ajax: null,
+                columns: null,
 
                 emptyTemplate: null,
                 zeroTemplate: null,
@@ -173,9 +187,10 @@
 
                 headerCenter: true,
 
-                // new:
-                signal: null, // AbortSignal
-                cleanup: null, // function(fn)
+                signal: null,
+                cleanup: null,
+
+                dtOptions: null,
             },
             opts || {}
         );
@@ -184,39 +199,48 @@
         const signal = o.signal || null;
         const cleanup = (typeof o.cleanup === 'function') ? o.cleanup : null;
 
-        if (!o.table) return null;
-
         if (!w.jQuery || !jQuery.fn || !jQuery.fn.DataTable) {
             console.error('DataTables yüklenmemiş. (jQuery.fn.DataTable yok)');
             return null;
         }
 
-        const tableEl = root.querySelector(o.table);
+        const tableEl = resolveTableEl(o.table, root);
         if (!tableEl) return null;
 
         const $table = jQuery(tableEl);
 
-        // If already inited: just return instance (do NOT rebind handlers)
+        // Already inited
         if (jQuery.fn.dataTable.isDataTable($table)) {
             return $table.DataTable();
         }
 
         const emptyHtml = o.emptyTemplate ? tplHtml(o.emptyTemplate, o.emptyFallback, root) : o.emptyFallback;
-        const zeroHtml  = o.zeroTemplate  ? tplHtml(o.zeroTemplate,  o.zeroFallback,  root) : o.zeroFallback;
+        const zeroHtml = o.zeroTemplate ? tplHtml(o.zeroTemplate, o.zeroFallback, root) : o.zeroFallback;
 
         if (o.headerCenter) tableEl.classList.add('dt-kt-header-center');
 
-        const dt = $table.DataTable({
+        const baseDtOptions = {
             pageLength: o.pageLength,
             lengthMenu: o.lengthMenu,
             order: o.order,
             autoWidth: o.autoWidth,
             dom: o.dom,
+            responsive: o.responsive,
+            scrollX: o.scrollX,
+
+            // ✅ server-side support
+            serverSide: !!o.serverSide,
+            processing: !!o.processing,
+            ajax: o.ajax || undefined,
+            columns: o.columns || undefined,
+
             columnDefs: o.columnDefs,
+
             language: Object.assign(
                 { emptyTable: '', zeroRecords: '', infoEmpty: 'Kayıt yok' },
                 o.language || {}
             ),
+
             drawCallback: function () {
                 const api = this.api();
 
@@ -234,7 +258,6 @@
                 }
 
                 if (o.pagination) renderPagination(api, o.pagination, root, signal);
-
                 if (typeof o.onDraw === 'function') o.onDraw(api);
 
                 if (o.checkAll) {
@@ -242,19 +265,19 @@
                     if (c) c.checked = false;
                 }
             },
-        });
+        };
 
+        const merged = Object.assign({}, baseDtOptions, (o.dtOptions && typeof o.dtOptions === 'object') ? o.dtOptions : {});
+
+        const dt = $table.DataTable(merged);
         $table.removeClass('dataTable no-footer');
 
-        // ensure dt destroyed on page cleanup (if provided)
-        if (cleanup) {
-            cleanup(() => safeDestroyDt(dt));
-        }
+        if (cleanup) cleanup(() => safeDestroyDt(dt));
 
         // search bind (root scoped)
         if (o.search) {
             const s = root.querySelector(o.search);
-            if (s && !markBound(s, `dt:search:${o.table}`)) {
+            if (s && !markBound(s, `dt:search:${String(o.table)}`)) {
                 s.addEventListener(
                     'input',
                     (e) => dt.search(e.target.value || '').draw(),
@@ -263,10 +286,10 @@
             }
         }
 
-        // page size bind (client-side mode only)
+        // page size bind
         if (o.pageSize) {
             const sel = root.querySelector(o.pageSize);
-            if (sel && !markBound(sel, `dt:pagesize:${o.table}`)) {
+            if (sel && !markBound(sel, `dt:pagesize:${String(o.table)}`)) {
                 sel.innerHTML = '';
                 (o.lengthMenu || [5, 10, 25, 50]).forEach((n) => {
                     const opt = document.createElement('option');
@@ -288,12 +311,12 @@
         // check-all (root scoped)
         if (o.checkAll && o.rowChecks) {
             const checkAllEl = root.querySelector(o.checkAll);
-            if (checkAllEl && !markBound(checkAllEl, `dt:checkall:${o.table}`)) {
+            if (checkAllEl && !markBound(checkAllEl, `dt:checkall:${String(o.table)}`)) {
                 checkAllEl.addEventListener(
                     'change',
                     () => {
                         const checked = checkAllEl.checked;
-                        root.querySelectorAll(o.rowChecks).forEach(cb => (cb.checked = checked));
+                        root.querySelectorAll(o.rowChecks).forEach((cb) => (cb.checked = checked));
                     },
                     signal ? { signal } : undefined
                 );
@@ -303,5 +326,6 @@
         return dt;
     }
 
+    // ✅ global
     w.initDataTable = initDataTable;
 })(window);

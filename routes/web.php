@@ -126,61 +126,48 @@ Route::middleware(['auth', 'audit'])
         // Categories
         Route::prefix('categories')->as('categories.')->group(function () {
             Route::get('/', [CategoryController::class, 'index'])
-                ->middleware('permission:category.view')
+                ->middleware('permission:categories.view')
                 ->name('index');
 
+            // ✅ DataTables standard endpoint
             Route::get('/list', [CategoryController::class, 'list'])
-                ->middleware('permission:category.list')
-                ->name('categories.list');
+                ->middleware('permission:categories.view')
+                ->name('list');
 
-            Route::get('/trash', [CategoryController::class, 'trash'])
-                ->middleware('permission:category.trash')
-                ->name('trash');
+            // 🧱 Legacy (eski custom kart listeyi kullanmak istersen)
+            Route::get('/list-legacy', [CategoryController::class, 'listLegacy'])
+                ->middleware('permission:categories.view')
+                ->name('list_legacy');
 
             Route::get('/create', [CategoryController::class, 'create'])
-                ->middleware('permission:category.create')
+                ->middleware('permission:categories.create')
                 ->name('create');
 
             Route::post('/', [CategoryController::class, 'store'])
-                ->middleware('permission:category.create')
+                ->middleware('permission:categories.create')
                 ->name('store');
 
             Route::get('/{category}/edit', [CategoryController::class, 'edit'])
-                ->middleware('permission:category.update')
+                ->middleware('permission:categories.update')
                 ->name('edit');
 
             Route::put('/{category}', [CategoryController::class, 'update'])
-                ->middleware('permission:category.update')
+                ->middleware('permission:categories.update')
                 ->name('update');
 
+            Route::get('/trash', [CategoryController::class, 'trash'])
+                ->middleware('permission:categories.view')
+                ->name('trash');
+
+            Route::get('/trash/list', [CategoryController::class, 'trashList'])
+                ->middleware('permission:categories.view')
+                ->name('trash.list');
+
             Route::delete('/{category}', [CategoryController::class, 'destroy'])
-                ->middleware('permission:category.delete')
+                ->middleware('permission:categories.delete')
                 ->name('destroy');
-
-            Route::post('/{id}/restore', [CategoryController::class, 'restore'])
-                ->middleware('permission:category.restore')
-                ->name('restore');
-
-            Route::delete('/{id}/force', [CategoryController::class, 'forceDestroy'])
-                ->middleware('permission:category.force_delete')
-                ->name('forceDestroy');
-
-            Route::post('/bulk-delete', [CategoryController::class, 'bulkDestroy'])
-                ->middleware('permission:category.delete')
-                ->name('bulkDestroy');
-
-            Route::post('/bulk-restore', [CategoryController::class, 'bulkRestore'])
-                ->middleware('permission:category.restore')
-                ->name('bulkRestore');
-
-            Route::post('/bulk-force-delete', [CategoryController::class, 'bulkForceDestroy'])
-                ->middleware('permission:category.force_delete')
-                ->name('bulkForceDestroy');
-
-            Route::get('/check-slug', [CategoryController::class, 'checkSlug'])
-                ->middleware('permission:category.view')
-                ->name('checkSlug');
         });
+
 
         /// Blog
         Route::prefix('blog')->as('blog.')->group(function () {
@@ -398,6 +385,12 @@ Route::middleware(['auth', 'audit'])
             Route::delete('/{gallery}', [GalleryController::class, 'destroy'])
                 ->middleware('permission:galleries.delete')
                 ->name('destroy');
+
+            Route::get('/trash', function () {
+                return redirect()->route('admin.trash.index');
+            })
+                ->middleware('permission:trash.view')
+                ->name('trash');
         });
 
         // Gallery Items
