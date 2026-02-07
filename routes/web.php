@@ -166,6 +166,14 @@ Route::middleware(['auth', 'audit'])
             Route::delete('/{category}', [CategoryController::class, 'destroy'])
                 ->middleware('permission:categories.delete')
                 ->name('destroy');
+
+            Route::post('/{id}/restore', [CategoryController::class, 'restore'])
+                ->middleware('permission:categories.restore')
+                ->name('restore');
+
+            Route::delete('/{id}/force', [CategoryController::class, 'forceDestroy'])
+                ->middleware('permission:categories.forceDelete')
+                ->name('forceDestroy');
         });
 
 

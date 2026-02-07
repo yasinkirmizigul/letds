@@ -85,7 +85,7 @@
                                         <td>
                                             @perm('users.update')
                                                 <a href="{{ route('admin.users.edit', $user) }}"
-                                                   class="kt-btn kt-btn-sm kt-btn-icon kt-btn-primary">
+                                                   class="kt-btn kt-btn-sm kt-btn-icon kt-btn-warning">
                                                     <i class="ki-filled ki-notepad-edit"></i>
                                                 </a>
                                             @endperm

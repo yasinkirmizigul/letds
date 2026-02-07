@@ -245,7 +245,7 @@
                                         <td class="text-end">
                                             @perm('blog.update')
                                             <a href="{{ route('admin.blog.edit', $p) }}"
-                                               class="kt-btn kt-btn-sm kt-btn-icon kt-btn-primary"
+                                               class="kt-btn kt-btn-sm kt-btn-icon kt-btn-warning"
                                                title="Düzenle">
                                                 <i class="ki-filled ki-notepad-edit"></i>
                                             </a>

@@ -6,7 +6,7 @@
     <div class="kt-container-fixed max-w-[90%]"
          data-page="categories.index"
          data-mode="{{ $mode ?? 'active' }}"
-         data-perpage="25">
+         data-list-url="{{ route('admin.categories.list_legacy') }}">
 
         <div class="grid gap-5 lg:gap-7.5">
 

@@ -71,6 +71,10 @@ class CategoryController extends Controller
                 'parent_name' => $c->parent?->name,
                 'blog_posts_count' => (int) ($c->blog_posts_count ?? 0),
                 'deleted_at' => optional($c->deleted_at)->toISOString(),
+                'edit_url'   => route('admin.categories.edit', $c),
+                'delete_url' => route('admin.categories.destroy', $c),
+                'restore_url' => route('admin.categories.restore', $c->id),
+                'force_url'   => route('admin.categories.forceDestroy', $c->id),
             ])->values(),
             'meta' => [
                 'current_page' => $items->currentPage(),
@@ -190,12 +194,11 @@ class CategoryController extends Controller
 
     public function destroy(Category $category)
     {
-        $hasChildren = Category::where('parent_id', $category->id)->exists();
-        if ($hasChildren) {
-            return back()->with('error', 'Bu kategorinin alt kategorileri var. Önce alt kategorileri taşıyın veya silin.');
-        }
+        $category->delete();
 
-        $category->delete(); // soft delete
+        if (request()->expectsJson()) {
+            return response()->json(['ok' => true]);
+        }
 
         return redirect()
             ->route('admin.categories.index')
@@ -337,5 +340,4 @@ class CategoryController extends Controller
             'data' => $data,
         ]);
     }
-
 }

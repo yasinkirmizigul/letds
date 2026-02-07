@@ -89,7 +89,7 @@
                                                 @perm('roles.update')
                                                 @if($role->slug !== 'superadmin' && $myP > (int)($role->priority ?? 0))
                                                     <a href="{{ route('admin.roles.edit', $role) }}"
-                                                       class="kt-btn kt-btn-sm kt-btn-icon kt-btn-primary"
+                                                       class="kt-btn kt-btn-sm kt-btn-icon kt-btn-warning"
                                                        title="Düzenle">
                                                         <i class="ki-filled ki-notepad-edit"></i>
                                                     </a>
