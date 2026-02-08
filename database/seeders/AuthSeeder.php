@@ -13,10 +13,10 @@ class AuthSeeder extends Seeder
 {
     public function run()
     {
-        $superAdminRole = Role::create([
-            'name' => 'Super Admin',
-            'slug' => 'superadmin'
-        ]);
+        $superAdminRole = Role::updateOrCreate(
+            ['slug' => 'superadmin'],
+            ['name' => 'Super Admin']
+        );
 
         $permissions = [
             'blog.view',

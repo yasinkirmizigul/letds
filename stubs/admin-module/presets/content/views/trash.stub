@@ -4,7 +4,6 @@
 
 @section('content')
 <div class="kt-container-fixed" data-page="{{ module_kebab_plural }}.trash">
-
     <div class="kt-card">
         <div class="kt-card-header py-4">
             <h3 class="kt-card-title">{{ module_label_plural }} / Çöp</h3>
@@ -12,58 +11,42 @@
             <div class="kt-card-toolbar flex items-center gap-2">
                 <span class="kt-badge kt-badge-sm kt-badge-light" data-selected-count>Seçili: 0</span>
 
-                <button type="button"
-                        class="kt-btn kt-btn-sm kt-btn-light"
-                        disabled
-                        data-bulk-restore>
-                    <i class="ki-outline ki-arrow-rotate-left"></i>
-                    Seçileni Geri Al
+                <button type="button" class="kt-btn kt-btn-sm kt-btn-light" disabled data-bulk-restore>
+                    <i class="ki-outline ki-arrow-rotate-left"></i> Seçileni Geri Al
                 </button>
 
-                <button type="button"
-                        class="kt-btn kt-btn-sm kt-btn-light"
-                        disabled
-                        data-bulk-force>
-                    <i class="ki-outline ki-trash"></i>
-                    Seçileni Kalıcı Sil
+                <button type="button" class="kt-btn kt-btn-sm kt-btn-light" disabled data-bulk-force>
+                    <i class="ki-outline ki-trash"></i> Seçileni Kalıcı Sil
                 </button>
 
-                <a href="{{ route('{{ admin_prefix }}.{{ route_name_plural }}.index') }}"
-                   class="kt-btn kt-btn-sm kt-btn-light">
-                    <i class="ki-outline ki-arrow-left"></i>
-                    Liste
+                <a href="{{ route('admin.{{ route_name_plural }}.index') }}" class="kt-btn kt-btn-sm kt-btn-light">
+                    <i class="ki-outline ki-arrow-left"></i> Liste
                 </a>
             </div>
         </div>
 
         <div class="kt-card-body p-5">
-            <table id="{{ route_name_plural }}_trash_table"
-                   class="kt-table table-auto kt-table-border w-full"
+            <table class="kt-table table-auto kt-table-border w-full"
                    data-module-trash-table
-                   data-ajax="{{ route('{{ admin_prefix }}.{{ route_name_plural }}.trash') }}"
-                   data-bulk-restore-url="{{ route('{{ admin_prefix }}.{{ route_name_plural }}.bulkRestore') }}"
-                   data-bulk-force-url="{{ route('{{ admin_prefix }}.{{ route_name_plural }}.bulkForce') }}">
+                   data-ajax="{{ route('admin.{{ route_name_plural }}.trashListLegacy') }}"
+                   data-bulk-restore-url="{{ route('admin.{{ route_name_plural }}.bulkRestore') }}"
+                   data-bulk-force-url="{{ route('admin.{{ route_name_plural }}.bulkForce') }}">
                 <thead>
                     <tr>
-                        <th style="width: 5%">
+                        <th style="width:5%">
                             <label class="kt-form-check kt-form-check-sm">
                                 <input class="kt-checkbox" type="checkbox" data-check-all>
                             </label>
                         </th>
-                        <th style="width: 8%">#</th>
+                        <th style="width:8%">#</th>
                         <th>Başlık</th>
-                        <th style="width: 18%">Silinme</th>
-                        <th style="width: 16%">Kısıt</th>
-                        <th style="width: 18%">İşlem</th>
+                        <th style="width:18%">Silinme</th>
+                        <th style="width:16%">Kısıt</th>
+                        <th style="width:18%">İşlem</th>
                     </tr>
                 </thead>
             </table>
-
-            <div class="text-xs opacity-70 mt-3">
-                Kurumsal not: “Geri Al” soft delete’i geri çevirir. “Kalıcı Sil” geri dönüşsüzdür.
-            </div>
         </div>
     </div>
-
 </div>
 @endsection

@@ -1,0 +1,29 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Admin\User\Permission;
+use Illuminate\Database\Seeder;
+
+class {{ permission_seeder }} extends Seeder
+{
+    public function run(): void
+    {
+        $permissions = [
+            '{{ permission_key }}.view',
+            '{{ permission_key }}.create',
+            '{{ permission_key }}.update',
+            '{{ permission_key }}.delete',
+            '{{ permission_key }}.trash',
+            '{{ permission_key }}.restore',
+            '{{ permission_key }}.force_delete',
+        ];
+
+        foreach ($permissions as $slug) {
+            Permission::firstOrCreate(
+                ['slug' => $slug],
+                ['name' => ucfirst(str_replace('.', ' ', $slug))]
+            );
+        }
+    }
+}

@@ -3,6 +3,7 @@
 namespace {{ request_namespace }};
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class {{ store_request }} extends FormRequest
@@ -15,14 +16,19 @@ class {{ store_request }} extends FormRequest
     public function rules(): array
     {
         return [
+            // Core
             'title' => ['required', 'string', 'max:255'],
-            'slug'  => ['required', 'string', 'max:255', 'unique:{{ table }},slug'],
+            'slug'  => ['nullable', 'string', 'max:255', 'unique:{{ table }},slug'],
+
+            // Publish state
             'status' => ['required', Rule::in(['draft', 'published'])],
             'is_featured' => ['sometimes', 'boolean'],
 
+            // SEO
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:255'],
 
+            // Ordering + body
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'content' => ['nullable', 'string'],
         ];
@@ -30,9 +36,19 @@ class {{ store_request }} extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $title = is_string($this->input('title')) ? trim($this->input('title')) : null;
+        $slug  = is_string($this->input('slug')) ? trim($this->input('slug')) : null;
+
+        // slug boş gelirse title’dan üret (controller da bunu yapabilir; burada üretmek daha stabil)
+        if ($title && ($slug === null || $slug === '')) {
+            $slug = Str::slug($title);
+        }
+
         $this->merge([
-            'is_featured' => (bool) $this->input('is_featured', false),
-            'sort_order'  => (int) $this->input('sort_order', 0),
+            'title'       => $title,
+            'slug'        => $slug,
+            'is_featured' => (bool) $this->boolean('is_featured'),
+            'sort_order'  => (int) ($this->input('sort_order', 0)),
         ]);
     }
 }

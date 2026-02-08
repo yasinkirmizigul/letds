@@ -1,251 +1,177 @@
-function qs(sel, root = document) {
-    return root.querySelector(sel);
+// resources/js/admin/pages/{{ module_kebab_plural }}/edit.js
+
+import initSlugManager from '@/core/slug-manager';
+import initGalleryManager, { destroyGalleryManager } from '@/core/gallery-manager';
+import initLibraryAttach from '@/core/library-attach';
+import initFeaturedImageManager, { destroyFeaturedImageManager } from '@/core/featured-image-manager';
+
+function csrfToken() {
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    return meta ? meta.getAttribute('content') : '';
 }
 
-function slugifyTR(str) {
-    if (!str) return '';
-    return String(str)
-        .trim()
-        .toLowerCase()
-        .replace(/ğ/g, 'g')
-        .replace(/ü/g, 'u')
-        .replace(/ş/g, 's')
-        .replace(/ı/g, 'i')
-        .replace(/ö/g, 'o')
-        .replace(/ç/g, 'c')
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '');
+function getTheme() {
+    const root = document.documentElement;
+    const body = document.body;
+    const isDark = root.classList.contains('dark') || body.classList.contains('dark');
+    return isDark ? 'dark' : 'light';
 }
 
-function getCsrf() {
-    return (
-        window.csrfToken ||
-        document.querySelector('meta[name="csrf-token"]')?.content ||
-        ''
-    );
-}
+function loadScriptOnce(src) {
+    if (!src) return Promise.reject(new Error('tinymce src missing'));
+    if (document.querySelector(`script[data-once="${src}"]`)) return Promise.resolve();
 
-async function fetchJson(url, opts = {}) {
-    const res = await fetch(url, {
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Accept': 'application/json',
-            ...(opts.headers || {})
-        },
-        ...opts,
+    return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src;
+        s.async = true;
+        s.dataset.once = src;
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error('Failed to load: ' + src));
+        document.head.appendChild(s);
     });
-    const json = await res.json().catch(() => null);
-
-    if (!res.ok) {
-        const msg = json?.message || 'İşlem başarısız';
-        const err = new Error(msg);
-        err.payload = json;
-        throw err;
-    }
-
-    return json;
 }
 
-async function checkSlugUnique(url, slug, ignoreId) {
-    if (!url || !slug) return { ok: true };
-    const full = url + '?slug=' + encodeURIComponent(slug) + (ignoreId ? '&ignore=' + encodeURIComponent(ignoreId) : '');
-    return fetchJson(full);
+function safeTinyRemove(selector) {
+    try { window.tinymce?.remove?.(selector); } catch {}
 }
 
-async function checkFeaturedLimit(url) {
-    if (!url) return { ok: true };
-    return fetchJson(url);
+function initTiny({ selector, uploadUrl, baseUrl, langUrl }) {
+    if (!window.tinymce) return;
+
+    const theme = getTheme();
+    safeTinyRemove(selector);
+
+    window.tinymce.init({
+        selector,
+        height: 420,
+        license_key: 'gpl',
+        base_url: baseUrl,
+        suffix: '.min',
+        language: 'tr',
+        language_url: langUrl,
+        skin: theme === 'dark' ? 'oxide-dark' : 'oxide',
+        content_css: theme === 'dark' ? 'dark' : 'default',
+        plugins: 'lists link image code table',
+        toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link image table | code',
+        menubar: false,
+        branding: false,
+        promotion: false,
+        automatic_uploads: true,
+        paste_data_images: true,
+
+        images_upload_handler: (blobInfo, progress) =>
+            new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', uploadUrl);
+                xhr.withCredentials = true;
+                xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken());
+
+                xhr.upload.onprogress = (e) => {
+                    if (e.lengthComputable) progress((e.loaded / e.total) * 100);
+                };
+
+                xhr.onload = () => {
+                    if (xhr.status < 200 || xhr.status >= 300) return reject('Upload failed: ' + xhr.status);
+
+                    let json;
+                    try { json = JSON.parse(xhr.responseText); } catch { return reject('Invalid JSON'); }
+                    if (!json || typeof json.location !== 'string') return reject('No location returned');
+                    resolve(json.location);
+                };
+
+                xhr.onerror = () => reject('Network error');
+
+                const formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.filename());
+                xhr.send(formData);
+            }),
+    });
 }
 
-function setInvalid(el, isInvalid, message = '') {
-    if (!el) return;
-    el.classList.toggle('is-invalid', !!isInvalid);
+function observeThemeChanges(onChange) {
+    let current = getTheme();
 
-    const msgEl = el.closest('.form-group, .kt-form-control, .kt-field')?.querySelector('[data-field-error]');
-    if (msgEl) msgEl.textContent = isInvalid ? (message || 'Geçersiz') : '';
+    const obs = new MutationObserver(() => {
+        const next = getTheme();
+        if (next === current) return;
+        current = next;
+        onChange(next);
+    });
+
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+    return obs;
 }
 
-function updateFeaturedPreview(isFeatured) {
-    const el = qs('[data-featured-badge]');
-    if (!el) return;
+export default async function init(ctx) {
+    const root = ctx.root;
+    const signal = ctx.signal;
 
-    el.textContent = isFeatured ? 'Öne Çıkan' : 'Normal';
-    el.classList.toggle('kt-badge-primary', !!isFeatured);
-    el.classList.toggle('kt-badge-light', !isFeatured);
-}
+    // ✅ Slug
+    initSlugManager(
+        root,
+        {
+            sourceSelector: '#title',
+            slugSelector: '#slug',
+            previewSelector: '#url_slug_preview',
+            autoSelector: '#slug_auto',
+            regenSelector: '#slug_regen',
+            generateOnInit: true,
+        },
+        signal
+    );
 
-function clampText(s, n) {
-    s = String(s || '');
-    return s.length > n ? s.slice(0, n) : s;
-}
+    // ✅ Featured image
+    initFeaturedImageManager(root);
+    ctx.cleanup(() => {
+        try { destroyFeaturedImageManager(); } catch {}
+    });
 
-export default function init() {
-    const pageRoot = qs('[data-page]');
-    const form = qs('[data-module-form]');
-    if (!pageRoot || !form) return;
+    // ✅ Tiny
+    const ds = root.dataset;
+    const tinymceSrc = ds.tinymceSrc;
+    const tinymceBase = ds.tinymceBase;
+    const tinymceLangUrl = ds.tinymceLangUrl;
+    const uploadUrl = ds.uploadUrl;
 
-    const titleEl = qs('[data-title-input]') || qs('input[name="title"]', form);
-    const slugEl = qs('[data-slug-input]') || qs('input[name="slug"]', form);
-    const statusEl = qs('[data-status-select]') || qs('select[name="status"]', form);
-    const featuredEl = qs('[data-featured-toggle]') || qs('input[name="is_featured"]', form);
+    let themeObserver = null;
 
-    const slugCheckUrl = pageRoot.getAttribute('data-slug-check-url') || '';
-    const featuredLimitUrl = pageRoot.getAttribute('data-featured-limit-url') || '';
-    const itemId = pageRoot.getAttribute('data-item-id') || '';
+    if (tinymceSrc && tinymceBase && tinymceLangUrl && uploadUrl) {
+        await loadScriptOnce(tinymceSrc).catch(() => {});
+        initTiny({
+            selector: '#content_editor',
+            uploadUrl,
+            baseUrl: tinymceBase,
+            langUrl: tinymceLangUrl,
+        });
 
-    // ---------------- Status map from Blade
-    const statusCard = qs('[data-status-map]');
-    let statusMap = null;
-    try {
-        const raw = statusCard?.getAttribute('data-status-map');
-        statusMap = raw ? JSON.parse(raw) : null;
-    } catch (e) {
-        statusMap = null;
-    }
+        themeObserver = observeThemeChanges(() => {
+            initTiny({
+                selector: '#content_editor',
+                uploadUrl,
+                baseUrl: tinymceBase,
+                langUrl: tinymceLangUrl,
+            });
+        });
 
-    function applyStatusPreview(val) {
-        const badge = qs('[data-status-badge]');
-        if (!badge) return;
-
-        const key = val || 'draft';
-        const st = statusMap?.[key];
-
-        if (st?.badge) badge.className = st.badge + ' whitespace-nowrap';
-        else badge.className = 'kt-badge kt-badge-sm kt-badge-light whitespace-nowrap';
-
-        badge.textContent = st?.label || key;
-    }
-
-    // ---------------- Edit: slug default dolu gelir, kullanıcı değiştirirse kontrol et
-    if (statusEl) {
-        applyStatusPreview(statusEl.value);
-        statusEl.addEventListener('change', () => applyStatusPreview(statusEl.value));
-    }
-
-    // ---------------- Featured preview + limit check
-    if (featuredEl) {
-        const getVal = () => {
-            if (featuredEl.type === 'checkbox') return featuredEl.checked;
-            return String(featuredEl.value) === '1' || String(featuredEl.value) === 'true';
-        };
-
-        updateFeaturedPreview(getVal());
-
-        featuredEl.addEventListener('change', async () => {
-            const val = getVal();
-            updateFeaturedPreview(val);
-
-            if (!val) return;
-            if (!featuredLimitUrl) return;
-
-            try {
-                const res = await checkFeaturedLimit(featuredLimitUrl);
-                if (res?.ok === false) {
-                    alert(res.message || 'Öne çıkan limiti dolu');
-                    if (featuredEl.type === 'checkbox') featuredEl.checked = false;
-                    else featuredEl.value = '0';
-                    updateFeaturedPreview(false);
-                }
-            } catch (e) {
-                alert(e?.message || 'Featured kontrolü başarısız');
-                if (featuredEl.type === 'checkbox') featuredEl.checked = false;
-                else featuredEl.value = '0';
-                updateFeaturedPreview(false);
-            }
+        ctx.cleanup(() => {
+            try { themeObserver?.disconnect?.(); } catch {}
+            themeObserver = null;
+            safeTinyRemove('#content_editor');
         });
     }
 
-    // ---------------- Slug live check (debounce)
-    if (slugEl && slugCheckUrl) {
-        let timer;
-        slugEl.addEventListener('input', () => {
-            clearTimeout(timer);
+    // ✅ Gallery + Library attach
+    initGalleryManager(root);
+    ctx.cleanup(() => {
+        try { destroyGalleryManager(root); } catch {}
+    });
 
-            const val = slugEl.value;
-            if (!val) {
-                setInvalid(slugEl, false);
-                return;
-            }
-
-            timer = setTimeout(async () => {
-                try {
-                    const res = await checkSlugUnique(slugCheckUrl, val, itemId);
-                    if (res?.ok === false) setInvalid(slugEl, true, res.message || 'Bu slug kullanılıyor');
-                    else setInvalid(slugEl, false);
-                } catch (e) {
-                    setInvalid(slugEl, false);
-                }
-            }, 500);
-        });
-    }
-
-    // ---------------- META counters + SEO preview
-    const metaTitleEl = qs('[data-meta-title-input]');
-    const metaDescEl  = qs('[data-meta-desc-input]');
-    const metaTitleCount = qs('[data-meta-title-count]');
-    const metaDescCount  = qs('[data-meta-desc-count]');
-    const seoTitle = qs('[data-seo-title-preview]');
-    const seoDesc  = qs('[data-seo-desc-preview]');
-    const seoSlug  = qs('[data-seo-slug-preview]');
-
-    function refreshSeoPreview() {
-        const titleVal = metaTitleEl?.value || (titleEl?.value || '');
-        const descVal  = metaDescEl?.value || '';
-
-        if (metaTitleCount) metaTitleCount.textContent = String((metaTitleEl?.value || '').length);
-        if (metaDescCount)  metaDescCount.textContent  = String((metaDescEl?.value || '').length);
-
-        if (seoTitle) seoTitle.textContent = clampText(titleVal || 'Başlık', 60);
-        if (seoDesc)  seoDesc.textContent  = clampText(descVal || 'Açıklama...', 160);
-
-        const slugVal = (slugEl?.value || '');
-        if (seoSlug) seoSlug.textContent = slugVal;
-    }
-
-    if (metaTitleEl) metaTitleEl.addEventListener('input', refreshSeoPreview);
-    if (metaDescEl)  metaDescEl.addEventListener('input', refreshSeoPreview);
-    if (slugEl)      slugEl.addEventListener('input', refreshSeoPreview);
-    if (titleEl)     titleEl.addEventListener('input', refreshSeoPreview);
-
-    refreshSeoPreview();
-
-    // ---------------- AJAX save (opsiyonel)
-    if (form.hasAttribute('data-ajax-save')) {
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const submitBtn = form.querySelector('button[type="submit"]');
-            if (submitBtn) submitBtn.disabled = true;
-
-            try {
-                const method = (form.querySelector('input[name="_method"]')?.value || form.getAttribute('method') || 'POST').toUpperCase();
-
-                const res = await fetch(form.action, {
-                    method,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': getCsrf(),
-                    },
-                    body: new FormData(form),
-                });
-
-                const json = await res.json().catch(() => null);
-
-                if (!res.ok || !json?.ok) {
-                    alert(json?.message || 'Güncelleme başarısız');
-                    return;
-                }
-
-                if (json.redirect) window.location.href = json.redirect;
-                else window.location.reload();
-            } catch (err) {
-                alert(err?.message || 'Güncelleme başarısız');
-            } finally {
-                if (submitBtn) submitBtn.disabled = false;
-            }
-        });
-    }
+    initLibraryAttach(root);
 }
+
+// Page-registry cleanup’ı zaten ctx.cleanup stack’ini çalıştırıyor.
+// Burada ekstra bir şey yapmaya gerek yok.
+export function destroy(ctx) {}

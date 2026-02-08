@@ -195,56 +195,56 @@
 
                                         <span id="blog_publish_badge"
                                               class="kt-badge kt-badge-sm { old('is_published') ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }">
-                    { old('is_published') ? 'Yayında' : 'Taslak' }
-                </span>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-center justify-between">
-                                    <div class="flex flex-col">
-                                        <span class="font-medium">Anasayfa</span>
-                                        <span class="text-sm text-muted-foreground">En fazla 5</span>
-                                    </div>
-
-                                    <div class="flex items-center gap-2">
-                                        <label class="kt-switch kt-switch-sm">
-                                            <input
-                                                type="checkbox"
-                                                class="kt-switch js-featured-toggle-ui"
-                                                id="blog_is_featured"
-                                                name="is_featured"
-                                                value="1"
-                                                @checked(old('is_featured'))
-                                            >
-                                        </label>
-
-                                        <span id="blog_featured_badge"
-                                              class="kt-badge kt-badge-sm { old('is_featured') ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }">
-                    { old('is_featured') ? 'Anasayfada' : 'Kapalı' }
-                </span>
-                                    </div>
+                                        {{ old('is_published') ? 'Yayında' : 'Taslak' }}
+                                    </span>
                                 </div>
                             </div>
+
+                            <div class="flex items-center justify-between">
+                                <div class="flex flex-col">
+                                    <span class="font-medium">Anasayfa</span>
+                                    <span class="text-sm text-muted-foreground">En fazla 5</span>
+                                </div>
+
+                                <div class="flex items-center gap-2">
+                                    <label class="kt-switch kt-switch-sm">
+                                        <input
+                                            type="checkbox"
+                                            class="kt-switch js-featured-toggle-ui"
+                                            id="blog_is_featured"
+                                            name="is_featured"
+                                            value="1"
+                                            @checked(old('is_featured'))
+                                        >
+                                    </label>
+
+                                    <span id="blog_featured_badge"
+                                          class="kt-badge kt-badge-sm { old('is_featured') ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }">
+                                    {{ old('is_featured') ? 'Anasayfada' : 'Kapalı' }}
+                                </span>
+                            </div>
                         </div>
-
-                        @error('is_published')
-                        <div class="text-xs text-danger mt-2">{ $message }</div>
-                        @enderror
-                        @error('is_featured')
-                        <div class="text-xs text-danger mt-2">{ $message }</div>
-                        @enderror
-
-                        <button type="submit" class="kt-btn kt-btn-primary">
-                            Kaydet
-                        </button>
-
                     </div>
-
                 </div>
-            </form>
-        </div>
 
-        {{-- Media library modal (featured “Medyadan Seç” için şart) --}}
+                @error('is_published')
+                <div class="text-xs text-danger mt-2">{ $message }</div>
+                @enderror
+                @error('is_featured')
+                <div class="text-xs text-danger mt-2">{ $message }</div>
+                @enderror
+
+                <button type="submit" class="kt-btn kt-btn-primary">
+                    Kaydet
+                </button>
+
+            </div>
+
+        </div>
+    </form>
+</div>
+
+{{-- Media library modal (featured “Medyadan Seç” için şart) --}}
         @include('admin.pages.media.partials._upload-modal')
     </div>
 @endsection

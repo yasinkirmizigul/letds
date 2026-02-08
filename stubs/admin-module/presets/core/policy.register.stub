@@ -1,0 +1,1 @@
+{{ model_namespace }}\{{ model }}::class => {{ policy_namespace }}\{{ policy }}::class,

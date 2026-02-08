@@ -1,32 +1,28 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\{{ controller }};
+use {{ controller_fqn }};
 
-Route::prefix('{{ admin_prefix }}')
-    ->name('{{ admin_prefix }}.')
+Route::prefix('{{ route_prefix }}')
+    ->name('admin.{{ route_name }}.')
     ->group(function () {
 
-        // Module: {{ module_label_plural }}
+        Route::get('/', [{{ controller_class }}::class, 'index'])->name('index');
+        Route::get('create', [{{ controller_class }}::class, 'create'])->name('create');
+        Route::post('/', [{{ controller_class }}::class, 'store'])->name('store');
 
-        // DataTable server-side endpoints
-        Route::get('{{ module_kebab_plural }}/list', [{{ controller }}::class, 'list'])->name('{{ route_name_plural }}.list');
-        Route::get('{{ module_kebab_plural }}/trash/list', [{{ controller }}::class, 'trashList'])->name('{{ route_name_plural }}.trashList');
+        Route::get('list-legacy', [{{ controller_class }}::class, 'listLegacy'])->name('listLegacy');
 
-        // CRUD
-        Route::get('{{ module_kebab_plural }}', [{{ controller }}::class, 'index'])->name('{{ route_name_plural }}.index');
-        Route::get('{{ module_kebab_plural }}/create', [{{ controller }}::class, 'create'])->name('{{ route_name_plural }}.create');
-        Route::post('{{ module_kebab_plural }}', [{{ controller }}::class, 'store'])->name('{{ route_name_plural }}.store');
+        Route::get('trash', [{{ controller_class }}::class, 'trash'])->name('trash');
+        Route::get('trash/list-legacy', [{{ controller_class }}::class, 'trashListLegacy'])->name('trashListLegacy');
 
-        Route::get('{{ module_kebab_plural }}/{{ route_param_braced }}/edit', [{{ controller }}::class, 'edit'])->name('{{ route_name_plural }}.edit');
-        Route::put('{{ module_kebab_plural }}/{{ route_param_braced }}', [{{ controller }}::class, 'update'])->name('{{ route_name_plural }}.update');
-        Route::delete('{{ module_kebab_plural }}/{{ route_param_braced }}', [{{ controller }}::class, 'destroy'])->name('{{ route_name_plural }}.destroy');
+        Route::post('bulk/restore', [{{ controller_class }}::class, 'bulkRestore'])->name('bulkRestore');
+        Route::delete('bulk/force', [{{ controller_class }}::class, 'bulkForceDelete'])->name('bulkForce');
 
-        // Trash ops
-        Route::get('{{ module_kebab_plural }}/trash', [{{ controller }}::class, 'trash'])->name('{{ route_name_plural }}.trash');
-        Route::post('{{ module_kebab_plural }}/{id}/restore', [{{ controller }}::class, 'restore'])->whereNumber('id')->name('{{ route_name_plural }}.restore');
-        Route::delete('{{ module_kebab_plural }}/{id}/force', [{{ controller }}::class, 'forceDelete'])->whereNumber('id')->name('{{ route_name_plural }}.force');
+        Route::post('{id}/restore', [{{ controller_class }}::class, 'restore'])->name('restore');
+        Route::delete('{id}/force', [{{ controller_class }}::class, 'forceDelete'])->name('force');
 
-        Route::post('{{ module_kebab_plural }}/bulk/restore', [{{ controller }}::class, 'bulkRestore'])->name('{{ route_name_plural }}.bulkRestore');
-        Route::delete('{{ module_kebab_plural }}/bulk/force', [{{ controller }}::class, 'bulkForceDelete'])->name('{{ route_name_plural }}.bulkForce');
+        Route::get('{ {{ route_param }} }/edit', [{{ controller_class }}::class, 'edit'])->name('edit');
+        Route::put('{ {{ route_param }} }', [{{ controller_class }}::class, 'update'])->name('update');
+        Route::delete('{ {{ route_param }} }', [{{ controller_class }}::class, 'destroy'])->name('destroy');
     });

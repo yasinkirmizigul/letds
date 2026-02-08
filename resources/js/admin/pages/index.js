@@ -35,11 +35,6 @@ import galleriesIndex from './galleries/index';
 import galleriesCreate from './galleries/create';
 import galleriesEdit from './galleries/edit';
 
-import TestProductsIndex from './test-products/index';
-import TestProductsCreate from './test-products/create';
-import TestProductsEdit from './test-products/edit';
-import TestProductsTrash from './test-products/trash';
-
 export function registerPages() {
     register('blog.create', BlogCreate);
     register('blog.edit', BlogEdit);
@@ -75,9 +70,4 @@ export function registerPages() {
     register('galleries.index', galleriesIndex);
     register('galleries.create', galleriesCreate);
     register('galleries.edit', galleriesEdit);
-
-    register('test-products.index', TestProductsIndex);
-    register('test-products.create', TestProductsCreate);
-    register('test-products.edit', TestProductsEdit);
-    register('test-products.trash', TestProductsTrash);
 }

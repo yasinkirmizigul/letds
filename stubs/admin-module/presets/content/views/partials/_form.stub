@@ -1,43 +1,51 @@
-<div class="kt-card">
-    <div class="kt-card-header py-4">
-        <h3 class="kt-card-title">Genel Bilgiler</h3>
+@php
+    /**
+     * Safe defaults
+     */
+    $item          = $item ?? null;
+    $formAction    = $formAction ?? '';
+    $formMethod    = $formMethod ?? 'POST';
+    $ajaxSave      = $ajaxSave ?? false;
+@endphp
+
+<form action="{{ $formAction }}"
+      method="POST"
+      class="grid gap-6"
+      {{ $ajaxSave ? 'data-ajax-save' : '' }}>
+
+    @csrf
+    @if($formMethod !== 'POST')
+        @method($formMethod)
+    @endif
+
+    {{-- Başlık --}}
+    <div class="grid gap-2">
+        <label class="kt-label" for="title">Başlık</label>
+        <input type="text"
+               id="title"
+               name="title"
+               class="kt-input"
+               value="{{ old('title', $item->title ?? '') }}"
+               data-slug-source>
     </div>
 
-    <div class="kt-card-body grid gap-5 p-5">
-        {{-- Title --}}
-        <div class="grid gap-2">
-            <label class="kt-label" for="title">Başlık</label>
-            <input id="title"
-                   type="text"
-                   name="title"
-                   class="kt-input"
-                   value="{{ old('title', $item->title ?? '') }}"
-                   data-title-input>
-            <div class="text-xs text-danger" data-field-error></div>
-        </div>
-
-        {{-- Slug --}}
-        <div class="grid gap-2">
-            <label class="kt-label" for="slug">Slug</label>
-            <input id="slug"
-                   type="text"
-                   name="slug"
-                   class="kt-input"
-                   value="{{ old('slug', $item->slug ?? '') }}"
-                   data-slug-input>
-            <div class="text-xs text-danger" data-field-error></div>
-            <div class="text-xs opacity-70">
-                Otomatik oluşur; istersen elle düzenleyebilirsin.
-            </div>
-        </div>
-
-        {{-- Content (opsiyonel örnek) --}}
-        <div class="grid gap-2">
-            <label class="kt-label" for="content">İçerik</label>
-            <textarea id="content"
-                      name="content"
-                      class="kt-textarea"
-                      rows="6">{{ old('content', $item->content ?? '') }}</textarea>
-        </div>
+    {{-- Slug --}}
+    <div class="grid gap-2">
+        <label class="kt-label" for="slug">Slug</label>
+        <input type="text"
+               id="slug"
+               name="slug"
+               class="kt-input"
+               value="{{ old('slug', $item->slug ?? '') }}"
+               data-slug-target>
     </div>
-</div>
+
+    {{-- İçerik --}}
+    <div class="grid gap-2">
+        <label class="kt-label" for="content">İçerik</label>
+        <textarea id="content"
+                  name="content"
+                  rows="6"
+                  class="kt-textarea">{{ old('content', $item->content ?? '') }}</textarea>
+    </div>
+</form>

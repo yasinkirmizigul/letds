@@ -3,6 +3,7 @@
 namespace {{ request_namespace }};
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class {{ update_request }} extends FormRequest
@@ -19,7 +20,8 @@ class {{ update_request }} extends FormRequest
 
         return [
             'title' => ['required', 'string', 'max:255'],
-            'slug'  => ['required', 'string', 'max:255', Rule::unique('{{ table }}', 'slug')->ignore($id)],
+            'slug'  => ['nullable', 'string', 'max:255', Rule::unique('{{ table }}', 'slug')->ignore($id)],
+
             'status' => ['required', Rule::in(['draft', 'published'])],
             'is_featured' => ['sometimes', 'boolean'],
 
@@ -33,9 +35,18 @@ class {{ update_request }} extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $title = is_string($this->input('title')) ? trim($this->input('title')) : null;
+        $slug  = is_string($this->input('slug')) ? trim($this->input('slug')) : null;
+
+        if ($title && ($slug === null || $slug === '')) {
+            $slug = Str::slug($title);
+        }
+
         $this->merge([
-            'is_featured' => (bool) $this->input('is_featured', false),
-            'sort_order'  => (int) $this->input('sort_order', 0),
+            'title'       => $title,
+            'slug'        => $slug,
+            'is_featured' => (bool) $this->boolean('is_featured'),
+            'sort_order'  => (int) ($this->input('sort_order', 0)),
         ]);
     }
 }

@@ -1,0 +1,23 @@
+[
+    'key'   => '{{ module_kebab_plural }}',
+    'label' => '{{ module_label_plural }}',
+    'icon'  => '{{ menu_icon }}', // örn: 'ki-outline ki-basket'
+    'route' => '{{ admin_prefix }}.{{ route_name_plural }}.index',
+    'can'   => '{{ permission_prefix }}.{{ permission_key }}.view',
+
+    // Opsiyonel: aynı modül içinde child linkler (liste + çöp)
+    'children' => [
+        [
+            'key'   => '{{ module_kebab_plural }}.list',
+            'label' => 'Liste',
+            'route' => '{{ admin_prefix }}.{{ route_name_plural }}.index',
+            'can'   => '{{ permission_prefix }}.{{ permission_key }}.view',
+        ],
+        [
+            'key'   => '{{ module_kebab_plural }}.trash',
+            'label' => 'Çöp',
+            'route' => '{{ admin_prefix }}.{{ route_name_plural }}.trash',
+            'can'   => '{{ permission_prefix }}.{{ permission_key }}.view',
+        ],
+    ],
+],

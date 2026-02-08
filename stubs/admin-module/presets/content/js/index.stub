@@ -31,7 +31,6 @@ async function requestJson(url, method = 'POST', payload = null) {
         throw err;
     }
 
-    // Eğer API {ok:true} dönüyorsa onu da kontrol et
     if (json && typeof json.ok !== 'undefined' && !json.ok) {
         const msg = json?.message || 'İşlem başarısız';
         const err = new Error(msg);
@@ -60,7 +59,6 @@ export default function init(ctx = {}) {
     const signal = ctx.signal || null;
     const cleanup = (typeof ctx.cleanup === 'function') ? ctx.cleanup : null;
 
-    // ✅ Server-side DataTable
     const dt = window.initDataTable({
         root,
         table: tableEl,
@@ -71,11 +69,8 @@ export default function init(ctx = {}) {
 
         columns: [
             { data: 'id', title: '#', width: '8%' },
-
-            // Title
             { data: 'title', title: 'Başlık', render: (d) => d || '' },
 
-            // Status badge (backend HTML döndürürse direkt bas)
             {
                 data: 'status_badge',
                 title: 'Durum',
@@ -93,7 +88,6 @@ export default function init(ctx = {}) {
 
             { data: 'updated_at', title: 'Güncelleme', width: '18%', render: (d) => d || '' },
 
-            // Actions (backend HTML döndürürse direkt bas)
             {
                 data: 'actions',
                 title: 'İşlem',
@@ -103,9 +97,8 @@ export default function init(ctx = {}) {
                 render: (d, t, row) => {
                     if (d) return d;
 
-                    // fallback minimum
                     const editUrl = row.edit_url;
-                    const trashUrl = row.trash_url; // soft delete endpoint
+                    const trashUrl = row.trash_url;
                     return `
                       <div class="flex items-center gap-2">
                         ${editUrl ? `
@@ -133,7 +126,6 @@ export default function init(ctx = {}) {
         cleanup,
     });
 
-    // Soft delete click (root scoped)
     const onClick = async (e) => {
         const delBtn = e.target.closest('[data-soft-delete]');
         if (!delBtn) return;

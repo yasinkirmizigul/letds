@@ -1,28 +1,97 @@
-export default function init() {
-    const tableEl = document.querySelector('[data-module-trash-table]');
+function qs(sel, root = document) {
+    return root.querySelector(sel);
+}
+
+async function requestJson(url, method = 'POST', payload = null) {
+    const csrf =
+        window.csrfToken ||
+        document.querySelector('meta[name="csrf-token"]')?.content ||
+        '';
+
+    const headers = {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': csrf,
+    };
+
+    const opts = { method, headers };
+
+    if (payload !== null) {
+        headers['Content-Type'] = 'application/json';
+        opts.body = JSON.stringify(payload);
+    }
+
+    const res = await fetch(url, opts);
+    const json = await res.json().catch(() => null);
+
+    if (!res.ok) {
+        const msg = json?.message || 'İşlem başarısız';
+        const err = new Error(msg);
+        err.payload = json;
+        throw err;
+    }
+
+    if (json && typeof json.ok !== 'undefined' && !json.ok) {
+        const msg = json?.message || 'İşlem başarısız';
+        const err = new Error(msg);
+        err.payload = json;
+        throw err;
+    }
+
+    return json;
+}
+
+export default function init(ctx = {}) {
+    const root = ctx.root || qs('[data-page]');
+    if (!root) return;
+
+    const tableEl = qs('[data-module-trash-table]', root);
     if (!tableEl) return;
 
     const ajaxUrl = tableEl.getAttribute('data-ajax');
     const bulkRestoreUrl = tableEl.getAttribute('data-bulk-restore-url');
     const bulkForceUrl = tableEl.getAttribute('data-bulk-force-url');
 
-    const checkAllEl = tableEl.querySelector('[data-check-all]');
-    const selectedCountEl = document.querySelector('[data-selected-count]');
-    const bulkRestoreBtn = document.querySelector('[data-bulk-restore]');
-    const bulkForceBtn = document.querySelector('[data-bulk-force]');
+    if (!ajaxUrl || !bulkRestoreUrl || !bulkForceUrl) return;
 
-    const csrf =
-        window.csrfToken ||
-        document.querySelector('meta[name="csrf-token"]')?.content ||
-        '';
+    if (typeof window.initDataTable !== 'function') {
+        console.warn('[admin-module] initDataTable helper not found. Trash table not initialized.');
+        return;
+    }
 
-    const getSelectedIds = () => {
-        const checks = tableEl.querySelectorAll('tbody input[type="checkbox"][data-row-check]:checked');
-        return Array.from(checks).map((c) => c.value).filter(Boolean);
+    const selectedCountEl = qs('[data-selected-count]', root);
+    const bulkRestoreBtn = qs('[data-bulk-restore]', root);
+    const bulkForceBtn = qs('[data-bulk-force]', root);
+    const checkAllEl = qs('[data-check-all]', tableEl);
+
+    const getRowChecks = () =>
+        Array.from(tableEl.querySelectorAll('tbody input[type="checkbox"][data-row-check]'));
+
+    const getSelectedChecks = () =>
+        Array.from(tableEl.querySelectorAll('tbody input[type="checkbox"][data-row-check]:checked'));
+
+    const updateBulkUI = () => {
+        const selected = getSelectedChecks();
+        const c = selected.length;
+
+        if (selectedCountEl) selectedCountEl.textContent = `Seçili: ${c}`;
+        if (bulkRestoreBtn) bulkRestoreBtn.disabled = c === 0;
+        if (bulkForceBtn) bulkForceBtn.disabled = c === 0;
+
+        if (checkAllEl) {
+            const all = getRowChecks();
+            const total = all.length;
+            const checked = selected.length;
+            checkAllEl.indeterminate = checked > 0 && checked < total;
+            checkAllEl.checked = total > 0 && checked === total;
+        }
     };
 
+    const getSelectedIds = () =>
+        getSelectedChecks().map((c) => c.value).filter(Boolean);
+
     const getForceEligibleSelectedIds = () => {
-        const checks = tableEl.querySelectorAll('tbody input[type="checkbox"][data-row-check]:checked');
+        const checks = getSelectedChecks();
         const ids = [];
         const blocked = [];
 
@@ -38,186 +107,144 @@ export default function init() {
         return { ids, blocked };
     };
 
-    const updateBulkUI = () => {
-        const ids = getSelectedIds();
-        const c = ids.length;
+    const signal = ctx.signal || null;
+    const cleanup = (typeof ctx.cleanup === 'function') ? ctx.cleanup : null;
 
-        if (selectedCountEl) selectedCountEl.textContent = `Seçili: ${c}`;
-        if (bulkRestoreBtn) bulkRestoreBtn.disabled = c === 0;
-        if (bulkForceBtn) bulkForceBtn.disabled = c === 0;
+    const dt = window.initDataTable({
+        root,
+        table: tableEl,
+        dom: 't',
+        serverSide: true,
+        processing: true,
+        ajax: ajaxUrl,
 
-        // check-all state
-        if (checkAllEl) {
-            const allChecks = tableEl.querySelectorAll('tbody input[type="checkbox"][data-row-check]');
-            const total = allChecks.length;
-            const checked = tableEl.querySelectorAll('tbody input[type="checkbox"][data-row-check]:checked').length;
-
-            checkAllEl.indeterminate = checked > 0 && checked < total;
-            checkAllEl.checked = total > 0 && checked === total;
-        }
-    };
-
-    const fetchTrash = async () => {
-        const res = await fetch(ajaxUrl, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json',
+        columns: [
+            {
+                data: null,
+                title: '',
+                width: '5%',
+                orderable: false,
+                searchable: false,
+                render: (d, t, row) => `
+                  <label class="kt-form-check kt-form-check-sm">
+                    <input class="kt-checkbox"
+                           type="checkbox"
+                           data-row-check
+                           value="${row.id}">
+                  </label>
+                `,
             },
-        });
+            { data: 'id', title: '#', width: '8%' },
+            { data: 'title', title: 'Başlık', render: (d) => d || '' },
+            { data: 'deleted_at', title: 'Silinme', width: '18%', render: (d) => d || '' },
 
-        const json = await res.json().catch(() => null);
-        if (!res.ok || !json?.ok) throw new Error(json?.message || 'Trash list failed');
-        return json.data || [];
-    };
-
-    const postJson = async (url, method, payload) => {
-        const res = await fetch(url, {
-            method,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrf,
-            },
-            body: JSON.stringify(payload || {}),
-        });
-
-        const json = await res.json().catch(() => null);
-        if (!res.ok || !json?.ok) throw new Error(json?.message || 'Request failed');
-        return json;
-    };
-
-    const initTable = async () => {
-        let data = [];
-        try {
-            data = await fetchTrash();
-        } catch (e) {
-            alert(e?.message || 'Trash list failed');
-            return;
-        }
-
-        if (typeof window.initDataTable === 'function') {
-            window.initDataTable(tableEl, {
-                serverSide: false,
-                processing: false,
-                data,
-                columns: [
-                    {
-                        data: null,
-                        title: '',
-                        width: '5%',
-                        orderable: false,
-                        render: (d, t, row) => {
-                            return `
-        <label class="kt-form-check kt-form-check-sm">
-          <input class="kt-checkbox"
-                 type="checkbox"
-                 data-row-check
-                 value="${row.id}">
-        </label>
-      `;
-                        }
-                    },
-                    { data: 'id', title: '#', width: '8%' },
-                    { data: 'title', title: 'Başlık' },
-                    { data: 'deleted_at', title: 'Silinme', width: '18%' },
-
-                    // ✅ NEW: Restriction column
-                    {
-                        data: null,
-                        title: 'Kısıt',
-                        width: '16%',
-                        orderable: false,
-                        render: (d, t, row) => {
-                            if (row.can_force_delete === false) {
-                                const msg = row.force_block_reason || 'Bağlı kayıt var';
-                                // light badge kurumsal; istersen warning sınıfı kullanırız
-                                return `<span class="kt-badge kt-badge-sm kt-badge-light" title="${msg}">${msg}</span>`;
-                            }
-                            return `<span class="kt-badge kt-badge-sm kt-badge-light">OK</span>`;
-                        }
-                    },
-
-                    // Actions
-                    {
-                        data: null,
-                        title: 'İşlem',
-                        width: '18%',
-                        orderable: false,
-                        render: (d, t, row) => {
-                            const forceDisabled = row.can_force_delete === false;
-                            const forceTitle = forceDisabled ? (row.force_block_reason || 'Bağlı kayıt var') : 'Kalıcı sil';
-                            return `
-                                <div class="flex items-center gap-2">
-                                  <button class="kt-btn kt-btn-sm kt-btn-light"
-                                          type="button"
-                                          data-restore
-                                          data-url="${row.restore_url}">
-                                    <i class="ki-outline ki-arrow-rotate-left"></i>
-                                    Restore
-                                  </button>
-
-                                  <button class="kt-btn kt-btn-sm kt-btn-light ${forceDisabled ? 'opacity-50 cursor-not-allowed' : ''}"
-                                          type="button"
-                                          ${forceDisabled ? 'disabled' : ''}
-                                          title="${forceTitle}"
-                                          data-force
-                                          data-can-force="${!forceDisabled}"
-                                          data-url="${row.force_url}">
-                                    <i class="ki-outline ki-trash"></i>
-                                    Force Delete
-                                  </button>
-                                </div>
-                              `;
-                        }
+            {
+                data: null,
+                title: 'Kısıt',
+                width: '16%',
+                orderable: false,
+                searchable: false,
+                render: (d, t, row) => {
+                    if (row.can_force_delete === false) {
+                        const msg = row.force_block_reason || 'Bağlı kayıt var';
+                        return `<span class="kt-badge kt-badge-sm kt-badge-light" title="${msg}">${msg}</span>`;
                     }
-                ],
+                    return `<span class="kt-badge kt-badge-sm kt-badge-light">OK</span>`;
+                }
+            },
 
-            });
+            {
+                data: null,
+                title: 'İşlem',
+                width: '18%',
+                orderable: false,
+                searchable: false,
+                render: (d, t, row) => {
+                    const forceDisabled = row.can_force_delete === false;
+                    const forceTitle = forceDisabled ? (row.force_block_reason || 'Bağlı kayıt var') : 'Kalıcı sil';
 
-            // table draw sonrası checkbox state
-            setTimeout(updateBulkUI, 0);
+                    return `
+                      <div class="flex items-center gap-2">
+                        <button class="kt-btn kt-btn-sm kt-btn-light"
+                                type="button"
+                                data-restore
+                                data-url="${row.restore_url}">
+                          <i class="ki-outline ki-arrow-rotate-left"></i>
+                          Restore
+                        </button>
 
-            return;
+                        <button class="kt-btn kt-btn-sm kt-btn-light ${forceDisabled ? 'opacity-50 cursor-not-allowed' : ''}"
+                                type="button"
+                                ${forceDisabled ? 'disabled' : ''}
+                                title="${forceTitle}"
+                                data-force
+                                data-can-force="${!forceDisabled}"
+                                data-url="${row.force_url}">
+                          <i class="ki-outline ki-trash"></i>
+                          Force Delete
+                        </button>
+                      </div>
+                    `;
+                }
+            },
+        ],
+
+        signal,
+        cleanup,
+    });
+
+    const onDraw = () => {
+        // draw sonrası bulk state sıfırlanır (checkbox DOM yenilenir)
+        if (checkAllEl) {
+            checkAllEl.checked = false;
+            checkAllEl.indeterminate = false;
         }
-
-        console.warn('initDataTable helper not found. Trash table not initialized.');
+        updateBulkUI();
     };
 
-    // Check-all
+    // initDataTable wrapper'ın dt döndürdüğünü varsayıyorum:
+    // eğer DataTable instance ise draw event bağlanır
+    try {
+        dt?.on?.('draw', onDraw);
+        if (cleanup) cleanup(() => dt?.off?.('draw', onDraw));
+    } catch {}
+
+    // check-all
     if (checkAllEl) {
-        checkAllEl.addEventListener('change', () => {
-            const checks = tableEl.querySelectorAll('tbody input[type="checkbox"][data-row-check]');
+        const onCheckAll = () => {
+            const checks = getRowChecks();
             checks.forEach((c) => { c.checked = checkAllEl.checked; });
             updateBulkUI();
-        });
+        };
+        checkAllEl.addEventListener('change', onCheckAll, signal ? { signal } : undefined);
+        if (cleanup) cleanup(() => checkAllEl.removeEventListener('change', onCheckAll));
     }
 
-    // Row checkbox change
-    tableEl.addEventListener('change', (e) => {
+    // row check change
+    const onChange = (e) => {
         const rowCheck = e.target.closest('input[type="checkbox"][data-row-check]');
         if (!rowCheck) return;
         updateBulkUI();
-    });
+    };
+    tableEl.addEventListener('change', onChange, signal ? { signal } : undefined);
+    if (cleanup) cleanup(() => tableEl.removeEventListener('change', onChange));
 
-    // Single / Bulk actions
-    document.addEventListener('click', async (e) => {
+    // actions
+    const onClick = async (e) => {
         const restoreBtn = e.target.closest('[data-restore]');
         const forceBtn = e.target.closest('[data-force]');
         const bulkRestore = e.target.closest('[data-bulk-restore]');
         const bulkForce = e.target.closest('[data-bulk-force]');
 
         try {
-            // bulk restore
             if (bulkRestore) {
                 const ids = getSelectedIds();
                 if (!ids.length) return;
-                await postJson(bulkRestoreUrl, 'POST', { ids });
-                location.reload();
+                await requestJson(bulkRestoreUrl, 'POST', { ids });
+                dt?.ajax?.reload?.(null, false);
                 return;
             }
 
-            // bulk force delete
             if (bulkForce) {
                 const { ids, blocked } = getForceEligibleSelectedIds();
                 if (!ids.length) {
@@ -231,45 +258,36 @@ export default function init() {
 
                 if (!confirm('Kalıcı silinsin mi?')) return;
 
-                const json = await postJson(bulkForceUrl, 'DELETE', { ids });
-
-                if (json?.failed && Object.keys(json.failed).length) {
-                    const lines = Object.entries(json.failed)
-                        .slice(0, 10)
-                        .map(([id, msg]) => `#${id}: ${msg}`);
-                    alert(`Bazı kayıtlar silinemedi:\n\n${lines.join('\n')}${Object.keys(json.failed).length > 10 ? '\n...' : ''}`);
-                }
-
-                location.reload();
+                await requestJson(bulkForceUrl, 'DELETE', { ids });
+                dt?.ajax?.reload?.(null, false);
                 return;
             }
 
-
-            // single restore
             if (restoreBtn) {
                 const url = restoreBtn.getAttribute('data-url');
                 if (!url) return;
-                await postJson(url, 'POST', {});
-                location.reload();
+                await requestJson(url, 'POST', {});
+                dt?.ajax?.reload?.(null, false);
                 return;
             }
 
-            // single force
             if (forceBtn) {
                 if (forceBtn.getAttribute('data-can-force') === 'false' || forceBtn.disabled) return;
                 const url = forceBtn.getAttribute('data-url');
                 if (!url) return;
                 if (!confirm('Kalıcı olarak silinsin mi?')) return;
 
-                await postJson(url, 'DELETE', {});
-                location.reload();
+                await requestJson(url, 'DELETE', {});
+                dt?.ajax?.reload?.(null, false);
                 return;
             }
         } catch (err) {
             alert(err?.message || 'İşlem başarısız');
         }
-    });
+    };
 
-    initTable();
+    root.addEventListener('click', onClick, signal ? { signal } : undefined);
+    if (cleanup) cleanup(() => root.removeEventListener('click', onClick));
+
     updateBulkUI();
 }

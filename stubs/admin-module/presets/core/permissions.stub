@@ -1,0 +1,17 @@
+<?php
+
+return [
+    'group' => [
+        'key'   => '{{ permission_prefix }}.{{ permission_key }}',
+        'label' => '{{ module_label_plural }}',
+    ],
+
+    'permissions' => [
+        ['name' => '{{ permission_prefix }}.{{ permission_key }}.view',    'label' => 'Görüntüle'],
+        ['name' => '{{ permission_prefix }}.{{ permission_key }}.create',  'label' => 'Oluştur'],
+        ['name' => '{{ permission_prefix }}.{{ permission_key }}.update',  'label' => 'Güncelle'],
+        ['name' => '{{ permission_prefix }}.{{ permission_key }}.delete',  'label' => 'Sil (Çöp)'],
+        ['name' => '{{ permission_prefix }}.{{ permission_key }}.restore', 'label' => 'Geri Yükle'],
+        ['name' => '{{ permission_prefix }}.{{ permission_key }}.force',   'label' => 'Kalıcı Sil'],
+    ],
+];

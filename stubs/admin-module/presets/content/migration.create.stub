@@ -11,19 +11,30 @@ return new class extends Migration
         Schema::create('{{ table }}', function (Blueprint $table) {
             $table->id();
 
-            $table->string('title')->index();
-            $table->string('slug')->unique();
+            $table->string('title', 200)->index();
+            $table->string('slug', 220)->unique();
 
-            $table->enum('status', ['draft','published'])->default('draft')->index();
+            $table->string('excerpt', 500)->nullable();
+            $table->string('meta_title', 255)->nullable();
+            $table->string('meta_description', 500)->nullable();
+
+            $table->longText('content')->nullable();
+
+            $table->string('status', 30)->default('draft')->index();
             $table->boolean('is_featured')->default(false)->index();
-
-            $table->string('meta_title')->nullable();
-            $table->string('meta_description', 255)->nullable();
+            $table->timestamp('featured_at')->nullable()->index();
+            $table->unsignedBigInteger('featured_media_id')->nullable()->index();
 
             $table->unsignedInteger('sort_order')->default(0)->index();
 
+            $table->unsignedBigInteger('created_by')->nullable()->index();
+            $table->unsignedBigInteger('updated_by')->nullable()->index();
+
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index(['status', 'deleted_at']);
+            $table->index(['is_featured', 'status']);
         });
     }
 

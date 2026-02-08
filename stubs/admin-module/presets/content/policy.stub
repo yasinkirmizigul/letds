@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Policies;
+namespace {{ policy_namespace }};
 
 use App\Models\User;
-use App\Models\{{ model }};
+use {{ model_namespace }}\{{ model }};
 
 class {{ policy }}
 {
-    protected function perm(string $action): string
-{
-    return '{{ permission_prefix }}.{{ permission_key }}.' . $action;
-}
+    private function perm(string $action): string
+    {
+        return '{{ permission_prefix }}.{{ permission_key }}.' . $action;
+    }
 
     public function viewAny(User $user): bool
-{
-    return $user->can($this->perm('view'));
-}
+    {
+        return $user->can($this->perm('view'));
+    }
 
     public function view(User $user, {{ model }} ${{ model_var }}): bool
     {
@@ -23,9 +23,9 @@ class {{ policy }}
     }
 
     public function create(User $user): bool
-{
-    return $user->can($this->perm('create'));
-}
+    {
+        return $user->can($this->perm('create'));
+    }
 
     public function update(User $user, {{ model }} ${{ model_var }}): bool
     {
@@ -44,6 +44,6 @@ class {{ policy }}
 
     public function forceDelete(User $user, {{ model }} ${{ model_var }}): bool
     {
-        return $user->can($this->perm('force'));
+        return $user->can($this->perm('force_delete'));
     }
 }

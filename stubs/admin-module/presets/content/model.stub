@@ -4,7 +4,6 @@ namespace {{ model_namespace }};
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 
 class {{ model }} extends Model
 {
@@ -15,54 +14,50 @@ class {{ model }} extends Model
     protected $fillable = [
         'title',
         'slug',
+        'excerpt',
+        'content',
         'status',
         'is_featured',
+        'featured_at',
+        'featured_media_id',
         'meta_title',
         'meta_description',
-        'content',
         'sort_order',
+        'created_by',
+        'updated_by',
     ];
 
     protected $casts = [
         'is_featured' => 'boolean',
-        'sort_order' => 'integer',
+        'featured_at' => 'datetime',
         'deleted_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
+
+    protected $attributes = [
+        'status' => 'draft',
+        'is_featured' => 0,
+        'sort_order' => 0,
+    ];
+
+    public function scopeFeatured($q)
+    {
+        return $q->where('is_featured', 1);
+    }
 
     public function scopePublished($q)
     {
         return $q->where('status', 'published');
     }
 
-    public function scopeDraft($q)
-    {
-        return $q->where('status', 'draft');
-    }
-
-    public function scopeFeatured($q)
-    {
-        return $q->where('is_featured', true);
-    }
-
-    protected static function booted()
-    {
-        static::saving(function (self $m) {
-            $m->slug = trim((string) $m->slug);
-            if ($m->slug === '') {
-                $m->slug = Str::slug((string) $m->title);
-            }
-        });
-    }
-
     /**
-     * Trash ekranında force delete engelleri (kurumsal)
-     * Örn:
-     * return [
-     *   ['relation' => 'galleryItems', 'label' => 'Galeri'],
-     * ];
+     * Force delete blockers (override per module as needed)
      */
     public function forceDeleteBlockers(): array
     {
-        return [];
+        return [
+            // ['relation' => 'galleryItems', 'label' => 'Galeri'],
+        ];
     }
 }

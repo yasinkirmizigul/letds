@@ -1,6 +1,6 @@
 <?php
 
-return [
+$menu = [
     [
         'type'  => 'single',
         'title' => 'Dashboard',
@@ -59,7 +59,6 @@ return [
         'style' => '',
     ],
 
-    // ✅ NEW: Galleries
     [
         'type'     => 'accordion',
         'title'    => 'Galeri',
@@ -137,26 +136,24 @@ return [
         'active'=> ['admin.trash'],
         'style' => 'margin-inline-start: -5px;',
     ],
-    // [ADMIN_MODULE_MENU]
-];
-$__moduleMenuFiles = $__moduleMenuFiles ?? [];
 
+    // [ADMIN_MODULE_MENU:START]
+    // Auto-generated module menu items injected here (optional).
+    // [ADMIN_MODULE_MENU:END]
+];
+
+// --- Auto-load module menu files (asıl kurumsal yöntem)
 $modulesDir = __DIR__ . '/admin_menu/modules';
 if (is_dir($modulesDir)) {
+    $moduleItems = [];
     foreach (glob($modulesDir.'/*.php') as $f) {
-        $__moduleMenuFiles[] = $f;
+        $items = require $f;
+        if (is_array($items)) {
+            $moduleItems = array_merge($moduleItems, $items);
+        }
     }
-}
 
-$moduleItems = [];
-foreach (array_unique($__moduleMenuFiles) as $f) {
-    $items = require $f;
-    if (is_array($items)) {
-        $moduleItems = array_merge($moduleItems, $items);
-    }
+    $menu = array_merge($menu, $moduleItems);
 }
-
-// Son olarak kendi $menu array’ine ekle:
-$menu = array_merge($menu ?? [], $moduleItems);
 
 return $menu;

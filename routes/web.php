@@ -549,8 +549,15 @@ Route::middleware(['auth', 'audit'])
                     ->name('galleries.trash');*/
     });
 
-// [ADMIN_MODULE_ROUTES]
-require __DIR__ . '/admin/modules/test_products.php';
+// [ADMIN_MODULE_ROUTES:START]
+$__adminModuleDir = __DIR__ . '/admin/modules';
+if (is_dir($__adminModuleDir)) {
+    foreach (glob($__adminModuleDir . '/*.php') as $__f) {
+        require $__f;
+    }
+}
+// [ADMIN_MODULE_ROUTES:END]
+
 
 // Public Projects
 Route::get('/projects/{slug}', [ProjectPublicController::class, 'show'])

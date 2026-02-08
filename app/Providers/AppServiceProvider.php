@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Console\Commands\MakeAdminModule;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -54,5 +55,15 @@ class AppServiceProvider extends ServiceProvider
                 MakeAdminModule::class,
             ]);
         }
+        Gate::before(function ($user, $ability) {
+            if (method_exists($user, 'hasRole') && $user->hasRole('superadmin')) {
+                return true;
+            }
+
+            // Eğer hasRole yoksa ama relation varsa:
+            // if ($user->roles()->where('slug','superadmin')->exists()) return true;
+
+            return null;
+        });
     }
 }

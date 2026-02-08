@@ -1,62 +1,70 @@
 @php
-    // Generator buraya gerçek php array string basıyor:
-    $statusOptions = {{ status_options_php }};
-    $currentKey = old('status', $item->status ?? 'draft');
-    $current = $statusOptions[$currentKey] ?? null;
+    $statusOptions  = $statusOptions ?? [];
+    $currentStatus  = $currentStatus ?? null;
+    $isFeatured     = $isFeatured ?? false;
 @endphp
 
-<div class="kt-card" data-status-map='@json($statusOptions)'>
+{{-- ✅ Durum + Öne Çıkan --}}
+<div class="kt-card">
     <div class="kt-card-header py-4">
-        <h3 class="kt-card-title">Durum &amp; Öne Çıkan</h3>
+        <h3 class="kt-card-title">Durum &amp; Anasayfa</h3>
     </div>
-
     <div class="kt-card-body grid gap-5 p-5">
-
-        {{-- Status --}}
+        {{-- Durum --}}
         <div class="grid gap-2">
             <label class="kt-label" for="status">Durum</label>
-
-            <div class="flex items-center gap-3">
-                <select id="status"
-                        name="status"
-                        class="kt-select w-full"
-                        data-status-select>
-                    @foreach($statusOptions as $key => $st)
-                        <option value="{{ $key }}"
-                            {{ $currentKey === $key ? 'selected' : '' }}>
-                            {{ $st['label'] ?? $key }}
-                        </option>
-                    @endforeach
-                </select>
-
-                <span class="{{ $current['badge'] ?? 'kt-badge kt-badge-sm kt-badge-light' }} whitespace-nowrap"
-                      data-status-badge>
-                    {{ $current['label'] ?? $currentKey }}
-                </span>
-            </div>
+            <select id="status"
+                    name="status"
+                    class="kt-select w-full"
+                    data-status-select>
+                @foreach($statusOptions as $key => $opt)
+                    @php
+                        $label = is_array($opt) ? ($opt['label'] ?? $key) : (string) $opt;
+                    @endphp
+                    <option value="{{ $key }}" {{ (string)$currentStatus === (string)$key ? 'selected' : '' }}>
+                        {{ $label }}
+                    </option>
+                @endforeach
+            </select>
         </div>
 
-        {{-- Featured --}}
-        <div class="flex items-center justify-between">
-            <div class="grid gap-1">
-                <div class="font-medium">Öne Çıkan</div>
-                <div class="text-xs opacity-70">Limit doluysa otomatik engellenir.</div>
-            </div>
+        {{-- Öne Çıkan --}}
+        <div class="grid gap-2">
+            <label class="kt-label">Anasayfada göster</label>
 
             <div class="flex items-center gap-3">
+                <input type="hidden" name="is_featured" value="0" />
                 <input type="checkbox"
+                       id="is_featured"
+                       class="kt-switch"
                        name="is_featured"
                        value="1"
-                       class="kt-switch"
                        data-featured-toggle
-                       {{ old('is_featured', $item->is_featured ?? false) ? 'checked' : '' }}>
-
-                <span class="kt-badge kt-badge-sm kt-badge-light whitespace-nowrap"
-                      data-featured-badge>
-                    {{ old('is_featured', $item->is_featured ?? false) ? 'Öne Çıkan' : 'Normal' }}
-                </span>
+                        {{ $isFeatured ? 'checked' : '' }}>
+                <span class="text-sm text-muted-foreground js-featured-label">
+                {{ $isFeatured ? 'Anasayfada' : 'Kapalı' }}
+            </span>
             </div>
-        </div>
 
+            <div class="text-xs text-muted-foreground">
+                En fazla 5 içerik aynı anda anasayfada görünebilir.
+            </div>
+
+            @error('is_featured')
+                <div class="kt-error">{{ $message }}</div>
+            @enderror
+        </div>
     </div>
 </div>
+
+@php
+    $statusOptionsJson = json_encode($statusOptions, JSON_UNESCAPED_UNICODE);
+    $currentStatusJson = json_encode($currentStatus, JSON_UNESCAPED_UNICODE);
+    $isFeaturedJson    = json_encode((bool) $isFeatured);
+@endphp
+
+<script>
+    window.__statusOptions  = {!! $statusOptionsJson ?: '[]' !!};
+    window.__currentStatus  = {!! $currentStatusJson ?: 'null' !!};
+    window.__isFeatured     = {!! $isFeaturedJson ?: 'false' !!};
+</script>
