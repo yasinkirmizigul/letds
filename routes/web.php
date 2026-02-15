@@ -547,7 +547,6 @@ Route::middleware(['auth', 'audit'])
                     ->name('media.trash');
                 Route::get('galleries/trash', fn() => redirect()->route('admin.galleries.index', ['mode' => 'trash']))
                     ->name('galleries.trash');*/
-    });
 
 // [ADMIN_MODULE_ROUTES:START]
 $__adminModuleDir = __DIR__ . '/admin/modules';
@@ -557,6 +556,7 @@ if (is_dir($__adminModuleDir)) {
     }
 }
 // [ADMIN_MODULE_ROUTES:END]
+    });
 
 
 // Public Projects

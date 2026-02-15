@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->string('slug')->unique();
 
             $table->longText('content')->nullable();
+            $table->text('excerpt')->nullable();
 
             $table->string('meta_keywords', 500)->nullable();
             $table->string('meta_description', 255)->nullable();
@@ -21,8 +22,13 @@ return new class extends Migration {
             $table->string('featured_image_path', 500)->nullable();
 
             $table->boolean('is_published')->default(false);
+            $table->boolean('is_featured')->default(false);
+            $table->timestamp('featured_at')->nullable();
+
+            $table->index(['is_featured','featured_at'], 'blog_posts_featured_idx');
             $table->timestamp('published_at')->nullable();
 
+            $table->softDeletes();
             $table->timestamps();
         });
     }

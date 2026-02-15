@@ -60,12 +60,6 @@
                     @include('admin.pages.{{ module_kebab_plural }}.partials._meta')
                 </div>
             </div>
-
-            <div class="mt-6 flex items-center gap-2">
-                <button type="submit" class="kt-btn kt-btn-primary">Kaydet</button>
-                <a href="{{ route('admin.{{ route_name_plural }}.index') }}"
-                   class="kt-btn kt-btn-light">Vazgeç</a>
-            </div>
         </form>
     </div>
 </div>

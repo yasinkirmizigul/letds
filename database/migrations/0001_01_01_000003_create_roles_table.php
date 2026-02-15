@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');          // admin, editor
             $table->string('slug')->unique(); // admin, superadmin
+            $table->integer('priority')->default(0);
+            $table->index('priority');
             $table->timestamps();
         });
     }

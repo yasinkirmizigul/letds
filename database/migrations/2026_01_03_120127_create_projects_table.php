@@ -25,6 +25,8 @@ return new class extends Migration
 
             // Status
             $table->string('status', 20)->default('draft')->index(); // draft|active|archived
+            $table->boolean('is_featured')->default(false)->index();
+            $table->timestamp('featured_at')->nullable()->index();
 
             // Optional appointment link (FK yok: Appointment modülü yoksa kırmayalım)
             $table->unsignedBigInteger('appointment_id')->nullable()->index();

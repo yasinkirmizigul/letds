@@ -11,6 +11,7 @@ return new class extends Migration {
             $table->id();
 
             $table->unsignedBigInteger('user_id')->nullable()->index();
+            $table->boolean('is_system')->default(false)->comment('SYSTEM / CLI log mu?');
             $table->string('user_email')->nullable();
             $table->string('user_name')->nullable();
 

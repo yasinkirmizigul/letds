@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use {{ controller_fqn }};
 
 Route::prefix('{{ route_prefix }}')
-    ->name('admin.{{ route_name }}.')
+    ->name('{{ route_name_plural }}.')
     ->group(function () {
 
         Route::get('/', [{{ controller_class }}::class, 'index'])->name('index');
@@ -17,12 +17,15 @@ Route::prefix('{{ route_prefix }}')
         Route::get('trash/list-legacy', [{{ controller_class }}::class, 'trashListLegacy'])->name('trashListLegacy');
 
         Route::post('bulk/restore', [{{ controller_class }}::class, 'bulkRestore'])->name('bulkRestore');
-        Route::delete('bulk/force', [{{ controller_class }}::class, 'bulkForceDelete'])->name('bulkForce');
+        Route::delete('bulk/force', [{{ controller_class }}::class, 'bulkForceDelete'])->name('bulkForceDelete');
 
-        Route::post('{id}/restore', [{{ controller_class }}::class, 'restore'])->name('restore');
-        Route::delete('{id}/force', [{{ controller_class }}::class, 'forceDelete'])->name('force');
+        Route::patch('{{ route_param_braced }}/restore', [{{ controller_class }}::class, 'restore'])->name('restore');
+        Route::delete('{{ route_param_braced }}/force', [{{ controller_class }}::class, 'forceDelete'])->name('forceDelete');
 
-        Route::get('{ {{ route_param }} }/edit', [{{ controller_class }}::class, 'edit'])->name('edit');
-        Route::put('{ {{ route_param }} }', [{{ controller_class }}::class, 'update'])->name('update');
-        Route::delete('{ {{ route_param }} }', [{{ controller_class }}::class, 'destroy'])->name('destroy');
+        Route::get('{{ route_param_braced }}/edit', [{{ controller_class }}::class, 'edit'])->name('edit');
+        Route::put('{{ route_param_braced }}', [{{ controller_class }}::class, 'update'])->name('update');
+        Route::delete('{{ route_param_braced }}', [{{ controller_class }}::class, 'destroy'])->name('destroy');
+
+        Route::post('check-slug', [{{ controller_class }}::class, 'checkSlug'])->name('checkSlug');
+        Route::get('check-featured-limit', [{{ controller_class }}::class, 'checkFeaturedLimit'])->name('checkFeaturedLimit');
     });

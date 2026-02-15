@@ -196,7 +196,17 @@ class ModuleGenerator
             'module_label_singular' => Str::headline($model),
             'module_label_plural' => Str::headline($n->studlyPlural()),
             'module_kebab_plural' => $moduleKebabPlural,
+            'module_kebab_singular' => Str::kebab($model),
             'route_name_plural' => $routeNamePlural,
+            'route_name' => $routeNamePlural,
+            'route_prefix' => $moduleKebabPlural,
+
+            // Contract aliases
+            'module' => $model,
+            'module_plural' => $n->studlyPlural(),
+            'module_slug' => Str::kebab($model),
+            'module_snake' => Str::snake($model),
+            'view_path' => 'admin.pages.' . $moduleKebabPlural,
 
             // Routes
             'admin_prefix' => $cfg['admin_route_prefix'] ?? 'admin',
