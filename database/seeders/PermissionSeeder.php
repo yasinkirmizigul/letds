@@ -49,8 +49,6 @@ class PermissionSeeder extends Seeder
             $super->permissions()->sync(Permission::pluck('id')->all());
         }
 
-        $super->permissions()->sync(Permission::pluck('id')->all());
-
         $this->command?->info('PermissionSeeder: permission listesi hazır (+ superadmin sync).');
     }
 }
