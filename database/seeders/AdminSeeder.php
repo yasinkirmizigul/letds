@@ -12,33 +12,46 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->call(PermissionSeeder::class);
-        $admin = Role::firstOrCreate(
+        $admin = Role::updateOrCreate(
             ['slug' => 'admin'],
             ['name' => 'Admin']
         );
 
-        // Admin -> sadece roles & permissions (users yok)
+        // Admin -> only auth management (no users module by default)
         $adminPerms = Permission::whereIn('slug', [
             'admin.access',
-
             'roles.view','roles.create','roles.update','roles.delete',
             'permissions.view','permissions.create','permissions.update','permissions.delete',
         ])->pluck('id')->all();
 
         $admin->permissions()->sync($adminPerms);
 
-        $user = User::firstOrCreate(
-            ['email' => 'admin2@admin.com'],
-            [
-                'name' => 'Admin',
-                'password' => Hash::make('123456'),
-                'is_active' => true,
-            ]
-        );
+        if ($this->shouldCreateUsers()) {
+            $email = env('SEED_ADMIN_EMAIL', 'admin2@admin.com');
+            $name  = env('SEED_ADMIN_NAME', 'Admin');
+            $pass  = env('SEED_ADMIN_PASS', '123456');
 
-        $user->roles()->syncWithoutDetaching([$admin->id]);
+            $user = User::updateOrCreate(
+                ['email' => $email],
+                [
+                    'name' => $name,
+                    'password' => Hash::make($pass),
+                    'is_active' => true,
+                ]
+            );
 
-        $this->command?->info('AdminSeeder: admin kullanıcı/rol hazır.');
+            $user->roles()->syncWithoutDetaching([$admin->id]);
+        } else {
+            $this->command?->warn('AdminSeeder: user creation skipped (SEED_CREATE_USERS disabled).');
+        }
+
+        $this->command?->info('AdminSeeder: role synced (auth management perms).');
+    }
+
+    private function shouldCreateUsers(): bool
+    {
+        $default = !app()->environment('production');
+
+        return filter_var(env('SEED_CREATE_USERS', $default), FILTER_VALIDATE_BOOL);
     }
 }

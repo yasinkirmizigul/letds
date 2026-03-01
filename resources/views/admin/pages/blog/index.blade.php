@@ -10,7 +10,7 @@
         $hasFilter = ($q !== '') || !empty($selectedCategoryIds);
     @endphp
 
-    <div class="kt-container-fixed max-w-[90%]"
+    <div class="grid gap-5 lg:gap-7.5"
          data-page="blog.index"
          data-mode="{{ $mode }}"
          data-perpage="{{ $perPage ?? 25 }}">

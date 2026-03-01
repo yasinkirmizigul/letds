@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\Gallery\BlogPostGalleryController;
 use App\Http\Controllers\Admin\Gallery\GalleryController;
 use App\Http\Controllers\Admin\Gallery\GalleryItemsController;
 use App\Http\Controllers\Admin\Dash\DashController;
+use App\Http\Controllers\Admin\Product\ProductController;
 use App\Http\Controllers\Admin\TinyMceController;
 use App\Http\Controllers\Admin\User\RoleController;
 use App\Http\Controllers\Admin\User\PermissionController;
@@ -17,7 +18,6 @@ use App\Http\Controllers\Admin\Media\MediaController;
 use App\Http\Controllers\Admin\Profile\ProfileController;
 use App\Http\Controllers\Admin\TrashController;
 use App\Http\Controllers\Admin\AuditLog\AuditLogController;
-use App\Http\Controllers\Site\ProjectPublicController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -129,12 +129,10 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:categories.view')
                 ->name('index');
 
-            // ✅ DataTables standard endpoint
             Route::get('/list', [CategoryController::class, 'list'])
                 ->middleware('permission:categories.view')
                 ->name('list');
 
-            // 🧱 Legacy (eski custom kart listeyi kullanmak istersen)
             Route::get('/list-legacy', [CategoryController::class, 'listLegacy'])
                 ->middleware('permission:categories.view')
                 ->name('list_legacy');
@@ -322,6 +320,86 @@ Route::middleware(['auth', 'audit'])
             // featured toggle (max 5 enforced in backend)
             Route::patch('/{project}/featured', [ProjectController::class, 'toggleFeatured'])
                 ->middleware('permission:projects.update')
+                ->name('featured');
+        });
+
+        // =========================
+        // Products
+        // =========================
+        Route::prefix('products')->as('products.')->group(function () {
+
+            // pages
+            Route::get('/', [ProductController::class, 'index'])
+                ->middleware('permission:products.view')
+                ->name('index');
+
+            Route::get('/trash', [ProductController::class, 'trash'])
+                ->middleware('permission:products.trash')
+                ->name('trash');
+
+            // datatable/json list
+            Route::get('/list', [ProductController::class, 'list'])
+                ->middleware('permission:products.view')
+                ->name('list');
+
+            // create/store
+            Route::get('/create', [ProductController::class, 'create'])
+                ->middleware('permission:products.create')
+                ->name('create');
+
+            Route::post('/', [ProductController::class, 'store'])
+                ->middleware('permission:products.create')
+                ->name('store');
+
+            // edit/update
+            Route::get('/{product}/edit', [ProductController::class, 'edit'])
+                ->middleware('permission:products.update')
+                ->name('edit');
+
+            Route::put('/{product}', [ProductController::class, 'update'])
+                ->middleware('permission:products.update')
+                ->name('update');
+
+            // delete (soft)
+            Route::delete('/{product}', [ProductController::class, 'destroy'])
+                ->middleware('permission:products.delete')
+                ->name('destroy');
+
+            // restore / force delete
+            Route::post('/{product}/restore', [ProductController::class, 'restore'])
+                ->middleware('permission:products.restore')
+                ->name('restore');
+
+            Route::delete('/{product}/force', [ProductController::class, 'forceDestroy'])
+                ->middleware('permission:products.force_delete')
+                ->name('forceDestroy');
+
+            // bulk actions
+            Route::post('/bulk-destroy', [ProductController::class, 'bulkDestroy'])
+                ->middleware('permission:products.delete')
+                ->name('bulkDestroy');
+
+            Route::post('/bulk-restore', [ProductController::class, 'bulkRestore'])
+                ->middleware('permission:products.restore')
+                ->name('bulkRestore');
+
+            Route::post('/bulk-force-destroy', [ProductController::class, 'bulkForceDestroy'])
+                ->middleware('permission:products.force_delete')
+                ->name('bulkForceDestroy');
+
+            // helpers
+            Route::get('/check-slug', [ProductController::class, 'checkSlug'])
+                ->middleware('permission:products.view')
+                ->name('checkSlug');
+
+            // workflow status (dropdown)
+            Route::patch('/{product}/status', [ProductController::class, 'updateStatus'])
+                ->middleware('permission:products.update')
+                ->name('status');
+
+            // featured toggle (max 5 enforced in backend)
+            Route::patch('/{product}/featured', [ProductController::class, 'toggleFeatured'])
+                ->middleware('permission:products.update')
                 ->name('featured');
         });
 
@@ -557,8 +635,3 @@ if (is_dir($__adminModuleDir)) {
 }
 // [ADMIN_MODULE_ROUTES:END]
     });
-
-
-// Public Projects
-Route::get('/projects/{slug}', [ProjectPublicController::class, 'show'])
-    ->name('projects.show');

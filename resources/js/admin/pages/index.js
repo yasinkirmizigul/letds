@@ -35,6 +35,14 @@ import galleriesIndex from './galleries/index';
 import galleriesCreate from './galleries/create';
 import galleriesEdit from './galleries/edit';
 
+import ProductsCreate from './products/create';
+import ProductsEdit from './products/edit';
+import ProductsIndex from './products/index';
+import ProductsTrash from './products/trash';
+
+import AppointmentsCalendar from './appointments/calendar';
+
+
 export function registerPages() {
     register('blog.create', BlogCreate);
     register('blog.edit', BlogEdit);
@@ -70,4 +78,11 @@ export function registerPages() {
     register('galleries.index', galleriesIndex);
     register('galleries.create', galleriesCreate);
     register('galleries.edit', galleriesEdit);
+
+    register('products.create', ProductsCreate);
+    register('products.edit', ProductsEdit);
+    register('products.index', ProductsIndex);
+    register('products.trash', ProductsTrash);
+
+    register('appointments.calendar', AppointmentsCalendar);
 }

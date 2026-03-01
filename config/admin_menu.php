@@ -34,10 +34,26 @@ $menu = [
         'perm'     => 'projects.view',
         'children' => [
             [
-                'title'  => 'Projeler',
+                'title'  => 'Proje Listesi',
                 'route'  => 'admin.projects.index',
                 'active' => ['admin.projects.*'],
                 'perm'   => 'projects.view',
+            ],
+        ],
+        'style' => '',
+    ],
+
+    [
+        'type'     => 'accordion',
+        'title'    => 'Ürünler',
+        'icon'     => 'ki-filled ki-handcart text-lg',
+        'perm'     => 'products.view',
+        'children' => [
+            [
+                'title'  => 'Ürün Listesi',
+                'route'  => 'admin.products.index',
+                'active' => ['admin.products.*'],
+                'perm'   => 'products.view',
             ],
         ],
         'style' => '',

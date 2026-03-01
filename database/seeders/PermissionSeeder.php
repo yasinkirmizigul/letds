@@ -3,54 +3,89 @@
 namespace Database\Seeders;
 
 use App\Models\Admin\User\Permission;
-use App\Models\Admin\User\Role;
 use Illuminate\Database\Seeder;
 
 class PermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        $slugs = [
-            'admin.access',
+        // slug => human name
+        $permissions = [
+            // Admin
+            'admin.access' => 'Admin Access',
 
             // Users / Roles / Permissions
-            'users.view','users.create','users.update','users.delete',
-            'roles.view','roles.create','roles.update','roles.delete',
-            'permissions.view','permissions.create','permissions.update','permissions.delete',
+            'users.view' => 'Users View',
+            'users.create' => 'Users Create',
+            'users.update' => 'Users Update',
+            'users.delete' => 'Users Delete',
+
+            'roles.view' => 'Roles View',
+            'roles.create' => 'Roles Create',
+            'roles.update' => 'Roles Update',
+            'roles.delete' => 'Roles Delete',
+
+            'permissions.view' => 'Permissions View',
+            'permissions.create' => 'Permissions Create',
+            'permissions.update' => 'Permissions Update',
+            'permissions.delete' => 'Permissions Delete',
 
             // Projects
-            'projects.view','projects.create','projects.update','projects.delete',
-            'projects.trash','projects.restore','projects.force_delete','projects.state_change',
+            'projects.view' => 'Projects View',
+            'projects.create' => 'Projects Create',
+            'projects.update' => 'Projects Update',
+            'projects.delete' => 'Projects Delete',
+            'projects.trash' => 'Projects Trash',
+            'projects.restore' => 'Projects Restore',
+            'projects.force_delete' => 'Projects Force Delete',
+            'projects.state_change' => 'Projects State Change',
         ];
 
-        // ✅ Module permissions auto-load
+        // Optional: extra permissions per module.
+        // Supported formats (each module file should return array):
+        // 1) ['blog.view', 'blog.create', ...]  -> name auto-generated
+        // 2) ['blog.view' => 'Blog View', ...]  -> explicit names
         $modulesDir = database_path('seeders/permissions/modules');
         if (is_dir($modulesDir)) {
-            foreach (glob($modulesDir.'/*.php') as $f) {
+            foreach (glob($modulesDir . '/*.php') as $f) {
                 $extra = require $f;
-                if (is_array($extra)) {
-                    $slugs = array_merge($slugs, $extra);
+
+                if (!is_array($extra)) {
+                    continue;
+                }
+
+                foreach ($extra as $k => $v) {
+                    if (is_int($k)) {
+                        // list of slugs
+                        $slug = (string) $v;
+                        $permissions[$slug] = $permissions[$slug] ?? $this->defaultNameFromSlug($slug);
+                    } else {
+                        // slug => name
+                        $permissions[(string) $k] = (string) $v;
+                    }
                 }
             }
         }
 
-        $slugs = array_values(array_unique($slugs));
-
-        foreach ($slugs as $slug) {
-            Permission::firstOrCreate(
+        // Upsert (idempotent)
+        foreach ($permissions as $slug => $name) {
+            Permission::updateOrCreate(
                 ['slug' => $slug],
-                ['name' => ucfirst(str_replace('.', ' ', $slug))]
+                ['name' => $name]
             );
         }
 
-        // ✅ UI parity + otomatik: Super Admin -> hepsi
-        $super = Role::where('slug', 'superadmin')->first();
-        if ($super) {
-            $super->permissions()->sync(Permission::pluck('id')->all());
-        }
+        $this->command?->info('PermissionSeeder: permissions upserted (' . count($permissions) . ').');
+    }
 
-        $super->permissions()->sync(Permission::pluck('id')->all());
+    private function defaultNameFromSlug(string $slug): string
+    {
+        $slug = trim($slug);
+        if ($slug === '') return 'Permission';
 
-        $this->command?->info('PermissionSeeder: permission listesi hazır (+ superadmin sync).');
+        $parts = preg_split('/[._-]+/', $slug) ?: [$slug];
+        $parts = array_map(fn ($p) => ucfirst(strtolower($p)), $parts);
+
+        return implode(' ', $parts);
     }
 }
