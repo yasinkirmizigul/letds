@@ -106,7 +106,15 @@ $menu = [
         ],
         'style' => '',
     ],
-
+    [
+        'type' => 'single',
+        'title' => 'Randevular',
+        'icon' => 'ki-filled ki-calendar-8 text-lg',
+        'route' => 'admin.appointments.calendar',
+        'active' => ['admin.appointments.*'],
+        'perm' => 'appointments.view',
+        'style' => 'margin-inline-start: -5px;',
+    ],
     [
         'type'     => 'accordion',
         'title'    => 'Kullanıcılar',

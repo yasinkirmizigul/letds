@@ -4,23 +4,60 @@ import interactionPlugin from '@fullcalendar/interaction'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 
-
 let calendar = null
 
 function qs(root, sel) {
     return (root || document).querySelector(sel)
 }
+
 function qsa(root, sel) {
     return Array.from((root || document).querySelectorAll(sel))
 }
 
-// ✅ Senin route yapın: /admin/appointments/calendar/events
 function buildEventsUrl(providerId, from, to) {
     const u = new URL('/admin/appointments/calendar/events', window.location.origin)
     if (providerId) u.searchParams.set('provider_id', providerId)
     if (from) u.searchParams.set('from', from)
     if (to) u.searchParams.set('to', to)
     return u.toString()
+}
+
+function formatDateRange(start, end) {
+    if (!start || !end) return '-'
+
+    const fmt = new Intl.DateTimeFormat('tr-TR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    })
+
+    return `${fmt.format(start)} - ${fmt.format(end)}`
+}
+
+function fillDetailPanel(root, event) {
+    const panelEmpty = qs(root, '#panelEmpty')
+    const panelContent = qs(root, '#panelContent')
+    const pMember = qs(root, '#pMember')
+    const pWhen = qs(root, '#pWhen')
+    const pDuration = qs(root, '#pDuration')
+    const pStatus = qs(root, '#pStatus')
+
+    if (!panelEmpty || !panelContent || !pMember || !pWhen || !pDuration || !pStatus) {
+        return
+    }
+
+    const blocks = Number(event.extendedProps?.blocks || 1)
+    const minutes = blocks * 30
+
+    panelEmpty.classList.add('hidden')
+    panelContent.classList.remove('hidden')
+
+    pMember.textContent = event.extendedProps?.member_name || event.title || '-'
+    pWhen.textContent = formatDateRange(event.start, event.end)
+    pDuration.textContent = `${minutes} dk`
+    pStatus.textContent = event.extendedProps?.status || '-'
 }
 
 export default async function init(ctx) {
@@ -40,19 +77,13 @@ export default async function init(ctx) {
         snapDuration: '00:30:00',
         nowIndicator: true,
 
-        // ✅ Aşama 1: DB yok -> create/drag/resize KAPALI
+        // Aşama 2.5: sadece görüntüleme
         selectable: false,
         editable: false,
 
-        // ✅ sadece events feed
         events: async (fetchInfo, success, failure) => {
             try {
-                const url = buildEventsUrl(
-                    providerSelect?.value,
-                    fetchInfo.startStr,
-                    fetchInfo.endStr
-                )
-
+                const url = buildEventsUrl(providerSelect?.value, fetchInfo.startStr, fetchInfo.endStr)
                 const res = await fetch(url, { headers: { Accept: 'application/json' } })
                 if (!res.ok) throw new Error(`HTTP ${res.status}`)
                 const data = await res.json()
@@ -60,17 +91,21 @@ export default async function init(ctx) {
             } catch (e) {
                 failure(e)
             }
+        },
+
+        eventClick: (info) => {
+            fillDetailPanel(root, info.event)
         }
     })
 
     calendar.render()
 
-    // provider filtre değişince reload
     if (providerSelect) {
-        providerSelect.addEventListener('change', () => calendar?.refetchEvents())
+        providerSelect.addEventListener('change', () => {
+            calendar?.refetchEvents()
+        })
     }
 
-    // ✅ Blade toolbar butonlarını bağla (data-cal / data-view)
     qsa(root, '[data-cal]').forEach((btn) => {
         btn.addEventListener('click', () => {
             const action = btn.getAttribute('data-cal')
