@@ -9,9 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Appointment\AppointmentSlot;
+use App\Models\Concerns\HasLocalDateTimes;
 class Appointment extends Model
 {
-    use HasFactory;
+    use HasFactory, HasLocalDateTimes;
 
     public const STATUS_BOOKED = 'booked';
     public const STATUS_CANCELLED_BY_PROVIDER = 'cancelled_by_provider';

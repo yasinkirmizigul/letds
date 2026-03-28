@@ -8,7 +8,6 @@ use App\Models\Appointment\Appointment;
 use App\Services\Appointment\AppointmentService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class AppointmentCalendarController extends Controller
 {
@@ -26,7 +25,9 @@ class AppointmentCalendarController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'title']);
 
-        return view('admin.pages.appointments.calendar', compact('providers'));
+        return view('admin.pages.appointments.calendar',[
+            'pageTitle' => 'Randevular',
+        ], compact('providers'));
     }
 
     public function events(Request $request)
@@ -109,7 +110,11 @@ class AppointmentCalendarController extends Controller
             'blocks' => ['required', 'integer', 'min:1', 'max:6'],
         ]);
 
-        $newAppointment = $this->appointmentService->transfer($appointment, $data, auth()->id());
+        $newAppointment = $this->appointmentService->transfer(
+            $appointment,
+            $data,
+            auth()->user()
+        );
 
         return response()->json([
             'message' => 'Randevu taşındı.',
@@ -123,7 +128,11 @@ class AppointmentCalendarController extends Controller
             'blocks' => ['required', 'integer', 'min:1', 'max:6'],
         ]);
 
-        $updated = $this->appointmentService->resize($appointment, (int) $data['blocks']);
+        $updated = $this->appointmentService->resize(
+            $appointment,
+            (int) $data['blocks'],
+            auth()->user()
+        );
 
         return response()->json([
             'message' => 'Randevu süresi güncellendi.',
@@ -140,7 +149,7 @@ class AppointmentCalendarController extends Controller
         $cancelled = $this->appointmentService->cancelByProvider(
             $appointment,
             $data['reason'] ?? null,
-            auth()->id()
+            auth()->user()
         );
 
         return response()->json([

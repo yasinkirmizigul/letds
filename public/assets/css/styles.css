@@ -12907,3 +12907,122 @@ button[data-vc-week-day] {
     }
   }
 }
+/* FullCalendar tema düzeltmeleri */
+.fc {
+    --fc-border-color: rgba(255, 255, 255, 0.14);
+    --fc-page-bg-color: transparent;
+    --fc-neutral-bg-color: rgba(255, 255, 255, 0.04);
+    --fc-list-event-hover-bg-color: rgba(255, 255, 255, 0.06);
+    --fc-today-bg-color: rgba(59, 130, 246, 0.08);
+}
+
+/* üst başlık satırı */
+.fc .fc-col-header-cell {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.fc .fc-col-header-cell-cushion {
+    color: #e5e7eb !important;
+    font-weight: 600;
+    text-decoration: none !important;
+    padding: 8px 4px;
+}
+
+/* all-day satırı */
+.fc .fc-timegrid-axis-cushion,
+.fc .fc-timegrid-slot-label-cushion,
+.fc .fc-timegrid-slot-label {
+    color: #e5e7eb !important;
+    text-decoration: none !important;
+    font-variant-numeric: tabular-nums;
+}
+
+/* sol saat kolonunu netleştir */
+.fc .fc-timegrid-axis {
+    background: rgba(255, 255, 255, 0.03);
+    width: 72px;
+}
+
+.fc .fc-timegrid-slot-label-cushion {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* all-day yazısı */
+.fc .fc-timegrid-axis-frame,
+.fc .fc-scrollgrid-section-header th {
+    color: #e5e7eb;
+}
+
+/* üst toolbar başlığı */
+.fc .fc-toolbar-title {
+    color: #f9fafb;
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+/* grid çizgileri */
+.fc .fc-scrollgrid,
+.fc .fc-timegrid-slot,
+.fc .fc-timegrid-axis,
+.fc .fc-col-header-cell {
+    border-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+/* event görünümü */
+.fc .fc-event {
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: none;
+}
+
+/* bugünkü kolon hafif belli olsun */
+.fc .fc-day-today {
+    background: rgba(59, 130, 246, 0.08) !important;
+}
+/* Appointments page spacing */
+[data-page="appointments.calendar"] .kt-card {
+    border-radius: 1rem;
+}
+
+[data-page="appointments.calendar"] .fc {
+    padding-top: 0.25rem;
+}
+
+[data-page="appointments.calendar"] .fc .fc-toolbar {
+    margin-bottom: 1rem !important;
+}
+
+[data-page="appointments.calendar"] .fc .fc-toolbar-title {
+    line-height: 1.2;
+}
+
+[data-page="appointments.calendar"] .fc .fc-scrollgrid {
+    border-radius: 0.875rem;
+    overflow: hidden;
+}
+
+/* Header cells */
+[data-page="appointments.calendar"] .fc .fc-col-header-cell-cushion {
+    padding: 0.75rem 0.5rem !important;
+}
+
+/* Time axis */
+[data-page="appointments.calendar"] .fc .fc-timegrid-slot-label-cushion,
+[data-page="appointments.calendar"] .fc .fc-timegrid-axis-cushion {
+    padding: 0.35rem 0.5rem !important;
+}
+
+/* Events */
+[data-page="appointments.calendar"] .fc .fc-timegrid-event {
+    margin-inline: 0.2rem;
+}
+
+[data-page="appointments.calendar"] .fc .fc-event-main {
+    padding: 0.35rem 0.45rem;
+}
+
+/* Right panel visual rhythm */
+[data-page="appointments.calendar"] #panelContent > div {
+    min-width: 0;
+}

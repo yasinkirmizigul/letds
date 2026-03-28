@@ -116,6 +116,15 @@ $menu = [
         'style' => 'margin-inline-start: -5px;',
     ],
     [
+        'type' => 'single',
+        'title' => 'Randevu Ayarları',
+        'icon' => 'ki-filled ki-setting-2 text-lg',
+        'route' => 'admin.appointments.settings',
+        'active' => ['admin.appointments.settings*'],
+        'perm' => 'appointments.update',
+        'style' => 'margin-inline-start: -5px;',
+    ],
+    [
         'type'     => 'accordion',
         'title'    => 'Kullanıcılar',
         'icon'     => 'ki-filled ki-profile-circle text-lg',
