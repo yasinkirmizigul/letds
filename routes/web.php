@@ -1,23 +1,25 @@
 <?php
 
+use App\Http\Controllers\Admin\AuditLog\AuditLogController;
 use App\Http\Controllers\Admin\Auth\AuthController;
+use App\Http\Controllers\Admin\BlogPost\BlogPostController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\Dash\DashController;
 use App\Http\Controllers\Admin\Gallery\BlogPostGalleryController;
 use App\Http\Controllers\Admin\Gallery\GalleryController;
 use App\Http\Controllers\Admin\Gallery\GalleryItemsController;
-use App\Http\Controllers\Admin\Dash\DashController;
-use App\Http\Controllers\Admin\Product\ProductController;
-use App\Http\Controllers\Admin\TinyMceController;
-use App\Http\Controllers\Admin\User\RoleController;
-use App\Http\Controllers\Admin\User\PermissionController;
-use App\Http\Controllers\Admin\User\UserController;
-use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\BlogPost\BlogPostController;
-use App\Http\Controllers\Admin\Project\ProjectController;
 use App\Http\Controllers\Admin\Gallery\ProjectGalleryController;
 use App\Http\Controllers\Admin\Media\MediaController;
+use App\Http\Controllers\Admin\Product\ProductController;
 use App\Http\Controllers\Admin\Profile\ProfileController;
+use App\Http\Controllers\Admin\Project\ProjectController;
+use App\Http\Controllers\Admin\TinyMceController;
 use App\Http\Controllers\Admin\TrashController;
-use App\Http\Controllers\Admin\AuditLog\AuditLogController;
+use App\Http\Controllers\Admin\User\PermissionController;
+use App\Http\Controllers\Admin\User\RoleController;
+use App\Http\Controllers\Admin\User\UserController;
+use App\Http\Controllers\Site\Appointment\AppointmentController;
+use App\Http\Controllers\Site\Auth\MemberAuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -174,8 +176,7 @@ Route::middleware(['auth', 'audit'])
                 ->name('forceDestroy');
         });
 
-
-        /// Blog
+        // Blog
         Route::prefix('blog')->as('blog.')->group(function () {
             Route::get('/', [BlogPostController::class, 'index'])
                 ->middleware('permission:blog.view')
@@ -238,17 +239,12 @@ Route::middleware(['auth', 'audit'])
                 ->name('toggleFeatured');
 
             Route::get('/check-slug', [BlogPostController::class, 'checkSlug'])
-                ->middleware(['permission:blog.view']) // en az view
+                ->middleware(['permission:blog.view'])
                 ->name('checkSlug');
         });
 
-
-        // =========================
-        // Projects (clean section)
-        // =========================
+        // Projects
         Route::prefix('projects')->as('projects.')->group(function () {
-
-            // pages
             Route::get('/', [ProjectController::class, 'index'])
                 ->middleware('permission:projects.view')
                 ->name('index');
@@ -257,12 +253,10 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:projects.trash')
                 ->name('trash');
 
-            // datatable/json list
             Route::get('/list', [ProjectController::class, 'list'])
                 ->middleware('permission:projects.view')
                 ->name('list');
 
-            // create/store
             Route::get('/create', [ProjectController::class, 'create'])
                 ->middleware('permission:projects.create')
                 ->name('create');
@@ -271,7 +265,6 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:projects.create')
                 ->name('store');
 
-            // edit/update
             Route::get('/{project}/edit', [ProjectController::class, 'edit'])
                 ->middleware('permission:projects.update')
                 ->name('edit');
@@ -280,12 +273,10 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:projects.update')
                 ->name('update');
 
-            // delete (soft)
             Route::delete('/{project}', [ProjectController::class, 'destroy'])
                 ->middleware('permission:projects.delete')
                 ->name('destroy');
 
-            // restore / force delete
             Route::post('/{project}/restore', [ProjectController::class, 'restore'])
                 ->middleware('permission:projects.restore')
                 ->name('restore');
@@ -294,7 +285,6 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:projects.force_delete')
                 ->name('forceDestroy');
 
-            // bulk actions
             Route::post('/bulk-destroy', [ProjectController::class, 'bulkDestroy'])
                 ->middleware('permission:projects.delete')
                 ->name('bulkDestroy');
@@ -307,28 +297,21 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:projects.force_delete')
                 ->name('bulkForceDestroy');
 
-            // helpers
             Route::get('/check-slug', [ProjectController::class, 'checkSlug'])
                 ->middleware('permission:projects.view')
                 ->name('checkSlug');
 
-            // workflow status (dropdown)
             Route::patch('/{project}/status', [ProjectController::class, 'updateStatus'])
-                ->middleware('permission:projects.update') // istersen: projects.state_change
+                ->middleware('permission:projects.update')
                 ->name('status');
 
-            // featured toggle (max 5 enforced in backend)
             Route::patch('/{project}/featured', [ProjectController::class, 'toggleFeatured'])
                 ->middleware('permission:projects.update')
                 ->name('featured');
         });
 
-        // =========================
         // Products
-        // =========================
         Route::prefix('products')->as('products.')->group(function () {
-
-            // pages
             Route::get('/', [ProductController::class, 'index'])
                 ->middleware('permission:products.view')
                 ->name('index');
@@ -337,12 +320,10 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:products.trash')
                 ->name('trash');
 
-            // datatable/json list
             Route::get('/list', [ProductController::class, 'list'])
                 ->middleware('permission:products.view')
                 ->name('list');
 
-            // create/store
             Route::get('/create', [ProductController::class, 'create'])
                 ->middleware('permission:products.create')
                 ->name('create');
@@ -351,7 +332,6 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:products.create')
                 ->name('store');
 
-            // edit/update
             Route::get('/{product}/edit', [ProductController::class, 'edit'])
                 ->middleware('permission:products.update')
                 ->name('edit');
@@ -360,12 +340,10 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:products.update')
                 ->name('update');
 
-            // delete (soft)
             Route::delete('/{product}', [ProductController::class, 'destroy'])
                 ->middleware('permission:products.delete')
                 ->name('destroy');
 
-            // restore / force delete
             Route::post('/{product}/restore', [ProductController::class, 'restore'])
                 ->middleware('permission:products.restore')
                 ->name('restore');
@@ -374,7 +352,6 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:products.force_delete')
                 ->name('forceDestroy');
 
-            // bulk actions
             Route::post('/bulk-destroy', [ProductController::class, 'bulkDestroy'])
                 ->middleware('permission:products.delete')
                 ->name('bulkDestroy');
@@ -387,17 +364,14 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:products.force_delete')
                 ->name('bulkForceDestroy');
 
-            // helpers
             Route::get('/check-slug', [ProductController::class, 'checkSlug'])
                 ->middleware('permission:products.view')
                 ->name('checkSlug');
 
-            // workflow status (dropdown)
             Route::patch('/{product}/status', [ProductController::class, 'updateStatus'])
                 ->middleware('permission:products.update')
                 ->name('status');
 
-            // featured toggle (max 5 enforced in backend)
             Route::patch('/{product}/featured', [ProductController::class, 'toggleFeatured'])
                 ->middleware('permission:products.update')
                 ->name('featured');
@@ -421,26 +395,23 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:media.create')
                 ->name('upload');
 
-            // ✅ bulk route’lar önce (/{media} yutmasın)
             Route::delete('/bulk-delete', [MediaController::class, 'bulkDestroy'])
                 ->middleware('permission:media.delete')
                 ->name('bulkDestroy');
 
             Route::post('/bulk-restore', [MediaController::class, 'bulkRestore'])
-                ->middleware('permission:media.restore') // ayrı permission istiyorsan
+                ->middleware('permission:media.restore')
                 ->name('bulkRestore');
 
             Route::delete('/bulk-force-delete', [MediaController::class, 'bulkForceDestroy'])
-                ->middleware('permission:media.forceDelete') // ayrı permission istiyorsan
+                ->middleware('permission:media.forceDelete')
                 ->name('bulkForceDestroy');
 
-            // ✅ en son tekil delete + constraint
             Route::delete('/{media}', [MediaController::class, 'destroy'])
                 ->whereNumber('media')
                 ->middleware('permission:media.delete')
                 ->name('destroy');
         });
-
 
         // Galleries
         Route::prefix('galleries')->as('galleries.')->group(function () {
@@ -481,33 +452,26 @@ Route::middleware(['auth', 'audit'])
 
         // Gallery Items
         Route::prefix('galleries/{gallery}/items')->as('galleries.items.')->group(function () {
-
-            // GET /admin/galleries/{gallery}/items  -> items()
             Route::get('/', [GalleryItemsController::class, 'items'])
                 ->middleware('permission:galleries.update')
                 ->name('items');
 
-            // POST /admin/galleries/{gallery}/items -> store()
             Route::post('/', [GalleryItemsController::class, 'store'])
                 ->middleware('permission:galleries.update')
                 ->name('store');
 
-            // PATCH /admin/galleries/{gallery}/items/{item} -> update()
             Route::patch('/{item}', [GalleryItemsController::class, 'update'])
                 ->middleware('permission:galleries.update')
                 ->name('update');
 
-            // PATCH /admin/galleries/{gallery}/items/bulk -> bulkUpdate()
             Route::patch('/bulk', [GalleryItemsController::class, 'bulkUpdate'])
                 ->middleware('permission:galleries.update')
                 ->name('bulk');
 
-            // POST /admin/galleries/{gallery}/items/reorder -> reorder()
             Route::post('/reorder', [GalleryItemsController::class, 'reorder'])
                 ->middleware('permission:galleries.update')
                 ->name('reorder');
 
-            // DELETE /admin/galleries/{gallery}/items/{item} -> destroy()
             Route::delete('/{item}', [GalleryItemsController::class, 'destroy'])
                 ->middleware('permission:galleries.update')
                 ->name('destroy');
@@ -538,9 +502,7 @@ Route::middleware(['auth', 'audit'])
             Route::delete('/{type}/{id}', [TrashController::class, 'forceDestroy'])
                 ->middleware('permission:trash.force-delete')
                 ->name('forceDestroyOne');
-
         });
-
 
         // Audit Logs
         Route::prefix('audit-logs')->as('audit-logs.')->group(function () {
@@ -578,7 +540,6 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:projects.update')
                 ->name('index');
 
-            // Bulk actions
             Route::post('/projects/bulk-delete', [ProjectController::class, 'bulkDelete'])
                 ->name('projects.bulkDelete');
 
@@ -621,17 +582,50 @@ Route::middleware(['auth', 'audit'])
 
         Route::post('/tinymce/upload', [TinyMceController::class, 'upload'])
             ->name('tinymce.upload');
-        /*        Route::get('media/trash', fn() => redirect()->route('admin.media.index', ['mode' => 'trash']))
-                    ->name('media.trash');
-                Route::get('galleries/trash', fn() => redirect()->route('admin.galleries.index', ['mode' => 'trash']))
-                    ->name('galleries.trash');*/
 
-// [ADMIN_MODULE_ROUTES:START]
-$__adminModuleDir = __DIR__ . '/admin/modules';
-if (is_dir($__adminModuleDir)) {
-    foreach (glob($__adminModuleDir . '/*.php') as $__f) {
-        require $__f;
-    }
-}
-// [ADMIN_MODULE_ROUTES:END]
+        // [ADMIN_MODULE_ROUTES:START]
+        $__adminModuleDir = __DIR__ . '/admin/modules';
+        if (is_dir($__adminModuleDir)) {
+            foreach (glob($__adminModuleDir . '/*.php') as $__f) {
+                require $__f;
+            }
+        }
+        // [ADMIN_MODULE_ROUTES:END]
     });
+
+/*
+|--------------------------------------------------------------------------
+| Member Auth
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('member')->name('member.')->group(function () {
+    Route::middleware('guest:member')->group(function () {
+        Route::get('/login', [MemberAuthController::class, 'showLogin'])->name('login');
+        Route::post('/login', [MemberAuthController::class, 'login'])->name('login.post');
+    });
+
+    Route::post('/logout', [MemberAuthController::class, 'logout'])
+        ->middleware('auth:member')
+        ->name('logout');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Member Appointments
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth:member')->group(function () {
+    Route::get('/randevu-al', [AppointmentController::class, 'index'])
+        ->name('member.appointments.index');
+
+    Route::prefix('member/appointments')->name('member.appointments.')->group(function () {
+        Route::get('/', [AppointmentController::class, 'index'])->name('home');
+        Route::get('/availability', [AppointmentController::class, 'availability'])->name('availability');
+        Route::get('/days', [AppointmentController::class, 'days'])->name('days');
+        Route::post('/', [AppointmentController::class, 'store'])->name('store');
+        Route::post('/{id}/cancel', [AppointmentController::class, 'cancel'])->name('cancel');
+        Route::post('/{id}/reschedule', [AppointmentController::class, 'reschedule'])->name('reschedule');
+    });
+});

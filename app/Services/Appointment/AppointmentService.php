@@ -29,6 +29,7 @@ class AppointmentService
             }
 
             $startAtUtc = $startAtUtc->seconds(0);
+            $this->assertStartAtNotInPast($startAtUtc);
             $blocks = max(1, (int) $data['blocks']);
 
             $this->assertMemberHasNoActiveBooking((int) $data['member_id']);
@@ -181,6 +182,10 @@ class AppointmentService
 
     protected function writeSlots(Appointment $appointment): void
     {
+        \Log::info('WRITE SLOTS START', [
+            'appointment_id' => $appointment->id,
+            'start_at' => $appointment->start_at
+        ]);
         $slotAtUtc = $appointment->start_at->copy()->seconds(0);
 
         try {
@@ -199,6 +204,111 @@ class AppointmentService
                 ]);
             }
             throw $e;
+        }
+    }
+    public function getActiveForMember(int $memberId): ?Appointment
+    {
+        return Appointment::query()
+            ->where('member_id', $memberId)
+            ->where('status', Appointment::STATUS_BOOKED)
+            ->orderBy('start_at')
+            ->first();
+    }
+    public function cancelByMember(Appointment $appointment, int $memberId): Appointment
+    {
+        if ((int) $appointment->member_id !== (int) $memberId) {
+            throw ValidationException::withMessages([
+                'auth' => 'Yetkisiz işlem.',
+            ]);
+        }
+
+        if ($appointment->status !== Appointment::STATUS_BOOKED) {
+            throw ValidationException::withMessages([
+                'status' => 'Bu randevu iptal edilemez.',
+            ]);
+        }
+
+        if ($appointment->start_at->lt(DateTimeHelper::nowUtc())) {
+            throw ValidationException::withMessages([
+                'status' => 'Geçmiş randevu iptal edilemez.',
+            ]);
+        }
+
+        return DB::transaction(function () use ($appointment) {
+            $appointment->update([
+                'status' => defined(Appointment::class . '::STATUS_CANCELLED_BY_MEMBER')
+                    ? Appointment::STATUS_CANCELLED_BY_MEMBER
+                    : 'cancelled',
+                'cancelled_at' => DateTimeHelper::nowUtc(),
+            ]);
+
+            $appointment->slots()->delete();
+
+            return $appointment->fresh(['member', 'provider']);
+        });
+    }
+    public function rescheduleByMember(Appointment $appointment, array $data, int $memberId): Appointment
+    {
+        if ((int) $appointment->member_id !== (int) $memberId) {
+            throw ValidationException::withMessages([
+                'auth' => 'Yetkisiz işlem.',
+            ]);
+        }
+
+        if ($appointment->status !== Appointment::STATUS_BOOKED) {
+            throw ValidationException::withMessages([
+                'status' => 'Bu randevu yeniden planlanamaz.',
+            ]);
+        }
+
+        if ($appointment->start_at->lt(DateTimeHelper::nowUtc())) {
+            throw ValidationException::withMessages([
+                'status' => 'Geçmiş randevu yeniden planlanamaz.',
+            ]);
+        }
+
+        return DB::transaction(function () use ($appointment, $data) {
+            $newStartAtUtc = DateTimeHelper::toUtc($data['start_at']);
+
+            if (!$newStartAtUtc) {
+                throw ValidationException::withMessages([
+                    'start_at' => 'Geçersiz tarih.',
+                ]);
+            }
+
+            $newStartAtUtc = $newStartAtUtc->seconds(0);
+            $this->assertStartAtNotInPast($newStartAtUtc);
+
+            $blocks = max(1, (int) ($data['blocks'] ?? $appointment->blocks));
+            $newProviderId = (int) ($data['provider_id'] ?? $appointment->provider_id);
+
+            $this->availabilityService->assertProviderAvailable(
+                $newProviderId,
+                $newStartAtUtc,
+                $blocks,
+                $appointment->id
+            );
+
+            $appointment->slots()->delete();
+
+            $appointment->update([
+                'provider_id' => $newProviderId,
+                'start_at' => $newStartAtUtc,
+                'end_at' => $newStartAtUtc->copy()->addMinutes($blocks * 30),
+                'blocks' => $blocks,
+            ]);
+
+            $this->writeSlots($appointment);
+
+            return $appointment->fresh(['member', 'provider']);
+        });
+    }
+    protected function assertStartAtNotInPast(\Carbon\Carbon $startAtUtc): void
+    {
+        if ($startAtUtc->lt(DateTimeHelper::nowUtc()->seconds(0))) {
+            throw ValidationException::withMessages([
+                'start_at' => 'Geçmiş bir saate randevu oluşturulamaz.',
+            ]);
         }
     }
 }

@@ -203,4 +203,141 @@ class AvailabilityService
     {
         return ((int) $dateLocal->minute % 30 === 0) && ((int) $dateLocal->second === 0);
     }
+
+    public function getCalendarAvailability(int $providerId, Carbon $start, Carbon $end): array
+    {
+        $startLocal = $start->copy()->setTimezone($this->tz)->startOfDay();
+        $endLocal = $end->copy()->setTimezone($this->tz)->endOfDay();
+
+        $startUtc = $startLocal->copy()->utc();
+        $endUtc = $endLocal->copy()->utc();
+
+        $workingHours = ProviderWorkingHour::query()
+            ->where('provider_id', $providerId)
+            ->where('is_enabled', true)
+            ->get()
+            ->keyBy('day_of_week');
+
+        $occupied = AppointmentSlot::query()
+            ->where('provider_id', $providerId)
+            ->whereBetween('slot_start_at', [$startUtc, $endUtc])
+            ->pluck('slot_start_at')
+            ->map(fn ($d) => $d->copy()->setTimezone($this->tz)->format('Y-m-d H:i'))
+            ->toArray();
+
+        $occupiedMap = array_flip($occupied);
+
+        $timeOffs = ProviderTimeOff::query()
+            ->where('provider_id', $providerId)
+            ->where(function ($q) use ($startUtc, $endUtc) {
+                $q->whereBetween('start_at', [$startUtc, $endUtc])
+                    ->orWhereBetween('end_at', [$startUtc, $endUtc])
+                    ->orWhere(function ($qq) use ($startUtc, $endUtc) {
+                        $qq->where('start_at', '<=', $startUtc)
+                            ->where('end_at', '>=', $endUtc);
+                    });
+            })
+            ->get(['start_at', 'end_at']);
+
+        $blackouts = GlobalBlackout::query()
+            ->where(function ($q) use ($startUtc, $endUtc) {
+                $q->whereBetween('start_at', [$startUtc, $endUtc])
+                    ->orWhereBetween('end_at', [$startUtc, $endUtc])
+                    ->orWhere(function ($qq) use ($startUtc, $endUtc) {
+                        $qq->where('start_at', '<=', $startUtc)
+                            ->where('end_at', '>=', $endUtc);
+                    });
+            })
+            ->get(['start_at', 'end_at']);
+
+        $days = [];
+        for ($d = $startLocal->copy(); $d->lte($endLocal); $d->addDay()) {
+            $slots = $this->getAvailableStartsForDateFast(
+                $providerId,
+                $d,
+                $occupiedMap,
+                $workingHours,
+                $timeOffs,
+                $blackouts
+            );
+
+            $days[$d->toDateString()] = [
+                'has_availability' => count($slots) > 0,
+                'free_count' => count($slots),
+            ];
+        }
+
+        return $days;
+    }
+    protected function getAvailableStartsForDateFast(
+        int $providerId,
+        Carbon $date,
+        array $occupiedMap,
+        $workingHours,
+        $timeOffs,
+        $blackouts
+    ): array {
+        $dateLocal = $date->copy()->setTimezone($this->tz)->startOfDay();
+        $dayOfWeek = (int) $dateLocal->dayOfWeekIso;
+
+        $workingHour = $workingHours->get($dayOfWeek);
+
+        if (!$workingHour || !$workingHour->start_time || !$workingHour->end_time) {
+            return [];
+        }
+
+        $workStart = Carbon::createFromFormat(
+            'Y-m-d H:i:s',
+            $dateLocal->format('Y-m-d') . ' ' . DateTimeHelper::normalizeTimeString($workingHour->start_time),
+            $this->tz
+        );
+
+        $workEnd = Carbon::createFromFormat(
+            'Y-m-d H:i:s',
+            $dateLocal->format('Y-m-d') . ' ' . DateTimeHelper::normalizeTimeString($workingHour->end_time),
+            $this->tz
+        );
+
+        $results = [];
+        $cursor = $workStart->copy();
+
+        while ($cursor->lt($workEnd)) {
+            $slotEnd = $cursor->copy()->addMinutes(30);
+            if ($slotEnd->gt($workEnd)) {
+                break;
+            }
+
+            $key = $cursor->format('Y-m-d H:i');
+            $slotStartUtc = $cursor->copy()->utc();
+            $slotEndUtc = $slotEnd->copy()->utc();
+
+            if (isset($occupiedMap[$key])) {
+                $cursor->addMinutes(30);
+                continue;
+            }
+
+            $blockedByTimeOff = $timeOffs->contains(function ($item) use ($slotStartUtc, $slotEndUtc) {
+                return $item->start_at < $slotEndUtc && $item->end_at > $slotStartUtc;
+            });
+
+            if ($blockedByTimeOff) {
+                $cursor->addMinutes(30);
+                continue;
+            }
+
+            $blockedByBlackout = $blackouts->contains(function ($item) use ($slotStartUtc, $slotEndUtc) {
+                return $item->start_at < $slotEndUtc && $item->end_at > $slotStartUtc;
+            });
+
+            if ($blockedByBlackout) {
+                $cursor->addMinutes(30);
+                continue;
+            }
+
+            $results[] = $key;
+            $cursor->addMinutes(30);
+        }
+
+        return $results;
+    }
 }
