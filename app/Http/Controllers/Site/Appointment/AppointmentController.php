@@ -181,6 +181,15 @@ class AppointmentController extends Controller
             return response()->json([
                 'success' => true,
                 'id' => $updatedAppointment->id,
+                'message' => 'Randevu yeniden planlandı.',
+                'data' => [
+                    'id' => $updatedAppointment->id,
+                    'parent_id' => $updatedAppointment->parent_id,
+                    'start_at' => $updatedAppointment->start_at?->toIso8601String(),
+                    'end_at' => $updatedAppointment->end_at?->toIso8601String(),
+                    'provider_id' => $updatedAppointment->provider_id,
+                    'status' => $updatedAppointment->status,
+                ],
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([

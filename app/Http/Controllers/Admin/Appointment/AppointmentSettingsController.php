@@ -92,8 +92,8 @@ class AppointmentSettingsController extends Controller
 
         $timeOff = ProviderTimeOff::query()->create([
             'provider_id' => $provider->id,
-            'start_at' => \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $data['start_at'], 'Europe/Istanbul')->utc(),
-            'end_at' => \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $data['end_at'], 'Europe/Istanbul')->utc(),
+            'start_at' => \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $data['start_at'], 'Europe/Istanbul'),
+            'end_at' => \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $data['end_at'], 'Europe/Istanbul'),
             'reason' => $data['reason'] ?? null,
         ]);
 
@@ -131,8 +131,8 @@ class AppointmentSettingsController extends Controller
 
         $blackout = GlobalBlackout::query()->create([
             'label' => $data['label'],
-            'start_at' => \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $data['start_at'], 'Europe/Istanbul')->utc(),
-            'end_at' => \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $data['end_at'], 'Europe/Istanbul')->utc(),
+            'start_at' => \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $data['start_at'], 'Europe/Istanbul'),
+            'end_at' => \Carbon\Carbon::createFromFormat('Y-m-d\TH:i', $data['end_at'], 'Europe/Istanbul'),
         ]);
 
         return response()->json([

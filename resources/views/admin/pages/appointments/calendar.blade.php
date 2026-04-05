@@ -104,6 +104,10 @@
                                 Saat değişimi için randevuyu takvim üzerinde sürükleyin. Süre değişimi için etkinliğin
                                 alt kenarından uzatıp kısaltın.
                             </div>
+                            <div class="space-y-2">
+                                <div class="text-xs text-gray-500">Geçmiş</div>
+                                <div id="panelHistory" class="flex flex-col gap-2"></div>
+                            </div>
                         </div>
                     </div>
                 </div>

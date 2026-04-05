@@ -2,21 +2,17 @@
 
 namespace App\Models\Concerns;
 
-use App\Support\DateTimeHelper;
-
 trait HasLocalDateTimes
 {
     public function asLocalDateTime(?string $attribute)
     {
-        $value = $this->{$attribute} ?? null;
-
-        return $value ? DateTimeHelper::toLocal($value) : null;
+        return $this->{$attribute} ?? null;
     }
 
     public function asLocalFormatted(?string $attribute, string $format = 'd.m.Y H:i'): ?string
     {
         $value = $this->{$attribute} ?? null;
 
-        return $value ? DateTimeHelper::formatLocal($value, $format) : null;
+        return $value ? $value->format($format) : null;
     }
 }

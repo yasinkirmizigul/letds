@@ -5,41 +5,42 @@ namespace App\Services\Appointment;
 use App\Jobs\SendAppointmentUpdatedMailJob;
 use App\Models\Admin\User\User;
 use App\Models\Appointment\Appointment;
-use App\Support\DateTimeHelper;
+use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class AppointmentService
 {
+    protected string $tz = 'Europe/Istanbul';
+
     public function __construct(
         protected AvailabilityService $availabilityService
-    ) {}
+    )
+    {
+    }
 
     public function create(array $data, ?int $actorUserId = null): Appointment
     {
         return DB::transaction(function () use ($data, $actorUserId) {
+            $startAt = Carbon::parse($data['start_at'], $this->tz)->seconds(0);
 
-            $startAtUtc = DateTimeHelper::toUtc($data['start_at']);
+            $this->assertStartAtNotInPast($startAt);
 
-            if (!$startAtUtc) {
-                throw ValidationException::withMessages([
-                    'start_at' => 'Geçersiz tarih.',
-                ]);
-            }
+            $blocks = max(1, (int)$data['blocks']);
 
-            $startAtUtc = $startAtUtc->seconds(0);
-            $this->assertStartAtNotInPast($startAtUtc);
-            $blocks = max(1, (int) $data['blocks']);
-
-            $this->assertMemberHasNoActiveBooking((int) $data['member_id']);
-            $this->availabilityService->assertProviderAvailable((int) $data['provider_id'], $startAtUtc, $blocks);
+            $this->assertMemberHasNoActiveBooking((int)$data['member_id']);
+            $this->availabilityService->assertProviderAvailable(
+                (int)$data['provider_id'],
+                $startAt,
+                $blocks
+            );
 
             $appointment = Appointment::create([
-                'provider_id' => (int) $data['provider_id'],
-                'member_id' => (int) $data['member_id'],
-                'start_at' => $startAtUtc,
-                'end_at' => $startAtUtc->copy()->addMinutes($blocks * 30),
+                'provider_id' => (int)$data['provider_id'],
+                'member_id' => (int)$data['member_id'],
+                'start_at' => $startAt,
+                'end_at' => $startAt->copy()->addMinutes($blocks * 30),
                 'blocks' => $blocks,
                 'status' => Appointment::STATUS_BOOKED,
                 'notes_internal' => $data['notes_internal'] ?? null,
@@ -55,46 +56,43 @@ class AppointmentService
     public function transfer(Appointment $appointment, array $data, User $actor): Appointment
     {
         $this->authorizeManage($appointment, $actor);
+        $this->assertCanTransition($appointment, Appointment::STATUS_TRANSFERRED);
 
         $new = DB::transaction(function () use ($appointment, $data, $actor) {
+            $newStartAt = Carbon::parse($data['new_start_at'], $this->tz)->seconds(0);
+            $this->assertStartAtNotInPast($newStartAt);
 
-            $newStartAtUtc = DateTimeHelper::toUtc($data['new_start_at']);
-
-            if (!$newStartAtUtc) {
-                throw ValidationException::withMessages([
-                    'start_at' => 'Geçersiz tarih.',
-                ]);
-            }
-
-            $newStartAtUtc = $newStartAtUtc->seconds(0);
             $blocks = max(1, (int) $data['blocks']);
-
             $newProviderId = (int) ($data['new_provider_id'] ?? $appointment->provider_id);
 
             $this->availabilityService->assertProviderAvailable(
                 $newProviderId,
-                $newStartAtUtc,
+                $newStartAt,
                 $blocks,
                 $appointment->id
             );
 
-            $appointment->update(['status' => Appointment::STATUS_TRANSFERRED]);
+            $appointment->update([
+                'status' => Appointment::STATUS_TRANSFERRED,
+            ]);
+
             $appointment->slots()->delete();
 
             $new = Appointment::create([
                 'provider_id' => $newProviderId,
                 'member_id' => $appointment->member_id,
-                'start_at' => $newStartAtUtc,
-                'end_at' => $newStartAtUtc->copy()->addMinutes($blocks * 30),
+                'start_at' => $newStartAt,
+                'end_at' => $newStartAt->copy()->addMinutes($blocks * 30),
                 'blocks' => $blocks,
                 'status' => Appointment::STATUS_BOOKED,
                 'created_by_user_id' => $actor->id,
+                'notes_internal' => $appointment->notes_internal,
                 'parent_id' => $appointment->id,
             ]);
 
             $this->writeSlots($new);
 
-            return $new->fresh(['member', 'provider']);
+            return $new->fresh(['member', 'provider', 'parent']);
         });
 
         SendAppointmentUpdatedMailJob::dispatch($new->id, 'transferred');
@@ -107,12 +105,11 @@ class AppointmentService
         $this->authorizeManage($appointment, $actor);
 
         $updated = DB::transaction(function () use ($appointment, $blocks) {
-
             $blocks = max(1, $blocks);
 
             $this->availabilityService->assertProviderAvailable(
-                (int) $appointment->provider_id,
-                $appointment->start_at->copy(),
+                (int)$appointment->provider_id,
+                $appointment->start_at->copy()->seconds(0),
                 $blocks,
                 $appointment->id
             );
@@ -137,19 +134,19 @@ class AppointmentService
     public function cancelByProvider(Appointment $appointment, ?string $reason, User $actor): Appointment
     {
         $this->authorizeManage($appointment, $actor);
+        $this->assertCanTransition($appointment, Appointment::STATUS_CANCELLED_BY_PROVIDER);
 
         $cancelled = DB::transaction(function () use ($appointment, $reason, $actor) {
-
             $appointment->update([
                 'status' => Appointment::STATUS_CANCELLED_BY_PROVIDER,
-                'cancelled_at' => DateTimeHelper::nowUtc(),
+                'cancelled_at' => Carbon::now($this->tz),
                 'cancel_reason' => $reason,
                 'cancelled_by_user_id' => $actor->id,
             ]);
 
             $appointment->slots()->delete();
 
-            return $appointment->fresh(['member', 'provider']);
+            return $appointment->fresh(['member', 'provider', 'parent', 'children']);
         });
 
         SendAppointmentUpdatedMailJob::dispatch($cancelled->id, 'cancelled');
@@ -157,22 +154,117 @@ class AppointmentService
         return $cancelled;
     }
 
+    public function getActiveForMember(int $memberId): ?Appointment
+    {
+        return Appointment::query()
+            ->where('member_id', $memberId)
+            ->where('status', Appointment::STATUS_BOOKED)
+            ->orderBy('start_at')
+            ->first();
+    }
+
+    public function cancelByMember(Appointment $appointment, int $memberId): Appointment
+    {
+        if ((int) $appointment->member_id !== (int) $memberId) {
+            throw ValidationException::withMessages([
+                'auth' => 'Yetkisiz işlem.',
+            ]);
+        }
+
+        if ($appointment->start_at->copy()->seconds(0)->lt(Carbon::now($this->tz)->seconds(0))) {
+            throw ValidationException::withMessages([
+                'status' => 'Geçmiş randevu iptal edilemez.',
+            ]);
+        }
+
+        $this->assertCanTransition($appointment, Appointment::STATUS_CANCELLED_BY_MEMBER);
+
+        return DB::transaction(function () use ($appointment) {
+            $appointment->update([
+                'status' => Appointment::STATUS_CANCELLED_BY_MEMBER,
+                'cancelled_at' => Carbon::now($this->tz),
+            ]);
+
+            $appointment->slots()->delete();
+
+            return $appointment->fresh(['member', 'provider', 'parent', 'children']);
+        });
+    }
+
+    public function rescheduleByMember(Appointment $appointment, array $data, int $memberId): Appointment
+    {
+        if ((int) $appointment->member_id !== (int) $memberId) {
+            throw ValidationException::withMessages([
+                'auth' => 'Yetkisiz işlem.',
+            ]);
+        }
+
+        if ($appointment->start_at->copy()->seconds(0)->lt(Carbon::now($this->tz)->seconds(0))) {
+            throw ValidationException::withMessages([
+                'status' => 'Geçmiş randevu yeniden planlanamaz.',
+            ]);
+        }
+
+        $this->assertCanTransition($appointment, Appointment::STATUS_TRANSFERRED);
+
+        return DB::transaction(function () use ($appointment, $data) {
+            $newStartAt = Carbon::parse($data['start_at'], $this->tz)->seconds(0);
+            $this->assertStartAtNotInPast($newStartAt);
+
+            $blocks = max(1, (int) ($data['blocks'] ?? $appointment->blocks));
+            $newProviderId = (int) ($data['provider_id'] ?? $appointment->provider_id);
+
+            $this->availabilityService->assertProviderAvailable(
+                $newProviderId,
+                $newStartAt,
+                $blocks,
+                $appointment->id
+            );
+
+            $appointment->update([
+                'status' => Appointment::STATUS_TRANSFERRED,
+            ]);
+
+            $appointment->slots()->delete();
+
+            $newAppointment = Appointment::create([
+                'provider_id' => $newProviderId,
+                'member_id' => $appointment->member_id,
+                'start_at' => $newStartAt,
+                'end_at' => $newStartAt->copy()->addMinutes($blocks * 30),
+                'blocks' => $blocks,
+                'status' => Appointment::STATUS_BOOKED,
+                'notes_internal' => $appointment->notes_internal,
+                'parent_id' => $appointment->id,
+            ]);
+
+            $this->writeSlots($newAppointment);
+
+            return $newAppointment->fresh(['member', 'provider', 'parent']);
+        });
+    }
+
     protected function authorizeManage(Appointment $appointment, User $actor): void
     {
-        if ($actor->isSuperAdmin() || $actor->hasRole('admin')) return;
+        if ($actor->isSuperAdmin() || $actor->hasRole('admin')) {
+            return;
+        }
 
         if (!$actor->hasRole('provider') || (int)$appointment->provider_id !== (int)$actor->id) {
-            throw ValidationException::withMessages(['auth' => 'Yetkisiz işlem.']);
+            throw ValidationException::withMessages([
+                'auth' => 'Yetkisiz işlem.',
+            ]);
         }
     }
 
     protected function assertMemberHasNoActiveBooking(int $memberId): void
     {
-        if (Appointment::query()
-            ->where('member_id', $memberId)
-            ->where('status', Appointment::STATUS_BOOKED)
-            ->lockForUpdate()
-            ->exists()
+        if (
+            Appointment::query()
+                ->where('member_id', $memberId)
+                ->where('status', Appointment::STATUS_BOOKED)
+                ->lockForUpdate()
+                ->exists()
         ) {
             throw ValidationException::withMessages([
                 'member_id' => 'Bu üyenin zaten aktif bir randevusu var.',
@@ -182,20 +274,16 @@ class AppointmentService
 
     protected function writeSlots(Appointment $appointment): void
     {
-        \Log::info('WRITE SLOTS START', [
-            'appointment_id' => $appointment->id,
-            'start_at' => $appointment->start_at
-        ]);
-        $slotAtUtc = $appointment->start_at->copy()->seconds(0);
+        $slotAt = $appointment->start_at->copy()->seconds(0);
 
         try {
             for ($i = 0; $i < $appointment->blocks; $i++) {
                 $appointment->slots()->create([
                     'provider_id' => $appointment->provider_id,
-                    'slot_start_at' => $slotAtUtc,
+                    'slot_start_at' => $slotAt,
                 ]);
 
-                $slotAtUtc = $slotAtUtc->copy()->addMinutes(30);
+                $slotAt = $slotAt->copy()->addMinutes(30);
             }
         } catch (QueryException $e) {
             if (($e->errorInfo[0] ?? null) === '23000') {
@@ -203,111 +291,42 @@ class AppointmentService
                     'slot' => 'Seçilen saat dolu.',
                 ]);
             }
+
             throw $e;
         }
     }
-    public function getActiveForMember(int $memberId): ?Appointment
+
+    protected function assertStartAtNotInPast(Carbon $startAt): void
     {
-        return Appointment::query()
-            ->where('member_id', $memberId)
-            ->where('status', Appointment::STATUS_BOOKED)
-            ->orderBy('start_at')
-            ->first();
-    }
-    public function cancelByMember(Appointment $appointment, int $memberId): Appointment
-    {
-        if ((int) $appointment->member_id !== (int) $memberId) {
-            throw ValidationException::withMessages([
-                'auth' => 'Yetkisiz işlem.',
-            ]);
-        }
-
-        if ($appointment->status !== Appointment::STATUS_BOOKED) {
-            throw ValidationException::withMessages([
-                'status' => 'Bu randevu iptal edilemez.',
-            ]);
-        }
-
-        if ($appointment->start_at->lt(DateTimeHelper::nowUtc())) {
-            throw ValidationException::withMessages([
-                'status' => 'Geçmiş randevu iptal edilemez.',
-            ]);
-        }
-
-        return DB::transaction(function () use ($appointment) {
-            $appointment->update([
-                'status' => defined(Appointment::class . '::STATUS_CANCELLED_BY_MEMBER')
-                    ? Appointment::STATUS_CANCELLED_BY_MEMBER
-                    : 'cancelled',
-                'cancelled_at' => DateTimeHelper::nowUtc(),
-            ]);
-
-            $appointment->slots()->delete();
-
-            return $appointment->fresh(['member', 'provider']);
-        });
-    }
-    public function rescheduleByMember(Appointment $appointment, array $data, int $memberId): Appointment
-    {
-        if ((int) $appointment->member_id !== (int) $memberId) {
-            throw ValidationException::withMessages([
-                'auth' => 'Yetkisiz işlem.',
-            ]);
-        }
-
-        if ($appointment->status !== Appointment::STATUS_BOOKED) {
-            throw ValidationException::withMessages([
-                'status' => 'Bu randevu yeniden planlanamaz.',
-            ]);
-        }
-
-        if ($appointment->start_at->lt(DateTimeHelper::nowUtc())) {
-            throw ValidationException::withMessages([
-                'status' => 'Geçmiş randevu yeniden planlanamaz.',
-            ]);
-        }
-
-        return DB::transaction(function () use ($appointment, $data) {
-            $newStartAtUtc = DateTimeHelper::toUtc($data['start_at']);
-
-            if (!$newStartAtUtc) {
-                throw ValidationException::withMessages([
-                    'start_at' => 'Geçersiz tarih.',
-                ]);
-            }
-
-            $newStartAtUtc = $newStartAtUtc->seconds(0);
-            $this->assertStartAtNotInPast($newStartAtUtc);
-
-            $blocks = max(1, (int) ($data['blocks'] ?? $appointment->blocks));
-            $newProviderId = (int) ($data['provider_id'] ?? $appointment->provider_id);
-
-            $this->availabilityService->assertProviderAvailable(
-                $newProviderId,
-                $newStartAtUtc,
-                $blocks,
-                $appointment->id
-            );
-
-            $appointment->slots()->delete();
-
-            $appointment->update([
-                'provider_id' => $newProviderId,
-                'start_at' => $newStartAtUtc,
-                'end_at' => $newStartAtUtc->copy()->addMinutes($blocks * 30),
-                'blocks' => $blocks,
-            ]);
-
-            $this->writeSlots($appointment);
-
-            return $appointment->fresh(['member', 'provider']);
-        });
-    }
-    protected function assertStartAtNotInPast(\Carbon\Carbon $startAtUtc): void
-    {
-        if ($startAtUtc->lt(DateTimeHelper::nowUtc()->seconds(0))) {
+        if ($startAt->lt(Carbon::now($this->tz)->seconds(0))) {
             throw ValidationException::withMessages([
                 'start_at' => 'Geçmiş bir saate randevu oluşturulamaz.',
+            ]);
+        }
+    }
+
+    protected function assertCanTransition(Appointment $appointment, string $toStatus): void
+    {
+        $allowed = [
+            Appointment::STATUS_BOOKED => [
+                Appointment::STATUS_TRANSFERRED,
+                Appointment::STATUS_CANCELLED_BY_PROVIDER,
+                Appointment::STATUS_CANCELLED_BY_MEMBER,
+                Appointment::STATUS_COMPLETED,
+                Appointment::STATUS_NO_SHOW,
+            ],
+            Appointment::STATUS_TRANSFERRED => [],
+            Appointment::STATUS_CANCELLED_BY_PROVIDER => [],
+            Appointment::STATUS_CANCELLED_BY_MEMBER => [],
+            Appointment::STATUS_COMPLETED => [],
+            Appointment::STATUS_NO_SHOW => [],
+        ];
+
+        $current = $appointment->status;
+
+        if (!in_array($toStatus, $allowed[$current] ?? [], true)) {
+            throw ValidationException::withMessages([
+                'status' => 'Geçersiz durum geçişi.',
             ]);
         }
     }

@@ -15,7 +15,13 @@ function qsa(root, sel) {
 }
 
 function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+
+    if (!token) {
+        throw new Error('CSRF token bulunamadı. Admin layout içine meta[name="csrf-token"] eklenmeli.')
+    }
+
+    return token
 }
 
 function buildEventsUrl(providerId, from, to) {
@@ -29,10 +35,12 @@ function buildEventsUrl(providerId, from, to) {
 async function postJson(url, data) {
     const res = await fetch(url, {
         method: 'POST',
+        credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'X-CSRF-TOKEN': csrfToken(),
+            'X-Requested-With': 'XMLHttpRequest',
         },
         body: JSON.stringify(data),
     })
@@ -53,6 +61,50 @@ async function postJson(url, data) {
     return payload
 }
 
+async function fetchJson(url) {
+    const res = await fetch(url, {
+        headers: { Accept: 'application/json' },
+    })
+
+    const payload = await res.json().catch(() => ({}))
+
+    if (!res.ok) {
+        throw new Error(payload?.message || 'İşlem başarısız.')
+    }
+
+    return payload
+}
+function renderHistory(root, items = []) {
+    const historyWrap = qs(root, '#panelHistory')
+    if (!historyWrap) return
+
+    if (!items.length) {
+        historyWrap.innerHTML = `<div class="text-xs text-gray-500">Geçmiş kayıt yok.</div>`
+        return
+    }
+
+    historyWrap.innerHTML = items.map((item) => `
+        <div class="rounded-xl border border-gray-200 px-3 py-3">
+            <div class="flex items-center justify-between gap-3">
+                <div class="text-sm font-medium">${item.start_at} - ${item.end_at}</div>
+                <div class="text-xs ${item.is_current ? 'text-green-600' : 'text-gray-500'}">
+                    ${item.is_current ? 'Aktif' : item.status}
+                </div>
+            </div>
+            <div class="mt-1 text-xs text-gray-500">
+                ${item.provider_name || '-'} • ${item.member_name || '-'}
+            </div>
+        </div>
+    `).join('')
+}
+async function loadHistory(root, eventId) {
+    try {
+        const data = await fetchJson(`/admin/appointments/${eventId}/history`)
+        renderHistory(root, Array.isArray(data) ? data : [])
+    } catch (e) {
+        renderHistory(root, [])
+    }
+}
 function calcBlocks(start, end) {
     if (!start || !end) return 1
     const minutes = Math.round((end.getTime() - start.getTime()) / 60000)
@@ -99,6 +151,7 @@ function fillDetailPanel(root, event) {
     pWhen.textContent = formatDateRange(event.start, event.end)
     pDuration.textContent = `${minutes} dk`
     pStatus.textContent = event.extendedProps?.status || '-'
+    loadHistory(root, event.id);
 }
 
 function resetDetailPanel(root) {
@@ -114,6 +167,10 @@ function resetDetailPanel(root) {
 
     if (panelEmpty) panelEmpty.classList.remove('hidden')
     if (panelContent) panelContent.classList.add('hidden')
+    const historyWrap = qs(root, '#panelHistory')
+    if (historyWrap) {
+        historyWrap.innerHTML = ''
+    }
 }
 
 function toLocalIsoString(date) {
@@ -212,6 +269,10 @@ export default async function init(ctx) {
             day: 'numeric',
             month: 'short',
             year: 'numeric',
+        },
+
+        eventAllow: function(dropInfo) {
+            return dropInfo.start >= new Date()
         },
 
         events: async (fetchInfo, success, failure) => {

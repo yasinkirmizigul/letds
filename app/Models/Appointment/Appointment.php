@@ -45,6 +45,28 @@ class Appointment extends Model
             'blocks' => 'integer',
         ];
     }
+    public function root(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'parent_id');
+    }
+
+    public function latestDescendant(): ?self
+    {
+        return $this->children()->latest('id')->first();
+    }
+
+    public function historyChain()
+    {
+        return self::query()
+            ->where(function ($q) {
+                $q->where('id', $this->id)
+                    ->orWhere('id', $this->parent_id)
+                    ->orWhere('parent_id', $this->id)
+                    ->orWhere('parent_id', $this->parent_id);
+            })
+            ->orderBy('start_at')
+            ->get();
+    }
 
     public function provider(): BelongsTo
     {

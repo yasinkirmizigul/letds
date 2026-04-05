@@ -65,4 +65,8 @@ Route::prefix('appointments')->as('appointments.')->group(function () {
     Route::delete('/blackouts/{blackout}', [AppointmentSettingsController::class, 'destroyBlackout'])
         ->middleware('permission:appointments.update')
         ->name('blackouts.destroy');
+
+    Route::get('/appointments/{appointment}/history', [AppointmentCalendarController::class, 'history'])
+        ->middleware('permission:appointments.view')
+        ->name('appointments.history');
 });

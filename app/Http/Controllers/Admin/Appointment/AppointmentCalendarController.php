@@ -68,6 +68,14 @@ class AppointmentCalendarController extends Controller
                     'title' => $memberName !== '' ? $memberName : 'Üye',
                     'start' => $appointment->start_at?->toIso8601String(),
                     'end' => $appointment->end_at?->toIso8601String(),
+                    'backgroundColor' => match ($appointment->status) {
+                        'booked' => '#0d6efd',
+                        'transferred' => '#6c757d',
+                        'cancelled_by_provider' => '#dc3545',
+                        'cancelled_by_member' => '#ffc107',
+                        'completed' => '#198754',
+                        default => '#6c757d',
+                    },
                     'extendedProps' => [
                         'provider_id' => $appointment->provider_id,
                         'provider_name' => $appointment->provider?->name,
@@ -76,6 +84,8 @@ class AppointmentCalendarController extends Controller
                         'member_name' => $memberName,
                         'status' => $appointment->status,
                         'blocks' => $appointment->blocks,
+                        'parent_id' => $appointment->parent_id,
+                        'is_transferred' => !is_null($appointment->parent_id),
                     ],
                 ];
             })
@@ -156,5 +166,40 @@ class AppointmentCalendarController extends Controller
             'message' => 'Randevu iptal edildi.',
             'data' => $cancelled,
         ]);
+    }
+    public function history(Appointment $appointment)
+    {
+        $rootId = $appointment->parent_id ?: $appointment->id;
+
+        $items = Appointment::query()
+            ->with([
+                'member:id,name,surname',
+                'provider:id,name,title',
+            ])
+            ->where(function ($q) use ($rootId) {
+                $q->where('id', $rootId)
+                    ->orWhere('parent_id', $rootId);
+            })
+            ->orderBy('start_at')
+            ->get()
+            ->map(function (Appointment $item) {
+                $memberName = trim(
+                    ($item->member?->name ?? '') . ' ' . ($item->member?->surname ?? '')
+                );
+
+                return [
+                    'id' => $item->id,
+                    'parent_id' => $item->parent_id,
+                    'status' => $item->status,
+                    'start_at' => $item->start_at?->format('d.m.Y H:i'),
+                    'end_at' => $item->end_at?->format('d.m.Y H:i'),
+                    'provider_name' => $item->provider?->name,
+                    'member_name' => $memberName,
+                    'is_current' => $item->status === Appointment::STATUS_BOOKED,
+                ];
+            })
+            ->values();
+
+        return response()->json($items);
     }
 }

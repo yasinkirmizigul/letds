@@ -9,7 +9,13 @@ function qsa(root, sel) {
 }
 
 function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+
+    if (!token) {
+        throw new Error('CSRF token bulunamadı. Admin layout içine meta[name="csrf-token"] eklenmeli.')
+    }
+
+    return token
 }
 
 async function fetchJson(url) {
@@ -21,10 +27,12 @@ async function fetchJson(url) {
 async function sendJson(url, method, data = null) {
     const res = await fetch(url, {
         method,
+        credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'X-CSRF-TOKEN': csrfToken(),
+            'X-Requested-With': 'XMLHttpRequest',
         },
         body: data ? JSON.stringify(data) : null,
     })
@@ -90,7 +98,7 @@ function renderTimeOffs(root, items = []) {
     <div class="border rounded-xl p-3 flex items-center justify-between gap-3">
       <div>
         <div class="font-medium">${item.reason || 'Açıklama yok'}</div>
-        <div class="text-sm text-gray-500">${item.start_at} → ${item.end_at}</div>
+        <div class="text-sm text-gray-500">new Date(item.start_at).toLocaleString('tr-TR')</div>
       </div>
       <button type="button" class="kt-btn kt-btn-light-danger" data-timeoff-delete="${item.id}">Sil</button>
     </div>
@@ -110,7 +118,7 @@ function renderBlackouts(root, items = []) {
     <div class="border rounded-xl p-3 flex items-center justify-between gap-3">
       <div>
         <div class="font-medium">${item.label}</div>
-        <div class="text-sm text-gray-500">${item.start_at} → ${item.end_at}</div>
+        <div class="text-sm text-gray-500">new Date(item.start_at).toLocaleString('tr-TR')</div>
       </div>
       <button type="button" class="kt-btn kt-btn-light-danger" data-blackout-delete="${item.id}">Sil</button>
     </div>

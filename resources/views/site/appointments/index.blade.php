@@ -8,7 +8,7 @@
             <div class="p-4 border rounded bg-green-50 mb-4" id="active-appointment-card">
                 <strong>Aktif randevun var</strong><br>
                 <span class="d-block mt-1">
-                    {{ $activeAppointment->start_at->timezone('Europe/Istanbul')->format('d.m.Y H:i') }}
+                    {{ $activeAppointment->start_at->format('d.m.Y H:i') }}
                 </span>
 
                 <div class="mt-3 flex gap-2">
