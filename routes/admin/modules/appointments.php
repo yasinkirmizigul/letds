@@ -29,7 +29,26 @@ Route::prefix('appointments')->as('appointments.')->group(function () {
         ->middleware('permission:appointments.cancel')
         ->name('cancel');
 
-    // Settings
+    Route::get('/{appointment}/history', [AppointmentCalendarController::class, 'history'])
+        ->middleware('permission:appointments.view')
+        ->name('history');
+
+    Route::post('/blocks', [AppointmentCalendarController::class, 'storeBlock'])
+        ->middleware('permission:appointments.update')
+        ->name('blocks.store');
+
+    Route::post('/blocks/{timeOff}/move', [AppointmentCalendarController::class, 'moveBlock'])
+        ->middleware('permission:appointments.update')
+        ->name('blocks.move');
+
+    Route::post('/blocks/{timeOff}/resize', [AppointmentCalendarController::class, 'resizeBlock'])
+        ->middleware('permission:appointments.update')
+        ->name('blocks.resize');
+
+    Route::post('/blocks/{timeOff}/delete', [AppointmentCalendarController::class, 'deleteBlock'])
+        ->middleware('permission:appointments.update')
+        ->name('blocks.delete');
+
     Route::get('/settings', [AppointmentSettingsController::class, 'index'])
         ->middleware('permission:appointments.update')
         ->name('settings');
@@ -65,8 +84,4 @@ Route::prefix('appointments')->as('appointments.')->group(function () {
     Route::delete('/blackouts/{blackout}', [AppointmentSettingsController::class, 'destroyBlackout'])
         ->middleware('permission:appointments.update')
         ->name('blackouts.destroy');
-
-    Route::get('/appointments/{appointment}/history', [AppointmentCalendarController::class, 'history'])
-        ->middleware('permission:appointments.view')
-        ->name('appointments.history');
 });

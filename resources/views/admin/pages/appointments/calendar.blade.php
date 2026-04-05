@@ -101,8 +101,8 @@
 
                             <div
                                 class="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-xs leading-5 text-gray-400">
-                                Saat değişimi için randevuyu takvim üzerinde sürükleyin. Süre değişimi için etkinliğin
-                                alt kenarından uzatıp kısaltın.
+                                Takvimde boş alan seçerek blokaj oluşturabilirsin. Randevuları veya blokajları sürükleyerek
+                                taşıyabilir, alt kenarından uzatıp kısaltabilirsin.
                             </div>
                             <div class="space-y-2">
                                 <div class="text-xs text-gray-500">Geçmiş</div>

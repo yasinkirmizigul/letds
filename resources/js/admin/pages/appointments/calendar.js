@@ -133,13 +133,18 @@ function fillDetailPanel(root, event) {
     const pWhen = qs(root, '#pWhen')
     const pDuration = qs(root, '#pDuration')
     const pStatus = qs(root, '#pStatus')
+    const cancelReason = qs(root, '#cancelReason')
+    const btnCancelAppointment = qs(root, '#btnCancelAppointment')
 
     if (!panelEmpty || !panelContent || !selectedAppointmentId || !pMember || !pWhen || !pDuration || !pStatus) {
         return
     }
 
+    const entityType = event.extendedProps?.entity_type || 'appointment'
     const blocks = Number(event.extendedProps?.blocks || 1)
-    const minutes = blocks * 30
+    const minutes = entityType === 'appointment'
+        ? blocks * 30
+        : Math.round((event.end.getTime() - event.start.getTime()) / 60000)
 
     selectedEventId = event.id
     selectedAppointmentId.value = event.id
@@ -147,13 +152,29 @@ function fillDetailPanel(root, event) {
     panelEmpty.classList.add('hidden')
     panelContent.classList.remove('hidden')
 
-    pMember.textContent = event.extendedProps?.member_name || event.title || '-'
+    if (entityType === 'time_off') {
+        pMember.textContent = event.title || 'Kapalı'
+        pStatus.textContent = 'blocked'
+        if (cancelReason) {
+            cancelReason.value = event.extendedProps?.reason || ''
+        }
+        if (btnCancelAppointment) {
+            btnCancelAppointment.textContent = 'Blokajı Sil'
+        }
+    } else {
+        pMember.textContent = event.extendedProps?.member_name || event.title || '-'
+        pStatus.textContent = event.extendedProps?.status || '-'
+        if (cancelReason) {
+            cancelReason.value = ''
+        }
+        if (btnCancelAppointment) {
+            btnCancelAppointment.textContent = 'Randevuyu İptal Et'
+        }
+    }
+
     pWhen.textContent = formatDateRange(event.start, event.end)
     pDuration.textContent = `${minutes} dk`
-    pStatus.textContent = event.extendedProps?.status || '-'
-    loadHistory(root, event.id);
 }
-
 function resetDetailPanel(root) {
     const panelEmpty = qs(root, '#panelEmpty')
     const panelContent = qs(root, '#panelContent')
@@ -246,10 +267,47 @@ export default async function init(ctx) {
         nowIndicator: true,
         allDaySlot: false,
         headerToolbar: false,
-        selectable: false,
+        selectable: true,
         editable: true,
         eventStartEditable: true,
         eventDurationEditable: true,
+
+        eventAllow: function(dropInfo) {
+            return dropInfo.start >= new Date()
+        },
+
+        select: async (info) => {
+            const providerId = providerSelect?.value
+            if (!providerId) {
+                notifyError('Önce kişi seç.')
+                return
+            }
+
+            if (info.start < new Date()) {
+                notifyError('Geçmiş zaman aralığı kapatılamaz.')
+                return
+            }
+
+            const reason = window.prompt('Bu zaman aralığı neden kapatılsın?', 'Kapalı')
+            if (reason === null) {
+                return
+            }
+
+            try {
+                await postJson('/admin/appointments/blocks', {
+                    provider_id: providerId,
+                    start_at: toLocalIsoString(info.start),
+                    end_at: toLocalIsoString(info.end),
+                    reason: reason.trim() || 'Kapalı',
+                })
+
+                calendar?.unselect()
+                calendar?.refetchEvents()
+                notifySuccess('Takvim blokajı oluşturuldu.')
+            } catch (e) {
+                notifyError(e.message || 'Blokaj oluşturulamadı.')
+            }
+        },
 
         allDayText: 'Tüm Gün',
 
@@ -271,10 +329,6 @@ export default async function init(ctx) {
             year: 'numeric',
         },
 
-        eventAllow: function(dropInfo) {
-            return dropInfo.start >= new Date()
-        },
-
         events: async (fetchInfo, success, failure) => {
             try {
                 const url = buildEventsUrl(providerSelect?.value, fetchInfo.startStr, fetchInfo.endStr)
@@ -292,8 +346,22 @@ export default async function init(ctx) {
         },
 
         eventDrop: async (info) => {
+            const entityType = info.event.extendedProps?.entity_type || 'appointment'
+
             try {
-                await postJson(`/admin/appointments/${info.event.id}/transfer`, {
+                if (entityType === 'time_off') {
+                    await postJson(`/admin/appointments/blocks/${info.event.extendedProps.entity_id}/move`, {
+                        start_at: toLocalIsoString(info.event.start),
+                        end_at: toLocalIsoString(info.event.end),
+                    })
+
+                    fillDetailPanel(root, info.event)
+                    calendar?.refetchEvents()
+                    notifySuccess('Blokaj saati güncellendi.')
+                    return
+                }
+
+                await postJson(`/admin/appointments/${info.event.extendedProps.entity_id}/transfer`, {
                     new_provider_id: providerSelect?.value || null,
                     new_start_at: toLocalIsoString(info.event.start),
                     blocks: calcBlocks(info.event.start, info.event.end),
@@ -304,13 +372,27 @@ export default async function init(ctx) {
                 notifySuccess('Randevu saati güncellendi.')
             } catch (e) {
                 info.revert()
-                notifyError(e.message || 'Randevu taşınamadı.')
+                notifyError(e.message || 'İşlem başarısız.')
             }
         },
 
         eventResize: async (info) => {
+            const entityType = info.event.extendedProps?.entity_type || 'appointment'
+
             try {
-                await postJson(`/admin/appointments/${info.event.id}/resize`, {
+                if (entityType === 'time_off') {
+                    await postJson(`/admin/appointments/blocks/${info.event.extendedProps.entity_id}/resize`, {
+                        start_at: toLocalIsoString(info.event.start),
+                        end_at: toLocalIsoString(info.event.end),
+                    })
+
+                    fillDetailPanel(root, info.event)
+                    calendar?.refetchEvents()
+                    notifySuccess('Blokaj süresi güncellendi.')
+                    return
+                }
+
+                await postJson(`/admin/appointments/${info.event.extendedProps.entity_id}/resize`, {
                     blocks: calcBlocks(info.event.start, info.event.end),
                 })
 
@@ -319,7 +401,7 @@ export default async function init(ctx) {
                 notifySuccess('Randevu süresi güncellendi.')
             } catch (e) {
                 info.revert()
-                notifyError(e.message || 'Randevu süresi güncellenemedi.')
+                notifyError(e.message || 'İşlem başarısız.')
             }
         },
     })
@@ -336,15 +418,31 @@ export default async function init(ctx) {
     if (btnCancelAppointment) {
         btnCancelAppointment.addEventListener('click', async () => {
             if (!selectedEventId) {
-                notifyError('Önce bir randevu seç.')
+                notifyError('Önce bir kayıt seç.')
                 return
             }
 
-            const ok = window.confirm('Seçili randevuyu iptal etmek istiyor musun?')
+            const event = calendar?.getEventById(selectedEventId)
+            const entityType = event?.extendedProps?.entity_type || 'appointment'
+
+            const ok = window.confirm(
+                entityType === 'time_off'
+                    ? 'Seçili blokajı silmek istiyor musun?'
+                    : 'Seçili randevuyu iptal etmek istiyor musun?'
+            )
+
             if (!ok) return
 
             try {
-                await postJson(`/admin/appointments/${selectedEventId}/cancel`, {
+                if (entityType === 'time_off') {
+                    await postJson(`/admin/appointments/blocks/${event.extendedProps.entity_id}/delete`, {})
+                    resetDetailPanel(root)
+                    calendar?.refetchEvents()
+                    notifySuccess('Blokaj silindi.')
+                    return
+                }
+
+                await postJson(`/admin/appointments/${event.extendedProps.entity_id}/cancel`, {
                     reason: cancelReason?.value?.trim() || null,
                 })
 
@@ -352,7 +450,7 @@ export default async function init(ctx) {
                 calendar?.refetchEvents()
                 notifySuccess('Randevu iptal edildi.')
             } catch (e) {
-                notifyError(e.message || 'Randevu iptal edilemedi.')
+                notifyError(e.message || 'İşlem başarısız.')
             }
         })
     }

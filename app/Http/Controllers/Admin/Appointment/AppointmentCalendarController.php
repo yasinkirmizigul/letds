@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Appointment;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\User\User;
 use App\Models\Appointment\Appointment;
+use App\Models\Appointment\ProviderTimeOff;
 use App\Services\Appointment\AppointmentService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -36,7 +37,7 @@ class AppointmentCalendarController extends Controller
         $from = $request->string('from')->toString();
         $to = $request->string('to')->toString();
 
-        $query = Appointment::query()
+        $appointmentsQuery = Appointment::query()
             ->with([
                 'member:id,name,surname',
                 'provider:id,name,title',
@@ -44,18 +45,18 @@ class AppointmentCalendarController extends Controller
             ->where('status', Appointment::STATUS_BOOKED);
 
         if ($providerId) {
-            $query->where('provider_id', $providerId);
+            $appointmentsQuery->where('provider_id', $providerId);
         }
 
         if ($from !== '') {
-            $query->where('start_at', '>=', Carbon::parse($from));
+            $appointmentsQuery->where('start_at', '>=', Carbon::parse($from, 'Europe/Istanbul'));
         }
 
         if ($to !== '') {
-            $query->where('start_at', '<', Carbon::parse($to));
+            $appointmentsQuery->where('start_at', '<', Carbon::parse($to, 'Europe/Istanbul'));
         }
 
-        $events = $query
+        $appointmentEvents = $appointmentsQuery
             ->orderBy('start_at')
             ->get()
             ->map(function (Appointment $appointment) {
@@ -64,19 +65,15 @@ class AppointmentCalendarController extends Controller
                 );
 
                 return [
-                    'id' => (string) $appointment->id,
+                    'id' => 'appointment_' . $appointment->id,
                     'title' => $memberName !== '' ? $memberName : 'Üye',
                     'start' => $appointment->start_at?->toIso8601String(),
                     'end' => $appointment->end_at?->toIso8601String(),
-                    'backgroundColor' => match ($appointment->status) {
-                        'booked' => '#0d6efd',
-                        'transferred' => '#6c757d',
-                        'cancelled_by_provider' => '#dc3545',
-                        'cancelled_by_member' => '#ffc107',
-                        'completed' => '#198754',
-                        default => '#6c757d',
-                    },
+                    'backgroundColor' => '#0d6efd',
+                    'borderColor' => '#0d6efd',
                     'extendedProps' => [
+                        'entity_type' => 'appointment',
+                        'entity_id' => $appointment->id,
                         'provider_id' => $appointment->provider_id,
                         'provider_name' => $appointment->provider?->name,
                         'provider_title' => $appointment->provider?->title,
@@ -88,10 +85,55 @@ class AppointmentCalendarController extends Controller
                         'is_transferred' => !is_null($appointment->parent_id),
                     ],
                 ];
-            })
-            ->values();
+            });
 
-        return response()->json($events);
+        $timeOffQuery = ProviderTimeOff::query()
+            ->with(['provider:id,name,title']);
+
+        if ($providerId) {
+            $timeOffQuery->where('provider_id', $providerId);
+        }
+
+        if ($from !== '') {
+            $timeOffQuery->where('start_at', '<', Carbon::parse($to, 'Europe/Istanbul'));
+        }
+
+        if ($to !== '') {
+            $timeOffQuery->where('end_at', '>', Carbon::parse($from, 'Europe/Istanbul'));
+        }
+
+        $timeOffEvents = $timeOffQuery
+            ->orderBy('start_at')
+            ->get()
+            ->map(function (ProviderTimeOff $timeOff) {
+                return [
+                    'id' => 'timeoff_' . $timeOff->id,
+                    'title' => $timeOff->reason ?: 'Kapalı',
+                    'start' => $timeOff->start_at?->toIso8601String(),
+                    'end' => $timeOff->end_at?->toIso8601String(),
+                    'backgroundColor' => '#f59e0b',
+                    'borderColor' => '#f59e0b',
+                    'textColor' => '#111827',
+                    'extendedProps' => [
+                        'entity_type' => 'time_off',
+                        'entity_id' => $timeOff->id,
+                        'provider_id' => $timeOff->provider_id,
+                        'provider_name' => $timeOff->provider?->name,
+                        'provider_title' => $timeOff->provider?->title,
+                        'member_id' => null,
+                        'member_name' => null,
+                        'status' => 'blocked',
+                        'blocks' => null,
+                        'reason' => $timeOff->reason,
+                    ],
+                ];
+            });
+
+        return response()->json(
+            $appointmentEvents
+                ->concat($timeOffEvents)
+                ->values()
+        );
     }
 
     public function store(Request $request)
@@ -201,5 +243,71 @@ class AppointmentCalendarController extends Controller
             ->values();
 
         return response()->json($items);
+    }
+    public function storeBlock(Request $request)
+    {
+        $data = $request->validate([
+            'provider_id' => ['required', 'integer', 'exists:users,id'],
+            'start_at' => ['required', 'date'],
+            'end_at' => ['required', 'date', 'after:start_at'],
+            'reason' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $block = ProviderTimeOff::query()->create([
+            'provider_id' => (int) $data['provider_id'],
+            'start_at' => Carbon::parse($data['start_at'], 'Europe/Istanbul')->seconds(0),
+            'end_at' => Carbon::parse($data['end_at'], 'Europe/Istanbul')->seconds(0),
+            'reason' => $data['reason'] ?: 'Kapalı',
+        ]);
+
+        return response()->json([
+            'message' => 'Takvim blokajı oluşturuldu.',
+            'data' => $block,
+        ], 201);
+    }
+
+    public function moveBlock(Request $request, ProviderTimeOff $timeOff)
+    {
+        $data = $request->validate([
+            'start_at' => ['required', 'date'],
+            'end_at' => ['required', 'date', 'after:start_at'],
+        ]);
+
+        $timeOff->update([
+            'start_at' => Carbon::parse($data['start_at'], 'Europe/Istanbul')->seconds(0),
+            'end_at' => Carbon::parse($data['end_at'], 'Europe/Istanbul')->seconds(0),
+        ]);
+
+        return response()->json([
+            'message' => 'Blokaj zamanı güncellendi.',
+            'data' => $timeOff->fresh(),
+        ]);
+    }
+
+    public function resizeBlock(Request $request, ProviderTimeOff $timeOff)
+    {
+        $data = $request->validate([
+            'start_at' => ['required', 'date'],
+            'end_at' => ['required', 'date', 'after:start_at'],
+        ]);
+
+        $timeOff->update([
+            'start_at' => Carbon::parse($data['start_at'], 'Europe/Istanbul')->seconds(0),
+            'end_at' => Carbon::parse($data['end_at'], 'Europe/Istanbul')->seconds(0),
+        ]);
+
+        return response()->json([
+            'message' => 'Blokaj süresi güncellendi.',
+            'data' => $timeOff->fresh(),
+        ]);
+    }
+
+    public function deleteBlock(ProviderTimeOff $timeOff)
+    {
+        $timeOff->delete();
+
+        return response()->json([
+            'message' => 'Blokaj silindi.',
+        ]);
     }
 }
