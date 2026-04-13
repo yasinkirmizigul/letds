@@ -16,6 +16,7 @@ class ProviderTimeOff extends Model
         'start_at',
         'end_at',
         'reason',
+        'block_type',
     ];
 
     protected function casts(): array

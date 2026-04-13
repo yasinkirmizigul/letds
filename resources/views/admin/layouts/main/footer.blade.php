@@ -5,7 +5,7 @@
         <div class="flex flex-col items-center justify-center gap-3 py-5 md:flex-row md:justify-between">
             <div class="order-2 flex gap-2 text-sm font-normal md:order-1">
                 <span class="text-secondary-foreground">
-                    2025©
+                    {{ now()->year }}©
                 </span>
                 <a class="hover:text-primary text-secondary-foreground" href="https://yasinkirmizigul.com">
                     yasn

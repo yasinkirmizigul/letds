@@ -105,6 +105,8 @@ class Appointment extends Model
 
     public function isActiveBooking(): bool
     {
-        return $this->status === self::STATUS_BOOKED;
+        return $this->status === self::STATUS_BOOKED
+            && $this->end_at
+            && $this->end_at->gte(\Carbon\Carbon::now('UTC'));
     }
 }

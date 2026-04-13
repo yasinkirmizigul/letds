@@ -84,4 +84,12 @@ Route::prefix('appointments')->as('appointments.')->group(function () {
     Route::delete('/blackouts/{blackout}', [AppointmentSettingsController::class, 'destroyBlackout'])
         ->middleware('permission:appointments.update')
         ->name('blackouts.destroy');
+
+    Route::post('/blocks/{timeOff}/update', [AppointmentCalendarController::class, 'updateBlock'])
+        ->middleware('permission:appointments.update')
+        ->name('blocks.update');
+
+    Route::get('/blocks/{timeOff}', [AppointmentCalendarController::class, 'showBlock'])
+        ->middleware('permission:appointments.view')
+        ->name('blocks.show');
 });

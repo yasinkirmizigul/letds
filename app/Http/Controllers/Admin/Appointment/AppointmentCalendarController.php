@@ -64,13 +64,16 @@ class AppointmentCalendarController extends Controller
                     ($appointment->member?->name ?? '') . ' ' . ($appointment->member?->surname ?? '')
                 );
 
+                $color = $this->appointmentEventColor($appointment->status);
+
                 return [
                     'id' => 'appointment_' . $appointment->id,
                     'title' => $memberName !== '' ? $memberName : 'Üye',
                     'start' => $appointment->start_at?->toIso8601String(),
                     'end' => $appointment->end_at?->toIso8601String(),
-                    'backgroundColor' => '#0d6efd',
-                    'borderColor' => '#0d6efd',
+                    'backgroundColor' => $color['bg'],
+                    'borderColor' => $color['border'],
+                    'textColor' => $color['text'],
                     'extendedProps' => [
                         'entity_type' => 'appointment',
                         'entity_id' => $appointment->id,
@@ -80,6 +83,7 @@ class AppointmentCalendarController extends Controller
                         'member_id' => $appointment->member_id,
                         'member_name' => $memberName,
                         'status' => $appointment->status,
+                        'status_label' => $color['label'],
                         'blocks' => $appointment->blocks,
                         'parent_id' => $appointment->parent_id,
                         'is_transferred' => !is_null($appointment->parent_id),
@@ -106,14 +110,16 @@ class AppointmentCalendarController extends Controller
             ->orderBy('start_at')
             ->get()
             ->map(function (ProviderTimeOff $timeOff) {
+                $color = $this->blockEventColor($timeOff->block_type ?? 'manual');
+
                 return [
                     'id' => 'timeoff_' . $timeOff->id,
-                    'title' => $timeOff->reason ?: 'Kapalı',
+                    'title' => $timeOff->reason ?: $color['label'],
                     'start' => $timeOff->start_at?->toIso8601String(),
                     'end' => $timeOff->end_at?->toIso8601String(),
-                    'backgroundColor' => '#f59e0b',
-                    'borderColor' => '#f59e0b',
-                    'textColor' => '#111827',
+                    'backgroundColor' => $color['bg'],
+                    'borderColor' => $color['border'],
+                    'textColor' => $color['text'],
                     'extendedProps' => [
                         'entity_type' => 'time_off',
                         'entity_id' => $timeOff->id,
@@ -123,8 +129,10 @@ class AppointmentCalendarController extends Controller
                         'member_id' => null,
                         'member_name' => null,
                         'status' => 'blocked',
+                        'status_label' => $color['label'],
                         'blocks' => null,
                         'reason' => $timeOff->reason,
+                        'block_type' => $timeOff->block_type,
                     ],
                 ];
             });
@@ -251,18 +259,36 @@ class AppointmentCalendarController extends Controller
             'start_at' => ['required', 'date'],
             'end_at' => ['required', 'date', 'after:start_at'],
             'reason' => ['nullable', 'string', 'max:255'],
+            'block_type' => ['required', 'string', 'in:manual,break,meeting,off'],
         ]);
 
+        $providerId = (int) $data['provider_id'];
+        $startAt = Carbon::parse($data['start_at'], 'Europe/Istanbul')->seconds(0);
+        $endAt = Carbon::parse($data['end_at'], 'Europe/Istanbul')->seconds(0);
+
+        if ($this->hasAppointmentOverlap($providerId, $startAt, $endAt)) {
+            return response()->json([
+                'message' => 'Bu zaman aralığında aktif randevu var.',
+            ], 422);
+        }
+
+        if ($this->hasTimeOffOverlap($providerId, $startAt, $endAt)) {
+            return response()->json([
+                'message' => 'Bu zaman aralığında zaten blokaj var.',
+            ], 422);
+        }
+
         $block = ProviderTimeOff::query()->create([
-            'provider_id' => (int) $data['provider_id'],
-            'start_at' => Carbon::parse($data['start_at'], 'Europe/Istanbul')->seconds(0),
-            'end_at' => Carbon::parse($data['end_at'], 'Europe/Istanbul')->seconds(0),
-            'reason' => $data['reason'] ?: 'Kapalı',
+            'provider_id' => $providerId,
+            'start_at' => $startAt,
+            'end_at' => $endAt,
+            'reason' => $data['reason'] ?: $this->blockEventColor($data['block_type'])['label'],
+            'block_type' => $data['block_type'],
         ]);
 
         return response()->json([
             'message' => 'Takvim blokajı oluşturuldu.',
-            'data' => $block,
+            'data' => $block->fresh(),
         ], 201);
     }
 
@@ -273,9 +299,24 @@ class AppointmentCalendarController extends Controller
             'end_at' => ['required', 'date', 'after:start_at'],
         ]);
 
+        $startAt = Carbon::parse($data['start_at'], 'Europe/Istanbul')->seconds(0);
+        $endAt = Carbon::parse($data['end_at'], 'Europe/Istanbul')->seconds(0);
+
+        if ($this->hasAppointmentOverlap((int) $timeOff->provider_id, $startAt, $endAt)) {
+            return response()->json([
+                'message' => 'Bu zaman aralığında aktif randevu var. Blokaj taşınamaz.',
+            ], 422);
+        }
+
+        if ($this->hasTimeOffOverlap((int) $timeOff->provider_id, $startAt, $endAt, (int) $timeOff->id)) {
+            return response()->json([
+                'message' => 'Bu zaman aralığında başka bir blokaj var. Blokaj taşınamaz.',
+            ], 422);
+        }
+
         $timeOff->update([
-            'start_at' => Carbon::parse($data['start_at'], 'Europe/Istanbul')->seconds(0),
-            'end_at' => Carbon::parse($data['end_at'], 'Europe/Istanbul')->seconds(0),
+            'start_at' => $startAt,
+            'end_at' => $endAt,
         ]);
 
         return response()->json([
@@ -291,9 +332,24 @@ class AppointmentCalendarController extends Controller
             'end_at' => ['required', 'date', 'after:start_at'],
         ]);
 
+        $startAt = Carbon::parse($data['start_at'], 'Europe/Istanbul')->seconds(0);
+        $endAt = Carbon::parse($data['end_at'], 'Europe/Istanbul')->seconds(0);
+
+        if ($this->hasAppointmentOverlap((int) $timeOff->provider_id, $startAt, $endAt)) {
+            return response()->json([
+                'message' => 'Bu zaman aralığında aktif randevu var. Blokaj süresi değiştirilemez.',
+            ], 422);
+        }
+
+        if ($this->hasTimeOffOverlap((int) $timeOff->provider_id, $startAt, $endAt, (int) $timeOff->id)) {
+            return response()->json([
+                'message' => 'Bu zaman aralığında başka bir blokaj var. Blokaj süresi değiştirilemez.',
+            ], 422);
+        }
+
         $timeOff->update([
-            'start_at' => Carbon::parse($data['start_at'], 'Europe/Istanbul')->seconds(0),
-            'end_at' => Carbon::parse($data['end_at'], 'Europe/Istanbul')->seconds(0),
+            'start_at' => $startAt,
+            'end_at' => $endAt,
         ]);
 
         return response()->json([
@@ -308,6 +364,141 @@ class AppointmentCalendarController extends Controller
 
         return response()->json([
             'message' => 'Blokaj silindi.',
+        ]);
+    }
+
+    public function updateBlock(Request $request, ProviderTimeOff $timeOff)
+    {
+        $data = $request->validate([
+            'reason' => ['nullable', 'string', 'max:255'],
+            'block_type' => ['required', 'string', 'in:manual,break,meeting,off'],
+        ]);
+
+        $timeOff->update([
+            'reason' => $data['reason'] ?: $this->blockEventColor($data['block_type'])['label'],
+            'block_type' => $data['block_type'],
+        ]);
+
+        return response()->json([
+            'message' => 'Blokaj güncellendi.',
+            'data' => $timeOff->fresh(),
+        ]);
+    }
+    protected function appointmentEventColor(string $status): array
+    {
+        return match ($status) {
+            Appointment::STATUS_BOOKED => [
+                'bg' => '#2563eb',   // blue-600
+                'border' => '#1d4ed8', // blue-700
+                'text' => '#ffffff',
+                'label' => 'Randevu',
+            ],
+            Appointment::STATUS_TRANSFERRED => [
+                'bg' => '#6b7280',   // gray-500
+                'border' => '#4b5563', // gray-600
+                'text' => '#ffffff',
+                'label' => 'Taşındı',
+            ],
+            Appointment::STATUS_CANCELLED_BY_PROVIDER => [
+                'bg' => '#dc2626',   // red-600
+                'border' => '#b91c1c', // red-700
+                'text' => '#ffffff',
+                'label' => 'Provider İptal',
+            ],
+            Appointment::STATUS_CANCELLED_BY_MEMBER => [
+                'bg' => '#d97706',   // amber-600
+                'border' => '#b45309', // amber-700
+                'text' => '#ffffff',
+                'label' => 'Üye İptal',
+            ],
+            Appointment::STATUS_COMPLETED => [
+                'bg' => '#16a34a',   // green-600
+                'border' => '#15803d', // green-700
+                'text' => '#ffffff',
+                'label' => 'Tamamlandı',
+            ],
+            Appointment::STATUS_NO_SHOW => [
+                'bg' => '#7c3aed',   // violet-600
+                'border' => '#6d28d9', // violet-700
+                'text' => '#ffffff',
+                'label' => 'Gelmedi',
+            ],
+            default => [
+                'bg' => '#374151',
+                'border' => '#1f2937',
+                'text' => '#ffffff',
+                'label' => 'Randevu',
+            ],
+        };
+    }
+    protected function hasAppointmentOverlap(
+        int $providerId,
+        Carbon $startAt,
+        Carbon $endAt
+    ): bool {
+        return Appointment::query()
+            ->where('provider_id', $providerId)
+            ->where('status', Appointment::STATUS_BOOKED)
+            ->where(function ($q) use ($startAt, $endAt) {
+                $q->where('start_at', '<', $endAt)
+                    ->where('end_at', '>', $startAt);
+            })
+            ->exists();
+    }
+
+    protected function hasTimeOffOverlap(
+        int $providerId,
+        Carbon $startAt,
+        Carbon $endAt,
+        ?int $ignoreId = null
+    ): bool {
+        return ProviderTimeOff::query()
+            ->where('provider_id', $providerId)
+            ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
+            ->where(function ($q) use ($startAt, $endAt) {
+                $q->where('start_at', '<', $endAt)
+                    ->where('end_at', '>', $startAt);
+            })
+            ->exists();
+    }
+    protected function blockEventColor(string $type): array
+    {
+        return match ($type) {
+            'break' => [
+                'bg' => '#16a34a',
+                'border' => '#15803d',
+                'text' => '#ffffff',
+                'label' => 'Mola',
+            ],
+            'meeting' => [
+                'bg' => '#7c3aed',
+                'border' => '#6d28d9',
+                'text' => '#ffffff',
+                'label' => 'Toplantı',
+            ],
+            'off' => [
+                'bg' => '#dc2626',
+                'border' => '#b91c1c',
+                'text' => '#ffffff',
+                'label' => 'İzin',
+            ],
+            default => [
+                'bg' => '#d97706',
+                'border' => '#b45309',
+                'text' => '#ffffff',
+                'label' => 'Kapalı',
+            ],
+        };
+    }
+    public function showBlock(ProviderTimeOff $timeOff)
+    {
+        return response()->json([
+            'id' => $timeOff->id,
+            'provider_id' => $timeOff->provider_id,
+            'start_at' => $timeOff->start_at?->toIso8601String(),
+            'end_at' => $timeOff->end_at?->toIso8601String(),
+            'reason' => $timeOff->reason,
+            'block_type' => $timeOff->block_type ?: 'manual',
         ]);
     }
 }

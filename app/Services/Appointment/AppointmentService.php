@@ -5,6 +5,7 @@ namespace App\Services\Appointment;
 use App\Jobs\SendAppointmentUpdatedMailJob;
 use App\Models\Admin\User\User;
 use App\Models\Appointment\Appointment;
+use App\Support\DateTimeHelper;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -159,6 +160,7 @@ class AppointmentService
         return Appointment::query()
             ->where('member_id', $memberId)
             ->where('status', Appointment::STATUS_BOOKED)
+            ->where('end_at', '>=', \Carbon\Carbon::now('UTC'))
             ->orderBy('start_at')
             ->first();
     }
@@ -259,12 +261,12 @@ class AppointmentService
 
     protected function assertMemberHasNoActiveBooking(int $memberId): void
     {
-        if (
-            Appointment::query()
-                ->where('member_id', $memberId)
-                ->where('status', Appointment::STATUS_BOOKED)
-                ->lockForUpdate()
-                ->exists()
+        if (Appointment::query()
+            ->where('member_id', $memberId)
+            ->where('status', Appointment::STATUS_BOOKED)
+            ->where('end_at', '>=', \Carbon\Carbon::now('UTC'))
+            ->lockForUpdate()
+            ->exists()
         ) {
             throw ValidationException::withMessages([
                 'member_id' => 'Bu üyenin zaten aktif bir randevusu var.',
