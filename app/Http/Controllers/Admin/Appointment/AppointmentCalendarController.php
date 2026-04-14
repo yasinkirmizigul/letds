@@ -22,22 +22,27 @@ class AppointmentCalendarController extends Controller
 
     public function index(Request $request)
     {
-        $providers = User::query()
-            ->where('is_active', true)
-            ->whereHas('roles', function ($q) {
-                $q->whereIn('slug', ['provider', 'admin', 'superadmin']);
-            })
+        /** @var User $actor */
+        $actor = $request->user();
+
+        $providers = $this->providerOptionsQuery($actor)
+            ->orderBy('name')
+            ->get(['id', 'name', 'title']);
+
+        $transferProviders = $this->transferProviderOptionsQuery($actor)
             ->orderBy('name')
             ->get(['id', 'name', 'title']);
 
         return view('admin.pages.appointments.calendar', [
             'pageTitle' => 'Randevular',
-        ], compact('providers'));
+            'selectedProviderId' => $actor->isSuperAdmin() ? null : (int) $actor->id,
+            'canSelectProvider' => $actor->isSuperAdmin(),
+        ], compact('providers', 'transferProviders'));
     }
 
     public function events(Request $request)
     {
-        $providerId = $request->integer('provider_id');
+        $providerId = $this->resolveProviderId($request);
         $from = $request->string('from')->toString();
         $to = $request->string('to')->toString();
 
@@ -150,6 +155,9 @@ class AppointmentCalendarController extends Controller
 
     public function store(Request $request)
     {
+        /** @var User $actor */
+        $actor = $request->user();
+
         $data = $request->validate([
             'provider_id' => ['required', 'integer', 'exists:users,id'],
             'member_id' => ['required', 'integer', 'exists:members,id'],
@@ -157,6 +165,8 @@ class AppointmentCalendarController extends Controller
             'blocks' => ['required', 'integer', 'min:1', 'max:6'],
             'notes_internal' => ['nullable', 'string'],
         ]);
+
+        $this->assertCanAccessProvider($actor, (int) $data['provider_id']);
 
         $appointment = $this->appointmentService->create($data, auth()->id());
 
@@ -168,16 +178,25 @@ class AppointmentCalendarController extends Controller
 
     public function transfer(Request $request, Appointment $appointment)
     {
+        /** @var User $actor */
+        $actor = $request->user();
+        $this->assertCanAccessAppointment($actor, $appointment);
+
         $data = $request->validate([
             'new_provider_id' => ['nullable', 'integer', 'exists:users,id'],
             'new_start_at' => ['required', 'date'],
             'blocks' => ['required', 'integer', 'min:1', 'max:6'],
         ]);
 
+        $targetProviderId = isset($data['new_provider_id']) && $data['new_provider_id'] !== null
+            ? (int) $data['new_provider_id']
+            : null;
+        $this->assertCanTransferToProvider($actor, $targetProviderId);
+
         $newAppointment = $this->appointmentService->transfer(
             $appointment,
             $data,
-            auth()->user()
+            $actor
         );
 
         return response()->json([
@@ -188,6 +207,10 @@ class AppointmentCalendarController extends Controller
 
     public function resize(Request $request, Appointment $appointment)
     {
+        /** @var User $actor */
+        $actor = $request->user();
+        $this->assertCanAccessAppointment($actor, $appointment);
+
         $data = $request->validate([
             'blocks' => ['required', 'integer', 'min:1', 'max:6'],
         ]);
@@ -195,7 +218,7 @@ class AppointmentCalendarController extends Controller
         $updated = $this->appointmentService->resize(
             $appointment,
             (int) $data['blocks'],
-            auth()->user()
+            $actor
         );
 
         return response()->json([
@@ -206,6 +229,10 @@ class AppointmentCalendarController extends Controller
 
     public function cancel(Request $request, Appointment $appointment)
     {
+        /** @var User $actor */
+        $actor = $request->user();
+        $this->assertCanAccessAppointment($actor, $appointment);
+
         $data = $request->validate([
             'reason' => ['nullable', 'string', 'max:500'],
         ]);
@@ -213,7 +240,7 @@ class AppointmentCalendarController extends Controller
         $cancelled = $this->appointmentService->cancelByProvider(
             $appointment,
             $data['reason'] ?? null,
-            auth()->user()
+            $actor
         );
 
         return response()->json([
@@ -224,6 +251,10 @@ class AppointmentCalendarController extends Controller
 
     public function history(Appointment $appointment)
     {
+        /** @var User $actor */
+        $actor = auth()->user();
+        $this->assertCanAccessAppointment($actor, $appointment);
+
         $rootId = $appointment->parent_id ?: $appointment->id;
 
         $items = Appointment::query()
@@ -260,6 +291,9 @@ class AppointmentCalendarController extends Controller
 
     public function storeBlock(Request $request)
     {
+        /** @var User $actor */
+        $actor = $request->user();
+
         $data = $request->validate([
             'provider_id' => ['required', 'integer', 'exists:users,id'],
             'start_at' => ['required', 'date'],
@@ -269,6 +303,7 @@ class AppointmentCalendarController extends Controller
         ]);
 
         $providerId = (int) $data['provider_id'];
+        $this->assertCanAccessProvider($actor, $providerId);
         $startAt = Carbon::parse($data['start_at'], 'Europe/Istanbul')->seconds(0);
         $endAt = Carbon::parse($data['end_at'], 'Europe/Istanbul')->seconds(0);
 
@@ -311,6 +346,10 @@ class AppointmentCalendarController extends Controller
 
     public function moveBlock(Request $request, ProviderTimeOff $timeOff)
     {
+        /** @var User $actor */
+        $actor = $request->user();
+        $this->assertCanAccessTimeOff($actor, $timeOff);
+
         $data = $request->validate([
             'start_at' => ['required', 'date'],
             'end_at' => ['required', 'date', 'after:start_at'],
@@ -355,6 +394,10 @@ class AppointmentCalendarController extends Controller
 
     public function resizeBlock(Request $request, ProviderTimeOff $timeOff)
     {
+        /** @var User $actor */
+        $actor = $request->user();
+        $this->assertCanAccessTimeOff($actor, $timeOff);
+
         $data = $request->validate([
             'start_at' => ['required', 'date'],
             'end_at' => ['required', 'date', 'after:start_at'],
@@ -399,6 +442,10 @@ class AppointmentCalendarController extends Controller
 
     public function deleteBlock(ProviderTimeOff $timeOff)
     {
+        /** @var User $actor */
+        $actor = auth()->user();
+        $this->assertCanAccessTimeOff($actor, $timeOff);
+
         $timeOff->delete();
 
         return response()->json([
@@ -408,6 +455,10 @@ class AppointmentCalendarController extends Controller
 
     public function updateBlock(Request $request, ProviderTimeOff $timeOff)
     {
+        /** @var User $actor */
+        $actor = $request->user();
+        $this->assertCanAccessTimeOff($actor, $timeOff);
+
         $data = $request->validate([
             'reason' => ['nullable', 'string', 'max:255'],
             'block_type' => ['required', 'string', 'in:manual,break,meeting,off'],
@@ -421,6 +472,88 @@ class AppointmentCalendarController extends Controller
         return response()->json([
             'message' => 'Blokaj güncellendi.',
             'data' => $timeOff->fresh(),
+        ]);
+    }
+
+    protected function providerOptionsQuery(User $actor)
+    {
+        return User::query()
+            ->where('is_active', true)
+            ->whereHas('roles', function ($q) {
+                $q->whereIn('slug', ['provider', 'admin', 'superadmin']);
+            })
+            ->when(!$actor->isSuperAdmin(), function ($query) use ($actor) {
+                $query->whereKey($actor->id);
+            });
+    }
+
+    protected function transferProviderOptionsQuery(User $actor)
+    {
+        return User::query()
+            ->where('is_active', true)
+            ->whereHas('roles', function ($q) {
+                $q->whereIn('slug', ['provider', 'admin', 'superadmin']);
+            })
+            ->when(!$actor->isSuperAdmin(), function ($query) use ($actor) {
+                $query
+                    ->whereKeyNot($actor->id)
+                    ->whereDoesntHave('roles', function ($roleQuery) {
+                        $roleQuery->where('slug', 'superadmin');
+                    });
+            });
+    }
+
+    protected function resolveProviderId(Request $request): ?int
+    {
+        /** @var User $actor */
+        $actor = $request->user();
+
+        if (!$actor->isSuperAdmin()) {
+            return (int) $actor->id;
+        }
+
+        $providerId = $request->integer('provider_id');
+
+        return $providerId > 0 ? $providerId : null;
+    }
+
+    protected function assertCanAccessProvider(User $actor, int $providerId): void
+    {
+        if ($actor->isSuperAdmin()) {
+            return;
+        }
+
+        abort_unless((int) $actor->id === $providerId, 403);
+    }
+
+    protected function assertCanAccessAppointment(User $actor, Appointment $appointment): void
+    {
+        $this->assertCanAccessProvider($actor, (int) $appointment->provider_id);
+    }
+
+    protected function assertCanAccessTimeOff(User $actor, ProviderTimeOff $timeOff): void
+    {
+        $this->assertCanAccessProvider($actor, (int) $timeOff->provider_id);
+    }
+
+    protected function assertCanTransferToProvider(User $actor, ?int $providerId): void
+    {
+        if ($providerId === null) {
+            return;
+        }
+
+        $allowed = $this->transferProviderOptionsQuery($actor)
+            ->whereKey($providerId)
+            ->exists();
+
+        if ($allowed) {
+            return;
+        }
+
+        throw ValidationException::withMessages([
+            'new_provider_id' => $actor->isSuperAdmin()
+                ? 'Secilen kisiye aktarim yapilamiyor.'
+                : 'Randevu sadece kendiniz disindaki ve super admin olmayan birine aktarilabilir.',
         ]);
     }
 
@@ -504,6 +637,10 @@ class AppointmentCalendarController extends Controller
 
     public function showBlock(ProviderTimeOff $timeOff)
     {
+        /** @var User $actor */
+        $actor = auth()->user();
+        $this->assertCanAccessTimeOff($actor, $timeOff);
+
         return response()->json([
             'id' => $timeOff->id,
             'provider_id' => $timeOff->provider_id,
@@ -516,6 +653,10 @@ class AppointmentCalendarController extends Controller
 
     public function show(Appointment $appointment)
     {
+        /** @var User $actor */
+        $actor = auth()->user();
+        $this->assertCanAccessAppointment($actor, $appointment);
+
         $appointment->load([
             'member:id,name,surname',
             'provider:id,name,title',

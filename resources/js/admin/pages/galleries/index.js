@@ -1,3 +1,4 @@
+import { get } from '@/core/http';
 export default function init() {
     const root = document.querySelector('[data-page="galleries.index"]');
     if (!root) return;
@@ -67,13 +68,9 @@ export default function init() {
             mode,
         });
 
-        const res = await fetch(`/admin/galleries/list?${qs.toString()}`, {
-            headers: { Accept: 'application/json' },
-        });
+        const j = await get(`/admin/galleries/list?${qs.toString()}`, { ignoreGlobalError: true }) || {};
 
-        const j = await res.json().catch(() => ({}));
-
-        if (!res.ok || !j?.ok) {
+        if (!j?.ok) {
             listEl.innerHTML = '';
             emptyEl?.classList.remove('hidden');
             if (infoEl) infoEl.textContent = '';

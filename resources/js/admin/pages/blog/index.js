@@ -1,9 +1,6 @@
-let popEl = null;
+import { request } from '@/core/http';
 
-function csrfToken() {
-    const meta = document.querySelector('meta[name="csrf-token"]');
-    return meta ? meta.getAttribute('content') : '';
-}
+let popEl = null;
 
 function notify(type, text) {
     if (window.KTNotify?.show) {
@@ -65,19 +62,7 @@ async function togglePublish(input) {
     row?.classList.add('opacity-50');
 
     try {
-        const res = await fetch(url, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': csrfToken(),
-            },
-            body: JSON.stringify({ is_published: nextVal }),
-        });
-
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-
-        const data = await res.json();
+        const data = await request(url, { method: 'PATCH', data: { is_published: nextVal }, ignoreGlobalError: true });
         if (!data?.ok) throw new Error('Invalid response');
 
         if (badgeWrap && data.badge_html) badgeWrap.innerHTML = data.badge_html;
@@ -118,19 +103,7 @@ async function toggleFeatured(input) {
     row?.classList.add('opacity-50');
 
     try {
-        const res = await fetch(url, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': csrfToken(),
-            },
-            body: JSON.stringify({ is_featured: nextVal }),
-        });
-
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-
-        const data = await res.json();
+        const data = await request(url, { method: 'PATCH', data: { is_featured: nextVal }, ignoreGlobalError: true });
         if (!data?.ok) throw new Error('Invalid response');
 
         if (badgeWrap && data.badge_html) badgeWrap.innerHTML = data.badge_html;
@@ -158,22 +131,10 @@ async function toggleFeatured(input) {
 }
 
 
-function postJson(url, body, signal) {
-    return fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': csrfToken(),
-        },
-        body: JSON.stringify(body),
-        signal,
-        credentials: 'same-origin',
-    }).then(async (res) => {
-        const j = await res.json().catch(() => ({}));
-        if (!res.ok || j?.ok === false) throw new Error(j?.error?.message || 'İşlem başarısız');
-        return j;
-    });
+async function postJson(url, body, signal) {
+    const j = await request(url, { method: 'POST', data: body, signal, ignoreGlobalError: true });
+    if (j?.ok === false) throw new Error(j?.error?.message || 'İşlem başarısız');
+    return j;
 }
 
 // -------- Custom pagination
@@ -402,16 +363,8 @@ export default function init(ctx) {
             if (action === 'delete') {
                 if (!confirm('Bu yazı silinsin mi?')) return;
 
-                const res = await fetch(`/admin/blog/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken(),
-                    },
-                    signal,
-                });
-                const j = await res.json().catch(() => ({}));
-                if (!res.ok || j?.ok === false) throw new Error(j?.error?.message || 'Silme başarısız');
+                const j = await request(`/admin/blog/${id}`, { method: 'DELETE', signal, ignoreGlobalError: true });
+                if (j?.ok === false) throw new Error(j?.error?.message || 'Silme başarısız');
 
                 notify('success', 'Silindi');
                 location.reload();
@@ -430,16 +383,8 @@ export default function init(ctx) {
             if (action === 'force-delete') {
                 if (!confirm('Bu yazı KALICI silinecek. Emin misin?')) return;
 
-                const res = await fetch(`/admin/blog/${id}/force`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken(),
-                    },
-                    signal,
-                });
-                const j = await res.json().catch(() => ({}));
-                if (!res.ok || j?.ok === false) throw new Error(j?.error?.message || 'Kalıcı silme başarısız');
+                const j = await request(`/admin/blog/${id}/force`, { method: 'DELETE', signal, ignoreGlobalError: true });
+                if (j?.ok === false) throw new Error(j?.error?.message || 'Kalıcı silme başarısız');
 
                 notify('success', 'Kalıcı silindi');
                 location.reload();

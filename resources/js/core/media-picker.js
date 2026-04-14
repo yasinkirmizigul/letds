@@ -1,3 +1,5 @@
+import { get } from '@/core/http';
+
 function escapeHtml(str) {
     return String(str ?? '')
         .replaceAll('&', '&amp;')
@@ -145,20 +147,10 @@ export function initMediaPicker(scope = document) {
         });
 
         try {
-            const res = await fetch(`/admin/media/list?${qs.toString()}`, {
-                headers: { Accept: 'application/json' },
-                credentials: 'same-origin',
-                signal: aborter.signal,
-            });
+            const json = await get(`/admin/media/list?${qs.toString()}`, { signal: aborter.signal, ignoreGlobalError: true });
 
             if (reqId !== lastRequestId) return;
 
-            if (!res.ok) {
-                renderEmpty(`Liste alınamadı (HTTP ${res.status})`);
-                return;
-            }
-
-            const json = await res.json().catch(() => null);
             if (!json) {
                 renderEmpty('Geçersiz yanıt (JSON okunamadı)');
                 return;

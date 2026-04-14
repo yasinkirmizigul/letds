@@ -1,10 +1,7 @@
 // resources/js/core/library-attach.js
 
 import { initMediaUploadModal } from '@/core/media-upload-modal';
-
-function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-}
+import { post } from '@/core/http';
 
 export default function initLibraryAttach(root = document) {
     // modal global => document scope
@@ -64,27 +61,15 @@ export default function initLibraryAttach(root = document) {
 
         const body = { [currentAttach.payloadKey]: ids };
 
-        let res, j;
+        let j;
         try {
-            res = await fetch(currentAttach.url, {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': csrfToken(),
-                },
-                credentials: 'same-origin',
-                body: JSON.stringify(body),
-            });
-            j = await res.json().catch(() => ({}));
+            j = await post(currentAttach.url, body, { ignoreGlobalError: true });
         } catch (err) {
             console.error(err);
-            res = { ok: false, status: 0 };
-            j = {};
+            j = err?.data || {};
         }
 
-        const ok = !!(res.ok && j?.ok);
+        const ok = !!j?.ok;
 
         if (useBtn) {
             useBtn.innerHTML = ok

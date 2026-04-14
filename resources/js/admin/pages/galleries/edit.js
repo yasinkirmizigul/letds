@@ -1,9 +1,6 @@
+import { request } from '@/core/http';
 import Sortable from 'sortablejs';
 import { initMediaUploadModal } from '@/core/media-upload-modal';
-
-function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-}
 
 function inferKind(mime) {
     if (!mime) return 'file';
@@ -23,20 +20,12 @@ function escapeHtml(s) {
 }
 
 async function req(url, method, body, signal) {
-    const res = await fetch(url, {
-        method,
-        headers: {
-            'X-CSRF-TOKEN': csrfToken(),
-            'Accept': 'application/json',
-            ...(body ? { 'Content-Type': 'application/json' } : {}),
-        },
-        body: body ? JSON.stringify(body) : undefined,
-        signal,
-        credentials: 'same-origin',
-    });
-
-    const j = await res.json().catch(() => ({}));
-    return { res, j };
+    try {
+        const j = await request(url, { method, data: body, signal, ignoreGlobalError: true });
+        return { res: { ok: true, status: 200 }, j: j || {} };
+    } catch (err) {
+        return { res: { ok: false, status: err?.status || 0 }, j: err?.data || {} };
+    }
 }
 
 export default function init(ctx) {

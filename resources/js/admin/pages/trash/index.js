@@ -1,23 +1,10 @@
-function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-}
-
 async function jsonReq(url, method = 'GET', body = null, signal = null) {
-    const res = await fetch(url, {
-        method,
-        headers: {
-            Accept: 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-            ...(csrfToken() ? {'X-CSRF-TOKEN': csrfToken()} : {}),
-            ...(body ? {'Content-Type': 'application/json'} : {}),
-        },
-        body: body ? JSON.stringify(body) : undefined,
-        credentials: 'same-origin',
-        signal,
-    });
-
-    const j = await res.json().catch(() => ({}));
-    return {res, j};
+    try {
+        const j = await request(url, { method, data: body, signal, ignoreGlobalError: true });
+        return { res: { ok: true, status: 200 }, j: j || {} };
+    } catch (err) {
+        return { res: { ok: false, status: err?.status || 0 }, j: err?.data || {} };
+    }
 }
 
 function esc(s) {

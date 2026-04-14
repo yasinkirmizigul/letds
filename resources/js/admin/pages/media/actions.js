@@ -1,3 +1,4 @@
+import { request, get, post, delete as destroy } from '@/core/http';
 export function attachGridActions({
                                       root,
                                       grid,
@@ -11,19 +12,12 @@ export function attachGridActions({
                                       inferKindFromMimeOrExt,
                                   }) {
     async function req(url, method) {
-        const res = await fetch(url, {
-            method,
-            headers: {
-                ...(csrf ? { 'X-CSRF-TOKEN': csrf } : {}),
-                Accept: 'application/json',
-            },
-        });
-
-        if (!res.ok) {
-            const j = await res.json().catch(() => ({}));
+        try {
+            return await request(url, { method, headers: csrf ? { 'X-CSRF-TOKEN': csrf } : {}, ignoreGlobalError: true }) || {};
+        } catch (err) {
+            const j = err?.data || {};
             throw new Error(j?.error?.message || j?.message || 'İşlem başarısız');
         }
-        return res.json().catch(() => ({}));
     }
 
     grid?.addEventListener('click', async (e) => {

@@ -1,3 +1,4 @@
+import { request, get, post, delete as destroy } from '@/core/http';
 export default function init(ctx = {}) {
     const root = document.querySelector('[data-page="categories.trash"]');
     if (!root) return;
@@ -23,13 +24,13 @@ export default function init(ctx = {}) {
         const forceBtn = e.target.closest('[data-force-delete]');
 
         if (restoreBtn) {
-            await fetch(restoreBtn.dataset.url, { method: 'POST' });
+            await post(restoreBtn.dataset.url, null, { ignoreGlobalError: true });
             location.reload();
         }
 
         if (forceBtn) {
             if (!confirm('Kalıcı silinsin mi?')) return;
-            await fetch(forceBtn.dataset.url, { method: 'DELETE' });
+            await destroy(forceBtn.dataset.url, null, { ignoreGlobalError: true });
             location.reload();
         }
     });

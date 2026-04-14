@@ -1,3 +1,5 @@
+import { request } from '@/core/http';
+
 function qs(sel, root = document) {
     return root.querySelector(sel);
 }
@@ -11,36 +13,8 @@ function escHtml(str) {
         .replaceAll("'", '&#039;');
 }
 
-function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.content || '';
-}
-
 async function requestJson(url, { method = 'GET', body = null, signal = null } = {}) {
-    const headers = {
-        'X-Requested-With': 'XMLHttpRequest',
-        'Accept': 'application/json',
-    };
-
-    // Laravel method + csrf
-    const token = csrfToken();
-    if (token) headers['X-CSRF-TOKEN'] = token;
-
-    const opts = { method, headers, signal };
-
-    if (body) {
-        headers['Content-Type'] = 'application/json';
-        opts.body = JSON.stringify(body);
-    }
-
-    const res = await fetch(url, opts);
-    const json = await res.json().catch(() => null);
-
-    if (!res.ok) {
-        const msg = json?.message || `İstek başarısız (${res.status})`;
-        throw new Error(msg);
-    }
-
-    return json;
+    return request(url, { method, data: body, signal, ignoreGlobalError: true });
 }
 
 function buildUrl(base, params) {

@@ -1,3 +1,4 @@
+import { request, get, post, delete as destroy } from '@/core/http';
 export function attachBulkActions({
                                       root,
                                       csrf,
@@ -11,22 +12,12 @@ export function attachBulkActions({
     const bulkForceDeleteBtn = root.querySelector('#mediaBulkForceDeleteBtn');
 
     async function req(url, method, bodyObj) {
-        const res = await fetch(url, {
-            method,
-            headers: {
-                ...(bodyObj ? { 'Content-Type': 'application/json' } : {}),
-                ...(csrf ? { 'X-CSRF-TOKEN': csrf } : {}),
-                Accept: 'application/json',
-            },
-            body: bodyObj ? JSON.stringify(bodyObj) : undefined,
-        });
-
-        if (!res.ok) {
-            const j = await res.json().catch(() => ({}));
+        try {
+            return await request(url, { method, data: bodyObj, headers: csrf ? { 'X-CSRF-TOKEN': csrf } : {}, ignoreGlobalError: true }) || {};
+        } catch (err) {
+            const j = err?.data || {};
             throw new Error(j?.error?.message || j?.message || 'İşlem başarısız');
         }
-
-        return res.json().catch(() => ({}));
     }
 
     // Active: bulk soft delete

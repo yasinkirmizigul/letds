@@ -1,3 +1,6 @@
+import { get, request } from '@/core/http'
+import { showToastMessage } from '@/core/swal-alert'
+
 let currentProviderId = null
 
 function qs(root, sel) {
@@ -8,48 +11,19 @@ function qsa(root, sel) {
     return Array.from((root || document).querySelectorAll(sel))
 }
 
-function csrfToken() {
-    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-
-    if (!token) {
-        throw new Error('CSRF token bulunamadı. Admin layout içine meta[name="csrf-token"] eklenmeli.')
-    }
-
-    return token
-}
-
 async function fetchJson(url) {
-    const res = await fetch(url, { headers: { Accept: 'application/json' } })
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    return res.json()
+    return get(url, { ignoreGlobalError: true })
 }
 
 async function sendJson(url, method, data = null) {
-    const res = await fetch(url, {
-        method,
-        credentials: 'same-origin',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': csrfToken(),
-            'X-Requested-With': 'XMLHttpRequest',
-        },
-        body: data ? JSON.stringify(data) : null,
-    })
-
-    const payload = await res.json().catch(() => ({}))
-    if (!res.ok) {
-        throw new Error(payload?.message || 'İşlem başarısız.')
-    }
-    return payload
+    return request(url, { method, data, ignoreGlobalError: true })
 }
 
 function notify(type, message) {
-    if (window.KTNotify?.show) {
-        window.KTNotify.show({ type, message, placement: 'top-end', duration: 2000 })
-        return
-    }
-    alert(message)
+    showToastMessage(type === 'error' ? 'error' : 'success', message, {
+        title: type === 'error' ? 'Islem basarisiz' : 'Islem tamamlandi',
+        duration: 2200,
+    })
 }
 
 function dayLabel(day) {

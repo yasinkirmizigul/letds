@@ -11,14 +11,22 @@
                         <label class="kt-form-label mb-1 text-gray-700 dark:text-zinc-200">Kişi</label>
                         <select
                             id="providerSelect"
+                            data-initial-provider-id="{{ $selectedProviderId ?? '' }}"
                             class="kt-select"
                             data-kt-select="true"
+                            @disabled(!$canSelectProvider)
                             data-kt-select-placeholder="Seçiniz"
                         >
+                            @if($canSelectProvider)
+                                <option value="" @selected(empty($selectedProviderId))>Tum kisiler</option>
+                            @endif
                             @foreach($providers as $p)
                                 <option value="{{ $p->id }}">{{ $p->name }} — {{ $p->title }}</option>
                             @endforeach
                         </select>
+                        <p id="calendarInteractionHint" class="hidden mt-2 text-xs text-amber-600 dark:text-amber-400">
+                            Takvimi duzenlemek icin once kisi sec.
+                        </p>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-3">
@@ -234,7 +242,8 @@
                         <div>
                             <label class="kt-form-label mb-2">Kişi</label>
                             <select id="appointmentProviderId" class="kt-select">
-                                @foreach($providers as $p)
+                                <option value="">Mevcut kiside kalsin</option>
+                                @foreach($transferProviders as $p)
                                     <option value="{{ $p->id }}">{{ $p->name }} — {{ $p->title }}</option>
                                 @endforeach
                             </select>

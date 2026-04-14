@@ -1,3 +1,5 @@
+import { request } from '@/core/http';
+
 /**
  * resources/js/admin/pages/products/index.js
  * Project list sayfasının layout/UX kalıbıyla uyumlu (kt-card header + scrollable table).
@@ -6,35 +8,8 @@
 
 /* global Swal */
 
-function csrfToken() {
-  const meta = document.querySelector('meta[name="csrf-token"]');
-  return meta ? meta.getAttribute('content') : '';
-}
-
 async function req(url, { method = 'POST', body = null, headers = {} } = {}) {
-  const h = {
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRF-TOKEN': csrfToken(),
-    ...headers,
-  };
-
-  const opts = { method, headers: h, credentials: 'same-origin' };
-  if (body !== null) {
-    if (body instanceof FormData) opts.body = body;
-    else {
-      h['Content-Type'] = 'application/json';
-      opts.body = JSON.stringify(body);
-    }
-  }
-
-  const res = await fetch(url, opts);
-  const ct = res.headers.get('content-type') || '';
-  const data = ct.includes('application/json') ? await res.json() : await res.text();
-  if (!res.ok) {
-    const msg = (data && data.message) ? data.message : `HTTP ${res.status}`;
-    throw new Error(msg);
-  }
-  return data;
+  return request(url, { method, data: body, headers, ignoreGlobalError: true });
 }
 
 function buildUrlWithParams(baseUrl, params) {

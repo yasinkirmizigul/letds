@@ -1,11 +1,8 @@
+import { request } from '@/core/http';
+
 // resources/js/admin/pages/projects/index.js
 let ac = null;
 let popEl = null;
-
-function csrfToken() {
-    const meta = document.querySelector('meta[name="csrf-token"]');
-    return meta ? meta.getAttribute('content') : '';
-}
 
 function notify(type, text) {
     if (window.KTNotify?.show) {
@@ -49,26 +46,22 @@ function showImgPopover(popEl, anchor, imgUrl) {
 }
 function hideImgPopover(popEl) { popEl.style.display = 'none'; }
 
-function postJson(url, body, method = 'POST') {
-    return fetch(url, {
-        method,
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': csrfToken(),
-        },
-        body: JSON.stringify(body),
-    }).then(async (res) => {
-        const j = await res.json().catch(() => ({}));
-        if (!res.ok || j?.ok === false) {
-            const msg = j?.error?.message || 'İşlem başarısız';
-            const err = new Error(msg);
-            err.status = res.status;
+async function postJson(url, body, method = 'POST') {
+    try {
+        const j = await request(url, { method, data: body, ignoreGlobalError: true });
+        if (j?.ok === false) {
+            const err = new Error(j?.error?.message || 'İşlem başarısız');
             err.payload = j;
             throw err;
         }
         return j;
-    });
+    } catch (err) {
+        const payload = err?.data || err?.payload || {};
+        const e = new Error(payload?.error?.message || payload?.message || err?.message || 'İşlem başarısız');
+        e.status = err?.status || 0;
+        e.payload = payload;
+        throw e;
+    }
 }
 
 // --- status menu ---
@@ -430,12 +423,8 @@ export default function init({ root }) {
             if (action === 'delete') {
                 if (!confirm('Bu proje silinsin mi?')) return;
 
-                const res = await fetch(`/admin/projects/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken() },
-                });
-                const j = await res.json().catch(() => ({}));
-                if (!res.ok || j?.ok === false) throw new Error(j?.error?.message || 'Silme başarısız');
+                const j = await request(`/admin/projects/${id}`, { method: 'DELETE', ignoreGlobalError: true });
+                if (j?.ok === false) throw new Error(j?.error?.message || 'Silme başarısız');
 
                 notify('success', 'Silindi');
                 location.reload();
@@ -454,12 +443,8 @@ export default function init({ root }) {
             if (action === 'force-delete') {
                 if (!confirm('Bu proje KALICI silinecek. Emin misin?')) return;
 
-                const res = await fetch(`/admin/projects/${id}/force`, {
-                    method: 'DELETE',
-                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken() },
-                });
-                const j = await res.json().catch(() => ({}));
-                if (!res.ok || j?.ok === false) throw new Error(j?.error?.message || 'Kalıcı silme başarısız');
+                const j = await request(`/admin/projects/${id}/force`, { method: 'DELETE', ignoreGlobalError: true });
+                if (j?.ok === false) throw new Error(j?.error?.message || 'Kalıcı silme başarısız');
 
                 notify('success', 'Kalıcı silindi');
                 location.reload();

@@ -2,6 +2,8 @@ import { Calendar } from '@fullcalendar/core'
 import interactionPlugin from '@fullcalendar/interaction'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
+import { get, request } from '@/core/http'
+import { showConfirmDialog, showToastMessage } from '@/core/swal-alert'
 
 let calendar = null
 let selectedEventId = null
@@ -34,16 +36,6 @@ function qsa(root, sel) {
     return Array.from((root || document).querySelectorAll(sel))
 }
 
-function csrfToken() {
-    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-
-    if (!token) {
-        throw new Error('CSRF token bulunamadı. Admin layout içine meta[name="csrf-token"] eklenmeli.')
-    }
-
-    return token
-}
-
 function buildEventsUrl(providerId, from, to) {
     const u = new URL('/admin/appointments/calendar/events', window.location.origin)
     if (providerId) u.searchParams.set('provider_id', providerId)
@@ -53,47 +45,19 @@ function buildEventsUrl(providerId, from, to) {
 }
 
 async function postJson(url, data) {
-    const res = await fetch(url, {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': csrfToken(),
-            'X-Requested-With': 'XMLHttpRequest',
-        },
-        body: JSON.stringify(data),
-    })
-
-    const payload = await res.json().catch(() => ({}))
-
-    if (!res.ok) {
-        const msg =
-            payload?.message ||
-            payload?.errors?.slot?.[0] ||
-            payload?.errors?.appointment?.[0] ||
-            payload?.errors?.reason?.[0] ||
-            'İşlem başarısız.'
-        const err = new Error(msg)
-        err.payload = payload
-        throw err
+    try {
+        return await request(url, { method: 'POST', data, ignoreGlobalError: true })
+    } catch (err) {
+        const payload = err?.data || {}
+        const msg = payload?.message || payload?.errors?.slot?.[0] || payload?.errors?.appointment?.[0] || payload?.errors?.reason?.[0] || 'İşlem başarısız.'
+        const e = new Error(msg)
+        e.payload = payload
+        throw e
     }
-
-    return payload
 }
 
 async function fetchJson(url) {
-    const res = await fetch(url, {
-        headers: { Accept: 'application/json' },
-    })
-
-    const payload = await res.json().catch(() => ({}))
-
-    if (!res.ok) {
-        throw new Error(payload?.message || 'İşlem başarısız.')
-    }
-
-    return payload
+    return get(url, { ignoreGlobalError: true })
 }
 
 async function loadBlockDetail(id) {
@@ -160,7 +124,13 @@ function openAppointmentModal(root, data) {
 
     if (member) member.value = appointmentModalState.memberName
     if (status) status.value = appointmentModalState.statusLabel
-    if (provider) provider.value = appointmentModalState.providerId
+    if (provider) {
+        syncSelectValue(
+            provider,
+            resolveTransferProviderValue(provider, appointmentModalState.providerId),
+            { emitEvents: false }
+        )
+    }
     if (startAt) startAt.value = toDateTimeLocalValue(appointmentModalState.startAt)
     if (blocks) blocks.value = String(appointmentModalState.blocks)
     if (notes) notes.value = appointmentModalState.notesInternal
@@ -255,20 +225,157 @@ function formatTimeRange(start, end) {
     if (!start || !end) return '-'
     return `${formatDateTime(start)} → ${formatDateTime(end)}`
 }
+function normalizeProviderId(value) {
+    if (value === null || value === undefined) return null
+
+    const normalized = String(value).trim()
+    return normalized !== '' ? normalized : null
+}
+
+function getSelectedProviderId(providerSelect) {
+    return normalizeProviderId(providerSelect?.value)
+}
+
+function getEventProviderId(event) {
+    return normalizeProviderId(event?.extendedProps?.provider_id)
+}
+
+function rangesOverlap(startA, endA, startB, endB) {
+    if (!startA || !endA || !startB || !endB) return false
+    return startA < endB && endA > startB
+}
+
+function hasVisibleEventConflict(event, nextStart, nextEnd) {
+    if (!calendar || !event || !nextStart || !nextEnd) return false
+
+    const providerId = getEventProviderId(event)
+    if (!providerId) return false
+
+    return calendar.getEvents().some((candidate) => {
+        if (candidate.id === event.id) return false
+        if (getEventProviderId(candidate) !== providerId) return false
+
+        return rangesOverlap(nextStart, nextEnd, candidate.start, candidate.end)
+    })
+}
+
+function ensureProviderSelection(providerSelect) {
+    if (getSelectedProviderId(providerSelect)) return true
+
+    notifyError('Randevu takvimini duzenlemek icin once kisi sec.')
+    return false
+}
+
+function setActionDisabled(element, disabled) {
+    if (!element) return
+
+    element.disabled = disabled
+    element.classList.toggle('opacity-50', disabled)
+    element.classList.toggle('pointer-events-none', disabled)
+}
+
+function updateCalendarInteractionState(root, providerSelect) {
+    const hasProvider = Boolean(getSelectedProviderId(providerSelect))
+    const hint = qs(root, '#calendarInteractionHint')
+
+    calendar?.setOption('selectable', hasProvider)
+    calendar?.setOption('editable', hasProvider)
+    calendar?.setOption('eventStartEditable', hasProvider)
+    calendar?.setOption('eventDurationEditable', hasProvider)
+
+    setActionDisabled(qs(root, '#btnCancelAppointment'), !hasProvider)
+    setActionDisabled(qs(root, '#btnAppointmentSave'), !hasProvider)
+    setActionDisabled(qs(root, '#btnAppointmentCancel'), !hasProvider)
+    setActionDisabled(qs(root, '#btnSaveBlock'), !hasProvider)
+    setActionDisabled(qs(root, '#ctxEditBlock'), !hasProvider)
+    setActionDisabled(qs(root, '#ctxDeleteBlock'), !hasProvider)
+
+    if (hint) {
+        hint.classList.toggle('hidden', hasProvider)
+    }
+}
+
+function notifyScheduleConflict() {
+    notifyError('Secilen zaman araliginda ayni kisi icin randevu veya blokaj var.')
+}
+
+function resolveTransferProviderValue(selectEl, currentProviderId) {
+    if (!selectEl) return ''
+
+    const currentId = normalizeProviderId(currentProviderId)
+    const hasCurrent = Array.from(selectEl.options).some((opt) => normalizeProviderId(opt.value) === currentId)
+
+    if (hasCurrent) {
+        return currentId
+    }
+
+    if (Array.from(selectEl.options).some((opt) => opt.value === '')) {
+        return ''
+    }
+
+    return normalizeProviderId(selectEl.options[0]?.value) || ''
+}
+
+function syncSelectValue(selectEl, value, options = {}) {
+    if (!selectEl) return
+    const { emitEvents = true } = options
+
+    const nextValue = value === null || value === undefined ? '' : String(value)
+    const matchedOption = Array.from(selectEl.options).find((opt) => String(opt.value) === nextValue)
+
+    if (!matchedOption) return
+
+    Array.from(selectEl.options).forEach((opt) => {
+        opt.selected = opt === matchedOption
+    })
+
+    selectEl.value = matchedOption.value
+
+    try {
+        const KT = window.KTSelect || window.ktSelect
+        const instance =
+            (KT?.getInstance && KT.getInstance(selectEl)) ||
+            (KT?.getOrCreateInstance && KT.getOrCreateInstance(selectEl)) ||
+            (selectEl.ktSelectInstance ?? null)
+
+        if (instance) {
+            if (typeof instance.setValue === 'function') instance.setValue(matchedOption.value)
+            if (typeof instance.update === 'function') instance.update()
+            if (typeof instance.render === 'function') instance.render()
+        }
+    } catch (_) {}
+
+    const wrapper = selectEl.closest('[data-kt-select-wrapper], .kt-select-wrapper')
+    if (wrapper) {
+        const display =
+            wrapper.querySelector('[data-kt-select-placeholder]') ||
+            wrapper.querySelector('[data-kt-select-display]') ||
+            wrapper.querySelector('.kt-select-display')
+
+        if (display) {
+            display.textContent = matchedOption.textContent?.trim() || matchedOption.value
+        }
+
+        wrapper.querySelectorAll('[data-kt-select-option]').forEach((item) => {
+            const isSelected = item.getAttribute('data-value') === matchedOption.value
+            item.setAttribute('aria-selected', isSelected ? 'true' : 'false')
+            item.classList.toggle('is-selected', isSelected)
+            item.classList.toggle('selected', isSelected)
+        })
+    }
+
+    if (emitEvents) {
+        selectEl.dispatchEvent(new Event('input', { bubbles: true }))
+        selectEl.dispatchEvent(new Event('change', { bubbles: true }))
+    }
+}
+
 function setNativeSelectValue(selectEl, value) {
     if (!selectEl) return
 
     const nextValue = value || 'manual'
     const exists = Array.from(selectEl.options).some((opt) => opt.value === nextValue)
-
-    selectEl.value = exists ? nextValue : 'manual'
-
-    Array.from(selectEl.options).forEach((opt) => {
-        opt.selected = opt.value === selectEl.value
-    })
-
-    selectEl.dispatchEvent(new Event('input', { bubbles: true }))
-    selectEl.dispatchEvent(new Event('change', { bubbles: true }))
+    syncSelectValue(selectEl, exists ? nextValue : 'manual')
 }
 function openBlockModal(root, options = {}) {
     const modal = qs(root, '#blockModal')
@@ -459,31 +566,15 @@ function toLocalIsoString(date) {
 }
 
 function notifyError(message) {
-    if (window.KTNotify?.show) {
-        window.KTNotify.show({
-            type: 'error',
-            message,
-            placement: 'top-end',
-            duration: 2500,
-        })
-        return
-    }
-
-    alert(message)
+    showToastMessage('error', message, {
+        title: 'Islem basarisiz',
+    })
 }
 
 function notifySuccess(message) {
-    if (window.KTNotify?.show) {
-        window.KTNotify.show({
-            type: 'success',
-            message,
-            placement: 'top-end',
-            duration: 1800,
-        })
-        return
-    }
-
-    alert(message)
+    showToastMessage('success', message, {
+        title: 'Islem tamamlandi',
+    })
 }
 function resetBlockModalState(root) {
     const entityIdInput = qs(root, '#blockEntityId')
@@ -586,8 +677,15 @@ export default async function init(ctx) {
     if (!el) return
 
     const providerSelect = qs(root, '#providerSelect')
+    const initialProviderId = normalizeProviderId(providerSelect?.dataset?.initialProviderId)
     const btnCancelAppointment = qs(root, '#btnCancelAppointment')
     const cancelReason = qs(root, '#cancelReason')
+
+    if (providerSelect && initialProviderId) {
+        syncSelectValue(providerSelect, initialProviderId)
+        requestAnimationFrame(() => syncSelectValue(providerSelect, initialProviderId, { emitEvents: false }))
+        setTimeout(() => syncSelectValue(providerSelect, initialProviderId, { emitEvents: false }), 50)
+    }
 
     const blockModal = qs(root, '#blockModal')
     const btnSaveBlock = qs(root, '#btnSaveBlock')
@@ -639,8 +737,20 @@ export default async function init(ctx) {
         eventStartEditable: true,
         eventDurationEditable: true,
 
-        eventAllow(dropInfo) {
-            return dropInfo.start >= new Date()
+        eventAllow(dropInfo, draggedEvent) {
+            if (dropInfo.start < new Date()) {
+                return false
+            }
+
+            if (!getSelectedProviderId(providerSelect)) {
+                return false
+            }
+
+            if (!draggedEvent) {
+                return true
+            }
+
+            return !hasVisibleEventConflict(draggedEvent, dropInfo.start, dropInfo.end)
         },
 
         select(info) {
@@ -693,9 +803,7 @@ export default async function init(ctx) {
         events: async (fetchInfo, success, failure) => {
             try {
                 const url = buildEventsUrl(providerSelect?.value, fetchInfo.startStr, fetchInfo.endStr)
-                const res = await fetch(url, { headers: { Accept: 'application/json' } })
-                if (!res.ok) throw new Error(`HTTP ${res.status}`)
-                const data = await res.json()
+                const data = await get(url, { ignoreGlobalError: true })
                 success(Array.isArray(data) ? data : [])
             } catch (e) {
                 failure(e)
@@ -706,6 +814,10 @@ export default async function init(ctx) {
             fillDetailPanel(root, info.event)
 
             if (info.event.extendedProps?.entity_type === 'time_off') {
+                if (!getSelectedProviderId(providerSelect)) {
+                    return
+                }
+
                 try {
                     const block = await loadBlockDetail(info.event.extendedProps.entity_id)
 
@@ -725,6 +837,10 @@ export default async function init(ctx) {
             }
 
             if (info.event.extendedProps?.entity_type === 'appointment') {
+                if (!getSelectedProviderId(providerSelect)) {
+                    return
+                }
+
                 try {
                     const appointment = await loadAppointmentDetail(info.event.extendedProps.entity_id)
                     openAppointmentModal(root, appointment)
@@ -741,6 +857,11 @@ export default async function init(ctx) {
                 info.el.addEventListener('contextmenu', (e) => {
                     e.preventDefault()
                     fillDetailPanel(root, info.event)
+
+                    if (!getSelectedProviderId(providerSelect)) {
+                        return
+                    }
+
                     openContextMenu(root, info.event, e.clientX, e.clientY)
                 })
             }
@@ -768,6 +889,17 @@ export default async function init(ctx) {
             const entityType = info.event.extendedProps?.entity_type || 'appointment'
 
             try {
+                if (!ensureProviderSelection(providerSelect)) {
+                    info.revert()
+                    return
+                }
+
+                if (hasVisibleEventConflict(info.event, info.event.start, info.event.end)) {
+                    info.revert()
+                    notifyScheduleConflict()
+                    return
+                }
+
                 if (entityType === 'time_off') {
                     await postJson(`/admin/appointments/blocks/${info.event.extendedProps.entity_id}/move`, {
                         start_at: toLocalIsoString(info.event.start),
@@ -801,6 +933,17 @@ export default async function init(ctx) {
             const entityType = info.event.extendedProps?.entity_type || 'appointment'
 
             try {
+                if (!ensureProviderSelection(providerSelect)) {
+                    info.revert()
+                    return
+                }
+
+                if (hasVisibleEventConflict(info.event, info.event.start, info.event.end)) {
+                    info.revert()
+                    notifyScheduleConflict()
+                    return
+                }
+
                 if (entityType === 'time_off') {
                     await postJson(`/admin/appointments/blocks/${info.event.extendedProps.entity_id}/resize`, {
                         start_at: toLocalIsoString(info.event.start),
@@ -830,11 +973,16 @@ export default async function init(ctx) {
     })
 
     calendar.render()
+    updateCalendarInteractionState(root, providerSelect)
 
     if (providerSelect) {
         providerSelect.addEventListener('change', () => {
             closeContextMenu(root)
+            closeAppointmentModal(root)
+            closeBlockModal(root)
+            hideDragTooltip(root)
             resetDetailPanel(root)
+            updateCalendarInteractionState(root, providerSelect)
             calendar?.refetchEvents()
         })
     }
@@ -842,6 +990,7 @@ export default async function init(ctx) {
     if (btnSaveBlock) {
         btnSaveBlock.addEventListener('click', async () => {
             if (isSavingBlock) return
+            if (!ensureProviderSelection(providerSelect)) return
 
             try {
                 setBlockSaveLoading(root, true)
@@ -895,6 +1044,7 @@ export default async function init(ctx) {
 
     if (btnCancelAppointment) {
         btnCancelAppointment.addEventListener('click', async () => {
+            if (!ensureProviderSelection(providerSelect)) return
             if (!selectedEventId) {
                 notifyError('Önce bir kayıt seç.')
                 return
@@ -903,11 +1053,15 @@ export default async function init(ctx) {
             const event = calendar?.getEventById(selectedEventId)
             const entityType = event?.extendedProps?.entity_type || 'appointment'
 
-            const ok = window.confirm(
-                entityType === 'time_off'
-                    ? 'Seçili blokajı silmek istiyor musun?'
-                    : 'Seçili randevuyu iptal etmek istiyor musun?'
-            )
+            const ok = await showConfirmDialog({
+                type: entityType === 'time_off' ? 'warning' : 'error',
+                title: entityType === 'time_off' ? 'Blokaj silinsin mi?' : 'Randevu iptal edilsin mi?',
+                message: entityType === 'time_off'
+                    ? 'Seçili blokaj kaydı takvimden kaldırılacak.'
+                    : 'Seçili randevu iptal edilecek.',
+                confirmButtonText: entityType === 'time_off' ? 'Blokajı sil' : 'Randevuyu iptal et',
+                cancelButtonText: 'Vazgeç',
+            })
 
             if (!ok) return
 
@@ -937,14 +1091,17 @@ export default async function init(ctx) {
 
     if (btnAppointmentSave) {
         btnAppointmentSave.addEventListener('click', async () => {
+            if (!ensureProviderSelection(providerSelect)) return
             if (!appointmentModalState.entityId) {
                 notifyError('Randevu kaydı bulunamadı.')
                 return
             }
 
             try {
+                const nextProviderId = normalizeProviderId(appointmentProviderId?.value)
+
                 await postJson(`/admin/appointments/${appointmentModalState.entityId}/transfer`, {
-                    new_provider_id: appointmentProviderId?.value || appointmentModalState.providerId,
+                    new_provider_id: nextProviderId,
                     new_start_at: appointmentStartAt?.value,
                     blocks: Number(appointmentBlocks?.value || 1),
                     notes_internal: appointmentNotesInternal?.value || null,
@@ -962,12 +1119,19 @@ export default async function init(ctx) {
 
     if (btnAppointmentCancel) {
         btnAppointmentCancel.addEventListener('click', async () => {
+            if (!ensureProviderSelection(providerSelect)) return
             if (!appointmentModalState.entityId) {
                 notifyError('Randevu kaydı bulunamadı.')
                 return
             }
 
-            const ok = window.confirm('Seçili randevuyu iptal etmek istiyor musun?')
+            const ok = await showConfirmDialog({
+                type: 'error',
+                title: 'Randevu iptal edilsin mi?',
+                message: 'Seçili randevu iptal edilecek.',
+                confirmButtonText: 'Randevuyu iptal et',
+                cancelButtonText: 'Vazgeç',
+            })
             if (!ok) return
 
             try {
@@ -999,6 +1163,7 @@ export default async function init(ctx) {
 
     if (ctxEditBlock) {
         ctxEditBlock.addEventListener('click', async () => {
+            if (!ensureProviderSelection(providerSelect)) return
             if (!activeContextEvent) return
 
             try {
@@ -1022,9 +1187,16 @@ export default async function init(ctx) {
 
     if (ctxDeleteBlock) {
         ctxDeleteBlock.addEventListener('click', async () => {
+            if (!ensureProviderSelection(providerSelect)) return
             if (!activeContextEvent) return
 
-            const ok = window.confirm('Seçili blokajı silmek istiyor musun?')
+            const ok = await showConfirmDialog({
+                type: 'warning',
+                title: 'Blokaj silinsin mi?',
+                message: 'Seçili blokaj kaydı takvimden kaldırılacak.',
+                confirmButtonText: 'Blokajı sil',
+                cancelButtonText: 'Vazgeç',
+            })
             if (!ok) return
 
             try {

@@ -1,6 +1,4 @@
-function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-}
+import { request } from '@/core/http';
 
 function esc(s) {
     return String(s ?? '')
@@ -32,21 +30,12 @@ function inferKind(mime, nameOrUrl) {
 }
 
 async function jsonReq(url, method, bodyObj, signal = null) {
-    const res = await fetch(url, {
-        method,
-        headers: {
-            Accept: 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-            ...(csrfToken() ? { 'X-CSRF-TOKEN': csrfToken() } : {}),
-            ...(bodyObj ? { 'Content-Type': 'application/json' } : {}),
-        },
-        credentials: 'same-origin',
-        body: bodyObj ? JSON.stringify(bodyObj) : undefined,
-        signal,
-    });
-
-    const j = await res.json().catch(() => ({}));
-    return { res, j };
+    try {
+        const j = await request(url, { method, data: bodyObj, signal, ignoreGlobalError: true });
+        return { res: { ok: true, status: 200 }, j: j || {} };
+    } catch (err) {
+        return { res: { ok: false, status: err?.status || 0 }, j: err?.data || {} };
+    }
 }
 
 function btnBusy(btn, on, htmlOn) {
@@ -197,23 +186,17 @@ export function initMediaUploadModal(scope = document) {
         if (t) fd.append('title', t);
         if (a) fd.append('alt', a);
 
-        const res = await fetch('/admin/media/upload', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken(),
-                Accept: 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-            },
-            credentials: 'same-origin',
-            body: fd,
-        });
+        let j = {};
+        try {
+            j = await request('/admin/media/upload', { method: 'POST', data: fd, ignoreGlobalError: true }) || {};
+        } catch (err) {
+            j = err?.data || { message: `HTTP ${err?.status || 0}` };
+        }
 
-        const j = await res.json().catch(() => ({}));
-
-        if (!res.ok || !j?.ok) {
+        if (!j?.ok) {
             q.status = 'error';
             q.progress = 0;
-            q.error = j?.error?.message || j?.message || `HTTP ${res.status}`;
+            q.error = j?.error?.message || j?.message || 'Yükleme başarısız';
             renderQueue();
             return null;
         }

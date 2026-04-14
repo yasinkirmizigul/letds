@@ -1,3 +1,6 @@
+import { get, post } from '@/core/http';
+import { showConfirmDialog, showToastMessage } from '@/core/swal-alert';
+
 let providerId = null;
 let selectedSlot = null;
 let selectedDate = null;
@@ -128,30 +131,34 @@ function updateCalendarTitle() {
     });
 }
 
+function showAppointmentAlert(type, title, message) {
+    showToastMessage(type, message, {
+        title,
+        duration: type === 'success' ? 1600 : 3200
+    });
+}
+
+function reloadAfterToast(title, message) {
+    showAppointmentAlert('success', title, message);
+
+    window.setTimeout(() => {
+        window.location.reload();
+    }, 900);
+}
+
 async function renderCalendar() {
     const container = document.getElementById('calendar');
     if (!container || !providerId || isMonthLoading) return;
 
     isMonthLoading = true;
     updateCalendarTitle();
-    container.innerHTML = `<div class="text-sm text-gray-500">Takvim yükleniyor...</div>`;
+    container.innerHTML = `<div class="text-sm text-gray-500">Takvim yukleniyor...</div>`;
 
     try {
         const year = currentMonth.getFullYear();
         const month = currentMonth.getMonth();
         const monthStr = `${year}-${pad(month + 1)}-01`;
-
-        const res = await fetch(`/member/appointments/days?provider_id=${encodeURIComponent(providerId)}&month=${monthStr}`, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        });
-
-        if (!res.ok) {
-            throw new Error('Takvim verisi alınamadı.');
-        }
-
-        const map = await res.json();
+        const map = await get(`/member/appointments/days?provider_id=${encodeURIComponent(providerId)}&month=${monthStr}`, { ignoreGlobalError: true });
         const todayStr = todayDateString();
 
         let html = `<div class="grid grid-cols-7 gap-2">`;
@@ -162,26 +169,26 @@ async function renderCalendar() {
             html += `<div></div>`;
         }
 
-        for (let d = 1; d <= totalDays; d++) {
-            const dateStr = `${year}-${pad(month + 1)}-${pad(d)}`;
+        for (let day = 1; day <= totalDays; day++) {
+            const dateStr = `${year}-${pad(month + 1)}-${pad(day)}`;
             const dayData = map[dateStr] || null;
-            const has = !!dayData?.has_availability;
+            const hasAvailability = Boolean(dayData?.has_availability);
             const freeCount = dayData?.free_count ?? 0;
             const isPast = dateStr < todayStr;
-            const isDisabled = isPast || !has;
+            const isDisabled = isPast || !hasAvailability;
 
             html += `
                 <button
                     type="button"
                     class="calendar-day p-2 text-center border rounded transition ${
-                isDisabled
-                    ? 'bg-gray-100 opacity-50 cursor-not-allowed'
-                    : 'bg-green-50 hover:bg-green-100 cursor-pointer'
-            }"
+                        isDisabled
+                            ? 'bg-gray-100 opacity-50 cursor-not-allowed'
+                            : 'bg-green-50 hover:bg-green-100 cursor-pointer'
+                    }"
                     ${!isDisabled ? `data-date="${dateStr}"` : 'disabled'}
                     title="${isDisabled ? 'Uygun slot yok' : `${freeCount} uygun slot`}"
                 >
-                    <div>${d}</div>
+                    <div>${day}</div>
                     ${!isDisabled ? `<div class="text-[11px] text-gray-500 mt-1">${freeCount}</div>` : ''}
                 </button>
             `;
@@ -190,20 +197,21 @@ async function renderCalendar() {
         html += `</div>`;
         container.innerHTML = html;
 
-        container.querySelectorAll('[data-date]').forEach(el => {
+        container.querySelectorAll('[data-date]').forEach((el) => {
             el.addEventListener('click', () => selectDate(el.dataset.date));
         });
 
         highlightSelectedDate();
     } catch (error) {
-        container.innerHTML = `<div class="text-sm text-red-600">Takvim yüklenemedi.</div>`;
+        container.innerHTML = `<div class="text-sm text-red-600">Takvim yuklenemedi.</div>`;
+        showAppointmentAlert('error', 'Takvim yuklenemedi', 'Lutfen daha sonra tekrar deneyin.');
     } finally {
         isMonthLoading = false;
     }
 }
 
 function highlightSelectedDate() {
-    document.querySelectorAll('.calendar-day').forEach(el => {
+    document.querySelectorAll('.calendar-day').forEach((el) => {
         el.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
     });
 
@@ -224,21 +232,11 @@ async function loadSlots() {
 
     isDayLoading = true;
     selectedSlot = null;
-    container.innerHTML = `<div class="text-sm text-gray-500">Saatler yükleniyor...</div>`;
+    container.innerHTML = `<div class="text-sm text-gray-500">Saatler yukleniyor...</div>`;
     empty?.classList.add('hidden');
 
     try {
-        const res = await fetch(`/member/appointments/availability?provider_id=${encodeURIComponent(providerId)}&date=${encodeURIComponent(date)}`, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        });
-
-        if (!res.ok) {
-            throw new Error('Slot verisi alınamadı.');
-        }
-
-        const data = await res.json();
+        const data = await get(`/member/appointments/availability?provider_id=${encodeURIComponent(providerId)}&date=${encodeURIComponent(date)}`, { ignoreGlobalError: true });
         container.innerHTML = '';
 
         if (!Array.isArray(data) || !data.length) {
@@ -246,11 +244,12 @@ async function loadSlots() {
             return;
         }
 
-        data.forEach(slot => {
+        data.forEach((slot) => {
             container.appendChild(createSlotElement(slot));
         });
     } catch (error) {
-        container.innerHTML = `<div class="text-sm text-red-600">Saatler yüklenemedi.</div>`;
+        container.innerHTML = `<div class="text-sm text-red-600">Saatler yuklenemedi.</div>`;
+        showAppointmentAlert('error', 'Saatler yuklenemedi', 'Lutfen daha sonra tekrar deneyin.');
     } finally {
         isDayLoading = false;
     }
@@ -279,8 +278,8 @@ function createSlotElement(slot) {
 function selectSlot(el, slot) {
     if (isSubmitting) return;
 
-    document.querySelectorAll('#slots > button').forEach(x => {
-        x.classList.remove('bg-blue-500', 'text-white', 'border-blue-500');
+    document.querySelectorAll('#slots > button').forEach((button) => {
+        button.classList.remove('bg-blue-500', 'text-white', 'border-blue-500');
     });
 
     el.classList.add('bg-blue-500', 'text-white', 'border-blue-500');
@@ -297,7 +296,15 @@ function selectSlot(el, slot) {
 async function confirmBooking() {
     if (!selectedSlot || isSubmitting) return;
 
-    if (!confirm(`${formatTime(selectedSlot.start_at)} için randevu al?`)) {
+    const ok = await showConfirmDialog({
+        type: 'info',
+        title: 'Randevu olusturulsun mu?',
+        message: `${formatTime(selectedSlot.start_at)} icin randevu alinacak.`,
+        confirmButtonText: 'Randevu al',
+        cancelButtonText: 'Vazgec'
+    });
+
+    if (!ok) {
         selectedSlot = null;
         return;
     }
@@ -305,31 +312,21 @@ async function confirmBooking() {
     isSubmitting = true;
 
     try {
-        const res = await fetch('/member/appointments', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-                provider_id: providerId,
-                start_at: selectedSlot.start_at,
-                blocks: 1
-            })
-        });
+        const data = await post('/member/appointments', {
+            provider_id: providerId,
+            start_at: selectedSlot.start_at,
+            blocks: 1
+        }, { ignoreGlobalError: true });
 
-        const data = await res.json();
-
-        if (!res.ok || !data.success) {
-            alert(data.message || 'Randevu oluşturulamadı.');
+        if (!data.success) {
+            showAppointmentAlert('error', 'Randevu olusturulamadi', data.message || 'Lutfen baska bir saat deneyin.');
             await loadSlots();
             return;
         }
 
-        window.location.reload();
+        reloadAfterToast('Randevu olusturuldu', 'Randevunuz kaydedildi. Sayfa yenileniyor.');
     } catch (error) {
-        alert('Randevu oluşturulamadı.');
+        showAppointmentAlert('error', 'Randevu olusturulamadi', 'Lutfen daha sonra tekrar deneyin.');
     } finally {
         isSubmitting = false;
     }
@@ -338,31 +335,31 @@ async function confirmBooking() {
 async function cancelAppointment() {
     if (isCancelling || !window.__ACTIVE_APPOINTMENT_ID__) return;
 
-    if (!confirm('Randevuyu iptal etmek istiyor musun?')) {
+    const ok = await showConfirmDialog({
+        type: 'warning',
+        title: 'Randevu iptal edilsin mi?',
+        message: 'Bu islem geri alinamaz.',
+        confirmButtonText: 'Iptal et',
+        cancelButtonText: 'Vazgec'
+    });
+
+    if (!ok) {
         return;
     }
 
     isCancelling = true;
 
     try {
-        const res = await fetch(`/member/appointments/${window.__ACTIVE_APPOINTMENT_ID__}/cancel`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        });
+        const data = await post(`/member/appointments/${window.__ACTIVE_APPOINTMENT_ID__}/cancel`, null, { ignoreGlobalError: true });
 
-        const data = await res.json();
-
-        if (!res.ok || !data.success) {
-            alert(data.message || 'Randevu iptal edilemedi.');
+        if (!data.success) {
+            showAppointmentAlert('error', 'Randevu iptal edilemedi', data.message || 'Iptal islemi tamamlanamadi.');
             return;
         }
 
-        window.location.reload();
+        reloadAfterToast('Randevu iptal edildi', 'Randevunuz iptal edildi. Sayfa yenileniyor.');
     } catch (error) {
-        alert('Randevu iptal edilemedi.');
+        showAppointmentAlert('error', 'Randevu iptal edilemedi', 'Lutfen daha sonra tekrar deneyin.');
     } finally {
         isCancelling = false;
     }
@@ -371,7 +368,15 @@ async function cancelAppointment() {
 async function confirmReschedule() {
     if (!selectedSlot || isSubmitting || !window.__ACTIVE_APPOINTMENT_ID__) return;
 
-    if (!confirm(`${formatTime(selectedSlot.start_at)} saatine yeniden planla?`)) {
+    const ok = await showConfirmDialog({
+        type: 'info',
+        title: 'Randevu yeniden planlansin mi?',
+        message: `${formatTime(selectedSlot.start_at)} saatine tasinacak.`,
+        confirmButtonText: 'Yeniden planla',
+        cancelButtonText: 'Vazgec'
+    });
+
+    if (!ok) {
         selectedSlot = null;
         return;
     }
@@ -379,31 +384,21 @@ async function confirmReschedule() {
     isSubmitting = true;
 
     try {
-        const res = await fetch(`/member/appointments/${window.__ACTIVE_APPOINTMENT_ID__}/reschedule`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-                provider_id: providerId,
-                start_at: selectedSlot.start_at,
-                blocks: 1
-            })
-        });
+        const data = await post(`/member/appointments/${window.__ACTIVE_APPOINTMENT_ID__}/reschedule`, {
+            provider_id: providerId,
+            start_at: selectedSlot.start_at,
+            blocks: 1
+        }, { ignoreGlobalError: true });
 
-        const data = await res.json();
-
-        if (!res.ok || !data.success) {
-            alert(data.message || 'Randevu yeniden planlanamadı.');
+        if (!data.success) {
+            showAppointmentAlert('error', 'Randevu yeniden planlanamadi', data.message || 'Secilen saat icin yeniden planlama yapilamadi.');
             await loadSlots();
             return;
         }
 
-        window.location.reload();
+        reloadAfterToast('Randevu guncellendi', 'Randevunuz yeniden planlandi. Sayfa yenileniyor.');
     } catch (error) {
-        alert('Randevu yeniden planlanamadı.');
+        showAppointmentAlert('error', 'Randevu yeniden planlanamadi', 'Lutfen daha sonra tekrar deneyin.');
     } finally {
         isSubmitting = false;
     }
@@ -415,7 +410,7 @@ function todayDateString() {
 }
 
 function pad(n) {
-    return n < 10 ? '0' + n : String(n);
+    return n < 10 ? `0${n}` : String(n);
 }
 
 function formatTime(dateStr) {

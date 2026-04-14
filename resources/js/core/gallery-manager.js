@@ -1,5 +1,6 @@
 // resources/js/core/gallery-manager.js
 import Sortable from 'sortablejs';
+import { request } from '@/core/http';
 
 function escapeHtml(str) {
     return String(str ?? '')
@@ -10,25 +11,13 @@ function escapeHtml(str) {
         .replaceAll("'", '&#39;');
 }
 
-function csrfToken() {
-    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-}
-
 async function jreq(url, method, body, signal = null) {
-    const res = await fetch(url, {
-        method,
-        headers: {
-            'X-CSRF-TOKEN': csrfToken(),
-            Accept: 'application/json',
-            ...(body ? { 'Content-Type': 'application/json' } : {}),
-        },
-        body: body ? JSON.stringify(body) : undefined,
-        credentials: 'same-origin',
-        signal,
-    });
-
-    const j = await res.json().catch(() => ({}));
-    return { res, j };
+    try {
+        const j = await request(url, { method, data: body, signal, ignoreGlobalError: true });
+        return { res: { ok: true, status: 200 }, j: j || {} };
+    } catch (err) {
+        return { res: { ok: false, status: err?.status || 0 }, j: err?.data || {} };
+    }
 }
 
 function getIds(container) {

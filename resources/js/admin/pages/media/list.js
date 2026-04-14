@@ -1,3 +1,4 @@
+import { request, get, post, delete as destroy } from '@/core/http';
 export function createMediaList({
                                     root,
                                     state,
@@ -20,16 +21,13 @@ export function createMediaList({
             mode,
         });
 
-        const res = await fetch(`/admin/media/list?${qs.toString()}`, {
-            headers: { Accept: 'application/json' },
-        });
-
-        if (!res.ok) {
+        let j = {};
+        try {
+            j = await get(`/admin/media/list?${qs.toString()}`, { ignoreGlobalError: true }) || {};
+        } catch (err) {
             setGlobalError('Liste alınamadı.');
             return;
         }
-
-        const j = await res.json().catch(() => ({}));
         if (!j?.ok) {
             setGlobalError(j?.error?.message || 'Liste alınamadı.');
             return;
