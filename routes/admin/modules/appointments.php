@@ -92,4 +92,8 @@ Route::prefix('appointments')->as('appointments.')->group(function () {
     Route::get('/blocks/{timeOff}', [AppointmentCalendarController::class, 'showBlock'])
         ->middleware('permission:appointments.view')
         ->name('blocks.show');
+
+    Route::get('/{appointment}', [AppointmentCalendarController::class, 'show'])
+        ->middleware('permission:appointments.view')
+        ->name('show');
 });

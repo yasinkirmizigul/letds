@@ -5,7 +5,6 @@ namespace App\Services\Appointment;
 use App\Jobs\SendAppointmentUpdatedMailJob;
 use App\Models\Admin\User\User;
 use App\Models\Appointment\Appointment;
-use App\Support\DateTimeHelper;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -16,9 +15,9 @@ class AppointmentService
     protected string $tz = 'Europe/Istanbul';
 
     public function __construct(
-        protected AvailabilityService $availabilityService
-    )
-    {
+        protected AvailabilityService $availabilityService,
+        protected ScheduleConflictService $scheduleConflictService
+    ) {
     }
 
     public function create(array $data, ?int $actorUserId = null): Appointment
@@ -28,20 +27,31 @@ class AppointmentService
 
             $this->assertStartAtNotInPast($startAt);
 
-            $blocks = max(1, (int)$data['blocks']);
+            $blocks = max(1, (int) $data['blocks']);
+            $providerId = (int) $data['provider_id'];
+            $endAt = $this->calculateEndAt($startAt, $blocks);
 
-            $this->assertMemberHasNoActiveBooking((int)$data['member_id']);
+            $this->assertMemberHasNoActiveBooking((int) $data['member_id']);
+
+            $this->scheduleConflictService->assertNoTimeOffOverlap(
+                $providerId,
+                $startAt,
+                $endAt,
+                null,
+                'Seçilen zaman aralığı provider blokajı ile çakışıyor. Randevu oluşturulamaz.'
+            );
+
             $this->availabilityService->assertProviderAvailable(
-                (int)$data['provider_id'],
+                $providerId,
                 $startAt,
                 $blocks
             );
 
             $appointment = Appointment::create([
-                'provider_id' => (int)$data['provider_id'],
-                'member_id' => (int)$data['member_id'],
+                'provider_id' => $providerId,
+                'member_id' => (int) $data['member_id'],
                 'start_at' => $startAt,
-                'end_at' => $startAt->copy()->addMinutes($blocks * 30),
+                'end_at' => $endAt,
                 'blocks' => $blocks,
                 'status' => Appointment::STATUS_BOOKED,
                 'notes_internal' => $data['notes_internal'] ?? null,
@@ -65,6 +75,15 @@ class AppointmentService
 
             $blocks = max(1, (int) $data['blocks']);
             $newProviderId = (int) ($data['new_provider_id'] ?? $appointment->provider_id);
+            $newEndAt = $this->calculateEndAt($newStartAt, $blocks);
+
+            $this->scheduleConflictService->assertNoTimeOffOverlap(
+                $newProviderId,
+                $newStartAt,
+                $newEndAt,
+                null,
+                'Seçilen yeni zaman aralığı provider blokajı ile çakışıyor. Randevu taşınamaz.'
+            );
 
             $this->availabilityService->assertProviderAvailable(
                 $newProviderId,
@@ -83,7 +102,7 @@ class AppointmentService
                 'provider_id' => $newProviderId,
                 'member_id' => $appointment->member_id,
                 'start_at' => $newStartAt,
-                'end_at' => $newStartAt->copy()->addMinutes($blocks * 30),
+                'end_at' => $newEndAt,
                 'blocks' => $blocks,
                 'status' => Appointment::STATUS_BOOKED,
                 'created_by_user_id' => $actor->id,
@@ -108,9 +127,20 @@ class AppointmentService
         $updated = DB::transaction(function () use ($appointment, $blocks) {
             $blocks = max(1, $blocks);
 
+            $startAt = $appointment->start_at->copy()->seconds(0);
+            $endAt = $this->calculateEndAt($startAt, $blocks);
+
+            $this->scheduleConflictService->assertNoTimeOffOverlap(
+                (int) $appointment->provider_id,
+                $startAt,
+                $endAt,
+                null,
+                'Yeni süre provider blokajı ile çakışıyor. Randevu süresi güncellenemez.'
+            );
+
             $this->availabilityService->assertProviderAvailable(
-                (int)$appointment->provider_id,
-                $appointment->start_at->copy()->seconds(0),
+                (int) $appointment->provider_id,
+                $startAt,
                 $blocks,
                 $appointment->id
             );
@@ -119,7 +149,7 @@ class AppointmentService
 
             $appointment->update([
                 'blocks' => $blocks,
-                'end_at' => $appointment->start_at->copy()->addMinutes($blocks * 30),
+                'end_at' => $endAt,
             ]);
 
             $this->writeSlots($appointment);
@@ -160,7 +190,7 @@ class AppointmentService
         return Appointment::query()
             ->where('member_id', $memberId)
             ->where('status', Appointment::STATUS_BOOKED)
-            ->where('end_at', '>=', \Carbon\Carbon::now('UTC'))
+            ->where('end_at', '>=', Carbon::now('UTC'))
             ->orderBy('start_at')
             ->first();
     }
@@ -215,6 +245,15 @@ class AppointmentService
 
             $blocks = max(1, (int) ($data['blocks'] ?? $appointment->blocks));
             $newProviderId = (int) ($data['provider_id'] ?? $appointment->provider_id);
+            $newEndAt = $this->calculateEndAt($newStartAt, $blocks);
+
+            $this->scheduleConflictService->assertNoTimeOffOverlap(
+                $newProviderId,
+                $newStartAt,
+                $newEndAt,
+                null,
+                'Seçilen yeni zaman aralığı provider blokajı ile çakışıyor. Randevu yeniden planlanamaz.'
+            );
 
             $this->availabilityService->assertProviderAvailable(
                 $newProviderId,
@@ -233,7 +272,7 @@ class AppointmentService
                 'provider_id' => $newProviderId,
                 'member_id' => $appointment->member_id,
                 'start_at' => $newStartAt,
-                'end_at' => $newStartAt->copy()->addMinutes($blocks * 30),
+                'end_at' => $newEndAt,
                 'blocks' => $blocks,
                 'status' => Appointment::STATUS_BOOKED,
                 'notes_internal' => $appointment->notes_internal,
@@ -252,7 +291,7 @@ class AppointmentService
             return;
         }
 
-        if (!$actor->hasRole('provider') || (int)$appointment->provider_id !== (int)$actor->id) {
+        if (!$actor->hasRole('provider') || (int) $appointment->provider_id !== (int) $actor->id) {
             throw ValidationException::withMessages([
                 'auth' => 'Yetkisiz işlem.',
             ]);
@@ -261,12 +300,13 @@ class AppointmentService
 
     protected function assertMemberHasNoActiveBooking(int $memberId): void
     {
-        if (Appointment::query()
-            ->where('member_id', $memberId)
-            ->where('status', Appointment::STATUS_BOOKED)
-            ->where('end_at', '>=', \Carbon\Carbon::now('UTC'))
-            ->lockForUpdate()
-            ->exists()
+        if (
+            Appointment::query()
+                ->where('member_id', $memberId)
+                ->where('status', Appointment::STATUS_BOOKED)
+                ->where('end_at', '>=', Carbon::now('UTC'))
+                ->lockForUpdate()
+                ->exists()
         ) {
             throw ValidationException::withMessages([
                 'member_id' => 'Bu üyenin zaten aktif bir randevusu var.',
@@ -296,6 +336,11 @@ class AppointmentService
 
             throw $e;
         }
+    }
+
+    protected function calculateEndAt(Carbon $startAt, int $blocks): Carbon
+    {
+        return $startAt->copy()->addMinutes($blocks * 30);
     }
 
     protected function assertStartAtNotInPast(Carbon $startAt): void

@@ -16,6 +16,16 @@ let blockModalState = {
     reason: '',
     blockType: 'manual',
 }
+let appointmentModalState = {
+    entityId: '',
+    providerId: '',
+    startAt: '',
+    blocks: 1,
+    memberName: '',
+    statusLabel: '',
+    notesInternal: '',
+    cancelReason: '',
+}
 function qs(root, sel) {
     return (root || document).querySelector(sel)
 }
@@ -113,7 +123,71 @@ function renderHistory(root, items = []) {
         </div>
     `).join('')
 }
+function toDateTimeLocalValue(dateLike) {
+    if (!dateLike) return ''
+    const d = new Date(dateLike)
+    const pad = (n) => String(n).padStart(2, '0')
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
 
+async function loadAppointmentDetail(id) {
+    return await fetchJson(`/admin/appointments/${id}`)
+}
+
+function openAppointmentModal(root, data) {
+
+    const modal = qs(root, '#appointmentModal')
+    if (!modal) return
+
+    appointmentModalState = {
+        entityId: String(data.id || ''),
+        providerId: String(data.provider_id || ''),
+        startAt: data.start_at || '',
+        blocks: Number(data.blocks || 1),
+        memberName: data.member_name || '',
+        statusLabel: data.status_label || data.status || '',
+        notesInternal: data.notes_internal || '',
+        cancelReason: data.cancel_reason || '',
+    }
+
+    const member = qs(root, '#appointmentMemberName')
+    const status = qs(root, '#appointmentStatusLabel')
+    const provider = qs(root, '#appointmentProviderId')
+    const startAt = qs(root, '#appointmentStartAt')
+    const blocks = qs(root, '#appointmentBlocks')
+    const notes = qs(root, '#appointmentNotesInternal')
+    const cancel = qs(root, '#appointmentCancelReason')
+
+    if (member) member.value = appointmentModalState.memberName
+    if (status) status.value = appointmentModalState.statusLabel
+    if (provider) provider.value = appointmentModalState.providerId
+    if (startAt) startAt.value = toDateTimeLocalValue(appointmentModalState.startAt)
+    if (blocks) blocks.value = String(appointmentModalState.blocks)
+    if (notes) notes.value = appointmentModalState.notesInternal
+    if (cancel) cancel.value = appointmentModalState.cancelReason
+
+    modal.classList.remove('hidden')
+    document.body.classList.add('overflow-hidden')
+}
+
+function closeAppointmentModal(root) {
+    const modal = qs(root, '#appointmentModal')
+    if (!modal) return
+
+    appointmentModalState = {
+        entityId: '',
+        providerId: '',
+        startAt: '',
+        blocks: 1,
+        memberName: '',
+        statusLabel: '',
+        notesInternal: '',
+        cancelReason: '',
+    }
+
+    modal.classList.add('hidden')
+    document.body.classList.remove('overflow-hidden')
+}
 async function loadHistory(root, eventId) {
     try {
         const data = await fetchJson(`/admin/appointments/${eventId}/history`)
@@ -536,6 +610,14 @@ export default async function init(ctx) {
 
     const ctxEditBlock = qs(root, '#ctxEditBlock')
     const ctxDeleteBlock = qs(root, '#ctxDeleteBlock')
+    const appointmentModal = qs(root, '#appointmentModal')
+    const btnAppointmentSave = qs(root, '#btnAppointmentSave')
+    const btnAppointmentCancel = qs(root, '#btnAppointmentCancel')
+    const appointmentProviderId = qs(root, '#appointmentProviderId')
+    const appointmentStartAt = qs(root, '#appointmentStartAt')
+    const appointmentBlocks = qs(root, '#appointmentBlocks')
+    const appointmentNotesInternal = qs(root, '#appointmentNotesInternal')
+    const appointmentCancelReason = qs(root, '#appointmentCancelReason')
 
     calendar = new Calendar(el, {
         plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin],
@@ -637,6 +719,17 @@ export default async function init(ctx) {
                     })
                 } catch (e) {
                     notifyError(e.message || 'Blokaj detayı alınamadı.')
+                }
+
+                return
+            }
+
+            if (info.event.extendedProps?.entity_type === 'appointment') {
+                try {
+                    const appointment = await loadAppointmentDetail(info.event.extendedProps.entity_id)
+                    openAppointmentModal(root, appointment)
+                } catch (e) {
+                    notifyError(e.message || 'Randevu detayı alınamadı.')
                 }
             }
         },
@@ -838,6 +931,68 @@ export default async function init(ctx) {
                 notifySuccess('Randevu iptal edildi.')
             } catch (e) {
                 notifyError(e.message || 'İşlem başarısız.')
+            }
+        })
+    }
+
+    if (btnAppointmentSave) {
+        btnAppointmentSave.addEventListener('click', async () => {
+            if (!appointmentModalState.entityId) {
+                notifyError('Randevu kaydı bulunamadı.')
+                return
+            }
+
+            try {
+                await postJson(`/admin/appointments/${appointmentModalState.entityId}/transfer`, {
+                    new_provider_id: appointmentProviderId?.value || appointmentModalState.providerId,
+                    new_start_at: appointmentStartAt?.value,
+                    blocks: Number(appointmentBlocks?.value || 1),
+                    notes_internal: appointmentNotesInternal?.value || null,
+                })
+
+                closeAppointmentModal(root)
+                resetDetailPanel(root)
+                calendar?.refetchEvents()
+                notifySuccess('Randevu güncellendi.')
+            } catch (e) {
+                notifyError(e.message || 'Randevu güncellenemedi.')
+            }
+        })
+    }
+
+    if (btnAppointmentCancel) {
+        btnAppointmentCancel.addEventListener('click', async () => {
+            if (!appointmentModalState.entityId) {
+                notifyError('Randevu kaydı bulunamadı.')
+                return
+            }
+
+            const ok = window.confirm('Seçili randevuyu iptal etmek istiyor musun?')
+            if (!ok) return
+
+            try {
+                await postJson(`/admin/appointments/${appointmentModalState.entityId}/cancel`, {
+                    reason: appointmentCancelReason?.value?.trim() || null,
+                })
+
+                closeAppointmentModal(root)
+                resetDetailPanel(root)
+                calendar?.refetchEvents()
+                notifySuccess('Randevu iptal edildi.')
+            } catch (e) {
+                notifyError(e.message || 'Randevu iptal edilemedi.')
+            }
+        })
+    }
+
+    qsa(root, '[data-appointment-modal-close]').forEach((btn) => {
+        btn.addEventListener('click', () => closeAppointmentModal(root))
+    })
+
+    if (appointmentModal) {
+        appointmentModal.addEventListener('click', (e) => {
+            if (e.target.matches('[data-appointment-modal-close]')) {
+                closeAppointmentModal(root)
             }
         })
     }

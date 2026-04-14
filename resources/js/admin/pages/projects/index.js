@@ -22,7 +22,6 @@ function notify(type, text) {
         }).fire({ icon: type === 'error' ? 'error' : 'success', title: text });
         return;
     }
-    console.log(type.toUpperCase() + ': ' + text);
 }
 
 function createImgPopover() {

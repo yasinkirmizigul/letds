@@ -116,7 +116,7 @@
                                 <textarea
                                     id="cancelReason"
                                     rows="4"
-                                    class="kt-input w-full p-2 border-gray-300 bg-white text-gray-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                                    class="kt-input w-full p-2 border-gray-300 bg-white text-gray-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 min-h-[44px]"
                                 ></textarea>
                             </div>
 
@@ -198,6 +198,89 @@
                         <button type="button" class="kt-btn kt-btn-primary" id="btnSaveBlock">
                             <span class="btn-text">Kaydet</span>
                         </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Appointment Modal --}}
+        <div id="appointmentModal" class="hidden fixed inset-0 z-[9998]">
+            <div class="absolute inset-0 bg-black/70" data-appointment-modal-close></div>
+
+            <div class="absolute inset-0 flex items-center justify-center p-4">
+                <div
+                    class="w-full max-w-2xl rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-950">
+                    <div class="flex items-center justify-between border-b border-gray-200 px-5 py-4 dark:border-zinc-800">
+                        <h3 class="text-base font-semibold text-gray-900 dark:text-zinc-100" id="appointmentModalTitle">
+                            Randevu Detayı
+                        </h3>
+                        <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-appointment-modal-close>Kapat
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4 p-5 lg:grid-cols-2">
+                        <input type="hidden" id="appointmentEntityId">
+
+                        <div>
+                            <label class="kt-form-label mb-2">Üye</label>
+                            <input type="text" id="appointmentMemberName" class="kt-input w-full" readonly>
+                        </div>
+
+                        <div>
+                            <label class="kt-form-label mb-2">Durum</label>
+                            <input type="text" id="appointmentStatusLabel" class="kt-input w-full" readonly>
+                        </div>
+
+                        <div>
+                            <label class="kt-form-label mb-2">Kişi</label>
+                            <select id="appointmentProviderId" class="kt-select">
+                                @foreach($providers as $p)
+                                    <option value="{{ $p->id }}">{{ $p->name }} — {{ $p->title }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="kt-form-label mb-2">Süre</label>
+                            <select id="appointmentBlocks" class="kt-input w-full">
+                                <option value="1">30 dk</option>
+                                <option value="2">60 dk</option>
+                                <option value="3">90 dk</option>
+                                <option value="4">120 dk</option>
+                                <option value="5">150 dk</option>
+                                <option value="6">180 dk</option>
+                            </select>
+                        </div>
+
+                        <div class="lg:col-span-2">
+                            <label class="kt-form-label mb-2">Yeni Başlangıç</label>
+                            <input type="datetime-local" id="appointmentStartAt" class="kt-input w-full">
+                        </div>
+
+                        <div class="lg:col-span-2">
+                            <label class="kt-form-label mb-2">İç Not</label>
+                            <textarea id="appointmentNotesInternal" rows="3" class="kt-input w-full p-2 min-h-[44px]"></textarea>
+                        </div>
+
+                        <div class="lg:col-span-2">
+                            <label class="kt-form-label mb-2">İptal Nedeni</label>
+                            <textarea id="appointmentCancelReason" rows="3" class="kt-input w-full p-2 min-h-[44px]"
+                                      placeholder="Opsiyonel"></textarea>
+                        </div>
+                    </div>
+
+                    <div
+                        class="flex items-center justify-between gap-3 border-t border-gray-200 px-5 py-4 dark:border-zinc-800">
+                        <button type="button" class="kt-btn kt-btn-danger" id="btnAppointmentCancel">
+                            Randevuyu İptal Et
+                        </button>
+
+                        <div class="flex items-center gap-2">
+                            <button type="button" class="kt-btn kt-btn-light" data-appointment-modal-close>Vazgeç</button>
+                            <button type="button" class="kt-btn kt-btn-primary" id="btnAppointmentSave">
+                                <span class="btn-text">Güncelle</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
