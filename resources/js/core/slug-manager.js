@@ -1,12 +1,25 @@
-// resources/js/core/slug-manager.js
+const TURKISH_CHAR_MAP = {
+    '\u00c7': 'c',
+    '\u00d6': 'o',
+    '\u00dc': 'u',
+    '\u011e': 'g',
+    '\u0130': 'i',
+    '\u015e': 's',
+    '\u00e7': 'c',
+    '\u00f6': 'o',
+    '\u00fc': 'u',
+    '\u011f': 'g',
+    '\u0131': 'i',
+    '\u015f': 's',
+};
 
 export function slugifyTR(str) {
     return String(str || '')
         .trim()
+        .replace(/[\u00c7\u00d6\u00dc\u011e\u0130\u015e\u00e7\u00f6\u00fc\u011f\u0131\u015f]/g, (char) => TURKISH_CHAR_MAP[char] || char)
         .toLowerCase()
-        .replaceAll('ğ', 'g').replaceAll('ü', 'u').replaceAll('ş', 's')
-        .replaceAll('ı', 'i').replaceAll('ö', 'o').replaceAll('ç', 'c')
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
         .replace(/[^a-z0-9\s-]/g, '')
         .replace(/\s+/g, '-')
         .replace(/-+/g, '-')
@@ -30,8 +43,8 @@ export default function initSlugManager(root, opts = {}, signal) {
         sourceSelector = '#title',
         slugSelector = '#slug',
         previewSelector = '#url_slug_preview',
-        autoSelector = '#slug_auto',     // optional
-        regenSelector = '#slug_regen',   // optional
+        autoSelector = '#slug_auto',
+        regenSelector = '#slug_regen',
         generateOnInit = false,
     } = opts;
 
@@ -54,46 +67,35 @@ export default function initSlugManager(root, opts = {}, signal) {
         if (!source) return;
         slug.value = slugifyTR(source.value);
         setPreview();
-        locked = (slug.value || '').trim().length > 0; // keep consistent
+        locked = (slug.value || '').trim().length > 0;
     };
 
-    // init preview
     setPreview();
 
-    // optional initial generate
     if (generateOnInit) {
         const canAuto = auto ? auto.checked : true;
         if (canAuto && !(slug.value || '').trim()) generate();
     }
 
-    // slug manual typing -> lock/unlock
     slug.addEventListener('input', () => {
-        const v = (slug.value || '').trim();
-        locked = v.length > 0;
+        const value = (slug.value || '').trim();
+        locked = value.length > 0;
         setPreview();
     }, signal ? { signal } : undefined);
 
-    // source typing
     source?.addEventListener('input', () => {
-        // if auto exists and is OFF => do nothing
         if (auto && !auto.checked) return;
-
-        // if auto doesn't exist: keep old behavior (don't overwrite if locked)
         if (!auto && locked) return;
-
-        // if auto exists and is ON: generate even if locked (auto means follow source)
         generate();
     }, signal ? { signal } : undefined);
 
-    // auto toggle: when ON -> generate immediately
     auto?.addEventListener('change', () => {
         if (!auto.checked) return;
         generate();
     }, signal ? { signal } : undefined);
 
-    // regen button: always generate
-    regen?.addEventListener('click', (e) => {
-        e.preventDefault();
+    regen?.addEventListener('click', (event) => {
+        event.preventDefault();
         generate();
     }, signal ? { signal } : undefined);
 }

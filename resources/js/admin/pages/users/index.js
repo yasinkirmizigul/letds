@@ -1,3 +1,5 @@
+import { showConfirmDialog } from '@/core/swal-alert';
+
 export default function init(ctx) {
     const root = ctx.root;
     const signal = ctx.signal;
@@ -25,19 +27,26 @@ export default function init(ctx) {
         checkAll: '#users_check_all',
         rowChecks: '.users_row_check',
 
-        // ✅ yeni standart
+        // yeni standart
         signal,
         cleanup: (fn) => ctx.cleanup(fn),
     });
 
-    // delete confirm (signal ile otomatik cleanup)
-    root.addEventListener('submit', (e) => {
+    root.addEventListener('submit', async (e) => {
         const form = e.target;
         if (!(form instanceof HTMLFormElement)) return;
         if (!form.matches('form[data-confirm="delete-user"]')) return;
 
-        if (!confirm('Bu kullanıcıyı silmek istiyor musunuz?')) {
-            e.preventDefault();
-        }
+        e.preventDefault();
+
+        const ok = await showConfirmDialog({
+            type: 'warning',
+            title: 'Kullanıcı silinsin mi?',
+            message: 'Kullanıcı kaydı çöp kutusuna taşınacak.',
+            confirmButtonText: 'Sil',
+        });
+
+        if (!ok) return;
+        form.submit();
     }, { signal });
 }

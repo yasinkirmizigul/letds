@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\ContactMessage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -44,5 +45,10 @@ class Member extends Authenticatable
     public function appointments(): HasMany
     {
         return $this->hasMany(\App\Models\Appointment\Appointment::class);
+    }
+
+    public function contactMessages(): HasMany
+    {
+        return $this->hasMany(ContactMessage::class);
     }
 }

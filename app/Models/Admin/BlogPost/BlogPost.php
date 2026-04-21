@@ -6,9 +6,12 @@ use App\Models\Admin\Category;
 use App\Models\Admin\Gallery\Gallery;
 use App\Models\Admin\Media\Media;
 use App\Models\Admin\User\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class BlogPost extends Model
 {
@@ -40,12 +43,44 @@ class BlogPost extends Model
         'featured_at' => 'datetime',
     ];
 
-    public function author()
+    public function scopeSearch(Builder $query, string $term): Builder
+    {
+        $term = trim($term);
+        if ($term === '') {
+            return $query;
+        }
+
+        return $query->where(function (Builder $builder) use ($term) {
+            $builder
+                ->where('title', 'like', "%{$term}%")
+                ->orWhere('slug', 'like', "%{$term}%")
+                ->orWhere('excerpt', 'like', "%{$term}%")
+                ->orWhere('meta_title', 'like', "%{$term}%")
+                ->orWhere('meta_description', 'like', "%{$term}%");
+        });
+    }
+
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query->where('is_published', true);
+    }
+
+    public function scopeDraft(Builder $query): Builder
+    {
+        return $query->where('is_published', false);
+    }
+
+    public function scopeFeatured(Builder $query): Builder
+    {
+        return $query->where('is_featured', true);
+    }
+
+    public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function editor()
+    public function editor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
@@ -67,20 +102,22 @@ class BlogPost extends Model
 
     public function featuredMediaOne(): ?Media
     {
+        if ($this->relationLoaded('featuredMedia')) {
+            return $this->featuredMedia
+                ->sortBy(fn (Media $media) => (int) ($media->pivot->order ?? 0))
+                ->first();
+        }
+
         return $this->featuredMedia()->first();
     }
 
-    /**
-     * ✅ Yeni standart URL: önce Media (optimized) dene, yoksa legacy featured_image_path’a düş
-     */
     public function featuredMediaUrl(): ?string
     {
-        $m = $this->featuredMediaOne();
-        if ($m) {
-            return $m->url('optimized');
+        $media = $this->featuredMediaOne();
+        if ($media) {
+            return $media->url('optimized');
         }
 
-        // legacy fallback (eski kayıtlar bozulmasın)
         return $this->featuredImageUrl();
     }
 
@@ -88,13 +125,13 @@ class BlogPost extends Model
     {
         return $this->morphToMany(
             Category::class,
-            'categorizable',     // morph name (migration'daki morphs('categorizable'))
-            'categorizables',    // pivot table
-            'categorizable_id',  // foreignPivotKey (BlogPost id)
-            'category_id'        // relatedPivotKey (Category id)
+            'categorizable',
+            'categorizables',
+            'categorizable_id',
+            'category_id'
         )
             ->withTimestamps()
-            ->withTrashed(); // Category soft delete ise seçili olanları editte gösterebilmek için
+            ->withTrashed();
     }
 
     public function galleries(): MorphToMany
@@ -109,16 +146,63 @@ class BlogPost extends Model
             ->withPivot(['slot', 'sort_order'])
             ->orderBy('pivot_sort_order');
     }
+
     public function getFeaturedImageUrlAttribute(): ?string
     {
-        return $this->featured_image_path
-            ? asset('storage/' . $this->featured_image_path)
-            : null;
+        return $this->featuredImageUrl();
     }
+
     public function featuredImageUrl(): ?string
     {
         return $this->featured_image_path
             ? asset('storage/' . $this->featured_image_path)
             : null;
+    }
+
+    public function excerptPreview(int $limit = 140): string
+    {
+        $source = $this->excerpt ?: strip_tags((string) $this->content);
+        $normalized = preg_replace('/\s+/u', ' ', trim((string) $source));
+
+        return Str::limit($normalized, $limit);
+    }
+
+    public function contentWordCount(): int
+    {
+        $content = strip_tags((string) $this->content);
+        preg_match_all('/[\pL\pN]+/u', $content, $matches);
+
+        return count($matches[0] ?? []);
+    }
+
+    public function estimatedReadTimeMinutes(int $wordsPerMinute = 200): int
+    {
+        $words = $this->contentWordCount();
+
+        if ($words === 0) {
+            return 0;
+        }
+
+        return max(1, (int) ceil($words / max(1, $wordsPerMinute)));
+    }
+
+    public function hasSeoMetadata(): bool
+    {
+        return filled($this->meta_title) && filled($this->meta_description);
+    }
+
+    public function seoCompletenessScore(): int
+    {
+        $checks = [
+            filled($this->title),
+            filled($this->excerpt),
+            filled($this->meta_title),
+            filled($this->meta_description),
+            filled($this->featured_image_path) || $this->featuredMediaOne() !== null,
+        ];
+
+        $completed = collect($checks)->filter()->count();
+
+        return (int) round(($completed / count($checks)) * 100);
     }
 }

@@ -1,5 +1,7 @@
 import './bootstrap';
 import './admin/helpers/datatable-helper';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 import Alpine from 'alpinejs';
 import { AppInit } from './core/app-init';
@@ -7,6 +9,10 @@ import { registerPages } from './admin/pages/index';
 import { initMediaPicker } from './core/media-picker';
 import { initMediaUploadModal } from './core/media-upload-modal';
 import initFeaturedImageManager from '@/core/featured-image-manager';
+
+window.Swal = Swal;
+window.swal = Swal;
+
 initMediaPicker();
 initMediaUploadModal();
 initFeaturedImageManager();

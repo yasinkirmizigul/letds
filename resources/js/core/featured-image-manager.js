@@ -1,5 +1,3 @@
-// resources/js/core/featured-image-manager.js
-
 function cleanupObjectUrl(state) {
     if (!state?.lastObjectUrl) return;
     try { URL.revokeObjectURL(state.lastObjectUrl); } catch {}
@@ -19,6 +17,17 @@ function togglePreviewUI({ img, ph, hasSrc }) {
 function safeClearFileInput(input) {
     if (!input) return;
     try { input.value = ''; } catch {}
+}
+
+function emitFeaturedChange(host) {
+    if (!host) return;
+
+    host.dispatchEvent(new CustomEvent('featured-image:change', {
+        bubbles: true,
+        detail: {
+            src: host.querySelector('[data-featured-preview]')?.getAttribute('src') || '',
+        },
+    }));
 }
 
 function getHost(el) {
@@ -41,7 +50,6 @@ function ensureHostInited(host, states) {
     togglePreviewUI({ img, ph, hasSrc: initialHas });
 }
 
-// ---- Delegated handlers ----
 function handleFileChange(e, states) {
     const input = e.target;
     if (!input?.matches?.('[data-featured-input]')) return;
@@ -55,6 +63,7 @@ function handleFileChange(e, states) {
     states.set(host, state);
 
     const mediaId = host.querySelector('[data-featured-media-id]');
+    const clearFlag = host.querySelector('[data-featured-clear-flag]');
     const img = host.querySelector('[data-featured-preview]');
     const ph = host.querySelector('[data-featured-placeholder]');
     if (!img || !ph) return;
@@ -69,15 +78,17 @@ function handleFileChange(e, states) {
             img.src = '';
             togglePreviewUI({ img, ph, hasSrc: false });
         }
+        emitFeaturedChange(host);
         return;
     }
 
-    // upload seçildiyse -> library seçimini sıfırla
     if (mediaId) mediaId.value = '';
+    if (clearFlag) clearFlag.value = '0';
 
     state.lastObjectUrl = URL.createObjectURL(file);
     img.src = state.lastObjectUrl;
     togglePreviewUI({ img, ph, hasSrc: true });
+    emitFeaturedChange(host);
 }
 
 function handleClearClick(e, states) {
@@ -94,15 +105,19 @@ function handleClearClick(e, states) {
 
     const input = host.querySelector('[data-featured-input]');
     const mediaId = host.querySelector('[data-featured-media-id]');
+    const clearFlag = host.querySelector('[data-featured-clear-flag]');
     const img = host.querySelector('[data-featured-preview]');
     const ph = host.querySelector('[data-featured-placeholder]');
 
     cleanupObjectUrl(state);
     safeClearFileInput(input);
-    if (mediaId) mediaId.value = '';
 
+    if (mediaId) mediaId.value = '';
+    if (clearFlag) clearFlag.value = '1';
     if (img) img.src = '';
+
     togglePreviewUI({ img, ph, hasSrc: false });
+    emitFeaturedChange(host);
 }
 
 function handleMediaPick(e, states) {
@@ -111,7 +126,6 @@ function handleMediaPick(e, states) {
     const url = d.url ?? '';
     const mime = d.mime ?? '';
 
-    // sadece image
     if (mime && !String(mime).startsWith('image/')) return;
     if (!id && !url) return;
 
@@ -132,6 +146,7 @@ function handleMediaPick(e, states) {
 
     const fileInput = host.querySelector('[data-featured-input]');
     const mediaId = host.querySelector('[data-featured-media-id]');
+    const clearFlag = host.querySelector('[data-featured-clear-flag]');
     const img = host.querySelector('[data-featured-preview]');
     const ph = host.querySelector('[data-featured-placeholder]');
 
@@ -139,14 +154,16 @@ function handleMediaPick(e, states) {
     safeClearFileInput(fileInput);
 
     if (mediaId) mediaId.value = id ?? '';
+    if (clearFlag) clearFlag.value = '0';
 
     if (url && img) {
         img.src = url;
         togglePreviewUI({ img, ph, hasSrc: true });
     }
+
+    emitFeaturedChange(host);
 }
 
-// ---- singleton listener binding (with removable refs) ----
 function ensureGlobalListeners() {
     if (window.__fim_listeners_bound) return;
 
@@ -166,21 +183,19 @@ function ensureGlobalListeners() {
     document.addEventListener('media:pick', onPick);
 }
 
-// ---- Public API ----
 export default function initFeaturedImageManager(root = document) {
     ensureGlobalListeners();
 
     const states = window.__fim_states;
-    root.querySelectorAll('[data-featured-image-manager="1"]').forEach((h) => ensureHostInited(h, states));
+    root.querySelectorAll('[data-featured-image-manager="1"]').forEach((host) => ensureHostInited(host, states));
 }
 
-// ✅ NAMED EXPORT: senin edit.js bunu import ediyor
 export function destroyFeaturedImageManager() {
-    const h = window.__fim_handlers;
-    if (h) {
-        try { document.removeEventListener('change', h.onChange, true); } catch {}
-        try { document.removeEventListener('click', h.onClick, true); } catch {}
-        try { document.removeEventListener('media:pick', h.onPick); } catch {}
+    const handlers = window.__fim_handlers;
+    if (handlers) {
+        try { document.removeEventListener('change', handlers.onChange, true); } catch {}
+        try { document.removeEventListener('click', handlers.onClick, true); } catch {}
+        try { document.removeEventListener('media:pick', handlers.onPick); } catch {}
     }
 
     window.__fim_handlers = null;

@@ -3,8 +3,10 @@
 namespace App\Models\Admin\User;
 
 use App\Models\Admin\Media\Media;
+use App\Models\ContactMessage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Cache;
@@ -75,6 +77,13 @@ class User extends Authenticatable
         }
 
         return $this->roles()->whereIn('slug', ['admin', 'superadmin'])->exists();
+    }
+
+    public function scopeAdminAccessible($query)
+    {
+        return $query
+            ->where('is_active', true)
+            ->whereHas('roles', fn ($roles) => $roles->whereIn('slug', ['admin', 'superadmin']));
     }
 
     /**
@@ -178,6 +187,11 @@ class User extends Authenticatable
     public function avatarMedia()
     {
         return $this->belongsTo(Media::class, 'avatar_media_id');
+    }
+
+    public function receivedContactMessages(): HasMany
+    {
+        return $this->hasMany(ContactMessage::class, 'recipient_user_id');
     }
 
     public function avatarUrl(): string

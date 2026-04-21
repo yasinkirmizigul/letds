@@ -165,6 +165,150 @@
     .scrollbar-hidden::-webkit-scrollbar { display: none; }
 }
 
+/* =========================
+   SweetAlert2 Metronic Theme
+   ========================= */
+
+.swal2-popup.swal2-kt-popup {
+    width: min(34rem, calc(100vw - 2rem)) !important;
+    padding: 1.75rem !important;
+    border-radius: 1.25rem !important;
+    border: 1px solid var(--border) !important;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18) !important;
+    background: var(--background) !important;
+    color: var(--foreground) !important;
+    font-family: inherit !important;
+}
+
+.swal2-popup.swal2-kt-popup .swal2-icon {
+    margin: 0 auto .65rem !important;
+    transform: scale(.92);
+}
+
+.swal2-kt-popup .swal2-kt-title {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 1.35rem !important;
+    line-height: 1.35 !important;
+    font-weight: 700 !important;
+    color: var(--foreground) !important;
+}
+
+.swal2-kt-popup .swal2-kt-text {
+    margin: .9rem 0 0 !important;
+    padding: 0 !important;
+    font-size: .98rem !important;
+    line-height: 1.7 !important;
+    color: var(--muted-foreground) !important;
+}
+
+.swal2-kt-popup .swal2-kt-actions {
+    width: 100% !important;
+    margin: 1.4rem 0 0 !important;
+    gap: .75rem !important;
+}
+
+.swal2-kt-button {
+    min-width: 8.5rem !important;
+    border: 0 !important;
+    border-radius: .875rem !important;
+    padding: .8rem 1.4rem !important;
+    font-size: .95rem !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+}
+
+.swal2-kt-cancel {
+    background: var(--background) !important;
+    color: var(--foreground) !important;
+    border: 1px solid var(--border) !important;
+}
+
+.swal2-kt-deny {
+    background: color-mix(in oklab, var(--foreground) 6%, var(--background)) !important;
+    color: var(--foreground) !important;
+    border: 1px solid transparent !important;
+}
+
+.swal2-kt-confirm--success {
+    background: #17c653 !important;
+    color: #fff !important;
+    box-shadow: 0 12px 28px rgba(23, 198, 83, 0.28) !important;
+}
+
+.swal2-kt-confirm--warning {
+    background: #f6b100 !important;
+    color: #1f2937 !important;
+    box-shadow: 0 12px 28px rgba(246, 177, 0, 0.28) !important;
+}
+
+.swal2-kt-confirm--error {
+    background: #f1416c !important;
+    color: #fff !important;
+    box-shadow: 0 12px 28px rgba(241, 65, 108, 0.28) !important;
+}
+
+.swal2-kt-confirm--info {
+    background: #3e97ff !important;
+    color: #fff !important;
+    box-shadow: 0 12px 28px rgba(62, 151, 255, 0.28) !important;
+}
+
+.swal2-container.swal2-backdrop-show {
+    backdrop-filter: blur(6px);
+}
+
+.swal2-popup.swal2-kt-toast {
+    width: min(24rem, calc(100vw - 1.5rem)) !important;
+    padding: 1rem 1.05rem !important;
+    border-radius: 1.1rem !important;
+    border: 1px solid var(--border) !important;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12) !important;
+    background: var(--background) !important;
+    color: var(--foreground) !important;
+    font-family: inherit !important;
+}
+
+.swal2-kt-toast .swal2-icon {
+    margin: 0 .8rem 0 0 !important;
+    transform: scale(.78);
+}
+
+.swal2-kt-toast .swal2-title,
+.swal2-kt-toast .swal2-kt-toast-title {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: .95rem !important;
+    line-height: 1.35 !important;
+    font-weight: 700 !important;
+    color: var(--foreground) !important;
+}
+
+.swal2-kt-toast .swal2-html-container,
+.swal2-kt-toast .swal2-kt-toast-text {
+    margin: .2rem 0 0 !important;
+    padding: 0 !important;
+    font-size: .84rem !important;
+    line-height: 1.45 !important;
+    color: var(--muted-foreground) !important;
+}
+
+.swal2-timer-progress-bar.swal2-kt-toast-progress--success {
+    background: #17c653 !important;
+}
+
+.swal2-timer-progress-bar.swal2-kt-toast-progress--warning {
+    background: #f6b100 !important;
+}
+
+.swal2-timer-progress-bar.swal2-kt-toast-progress--error {
+    background: #f1416c !important;
+}
+
+.swal2-timer-progress-bar.swal2-kt-toast-progress--info {
+    background: #3e97ff !important;
+}
+
 /* ===================================================== */
 /* DataTables 2.x – Metronic Sort (Highlight + Animasyon) */
 /* ===================================================== */

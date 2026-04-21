@@ -4,17 +4,14 @@
 
     $uid = $uid ?? ('fim-' . Str::random(10));
 
-    // Upload (Blog için)
     $fileName = $fileName ?? 'featured_image';
-
-    // Library selected media id (Project için)
     $mediaIdName = $mediaIdName ?? 'featured_media_id';
+    $clearFlagName = $clearFlagName ?? 'clear_featured_image';
 
-    // initial state
-    $currentUrl = $currentUrl ?? null;           // preview için url
-    $currentMediaId = $currentMediaId ?? null;   // hidden media id
+    $currentUrl = $currentUrl ?? null;
+    $currentMediaId = $currentMediaId ?? null;
 
-    $title = $title ?? 'Öne Çıkan Görsel';
+    $title = $title ?? 'One Cikan Gorsel';
     $hint = $hint ?? null;
 
     $hasImage = !empty($currentUrl);
@@ -31,19 +28,22 @@
             <div class="text-sm text-muted-foreground">{{ $hint }}</div>
         @endif
 
-        {{-- ✅ Project için: library seçimi buraya yazılır --}}
         <input type="hidden"
                name="{{ $mediaIdName }}"
                value="{{ $currentMediaId }}"
                data-featured-media-id>
 
-        {{-- Preview --}}
+        <input type="hidden"
+               name="{{ $clearFlagName }}"
+               value="0"
+               data-featured-clear-flag>
+
         <div class="rounded-xl border border-border bg-muted/10 overflow-hidden">
             <div class="{{ $hasImage ? 'hidden' : '' }} aspect-video w-full flex items-center justify-center text-muted-foreground"
                  data-featured-placeholder>
                 <div class="grid place-items-center gap-2 py-10">
                     <i class="ki-outline ki-picture text-3xl"></i>
-                    <div class="text-sm">Henüz görsel yok</div>
+                    <div class="text-sm">Henuz gorsel yok</div>
                 </div>
             </div>
 
@@ -54,14 +54,12 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2 p-5">
-            {{-- ✅ Blog için: Upload --}}
             <input type="file"
                    name="{{ $fileName }}"
                    accept="image/*"
                    class="kt-input mb-3"
                    data-featured-input>
 
-            {{-- ✅ Media library’den seç --}}
             <button type="button"
                     class="kt-btn kt-btn-light"
                     data-media-picker="true"
@@ -69,10 +67,9 @@
                     data-media-picker-target='[data-featured-uid="{{ $uid }}"] [data-featured-media-id]'
                     data-media-picker-preview='[data-featured-uid="{{ $uid }}"] [data-featured-preview]'>
                 <i class="ki-outline ki-folder"></i>
-                Medyadan Seç
+                Medyadan Sec
             </button>
 
-            {{-- Temizle --}}
             <button type="button"
                     class="kt-btn kt-btn-light"
                     data-featured-clear>
@@ -82,8 +79,8 @@
         </div>
 
         <div class="text-xs text-muted-foreground p-3">
-            Dosya yükleyebilir veya kütüphaneden seçebilirsin.
-            Kütüphaneden seçim yapınca dosya seçimi temizlenir; dosya seçince de mediaId temizlenir.
+            Dosya yukleyebilir veya kutuphaneden secebilirsin.
+            Kutuphaneden secim yapinca dosya secimi temizlenir; dosya secince de mediaId temizlenir.
         </div>
     </div>
 </div>

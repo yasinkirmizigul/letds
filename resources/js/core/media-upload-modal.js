@@ -1,4 +1,5 @@
 import { request } from '@/core/http';
+import { showConfirmDialog, showToastMessage } from '@/core/swal-alert';
 
 function esc(s) {
     return String(s ?? '')
@@ -569,7 +570,12 @@ export function initMediaUploadModal(scope = document) {
         const ids = [...selected.values()];
         if (!ids.length) return;
 
-        const ok = confirm(`${ids.length} adet medya silinecek. Emin misin?`);
+        const ok = await showConfirmDialog({
+            type: 'warning',
+            title: 'Seçili medya silinsin mi?',
+            message: `${ids.length} medya çöp kutusuna taşınacak.`,
+            confirmButtonText: 'Sil',
+        });
         if (!ok) return;
 
         setLibraryBusy(true);
@@ -579,12 +585,13 @@ export function initMediaUploadModal(scope = document) {
         setLibraryBusy(false);
 
         if (!res.ok || !j?.ok) {
-            alert(j?.error?.message || j?.message || `Silme başarısız (HTTP ${res.status})`);
+            showToastMessage('error', j?.error?.message || j?.message || `Silme başarısız (HTTP ${res.status})`);
             return;
         }
 
         clearSelection();
         await fetchLibrary();
+        showToastMessage('success', 'Seçili medya silindi.', { duration: 1800 });
     }
 
     bulkDeleteBtn?.addEventListener('click', () => {

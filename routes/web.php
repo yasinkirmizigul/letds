@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\User\RoleController;
 use App\Http\Controllers\Admin\User\UserController;
 use App\Http\Controllers\Site\Appointment\AppointmentController;
 use App\Http\Controllers\Site\Auth\MemberAuthController;
+use App\Http\Controllers\Site\ContactMessageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -629,3 +630,15 @@ Route::middleware('auth:member')->group(function () {
         Route::post('/{id}/reschedule', [AppointmentController::class, 'reschedule'])->name('reschedule');
     });
 });
+
+/*
+|--------------------------------------------------------------------------
+| Contact Messages
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/iletisim', [ContactMessageController::class, 'create'])
+    ->name('site.contact-messages.create');
+
+Route::post('/iletisim', [ContactMessageController::class, 'store'])
+    ->name('site.contact-messages.store');

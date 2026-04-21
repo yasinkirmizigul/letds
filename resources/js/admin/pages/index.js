@@ -42,6 +42,7 @@ import ProductsTrash from './products/trash';
 
 import AppointmentsCalendar from './appointments/calendar';
 import AppointmentsSettings from './appointments/settings';
+import MessagesIndex from './messages/index';
 
 
 export function registerPages() {
@@ -87,4 +88,5 @@ export function registerPages() {
 
     register('appointments.calendar', AppointmentsCalendar);
     register('appointments.settings', AppointmentsSettings);
+    register('messages.index', MessagesIndex);
 }

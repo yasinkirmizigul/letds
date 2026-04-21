@@ -23,6 +23,7 @@
         "@tailwindcss/vite": "^4.1.18",
         "alpinejs": "^3.13.3",
         "sortablejs": "^1.15.6",
+        "sweetalert2": "^11.26.24",
         "tailwindcss": "^4.1.18"
     }
 }

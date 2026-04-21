@@ -1,4 +1,6 @@
-import { request, get, post, delete as destroy } from '@/core/http';
+import { post, delete as destroy } from '@/core/http';
+import { showConfirmDialog, showToastMessage } from '@/core/swal-alert';
+
 export default function init(ctx = {}) {
     const root = document.querySelector('[data-page="categories.trash"]');
     if (!root) return;
@@ -15,8 +17,8 @@ export default function init(ctx = {}) {
             { data: 'slug' },
             { data: 'parent_name' },
             { data: 'deleted_at' },
-            { data: 'actions', orderable: false, searchable: false }
-        ]
+            { data: 'actions', orderable: false, searchable: false },
+        ],
     });
 
     root.addEventListener('click', async (e) => {
@@ -29,8 +31,21 @@ export default function init(ctx = {}) {
         }
 
         if (forceBtn) {
-            if (!confirm('Kalıcı silinsin mi?')) return;
-            await destroy(forceBtn.dataset.url, null, { ignoreGlobalError: true });
+            const ok = await showConfirmDialog({
+                type: 'error',
+                title: 'Kategori kalıcı silinsin mi?',
+                message: 'Bu işlem geri alınamaz.',
+                confirmButtonText: 'Kalıcı sil',
+            });
+            if (!ok) return;
+
+            try {
+                await destroy(forceBtn.dataset.url, null, { ignoreGlobalError: true });
+            } catch (error) {
+                showToastMessage('error', error?.message || 'Kalıcı silme başarısız');
+                return;
+            }
+
             location.reload();
         }
     });

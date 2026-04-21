@@ -1,3 +1,6 @@
+import { request } from '@/core/http';
+import { showConfirmDialog } from '@/core/swal-alert';
+
 async function jsonReq(url, method = 'GET', body = null, signal = null) {
     try {
         const j = await request(url, { method, data: body, signal, ignoreGlobalError: true });
@@ -395,9 +398,10 @@ export default function init(ctx) {
         setBulkUI();
     }
 
-    async function doSingleAction(url, method, confirmText) {
+    async function doSingleAction(url, method, confirmOptions) {
         if (!url) return;
-        if (!confirm(confirmText)) return;
+        const ok = await showConfirmDialog(confirmOptions);
+        if (!ok) return;
 
         const {res, j} = await jsonReq(url, method, (method === 'POST' ? {} : null), signal);
 
@@ -418,7 +422,7 @@ export default function init(ctx) {
         await fetchList();
     }
 
-    async function doBulk(url, confirmText) {
+    async function doBulk(url, confirmOptions) {
         const items = Array.from(selected)
             .map((k) => {
                 const [type, id] = String(k).split('|');
@@ -429,7 +433,9 @@ export default function init(ctx) {
             .filter(Boolean);
 
         if (!items.length) return;
-        if (!confirm(confirmText)) return;
+
+        const ok = await showConfirmDialog(confirmOptions);
+        if (!ok) return;
 
         const backup = {
             keys: new Set(selected),
@@ -559,8 +565,22 @@ export default function init(ctx) {
                 const act = btn.getAttribute('data-act');
                 const url = btn.getAttribute('data-url') || '';
 
-                if (act === 'restore') doSingleAction(url, 'POST', 'Bu kayıt geri yüklensin mi?');
-                if (act === 'force') doSingleAction(url, 'DELETE', 'Bu kayıt KALICI silinecek. Emin misin?');
+                if (act === 'restore') {
+                    doSingleAction(url, 'POST', {
+                        type: 'success',
+                        title: 'Bu kayıt geri yüklensin mi?',
+                        message: 'Kayıt tekrar aktif listeye alınacak.',
+                        confirmButtonText: 'Geri yükle',
+                    });
+                }
+                if (act === 'force') {
+                    doSingleAction(url, 'DELETE', {
+                        type: 'error',
+                        title: 'Bu kayıt kalıcı silinsin mi?',
+                        message: 'Bu işlem geri alınamaz.',
+                        confirmButtonText: 'Kalıcı sil',
+                    });
+                }
                 return;
             }
 
@@ -605,13 +625,23 @@ export default function init(ctx) {
 
     if (bulkRestoreBtn && !markBound(pageEl, 'bulk-restore')) {
         bulkRestoreBtn.addEventListener('click', () => {
-            doBulk(URLS.bulkRestore, 'Seçili kayıtlar geri yüklensin mi?');
+            doBulk(URLS.bulkRestore, {
+                type: 'success',
+                title: 'Seçili kayıtlar geri yüklensin mi?',
+                message: 'Seçili kayıtlar tekrar aktif listeye alınacak.',
+                confirmButtonText: 'Geri yükle',
+            });
         }, {signal});
     }
 
     if (bulkForceBtn && !markBound(pageEl, 'bulk-force')) {
         bulkForceBtn.addEventListener('click', () => {
-            doBulk(URLS.bulkForce, 'Seçili kayıtlar KALICI silinecek. Emin misin?');
+            doBulk(URLS.bulkForce, {
+                type: 'error',
+                title: 'Seçili kayıtlar kalıcı silinsin mi?',
+                message: 'Bu işlem geri alınamaz.',
+                confirmButtonText: 'Kalıcı sil',
+            });
         }, {signal});
     }
 

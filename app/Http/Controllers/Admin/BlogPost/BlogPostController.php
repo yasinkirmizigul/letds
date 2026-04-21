@@ -3,102 +3,105 @@
 namespace App\Http\Controllers\Admin\BlogPost;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Blog\BlogStoreRequest;
+use App\Http\Requests\Admin\Blog\BlogUpdateRequest;
 use App\Models\Admin\BlogPost\BlogPost;
 use App\Models\Admin\Category;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
-use Throwable;
+use Illuminate\Validation\ValidationException;
 
 class BlogPostController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
-        $mode = $request->string('mode', 'active')->toString(); // active|trash
+        $mode = $request->string('mode', 'active')->toString();
         $isTrash = $mode === 'trash';
 
-        $q = $request->string('q')->toString();
+        $q = trim($request->string('q')->toString());
+        $status = $request->string('status', 'all')->toString();
         $perPage = max(1, min(100, (int) $request->input('perpage', 25)));
 
-        // ✅ seçili kategoriler (GET: category_ids[])
         $selectedCategoryIds = collect($request->input('category_ids', []))
-            ->filter(fn ($v) => $v !== null && $v !== '')
-            ->map(fn ($v) => (int) $v)
-            ->filter(fn ($v) => $v > 0)
+            ->filter(fn ($value) => $value !== null && $value !== '')
+            ->map(fn ($value) => (int) $value)
+            ->filter(fn ($value) => $value > 0)
             ->unique()
             ->values()
             ->all();
 
-        // ✅ kategori options (view blogCategoryFilter bunu istiyor)
-        $categories = \App\Models\Admin\Category::query()
+        $categories = Category::query()
             ->orderBy('name')
             ->get(['id', 'name', 'parent_id']);
-        $categoryOptions = $this->categoryOptions($categories);
 
-        $query = $isTrash ? BlogPost::onlyTrashed() : BlogPost::query();
-
-        $posts = $query
-            ->when($q !== '', function ($qq) use ($q) {
-                $qq->where(function ($w) use ($q) {
-                    $w->where('title', 'like', "%{$q}%")
-                        ->orWhere('slug', 'like', "%{$q}%");
+        $query = ($isTrash ? BlogPost::onlyTrashed() : BlogPost::query())
+            ->with([
+                'author:id,name',
+                'categories:id,name',
+                'featuredMedia',
+            ])
+            ->search($q)
+            ->when(!empty($selectedCategoryIds), function ($builder) use ($selectedCategoryIds) {
+                $builder->whereHas('categories', function ($categoriesQuery) use ($selectedCategoryIds) {
+                    $categoriesQuery->whereIn('categories.id', $selectedCategoryIds);
                 });
             })
-            // ✅ kategori filtresi (relation varsa)
-            ->when(!empty($selectedCategoryIds) && method_exists(BlogPost::class, 'categories'), function ($qq) use ($selectedCategoryIds) {
-                $qq->whereHas('categories', function ($c) use ($selectedCategoryIds) {
-                    $c->whereIn('categories.id', $selectedCategoryIds);
-                });
-            })
-            ->orderByDesc('updated_at')
-            ->paginate($perPage)
-            ->withQueryString();
+            ->when($status === 'published', fn ($builder) => $builder->published())
+            ->when($status === 'draft', fn ($builder) => $builder->draft())
+            ->when($status === 'featured', fn ($builder) => $builder->featured())
+            ->orderByDesc('is_featured')
+            ->orderByDesc('published_at')
+            ->orderByDesc('updated_at');
+
+        $posts = $query->get();
 
         return view('admin.pages.blog.index', [
             'mode' => $isTrash ? 'trash' : 'active',
             'posts' => $posts,
             'q' => $q,
+            'status' => $status,
             'perPage' => $perPage,
-            'categoryOptions' => $categoryOptions,
+            'categoryOptions' => $this->categoryOptions($categories),
             'selectedCategoryIds' => $selectedCategoryIds,
+            'stats' => [
+                'all' => BlogPost::query()->count(),
+                'published' => BlogPost::query()->published()->count(),
+                'draft' => BlogPost::query()->draft()->count(),
+                'featured' => BlogPost::query()->featured()->count(),
+                'trash' => BlogPost::onlyTrashed()->count(),
+            ],
             'pageTitle' => 'Blog',
         ]);
     }
 
-
-    public function trash(Request $request)
+    public function trash(Request $request): View
     {
-        // aynı index view, sadece mode
         $request->merge(['mode' => 'trash']);
+
         return $this->index($request);
     }
 
-    /**
-     * Opsiyonel JSON list endpoint (mode destekli)
-     * /admin/blog/list?mode=trash&q=...&perpage=25&page=1
-     */
     public function list(Request $request): JsonResponse
     {
         $mode = $request->string('mode', 'active')->toString();
-        $q = $request->string('q')->toString();
+        $q = trim($request->string('q')->toString());
+        $status = $request->string('status', 'all')->toString();
         $perPage = max(1, min(100, (int) $request->input('perpage', 25)));
 
-        $query = $mode === 'trash'
-            ? BlogPost::onlyTrashed()->latest('id')
-            : BlogPost::query()->latest('id');
+        $query = ($mode === 'trash' ? BlogPost::onlyTrashed() : BlogPost::query())
+            ->with(['categories:id,name', 'author:id,name'])
+            ->search($q)
+            ->when($status === 'published', fn ($builder) => $builder->published())
+            ->when($status === 'draft', fn ($builder) => $builder->draft())
+            ->when($status === 'featured', fn ($builder) => $builder->featured())
+            ->latest('id');
 
-        $items = $query
-            ->when($q !== '', function ($qq) use ($q) {
-                $qq->where(function ($w) use ($q) {
-                    $w->where('title', 'like', "%{$q}%")
-                        ->orWhere('slug', 'like', "%{$q}%");
-                });
-            })
-            ->paginate($perPage);
+        $items = $query->paginate($perPage);
 
         return response()->json([
             'ok' => true,
@@ -112,296 +115,178 @@ class BlogPostController extends Controller
         ]);
     }
 
-    // --- CRUD: Bunlar sende zaten vardı. Varsa kendi mevcut create/store/edit/update'ini koru. ---
-    public function create()
+    public function create(): View
     {
         $categories = Category::query()
             ->orderBy('name')
             ->get(['id', 'name', 'parent_id']);
-
-        $categoryOptions = $this->categoryOptions($categories);
 
         return view('admin.pages.blog.create', [
-            'categories' => $categories,
-            'categoryOptions' => $categoryOptions,
+            'categoryOptions' => $this->categoryOptions($categories),
             'selectedCategoryIds' => [],
-            'pageTitle' => 'Yazı Ekle',
+            'pageTitle' => 'Yazi Ekle',
         ]);
     }
 
-    public function store(Request $request)
+    public function store(BlogStoreRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'title' => ['required','string','max:255'],
-            'slug'  => ['nullable','string','max:255'],
-            'content' => ['nullable','string'],
-            'category_ids' => ['nullable','array'],
-            'category_ids.*' => [
-                'integer',
-                Rule::exists('categories', 'id')->whereNull('deleted_at'),
-            ],
-            'featured_media_id' => ['nullable', 'integer'],
-            'featured_image' => ['nullable', 'image', 'max:5120'],
-            'excerpt' => ['nullable','string'],
-            'meta_title' => ['nullable','string','max:255'],
-            'meta_description' => ['nullable','string'],
-            'meta_keywords' => ['nullable','string'],
-            'is_published' => ['nullable','boolean'],
-            'is_featured' => ['nullable','boolean'],
-        ]);
+        $validated = $request->validated();
 
-        $slug = $data['slug'] ?: Str::slug($data['title']);
-        $data['slug'] = $this->uniqueSlug($slug);
+        $post = DB::transaction(function () use ($validated, $request) {
+            $post = BlogPost::create($this->buildPersistenceData($validated, $request));
+            $this->syncCategories($post, $validated['category_ids'] ?? []);
 
-        $postPublished = (bool) $request->boolean('is_published');
-        $postFeatured  = (bool) $request->boolean('is_featured');
-
-        $post = DB::transaction(function () use ($data, $postPublished, $postFeatured) {
-            if ($postFeatured) {
-                $this->guardFeaturedLimit(null);
-                $data['is_featured'] = true;
-                $data['featured_at'] = now();
-            } else {
-                $data['is_featured'] = false;
-                $data['featured_at'] = null;
-            }
-
-            if ($postPublished) {
-                $data['is_published'] = true;
-                $data['published_at'] = now();
-            } else {
-                $data['is_published'] = false;
-                $data['published_at'] = null;
-            }
-
-            return BlogPost::create($data);
+            return $post;
         });
 
-        // ✅ Featured: önce upload varsa legacy path’e kaydet (fallback), sonra featured_media_id set edildiyse pivot’a yaz
-        if ($request->hasFile('featured_image')) {
-            // legacy path (istersen ileride kaldırırsın)
-            if ($post->featured_image_path) {
-                Storage::disk('public')->delete($post->featured_image_path);
-            }
-            $path = $request->file('featured_image')->store('blog/featured', 'public');
-            $post->featured_image_path = $path;
-            $post->save();
+        $this->syncFeaturedAsset(
+            $post,
+            $request,
+            isset($validated['featured_media_id']) ? (int) $validated['featured_media_id'] : null,
+            (bool) ($validated['clear_featured_image'] ?? false)
+        );
 
-            // upload seçilince media_id sıfırlansın (tek kaynak seç)
-            $this->syncFeaturedMedia($post, null);
-        } else {
-            $this->syncFeaturedMedia($post, $request->input('featured_media_id') ? (int)$request->input('featured_media_id') : null);
-        }
-
-        if (method_exists($post, 'categories')) {
-            $ids = collect($data['category_ids'] ?? [])
-                ->filter()
-                ->map(fn($v) => (int) $v)
-                ->unique()
-                ->values()
-                ->all();
-
-            $post->categories()->sync($ids);
-        }
-
-        return redirect()->route('admin.blog.index')->with('success', 'Blog yazısı oluşturuldu.');
+        return redirect()
+            ->route('admin.blog.index')
+            ->with('success', 'Blog yazisi olusturuldu.');
     }
 
-    public function edit(BlogPost $blogPost)
+    public function edit(BlogPost $blogPost): View
     {
-        // edit ekranında seçili kategoriler görünmesi için
-        // (Category ilişkinde withTrashed yoksa bile en azından burada yakalamaya çalışırız)
-        try {
-            $blogPost->load(['categories' => fn ($q) => $q->withTrashed()]);
-        } catch (\Throwable $e) {
-            $blogPost->load('categories');
-        }
+        $blogPost->load([
+            'categories:id,name,parent_id',
+            'featuredMedia',
+            'author:id,name',
+            'editor:id,name',
+        ]);
 
         $categories = Category::query()
             ->orderBy('name')
             ->get(['id', 'name', 'parent_id']);
-
-        $categoryOptions = $this->categoryOptions($categories);
-
-        $selectedCategoryIds = $blogPost->categories
-            ? $blogPost->categories->pluck('id')->map(fn ($v) => (int) $v)->values()->all()
-            : [];
 
         return view('admin.pages.blog.edit', [
             'blogPost' => $blogPost,
-            'categories' => $categories,
-            'categoryOptions' => $categoryOptions,
-            'selectedCategoryIds' => $selectedCategoryIds,
-            'pageTitle' => 'Yazı Düzenle',
+            'categoryOptions' => $this->categoryOptions($categories),
+            'selectedCategoryIds' => $blogPost->categories
+                ->pluck('id')
+                ->map(fn ($value) => (int) $value)
+                ->values()
+                ->all(),
+            'pageTitle' => 'Yazi Duzenle',
         ]);
     }
 
-    public function update(Request $request, BlogPost $blogPost)
+    public function update(BlogUpdateRequest $request, BlogPost $blogPost): RedirectResponse
     {
-        $data = $request->validate([
-            'title' => ['required','string','max:255'],
-            'slug'  => ['nullable','string','max:255'],
-            'content' => ['nullable','string'],
-            'category_ids' => ['nullable','array'],
-            'category_ids.*' => [
-                'integer',
-                Rule::exists('categories', 'id')->whereNull('deleted_at'),
-            ],
-            'featured_media_id' => ['nullable', 'integer'],
-            'featured_image' => ['nullable', 'image', 'max:5120'],
-            'excerpt' => ['nullable','string'],
-            'meta_title' => ['nullable','string','max:255'],
-            'meta_description' => ['nullable','string'],
-            'meta_keywords' => ['nullable','string'],
-            'is_published' => ['nullable','boolean'],
-            'is_featured' => ['nullable','boolean'],
-        ]);
+        $validated = $request->validated();
 
-        $slug = $data['slug'] ?: Str::slug($data['title']);
-        $data['slug'] = $this->uniqueSlug($slug, $blogPost->id);
-
-        $postPublished = (bool) $request->boolean('is_published');
-        $postFeatured  = (bool) $request->boolean('is_featured');
-
-        DB::transaction(function () use (&$blogPost, $data, $postPublished, $postFeatured) {
+        DB::transaction(function () use ($validated, $request, &$blogPost) {
             $blogPost = BlogPost::query()->lockForUpdate()->findOrFail($blogPost->id);
-
-            if ($postFeatured) {
-                $this->guardFeaturedLimit($blogPost->id);
-                $data['is_featured'] = true;
-                $data['featured_at'] = $blogPost->featured_at ?? now();
-            } else {
-                $data['is_featured'] = false;
-                $data['featured_at'] = null;
-            }
-
-            if ($postPublished) {
-                $data['is_published'] = true;
-                $data['published_at'] = $blogPost->published_at ?? now();
-            } else {
-                $data['is_published'] = false;
-                $data['published_at'] = null;
-            }
-
-            $blogPost->update($data);
+            $blogPost->update($this->buildPersistenceData($validated, $request, $blogPost));
+            $this->syncCategories($blogPost, $validated['category_ids'] ?? []);
         });
 
+        $this->syncFeaturedAsset(
+            $blogPost,
+            $request,
+            isset($validated['featured_media_id']) ? (int) $validated['featured_media_id'] : null,
+            (bool) ($validated['clear_featured_image'] ?? false)
+        );
 
-        if ($request->hasFile('featured_image')) {
-
-            if ($blogPost->featured_image_path) {
-                Storage::disk('public')->delete($blogPost->featured_image_path);
-            }
-
-            $path = $request->file('featured_image')->store('blog/featured', 'public');
-            $blogPost->featured_image_path = $path;
-            $blogPost->save();
-
-            // upload -> media pivot temizle
-            $this->syncFeaturedMedia($blogPost, null);
-
-        } else {
-            // library seçimi -> pivot güncelle
-            $featuredMediaId = $request->input('featured_media_id');
-            $this->syncFeaturedMedia($blogPost, $featuredMediaId ? (int)$featuredMediaId : null);
-        }
-
-        if (method_exists($blogPost, 'categories')) {
-            $ids = collect($data['category_ids'] ?? [])
-                ->filter()
-                ->map(fn($v) => (int) $v)
-                ->unique()
-                ->values()
-                ->all();
-
-            $blogPost->categories()->sync($ids);
-        }
-
-        return redirect()->route('admin.blog.index')->with('success', 'Blog yazısı güncellendi.');
+        return redirect()
+            ->route('admin.blog.index')
+            ->with('success', 'Blog yazisi guncellendi.');
     }
 
-    // --- Soft delete (single) ---
-    public function destroy(BlogPost $blogPost): JsonResponse
+    public function destroy(Request $request, BlogPost $blogPost)
     {
-        $blogPost->delete(); // soft delete
-        return response()->json(['ok' => true]);
+        $blogPost->delete();
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'ok' => true,
+                'message' => 'Blog yazisi cop kutusuna tasindi.',
+            ]);
+        }
+
+        return redirect()
+            ->route('admin.blog.index')
+            ->with('success', 'Blog yazisi cop kutusuna tasindi.');
     }
 
-    // --- Restore (single) ---
     public function restore(int $id): JsonResponse
     {
         $post = BlogPost::onlyTrashed()->findOrFail($id);
         $post->restore();
 
-        return response()->json(['ok' => true, 'data' => ['restored' => true]]);
+        return response()->json([
+            'ok' => true,
+            'message' => 'Blog yazisi geri yuklendi.',
+            'data' => ['restored' => true],
+        ]);
     }
 
-    // --- Force delete (single) ---
     public function forceDestroy(int $id): JsonResponse
     {
         $post = BlogPost::withTrashed()->findOrFail($id);
 
         DB::transaction(function () use ($post) {
-            // kategori pivot temizliği (ilişki adın farklıysa düzelt)
-            if (method_exists($post, 'categories')) {
-                $post->categories()->detach();
-            }
-
+            $this->syncCategories($post, []);
+            $this->deleteLegacyFeaturedImage($post);
+            $this->syncFeaturedMedia($post, null);
             $post->forceDelete();
         });
 
-        return response()->json(['ok' => true, 'data' => ['force_deleted' => true]]);
+        return response()->json([
+            'ok' => true,
+            'message' => 'Blog yazisi kalici olarak silindi.',
+            'data' => ['force_deleted' => true],
+        ]);
     }
 
-    // --- Bulk soft delete ---
     public function bulkDestroy(Request $request): JsonResponse
     {
-        $ids = $request->input('ids', []);
-        if (!is_array($ids) || count($ids) === 0) {
-            return response()->json(['ok' => false, 'error' => ['message' => 'Seçili kayıt yok.']], 422);
-        }
+        $ids = $this->validatedBulkIds($request);
+        $count = BlogPost::query()->whereIn('id', $ids)->delete();
 
-        $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
-        $count = BlogPost::query()->whereIn('id', $ids)->delete(); // soft delete
-
-        return response()->json(['ok' => true, 'data' => ['deleted' => $count]]);
+        return response()->json([
+            'ok' => true,
+            'message' => $count . ' blog yazisi cop kutusuna tasindi.',
+            'data' => ['deleted' => $count],
+        ]);
     }
 
-    // --- Bulk restore ---
     public function bulkRestore(Request $request): JsonResponse
     {
-        $ids = $request->input('ids', []);
-        if (!is_array($ids) || count($ids) === 0) {
-            return response()->json(['ok' => false, 'error' => ['message' => 'Seçili kayıt yok.']], 422);
-        }
-
-        $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
+        $ids = $this->validatedBulkIds($request);
         $count = BlogPost::onlyTrashed()->whereIn('id', $ids)->restore();
 
-        return response()->json(['ok' => true, 'data' => ['restored' => $count]]);
+        return response()->json([
+            'ok' => true,
+            'message' => $count . ' blog yazisi geri yuklendi.',
+            'data' => ['restored' => $count],
+        ]);
     }
 
-    // --- Bulk force delete ---
     public function bulkForceDestroy(Request $request): JsonResponse
     {
-        $ids = $request->input('ids', []);
-        if (!is_array($ids) || count($ids) === 0) {
-            return response()->json(['ok' => false, 'error' => ['message' => 'Seçili kayıt yok.']], 422);
-        }
-
-        $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
+        $ids = $this->validatedBulkIds($request);
         $posts = BlogPost::withTrashed()->whereIn('id', $ids)->get();
 
         DB::transaction(function () use ($posts) {
             foreach ($posts as $post) {
-                if (method_exists($post, 'categories')) {
-                    $post->categories()->detach();
-                }
+                $this->syncCategories($post, []);
+                $this->deleteLegacyFeaturedImage($post);
+                $this->syncFeaturedMedia($post, null);
                 $post->forceDelete();
             }
         });
 
-        return response()->json(['ok' => true, 'data' => ['force_deleted' => $posts->count()]]);
+        return response()->json([
+            'ok' => true,
+            'message' => $posts->count() . ' blog yazisi kalici olarak silindi.',
+            'data' => ['force_deleted' => $posts->count()],
+        ]);
     }
 
     public function togglePublish(Request $request, BlogPost $blogPost): JsonResponse
@@ -412,19 +297,20 @@ class BlogPostController extends Controller
 
         return DB::transaction(function () use ($blogPost, $payload) {
             $blogPost = BlogPost::query()->lockForUpdate()->findOrFail($blogPost->id);
-
             $want = (bool) $payload['is_published'];
 
             $blogPost->is_published = $want;
             $blogPost->published_at = $want ? ($blogPost->published_at ?? now()) : null;
+            $blogPost->updated_by = auth()->id();
             $blogPost->save();
 
             $badgeHtml = $blogPost->is_published
-                ? '<span class="kt-badge kt-badge-sm kt-badge-success">Yayında</span>'
+                ? '<span class="kt-badge kt-badge-sm kt-badge-success">Yayinda</span>'
                 : '<span class="kt-badge kt-badge-sm kt-badge-light">Taslak</span>';
 
             return response()->json([
                 'ok' => true,
+                'message' => $blogPost->is_published ? 'Yayin durumu guncellendi.' : 'Yazi taslak durumuna alindi.',
                 'is_published' => (bool) $blogPost->is_published,
                 'published_at' => $blogPost->published_at ? $blogPost->published_at->format('d.m.Y H:i') : null,
                 'badge_html' => $badgeHtml,
@@ -440,7 +326,6 @@ class BlogPostController extends Controller
 
         return DB::transaction(function () use ($blogPost, $payload) {
             $blogPost = BlogPost::query()->lockForUpdate()->findOrFail($blogPost->id);
-
             $want = (bool) $payload['is_featured'];
 
             if ($want) {
@@ -452,14 +337,16 @@ class BlogPostController extends Controller
                 $blogPost->featured_at = null;
             }
 
+            $blogPost->updated_by = auth()->id();
             $blogPost->save();
 
             $badgeHtml = $blogPost->is_featured
                 ? '<span class="kt-badge kt-badge-sm kt-badge-light-success">Anasayfada</span>'
-                : '<span class="kt-badge kt-badge-sm kt-badge-light text-muted-foreground">Kapalı</span>';
+                : '<span class="kt-badge kt-badge-sm kt-badge-light text-muted-foreground">Kapali</span>';
 
             return response()->json([
                 'ok' => true,
+                'message' => $blogPost->is_featured ? 'Yazi anasayfada gosterilecek.' : 'Yazi anasayfadan kaldirildi.',
                 'is_featured' => (bool) $blogPost->is_featured,
                 'featured_at' => $blogPost->featured_at ? $blogPost->featured_at->format('d.m.Y H:i') : null,
                 'badge_html' => $badgeHtml,
@@ -467,66 +354,115 @@ class BlogPostController extends Controller
         });
     }
 
-
-    private function guardFeaturedLimit(?int $exceptId = null): void
+    public function checkSlug(Request $request): JsonResponse
     {
-        $q = BlogPost::query()->where('is_featured', true)->lockForUpdate();
-        if ($exceptId) {
-            $q->where('id', '!=', $exceptId);
-        }
+        $rawSlug = trim((string) $request->query('slug', ''));
+        $ignoreId = $request->integer('ignore');
+        $normalizedSlug = Str::slug($rawSlug);
 
-        if ($q->count() >= 5) {
-            throw ValidationException::withMessages([
-                'is_featured' => 'Aynı anda en fazla 5 blog anasayfada gösterilebilir.',
+        if ($normalizedSlug === '') {
+            return response()->json([
+                'ok' => false,
+                'available' => false,
+                'message' => 'Slug bos olamaz.',
             ]);
         }
+
+        $suggested = $this->uniqueSlug($normalizedSlug, $ignoreId);
+        $isAvailable = $suggested === $normalizedSlug;
+
+        return response()->json([
+            'ok' => true,
+            'available' => $isAvailable,
+            'normalized' => $normalizedSlug,
+            'suggested' => $suggested,
+            'message' => $isAvailable ? 'Slug uygun.' : 'Bu slug kullaniliyor. Onerilen slug hazirlandi.',
+        ]);
     }
 
-    private function uniqueSlug(string $slug, ?int $ignoreId = null): string
+    private function buildPersistenceData(array $validated, Request $request, ?BlogPost $blogPost = null): array
     {
-        $base = Str::slug($slug);
-        $candidate = $base;
-        $i = 2;
+        $slugSource = $validated['slug'] ?: $validated['title'];
 
-        while (
-        BlogPost::query()
-            ->when($ignoreId, fn($q) => $q->where('id', '!=', $ignoreId))
-            ->where('slug', $candidate)
-            ->exists()
-        ) {
-            $candidate = $base . '-' . $i;
-            $i++;
+        $data = [
+            'title' => $validated['title'],
+            'slug' => $this->uniqueSlug($slugSource, $blogPost?->id),
+            'excerpt' => $validated['excerpt'] ?? null,
+            'content' => $validated['content'] ?? null,
+            'meta_title' => $validated['meta_title'] ?? null,
+            'meta_description' => $validated['meta_description'] ?? null,
+            'meta_keywords' => $validated['meta_keywords'] ?? null,
+            'is_published' => (bool) ($validated['is_published'] ?? false),
+            'is_featured' => (bool) ($validated['is_featured'] ?? false),
+            'published_at' => $this->resolvePublishedAt((bool) ($validated['is_published'] ?? false), $blogPost),
+            'featured_at' => $this->resolveFeaturedAt((bool) ($validated['is_featured'] ?? false), $blogPost),
+            'updated_by' => $request->user()?->id,
+        ];
+
+        if (!$blogPost) {
+            $data['created_by'] = $request->user()?->id;
         }
 
-        return $candidate;
-    }
-    private function categoryOptions($categories): array
-    {
-        // $categories: collection (id, name, parent_id)
-        $byParent = [];
-        foreach ($categories as $c) {
-            $pid = (int) ($c->parent_id ?? 0);
-            $byParent[$pid][] = $c;
+        if ($data['is_featured']) {
+            $this->guardFeaturedLimit($blogPost?->id);
         }
 
-        $out = [];
-
-        $walk = function ($parentId, $depth) use (&$walk, &$out, $byParent) {
-            $list = $byParent[(int)$parentId] ?? [];
-            foreach ($list as $c) {
-                $prefix = str_repeat('— ', $depth);
-                $out[] = [
-                    'id' => (int) $c->id,
-                    'label' => $prefix . $c->name,
-                ];
-                $walk((int)$c->id, $depth + 1);
-            }
-        };
-
-        $walk(0, 0);
-
-        return $out;
+        return $data;
     }
+
+    private function syncCategories(BlogPost $post, array $categoryIds): void
+    {
+        if (!method_exists($post, 'categories')) {
+            return;
+        }
+
+        $ids = collect($categoryIds)
+            ->filter()
+            ->map(fn ($value) => (int) $value)
+            ->unique()
+            ->values()
+            ->all();
+
+        $post->categories()->sync($ids);
+    }
+
+    private function syncFeaturedAsset(
+        BlogPost $post,
+        Request $request,
+        ?int $featuredMediaId,
+        bool $clearFeaturedImage
+    ): void {
+        if ($request->hasFile('featured_image')) {
+            $this->deleteLegacyFeaturedImage($post);
+
+            $path = $request->file('featured_image')->store('blog/featured', 'public');
+            $post->forceFill(['featured_image_path' => $path])->save();
+
+            $this->syncFeaturedMedia($post, null);
+
+            return;
+        }
+
+        if ($clearFeaturedImage && !$featuredMediaId) {
+            $this->deleteLegacyFeaturedImage($post);
+            $this->syncFeaturedMedia($post, null);
+
+            return;
+        }
+
+        $this->syncFeaturedMedia($post, $featuredMediaId);
+    }
+
+    private function deleteLegacyFeaturedImage(BlogPost $post): void
+    {
+        if (!$post->featured_image_path) {
+            return;
+        }
+
+        Storage::disk('public')->delete($post->featured_image_path);
+        $post->forceFill(['featured_image_path' => null])->save();
+    }
+
     private function syncFeaturedMedia(BlogPost $post, ?int $mediaId): void
     {
         DB::table('mediables')
@@ -549,28 +485,98 @@ class BlogPostController extends Controller
             'updated_at' => now(),
         ]);
     }
-    public function checkSlug(Request $request)
-    {
-        $slug = trim((string) $request->query('slug', ''));
-        $ignoreId = $request->integer('ignore');
 
-        if ($slug === '') {
-            return response()->json([
-                'ok' => false,
-                'available' => false,
-                'message' => 'Slug boş olamaz.',
+    private function resolvePublishedAt(bool $isPublished, ?BlogPost $blogPost = null)
+    {
+        if (!$isPublished) {
+            return null;
+        }
+
+        return $blogPost?->published_at ?? now();
+    }
+
+    private function resolveFeaturedAt(bool $isFeatured, ?BlogPost $blogPost = null)
+    {
+        if (!$isFeatured) {
+            return null;
+        }
+
+        return $blogPost?->featured_at ?? now();
+    }
+
+    private function guardFeaturedLimit(?int $exceptId = null): void
+    {
+        $query = BlogPost::query()
+            ->where('is_featured', true)
+            ->lockForUpdate();
+
+        if ($exceptId) {
+            $query->where('id', '!=', $exceptId);
+        }
+
+        if ($query->count() >= 5) {
+            throw ValidationException::withMessages([
+                'is_featured' => 'Ayni anda en fazla 5 blog anasayfada gosterilebilir.',
+            ]);
+        }
+    }
+
+    private function uniqueSlug(string $slug, ?int $ignoreId = null): string
+    {
+        $base = Str::slug($slug);
+        $candidate = $base;
+        $suffix = 2;
+
+        while (
+            BlogPost::query()
+                ->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
+                ->where('slug', $candidate)
+                ->exists()
+        ) {
+            $candidate = $base . '-' . $suffix;
+            $suffix++;
+        }
+
+        return $candidate;
+    }
+
+    private function validatedBulkIds(Request $request): array
+    {
+        $ids = $request->input('ids', []);
+
+        if (!is_array($ids) || count($ids) === 0) {
+            throw ValidationException::withMessages([
+                'ids' => 'Secili kayit yok.',
             ]);
         }
 
-        $exists = BlogPost::query()
-            ->when($ignoreId, fn($q) => $q->whereKeyNot($ignoreId))
-            ->where('slug', $slug)
-            ->exists();
+        return array_values(array_unique(array_filter(array_map('intval', $ids))));
+    }
 
-        return response()->json([
-            'ok' => true,
-            'available' => !$exists,
-            'message' => $exists ? 'Bu slug zaten kullanılıyor.' : 'Slug uygun.',
-        ]);
+    private function categoryOptions($categories): array
+    {
+        $byParent = [];
+
+        foreach ($categories as $category) {
+            $parentId = (int) ($category->parent_id ?? 0);
+            $byParent[$parentId][] = $category;
+        }
+
+        $options = [];
+
+        $walk = function (int $parentId, int $depth) use (&$walk, &$options, $byParent) {
+            foreach ($byParent[$parentId] ?? [] as $category) {
+                $options[] = [
+                    'id' => (int) $category->id,
+                    'label' => str_repeat('— ', $depth) . $category->name,
+                ];
+
+                $walk((int) $category->id, $depth + 1);
+            }
+        };
+
+        $walk(0, 0);
+
+        return $options;
     }
 }

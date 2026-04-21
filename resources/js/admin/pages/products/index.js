@@ -1,4 +1,5 @@
 import { request } from '@/core/http';
+import { showConfirmDialog, showToastMessage } from '@/core/swal-alert';
 
 /**
  * resources/js/admin/pages/products/index.js
@@ -106,28 +107,22 @@ function wireSelection(root) {
   refreshBulkBar(root);
 }
 
-function confirmDialog(title, text, confirmButtonText = 'Evet') {
-  if (!window.Swal) {
-    return Promise.resolve(window.confirm(`${title}\n\n${text}`));
-  }
-  return Swal.fire({
+function confirmDialog(title, text, confirmButtonText = 'Evet', type = 'warning') {
+  return showConfirmDialog({
+    type,
     title,
-    text,
-    icon: 'warning',
-    showCancelButton: true,
+    message: text,
     confirmButtonText,
     cancelButtonText: 'Vazgeç',
-  }).then((r) => r.isConfirmed);
+  });
 }
 
 function toastSuccess(text) {
-  if (!window.Swal) return;
-  Swal.fire({ icon: 'success', title: text, timer: 1200, showConfirmButton: false });
+  showToastMessage('success', text, { duration: 1200 });
 }
 
 function toastError(text) {
-  if (!window.Swal) return;
-  Swal.fire({ icon: 'error', title: 'Hata', text });
+  showToastMessage('error', text, { title: 'Hata' });
 }
 
 function routes() {
@@ -150,7 +145,7 @@ async function handleRowAction(root, action, id) {
 
   try {
     if (action === 'delete') {
-      const ok = await confirmDialog('Silinsin mi?', 'Bu ürün çöp kutusuna taşınacak.', 'Sil');
+      const ok = await confirmDialog('Silinsin mi?', 'Bu ürün çöp kutusuna taşınacak.', 'Sil', 'warning');
       if (!ok) return;
       await req(r.destroy(id), { method: 'DELETE' });
       window.location.reload();
@@ -158,7 +153,7 @@ async function handleRowAction(root, action, id) {
     }
 
     if (action === 'restore') {
-      const ok = await confirmDialog('Geri yüklensin mi?', 'Ürün aktif listeye taşınacak.', 'Geri Yükle');
+      const ok = await confirmDialog('Geri yüklensin mi?', 'Ürün aktif listeye taşınacak.', 'Geri yükle', 'success');
       if (!ok) return;
       await req(r.restore(id), { method: 'POST' });
       window.location.reload();
@@ -166,7 +161,7 @@ async function handleRowAction(root, action, id) {
     }
 
     if (action === 'force-delete') {
-      const ok = await confirmDialog('Kalıcı silinsin mi?', 'Bu işlem geri alınamaz.', 'Kalıcı Sil');
+      const ok = await confirmDialog('Kalıcı silinsin mi?', 'Bu işlem geri alınamaz.', 'Kalıcı sil', 'error');
       if (!ok) return;
       await req(r.forceDestroy(id), { method: 'DELETE' });
       window.location.reload();
@@ -188,7 +183,7 @@ async function handleBulk(root, kind) {
   const r = routes();
   try {
     if (kind === 'delete') {
-      const ok = await confirmDialog('Seçili ürünler silinsin mi?', 'Seçili ürünler çöp kutusuna taşınacak.', 'Sil');
+      const ok = await confirmDialog('Seçili ürünler silinsin mi?', 'Seçili ürünler çöp kutusuna taşınacak.', 'Sil', 'warning');
       if (!ok) return;
       await req(r.bulkDestroy, { method: 'POST', body: { ids } });
       window.location.reload();
@@ -196,7 +191,7 @@ async function handleBulk(root, kind) {
     }
 
     if (kind === 'restore') {
-      const ok = await confirmDialog('Seçili ürünler geri yüklensin mi?', 'Ürünler aktif listeye taşınacak.', 'Geri Yükle');
+      const ok = await confirmDialog('Seçili ürünler geri yüklensin mi?', 'Ürünler aktif listeye taşınacak.', 'Geri yükle', 'success');
       if (!ok) return;
       await req(r.bulkRestore, { method: 'POST', body: { ids } });
       window.location.reload();
@@ -204,7 +199,7 @@ async function handleBulk(root, kind) {
     }
 
     if (kind === 'force') {
-      const ok = await confirmDialog('Seçili ürünler kalıcı silinsin mi?', 'Bu işlem geri alınamaz.', 'Kalıcı Sil');
+      const ok = await confirmDialog('Seçili ürünler kalıcı silinsin mi?', 'Bu işlem geri alınamaz.', 'Kalıcı sil', 'error');
       if (!ok) return;
       await req(r.bulkForceDestroy, { method: 'POST', body: { ids } });
       window.location.reload();

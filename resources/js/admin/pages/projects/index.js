@@ -1,24 +1,12 @@
 import { request } from '@/core/http';
+import { showConfirmDialog, showToastMessage } from '@/core/swal-alert';
 
 // resources/js/admin/pages/projects/index.js
 let ac = null;
 let popEl = null;
 
 function notify(type, text) {
-    if (window.KTNotify?.show) {
-        window.KTNotify.show({ type, message: text, placement: 'top-end', duration: 1800 });
-        return;
-    }
-    if (window.Swal?.mixin) {
-        window.Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 1800,
-            timerProgressBar: true,
-        }).fire({ icon: type === 'error' ? 'error' : 'success', title: text });
-        return;
-    }
+    showToastMessage(type === 'error' ? 'error' : 'success', text, { duration: 1800 });
 }
 
 function createImgPopover() {
@@ -421,7 +409,13 @@ export default function init({ root }) {
 
         try {
             if (action === 'delete') {
-                if (!confirm('Bu proje silinsin mi?')) return;
+                const ok = await showConfirmDialog({
+                    type: 'warning',
+                    title: 'Proje silinsin mi?',
+                    message: 'Proje çöp kutusuna taşınacak.',
+                    confirmButtonText: 'Sil',
+                });
+                if (!ok) return;
 
                 const j = await request(`/admin/projects/${id}`, { method: 'DELETE', ignoreGlobalError: true });
                 if (j?.ok === false) throw new Error(j?.error?.message || 'Silme başarısız');
@@ -432,7 +426,13 @@ export default function init({ root }) {
             }
 
             if (action === 'restore') {
-                if (!confirm('Bu proje geri yüklensin mi?')) return;
+                const ok = await showConfirmDialog({
+                    type: 'success',
+                    title: 'Proje geri yüklensin mi?',
+                    message: 'Kayıt tekrar aktif listeye alınacak.',
+                    confirmButtonText: 'Geri yükle',
+                });
+                if (!ok) return;
 
                 await postJson(`/admin/projects/${id}/restore`, {});
                 notify('success', 'Geri yüklendi');
@@ -441,7 +441,13 @@ export default function init({ root }) {
             }
 
             if (action === 'force-delete') {
-                if (!confirm('Bu proje KALICI silinecek. Emin misin?')) return;
+                const ok = await showConfirmDialog({
+                    type: 'error',
+                    title: 'Proje kalıcı silinsin mi?',
+                    message: 'Bu işlem geri alınamaz.',
+                    confirmButtonText: 'Kalıcı sil',
+                });
+                if (!ok) return;
 
                 const j = await request(`/admin/projects/${id}/force`, { method: 'DELETE', ignoreGlobalError: true });
                 if (j?.ok === false) throw new Error(j?.error?.message || 'Kalıcı silme başarısız');
@@ -508,7 +514,13 @@ export default function init({ root }) {
         const ids = [...selectedIds];
         if (!ids.length) return;
 
-        if (!confirm(`${ids.length} kayıt silinsin mi?`)) return;
+        const ok = await showConfirmDialog({
+            type: 'warning',
+            title: 'Seçili projeler silinsin mi?',
+            message: `${ids.length} kayıt çöp kutusuna taşınacak.`,
+            confirmButtonText: 'Sil',
+        });
+        if (!ok) return;
 
         try {
             await postJson('/admin/projects/bulk-destroy', { ids });
@@ -526,7 +538,13 @@ export default function init({ root }) {
         const ids = [...selectedIds];
         if (!ids.length) return;
 
-        if (!confirm(`${ids.length} kayıt geri yüklensin mi?`)) return;
+        const ok = await showConfirmDialog({
+            type: 'success',
+            title: 'Seçili projeler geri yüklensin mi?',
+            message: `${ids.length} kayıt tekrar aktif listeye alınacak.`,
+            confirmButtonText: 'Geri yükle',
+        });
+        if (!ok) return;
 
         try {
             await postJson('/admin/projects/bulk-restore', { ids });
@@ -544,7 +562,13 @@ export default function init({ root }) {
         const ids = [...selectedIds];
         if (!ids.length) return;
 
-        if (!confirm(`${ids.length} kayıt KALICI silinecek. Emin misin?`)) return;
+        const ok = await showConfirmDialog({
+            type: 'error',
+            title: 'Seçili projeler kalıcı silinsin mi?',
+            message: `${ids.length} kayıt geri alınamayacak şekilde silinecek.`,
+            confirmButtonText: 'Kalıcı sil',
+        });
+        if (!ok) return;
 
         try {
             await postJson('/admin/projects/bulk-force-destroy', { ids });

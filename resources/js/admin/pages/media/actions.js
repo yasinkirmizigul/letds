@@ -1,4 +1,5 @@
 import { request, get, post, delete as destroy } from '@/core/http';
+import { showConfirmDialog, showToastMessage } from '@/core/swal-alert';
 export function attachGridActions({
                                       root,
                                       grid,
@@ -33,7 +34,13 @@ export function attachGridActions({
             const id = delBtn.getAttribute('data-id');
             if (!id) return;
 
-            if (!confirm('Bu medyayı silmek istiyor musun?')) return;
+            const ok = await showConfirmDialog({
+                type: 'warning',
+                title: 'Medya silinsin mi?',
+                message: 'Seçili medya çöp kutusuna taşınacak.',
+                confirmButtonText: 'Sil',
+            });
+            if (!ok) return;
 
             try {
                 await req(`/admin/media/${id}`, 'DELETE');
@@ -41,8 +48,9 @@ export function attachGridActions({
                 setBulkUI();
                 state.page = 1;
                 await fetchList();
+                showToastMessage('success', 'Medya silindi.', { duration: 1800 });
             } catch (err) {
-                alert(err?.message || 'Silme başarısız');
+                showToastMessage('error', err?.message || 'Silme başarısız');
             }
             return;
         }
@@ -58,8 +66,9 @@ export function attachGridActions({
                 setBulkUI();
                 state.page = 1;
                 await fetchList();
+                showToastMessage('success', 'Medya geri yüklendi.', { duration: 1800 });
             } catch (err) {
-                alert(err?.message || 'Geri yükleme başarısız');
+                showToastMessage('error', err?.message || 'Geri yükleme başarısız');
             }
             return;
         }
@@ -69,7 +78,13 @@ export function attachGridActions({
             const id = forceBtn.getAttribute('data-id');
             if (!id) return;
 
-            if (!confirm('Bu medya KALICI olarak silinecek. Emin misin?')) return;
+            const ok = await showConfirmDialog({
+                type: 'error',
+                title: 'Medya kalıcı silinsin mi?',
+                message: 'Bu işlem geri alınamaz.',
+                confirmButtonText: 'Kalıcı sil',
+            });
+            if (!ok) return;
 
             try {
                 await req(`/admin/media/${id}/force`, 'DELETE');
@@ -77,8 +92,9 @@ export function attachGridActions({
                 setBulkUI();
                 state.page = 1;
                 await fetchList();
+                showToastMessage('success', 'Medya kalıcı olarak silindi.', { duration: 1800 });
             } catch (err) {
-                alert(err?.message || 'Kalıcı silme başarısız');
+                showToastMessage('error', err?.message || 'Kalıcı silme başarısız');
             }
             return;
         }

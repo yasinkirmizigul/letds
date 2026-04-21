@@ -1,4 +1,5 @@
 import { request } from '@/core/http';
+import { showConfirmDialog, showToastMessage } from '@/core/swal-alert';
 
 function qs(sel, root = document) {
     return root.querySelector(sel);
@@ -293,8 +294,15 @@ export default function init(ctx = {}) {
                 e.stopImmediatePropagation();
                 const url = del.getAttribute('data-url');
                 if (!url) return;
-                if (!confirm('Silinsin mi? (Çöp kutusuna taşınacak)')) return;
+                const ok = await showConfirmDialog({
+                    type: 'warning',
+                    title: 'Kategori silinsin mi?',
+                    message: 'Kayıt çöp kutusuna taşınacak.',
+                    confirmButtonText: 'Sil',
+                });
+                if (!ok) return;
                 await requestJson(url, { method: 'DELETE' });
+                showToastMessage('success', 'Kategori silindi.', { duration: 1800 });
                 await load();
             }
 
@@ -302,18 +310,26 @@ export default function init(ctx = {}) {
                 const url = restore.getAttribute('data-url');
                 if (!url) return;
                 await requestJson(url, { method: 'POST' });
+                showToastMessage('success', 'Kategori geri yüklendi.', { duration: 1800 });
                 await load();
             }
 
             if (force) {
                 const url = force.getAttribute('data-url');
                 if (!url) return;
-                if (!confirm('Kalıcı silinsin mi? Bu işlem geri alınamaz.')) return;
+                const ok = await showConfirmDialog({
+                    type: 'error',
+                    title: 'Kategori kalıcı silinsin mi?',
+                    message: 'Bu işlem geri alınamaz.',
+                    confirmButtonText: 'Kalıcı sil',
+                });
+                if (!ok) return;
                 await requestJson(url, { method: 'DELETE' });
+                showToastMessage('success', 'Kategori kalıcı olarak silindi.', { duration: 1800 });
                 await load();
             }
         } catch (err) {
-            alert(err?.message || 'İşlem başarısız');
+            showToastMessage('error', err?.message || 'İşlem başarısız');
         }
     }, ctx.signal ? { signal: ctx.signal } : undefined);
 
