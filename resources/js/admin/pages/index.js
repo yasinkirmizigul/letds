@@ -24,6 +24,7 @@ import UsersIndex from './users/index';
 import CategoriesCreate from './categories/create';
 import CategoriesEdit from './categories/edit';
 import CategoriesIndex from './categories/index';
+import DashIndex from './dash/index';
 
 import profileEdit from './profile/edit';
 import profileIndex from './profile/index';
@@ -46,6 +47,8 @@ import MessagesIndex from './messages/index';
 
 
 export function registerPages() {
+    register('dash.index', DashIndex);
+
     register('blog.create', BlogCreate);
     register('blog.edit', BlogEdit);
     register('blog.index', BlogIndex);

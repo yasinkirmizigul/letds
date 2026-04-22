@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-kt-theme="true" data-kt-theme-mode="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,12 +7,26 @@
 
     <title>{{ config('app.name') }}</title>
 
+    <script>
+        (function () {
+            let themeMode = localStorage.getItem('kt-theme') || 'system';
+
+            if (themeMode === 'system') {
+                themeMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+
+            document.documentElement.classList.remove('light', 'dark');
+            document.documentElement.classList.add(themeMode);
+            document.documentElement.setAttribute('data-kt-theme-mode', themeMode);
+        })();
+    </script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-50">
+<body class="min-h-screen bg-background text-foreground">
 
 <div class="container mx-auto py-6 px-4">
-    <div class="mb-6 rounded-3xl border border-border bg-white/90 px-5 py-4 shadow-sm">
+    <div class="mb-6 rounded-3xl app-shell-surface px-5 py-4">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
                 <div class="text-xs font-semibold uppercase tracking-[0.24em] text-primary">Letds</div>

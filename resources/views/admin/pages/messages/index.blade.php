@@ -15,19 +15,19 @@
             </div>
 
             <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                <div class="rounded-3xl border border-border bg-white p-5 shadow-sm">
+                <div class="rounded-3xl app-stat-card p-5">
                     <div class="text-sm text-muted-foreground">Toplam mesaj</div>
                     <div class="mt-2 text-3xl font-semibold text-foreground">{{ $stats['total'] }}</div>
                 </div>
-                <div class="rounded-3xl border border-border bg-white p-5 shadow-sm">
+                <div class="rounded-3xl app-stat-card p-5">
                     <div class="text-sm text-muted-foreground">Okunmamış</div>
                     <div class="mt-2 text-3xl font-semibold text-warning">{{ $stats['unread'] }}</div>
                 </div>
-                <div class="rounded-3xl border border-border bg-white p-5 shadow-sm">
+                <div class="rounded-3xl app-stat-card p-5">
                     <div class="text-sm text-muted-foreground">Yüksek / Acil</div>
                     <div class="mt-2 text-3xl font-semibold text-danger">{{ $stats['highPriority'] }}</div>
                 </div>
-                <div class="rounded-3xl border border-border bg-white p-5 shadow-sm">
+                <div class="rounded-3xl app-stat-card p-5">
                     <div class="text-sm text-muted-foreground">Ziyaretçi mesajı</div>
                     <div class="mt-2 text-3xl font-semibold text-primary">{{ $stats['guest'] }}</div>
                 </div>

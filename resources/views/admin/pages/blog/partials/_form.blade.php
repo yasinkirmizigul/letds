@@ -49,7 +49,7 @@
                     @enderror
                 </div>
 
-                <div class="grid gap-3 rounded-3xl border border-border bg-muted/10 p-4">
+                <div class="grid gap-3 rounded-3xl app-surface-card app-surface-card--soft p-4">
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <label class="kt-form-label font-normal text-mono mb-0" for="slug">Slug ve URL</label>
                         <span class="text-xs text-muted-foreground">URL stabilitesi icin sadece gerektiğinde degistirin.</span>
@@ -81,7 +81,7 @@
                         <div class="text-xs text-danger">{{ $message }}</div>
                     @enderror
 
-                    <div class="rounded-2xl border border-border bg-white px-4 py-3 text-sm text-muted-foreground">
+                    <div class="rounded-2xl app-surface-card px-4 py-3 text-sm text-muted-foreground">
                         URL onizleme:
                         <span class="font-medium text-foreground">{{ url('/blog') }}/<span id="url_slug_preview">{{ $currentSlug }}</span></span>
                     </div>
@@ -184,7 +184,7 @@
                 </div>
 
                 <div class="grid gap-4 self-start">
-                    <div class="rounded-[28px] border border-border bg-white p-5 shadow-sm">
+                    <div class="rounded-[28px] app-surface-card p-5">
                         <div class="text-[11px] uppercase tracking-[0.24em] text-muted-foreground">Arama Onizlemesi</div>
                         <div class="mt-4 grid gap-2">
                             <div class="text-base font-semibold leading-6 text-primary" data-blog-seo-preview-title>
@@ -199,7 +199,7 @@
                         </div>
                     </div>
 
-                    <div class="rounded-3xl border border-border bg-muted/10 p-4 text-sm text-muted-foreground">
+                    <div class="rounded-3xl app-surface-card app-surface-card--soft p-4 text-sm text-muted-foreground">
                         Meta title icin 30-60, meta description icin 100-160 karakter araligi daha saglikli gorunur.
                     </div>
                 </div>
@@ -250,7 +250,7 @@
             </div>
 
             <div class="kt-card-content p-6 grid gap-4">
-                <div class="rounded-3xl border border-border bg-muted/10 p-4">
+                <div class="rounded-3xl app-surface-card app-surface-card--soft p-4">
                     <div class="flex items-start justify-between gap-3">
                         <div class="grid gap-1">
                             <div class="font-medium text-foreground">Yayin Durumu</div>
@@ -283,7 +283,7 @@
                     @enderror
                 </div>
 
-                <div class="rounded-3xl border border-border bg-muted/10 p-4">
+                <div class="rounded-3xl app-surface-card app-surface-card--soft p-4">
                     <div class="flex items-start justify-between gap-3">
                         <div class="grid gap-1">
                             <div class="font-medium text-foreground">Anasayfa Vitrini</div>
@@ -334,17 +334,17 @@
 
             <div class="kt-card-content p-6 grid gap-4">
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="rounded-3xl border border-border bg-white p-4">
+                    <div class="rounded-3xl app-surface-card p-4">
                         <div class="text-xs uppercase tracking-[0.18em] text-muted-foreground">Kelime</div>
                         <div class="mt-2 text-2xl font-semibold text-foreground" data-blog-word-count>{{ $initialWordCount }} kelime</div>
                     </div>
-                    <div class="rounded-3xl border border-border bg-white p-4">
+                    <div class="rounded-3xl app-surface-card p-4">
                         <div class="text-xs uppercase tracking-[0.18em] text-muted-foreground">Okuma</div>
                         <div class="mt-2 text-2xl font-semibold text-foreground" data-blog-read-time>{{ $initialReadTime }} dk</div>
                     </div>
                 </div>
 
-                <div class="rounded-3xl border border-border bg-muted/10 p-4">
+                <div class="rounded-3xl app-surface-card app-surface-card--soft p-4">
                     <div class="flex items-center justify-between gap-3">
                         <div>
                             <div class="text-xs uppercase tracking-[0.18em] text-muted-foreground">SEO Tamamlilik</div>
@@ -433,32 +433,32 @@
                 </div>
 
                 <div class="kt-card-content p-6 grid gap-3 text-sm">
-                    <div class="rounded-2xl border border-border bg-white px-4 py-3">
+                    <div class="rounded-2xl app-surface-card px-4 py-3">
                         <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Kayit No</div>
                         <div class="mt-1 font-medium text-foreground">#{{ $blogPost->id }}</div>
                     </div>
-                    <div class="rounded-2xl border border-border bg-white px-4 py-3">
+                    <div class="rounded-2xl app-surface-card px-4 py-3">
                         <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Yazar</div>
                         <div class="mt-1 font-medium text-foreground">{{ $blogPost->author?->name ?: 'Belirlenmedi' }}</div>
                     </div>
-                    <div class="rounded-2xl border border-border bg-white px-4 py-3">
+                    <div class="rounded-2xl app-surface-card px-4 py-3">
                         <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Son Editor</div>
                         <div class="mt-1 font-medium text-foreground">{{ $blogPost->editor?->name ?: 'Belirlenmedi' }}</div>
                     </div>
-                    <div class="rounded-2xl border border-border bg-white px-4 py-3">
+                    <div class="rounded-2xl app-surface-card px-4 py-3">
                         <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Olusturulma</div>
                         <div class="mt-1 font-medium text-foreground">{{ $blogPost->created_at?->format('d.m.Y H:i') ?: '-' }}</div>
                     </div>
-                    <div class="rounded-2xl border border-border bg-white px-4 py-3">
+                    <div class="rounded-2xl app-surface-card px-4 py-3">
                         <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Son Guncelleme</div>
                         <div class="mt-1 font-medium text-foreground">{{ $blogPost->updated_at?->format('d.m.Y H:i') ?: '-' }}</div>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
-                        <div class="rounded-2xl border border-border bg-white px-4 py-3">
+                        <div class="rounded-2xl app-surface-card px-4 py-3">
                             <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Yayin</div>
                             <div class="mt-1 font-medium text-foreground">{{ $blogPost->published_at?->format('d.m.Y H:i') ?: 'Yok' }}</div>
                         </div>
-                        <div class="rounded-2xl border border-border bg-white px-4 py-3">
+                        <div class="rounded-2xl app-surface-card px-4 py-3">
                             <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Anasayfa</div>
                             <div class="mt-1 font-medium text-foreground">{{ $blogPost->featured_at?->format('d.m.Y H:i') ?: 'Yok' }}</div>
                         </div>

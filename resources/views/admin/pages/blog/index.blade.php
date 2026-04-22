@@ -53,23 +53,23 @@
         </div>
 
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-            <div class="rounded-3xl border border-border bg-white p-5 shadow-sm">
+            <div class="rounded-3xl app-stat-card p-5">
                 <div class="text-sm text-muted-foreground">Toplam Yazi</div>
                 <div class="mt-2 text-3xl font-semibold text-foreground">{{ $stats['all'] ?? 0 }}</div>
             </div>
-            <div class="rounded-3xl border border-border bg-white p-5 shadow-sm">
+            <div class="rounded-3xl app-stat-card p-5">
                 <div class="text-sm text-muted-foreground">Yayinda</div>
                 <div class="mt-2 text-3xl font-semibold text-success">{{ $stats['published'] ?? 0 }}</div>
             </div>
-            <div class="rounded-3xl border border-border bg-white p-5 shadow-sm">
+            <div class="rounded-3xl app-stat-card p-5">
                 <div class="text-sm text-muted-foreground">Taslak</div>
                 <div class="mt-2 text-3xl font-semibold text-warning">{{ $stats['draft'] ?? 0 }}</div>
             </div>
-            <div class="rounded-3xl border border-border bg-white p-5 shadow-sm">
+            <div class="rounded-3xl app-stat-card p-5">
                 <div class="text-sm text-muted-foreground">Anasayfada</div>
                 <div class="mt-2 text-3xl font-semibold text-primary">{{ $stats['featured'] ?? 0 }}</div>
             </div>
-            <div class="rounded-3xl border border-border bg-white p-5 shadow-sm">
+            <div class="rounded-3xl app-stat-card p-5">
                 <div class="text-sm text-muted-foreground">Copte</div>
                 <div class="mt-2 text-3xl font-semibold text-danger">{{ $stats['trash'] ?? 0 }}</div>
             </div>

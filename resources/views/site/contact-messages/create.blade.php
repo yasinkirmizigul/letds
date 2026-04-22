@@ -73,7 +73,7 @@
                             </div>
 
                             @if($isMember)
-                                <div class="md:col-span-2 rounded-2xl border border-success/20 bg-success/5 p-4">
+                                <div class="md:col-span-2 rounded-2xl app-surface-card app-surface-card--success p-4">
                                     <div class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
                                         <div>
                                             <div class="text-sm font-semibold text-foreground">Üye bilgilerin otomatik kullanılacak</div>
@@ -85,11 +85,11 @@
                                     </div>
 
                                     <div class="mt-4 grid gap-3 sm:grid-cols-2">
-                                        <div class="rounded-xl bg-white/80 px-4 py-3">
+                                        <div class="rounded-xl app-surface-card app-surface-card--soft px-4 py-3">
                                             <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Ad Soyad</div>
                                             <div class="mt-1 font-medium text-foreground">{{ $member->full_name }}</div>
                                         </div>
-                                        <div class="rounded-xl bg-white/80 px-4 py-3">
+                                        <div class="rounded-xl app-surface-card app-surface-card--soft px-4 py-3">
                                             <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">İletişim</div>
                                             <div class="mt-1 font-medium text-foreground">{{ $member->email }}</div>
                                             <div class="text-sm text-muted-foreground">{{ $member->phone ?: 'Telefon bilgisi yok' }}</div>
@@ -97,7 +97,7 @@
                                     </div>
                                 </div>
                             @else
-                                <div class="md:col-span-2 rounded-2xl border border-border bg-muted/20 p-4">
+                                <div class="md:col-span-2 rounded-2xl app-surface-card app-surface-card--soft p-4">
                                     <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
                                         <div>
                                             <div class="text-sm font-semibold text-foreground">Gönderen bilgileri</div>
@@ -141,7 +141,7 @@
                                             <label class="kt-form-label mb-3">Size hangi kanaldan dönüş yapılsın?</label>
                                             <div class="grid gap-3 sm:grid-cols-2">
                                                 @foreach($contactChannelOptions as $channelKey => $channelOption)
-                                                    <label class="flex items-start gap-3 rounded-2xl border border-border bg-white px-4 py-4">
+                                                    <label class="flex items-start gap-3 rounded-2xl app-surface-card app-surface-card--interactive px-4 py-4">
                                                         <input
                                                             type="checkbox"
                                                             name="contact_channels[]"
@@ -264,7 +264,7 @@
                     </div>
                     <div class="kt-card-content p-5 grid gap-4">
                         @foreach($priorityOptions as $priorityOption)
-                            <div class="rounded-2xl border border-border bg-muted/10 p-4">
+                            <div class="rounded-2xl app-surface-card app-surface-card--soft p-4">
                                 <span class="{{ $priorityOption['badge'] }}">{{ $priorityOption['label'] }}</span>
                                 <p class="mt-3 text-sm text-muted-foreground">
                                     @switch($loop->index)
@@ -291,13 +291,13 @@
                         <h3 class="kt-card-title">Sistem Notları</h3>
                     </div>
                     <div class="kt-card-content p-5 grid gap-4 text-sm text-muted-foreground">
-                        <div class="rounded-2xl border border-border bg-white px-4 py-4">
+                        <div class="rounded-2xl app-surface-card px-4 py-4">
                             Mesajı hangi kullanıcıya yönlendirdiğin admin panelde net şekilde görünür.
                         </div>
-                        <div class="rounded-2xl border border-border bg-white px-4 py-4">
+                        <div class="rounded-2xl app-surface-card px-4 py-4">
                             Süper admin tüm mesajları görebilir; diğer kullanıcılar sadece kendilerine gönderilen kayıtları görür.
                         </div>
-                        <div class="rounded-2xl border border-border bg-white px-4 py-4">
+                        <div class="rounded-2xl app-surface-card px-4 py-4">
                             İstersen ileride kullanıcı listesinde “bu kişiye mesaj gönder” butonu ekleyebiliriz; bu sayfa buna hazır.
                         </div>
                     </div>

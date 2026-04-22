@@ -469,4 +469,404 @@ table.dt-kt-header-center thead th .dt-column-header { display:flex; align-items
 table.dt-kt-header-center thead th.text-right .dt-column-header { justify-content:flex-end; }
 table.dt-kt-header-center thead th.text-left .dt-column-header { justify-content:flex-start; }
 thead th.dt-orderable-none .dt-column-order { display:none !important; }
+
+.app-shell-surface,
+.app-surface-card,
+.app-stat-card {
+    border: 1px solid color-mix(in oklab, var(--border) 86%, white 14%);
+    background: linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--background) 91%, white 9%),
+        color-mix(in oklab, var(--background) 98%, transparent)
+    );
+    box-shadow: 0 16px 36px rgb(15 23 42 / 6%);
+}
+
+.app-stat-card {
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.app-stat-card:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in oklab, var(--color-primary, #3e97ff) 18%, var(--border) 82%);
+    box-shadow: 0 22px 42px rgb(15 23 42 / 9%);
+}
+
+.app-surface-card--soft {
+    border-color: color-mix(in oklab, var(--foreground) 8%, var(--border) 92%);
+    background: color-mix(in oklab, var(--foreground) 3%, var(--background));
+    box-shadow: none;
+}
+
+.app-surface-card--success {
+    border-color: color-mix(in oklab, #17c653 24%, var(--border) 76%);
+    background: color-mix(in oklab, #17c653 7%, var(--background) 93%);
+    box-shadow: none;
+}
+
+.app-surface-card--interactive {
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.app-surface-card--interactive:hover {
+    transform: translateY(-1px);
+    border-color: color-mix(in oklab, var(--color-primary, #3e97ff) 20%, var(--border) 80%);
+    box-shadow: 0 16px 30px rgb(15 23 42 / 8%);
+}
+
+.app-shell-surface {
+    background:
+        radial-gradient(circle at top left, rgb(62 151 255 / 12%), transparent 28%),
+        linear-gradient(
+            180deg,
+            color-mix(in oklab, var(--background) 89%, white 11%),
+            color-mix(in oklab, var(--background) 98%, transparent)
+        );
+}
+
+.dark .app-shell-surface,
+.dark .app-surface-card,
+.dark .app-stat-card {
+    border-color: color-mix(in oklab, var(--border) 92%, var(--foreground) 8%);
+    background: linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--background) 92%, var(--foreground) 8%),
+        color-mix(in oklab, var(--background) 98%, black 2%)
+    );
+    box-shadow: 0 22px 44px rgb(0 0 0 / 28%);
+}
+
+.dark .app-surface-card--soft {
+    border-color: color-mix(in oklab, var(--foreground) 10%, var(--border) 90%);
+    background: color-mix(in oklab, var(--foreground) 6%, var(--background));
+    box-shadow: none;
+}
+
+.dark .app-surface-card--success {
+    border-color: color-mix(in oklab, #17c653 30%, var(--border) 70%);
+    background: color-mix(in oklab, #17c653 10%, var(--background) 90%);
+    box-shadow: none;
+}
+
+.dark .app-shell-surface {
+    background:
+        radial-gradient(circle at top left, rgb(62 151 255 / 22%), transparent 30%),
+        linear-gradient(
+            180deg,
+            color-mix(in oklab, var(--background) 90%, var(--foreground) 10%),
+            color-mix(in oklab, var(--background) 98%, black 2%)
+        );
+}
+
+.dashboard-shell {
+    position: relative;
+}
+
+.dashboard-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .45rem .75rem;
+    border-radius: 9999px;
+    border: 1px solid color-mix(in oklab, var(--border) 82%, white 18%);
+    background: color-mix(in oklab, var(--background) 84%, var(--color-primary, #3e97ff) 16%);
+    font-size: .72rem;
+    line-height: 1;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--foreground);
+}
+
+.dashboard-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .5rem .85rem;
+    border-radius: 9999px;
+    border: 1px solid color-mix(in oklab, var(--border) 76%, white 24%);
+    background: rgb(255 255 255 / 62%);
+    color: var(--foreground);
+    font-size: .82rem;
+    backdrop-filter: blur(14px);
+}
+
+.dashboard-hero {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid color-mix(in oklab, var(--border) 72%, white 28%);
+    background:
+        radial-gradient(circle at top left, rgb(62 151 255 / 16%), transparent 34%),
+        radial-gradient(circle at bottom right, rgb(23 198 83 / 12%), transparent 30%),
+        linear-gradient(135deg, rgb(255 255 255 / 98%), rgb(245 248 255 / 92%));
+    box-shadow: 0 24px 70px rgb(15 23 42 / 10%);
+}
+
+.dashboard-hero__orb {
+    position: absolute;
+    z-index: 0;
+    border-radius: 9999px;
+    filter: blur(0);
+    opacity: .5;
+}
+
+.dashboard-hero__orb--primary {
+    top: -64px;
+    right: -48px;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgb(62 151 255 / 28%) 0%, transparent 68%);
+}
+
+.dashboard-hero__orb--secondary {
+    bottom: -84px;
+    left: -48px;
+    width: 260px;
+    height: 260px;
+    background: radial-gradient(circle, rgb(114 57 234 / 16%) 0%, transparent 70%);
+}
+
+.dashboard-focus-panel {
+    position: relative;
+    z-index: 1;
+    border-radius: 1.5rem;
+    border: 1px solid color-mix(in oklab, var(--border) 78%, white 22%);
+    background: rgb(255 255 255 / 74%);
+    padding: 1.2rem;
+    backdrop-filter: blur(18px);
+}
+
+.dashboard-focus-item {
+    display: flex;
+    align-items: flex-start;
+    gap: .9rem;
+    padding: .95rem 1rem;
+    border-radius: 1rem;
+    border: 1px solid color-mix(in oklab, var(--dashboard-accent, #3e97ff) 16%, var(--border) 84%);
+    background: linear-gradient(135deg, rgb(255 255 255 / 96%), color-mix(in oklab, var(--dashboard-accent, #3e97ff) 8%, white 92%));
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.dashboard-focus-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px rgb(15 23 42 / 8%);
+}
+
+.dashboard-focus-item__icon,
+.dashboard-kpi-card__icon,
+.dashboard-module-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1rem;
+    color: var(--dashboard-accent, #3e97ff);
+}
+
+.dashboard-focus-item__icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    background: color-mix(in oklab, var(--dashboard-accent, #3e97ff) 16%, white 84%);
+    font-size: 1.15rem;
+    flex-shrink: 0;
+}
+
+.dashboard-focus-item__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    height: 2rem;
+    padding-inline: .5rem;
+    border-radius: 9999px;
+    background: color-mix(in oklab, var(--dashboard-accent, #3e97ff) 18%, white 82%);
+    color: var(--dashboard-accent, #3e97ff);
+    font-size: .82rem;
+    font-weight: 700;
+}
+
+.dashboard-kpi-card {
+    border: 1px solid color-mix(in oklab, var(--dashboard-accent, #3e97ff) 12%, var(--border) 88%);
+    background: linear-gradient(180deg, rgb(255 255 255 / 100%), color-mix(in oklab, var(--dashboard-accent, #3e97ff) 4%, white 96%));
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.dashboard-kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 34px rgb(15 23 42 / 8%);
+}
+
+.dashboard-kpi-card__icon {
+    width: 3rem;
+    height: 3rem;
+    background: color-mix(in oklab, var(--dashboard-accent, #3e97ff) 14%, white 86%);
+    font-size: 1.2rem;
+}
+
+.dashboard-module-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.5rem;
+    border: 1px solid color-mix(in oklab, var(--dashboard-accent, #3e97ff) 13%, var(--border) 87%);
+    background:
+        linear-gradient(180deg, rgb(255 255 255 / 100%), color-mix(in oklab, var(--dashboard-accent, #3e97ff) 5%, white 95%));
+    padding: 1.25rem;
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.dashboard-module-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 36px rgb(15 23 42 / 8%);
+}
+
+.dashboard-module-card__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.dashboard-module-card__icon {
+    width: 3.15rem;
+    height: 3.15rem;
+    background: color-mix(in oklab, var(--dashboard-accent, #3e97ff) 14%, white 86%);
+    font-size: 1.35rem;
+}
+
+.dashboard-chart {
+    min-height: 320px;
+}
+
+.dashboard-chart--compact {
+    min-height: 280px;
+}
+
+.dashboard-chart--mini {
+    min-height: 220px;
+}
+
+.dashboard-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    border: 1px solid color-mix(in oklab, var(--border) 86%, white 14%);
+    background: linear-gradient(180deg, rgb(255 255 255 / 100%), rgb(248 250 252 / 88%));
+    transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+
+.dashboard-list-item:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in oklab, var(--color-primary, #3e97ff) 18%, var(--border) 82%);
+    box-shadow: 0 14px 28px rgb(15 23 42 / 8%);
+}
+
+.dashboard-empty-state {
+    border-radius: 1rem;
+    border: 1px dashed color-mix(in oklab, var(--border) 78%, white 22%);
+    background: rgb(248 250 252 / 84%);
+    padding: 1.1rem 1rem;
+    color: var(--color-muted-foreground, #6b7280);
+    font-size: .92rem;
+    line-height: 1.65;
+}
+
+.dark .dashboard-kicker {
+    border-color: color-mix(in oklab, var(--border) 84%, var(--foreground) 16%);
+    background: color-mix(in oklab, var(--color-primary, #3e97ff) 18%, var(--background) 82%);
+}
+
+.dark .dashboard-chip {
+    border-color: color-mix(in oklab, var(--border) 84%, var(--foreground) 16%);
+    background: color-mix(in oklab, var(--foreground) 8%, var(--background));
+}
+
+.dark .dashboard-hero {
+    border-color: color-mix(in oklab, var(--border) 86%, var(--foreground) 14%);
+    background:
+        radial-gradient(circle at top left, rgb(62 151 255 / 24%), transparent 34%),
+        radial-gradient(circle at bottom right, rgb(23 198 83 / 14%), transparent 34%),
+        linear-gradient(
+            135deg,
+            color-mix(in oklab, var(--background) 88%, var(--foreground) 12%),
+            color-mix(in oklab, var(--background) 96%, black 4%)
+        );
+    box-shadow: 0 26px 64px rgb(0 0 0 / 28%);
+}
+
+.dark .dashboard-focus-panel {
+    border-color: color-mix(in oklab, var(--border) 86%, var(--foreground) 14%);
+    background: color-mix(in oklab, var(--foreground) 8%, var(--background));
+}
+
+.dark .dashboard-focus-item {
+    border-color: color-mix(in oklab, var(--dashboard-accent, #3e97ff) 20%, var(--border) 80%);
+    background: linear-gradient(
+        135deg,
+        color-mix(in oklab, var(--background) 88%, var(--dashboard-accent, #3e97ff) 12%),
+        color-mix(in oklab, var(--background) 96%, var(--foreground) 4%)
+    );
+}
+
+.dark .dashboard-focus-item:hover,
+.dark .dashboard-kpi-card:hover,
+.dark .dashboard-module-card:hover,
+.dark .dashboard-list-item:hover {
+    box-shadow: 0 20px 38px rgb(0 0 0 / 26%);
+}
+
+.dark .dashboard-focus-item__icon,
+.dark .dashboard-kpi-card__icon,
+.dark .dashboard-module-card__icon {
+    background: color-mix(in oklab, var(--dashboard-accent, #3e97ff) 20%, var(--background) 80%);
+}
+
+.dark .dashboard-focus-item__count {
+    background: color-mix(in oklab, var(--dashboard-accent, #3e97ff) 24%, var(--background) 76%);
+}
+
+.dark .dashboard-kpi-card {
+    border-color: color-mix(in oklab, var(--dashboard-accent, #3e97ff) 16%, var(--border) 84%);
+    background: linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--background) 89%, var(--dashboard-accent, #3e97ff) 11%),
+        color-mix(in oklab, var(--background) 98%, black 2%)
+    );
+}
+
+.dark .dashboard-module-card {
+    border-color: color-mix(in oklab, var(--dashboard-accent, #3e97ff) 16%, var(--border) 84%);
+    background: linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--background) 89%, var(--dashboard-accent, #3e97ff) 11%),
+        color-mix(in oklab, var(--background) 98%, black 2%)
+    );
+}
+
+.dark .dashboard-list-item {
+    border-color: color-mix(in oklab, var(--border) 90%, var(--foreground) 10%);
+    background: linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--background) 92%, var(--foreground) 8%),
+        color-mix(in oklab, var(--background) 98%, black 2%)
+    );
+}
+
+.dark .dashboard-empty-state {
+    border-color: color-mix(in oklab, var(--border) 82%, var(--foreground) 18%);
+    background: color-mix(in oklab, var(--foreground) 6%, var(--background));
+}
+
+@media (max-width: 1024px) {
+    .dashboard-hero {
+        background:
+            radial-gradient(circle at top left, rgb(62 151 255 / 14%), transparent 40%),
+            linear-gradient(180deg, rgb(255 255 255 / 100%), rgb(247 249 255 / 94%));
+    }
+
+    .dashboard-chart {
+        min-height: 280px;
+    }
+}
+
 @import "./kt-btn-bootstrap.css";

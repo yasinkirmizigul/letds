@@ -70,7 +70,7 @@
                     @enderror
                 </div>
 
-                <div class="grid gap-3 rounded-3xl border border-border bg-muted/10 p-4">
+                <div class="grid gap-3 rounded-3xl app-surface-card app-surface-card--soft p-4">
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <label class="kt-form-label font-normal text-mono mb-0" for="slug">Slug ve URL</label>
                         <span class="text-xs text-muted-foreground">URL stabilitesini korumak icin sadece gerektiginde degistirin.</span>
@@ -102,7 +102,7 @@
                         <div class="text-xs text-danger">{{ $message }}</div>
                     @enderror
 
-                    <div class="rounded-2xl border border-border bg-white px-4 py-3 text-sm text-muted-foreground">
+                    <div class="rounded-2xl app-surface-card px-4 py-3 text-sm text-muted-foreground">
                         URL onizleme:
                         <span class="font-medium text-foreground">{{ url('/products') }}/<span id="url_slug_preview">{{ $currentSlug }}</span></span>
                     </div>
@@ -321,7 +321,7 @@
                 </div>
 
                 <div class="grid gap-4 self-start">
-                    <div class="rounded-[28px] border border-border bg-white p-5 shadow-sm">
+                    <div class="rounded-[28px] app-surface-card p-5">
                         <div class="text-[11px] uppercase tracking-[0.24em] text-muted-foreground">Arama Onizlemesi</div>
                         <div class="mt-4 grid gap-2">
                             <div class="text-base font-semibold leading-6 text-primary" data-product-seo-preview-title>
@@ -336,7 +336,7 @@
                         </div>
                     </div>
 
-                    <div class="rounded-3xl border border-border bg-muted/10 p-4 text-sm text-muted-foreground">
+                    <div class="rounded-3xl app-surface-card app-surface-card--soft p-4 text-sm text-muted-foreground">
                         Meta title icin 30-60, meta description icin 100-160 karakter araligi daha dengeli gorunur.
                     </div>
                 </div>
@@ -360,7 +360,7 @@
             </div>
 
             <div class="kt-card-content p-6 grid gap-4">
-                <div class="rounded-3xl border border-border bg-muted/10 p-4">
+                <div class="rounded-3xl app-surface-card app-surface-card--soft p-4">
                     <div class="grid gap-3">
                         <div class="flex items-center justify-between gap-3">
                             <div class="font-medium text-foreground">Workflow Durumu</div>
@@ -394,7 +394,7 @@
                     </div>
                 </div>
 
-                <div class="rounded-3xl border border-border bg-muted/10 p-4">
+                <div class="rounded-3xl app-surface-card app-surface-card--soft p-4">
                     <div class="flex items-start justify-between gap-3">
                         <div class="grid gap-1">
                             <div class="font-medium text-foreground">Anasayfa Vitrini</div>
@@ -427,7 +427,7 @@
                     @enderror
                 </div>
 
-                <div class="rounded-3xl border border-border bg-muted/10 p-4">
+                <div class="rounded-3xl app-surface-card app-surface-card--soft p-4">
                     <div class="flex items-start justify-between gap-3">
                         <div class="grid gap-1">
                             <div class="font-medium text-foreground">Aktiflik</div>
@@ -474,22 +474,22 @@
 
             <div class="kt-card-content p-6 grid gap-4">
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="rounded-3xl border border-border bg-white p-4">
+                    <div class="rounded-3xl app-surface-card p-4">
                         <div class="text-xs uppercase tracking-[0.18em] text-muted-foreground">Kelime</div>
                         <div class="mt-2 text-2xl font-semibold text-foreground" data-product-word-count>{{ $initialWordCount }} kelime</div>
                     </div>
-                    <div class="rounded-3xl border border-border bg-white p-4">
+                    <div class="rounded-3xl app-surface-card p-4">
                         <div class="text-xs uppercase tracking-[0.18em] text-muted-foreground">Okuma</div>
                         <div class="mt-2 text-2xl font-semibold text-foreground" data-product-read-time>{{ $initialReadTime }} dk</div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="rounded-3xl border border-border bg-white p-4">
+                    <div class="rounded-3xl app-surface-card p-4">
                         <div class="text-xs uppercase tracking-[0.18em] text-muted-foreground">Fiyat</div>
                         <div class="mt-2 text-lg font-semibold text-foreground" data-product-price-preview>{{ $resolvedPrice }}</div>
                     </div>
-                    <div class="rounded-3xl border border-border bg-white p-4">
+                    <div class="rounded-3xl app-surface-card p-4">
                         <div class="text-xs uppercase tracking-[0.18em] text-muted-foreground">Stok</div>
                         <div class="mt-2">
                             <span class="kt-badge kt-badge-sm {{ $stockBadgeClass }}" data-product-stock-badge>{{ $stockBadgeLabel }}</span>
@@ -497,7 +497,7 @@
                     </div>
                 </div>
 
-                <div class="rounded-3xl border border-border bg-muted/10 p-4">
+                <div class="rounded-3xl app-surface-card app-surface-card--soft p-4">
                     <div class="flex items-center justify-between gap-3">
                         <div>
                             <div class="text-xs uppercase tracking-[0.18em] text-muted-foreground">SEO Tamamlilik</div>

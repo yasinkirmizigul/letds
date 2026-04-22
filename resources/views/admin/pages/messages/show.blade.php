@@ -40,7 +40,7 @@
                             <h3 class="kt-card-title">Mesaj İçeriği</h3>
                         </div>
                         <div class="kt-card-content p-6">
-                            <div class="rounded-3xl border border-border bg-muted/10 p-5 whitespace-pre-line text-sm leading-7 text-foreground">
+                            <div class="rounded-3xl app-surface-card app-surface-card--soft p-5 whitespace-pre-line text-sm leading-7 text-foreground">
                                 {{ $message->message }}
                             </div>
                         </div>
@@ -51,15 +51,15 @@
                             <h3 class="kt-card-title">Kayıt Meta Bilgileri</h3>
                         </div>
                         <div class="kt-card-content p-6 grid gap-4 md:grid-cols-2">
-                            <div class="rounded-2xl border border-border bg-white px-4 py-4">
+                            <div class="rounded-2xl app-surface-card px-4 py-4">
                                 <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">İletişim tercihi</div>
                                 <div class="mt-2 font-medium text-foreground">{{ $message->preferredChannelsLabel() }}</div>
                             </div>
-                            <div class="rounded-2xl border border-border bg-white px-4 py-4">
+                            <div class="rounded-2xl app-surface-card px-4 py-4">
                                 <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">IP adresi</div>
                                 <div class="mt-2 font-medium text-foreground">{{ $message->ip_address ?: '-' }}</div>
                             </div>
-                            <div class="rounded-2xl border border-border bg-white px-4 py-4 md:col-span-2">
+                            <div class="rounded-2xl app-surface-card px-4 py-4 md:col-span-2">
                                 <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">User Agent</div>
                                 <div class="mt-2 break-all text-sm text-foreground">{{ $message->user_agent ?: '-' }}</div>
                             </div>
@@ -73,21 +73,21 @@
                             <h3 class="kt-card-title">Gönderen</h3>
                         </div>
                         <div class="kt-card-content p-6 grid gap-4">
-                            <div class="rounded-2xl border border-border bg-white px-4 py-4">
+                            <div class="rounded-2xl app-surface-card px-4 py-4">
                                 <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Ad Soyad</div>
                                 <div class="mt-2 font-medium text-foreground">{{ $message->sender_full_name }}</div>
                             </div>
-                            <div class="rounded-2xl border border-border bg-white px-4 py-4">
+                            <div class="rounded-2xl app-surface-card px-4 py-4">
                                 <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">E-posta</div>
                                 <div class="mt-2 font-medium text-foreground">{{ $message->sender_email ?: 'Belirtilmedi' }}</div>
                             </div>
-                            <div class="rounded-2xl border border-border bg-white px-4 py-4">
+                            <div class="rounded-2xl app-surface-card px-4 py-4">
                                 <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Telefon</div>
                                 <div class="mt-2 font-medium text-foreground">{{ $message->sender_phone ?: 'Belirtilmedi' }}</div>
                             </div>
 
                             @if($message->member)
-                                <div class="rounded-2xl border border-success/20 bg-success/5 px-4 py-4">
+                                <div class="rounded-2xl app-surface-card app-surface-card--success px-4 py-4">
                                     <div class="text-xs uppercase tracking-[0.16em] text-success">Üye kaydı ile eşleşti</div>
                                     <div class="mt-2 text-sm text-foreground">
                                         #{{ $message->member->id }} • {{ $message->member->full_name }}
@@ -102,11 +102,11 @@
                             <h3 class="kt-card-title">Alıcı</h3>
                         </div>
                         <div class="kt-card-content p-6 grid gap-4">
-                            <div class="rounded-2xl border border-border bg-white px-4 py-4">
+                            <div class="rounded-2xl app-surface-card px-4 py-4">
                                 <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Kullanıcı</div>
                                 <div class="mt-2 font-medium text-foreground">{{ $message->recipient_display_name }}</div>
                             </div>
-                            <div class="rounded-2xl border border-border bg-white px-4 py-4">
+                            <div class="rounded-2xl app-surface-card px-4 py-4">
                                 <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">E-posta</div>
                                 <div class="mt-2 font-medium text-foreground">{{ $message->recipient?->email ?: 'Kullanıcı kaydı bulunamadı' }}</div>
                             </div>
