@@ -3,10 +3,13 @@
 namespace App\Models\Admin\Product;
 
 use App\Models\Admin\Category;
+use App\Models\Admin\Media\Media;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
@@ -14,16 +17,52 @@ class Product extends Model
 
     protected $table = 'products';
 
-    // Admin panel context: hızlı ilerlemek için guarded açık.
-    protected $guarded = [];
+    protected $fillable = [
+        'title',
+        'slug',
+        'content',
+        'sku',
+        'price',
+        'stock',
+        'barcode',
+        'sale_price',
+        'currency',
+        'vat_rate',
+        'brand',
+        'weight',
+        'width',
+        'height',
+        'length',
+        'is_active',
+        'sort_order',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
+        'featured_image_path',
+        'status',
+        'is_featured',
+        'featured_at',
+        'appointment_id',
+    ];
 
-    // ---- Workflow status ----
+    protected $casts = [
+        'price' => 'decimal:2',
+        'sale_price' => 'decimal:2',
+        'weight' => 'decimal:3',
+        'width' => 'decimal:3',
+        'height' => 'decimal:3',
+        'length' => 'decimal:3',
+        'is_active' => 'boolean',
+        'is_featured' => 'boolean',
+        'featured_at' => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
+
     public const STATUS_DRAFT = 'draft';
+    public const STATUS_APPOINTMENT_PENDING = 'appointment_pending';
     public const STATUS_ACTIVE = 'active';
     public const STATUS_ARCHIVED = 'archived';
-    public const STATUS_APPOINTMENT_PENDING = 'appointment_pending';
 
-    // Project ile aynı sözleşme: STATUS_OPTIONS + helperlar
     public const STATUS_OPTIONS = [
         self::STATUS_APPOINTMENT_PENDING => [
             'label' => 'Randevu Bekliyor',
@@ -41,61 +80,168 @@ class Product extends Model
             'order' => 30,
         ],
         self::STATUS_ARCHIVED => [
-            'label' => 'Arşiv',
+            'label' => 'Arsiv',
             'badge' => 'kt-badge kt-badge-sm kt-badge-light-danger',
             'order' => 40,
         ],
     ];
 
+    public function scopeSearch(Builder $query, string $term): Builder
+    {
+        $term = trim($term);
+        if ($term === '') {
+            return $query;
+        }
+
+        return $query->where(function (Builder $builder) use ($term) {
+            $builder
+                ->where('title', 'like', "%{$term}%")
+                ->orWhere('slug', 'like', "%{$term}%")
+                ->orWhere('sku', 'like', "%{$term}%")
+                ->orWhere('barcode', 'like', "%{$term}%")
+                ->orWhere('brand', 'like', "%{$term}%")
+                ->orWhere('meta_title', 'like', "%{$term}%");
+        });
+    }
+
+    public function scopeInStatus(Builder $query, ?string $status): Builder
+    {
+        if (!$status || $status === 'all') {
+            return $query;
+        }
+
+        return $query->where('status', $status);
+    }
+
+    public function scopeFeatured(Builder $query): Builder
+    {
+        return $query->where('is_featured', true);
+    }
+
+    public function scopeLowStock(Builder $query, int $threshold = 5): Builder
+    {
+        return $query
+            ->whereNotNull('stock')
+            ->where('stock', '<=', max(0, $threshold));
+    }
+
     public static function statusOptionsSorted(): array
     {
-        $opts = self::STATUS_OPTIONS;
-        uasort($opts, fn ($a, $b) => (int)($a['order'] ?? 0) <=> (int)($b['order'] ?? 0));
-        return $opts;
+        $options = self::STATUS_OPTIONS;
+        uasort($options, fn (array $left, array $right) => (int) ($left['order'] ?? 0) <=> (int) ($right['order'] ?? 0));
+
+        return $options;
     }
 
     public static function statusLabel(?string $key): string
     {
-        $k = $key ?: self::STATUS_APPOINTMENT_PENDING;
-        return self::STATUS_OPTIONS[$k]['label'] ?? $k;
+        $resolved = $key ?: self::STATUS_APPOINTMENT_PENDING;
+
+        return self::STATUS_OPTIONS[$resolved]['label'] ?? $resolved;
     }
 
     public static function statusBadgeClass(?string $key): string
     {
-        $k = $key ?: self::STATUS_APPOINTMENT_PENDING;
-        return self::STATUS_OPTIONS[$k]['badge'] ?? 'kt-badge kt-badge-sm kt-badge-light';
+        $resolved = $key ?: self::STATUS_APPOINTMENT_PENDING;
+
+        return self::STATUS_OPTIONS[$resolved]['badge'] ?? 'kt-badge kt-badge-sm kt-badge-light';
     }
 
-    // ---- Relations ----
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'category_product', 'product_id', 'category_id');
     }
 
-    // ---- Featured media helper ----
+    public function featuredMedia(): MorphToMany
+    {
+        return $this->morphToMany(
+            Media::class,
+            'mediable',
+            'mediables',
+            'mediable_id',
+            'media_id'
+        )
+            ->withPivot(['collection', 'order'])
+            ->withTimestamps()
+            ->wherePivot('collection', 'featured')
+            ->orderBy('pivot_order');
+    }
+
+    public function featuredMediaOne(): ?Media
+    {
+        if ($this->relationLoaded('featuredMedia')) {
+            return $this->featuredMedia
+                ->sortBy(fn (Media $media) => (int) ($media->pivot->order ?? 0))
+                ->first();
+        }
+
+        return $this->featuredMedia()->first();
+    }
+
     public function featuredMediaUrl(): ?string
     {
-        // Project'te kullanılan pivot: mediables (collection=featured)
-        $mediaId = DB::table('mediables')
-            ->where('mediable_type', self::class)
-            ->where('mediable_id', $this->id)
-            ->where('collection', 'featured')
-            ->orderBy('order')
-            ->value('media_id');
+        $media = $this->featuredMediaOne();
+        if ($media) {
+            return $media->url('optimized');
+        }
 
-        if (!$mediaId) return null;
+        return $this->featuredImageUrl();
+    }
 
-        // Media tablonuzun adı "media" ve url alanı/ methodu proje tarafında farklı olabilir.
-        // En güvenlisi: Media modelinizde getUrl() / url / path neyse ona bağlamak.
-        // Bu helper burada null dönebilir; index blade'de fallback var.
-        $row = DB::table('media')->where('id', $mediaId)->first();
-        if (!$row) return null;
+    public function getFeaturedImageUrlAttribute(): ?string
+    {
+        return $this->featuredImageUrl();
+    }
 
-        // En yaygın senaryo: media.path (storage relative) veya media.url
-        if (isset($row->url) && $row->url) return (string) $row->url;
-        if (isset($row->path) && $row->path) return asset('storage/' . ltrim((string)$row->path, '/'));
-        if (isset($row->file_path) && $row->file_path) return asset('storage/' . ltrim((string)$row->file_path, '/'));
+    public function featuredImageUrl(): ?string
+    {
+        return $this->featured_image_path
+            ? asset('storage/' . $this->featured_image_path)
+            : null;
+    }
 
-        return null;
+    public function contentWordCount(): int
+    {
+        $content = strip_tags((string) $this->content);
+        preg_match_all('/[\pL\pN]+/u', $content, $matches);
+
+        return count($matches[0] ?? []);
+    }
+
+    public function estimatedReadTimeMinutes(int $wordsPerMinute = 220): int
+    {
+        $words = $this->contentWordCount();
+        if ($words === 0) {
+            return 0;
+        }
+
+        return max(1, (int) ceil($words / max(1, $wordsPerMinute)));
+    }
+
+    public function excerptPreview(int $limit = 140): string
+    {
+        $normalized = preg_replace('/\s+/u', ' ', trim(strip_tags((string) $this->content)));
+
+        return Str::limit((string) $normalized, $limit);
+    }
+
+    public function hasSeoMetadata(): bool
+    {
+        return filled($this->meta_title) && filled($this->meta_description);
+    }
+
+    public function seoCompletenessScore(): int
+    {
+        $checks = [
+            filled($this->title),
+            filled($this->content),
+            filled($this->meta_title),
+            filled($this->meta_description),
+            filled($this->featured_image_path) || $this->featuredMediaOne() !== null,
+        ];
+
+        $completed = collect($checks)->filter()->count();
+
+        return (int) round(($completed / count($checks)) * 100);
     }
 }

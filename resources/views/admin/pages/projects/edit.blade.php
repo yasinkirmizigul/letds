@@ -1,123 +1,67 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    @php
-        $currentStatus = old('status', $project?->status ?? \App\Models\Admin\Project\Project::STATUS_APPOINTMENT_PENDING);
-        $currentFeatured = (bool) old('is_featured', (bool)($project?->is_featured ?? false));
-        $st = $statusOptions[$currentStatus] ?? $statusOptions[\App\Models\Admin\Project\Project::STATUS_APPOINTMENT_PENDING];
-    @endphp
-
-    <div class="kt-container-fixed"
-         data-page="projects.edit"
-         data-id="{{ $project->id }}"
-         data-upload-url="{{ Route::has('admin.tinymce.upload') ? route('admin.tinymce.upload') : url('/admin/tinymce/upload') }}"
-         data-tinymce-src="{{ asset('assets/vendors/tinymce/tinymce.min.js') }}"
-         data-tinymce-base="{{ url('/assets/vendors/tinymce') }}"
-         data-tinymce-lang-url="{{ asset('assets/vendors/tinymce/langs/tr.js') }}"
-         data-status-options='@json($statusOptions)'>
-
+    <div
+        class="kt-container-fixed max-w-[96%]"
+        data-page="projects.edit"
+        data-upload-url="{{ route('admin.tinymce.upload') }}"
+        data-tinymce-src="{{ asset('assets/vendors/tinymce/tinymce.min.js') }}"
+        data-tinymce-base="{{ asset('assets/vendors/tinymce') }}"
+        data-tinymce-lang-url="{{ asset('assets/vendors/tinymce/langs/tr.js') }}"
+        data-slug-check-url="{{ route('admin.projects.checkSlug') }}"
+        data-slug-ignore-id="{{ $project->id }}"
+        data-status-options='@json($statusOptions)'
+        data-public-statuses='@json(array_values($publicStatuses ?? []))'
+        data-project-index-url="{{ route('admin.projects.index') }}"
+        data-project-delete-url="{{ route('admin.projects.destroy', $project) }}"
+    >
         @includeIf('admin.partials._flash')
 
-        <form method="POST"
-              action="{{ route('admin.projects.update', $project) }}"
-              class="grid gap-5 lg:gap-7.5"
-              enctype="multipart/form-data">
+        <div class="flex flex-col gap-4 mb-6 lg:flex-row lg:items-end lg:justify-between">
+            <div class="grid gap-2">
+                <span class="kt-badge kt-badge-sm {{ $project->is_featured ? 'kt-badge-light-success' : 'kt-badge-light' }} w-fit">
+                    {{ $project->is_featured ? 'Anasayfada' : 'Normal Kayit' }}
+                </span>
+                <div>
+                    <h1 class="text-xl font-semibold">Projeyi Duzenle</h1>
+                    <div class="text-sm text-muted-foreground">#{{ $project->id }} - {{ $project->title }}</div>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="{{ route('admin.projects.index') }}" class="kt-btn kt-btn-light">Geri</a>
+                <button class="kt-btn kt-btn-primary" type="submit" form="project-update-form">Kaydet</button>
+                @perm('projects.delete')
+                    <button type="button" id="projectDeleteBtn" class="kt-btn kt-btn-danger">Sil</button>
+                @endperm
+            </div>
+        </div>
+
+        <form
+            id="project-update-form"
+            method="POST"
+            action="{{ route('admin.projects.update', $project) }}"
+            enctype="multipart/form-data"
+            class="grid gap-6"
+        >
             @csrf
             @method('PUT')
 
             @include('admin.pages.projects.partials._form', [
                 'project' => $project,
-                'categories' => $categories ?? collect(),
+                'categoryOptions' => $categoryOptions ?? [],
                 'selectedCategoryIds' => $selectedCategoryIds ?? [],
                 'featuredMediaId' => $featuredMediaId ?? null,
+                'statusOptions' => $statusOptions ?? [],
+                'publicStatuses' => $publicStatuses ?? [],
             ])
 
-            {{-- ✅ Durum + Anasayfa --}}
-            <div class="kt-card">
-                <div class="kt-card-header py-4">
-                    <h3 class="kt-card-title">Durum &amp; Anasayfa</h3>
-                </div>
-
-                <div class="kt-card-body p-5">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-
-                        {{-- Sol kolon: Durum --}}
-                        <div class="grid gap-2">
-                            <label for="status" class="kt-label">Durum</label>
-
-                            <div class="flex items-center gap-3">
-                                <select id="status"
-                                        name="status"
-                                        class="kt-select w-full"
-                                        data-kt-select="true"
-                                        data-kt-select-placeholder="Durum"
-                                        data-status-select>
-                                    @foreach($statusOptions as $key => $opt)
-                                        <option value="{{ $key }}" {{ $currentStatus === $key ? 'selected' : '' }}>
-                                            {{ $opt['label'] }}
-                                        </option>
-                                    @endforeach
-                                </select>
-
-                                <span id="status_badge_preview"
-                                      class="{{ $st['badge'] }} whitespace-nowrap items-center px-2 min-w-[130px] truncate"
-                                      data-status-badge>
-                        {{ $st['label'] }}
-                    </span>
-                            </div>
-
-                            @error('status')
-                            <div class="kt-error">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        {{-- Sağ kolon: Anasayfa --}}
-                        <div class="grid gap-2">
-                            <label class="kt-label">Anasayfada göster</label>
-
-                            <div class="flex items-center gap-3">
-                                <input type="hidden" name="is_featured" value="0" />
-                                <input type="checkbox"
-                                       id="is_featured"
-                                       class="kt-switch"
-                                       name="is_featured"
-                                       value="1"
-                                       data-featured-toggle
-                                    {{ $currentFeatured ? 'checked' : '' }}>
-
-                                <span
-                                    class="js-featured-label kt-badge kt-badge-sm transition-all duration-200
-                                       {{ $currentFeatured ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }}"
-                                                        aria-live="polite"
-                                                    >
-                                            {{ $currentFeatured ? 'Anasayfada' : 'Kapalı' }}
-                                 </span>
-                            </div>
-
-                            <div class="text-xs text-muted-foreground">
-                                En fazla 5 proje aynı anda anasayfada görünebilir.
-                            </div>
-
-                            @error('is_featured')
-                            <div class="kt-error">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex items-center justify-between gap-3">
-                <button type="button" id="projectDeleteBtn" class="kt-btn kt-btn-danger">Sil</button>
-
-                <div class="flex items-center gap-3">
-                    <button type="submit" class="kt-btn kt-btn-primary">Güncelle</button>
-                    <a href="{{ route('admin.projects.index') }}" class="kt-btn kt-btn-light">Geri</a>
-                </div>
+            <div class="flex items-center justify-end gap-3">
+                <a href="{{ route('admin.projects.index') }}" class="kt-btn kt-btn-light">Iptal</a>
+                <button type="submit" class="kt-btn kt-btn-primary">Guncelle</button>
             </div>
         </form>
-    </div>
 
-    @include('admin.pages.media.partials._upload-modal')
+        @include('admin.pages.media.partials._upload-modal')
+    </div>
 @endsection

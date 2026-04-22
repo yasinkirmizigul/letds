@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Admin\Media;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Media\Media;
 use App\Services\Admin\Media\MediaService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Throwable;
 
 class MediaController extends Controller
@@ -16,8 +16,9 @@ class MediaController extends Controller
     public function index()
     {
         return view('admin.pages.media.index', [
-            'pageTitle' => 'Medya Kütüphanesi',
+            'pageTitle' => 'Medya Kutuphanesi',
             'mode' => 'active',
+            'stats' => $this->stats(),
         ]);
     }
 
@@ -26,6 +27,7 @@ class MediaController extends Controller
         return view('admin.pages.media.index', [
             'pageTitle' => 'Silinen Medyalar',
             'mode' => 'trash',
+            'stats' => $this->stats(),
         ]);
     }
 
@@ -33,39 +35,39 @@ class MediaController extends Controller
     {
         $mode = $request->string('mode', 'active')->toString();
 
-        $q = $mode === 'trash'
+        $query = $mode === 'trash'
             ? Media::onlyTrashed()->latest('id')
             : Media::query()->latest('id');
 
         if ($type = $request->string('type')->toString()) {
             if ($type === 'image') {
-                $q->where('mime_type', 'like', 'image/%');
+                $query->where('mime_type', 'like', 'image/%');
             } elseif ($type === 'video') {
-                $q->where('mime_type', 'like', 'video/%');
+                $query->where('mime_type', 'like', 'video/%');
             } elseif ($type === 'pdf') {
-                $q->where('mime_type', 'application/pdf');
+                $query->where('mime_type', 'application/pdf');
             }
         }
 
         if ($term = $request->string('q')->toString()) {
-            $q->where(function ($qq) use ($term) {
-                $qq->where('original_name', 'like', "%{$term}%")
+            $query->where(function ($builder) use ($term) {
+                $builder->where('original_name', 'like', "%{$term}%")
                     ->orWhere('title', 'like', "%{$term}%")
                     ->orWhere('alt', 'like', "%{$term}%");
             });
         }
 
         $perPage = max(1, min(96, (int) $request->input('perpage', 24)));
-        $items = $q->paginate($perPage);
+        $items = $query->paginate($perPage);
 
         return response()->json([
-            'ok'   => true,
-            'data' => $items->getCollection()->map(fn (Media $m) => $this->mediaPayload($m))->values(),
+            'ok' => true,
+            'data' => $items->getCollection()->map(fn (Media $media) => $this->mediaPayload($media))->values(),
             'meta' => [
                 'current_page' => $items->currentPage(),
-                'last_page'    => $items->lastPage(),
-                'per_page'     => $items->perPage(),
-                'total'        => $items->total(),
+                'last_page' => $items->lastPage(),
+                'per_page' => $items->perPage(),
+                'total' => $items->total(),
             ],
         ]);
     }
@@ -74,151 +76,171 @@ class MediaController extends Controller
     {
         try {
             $request->validate([
-                'file'      => ['required_without:files', 'file', 'max:20480'],
-                'files'     => ['required_without:file', 'array'],
-                'files.*'   => ['file', 'max:20480'],
-                'title'     => ['nullable', 'string', 'max:255'],
-                'alt'       => ['nullable', 'string', 'max:255'],
+                'file' => ['required_without:files', 'file', 'max:20480'],
+                'files' => ['required_without:file', 'array'],
+                'files.*' => ['file', 'max:20480'],
+                'title' => ['nullable', 'string', 'max:255'],
+                'alt' => ['nullable', 'string', 'max:255'],
             ]);
 
             $title = $request->input('title');
-            $alt   = $request->input('alt');
+            $alt = $request->input('alt');
 
             $files = $request->file('files');
-            if (is_array($files) && count($files)) {
+            if (is_array($files) && count($files) > 0) {
                 $uploaded = [];
-                foreach ($files as $f) {
-                    $m = $this->mediaService->store($f, [
+                foreach ($files as $file) {
+                    $media = $this->mediaService->store($file, [
                         'title' => $title,
-                        'alt'   => $alt,
+                        'alt' => $alt,
                     ]);
-                    $uploaded[] = $this->mediaPayload($m);
+                    $uploaded[] = $this->mediaPayload($media);
                 }
 
-                return response()->json(['ok' => true, 'data' => $uploaded]);
+                return response()->json([
+                    'ok' => true,
+                    'message' => 'Dosyalar yuklendi.',
+                    'data' => $uploaded,
+                ]);
             }
 
-            $file = $request->file('file');
-            $m = $this->mediaService->store($file, [
+            $media = $this->mediaService->store($request->file('file'), [
                 'title' => $title,
-                'alt'   => $alt,
+                'alt' => $alt,
             ]);
 
-            return response()->json(['ok' => true, 'data' => $this->mediaPayload($m)]);
-        } catch (Throwable $e) {
-            report($e);
             return response()->json([
-                'ok'    => false,
-                'error' => ['message' => $e->getMessage()],
+                'ok' => true,
+                'message' => 'Dosya yuklendi.',
+                'data' => $this->mediaPayload($media),
+            ]);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json([
+                'ok' => false,
+                'error' => ['message' => $exception->getMessage()],
             ], 422);
         }
     }
 
-    // Single soft delete
     public function destroy(Media $media): JsonResponse
     {
         $media->delete();
 
         return response()->json([
-            'ok'   => true,
+            'ok' => true,
+            'message' => 'Medya cop kutusuna tasindi.',
             'data' => ['deleted' => true],
         ]);
     }
 
-    // Single restore
     public function restore(int $id): JsonResponse
     {
-        $m = Media::onlyTrashed()->findOrFail($id);
-        $m->restore();
+        $media = Media::onlyTrashed()->findOrFail($id);
+        $media->restore();
 
         return response()->json([
-            'ok'   => true,
+            'ok' => true,
+            'message' => 'Medya geri yuklendi.',
             'data' => ['restored' => true],
         ]);
     }
 
-    // Single force delete (db + file)
     public function forceDestroy(int $id): JsonResponse
     {
-        $m = Media::withTrashed()->findOrFail($id);
-        $m->forceDelete();
+        $media = Media::withTrashed()->findOrFail($id);
+        $media->forceDelete();
 
         return response()->json([
-            'ok'   => true,
+            'ok' => true,
+            'message' => 'Medya kalici olarak silindi.',
             'data' => ['force_deleted' => true],
         ]);
     }
 
-    // Bulk soft delete
     public function bulkDestroy(Request $request): JsonResponse
     {
-        $ids = $request->input('ids', []);
-        if (!is_array($ids) || count($ids) === 0) {
-            return response()->json(['ok' => false, 'error' => ['message' => 'Seçili kayıt yok.']], 422);
+        $ids = $this->validatedIds($request->input('ids', []));
+        if (count($ids) === 0) {
+            return response()->json(['ok' => false, 'error' => ['message' => 'Secili kayit yok.']], 422);
         }
 
-        $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
-        $count = Media::query()->whereIn('id', $ids)->delete(); // soft delete
+        $count = Media::query()->whereIn('id', $ids)->delete();
 
         return response()->json([
-            'ok'   => true,
+            'ok' => true,
+            'message' => 'Secili medya kayitlari silindi.',
             'data' => ['deleted' => $count],
         ]);
     }
 
-    // Bulk restore
     public function bulkRestore(Request $request): JsonResponse
     {
-        $ids = $request->input('ids', []);
-        if (!is_array($ids) || count($ids) === 0) {
-            return response()->json(['ok' => false, 'error' => ['message' => 'Seçili kayıt yok.']], 422);
+        $ids = $this->validatedIds($request->input('ids', []));
+        if (count($ids) === 0) {
+            return response()->json(['ok' => false, 'error' => ['message' => 'Secili kayit yok.']], 422);
         }
 
-        $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
         $count = Media::onlyTrashed()->whereIn('id', $ids)->restore();
 
         return response()->json([
-            'ok'   => true,
+            'ok' => true,
+            'message' => 'Secili medya kayitlari geri yuklendi.',
             'data' => ['restored' => $count],
         ]);
     }
 
-    // Bulk force delete
     public function bulkForceDestroy(Request $request): JsonResponse
     {
-        $ids = $request->input('ids', []);
-        if (!is_array($ids) || count($ids) === 0) {
-            return response()->json(['ok' => false, 'error' => ['message' => 'Seçili kayıt yok.']], 422);
+        $ids = $this->validatedIds($request->input('ids', []));
+        if (count($ids) === 0) {
+            return response()->json(['ok' => false, 'error' => ['message' => 'Secili kayit yok.']], 422);
         }
 
-        $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
         $items = Media::withTrashed()->whereIn('id', $ids)->get();
-
-        foreach ($items as $m) {
-            $m->forceDelete();
+        foreach ($items as $media) {
+            $media->forceDelete();
         }
 
         return response()->json([
-            'ok'   => true,
+            'ok' => true,
+            'message' => 'Secili medya kayitlari kalici olarak silindi.',
             'data' => ['force_deleted' => $items->count()],
         ]);
     }
 
-    private function mediaPayload(Media $m): array
+    private function mediaPayload(Media $media): array
     {
         return [
-            'id'            => $m->id,
-            'uuid'          => $m->uuid,
-            'url'           => $m->url(),
-            'thumb_url'     => $m->thumbUrl(),
-            'original_name' => $m->original_name,
-            'mime_type'     => $m->mime_type,
-            'size'          => (int) $m->size,
-            'width'         => $m->width,
-            'height'        => $m->height,
-            'is_image'      => $m->isImage(),
-            'created_at'    => $m->created_at?->toDateTimeString(),
-            'deleted_at'    => $m->deleted_at?->toDateTimeString(),
+            'id' => $media->id,
+            'uuid' => $media->uuid,
+            'url' => $media->url(),
+            'thumb_url' => $media->thumbUrl(),
+            'original_name' => $media->original_name,
+            'mime_type' => $media->mime_type,
+            'size' => (int) $media->size,
+            'width' => $media->width,
+            'height' => $media->height,
+            'is_image' => $media->isImage(),
+            'created_at' => $media->created_at?->toDateTimeString(),
+            'deleted_at' => $media->deleted_at?->toDateTimeString(),
+        ];
+    }
+
+    private function validatedIds($ids): array
+    {
+        return array_values(array_unique(array_filter(array_map('intval', is_array($ids) ? $ids : []))));
+    }
+
+    private function stats(): array
+    {
+        return [
+            'active' => Media::query()->count(),
+            'trash' => Media::onlyTrashed()->count(),
+            'images' => Media::query()->where('mime_type', 'like', 'image/%')->count(),
+            'videos' => Media::query()->where('mime_type', 'like', 'video/%')->count(),
+            'pdfs' => Media::query()->where('mime_type', 'application/pdf')->count(),
         ];
     }
 }

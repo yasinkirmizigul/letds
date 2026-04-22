@@ -1,320 +1,644 @@
 import { request } from '@/core/http';
 import { showConfirmDialog, showToastMessage } from '@/core/swal-alert';
 
-/**
- * resources/js/admin/pages/products/index.js
- * Project list sayfasının layout/UX kalıbıyla uyumlu (kt-card header + scrollable table).
- * Backend: ProductController@index (server-rendered) + bulk/status/featured ajax aksiyonları.
- */
+let imagePopover = null;
+let statusPopover = null;
 
-/* global Swal */
-
-async function req(url, { method = 'POST', body = null, headers = {} } = {}) {
-  return request(url, { method, data: body, headers, ignoreGlobalError: true });
+function notify(type, text) {
+    showToastMessage(type === 'error' ? 'error' : 'success', text, { duration: 1800 });
 }
 
-function buildUrlWithParams(baseUrl, params) {
-  const u = new URL(baseUrl, window.location.origin);
-  const cur = new URL(window.location.href);
-  // mevcut query string'i taşı
-  cur.searchParams.forEach((v, k) => u.searchParams.set(k, v));
+function resolveErrorMessage(error, fallback) {
+    const validationErrors = error?.data?.errors;
+    if (validationErrors && typeof validationErrors === 'object') {
+        const firstError = Object.values(validationErrors).flat().find(Boolean);
+        if (firstError) {
+            return firstError;
+        }
+    }
 
-  Object.entries(params).forEach(([k, v]) => {
-    if (v === null || v === undefined || v === '') u.searchParams.delete(k);
-    else u.searchParams.set(k, String(v));
-  });
-
-  return u.pathname + '?' + u.searchParams.toString();
+    return error?.data?.message || error?.message || fallback;
 }
 
-function getMode(root) {
-  const page = root?.dataset?.page || '';
-  return page.endsWith('.trash') ? 'trash' : 'active';
+function createImagePopover() {
+    const element = document.createElement('div');
+    element.style.position = 'fixed';
+    element.style.zIndex = '9999';
+    element.style.display = 'none';
+    element.className = 'kt-card p-2 shadow-lg';
+    element.innerHTML = '<img src="" style="width:220px;height:220px;object-fit:cover;border-radius:12px;">';
+    document.body.appendChild(element);
+
+    return element;
 }
 
-function selectedIds(root) {
-  const ids = [];
-  root.querySelectorAll('.products-check:checked').forEach((cb) => ids.push(cb.value));
-  return ids;
+function showImagePopover(element, anchor, imageUrl) {
+    const image = element.querySelector('img');
+    image.src = imageUrl;
+
+    const rect = anchor.getBoundingClientRect();
+    const top = Math.min(window.innerHeight - 240, Math.max(10, rect.top - 10));
+    const left = Math.min(window.innerWidth - 240, Math.max(10, rect.right + 12));
+
+    element.style.top = `${top}px`;
+    element.style.left = `${left}px`;
+    element.style.display = 'block';
 }
 
-function refreshBulkBar(root) {
-  const bar = root.querySelector('#productsBulkBar');
-  const countEl = root.querySelector('#productsSelectedCount');
-  const ids = selectedIds(root);
-  if (countEl) countEl.textContent = String(ids.length);
-
-  const btnDel = root.querySelector('#productsBulkDeleteBtn');
-  const btnRes = root.querySelector('#productsBulkRestoreBtn');
-  const btnForce = root.querySelector('#productsBulkForceDeleteBtn');
-
-  [btnDel, btnRes, btnForce].forEach((b) => { if (b) b.disabled = ids.length === 0; });
-
-  if (!bar) return;
-  if (ids.length > 0) bar.classList.remove('hidden');
-  else bar.classList.add('hidden');
+function hideImagePopover(element) {
+    if (!element) return;
+    element.style.display = 'none';
 }
 
-function wireSearchAndPageSize(root) {
-  const qInput = root.querySelector('#productsSearchInput');
-  const perSel = root.querySelector('#productsPageSize');
+function parseStatusOptions(root) {
+    try {
+        return Object.entries(JSON.parse(root.dataset.statusOptions || '{}'))
+            .map(([key, option]) => ({
+                key,
+                label: option?.label || key,
+                badge: option?.badge || 'kt-badge kt-badge-sm kt-badge-light',
+                order: Number(option?.order ?? 0),
+            }))
+            .sort((left, right) => left.order - right.order);
+    } catch {
+        return [];
+    }
+}
 
-  if (qInput) {
-    let t = null;
-    qInput.addEventListener('input', () => {
-      // 400ms debounce -> URL güncelle + reload
-      clearTimeout(t);
-      t = setTimeout(() => {
-        const url = buildUrlWithParams(window.location.pathname, { q: qInput.value.trim(), page: 1 });
-        window.location.assign(url);
-      }, 400);
+function createStatusPopover() {
+    const element = document.createElement('div');
+    element.style.position = 'fixed';
+    element.style.zIndex = '10000';
+    element.style.display = 'none';
+    element.className = 'kt-card shadow-lg p-2 w-[280px] transition transform duration-150 ease-out';
+    element.innerHTML = `
+        <div class="text-xs text-muted-foreground px-2 py-1">Workflow durumu sec</div>
+        <div class="grid gap-1" data-status-menu></div>
+    `;
+    document.body.appendChild(element);
+
+    return element;
+}
+
+function showStatusPopover(element, anchor, currentStatus, statusOptions, statusUrl) {
+    const menu = element.querySelector('[data-status-menu]');
+    if (!menu) return;
+
+    menu.innerHTML = statusOptions.map((option) => {
+        const isActive = option.key === currentStatus;
+
+        return `
+            <button
+                type="button"
+                class="w-full flex items-center justify-between gap-2 px-2 py-2 rounded-lg transition duration-150 ease-out hover:bg-muted/40 cursor-pointer ${isActive ? 'bg-muted/40 ring-1 ring-border' : ''}"
+                data-status-pick="${option.key}"
+                data-status-url="${statusUrl}"
+                ${isActive ? 'data-active="1"' : ''}
+            >
+                <span class="${option.badge}">${option.label}</span>
+                <span class="text-muted-foreground ${isActive ? '' : 'opacity-0'} transition-opacity duration-150">
+                    <i class="ki-outline ki-check-circle"></i>
+                </span>
+            </button>
+        `;
+    }).join('');
+
+    const rect = anchor.getBoundingClientRect();
+    const top = Math.min(window.innerHeight - 320, Math.max(10, rect.bottom + 6));
+    const left = Math.min(window.innerWidth - 300, Math.max(10, rect.left));
+
+    element.style.top = `${top}px`;
+    element.style.left = `${left}px`;
+    element.style.opacity = '0';
+    element.style.transform = 'translateY(-4px)';
+    element.style.display = 'block';
+
+    requestAnimationFrame(() => {
+        element.style.opacity = '1';
+        element.style.transform = 'translateY(0)';
+        element.querySelector('[data-active="1"]')?.focus?.();
     });
-
-    qInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        const url = buildUrlWithParams(window.location.pathname, { q: qInput.value.trim(), page: 1 });
-        window.location.assign(url);
-      }
-    });
-  }
-
-  if (perSel) {
-    perSel.addEventListener('change', () => {
-      const url = buildUrlWithParams(window.location.pathname, { perpage: perSel.value, page: 1 });
-      window.location.assign(url);
-    });
-  }
 }
 
-function wireSelection(root) {
-  const checkAll = root.querySelector('#products_check_all');
-  if (checkAll) {
-    checkAll.addEventListener('change', () => {
-      const checked = !!checkAll.checked;
-      root.querySelectorAll('.products-check').forEach((cb) => { cb.checked = checked; });
-      refreshBulkBar(root);
-    });
-  }
+function hideStatusPopover(element) {
+    if (!element || element.style.display !== 'block') return;
 
-  root.querySelectorAll('.products-check').forEach((cb) => {
-    cb.addEventListener('change', () => {
-      if (checkAll && !cb.checked) checkAll.checked = false;
-      refreshBulkBar(root);
-    });
-  });
+    element.style.opacity = '0';
+    element.style.transform = 'translateY(-4px)';
 
-  refreshBulkBar(root);
+    window.setTimeout(() => {
+        element.style.display = 'none';
+    }, 120);
 }
 
-function confirmDialog(title, text, confirmButtonText = 'Evet', type = 'warning') {
-  return showConfirmDialog({
-    type,
-    title,
-    message: text,
-    confirmButtonText,
-    cancelButtonText: 'Vazgeç',
-  });
-}
+function renderPagination(api, host) {
+    if (!host || !api) return;
 
-function toastSuccess(text) {
-  showToastMessage('success', text, { duration: 1200 });
-}
+    const info = api.page.info();
+    const pages = info.pages;
+    const page = info.page;
 
-function toastError(text) {
-  showToastMessage('error', text, { title: 'Hata' });
-}
+    host.innerHTML = '';
+    if (pages <= 1) return;
 
-function routes() {
-  // Bu pack'te route adları: admin.products.*
-  return {
-    destroy: (id) => `/admin/products/${id}`,
-    restore: (id) => `/admin/products/${id}/restore`,
-    forceDestroy: (id) => `/admin/products/${id}/force`,
-    bulkDestroy: `/admin/products/bulk-destroy`,
-    bulkRestore: `/admin/products/bulk-restore`,
-    bulkForceDestroy: `/admin/products/bulk-force-destroy`,
-    status: (id) => `/admin/products/${id}/status`,
-    featured: (id) => `/admin/products/${id}/featured`,
-  };
-}
+    const makeBtn = (label, targetPage, disabled = false, active = false) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = active ? 'kt-btn kt-btn-sm kt-btn-primary' : 'kt-btn kt-btn-sm kt-btn-light';
+        if (disabled) button.disabled = true;
+        button.textContent = label;
+        button.addEventListener('click', () => api.page(targetPage).draw('page'));
 
-async function handleRowAction(root, action, id) {
-  const r = routes();
-  const mode = getMode(root);
+        return button;
+    };
 
-  try {
-    if (action === 'delete') {
-      const ok = await confirmDialog('Silinsin mi?', 'Bu ürün çöp kutusuna taşınacak.', 'Sil', 'warning');
-      if (!ok) return;
-      await req(r.destroy(id), { method: 'DELETE' });
-      window.location.reload();
-      return;
+    host.appendChild(makeBtn('<', Math.max(0, page - 1), page === 0));
+
+    const start = Math.max(0, page - 2);
+    const end = Math.min(pages - 1, page + 2);
+    for (let index = start; index <= end; index += 1) {
+        host.appendChild(makeBtn(String(index + 1), index, false, index === page));
     }
 
-    if (action === 'restore') {
-      const ok = await confirmDialog('Geri yüklensin mi?', 'Ürün aktif listeye taşınacak.', 'Geri yükle', 'success');
-      if (!ok) return;
-      await req(r.restore(id), { method: 'POST' });
-      window.location.reload();
-      return;
-    }
-
-    if (action === 'force-delete') {
-      const ok = await confirmDialog('Kalıcı silinsin mi?', 'Bu işlem geri alınamaz.', 'Kalıcı sil', 'error');
-      if (!ok) return;
-      await req(r.forceDestroy(id), { method: 'DELETE' });
-      window.location.reload();
-      return;
-    }
-
-    // güvenlik: trash modunda delete yok; active modda restore yok
-    if (mode === 'trash' && action === 'delete') return;
-    if (mode !== 'trash' && (action === 'restore' || action === 'force-delete')) return;
-  } catch (e) {
-    toastError(e.message || String(e));
-  }
+    host.appendChild(makeBtn('>', Math.min(pages - 1, page + 1), page === pages - 1));
 }
 
-async function handleBulk(root, kind) {
-  const ids = selectedIds(root);
-  if (ids.length === 0) return;
+function selectedCategoryIds(root) {
+    const select = root.querySelector('#productsCategoryFilter');
 
-  const r = routes();
-  try {
-    if (kind === 'delete') {
-      const ok = await confirmDialog('Seçili ürünler silinsin mi?', 'Seçili ürünler çöp kutusuna taşınacak.', 'Sil', 'warning');
-      if (!ok) return;
-      await req(r.bulkDestroy, { method: 'POST', body: { ids } });
-      window.location.reload();
-      return;
-    }
-
-    if (kind === 'restore') {
-      const ok = await confirmDialog('Seçili ürünler geri yüklensin mi?', 'Ürünler aktif listeye taşınacak.', 'Geri yükle', 'success');
-      if (!ok) return;
-      await req(r.bulkRestore, { method: 'POST', body: { ids } });
-      window.location.reload();
-      return;
-    }
-
-    if (kind === 'force') {
-      const ok = await confirmDialog('Seçili ürünler kalıcı silinsin mi?', 'Bu işlem geri alınamaz.', 'Kalıcı sil', 'error');
-      if (!ok) return;
-      await req(r.bulkForceDestroy, { method: 'POST', body: { ids } });
-      window.location.reload();
-      return;
-    }
-  } catch (e) {
-    toastError(e.message || String(e));
-  }
+    return Array.from(select?.selectedOptions || [])
+        .map((option) => String(option.value || '').trim())
+        .filter(Boolean);
 }
 
-function wireBulkButtons(root) {
-  const del = root.querySelector('#productsBulkDeleteBtn');
-  if (del) del.addEventListener('click', () => handleBulk(root, 'delete'));
+function createProductFilter(root, tableEl) {
+    return (settings, _data, dataIndex) => {
+        if (settings.nTable !== tableEl) return true;
 
-  const res = root.querySelector('#productsBulkRestoreBtn');
-  if (res) res.addEventListener('click', () => handleBulk(root, 'restore'));
+        const row = settings.aoData?.[dataIndex]?.nTr;
+        if (!row) return true;
 
-  const force = root.querySelector('#productsBulkForceDeleteBtn');
-  if (force) force.addEventListener('click', () => handleBulk(root, 'force'));
-}
+        const selectedStatus = root.querySelector('#productsStatusFilter')?.value || 'all';
+        const selectedCategories = selectedCategoryIds(root);
 
-function wireRowButtons(root) {
-  root.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-action][data-id]');
-    if (!btn) return;
-    e.preventDefault();
-    handleRowAction(root, btn.dataset.action, btn.dataset.id);
-  });
-}
-
-function wireFeatured(root) {
-  const r = routes();
-
-  root.querySelectorAll('.js-featured-toggle').forEach((cb) => {
-    cb.addEventListener('change', async () => {
-      const id = cb.dataset.productId;
-      if (!id) return;
-      cb.disabled = true;
-
-      try {
-        const data = await req(r.featured(id), { method: 'PATCH', body: { is_featured: cb.checked ? 1 : 0 } });
-
-        const badge = cb.closest('td')?.querySelector('.js-featured-badge');
-        if (badge) {
-          if (cb.checked) {
-            badge.classList.remove('opacity-0', 'hidden');
-          } else {
-            badge.classList.add('opacity-0', 'hidden');
-          }
+        if (selectedStatus !== 'all' && row.dataset.status !== selectedStatus) {
+            return false;
         }
 
-        if (data?.ok === false && data?.message) {
-          // backend limit uyarısı
-          toastError(data.message);
-          cb.checked = !cb.checked;
+        if (selectedCategories.length > 0) {
+            const haystack = row.dataset.categoryIds || '';
+            const matched = selectedCategories.some((id) => haystack.includes(`|${id}|`));
+            if (!matched) {
+                return false;
+            }
+        }
+
+        return true;
+    };
+}
+
+async function postJson(url, body, signal, method = 'POST') {
+    const response = await request(url, {
+        method,
+        data: body,
+        signal,
+        ignoreGlobalError: true,
+    });
+
+    if (response?.ok === false) {
+        throw new Error(response?.message || 'Islem basarisiz.');
+    }
+
+    return response;
+}
+
+function redrawOwningTable(element) {
+    const table = element?.closest?.('table');
+    if (!table || !window.jQuery?.fn?.dataTable) return;
+    if (!window.jQuery.fn.dataTable.isDataTable(table)) return;
+
+    window.jQuery(table).DataTable().draw(false);
+}
+
+function setFeaturedState(row, isFeatured, featuredAt) {
+    if (!row) return;
+
+    row.dataset.featured = isFeatured ? '1' : '0';
+
+    const badge = row.querySelector('.js-featured-badge');
+    const featuredAtText = row.querySelector('.js-featured-at');
+    const toggle = row.querySelector('.js-featured-toggle');
+
+    if (toggle) {
+        toggle.checked = !!isFeatured;
+    }
+
+    if (badge) {
+        badge.classList.remove('kt-badge-light-success', 'kt-badge-light', 'text-muted-foreground');
+        if (isFeatured) {
+            badge.classList.add('kt-badge-light-success');
+            badge.textContent = 'Anasayfada';
         } else {
-          toastSuccess('Güncellendi');
+            badge.classList.add('kt-badge-light', 'text-muted-foreground');
+            badge.textContent = 'Kapali';
         }
-      } catch (e) {
-        toastError(e.message || String(e));
-        cb.checked = !cb.checked;
-      } finally {
-        cb.disabled = false;
-      }
-    });
-  });
+    }
+
+    if (featuredAtText) {
+        featuredAtText.textContent = isFeatured && featuredAt
+            ? `Secim: ${featuredAt}`
+            : 'Secim yapilmamis';
+    }
 }
 
-function wireStatus(root) {
-  const r = routes();
-  const statusOptions = (() => {
-    try { return JSON.parse(root.dataset.statusOptions || '{}'); } catch { return {}; }
-  })();
+function setStatusState(button, row, payload) {
+    const data = payload?.data || {};
+    if (!button || !row) return;
 
-  // Basit dropdown: Swal select ile
-  root.querySelectorAll('.js-status-trigger').forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      if (btn.disabled) return;
-      const id = btn.dataset.productId;
-      if (!id) return;
+    button.dataset.status = data.status || button.dataset.status || '';
+    row.dataset.status = data.status || row.dataset.status || '';
 
-      const inputOptions = {};
-      Object.entries(statusOptions).forEach(([k, v]) => { inputOptions[k] = v.label; });
+    button.className = `${data.status_badge || 'kt-badge kt-badge-sm kt-badge-light'} js-status-trigger`;
+    button.innerHTML = `${data.status_label || data.status || 'Status'} <i class="ki-outline ki-down ml-1"></i>`;
+}
 
-      try {
-        const { value: newStatus } = await Swal.fire({
-          title: 'Durum',
-          input: 'select',
-          inputOptions,
-          inputValue: btn.dataset.status || '',
-          showCancelButton: true,
-          confirmButtonText: 'Kaydet',
-          cancelButtonText: 'Vazgeç',
+export default function init(ctx) {
+    const root = ctx.root;
+    const signal = ctx.signal;
+    const tableEl = root.querySelector('#products_table');
+
+    if (!tableEl) return;
+
+    const perPage = root.dataset.perpage ? parseInt(root.dataset.perpage, 10) : 25;
+    const bulkBar = root.querySelector('#productsBulkBar');
+    const selectedCountEl = root.querySelector('#productsSelectedCount');
+    const checkAll = root.querySelector('#products_check_all');
+    const btnBulkDelete = root.querySelector('#productsBulkDeleteBtn');
+    const btnBulkRestore = root.querySelector('#productsBulkRestoreBtn');
+    const btnBulkForce = root.querySelector('#productsBulkForceDeleteBtn');
+    const selectedIds = new Set();
+    const statusOptions = parseStatusOptions(root);
+
+    function updateBulkUI() {
+        const count = selectedIds.size;
+
+        bulkBar?.classList.toggle('hidden', count === 0);
+        if (selectedCountEl) selectedCountEl.textContent = String(count);
+
+        if (btnBulkDelete) btnBulkDelete.disabled = count === 0;
+        if (btnBulkRestore) btnBulkRestore.disabled = count === 0;
+        if (btnBulkForce) btnBulkForce.disabled = count === 0;
+
+        if (!checkAll) return;
+
+        const boxes = Array.from(root.querySelectorAll('input.products-check'));
+        const checked = boxes.filter((box) => box.checked).length;
+        checkAll.indeterminate = checked > 0 && checked < boxes.length;
+        checkAll.checked = boxes.length > 0 && checked === boxes.length;
+    }
+
+    function applySelectionToCurrentPage() {
+        root.querySelectorAll('input.products-check').forEach((checkbox) => {
+            checkbox.checked = selectedIds.has(String(checkbox.value || ''));
         });
+        updateBulkUI();
+    }
 
-        if (!newStatus) return;
+    const filters = window.jQuery?.fn?.dataTable?.ext?.search;
+    const filterFn = createProductFilter(root, tableEl);
 
-        await req(r.status(id), { method: 'PATCH', body: { status: newStatus } });
-        // En temiz yol: reload (badge classları backend'e bağlı)
-        window.location.reload();
-      } catch (e) {
-        toastError(e.message || String(e));
-      }
+    if (Array.isArray(filters)) {
+        filters.push(filterFn);
+        ctx.cleanup(() => {
+            const index = filters.indexOf(filterFn);
+            if (index >= 0) {
+                filters.splice(index, 1);
+            }
+        });
+    }
+
+    imagePopover = createImagePopover();
+    statusPopover = createStatusPopover();
+
+    ctx.cleanup(() => {
+        try { imagePopover?.remove(); } catch {}
+        try { statusPopover?.remove(); } catch {}
+        imagePopover = null;
+        statusPopover = null;
     });
-  });
+
+    statusPopover.addEventListener('click', async (event) => {
+        const pick = event.target?.closest?.('[data-status-pick]');
+        if (!pick) return;
+
+        const status = pick.getAttribute('data-status-pick');
+        const statusUrl = pick.getAttribute('data-status-url');
+        if (!status || !statusUrl) return;
+
+        try {
+            const response = await postJson(statusUrl, { status }, signal, 'PATCH');
+            const trigger = document.querySelector(`.js-status-trigger[data-status-url="${statusUrl}"]`);
+            const row = trigger?.closest('tr');
+
+            setStatusState(trigger, row, response);
+            notify('success', response?.message || 'Durum guncellendi.');
+            hideStatusPopover(statusPopover);
+            redrawOwningTable(trigger);
+        } catch (error) {
+            notify('error', resolveErrorMessage(error, 'Durum guncellenemedi.'));
+        }
+    }, { signal });
+
+    root.addEventListener('mouseover', (event) => {
+        const anchor = event.target?.closest?.('.js-img-popover');
+        if (!anchor || !root.contains(anchor)) return;
+        const imageUrl = anchor.getAttribute('data-popover-img');
+        if (imageUrl) showImagePopover(imagePopover, anchor, imageUrl);
+    }, { signal });
+
+    root.addEventListener('mouseout', (event) => {
+        const anchor = event.target?.closest?.('.js-img-popover');
+        if (!anchor || !root.contains(anchor)) return;
+        const relatedTarget = event.relatedTarget;
+        if (relatedTarget && anchor.contains(relatedTarget)) return;
+        hideImagePopover(imagePopover);
+    }, { signal });
+
+    root.addEventListener('change', (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLInputElement)) return;
+
+        if (target.classList.contains('products-check')) {
+            const id = String(target.value || '');
+            if (!id) return;
+
+            if (target.checked) selectedIds.add(id);
+            else selectedIds.delete(id);
+
+            updateBulkUI();
+            return;
+        }
+
+        if (target.id === 'products_check_all') {
+            const checked = !!target.checked;
+            root.querySelectorAll('input.products-check').forEach((checkbox) => {
+                checkbox.checked = checked;
+
+                const id = String(checkbox.value || '');
+                if (!id) return;
+                if (checked) selectedIds.add(id);
+                else selectedIds.delete(id);
+            });
+
+            updateBulkUI();
+            return;
+        }
+
+        if (target.classList.contains('js-featured-toggle')) {
+            const row = target.closest('tr');
+            const rollback = !target.checked;
+
+            target.disabled = true;
+
+            postJson(target.dataset.url, { is_featured: target.checked ? 1 : 0 }, signal, 'PATCH')
+                .then((response) => {
+                    setFeaturedState(row, !!response?.data?.is_featured, response?.data?.featured_at || null);
+                    notify('success', response?.message || (target.checked ? 'Urun anasayfaya alindi.' : 'Urun anasayfadan kaldirildi.'));
+                    redrawOwningTable(target);
+                })
+                .catch((error) => {
+                    target.checked = rollback;
+                    notify('error', resolveErrorMessage(error, 'Vitrin durumu guncellenemedi.'));
+                })
+                .finally(() => {
+                    target.disabled = false;
+                });
+        }
+    }, { signal });
+
+    const api = window.initDataTable?.({
+        root,
+        table: '#products_table',
+        search: '#productsSearch',
+        pageSize: '#productsPageSize',
+        info: '#productsInfo',
+        pagination: '#productsPagination',
+        pageLength: perPage,
+        lengthMenu: [10, 25, 50, 100],
+        order: [[5, 'desc']],
+        dom: 't',
+        emptyTemplate: '#dt-empty-products',
+        zeroTemplate: '#dt-zero-products',
+        columnDefs: [
+            { orderable: false, searchable: false, targets: [0, 6, 7] },
+            { className: 'text-right', targets: [6, 7] },
+        ],
+        signal,
+        cleanup: (fn) => ctx.cleanup(fn),
+        onDraw: (dtApi) => {
+            renderPagination(dtApi || api, root.querySelector('#productsPagination'));
+            applySelectionToCurrentPage();
+        },
+    });
+
+    const searchInput = root.querySelector('#productsSearch');
+    if (api && searchInput?.value) {
+        api.search(searchInput.value).draw();
+    }
+
+    const redrawFilters = () => api?.draw();
+    root.querySelector('#productsStatusFilter')?.addEventListener('change', redrawFilters, { signal });
+    root.querySelector('#productsCategoryFilter')?.addEventListener('change', redrawFilters, { signal });
+
+    root.querySelector('#productsClearFiltersBtn')?.addEventListener('click', () => {
+        if (searchInput) {
+            searchInput.value = '';
+        }
+
+        const statusFilter = root.querySelector('#productsStatusFilter');
+        if (statusFilter) {
+            statusFilter.value = 'all';
+            statusFilter.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        const categoryFilter = root.querySelector('#productsCategoryFilter');
+        if (categoryFilter) {
+            Array.from(categoryFilter.options).forEach((option) => {
+                option.selected = false;
+            });
+            categoryFilter.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        api?.search('').draw();
+    }, { signal });
+
+    root.addEventListener('click', async (event) => {
+        const trigger = event.target?.closest?.('.js-status-trigger');
+        if (trigger && root.contains(trigger)) {
+            hideStatusPopover(statusPopover);
+            showStatusPopover(
+                statusPopover,
+                trigger,
+                trigger.dataset.status || '',
+                statusOptions,
+                trigger.dataset.statusUrl || ''
+            );
+            return;
+        }
+
+        const actionButton = event.target?.closest?.('[data-action]');
+        if (!actionButton || !root.contains(actionButton)) return;
+
+        const action = actionButton.getAttribute('data-action');
+        const url = actionButton.getAttribute('data-url');
+        if (!action || !url) return;
+        if (actionButton.dataset.busy === '1') return;
+
+        actionButton.dataset.busy = '1';
+
+        try {
+            if (action === 'delete') {
+                const ok = await showConfirmDialog({
+                    type: 'warning',
+                    title: 'Urun silinsin mi?',
+                    message: 'Urun cop kutusuna tasinacak.',
+                    confirmButtonText: 'Sil',
+                });
+                if (!ok) return;
+
+                const response = await request(url, { method: 'DELETE', signal, ignoreGlobalError: true });
+                notify('success', response?.message || 'Urun silindi.');
+                window.location.reload();
+                return;
+            }
+
+            if (action === 'restore') {
+                const ok = await showConfirmDialog({
+                    type: 'success',
+                    title: 'Urun geri yuklensin mi?',
+                    message: 'Kayit tekrar aktif listeye alinacak.',
+                    confirmButtonText: 'Geri yukle',
+                });
+                if (!ok) return;
+
+                const response = await postJson(url, {}, signal);
+                notify('success', response?.message || 'Urun geri yuklendi.');
+                window.location.reload();
+                return;
+            }
+
+            if (action === 'force-delete') {
+                const ok = await showConfirmDialog({
+                    type: 'error',
+                    title: 'Urun kalici olarak silinsin mi?',
+                    message: 'Bu islem geri alinamaz.',
+                    confirmButtonText: 'Kalici sil',
+                });
+                if (!ok) return;
+
+                const response = await request(url, { method: 'DELETE', signal, ignoreGlobalError: true });
+                notify('success', response?.message || 'Urun kalici olarak silindi.');
+                window.location.reload();
+            }
+        } catch (error) {
+            notify('error', resolveErrorMessage(error, 'Islem basarisiz.'));
+        } finally {
+            actionButton.dataset.busy = '0';
+        }
+    }, { signal });
+
+    document.addEventListener('click', (event) => {
+        if (statusPopover?.style.display !== 'block') return;
+
+        const insidePopover = statusPopover.contains(event.target);
+        const insideTrigger = event.target?.closest?.('.js-status-trigger');
+
+        if (!insidePopover && !insideTrigger) {
+            hideStatusPopover(statusPopover);
+        }
+    }, { signal });
+
+    btnBulkDelete?.addEventListener('click', async () => {
+        const ids = [...selectedIds];
+        if (!ids.length) return;
+
+        const ok = await showConfirmDialog({
+            type: 'warning',
+            title: 'Secili urunler silinsin mi?',
+            message: `${ids.length} kayit cop kutusuna tasinacak.`,
+            confirmButtonText: 'Sil',
+        });
+        if (!ok) return;
+
+        try {
+            const response = await postJson(root.dataset.bulkDeleteUrl, { ids }, signal);
+            notify('success', response?.message || 'Secili urunler silindi.');
+            selectedIds.clear();
+            window.location.reload();
+        } catch (error) {
+            notify('error', resolveErrorMessage(error, 'Silme islemi basarisiz.'));
+            updateBulkUI();
+        }
+    }, { signal });
+
+    btnBulkRestore?.addEventListener('click', async () => {
+        const ids = [...selectedIds];
+        if (!ids.length) return;
+
+        const ok = await showConfirmDialog({
+            type: 'success',
+            title: 'Secili urunler geri yuklensin mi?',
+            message: `${ids.length} kayit tekrar aktif listeye alinacak.`,
+            confirmButtonText: 'Geri yukle',
+        });
+        if (!ok) return;
+
+        try {
+            const response = await postJson(root.dataset.bulkRestoreUrl, { ids }, signal);
+            notify('success', response?.message || 'Secili urunler geri yuklendi.');
+            selectedIds.clear();
+            window.location.reload();
+        } catch (error) {
+            notify('error', resolveErrorMessage(error, 'Geri yukleme basarisiz.'));
+            updateBulkUI();
+        }
+    }, { signal });
+
+    btnBulkForce?.addEventListener('click', async () => {
+        const ids = [...selectedIds];
+        if (!ids.length) return;
+
+        const ok = await showConfirmDialog({
+            type: 'error',
+            title: 'Secili urunler kalici olarak silinsin mi?',
+            message: `${ids.length} kayit geri alinamayacak sekilde silinecek.`,
+            confirmButtonText: 'Kalici sil',
+        });
+        if (!ok) return;
+
+        try {
+            const response = await postJson(root.dataset.bulkForceDeleteUrl, { ids }, signal);
+            notify('success', response?.message || 'Secili urunler kalici olarak silindi.');
+            selectedIds.clear();
+            window.location.reload();
+        } catch (error) {
+            notify('error', resolveErrorMessage(error, 'Kalici silme basarisiz.'));
+            updateBulkUI();
+        }
+    }, { signal });
+
+    root.querySelectorAll('tr[data-status]').forEach((row) => {
+        setFeaturedState(row, row.dataset.featured === '1', row.querySelector('.js-featured-at')?.textContent?.replace(/^Secim:\s*/, '') || null);
+    });
+
+    renderPagination(api, root.querySelector('#productsPagination'));
+    updateBulkUI();
 }
 
-export default function init() {
-  const root = document.querySelector('[data-page="products.index"], [data-page="products.trash"]');
-  if (!root) return;
+export function destroy() {
+    try { imagePopover?.remove(); } catch {}
+    try { statusPopover?.remove(); } catch {}
 
-  wireSearchAndPageSize(root);
-  wireSelection(root);
-  wireBulkButtons(root);
-  wireRowButtons(root);
-  wireFeatured(root);
-  if (window.Swal) wireStatus(root);
+    imagePopover = null;
+    statusPopover = null;
 }

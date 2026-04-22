@@ -1,17 +1,24 @@
+import Swal from 'sweetalert2';
 import { request } from '@/core/http';
-import { showConfirmDialog } from '@/core/swal-alert';
+import { showConfirmDialog, showToastMessage } from '@/core/swal-alert';
 
-async function jsonReq(url, method = 'GET', body = null, signal = null) {
-    try {
-        const j = await request(url, { method, data: body, signal, ignoreGlobalError: true });
-        return { res: { ok: true, status: 200 }, j: j || {} };
-    } catch (err) {
-        return { res: { ok: false, status: err?.status || 0 }, j: err?.data || {} };
-    }
+const bound = new WeakMap();
+
+const TYPE_META = {
+    success: { icon: 'success', color: '#17c653' },
+    error: { icon: 'error', color: '#f1416c' },
+    warning: { icon: 'warning', color: '#f6b100' },
+    info: { icon: 'info', color: '#3e97ff' },
+};
+
+function resolveSwal() {
+    if (Swal?.fire) return Swal;
+    if (window.Swal?.fire) return window.Swal;
+    return null;
 }
 
-function esc(s) {
-    return String(s ?? '')
+function esc(value) {
+    return String(value ?? '')
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
@@ -19,352 +26,326 @@ function esc(s) {
         .replace(/'/g, '&#039;');
 }
 
-const bound = new WeakMap(); // root->Set(keys)
 function markBound(root, key) {
-    let s = bound.get(root);
-    if (!s) {
-        s = new Set();
-        bound.set(root, s);
+    let state = bound.get(root);
+    if (!state) {
+        state = new Set();
+        bound.set(root, state);
     }
-    if (s.has(key)) return true;
-    s.add(key);
+
+    if (state.has(key)) return true;
+    state.add(key);
     return false;
 }
 
-/**
- * ✅ KTUI modal (dependency-free) — sayfayı bozmadan kullan.
- */
-let __trashModalEl = null;
-
-function ensureTrashModal() {
-    if (__trashModalEl) return __trashModalEl;
-
-    const el = document.createElement('div');
-    el.id = 'trashNoticeModal';
-    el.className = 'fixed inset-0 z-[9999] hidden';
-    el.innerHTML = `
-<div class="absolute inset-0 bg-black/50"></div>
-<div class="absolute inset-0 flex items-center justify-center p-4">
-  <div class="kt-card w-full max-w-2xl shadow-lg rounded-2xl overflow-hidden">
-    <div class="kt-card-header py-4 px-5 flex items-center justify-between">
-      <div class="flex items-center gap-3 min-w-0">
-        <span class="size-2.5 rounded-full bg-primary/80 shrink-0" data-tone-dot></span>
-        <h3 class="kt-card-title text-base font-semibold truncate" data-title>Bilgi</h3>
-      </div>
-      <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-close>
-        <i class="ki-outline ki-cross"></i>
-      </button>
-    </div>
-    <div class="kt-card-body px-5 py-4 text-sm text-foreground" data-body></div>
-    <div class="kt-card-footer px-5 py-4 flex items-center justify-end gap-2">
-      <button type="button" class="kt-btn kt-btn-light" data-close>Kapat</button>
-    </div>
-  </div>
-</div>
-`;
-    document.body.appendChild(el);
-
-    const close = () => {
-        el.classList.add('hidden');
-        document.body.classList.remove('overflow-hidden');
-    };
-
-    el.addEventListener('click', (e) => {
-        const t = e.target;
-        if (t?.closest?.('[data-close]')) close();
-        if (t === el.firstElementChild) close(); // backdrop
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !el.classList.contains('hidden')) close();
-    });
-
-    __trashModalEl = el;
-    return el;
+async function jsonReq(url, method = 'GET', body = null, signal = null) {
+    try {
+        const payload = await request(url, { method, data: body, signal, ignoreGlobalError: true });
+        return { res: { ok: true, status: 200 }, j: payload || {} };
+    } catch (error) {
+        return { res: { ok: false, status: error?.status || 0 }, j: error?.data || {} };
+    }
 }
 
-function showTrashModal({title = 'Bilgi', html = '', tone = 'info'} = {}) {
-    const el = ensureTrashModal();
+function buildDialogButtonClass(type) {
+    return `kt-btn swal2-kt-button swal2-kt-confirm swal2-kt-confirm--${type}`;
+}
 
-    const titleEl = el.querySelector('[data-title]');
-    const bodyEl = el.querySelector('[data-body]');
-    const dotEl = el.querySelector('[data-tone-dot]');
-
-    if (titleEl) titleEl.textContent = title;
-    if (bodyEl) bodyEl.innerHTML = html;
-
-    if (dotEl) {
-        dotEl.classList.remove('bg-primary/80', 'bg-green-500/80', 'bg-red-500/80', 'bg-yellow-500/80');
-        if (tone === 'success') dotEl.classList.add('bg-green-500/80');
-        else if (tone === 'danger' || tone === 'error') dotEl.classList.add('bg-red-500/80');
-        else if (tone === 'warning') dotEl.classList.add('bg-yellow-500/80');
-        else dotEl.classList.add('bg-primary/80');
+async function showNoticeDialog({
+    title = 'Bilgi',
+    message = '',
+    html = '',
+    type = 'info',
+    confirmButtonText = 'Tamam',
+}) {
+    const swal = resolveSwal();
+    if (!swal) {
+        console.warn('SweetAlert2 bulunamadi. Mesaj gosterilemedi.');
+        return;
     }
 
-    el.classList.remove('hidden');
-    document.body.classList.add('overflow-hidden');
+    const meta = TYPE_META[type] || TYPE_META.info;
+
+    await swal.fire({
+        icon: meta.icon,
+        iconColor: meta.color,
+        title,
+        text: html ? undefined : (message || undefined),
+        html: html || undefined,
+        confirmButtonText,
+        buttonsStyling: false,
+        allowOutsideClick: true,
+        allowEscapeKey: true,
+        backdrop: 'rgba(15, 23, 42, 0.52)',
+        customClass: {
+            popup: `swal2-kt-popup swal2-kt-popup--${type}`,
+            title: 'swal2-kt-title',
+            htmlContainer: 'swal2-kt-text text-start',
+            actions: 'swal2-kt-actions',
+            confirmButton: buildDialogButtonClass(type),
+        },
+    });
 }
 
-function buildErrorMessage(j, fallback = 'İşlem başarısız') {
-    if (!j) return fallback;
-    let msg = j.message || j.error?.message || fallback;
+function buildErrorMessage(json, fallback = 'Islem basarisiz.') {
+    if (!json) return fallback;
 
-    if (j.usage?.summary) {
-        msg += '\nKullanım: ' + j.usage.summary;
+    const validationErrors = json?.errors;
+    if (validationErrors && typeof validationErrors === 'object') {
+        const firstError = Object.values(validationErrors).flat().find(Boolean);
+        if (firstError) return firstError;
     }
 
-    return msg;
+    let message = json.message || json.error?.message || fallback;
+    if (json.usage?.summary) {
+        message += `\nKullanim: ${json.usage.summary}`;
+    }
+
+    return message;
 }
 
-function showUsageModal(j, fallbackTitle = 'İşlem engellendi') {
-    const msg = buildErrorMessage(j, fallbackTitle);
+function showUsageDialog(json, fallbackTitle = 'Islem engellendi') {
+    const message = buildErrorMessage(json, fallbackTitle);
+    let html = `<div class="whitespace-pre-line">${esc(message).replace(/\n/g, '<br>')}</div>`;
 
-    let html = `<div class="whitespace-pre-line">${esc(msg).replace(/\n/g, '<br>')}</div>`;
-
-    const details = j?.usage?.details;
-    if (details && typeof details === 'object' && Object.keys(details).length) {
+    const details = json?.usage?.details;
+    if (details && typeof details === 'object' && Object.keys(details).length > 0) {
         const rows = Object.entries(details)
-            .map(([k, v]) => `
-<tr class="border-t border-border">
-  <td class="py-2 pr-3 text-muted-foreground">${esc(k)}</td>
-  <td class="py-2 text-end font-medium">${esc(v)}</td>
-</tr>
-            `.trim())
+            .map(([label, value]) => `
+                <tr class="border-t border-border">
+                    <td class="py-2 pr-3 text-muted-foreground">${esc(label)}</td>
+                    <td class="py-2 text-end font-medium">${esc(value)}</td>
+                </tr>
+            `)
             .join('');
 
         html += `
-<div class="mt-4">
-  <div class="text-sm font-medium mb-2">Kullanım Detayı</div>
-  <div class="kt-card kt-card-border">
-    <div class="kt-card-body p-0">
-      <table class="w-full text-sm">
-        <tbody>${rows}</tbody>
-      </table>
-    </div>
-  </div>
-</div>
-        `.trim();
+            <div class="mt-4">
+                <div class="text-sm font-medium mb-2">Kullanim detayi</div>
+                <div class="kt-card kt-card-border">
+                    <div class="kt-card-body p-0">
+                        <table class="w-full text-sm">
+                            <tbody>${rows}</tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
     }
 
-    showTrashModal({title: fallbackTitle, html, tone: 'warning'});
+    return showNoticeDialog({
+        title: fallbackTitle,
+        html,
+        type: 'warning',
+    });
+}
+
+function cloneTpl(template) {
+    const node = template?.content?.firstElementChild;
+    return node ? node.outerHTML : '';
+}
+
+function renderPagination(meta, host) {
+    if (!host) return;
+
+    const current = Number(meta.current_page || 1) || 1;
+    const last = Number(meta.last_page || 1) || 1;
+
+    if (last <= 1) {
+        host.innerHTML = '';
+        return;
+    }
+
+    const button = (page, label, disabled = false, active = false) => `
+        <button
+            type="button"
+            class="kt-btn kt-btn-sm ${active ? 'kt-btn-primary' : 'kt-btn-light'}"
+            data-page="${page}"
+            ${disabled ? 'disabled' : ''}>
+            ${label}
+        </button>
+    `;
+
+    const parts = [];
+    parts.push(button(current - 1, '<', current <= 1));
+
+    const start = Math.max(1, current - 2);
+    const end = Math.min(last, current + 2);
+
+    if (start > 1) parts.push(button(1, '1', false, current === 1));
+    if (start > 2) parts.push('<span class="px-2 text-muted-foreground">...</span>');
+
+    for (let page = start; page <= end; page += 1) {
+        parts.push(button(page, String(page), false, page === current));
+    }
+
+    if (end < last - 1) parts.push('<span class="px-2 text-muted-foreground">...</span>');
+    if (end < last) parts.push(button(last, String(last), false, current === last));
+
+    parts.push(button(current + 1, '>', current >= last));
+    host.innerHTML = `<div class="flex items-center gap-1 justify-center">${parts.join('')}</div>`;
+}
+
+function rowKey(type, id) {
+    return `${String(type || '')}|${String(id || '')}`;
+}
+
+function rowHtml(item, selected) {
+    const key = rowKey(item.type, item.id);
+    const checked = selected.has(key) ? 'checked' : '';
+    const restoreUrl = esc(item.restore_url || '');
+    const forceUrl = esc(item.force_url || '');
+
+    return `
+        <tr data-row-key="${esc(key)}">
+            <td class="w-[55px]">
+                <input
+                    type="checkbox"
+                    class="kt-checkbox kt-checkbox-sm"
+                    data-act="chk"
+                    data-id="${esc(item.id)}"
+                    data-type="${esc(item.type)}"
+                    ${checked}>
+            </td>
+            <td class="min-w-[160px]">
+                <span class="kt-badge kt-badge-light">${esc(item.type || '-')}</span>
+            </td>
+            <td class="min-w-[320px]">
+                <div class="font-medium">${esc(item.title || item.name || '-')}</div>
+                <div class="text-xs text-muted-foreground">${esc(item.sub || '')}</div>
+            </td>
+            <td class="min-w-[180px]">
+                <span class="text-sm text-muted-foreground">${esc(item.deleted_at || '')}</span>
+            </td>
+            <td class="w-[160px] text-end">
+                <div class="flex items-center justify-end gap-2">
+                    <button
+                        type="button"
+                        class="kt-btn kt-btn-sm kt-btn-light"
+                        data-act="restore"
+                        data-url="${restoreUrl}"
+                        ${restoreUrl ? '' : 'disabled'}>
+                        <i class="ki-outline ki-arrow-circle-left"></i>
+                    </button>
+                    <button
+                        type="button"
+                        class="kt-btn kt-btn-sm kt-btn-danger"
+                        data-act="force"
+                        data-url="${forceUrl}"
+                        ${forceUrl ? '' : 'disabled'}>
+                        <i class="ki-outline ki-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `;
 }
 
 export default function init(ctx) {
     const root = ctx.root;
     const signal = ctx.signal;
 
-    // 🔥 KRİTİK FIX:
-    // ctx.root bazen zaten page container oluyor.
-    const pageEl = (root?.matches?.('[data-page="trash.index"]'))
+    const pageEl = root?.matches?.('[data-page="trash.index"]')
         ? root
-        : root.querySelector?.('[data-page="trash.index"]');
+        : root?.querySelector?.('[data-page="trash.index"]');
 
     if (!pageEl) return;
 
-    // ---- Blade id’leri (trash/index.blade.php ile uyumlu)
     const tbodyEl = pageEl.querySelector('#trashTbody');
     const infoEl = pageEl.querySelector('#trashInfo');
-    const pagEl = pageEl.querySelector('#trashPagination');
-
-    const qInput = pageEl.querySelector('#trashSearch');
-    const typeSel = pageEl.querySelector('#trashType');
-    const perSel = pageEl.querySelector('#trashPageSize');
-
+    const paginationEl = pageEl.querySelector('#trashPagination');
+    const searchInput = pageEl.querySelector('#trashSearch');
+    const typeSelect = pageEl.querySelector('#trashType');
+    const perPageSelect = pageEl.querySelector('#trashPageSize');
     const bulkBar = pageEl.querySelector('#trashBulkBar');
     const checkAllHead = pageEl.querySelector('#trash_check_all_head');
     const checkAllBar = pageEl.querySelector('#trash_check_all');
     const selectedCountEl = pageEl.querySelector('#trashSelectedCount');
     const bulkRestoreBtn = pageEl.querySelector('#trashBulkRestoreBtn');
     const bulkForceBtn = pageEl.querySelector('#trashBulkForceDeleteBtn');
-
-    const tplEmpty = pageEl.querySelector('#dt-empty-trash');
-    const tplZero = pageEl.querySelector('#dt-zero-trash');
+    const emptyTpl = pageEl.querySelector('#dt-empty-trash');
+    const zeroTpl = pageEl.querySelector('#dt-zero-trash');
 
     if (!tbodyEl) return;
 
-    // ---- URL’ler Blade’den gelsin (Blade’de data-* var)
-    const URLS = {
+    const initialType = pageEl.dataset.initialType || 'all';
+    if (typeSelect && Array.from(typeSelect.options).some((option) => option.value === initialType)) {
+        typeSelect.value = initialType;
+    }
+
+    const urls = {
         list: pageEl.dataset.listUrl || '/admin/trash/list',
         bulkRestore: pageEl.dataset.bulkRestoreUrl || '/admin/trash/bulk-restore',
         bulkForce: pageEl.dataset.bulkForceDeleteUrl || '/admin/trash/bulk-force-delete',
     };
 
-    // ---- state
     const state = {
         q: '',
-        type: (typeSel?.value || 'all'),
+        type: typeSelect?.value || initialType || 'all',
         page: 1,
-        perpage: Number(pageEl.dataset.perpage || perSel?.value || 25) || 25,
-        last_page: 1,
+        perpage: Number(pageEl.dataset.perpage || perPageSelect?.value || 25) || 25,
         total: 0,
     };
 
     const selected = new Set();
     let debounceTimer = null;
 
-    function setInfo(text) {
-        if (!infoEl) return;
-        infoEl.textContent = text || '';
-    }
+    const setBulkUI = () => {
+        const count = selected.size;
 
-    function setBulkUI() {
-        const c = selected.size;
+        if (selectedCountEl) selectedCountEl.textContent = String(count);
+        if (bulkRestoreBtn) bulkRestoreBtn.disabled = count === 0;
+        if (bulkForceBtn) bulkForceBtn.disabled = count === 0;
+        bulkBar?.classList.toggle('hidden', count === 0);
 
-        if (selectedCountEl) selectedCountEl.textContent = String(c);
-        if (bulkRestoreBtn) bulkRestoreBtn.disabled = c === 0;
-        if (bulkForceBtn) bulkForceBtn.disabled = c === 0;
-
-        if (bulkBar) {
-            if (c > 0) bulkBar.classList.remove('hidden');
-            else bulkBar.classList.add('hidden');
-        }
+        const boxes = Array.from(tbodyEl.querySelectorAll('input[data-act="chk"]'));
+        const checkedCount = boxes.filter((box) => box.checked).length;
 
         if (checkAllHead) {
-            const totalCbs = tbodyEl.querySelectorAll('input[data-act="chk"]').length;
-            checkAllHead.checked = c > 0 && totalCbs > 0 && totalCbs === c;
-        }
-        if (checkAllBar) checkAllBar.checked = checkAllHead?.checked || false;
-    }
-
-    function cloneTpl(tpl) {
-        if (!tpl) return '';
-        const node = tpl.content?.firstElementChild;
-        return node ? node.outerHTML : '';
-    }
-
-    function renderPagination(meta) {
-        if (!pagEl) return;
-
-        const current = Number(meta.current_page || 1) || 1;
-        const last = Number(meta.last_page || 1) || 1;
-
-        if (last <= 1) {
-            pagEl.innerHTML = '';
-            return;
+            checkAllHead.indeterminate = checkedCount > 0 && checkedCount < boxes.length;
+            checkAllHead.checked = boxes.length > 0 && checkedCount === boxes.length;
         }
 
-        const btn = (p, label, disabled = false, active = false) => `
-            <button type="button"
-                    class="kt-btn kt-btn-sm ${active ? 'kt-btn-primary' : 'kt-btn-light'}"
-                    data-page="${p}"
-                    ${disabled ? 'disabled' : ''}>${label}</button>
-        `;
+        if (checkAllBar) {
+            checkAllBar.indeterminate = checkAllHead?.indeterminate || false;
+            checkAllBar.checked = checkAllHead?.checked || false;
+        }
+    };
 
-        const parts = [];
-        parts.push(btn(current - 1, '‹', current <= 1));
+    const fillPerPageSelect = () => {
+        if (!perPageSelect) return;
 
-        const start = Math.max(1, current - 2);
-        const end = Math.min(last, current + 2);
+        perPageSelect.innerHTML = [10, 25, 50, 100]
+            .map((value) => `<option value="${value}" ${value === state.perpage ? 'selected' : ''}>${value}</option>`)
+            .join('');
+    };
 
-        if (start > 1) parts.push(btn(1, '1', false, current === 1));
-        if (start > 2) parts.push(`<span class="px-2 text-muted-foreground">…</span>`);
+    const setInfo = (text = '') => {
+        if (infoEl) infoEl.textContent = text;
+    };
 
-        for (let p = start; p <= end; p++) parts.push(btn(p, String(p), false, p === current));
-
-        if (end < last - 1) parts.push(`<span class="px-2 text-muted-foreground">…</span>`);
-        if (end < last) parts.push(btn(last, String(last), false, current === last));
-
-        parts.push(btn(current + 1, '›', current >= last));
-
-        pagEl.innerHTML = `<div class="flex items-center gap-1 justify-center">${parts.join('')}</div>`;
-    }
-
-    function rowHtml(item) {
-        const id = esc(item.id);
-        const type = esc(item.type || '-');
-        const title = esc(item.title || item.name || '-');
-        const deletedAt = esc(item.deleted_at || '');
-
-        const restoreUrl = esc(item.restore_url || '');
-        const forceUrl = esc(item.force_url || '');
-
-        const restoreDisabled = restoreUrl ? '' : 'disabled';
-        const forceDisabled = forceUrl ? '' : 'disabled';
-
-        const checked = selected.has(String(item.id)) ? 'checked' : '';
-
-        return `
-            <tr data-row-id="${id}">
-                <td class="w-[55px]">
-                    <input type="checkbox"
-                       class="kt-checkbox kt-checkbox-sm"
-                       data-act="chk"
-                       data-id="${id}"
-                       data-type="${esc(item.type || '')}"
-                       ${checked}>
-                </td>
-
-                <td class="min-w-[160px]">
-                    <span class="kt-badge kt-badge-light">${type}</span>
-                </td>
-
-                <td class="min-w-[320px]">
-                    <div class="font-medium">${title}</div>
-                    <div class="text-xs text-muted-foreground">#${id}</div>
-                </td>
-
-                <td class="min-w-[180px]">
-                    <span class="text-sm text-muted-foreground">${deletedAt}</span>
-                </td>
-
-                <td class="w-[160px] text-end">
-                    <div class="flex items-center justify-end gap-2">
-                        <button type="button"
-                                class="kt-btn kt-btn-sm kt-btn-light"
-                                data-act="restore"
-                                data-id="${id}"
-                                data-url="${restoreUrl}"
-                                ${restoreDisabled}>
-                            <i class="ki-outline ki-arrow-circle-left"></i>
-                        </button>
-
-                        <button type="button"
-                                class="kt-btn kt-btn-sm kt-btn-danger"
-                                data-act="force"
-                                data-id="${id}"
-                                data-url="${forceUrl}"
-                                ${forceDisabled}>
-                            <i class="ki-outline ki-trash"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `;
-    }
-
-    function fillPerPageSelect() {
-        if (!perSel) return;
-
-        const options = [10, 25, 50, 100];
-        perSel.innerHTML = options.map((n) => {
-            const sel = n === state.perpage ? 'selected' : '';
-            return `<option value="${n}" ${sel}>${n}</option>`;
-        }).join('');
-    }
-
-    async function fetchList() {
-        const type = (state.type === 'all') ? null : state.type;
-
-        const qs = new URLSearchParams({
+    const fetchList = async () => {
+        const params = new URLSearchParams({
             q: state.q || '',
             page: String(state.page),
             perpage: String(state.perpage),
         });
 
-        if (type) qs.set('type', type);
+        if (state.type && state.type !== 'all') {
+            params.set('type', state.type);
+        }
 
-        const {res, j} = await jsonReq(`${URLS.list}?${qs.toString()}`, 'GET', null, signal);
-
+        const { res, j } = await jsonReq(`${urls.list}?${params.toString()}`, 'GET', null, signal);
         if (!res.ok || !j?.ok) {
             tbodyEl.innerHTML = `
                 <tr>
                     <td colspan="5" class="py-10 text-center text-muted-foreground">
-                        Liste alınamadı.
+                        Liste alinamadi.
                     </td>
                 </tr>
             `;
             setInfo('');
-            renderPagination({current_page: 1, last_page: 1});
+            renderPagination({ current_page: 1, last_page: 1 }, paginationEl);
             selected.clear();
             setBulkUI();
             return;
@@ -372,277 +353,258 @@ export default function init(ctx) {
 
         const items = Array.isArray(j.data) ? j.data : [];
         const meta = j.meta || {};
-
-        state.last_page = Number(meta.last_page || 1) || 1;
         state.total = Number(meta.total || 0) || 0;
 
-        const visibleIds = new Set(items.map((x) => String(x?.id)));
-        for (const id of Array.from(selected)) {
-            if (!visibleIds.has(id)) selected.delete(id);
-        }
-
-        if (!items.length) {
-            const isSearch = Boolean(state.q) || Boolean(type);
-            tbodyEl.innerHTML = isSearch ? cloneTpl(tplZero) : cloneTpl(tplEmpty);
-        } else {
-            tbodyEl.innerHTML = items.map(rowHtml).join('');
-        }
-
-        if (meta && typeof meta.from !== 'undefined') {
-            setInfo(`${meta.from || 0}-${meta.to || 0} / ${meta.total || 0}`);
-        } else {
-            setInfo(state.total ? `Toplam: ${state.total}` : '');
-        }
-
-        renderPagination(meta);
-        setBulkUI();
-    }
-
-    async function doSingleAction(url, method, confirmOptions) {
-        if (!url) return;
-        const ok = await showConfirmDialog(confirmOptions);
-        if (!ok) return;
-
-        const {res, j} = await jsonReq(url, method, (method === 'POST' ? {} : null), signal);
-
-        if (!res.ok || !j?.ok) {
-            // ✅ alert yerine modal (usage varsa tablo da gösterir)
-            if (j?.usage?.summary || (j?.usage?.details && Object.keys(j.usage.details).length)) {
-                showUsageModal(j, 'İşlem engellendi');
-            } else {
-                showTrashModal({
-                    title: 'İşlem başarısız',
-                    html: `<div class="whitespace-pre-line">${esc(buildErrorMessage(j)).replace(/\n/g, '<br>')}</div>`,
-                    tone: 'danger'
-                });
+        const visibleKeys = new Set(items.map((item) => rowKey(item.type, item.id)));
+        Array.from(selected).forEach((key) => {
+            if (!visibleKeys.has(key)) {
+                selected.delete(key);
             }
+        });
+
+        if (items.length === 0) {
+            tbodyEl.innerHTML = (state.q || state.type !== 'all')
+                ? cloneTpl(zeroTpl)
+                : cloneTpl(emptyTpl);
+        } else {
+            tbodyEl.innerHTML = items.map((item) => rowHtml(item, selected)).join('');
+        }
+
+        setInfo(state.total ? `Toplam: ${state.total}` : '');
+        renderPagination(meta, paginationEl);
+        setBulkUI();
+    };
+
+    const showRequestError = async (json, title = 'Islem basarisiz') => {
+        if (json?.usage?.summary || (json?.usage?.details && Object.keys(json.usage.details).length > 0)) {
+            await showUsageDialog(json, title);
             return;
         }
 
-        await fetchList();
-    }
+        await showNoticeDialog({
+            title,
+            html: `<div class="whitespace-pre-line">${esc(buildErrorMessage(json, title)).replace(/\n/g, '<br>')}</div>`,
+            type: 'error',
+        });
+    };
 
-    async function doBulk(url, confirmOptions) {
-        const items = Array.from(selected)
-            .map((k) => {
-                const [type, id] = String(k).split('|');
-                const nid = Number(id);
-                if (!type || !Number.isFinite(nid)) return null;
-                return {type, id: nid, key: `${type}|${nid}`};
-            })
-            .filter(Boolean);
-
-        if (!items.length) return;
+    const doSingleAction = async (url, method, confirmOptions, successMessage) => {
+        if (!url) return;
 
         const ok = await showConfirmDialog(confirmOptions);
         if (!ok) return;
 
-        const backup = {
-            keys: new Set(selected),
-            rows: [],
-        };
+        const { res, j } = await jsonReq(url, method, method === 'POST' ? {} : null, signal);
+        if (!res.ok || !j?.ok) {
+            await showRequestError(j, 'Islem engellendi');
+            return;
+        }
 
-        const keyToRow = (key) => {
-            const [t, id] = String(key).split('|');
-            return tbodyEl.querySelector(`input[data-act="chk"][data-id="${CSS.escape(id)}"][data-type="${CSS.escape(t)}"]`)?.closest('tr');
-        };
+        showToastMessage('success', j?.message || successMessage, { duration: 1800 });
+        await fetchList();
+    };
 
-        backup.keys.forEach((key) => {
-            const row = keyToRow(key);
-            if (!row) return;
-            backup.rows.push({key, node: row, parent: row.parentNode, nextSibling: row.nextSibling});
-            row.remove();
-        });
+    const doBulk = async (url, confirmOptions, successTitle) => {
+        const items = Array.from(selected)
+            .map((key) => {
+                const [type, id] = String(key).split('|');
+                const numericId = Number(id);
 
+                if (!type || !Number.isFinite(numericId)) return null;
+                return { type, id: numericId, key };
+            })
+            .filter(Boolean);
+
+        if (items.length === 0) return;
+
+        const ok = await showConfirmDialog(confirmOptions);
+        if (!ok) return;
+
+        const backup = new Set(selected);
         selected.clear();
         setBulkUI();
 
-        try {
-            const payload = {items: items.map(({type, id}) => ({type, id}))};
-            const {res, j} = await jsonReq(url, 'POST', payload, signal);
+        const { res, j } = await jsonReq(url, 'POST', {
+            items: items.map(({ type, id }) => ({ type, id })),
+        }, signal);
 
-            if (!res.ok || !j?.ok) throw new Error(buildErrorMessage(j));
-
-            // ✅ alert yerine modal + özet
-            let html = `<div class="font-medium">${esc(`${j.done || 0} kayıt işlendi.`)}</div>`;
-
-            if (j.failed?.length) {
-                const list = j.failed.slice(0, 8).map(f => `
-                    <li class="flex items-start justify-between gap-3">
-                        <span class="text-muted-foreground">${esc(`${f.type}#${f.id}`)}</span>
-                        <span class="text-end">${esc(f.reason || 'Hata')}</span>
-                    </li>
-                `).join('');
-                html += `
-                    <div class="mt-3">
-                        <div class="text-sm font-medium mb-2">${esc(`${j.failed.length} kayıt engellendi`)}</div>
-                        <ul class="space-y-1 text-sm">${list}</ul>
-                    </div>
-                `;
-            }
-
-            if (j.denied?.length) {
-                html += `<div class="mt-3 text-sm text-muted-foreground">${esc(`${j.denied.length} kayıt için yetki yok.`)}</div>`;
-            }
-
-            showTrashModal({title: 'Toplu işlem sonucu', html, tone: 'info'});
-            await fetchList();
-
-        } catch (e) {
-            if (backup.rows.length) {
-                tbodyEl.innerHTML = '';
-                backup.rows.forEach(({node, parent, nextSibling}) => {
-                    if (nextSibling) parent.insertBefore(node, nextSibling);
-                    else parent.appendChild(node);
-                });
-
-                selected.clear();
-                backup.keys.forEach((k) => selected.add(k));
-                setBulkUI();
-            }
-
-            showTrashModal({
-                title: 'İşlem başarısız',
-                html: `<div class="whitespace-pre-line">${esc(e?.message || 'İşlem başarısız').replace(/\n/g, '<br>')}</div>`,
-                tone: 'danger'
-            });
+        if (!res.ok || !j?.ok) {
+            backup.forEach((key) => selected.add(key));
+            setBulkUI();
+            await showRequestError(j, 'Toplu islem basarisiz');
+            return;
         }
-    }
 
-    // ---- bindings
+        let html = `<div class="font-medium">${esc(`${j.done || 0} kayit islendi.`)}</div>`;
+
+        if (Array.isArray(j.failed) && j.failed.length > 0) {
+            const failedRows = j.failed
+                .slice(0, 8)
+                .map((item) => `
+                    <li class="flex items-start justify-between gap-3">
+                        <span class="text-muted-foreground">${esc(`${item.type}#${item.id}`)}</span>
+                        <span class="text-end">${esc(item.reason || 'Hata')}</span>
+                    </li>
+                `)
+                .join('');
+
+            html += `
+                <div class="mt-3">
+                    <div class="text-sm font-medium mb-2">${esc(`${j.failed.length} kayit engellendi`)}</div>
+                    <ul class="space-y-1 text-sm">${failedRows}</ul>
+                </div>
+            `;
+        }
+
+        if (Array.isArray(j.denied) && j.denied.length > 0) {
+            html += `<div class="mt-3 text-sm text-muted-foreground">${esc(`${j.denied.length} kayit icin yetki yok.`)}</div>`;
+        }
+
+        await showNoticeDialog({
+            title: successTitle,
+            html,
+            type: Array.isArray(j.failed) && j.failed.length > 0 ? 'warning' : 'success',
+        });
+
+        await fetchList();
+    };
+
+    const toggleAll = (checked) => {
+        tbodyEl.querySelectorAll('input[data-act="chk"]').forEach((checkbox) => {
+            const id = checkbox.getAttribute('data-id');
+            const type = checkbox.getAttribute('data-type');
+            if (!id || !type) return;
+
+            checkbox.checked = checked;
+            const key = rowKey(type, id);
+
+            if (checked) selected.add(key);
+            else selected.delete(key);
+        });
+
+        setBulkUI();
+    };
+
     fillPerPageSelect();
 
-    if (qInput && !markBound(pageEl, 'q')) {
-        qInput.addEventListener('input', () => {
+    if (searchInput && !markBound(pageEl, 'search')) {
+        searchInput.addEventListener('input', () => {
             clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                state.q = (qInput.value || '').trim();
+            debounceTimer = window.setTimeout(() => {
+                state.q = String(searchInput.value || '').trim();
                 state.page = 1;
                 fetchList();
             }, 250);
-        }, {signal});
+        }, { signal });
 
         ctx.cleanup?.(() => {
-            if (debounceTimer) clearTimeout(debounceTimer);
+            if (debounceTimer) {
+                clearTimeout(debounceTimer);
+            }
             debounceTimer = null;
         });
     }
 
-    if (typeSel && !markBound(pageEl, 'type')) {
-        typeSel.addEventListener('change', () => {
-            state.type = typeSel.value || 'all';
+    if (typeSelect && !markBound(pageEl, 'type')) {
+        typeSelect.addEventListener('change', () => {
+            state.type = typeSelect.value || 'all';
             state.page = 1;
             fetchList();
-        }, {signal});
+        }, { signal });
     }
 
-    if (perSel && !markBound(pageEl, 'per')) {
-        perSel.addEventListener('change', () => {
-            state.perpage = Number(perSel.value || 25) || 25;
+    if (perPageSelect && !markBound(pageEl, 'perpage')) {
+        perPageSelect.addEventListener('change', () => {
+            state.perpage = Number(perPageSelect.value || 25) || 25;
             state.page = 1;
             fetchList();
-        }, {signal});
+        }, { signal });
     }
 
-    if (pagEl && !markBound(pageEl, 'pagination')) {
-        pagEl.addEventListener('click', (e) => {
-            const b = e.target.closest('button[data-page]');
-            if (!b) return;
+    if (paginationEl && !markBound(pageEl, 'pagination')) {
+        paginationEl.addEventListener('click', (event) => {
+            const button = event.target.closest('button[data-page]');
+            if (!button) return;
 
-            const p = Number(b.getAttribute('data-page') || 1);
-            if (!Number.isFinite(p) || p < 1) return;
+            const nextPage = Number(button.getAttribute('data-page') || 1);
+            if (!Number.isFinite(nextPage) || nextPage < 1 || nextPage === state.page) return;
 
-            if (p === state.page) return;
-            state.page = p;
+            state.page = nextPage;
             fetchList();
-        }, {signal});
+        }, { signal });
     }
 
     if (!markBound(pageEl, 'tbody-actions')) {
-        tbodyEl.addEventListener('click', (e) => {
-            const btn = e.target.closest('button[data-act]');
-            if (btn) {
-                const act = btn.getAttribute('data-act');
-                const url = btn.getAttribute('data-url') || '';
+        tbodyEl.addEventListener('click', (event) => {
+            const actionButton = event.target.closest('button[data-act]');
+            if (actionButton) {
+                const action = actionButton.getAttribute('data-act');
+                const url = actionButton.getAttribute('data-url') || '';
 
-                if (act === 'restore') {
+                if (action === 'restore') {
                     doSingleAction(url, 'POST', {
                         type: 'success',
-                        title: 'Bu kayıt geri yüklensin mi?',
-                        message: 'Kayıt tekrar aktif listeye alınacak.',
-                        confirmButtonText: 'Geri yükle',
-                    });
+                        title: 'Bu kayit geri yuklensin mi?',
+                        message: 'Kayit tekrar aktif listeye alinacak.',
+                        confirmButtonText: 'Geri yukle',
+                    }, 'Kayit geri yuklendi.');
+                    return;
                 }
-                if (act === 'force') {
+
+                if (action === 'force') {
                     doSingleAction(url, 'DELETE', {
                         type: 'error',
-                        title: 'Bu kayıt kalıcı silinsin mi?',
-                        message: 'Bu işlem geri alınamaz.',
-                        confirmButtonText: 'Kalıcı sil',
-                    });
+                        title: 'Bu kayit kalici olarak silinsin mi?',
+                        message: 'Bu islem geri alinamaz.',
+                        confirmButtonText: 'Kalici sil',
+                    }, 'Kayit kalici olarak silindi.');
+                    return;
                 }
-                return;
             }
 
-            const chk = e.target.closest('input[type="checkbox"][data-act="chk"]');
-            if (chk) {
-                const id = chk.getAttribute('data-id');
-                const type = chk.getAttribute('data-type') || '';
-                if (!id || !type) return;
+            const checkbox = event.target.closest('input[data-act="chk"]');
+            if (!checkbox) return;
 
-                const key = `${type}|${id}`;
-
-                if (chk.checked) selected.add(key);
-                else selected.delete(key);
-
-                setBulkUI();
-            }
-        }, {signal});
-    }
-
-    const toggleAll = (checked) => {
-        tbodyEl.querySelectorAll('input[type="checkbox"][data-act="chk"]').forEach((c) => {
-            c.checked = checked;
-            const id = c.getAttribute('data-id');
-            const type = c.getAttribute('data-type') || '';
+            const id = checkbox.getAttribute('data-id');
+            const type = checkbox.getAttribute('data-type');
             if (!id || !type) return;
 
-            const key = `${type}|${id}`;
-
-            if (checked) selected.add(key);
+            const key = rowKey(type, id);
+            if (checkbox.checked) selected.add(key);
             else selected.delete(key);
 
-        });
-        setBulkUI();
-    };
+            setBulkUI();
+        }, { signal });
+    }
 
     if (checkAllHead && !markBound(pageEl, 'checkall-head')) {
-        checkAllHead.addEventListener('change', () => toggleAll(checkAllHead.checked), {signal});
+        checkAllHead.addEventListener('change', () => toggleAll(checkAllHead.checked), { signal });
     }
+
     if (checkAllBar && !markBound(pageEl, 'checkall-bar')) {
-        checkAllBar.addEventListener('change', () => toggleAll(checkAllBar.checked), {signal});
+        checkAllBar.addEventListener('change', () => toggleAll(checkAllBar.checked), { signal });
     }
 
     if (bulkRestoreBtn && !markBound(pageEl, 'bulk-restore')) {
         bulkRestoreBtn.addEventListener('click', () => {
-            doBulk(URLS.bulkRestore, {
+            doBulk(urls.bulkRestore, {
                 type: 'success',
-                title: 'Seçili kayıtlar geri yüklensin mi?',
-                message: 'Seçili kayıtlar tekrar aktif listeye alınacak.',
-                confirmButtonText: 'Geri yükle',
-            });
-        }, {signal});
+                title: 'Secili kayitlar geri yuklensin mi?',
+                message: 'Secili kayitlar tekrar aktif listeye alinacak.',
+                confirmButtonText: 'Geri yukle',
+            }, 'Toplu geri yukleme sonucu');
+        }, { signal });
     }
 
     if (bulkForceBtn && !markBound(pageEl, 'bulk-force')) {
         bulkForceBtn.addEventListener('click', () => {
-            doBulk(URLS.bulkForce, {
+            doBulk(urls.bulkForce, {
                 type: 'error',
-                title: 'Seçili kayıtlar kalıcı silinsin mi?',
-                message: 'Bu işlem geri alınamaz.',
-                confirmButtonText: 'Kalıcı sil',
-            });
-        }, {signal});
+                title: 'Secili kayitlar kalici olarak silinsin mi?',
+                message: 'Bu islem geri alinamaz.',
+                confirmButtonText: 'Kalici sil',
+            }, 'Toplu silme sonucu');
+        }, { signal });
     }
 
     fetchList();

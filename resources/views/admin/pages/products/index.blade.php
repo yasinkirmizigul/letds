@@ -1,233 +1,394 @@
-{{-- resources/views/admin/pages/products/index.blade.php --}}
 @extends('admin.layouts.main.app')
 
 @section('content')
     @php
-        // Controller’dan geliyor varsayıyorum (Project’teki gibi):
-        // $mode: 'active'|'trash'
-        // $products: LengthAwarePaginator veya Collection
-        $isTrash = ($mode ?? 'active') === 'trash';
-
-        $statusOptions = \App\Models\Admin\Product\Product::statusOptionsSorted();
+        $mode = $mode ?? 'active';
+        $isTrash = $mode === 'trash';
+        $q = $q ?? '';
+        $status = $status ?? 'all';
+        $selectedCategoryIds = $selectedCategoryIds ?? [];
     @endphp
 
-    <div class="kt-container-fixed"
-         data-page="{{ $isTrash ? 'products.trash' : 'products.index' }}"
-         data-status-options='@json($statusOptions)'>
+    <div
+        class="kt-container-fixed max-w-[96%] grid gap-5 lg:gap-7.5"
+        data-page="products.index"
+        data-mode="{{ $mode }}"
+        data-perpage="{{ $perPage ?? 25 }}"
+        data-status-options='@json($statusOptions ?? [])'
+        data-bulk-delete-url="{{ route('admin.products.bulkDestroy') }}"
+        data-bulk-restore-url="{{ route('admin.products.bulkRestore') }}"
+        data-bulk-force-delete-url="{{ route('admin.products.bulkForceDestroy') }}"
+    >
+        @includeIf('admin.partials._flash')
 
-        <x-list-layout
-            :title="$isTrash ? 'Silinmiş Ürünler' : 'Ürünler'"
-            :searchAction="$isTrash ? route('admin.products.trash') : route('admin.products.index')">
+        <div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+                <h1 class="text-xl font-semibold">
+                    {{ $isTrash ? 'Urunler Cop Kutusu' : 'Urun Yonetimi' }}
+                </h1>
+                <div class="text-sm text-muted-foreground">
+                    {{ $isTrash ? 'Silinen urunleri geri yukleyebilir veya kalici olarak silebilirsiniz.' : 'Workflow, fiyat, stok ve vitrin akislarini tek ekrandan yonetin.' }}
+                </div>
+            </div>
 
-            <x-slot:actions>
-                @if($isTrash)
-                    <a href="{{ route('admin.products.index') }}" class="kt-btn kt-btn-light">
-                        Aktif Liste
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="{{ route('admin.products.index') }}" class="kt-btn kt-btn-sm {{ $isTrash ? 'kt-btn-light' : 'kt-btn-primary' }}">
+                    Aktif Kayitlar
+                </a>
+                <a href="{{ route('admin.products.trash') }}" class="kt-btn kt-btn-sm {{ $isTrash ? 'kt-btn-primary' : 'kt-btn-light' }}">
+                    Cop Kutusu
+                </a>
+
+                @perm('products.create')
+                    <a href="{{ route('admin.products.create') }}" class="kt-btn kt-btn-sm kt-btn-primary">
+                        Yeni Urun
                     </a>
-                @else
-                    <a href="{{ route('admin.products.trash') }}" class="kt-btn kt-btn-light">
-                        <i class="ki-outline ki-trash"></i>
-                        Çöp
-                    </a>
+                @endperm
+            </div>
+        </div>
 
-                    @can('products.create')
-                        <a href="{{ route('admin.products.create') }}" class="kt-btn kt-btn-primary">
-                            <i class="ki-outline ki-plus"></i>
-                            Yeni Ürün
-                        </a>
-                    @endcan
-                @endif
-            </x-slot:actions>
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+            <div class="rounded-3xl border border-border bg-white p-5 shadow-sm">
+                <div class="text-sm text-muted-foreground">Toplam</div>
+                <div class="mt-2 text-3xl font-semibold text-foreground">{{ $stats['all'] ?? 0 }}</div>
+            </div>
+            <div class="rounded-3xl border border-border bg-white p-5 shadow-sm">
+                <div class="text-sm text-muted-foreground">Aktif</div>
+                <div class="mt-2 text-3xl font-semibold text-success">{{ $stats['active'] ?? 0 }}</div>
+            </div>
+            <div class="rounded-3xl border border-border bg-white p-5 shadow-sm">
+                <div class="text-sm text-muted-foreground">Anasayfada</div>
+                <div class="mt-2 text-3xl font-semibold text-primary">{{ $stats['featured'] ?? 0 }}</div>
+            </div>
+            <div class="rounded-3xl border border-border bg-white p-5 shadow-sm">
+                <div class="text-sm text-muted-foreground">Dusuk Stok</div>
+                <div class="mt-2 text-3xl font-semibold text-warning">{{ $stats['low_stock'] ?? 0 }}</div>
+            </div>
+            <div class="rounded-3xl border border-border bg-white p-5 shadow-sm">
+                <div class="text-sm text-muted-foreground">Copte</div>
+                <div class="mt-2 text-3xl font-semibold text-danger">{{ $stats['trash'] ?? 0 }}</div>
+            </div>
+        </div>
 
-            <table id="products_table" class="kt-table table-auto kt-table-border w-full">
-                <thead>
-                <tr>
-                    <th class="w-[44px] dt-orderable-none">
-                        <input class="kt-checkbox kt-checkbox-sm" id="products_check_all" type="checkbox">
-                    </th>
+        <div class="kt-card kt-card-grid min-w-full">
+            <div class="kt-card-header py-5 flex-wrap gap-4">
+                <div>
+                    <h3 class="kt-card-title">{{ $isTrash ? 'Silinen Urunler' : 'Urun Listesi' }}</h3>
+                    <div class="text-sm text-muted-foreground">
+                        Durum, stok, kategori ve vitrin secimini tek satirda inceleyin.
+                    </div>
+                </div>
 
-                    <th class="min-w-[340px]">Ürün</th>
-                    <th class="min-w-[180px]">SKU</th>
-                    <th class="min-w-[140px] text-right">Fiyat</th>
-                    <th class="min-w-[110px] text-right">Stok</th>
+                <div class="flex flex-wrap items-center gap-2">
+                    <input
+                        id="productsSearch"
+                        type="text"
+                        class="kt-input kt-input-sm w-full md:w-[260px]"
+                        placeholder="Baslik, slug, SKU, barkod ara..."
+                        value="{{ $q }}"
+                    />
 
-                    <th class="min-w-[220px]">Kısa Bağlantı</th>
-                    <th class="min-w-[200px]">Durum</th>
-                    <th class="min-w-[140px] text-center">Anasayfa</th>
-                    <th class="min-w-[170px] text-right">Tarih</th>
-                    <th class="min-w-[130px] text-right dt-orderable-none">İşlemler</th>
-                </tr>
-                </thead>
+                    <select
+                        id="productsStatusFilter"
+                        class="kt-select w-full md:w-[220px]"
+                        data-kt-select="true"
+                        data-kt-select-placeholder="Durum"
+                    >
+                        <option value="all" @selected($status === 'all')>Tum durumlar</option>
+                        @foreach(($statusOptions ?? []) as $key => $option)
+                            <option value="{{ $key }}" @selected($status === $key)>{{ $option['label'] }}</option>
+                        @endforeach
+                    </select>
 
-                <tbody>
-                @forelse($products as $p)
-                    @php
-                        $img = $p->featuredMediaUrl()
-                            ?: ($p->featured_image_path ? asset('storage/'.$p->featured_image_path) : null);
+                    <select
+                        id="productsCategoryFilter"
+                        class="kt-select w-full md:w-[250px]"
+                        multiple
+                        data-kt-select="true"
+                        data-kt-select-placeholder="Kategoriler"
+                        data-kt-select-multiple="true"
+                        data-kt-select-tags="false"
+                        data-kt-select-config='{"showSelectedCount":true,"enableSelectAll":true,"selectAllText":"Tumunu Sec","clearAllText":"Temizle"}'
+                    >
+                        @foreach(($categoryOptions ?? []) as $option)
+                            <option value="{{ $option['id'] }}" @selected(in_array($option['id'], $selectedCategoryIds))>
+                                {{ $option['label'] }}
+                            </option>
+                        @endforeach
+                    </select>
 
-                        $price = $p->sale_price ?? $p->price;
-                        $cur   = $p->currency ?? 'TRY';
+                    <button type="button" id="productsClearFiltersBtn" class="kt-btn kt-btn-sm kt-btn-light">
+                        Filtreleri Temizle
+                    </button>
+                </div>
+            </div>
 
-                        $st = $p->status ?? \App\Models\Admin\Product\Product::STATUS_APPOINTMENT_PENDING;
-                    @endphp
+            <div class="kt-card-content">
+                <div id="productsBulkBar" class="hidden kt-card mb-4 border border-border">
+                    <div class="kt-card-content p-3 flex items-center justify-between gap-3">
+                        <div class="text-sm text-muted-foreground">
+                            Secili: <b id="productsSelectedCount">0</b>
+                        </div>
 
-                    <tr data-id="{{ $p->id }}">
-                        <td>
-                            <input class="kt-checkbox kt-checkbox-sm products-check" type="checkbox" value="{{ $p->id }}">
-                        </td>
+                        <div class="flex items-center gap-2">
+                            @if($isTrash)
+                                @perm('products.restore')
+                                    <button type="button" class="kt-btn kt-btn-sm kt-btn-success" id="productsBulkRestoreBtn" disabled>
+                                        Geri Yukle
+                                    </button>
+                                @endperm
+                                @perm('products.force_delete')
+                                    <button type="button" class="kt-btn kt-btn-sm kt-btn-destructive" id="productsBulkForceDeleteBtn" disabled>
+                                        Kalici Sil
+                                    </button>
+                                @endperm
+                            @else
+                                @perm('products.delete')
+                                    <button type="button" class="kt-btn kt-btn-sm kt-btn-destructive" id="productsBulkDeleteBtn" disabled>
+                                        Sil
+                                    </button>
+                                @endperm
+                            @endif
+                        </div>
+                    </div>
+                </div>
 
-                        <td>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl overflow-hidden border border-border bg-muted/30 shrink-0">
-                                    @if($img)
-                                        <a href="javascript:void(0)"
-                                           class="block w-full h-full js-img-popover"
-                                           data-popover-img="{{ $img }}">
-                                            <img src="{{ $img }}" class="w-full h-full object-cover" alt="">
-                                        </a>
-                                    @else
-                                        <div class="w-full h-full grid place-items-center text-muted-foreground">
-                                            <i class="ki-outline ki-picture text-lg"></i>
+                <div class="grid" id="products_dt">
+                    <div class="kt-scrollable-x-auto overflow-y-hidden">
+                        <table id="products_table" class="kt-table table-auto kt-table-border w-full">
+                            <thead>
+                            <tr>
+                                <th class="w-[55px] dt-orderable-none">
+                                    <input class="kt-checkbox kt-checkbox-sm" id="products_check_all" type="checkbox">
+                                </th>
+                                <th class="min-w-[360px]">Urun</th>
+                                <th class="min-w-[220px]">Ticari Durum</th>
+                                <th class="min-w-[220px]">Workflow</th>
+                                <th class="min-w-[220px]">Vitrin</th>
+                                <th class="min-w-[180px]">Son Guncelleme</th>
+                                <th class="w-[64px]"></th>
+                                <th class="w-[80px]"></th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            @foreach($products as $product)
+                                @php
+                                    $img = $product->featuredMediaUrl() ?: $product->featured_image_url;
+                                    $seoScore = $product->seoCompletenessScore();
+                                    $readTime = $product->estimatedReadTimeMinutes();
+                                    $categoryIdsAttr = '|' . $product->categories->pluck('id')->map(fn ($id) => (int) $id)->implode('|') . '|';
+                                    $stock = is_null($product->stock) ? null : (int) $product->stock;
+                                @endphp
+
+                                <tr
+                                    data-id="{{ $product->id }}"
+                                    data-status="{{ $product->status }}"
+                                    data-featured="{{ $product->is_featured ? '1' : '0' }}"
+                                    data-category-ids="{{ $categoryIdsAttr }}"
+                                >
+                                    <td class="w-[55px]">
+                                        <input class="kt-checkbox kt-checkbox-sm products-check" type="checkbox" value="{{ $product->id }}">
+                                    </td>
+
+                                    <td>
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-12 h-12 rounded-2xl overflow-hidden border border-border bg-muted/20 shrink-0">
+                                                @if($img)
+                                                    <a
+                                                        href="javascript:void(0)"
+                                                        class="block w-full h-full js-img-popover"
+                                                        data-popover-img="{{ $img }}"
+                                                    >
+                                                        <img src="{{ $img }}" class="w-full h-full object-cover" alt="">
+                                                    </a>
+                                                @else
+                                                    <div class="w-full h-full grid place-items-center text-muted-foreground">
+                                                        <i class="ki-outline ki-picture text-xl"></i>
+                                                    </div>
+                                                @endif
+                                            </div>
+
+                                            <div class="grid gap-2 min-w-0">
+                                                <div class="flex flex-wrap items-center gap-2">
+                                                    @if(!$isTrash)
+                                                        <a class="font-semibold text-foreground hover:text-primary" href="{{ route('admin.products.edit', $product->id) }}">
+                                                            {{ $product->title }}
+                                                        </a>
+                                                    @else
+                                                        <span class="font-semibold text-foreground">{{ $product->title }}</span>
+                                                    @endif
+                                                    <span class="kt-badge kt-badge-sm kt-badge-light">#{{ $product->id }}</span>
+                                                    <span class="kt-badge kt-badge-sm {{ $seoScore >= 80 ? 'kt-badge-light-success' : ($seoScore >= 50 ? 'kt-badge-light-warning' : 'kt-badge-light-danger') }}">
+                                                        SEO %{{ $seoScore }}
+                                                    </span>
+                                                    <span class="kt-badge kt-badge-sm kt-badge-light">
+                                                        {{ $readTime > 0 ? $readTime . ' dk okuma' : 'Kisa icerik' }}
+                                                    </span>
+                                                </div>
+
+                                                <div class="text-sm text-muted-foreground break-all">
+                                                    /products/{{ $product->slug }}
+                                                </div>
+
+                                                <div class="text-sm text-muted-foreground leading-6">
+                                                    {{ $product->excerptPreview(130) ?: 'Icerik ozeti bulunmuyor.' }}
+                                                </div>
+
+                                                <div class="flex flex-wrap items-center gap-1">
+                                                    @if($product->sku)
+                                                        <span class="kt-badge kt-badge-sm kt-badge-light">SKU: {{ $product->sku }}</span>
+                                                    @endif
+                                                    @if($product->brand)
+                                                        <span class="kt-badge kt-badge-sm kt-badge-light">{{ $product->brand }}</span>
+                                                    @endif
+                                                    @foreach($product->categories as $category)
+                                                        <span class="kt-badge kt-badge-sm kt-badge-light">{{ $category->name }}</span>
+                                                    @endforeach
+                                                </div>
+                                            </div>
                                         </div>
-                                    @endif
+                                    </td>
+
+                                    <td>
+                                        <div class="grid gap-2">
+                                            <div class="text-sm font-medium text-foreground">
+                                                @if(!is_null($product->price))
+                                                    {{ number_format((float) $product->price, 2, ',', '.') }} {{ $product->currency ?: 'TRY' }}
+                                                @else
+                                                    Fiyat yok
+                                                @endif
+                                            </div>
+                                            <div class="flex flex-wrap items-center gap-2">
+                                                @if(!is_null($product->sale_price))
+                                                    <span class="kt-badge kt-badge-sm kt-badge-light-success">Indirim: {{ number_format((float) $product->sale_price, 2, ',', '.') }}</span>
+                                                @endif
+                                                <span class="kt-badge kt-badge-sm {{ is_null($stock) ? 'kt-badge-light' : ($stock <= 0 ? 'kt-badge-light-danger' : ($stock <= 5 ? 'kt-badge-light-warning' : 'kt-badge-light-success')) }}">
+                                                    {{ is_null($stock) ? 'Stok belirtilmedi' : ($stock <= 0 ? 'Stok yok' : ($stock <= 5 ? 'Dusuk stok: ' . $stock : 'Stok: ' . $stock)) }}
+                                                </span>
+                                            </div>
+                                            <div class="text-xs text-muted-foreground">
+                                                {{ $product->is_active ? 'Operasyonel olarak aktif' : 'Pasif durumda' }}
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <button
+                                            type="button"
+                                            class="{{ \App\Models\Admin\Product\Product::statusBadgeClass($product->status) }} js-status-trigger"
+                                            data-status="{{ $product->status }}"
+                                            data-status-url="{{ route('admin.products.status', $product) }}"
+                                            @disabled($isTrash)
+                                        >
+                                            {{ \App\Models\Admin\Product\Product::statusLabel($product->status) }}
+                                            <i class="ki-outline ki-down ml-1"></i>
+                                        </button>
+                                    </td>
+
+                                    <td>
+                                        <div class="grid gap-2">
+                                            <label class="inline-flex items-center gap-3">
+                                                <input
+                                                    type="checkbox"
+                                                    class="kt-switch kt-switch-sm js-featured-toggle"
+                                                    data-url="{{ route('admin.products.featured', $product) }}"
+                                                    @checked($product->is_featured)
+                                                    @disabled($isTrash)
+                                                >
+                                                <span class="kt-badge kt-badge-sm {{ $product->is_featured ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }} js-featured-badge">
+                                                    {{ $product->is_featured ? 'Anasayfada' : 'Kapali' }}
+                                                </span>
+                                            </label>
+                                            <div class="text-xs text-muted-foreground js-featured-at">
+                                                {{ $product->is_featured && $product->featured_at ? 'Secim: ' . $product->featured_at->format('d.m.Y H:i') : 'Secim yapilmamis' }}
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td class="text-sm text-muted-foreground">
+                                        <div class="grid gap-0.5">
+                                            <span>{{ $product->updated_at?->format('d.m.Y') }}</span>
+                                            <span class="text-xs">{{ $product->updated_at?->format('H:i') }}</span>
+                                        </div>
+                                    </td>
+
+                                    <td class="text-right">
+                                        @if(!$isTrash)
+                                            @perm('products.update')
+                                                <a class="kt-btn kt-btn-sm kt-btn-light" href="{{ route('admin.products.edit', $product) }}">
+                                                    Duzenle
+                                                </a>
+                                            @endperm
+                                        @endif
+                                    </td>
+
+                                    <td class="text-right">
+                                        <div class="inline-flex items-center gap-1">
+                                            @if($isTrash)
+                                                @perm('products.restore')
+                                                    <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-action="restore" data-url="{{ route('admin.products.restore', $product->id) }}">
+                                                        Geri Al
+                                                    </button>
+                                                @endperm
+                                                @perm('products.force_delete')
+                                                    <button type="button" class="kt-btn kt-btn-sm kt-btn-danger" data-action="force-delete" data-url="{{ route('admin.products.forceDestroy', $product->id) }}">
+                                                        Kalici Sil
+                                                    </button>
+                                                @endperm
+                                            @else
+                                                @perm('products.delete')
+                                                    <button type="button" class="kt-btn kt-btn-sm kt-btn-danger" data-action="delete" data-url="{{ route('admin.products.destroy', $product) }}">
+                                                        Sil
+                                                    </button>
+                                                @endperm
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <template id="dt-empty-products">
+                        <tr data-kt-empty-row="true">
+                            <td colspan="8" class="py-12">
+                                <div class="grid place-items-center gap-2 text-center text-muted-foreground">
+                                    <i class="ki-outline ki-box text-4xl"></i>
+                                    <div class="font-semibold">{{ $isTrash ? 'Silinen urun yok' : 'Henuz urun yok' }}</div>
+                                    <div class="text-sm">{{ $isTrash ? 'Geri yuklenebilir urun bulunmuyor.' : 'Yeni urun ekleyerek bu listeyi doldurabilirsiniz.' }}</div>
                                 </div>
+                            </td>
+                        </tr>
+                    </template>
 
-                                <div class="grid">
-                                    @if($isTrash)
-                                        <span class="font-semibold">{{ $p->title }}</span>
-                                    @else
-                                        <a class="font-semibold hover:underline"
-                                           href="{{ route('admin.products.edit', $p->id) }}">
-                                            {{ $p->title }}
-                                        </a>
-                                    @endif
-
-                                    <div class="text-xs text-muted-foreground">#{{ $p->id }}</div>
+                    <template id="dt-zero-products">
+                        <tr data-kt-zero-row="true">
+                            <td colspan="8" class="py-12">
+                                <div class="grid place-items-center gap-2 text-center text-muted-foreground">
+                                    <i class="ki-outline ki-search-list text-4xl"></i>
+                                    <div class="font-semibold">Sonuc bulunamadi</div>
+                                    <div class="text-sm">Arama veya filtreleri degistirip tekrar deneyin.</div>
                                 </div>
-                            </div>
-                        </td>
+                            </td>
+                        </tr>
+                    </template>
 
-                        <td class="text-sm text-muted-foreground">
-                            {{ $p->sku ?: '—' }}
-                        </td>
+                    <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
+                        <div class="flex items-center gap-2 order-2 md:order-1">
+                            Goster
+                            <select class="kt-select w-16" id="productsPageSize" data-kt-select="true"></select>
+                            / sayfa
+                        </div>
 
-                        <td class="text-sm text-right whitespace-nowrap">
-                            @if($price !== null)
-                                <span class="font-medium">{{ number_format((float)$price, 2, ',', '.') }}</span>
-                                <span class="text-muted-foreground">{{ $cur }}</span>
-                            @else
-                                <span class="text-muted-foreground">—</span>
-                            @endif
-                        </td>
-
-                        <td class="text-sm text-right">
-                            @if($p->stock !== null)
-                                <span class="{{ ((int)$p->stock) <= 0 ? 'text-danger font-semibold' : '' }}">
-                                {{ (int)$p->stock }}
-                            </span>
-                            @else
-                                <span class="text-muted-foreground">—</span>
-                            @endif
-                        </td>
-
-                        <td class="text-sm text-muted-foreground">
-                            {{ $p->slug }}
-                        </td>
-
-                        <td>
-                            <button type="button"
-                                    class="{{ \App\Models\Admin\Product\Product::statusBadgeClass($st) }} js-status-trigger"
-                                    data-product-id="{{ $p->id }}"
-                                    data-status="{{ $st }}"
-                                {{ $isTrash ? 'disabled' : '' }}>
-                                {{ \App\Models\Admin\Product\Product::statusLabel($st) }}
-                                <i class="ki-outline ki-down ml-1"></i>
-                            </button>
-                        </td>
-
-                        <td class="text-center">
-                            <div class="flex items-center justify-center gap-2">
-                                <input type="checkbox"
-                                       class="kt-switch kt-switch-sm js-featured-toggle"
-                                       data-product-id="{{ $p->id }}"
-                                    {{ $p->is_featured ? 'checked' : '' }}
-                                    {{ $isTrash ? 'disabled' : '' }}>
-                                <span class="kt-badge kt-badge-sm kt-badge-light js-featured-badge {{ $p->is_featured ? '' : 'hidden' }}">
-                                Anasayfa
-                            </span>
-                            </div>
-                        </td>
-
-                        <td class="text-sm text-muted-foreground text-right whitespace-nowrap">
-                            <div class="grid gap-0.5">
-                                <span>{{ $p->updated_at?->format('d.m.Y') }}</span>
-                                <span class="text-xs">{{ $p->updated_at?->format('H:i') }}</span>
-                            </div>
-                        </td>
-
-                        <td class="text-right whitespace-nowrap">
-                            <div class="inline-flex items-center gap-1">
-                                @if($isTrash)
-                                    @can('products.restore')
-                                        <button type="button"
-                                                class="kt-btn kt-btn-sm kt-btn-light"
-                                                data-action="restore"
-                                                data-id="{{ $p->id }}">
-                                            Geri Al
-                                        </button>
-                                    @endcan
-
-                                    @can('products.force_delete')
-                                        <button type="button"
-                                                class="kt-btn kt-btn-sm kt-btn-danger"
-                                                data-action="force-delete"
-                                                data-id="{{ $p->id }}">
-                                            Kalıcı Sil
-                                        </button>
-                                    @endcan
-                                @else
-                                    @can('products.update')
-                                        <a class="kt-btn kt-btn-sm kt-btn-light"
-                                           href="{{ route('admin.products.edit', $p->id) }}">
-                                            Düzenle
-                                        </a>
-                                    @endcan
-
-                                    @can('products.delete')
-                                        <button type="button"
-                                                class="kt-btn kt-btn-sm kt-btn-danger"
-                                                data-action="delete"
-                                                data-id="{{ $p->id }}">
-                                            Sil
-                                        </button>
-                                    @endcan
-                                @endif
-                            </div>
-                        </td>
-                    </tr>
-
-                @empty
-                    <tr>
-                        <td colspan="100%">
-                            <div class="grid place-items-center py-14 gap-3 text-muted-foreground">
-                                <i class="ki-outline ki-folder text-3xl"></i>
-                                <div class="text-sm">{{ $isTrash ? 'Silinmiş kayıt yok' : 'Kayıt yok' }}</div>
-
-                                @if(!$isTrash)
-                                    @can('products.create')
-                                        <a href="{{ route('admin.products.create') }}"
-                                           class="kt-btn kt-btn-sm kt-btn-primary">
-                                            Yeni ürün oluştur
-                                        </a>
-                                    @endcan
-                                @endif
-                            </div>
-                        </td>
-                    </tr>
-                @endforelse
-                </tbody>
-            </table>
-
-        </x-list-layout>
+                        <div class="flex items-center gap-4 order-1 md:order-2">
+                            <span id="productsInfo"></span>
+                            <div class="kt-datatable-pagination" id="productsPagination"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection

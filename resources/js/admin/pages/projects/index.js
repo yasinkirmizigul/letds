@@ -1,184 +1,145 @@
 import { request } from '@/core/http';
 import { showConfirmDialog, showToastMessage } from '@/core/swal-alert';
 
-// resources/js/admin/pages/projects/index.js
-let ac = null;
-let popEl = null;
+let imagePopover = null;
+let statusPopover = null;
 
 function notify(type, text) {
     showToastMessage(type === 'error' ? 'error' : 'success', text, { duration: 1800 });
 }
 
-function createImgPopover() {
-    const el = document.createElement('div');
-    el.style.position = 'fixed';
-    el.style.zIndex = 9999;
-    el.style.display = 'none';
-    el.className = 'kt-card p-2 shadow-lg';
-    el.innerHTML = `<img src="" style="width:220px;height:220px;object-fit:cover;border-radius:12px;">`;
-    document.body.appendChild(el);
-    return el;
-}
-
-function showImgPopover(popEl, anchor, imgUrl) {
-    const img = popEl.querySelector('img');
-    img.src = imgUrl;
-
-    const r = anchor.getBoundingClientRect();
-    const top = Math.min(window.innerHeight - 240, Math.max(10, r.top - 10));
-    const left = Math.min(window.innerWidth - 240, Math.max(10, r.right + 12));
-
-    popEl.style.top = top + 'px';
-    popEl.style.left = left + 'px';
-    popEl.style.display = 'block';
-}
-function hideImgPopover(popEl) { popEl.style.display = 'none'; }
-
-async function postJson(url, body, method = 'POST') {
-    try {
-        const j = await request(url, { method, data: body, ignoreGlobalError: true });
-        if (j?.ok === false) {
-            const err = new Error(j?.error?.message || 'İşlem başarısız');
-            err.payload = j;
-            throw err;
+function resolveErrorMessage(error, fallback) {
+    const validationErrors = error?.data?.errors;
+    if (validationErrors && typeof validationErrors === 'object') {
+        const firstError = Object.values(validationErrors).flat().find(Boolean);
+        if (firstError) {
+            return firstError;
         }
-        return j;
-    } catch (err) {
-        const payload = err?.data || err?.payload || {};
-        const e = new Error(payload?.error?.message || payload?.message || err?.message || 'İşlem başarısız');
-        e.status = err?.status || 0;
-        e.payload = payload;
-        throw e;
+    }
+
+    return error?.data?.message || error?.message || fallback;
+}
+
+function createImagePopover() {
+    const element = document.createElement('div');
+    element.style.position = 'fixed';
+    element.style.zIndex = '9999';
+    element.style.display = 'none';
+    element.className = 'kt-card p-2 shadow-lg';
+    element.innerHTML = '<img src="" style="width:220px;height:220px;object-fit:cover;border-radius:12px;">';
+    document.body.appendChild(element);
+
+    return element;
+}
+
+function showImagePopover(element, anchor, imageUrl) {
+    const image = element.querySelector('img');
+    image.src = imageUrl;
+
+    const rect = anchor.getBoundingClientRect();
+    const top = Math.min(window.innerHeight - 240, Math.max(10, rect.top - 10));
+    const left = Math.min(window.innerWidth - 240, Math.max(10, rect.right + 12));
+
+    element.style.top = `${top}px`;
+    element.style.left = `${left}px`;
+    element.style.display = 'block';
+}
+
+function hideImagePopover(element) {
+    if (!element) return;
+    element.style.display = 'none';
+}
+
+function parseStatusOptions(root) {
+    try {
+        return Object.entries(JSON.parse(root.dataset.statusOptions || '{}'))
+            .map(([key, option]) => ({
+                key,
+                label: option?.label || key,
+                badge: option?.badge || 'kt-badge kt-badge-sm kt-badge-light',
+                order: Number(option?.order ?? 0),
+            }))
+            .sort((left, right) => left.order - right.order);
+    } catch {
+        return [];
     }
 }
 
-// --- status menu ---
-// ✅ single source: read from Blade dataset: data-status-options='{"key":{"label","badge","order"},...}'
-let STATUS_OPTIONS_CACHE = null;
-
-function getStatusOptions(root) {
-    if (STATUS_OPTIONS_CACHE?.length) return STATUS_OPTIONS_CACHE;
-
-    // dataset parse
+function parsePublicStatuses(root) {
     try {
-        const raw = root?.dataset?.statusOptions;
-        if (raw) {
-            const obj = JSON.parse(raw);
-
-            const arr = Object.entries(obj).map(([key, opt]) => ({
-                key,
-                label: opt?.label ?? key,
-                badge: opt?.badge ?? 'kt-badge kt-badge-sm kt-badge-light',
-                order: Number(opt?.order ?? 0),
-            }));
-
-            arr.sort((a, b) => (a.order - b.order) || String(a.label).localeCompare(String(b.label)));
-            STATUS_OPTIONS_CACHE = arr.map(x => [x.key, x.label, x.badge]);
-            if (STATUS_OPTIONS_CACHE.length) return STATUS_OPTIONS_CACHE;
-        }
-    } catch (_) {}
-
-    // fallback (should not happen if Blade injects)
-    STATUS_OPTIONS_CACHE = [
-        ['appointment_pending', 'Randevu Bekliyor',   'kt-badge kt-badge-sm kt-badge-light-warning'],
-        ['appointment_scheduled', 'Randevu Planlandı','kt-badge kt-badge-sm kt-badge-light-primary'],
-        ['appointment_done', 'Randevu Tamamlandı',    'kt-badge kt-badge-sm kt-badge-light-success'],
-        ['dev_pending', 'Geliştirme Bekliyor',        'kt-badge kt-badge-sm kt-badge-light-warning'],
-        ['dev_in_progress', 'Geliştirme Devam',       'kt-badge kt-badge-sm kt-badge-primary'],
-        ['delivered', 'Teslim Edildi',                'kt-badge kt-badge-sm kt-badge-info'],
-        ['approved', 'Onaylandı',                     'kt-badge kt-badge-sm kt-badge-light-success'],
-        ['closed', 'Kapatıldı',                       'kt-badge kt-badge-sm kt-badge-light'],
-    ];
-    return STATUS_OPTIONS_CACHE;
+        const raw = JSON.parse(root.dataset.publicStatuses || '[]');
+        return Array.isArray(raw) ? raw : [];
+    } catch {
+        return [];
+    }
 }
 
 function createStatusPopover() {
-    const el = document.createElement('div');
-    el.style.position = 'fixed';
-    el.style.zIndex = 10000;
-    el.style.display = 'none';
-
-    // animasyon için hazır class
-    el.className = 'kt-card shadow-lg p-2 w-[260px] transition transform duration-150 ease-out';
-
-    el.innerHTML = `
-      <div class="text-xs text-muted-foreground px-2 py-1">Durum seç</div>
-      <div class="grid gap-1" data-status-menu></div>
+    const element = document.createElement('div');
+    element.style.position = 'fixed';
+    element.style.zIndex = '10000';
+    element.style.display = 'none';
+    element.className = 'kt-card shadow-lg p-2 w-[280px] transition transform duration-150 ease-out';
+    element.innerHTML = `
+        <div class="text-xs text-muted-foreground px-2 py-1">Workflow durumu sec</div>
+        <div class="grid gap-1" data-status-menu></div>
     `;
+    document.body.appendChild(element);
 
-    document.body.appendChild(el);
-    return el;
+    return element;
 }
 
-function showStatusPopover(pop, anchor, projectId, currentStatus, root) {
-    const menu = pop.querySelector('[data-status-menu]');
+function showStatusPopover(element, anchor, currentStatus, statusOptions, statusUrl) {
+    const menu = element.querySelector('[data-status-menu]');
     if (!menu) return;
 
-    const options = getStatusOptions(root);
-
-    menu.innerHTML = options.map(([key, label, cls]) => {
-        const isActive = key === currentStatus;
-
-        const base =
-            'w-full flex items-center justify-between gap-2 px-2 py-2 rounded-lg ' +
-            'transition duration-150 ease-out ' +
-            'hover:bg-muted/40 hover:scale-[1.01] active:scale-[0.99] ' +
-            'cursor-pointer ' +
-            'focus:outline-none focus-visible:ring-2 focus-visible:ring-border';
-
-        const active = 'bg-muted/40 ring-1 ring-border';
+    menu.innerHTML = statusOptions.map((option) => {
+        const isActive = option.key === currentStatus;
 
         return `
-          <button type="button"
-                  class="${base} ${isActive ? active : ''}"
-                  data-status-pick="${key}"
-                  data-project-id="${projectId}"
-                  aria-current="${isActive ? 'true' : 'false'}"
-                  ${isActive ? 'data-active="1"' : ''}>
-            <span class="${cls}">${label}</span>
-
-            <span class="text-muted-foreground ${isActive ? '' : 'opacity-0'} transition-opacity duration-150">
-              <i class="ki-outline ki-check-circle"></i>
-            </span>
-          </button>
+            <button
+                type="button"
+                class="w-full flex items-center justify-between gap-2 px-2 py-2 rounded-lg transition duration-150 ease-out hover:bg-muted/40 cursor-pointer ${isActive ? 'bg-muted/40 ring-1 ring-border' : ''}"
+                data-status-pick="${option.key}"
+                data-status-url="${statusUrl}"
+                ${isActive ? 'data-active="1"' : ''}
+            >
+                <span class="${option.badge}">${option.label}</span>
+                <span class="text-muted-foreground ${isActive ? '' : 'opacity-0'} transition-opacity duration-150">
+                    <i class="ki-outline ki-check-circle"></i>
+                </span>
+            </button>
         `;
     }).join('');
 
-    const r = anchor.getBoundingClientRect();
-    const top = Math.min(window.innerHeight - 320, Math.max(10, r.bottom + 6));
-    const left = Math.min(window.innerWidth - 280, Math.max(10, r.left));
+    const rect = anchor.getBoundingClientRect();
+    const top = Math.min(window.innerHeight - 320, Math.max(10, rect.bottom + 6));
+    const left = Math.min(window.innerWidth - 300, Math.max(10, rect.left));
 
-    pop.style.top = top + 'px';
-    pop.style.left = left + 'px';
-
-    // açılış animasyonu
-    pop.style.opacity = '0';
-    pop.style.transform = 'translateY(-4px)';
-    pop.style.display = 'block';
+    element.style.top = `${top}px`;
+    element.style.left = `${left}px`;
+    element.style.opacity = '0';
+    element.style.transform = 'translateY(-4px)';
+    element.style.display = 'block';
 
     requestAnimationFrame(() => {
-        pop.style.opacity = '1';
-        pop.style.transform = 'translateY(0)';
-
-        // seçili olana focus (seçili belli olsun)
-        const activeBtn = pop.querySelector('[data-active="1"]');
-        activeBtn?.focus?.();
+        element.style.opacity = '1';
+        element.style.transform = 'translateY(0)';
+        element.querySelector('[data-active="1"]')?.focus?.();
     });
 }
 
-function hideStatusPopover(pop) {
-    if (!pop) return;
-    if (pop.style.display !== 'block') return;
+function hideStatusPopover(element) {
+    if (!element || element.style.display !== 'block') return;
 
-    // kapanış animasyonu
-    pop.style.opacity = '0';
-    pop.style.transform = 'translateY(-4px)';
+    element.style.opacity = '0';
+    element.style.transform = 'translateY(-4px)';
+
     window.setTimeout(() => {
-        pop.style.display = 'none';
+        element.style.display = 'none';
     }, 120);
 }
 
-// --- pagination ---
 function renderPagination(api, host) {
     if (!host || !api) return;
 
@@ -190,349 +151,468 @@ function renderPagination(api, host) {
     if (pages <= 1) return;
 
     const makeBtn = (label, targetPage, disabled = false, active = false) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = active ? 'kt-btn kt-btn-sm kt-btn-primary' : 'kt-btn kt-btn-sm kt-btn-light';
-        if (disabled) btn.disabled = true;
-        btn.textContent = label;
-        btn.addEventListener('click', () => api.page(targetPage).draw('page'));
-        return btn;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = active ? 'kt-btn kt-btn-sm kt-btn-primary' : 'kt-btn kt-btn-sm kt-btn-light';
+        if (disabled) button.disabled = true;
+        button.textContent = label;
+        button.addEventListener('click', () => api.page(targetPage).draw('page'));
+
+        return button;
     };
 
-    host.appendChild(makeBtn('‹', Math.max(0, page - 1), page === 0));
+    host.appendChild(makeBtn('<', Math.max(0, page - 1), page === 0));
 
     const start = Math.max(0, page - 2);
     const end = Math.min(pages - 1, page + 2);
-    for (let i = start; i <= end; i++) host.appendChild(makeBtn(String(i + 1), i, false, i === page));
+    for (let index = start; index <= end; index += 1) {
+        host.appendChild(makeBtn(String(index + 1), index, false, index === page));
+    }
 
-    host.appendChild(makeBtn('›', Math.min(pages - 1, page + 1), page === pages - 1));
+    host.appendChild(makeBtn('>', Math.min(pages - 1, page + 1), page === pages - 1));
 }
 
-function initPageSizeFromDataset(root) {
-    const per = root?.dataset?.perpage ? parseInt(root.dataset.perpage, 10) : 25;
-    const sel = root.querySelector('#projectsPageSize');
-    if (!sel) return;
+function selectedCategoryIds(root) {
+    const select = root.querySelector('#projectsCategoryFilter');
 
-    const options = [10, 25, 50, 100];
-    sel.innerHTML = options.map(v => `<option value="${v}">${v}</option>`).join('');
-    sel.value = String(per);
+    return Array.from(select?.selectedOptions || [])
+        .map((option) => String(option.value || '').trim())
+        .filter(Boolean);
+}
 
-    sel.addEventListener('change', () => {
-        const u = new URL(window.location.href);
-        u.searchParams.set('perpage', sel.value);
-        window.location.href = u.toString();
+function createProjectFilter(root, tableEl) {
+    return (settings, _data, dataIndex) => {
+        if (settings.nTable !== tableEl) return true;
+
+        const row = settings.aoData?.[dataIndex]?.nTr;
+        if (!row) return true;
+
+        const selectedStatus = root.querySelector('#projectsStatusFilter')?.value || 'all';
+        const selectedCategories = selectedCategoryIds(root);
+
+        if (selectedStatus !== 'all' && row.dataset.status !== selectedStatus) {
+            return false;
+        }
+
+        if (selectedCategories.length > 0) {
+            const haystack = row.dataset.categoryIds || '';
+            const matched = selectedCategories.some((id) => haystack.includes(`|${id}|`));
+            if (!matched) {
+                return false;
+            }
+        }
+
+        return true;
+    };
+}
+
+async function postJson(url, body, signal, method = 'POST') {
+    const response = await request(url, {
+        method,
+        data: body,
+        signal,
+        ignoreGlobalError: true,
     });
+
+    if (response?.ok === false) {
+        throw new Error(response?.message || 'Islem basarisiz.');
+    }
+
+    return response;
 }
 
-export default function init({ root }) {
-    const tableEl = root.querySelector('#projects_table');
-    if (!tableEl) return;
+function redrawOwningTable(element) {
+    const table = element?.closest?.('table');
+    if (!table || !window.jQuery?.fn?.dataTable) return;
+    if (!window.jQuery.fn.dataTable.isDataTable(table)) return;
 
-    // warm cache once
-    getStatusOptions(root);
+    window.jQuery(table).DataTable().draw(false);
+}
 
-    const per = root?.dataset?.perpage ? parseInt(root.dataset.perpage, 10) : 25;
+function setPublicState(row, isPublic) {
+    if (!row) return;
 
-    const bulkBar = root.querySelector('#projectsBulkBar');
-    const selectedCountEl = root.querySelector('#projectsSelectedCount');
+    row.dataset.public = isPublic ? '1' : '0';
 
-    const checkAll = root.querySelector('#projects_check_all');
+    const badge = row.querySelector('.js-public-badge');
+    const hint = row.querySelector('.js-public-hint');
 
-    const btnBulkDelete = root.querySelector('#projectsBulkDeleteBtn');
-    const btnBulkRestore = root.querySelector('#projectsBulkRestoreBtn');
-    const btnBulkForce = root.querySelector('#projectsBulkForceDeleteBtn');
-
-    const selectedIds = new Set();
-
-    function updateBulkUI() {
-        const n = selectedIds.size;
-
-        bulkBar?.classList.toggle('hidden', n === 0);
-        if (selectedCountEl) selectedCountEl.textContent = String(n);
-
-        if (btnBulkDelete) btnBulkDelete.disabled = n === 0;
-        if (btnBulkRestore) btnBulkRestore.disabled = n === 0;
-        if (btnBulkForce) btnBulkForce.disabled = n === 0;
-
-        if (checkAll) {
-            const boxes = [...root.querySelectorAll('input.projects-check')];
-            const checked = boxes.filter(b => b.checked).length;
-
-            checkAll.indeterminate = checked > 0 && checked < boxes.length;
-            checkAll.checked = boxes.length > 0 && checked === boxes.length;
+    if (badge) {
+        badge.classList.remove('kt-badge-light-success', 'kt-badge-light', 'text-muted-foreground');
+        if (isPublic) {
+            badge.classList.add('kt-badge-light-success');
+            badge.textContent = 'Sitede gorunebilir';
+        } else {
+            badge.classList.add('kt-badge-light', 'text-muted-foreground');
+            badge.textContent = 'Sitede gizli';
         }
     }
 
+    if (hint) {
+        hint.textContent = isPublic
+            ? 'Bu statu site tarafinda gorunebilir.'
+            : 'Bu statu admin ici workflow asamasinda kalir.';
+    }
+}
+
+function setFeaturedState(row, isFeatured, featuredAt) {
+    if (!row) return;
+
+    row.dataset.featured = isFeatured ? '1' : '0';
+
+    const badge = row.querySelector('.js-featured-badge');
+    const featuredAtText = row.querySelector('.js-featured-at');
+
+    if (badge) {
+        badge.classList.remove('kt-badge-light-success', 'kt-badge-light', 'text-muted-foreground');
+        if (isFeatured) {
+            badge.classList.add('kt-badge-light-success');
+            badge.textContent = 'Anasayfada';
+        } else {
+            badge.classList.add('kt-badge-light', 'text-muted-foreground');
+            badge.textContent = 'Kapali';
+        }
+    }
+
+    if (featuredAtText) {
+        featuredAtText.textContent = isFeatured && featuredAt
+            ? `Secim: ${featuredAt}`
+            : 'Secim yapilmamis';
+    }
+}
+
+function setStatusState(button, row, payload) {
+    const data = payload?.data || {};
+    if (!button || !row) return;
+
+    button.dataset.status = data.status || button.dataset.status || '';
+    row.dataset.status = data.status || row.dataset.status || '';
+
+    button.className = `${data.status_badge || 'kt-badge kt-badge-sm kt-badge-light'} js-status-trigger`;
+    button.innerHTML = `${data.status_label || data.status || 'Status'} <i class="ki-outline ki-down ml-1"></i>`;
+    setPublicState(row, !!data.public_visible);
+}
+
+export default function init(ctx) {
+    const root = ctx.root;
+    const signal = ctx.signal;
+    const tableEl = root.querySelector('#projects_table');
+
+    if (!tableEl) return;
+
+    const perPage = root.dataset.perpage ? parseInt(root.dataset.perpage, 10) : 25;
+    const bulkBar = root.querySelector('#projectsBulkBar');
+    const selectedCountEl = root.querySelector('#projectsSelectedCount');
+    const checkAll = root.querySelector('#projects_check_all');
+    const btnBulkDelete = root.querySelector('#projectsBulkDeleteBtn');
+    const btnBulkRestore = root.querySelector('#projectsBulkRestoreBtn');
+    const btnBulkForce = root.querySelector('#projectsBulkForceDeleteBtn');
+    const selectedIds = new Set();
+    const statusOptions = parseStatusOptions(root);
+    const publicStatuses = parsePublicStatuses(root);
+
+    function updateBulkUI() {
+        const count = selectedIds.size;
+
+        bulkBar?.classList.toggle('hidden', count === 0);
+        if (selectedCountEl) selectedCountEl.textContent = String(count);
+
+        if (btnBulkDelete) btnBulkDelete.disabled = count === 0;
+        if (btnBulkRestore) btnBulkRestore.disabled = count === 0;
+        if (btnBulkForce) btnBulkForce.disabled = count === 0;
+
+        if (!checkAll) return;
+
+        const boxes = Array.from(root.querySelectorAll('input.projects-check'));
+        const checked = boxes.filter((box) => box.checked).length;
+        checkAll.indeterminate = checked > 0 && checked < boxes.length;
+        checkAll.checked = boxes.length > 0 && checked === boxes.length;
+    }
+
     function applySelectionToCurrentPage() {
-        root.querySelectorAll('input.projects-check').forEach(cb => {
-            cb.checked = selectedIds.has(String(cb.value));
+        root.querySelectorAll('input.projects-check').forEach((checkbox) => {
+            checkbox.checked = selectedIds.has(String(checkbox.value || ''));
         });
         updateBulkUI();
     }
 
-    ac = new AbortController();
-    const { signal } = ac;
+    const filters = window.jQuery?.fn?.dataTable?.ext?.search;
+    const filterFn = createProjectFilter(root, tableEl);
 
-    // popover delegation (image preview)
-    popEl = createImgPopover();
-    const statusPop = createStatusPopover();
+    if (Array.isArray(filters)) {
+        filters.push(filterFn);
+        ctx.cleanup(() => {
+            const index = filters.indexOf(filterFn);
+            if (index >= 0) {
+                filters.splice(index, 1);
+            }
+        });
+    }
 
-    // popover click (status select)
-    statusPop.addEventListener('click', async (e) => {
-        const pick = e.target?.closest?.('[data-status-pick]');
+    imagePopover = createImagePopover();
+    statusPopover = createStatusPopover();
+
+    ctx.cleanup(() => {
+        try { imagePopover?.remove(); } catch {}
+        try { statusPopover?.remove(); } catch {}
+        imagePopover = null;
+        statusPopover = null;
+    });
+
+    statusPopover.addEventListener('click', async (event) => {
+        const pick = event.target?.closest?.('[data-status-pick]');
         if (!pick) return;
 
         const status = pick.getAttribute('data-status-pick');
-        const pid = pick.getAttribute('data-project-id');
-        if (!pid || !status) return;
+        const statusUrl = pick.getAttribute('data-status-url');
+        if (!status || !statusUrl) return;
 
         try {
-            const j = await postJson(`/admin/projects/${pid}/status`, { status }, 'PATCH');
+            const response = await postJson(statusUrl, { status }, signal, 'PATCH');
+            const trigger = document.querySelector(`.js-status-trigger[data-status-url="${statusUrl}"]`);
+            const row = trigger?.closest('tr');
 
-            const btn = root.querySelector(`.js-status-trigger[data-project-id="${pid}"]`);
-            if (btn) {
-                btn.setAttribute('data-status', j.data.status);
-                btn.className = `${j.data.status_badge} js-status-trigger`;
-                btn.innerHTML = `${j.data.status_label} <i class="ki-outline ki-down ml-1"></i>`;
-            }
-
-            notify('success', 'Durum güncellendi');
-            hideStatusPopover(statusPop);
-        } catch (err) {
-            notify('error', err?.message || 'Durum güncellenemedi');
+            setStatusState(trigger, row, response);
+            notify('success', response?.message || 'Durum guncellendi.');
+            hideStatusPopover(statusPopover);
+            redrawOwningTable(trigger);
+        } catch (error) {
+            notify('error', resolveErrorMessage(error, 'Durum guncellenemedi.'));
         }
     }, { signal });
 
-    root.addEventListener('mouseover', (e) => {
-        const a = e.target?.closest?.('.js-img-popover');
-        if (!a || !root.contains(a)) return;
-        const img = a.getAttribute('data-popover-img');
-        if (img) showImgPopover(popEl, a, img);
+    root.addEventListener('mouseover', (event) => {
+        const anchor = event.target?.closest?.('.js-img-popover');
+        if (!anchor || !root.contains(anchor)) return;
+        const imageUrl = anchor.getAttribute('data-popover-img');
+        if (imageUrl) showImagePopover(imagePopover, anchor, imageUrl);
     }, { signal });
 
-    root.addEventListener('mouseout', (e) => {
-        const a = e.target?.closest?.('.js-img-popover');
-        if (!a || !root.contains(a)) return;
-        const rt = e.relatedTarget;
-        if (rt && a.contains(rt)) return;
-        hideImgPopover(popEl);
+    root.addEventListener('mouseout', (event) => {
+        const anchor = event.target?.closest?.('.js-img-popover');
+        if (!anchor || !root.contains(anchor)) return;
+        const relatedTarget = event.relatedTarget;
+        if (relatedTarget && anchor.contains(relatedTarget)) return;
+        hideImagePopover(imagePopover);
     }, { signal });
 
-    // datatable init
-    const api = window.initDataTable?.({
-        root,
-        table: '#projects_table',
-        search: '#projectsSearch',
-        info: '#projectsInfo',
-        pagination: '#projectsPagination',
+    root.addEventListener('change', (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLInputElement)) return;
 
-        pageLength: per,
-        lengthMenu: [5, 10, 25, 50],
-        order: [[1, 'desc']],
-        dom: 't',
-
-        emptyTemplate: '#dt-empty-projects',
-        zeroTemplate: '#dt-zero-projects',
-
-        columnDefs: [
-            { orderable: false, searchable: false, targets: [0, 6] },
-            { className: 'text-right', targets: [5, 6] },
-            { className: 'text-center', targets: [4] },
-        ],
-
-        onDraw: (dtApi) => {
-            renderPagination(dtApi || api, root.querySelector('#projectsPagination'));
-            applySelectionToCurrentPage();
-        }
-    });
-
-    // checkbox selection
-    root.addEventListener('change', (e) => {
-        const cb = e.target;
-        if (!(cb instanceof HTMLInputElement)) return;
-
-        if (cb.classList.contains('projects-check')) {
-            const id = String(cb.value || '');
+        if (target.classList.contains('projects-check')) {
+            const id = String(target.value || '');
             if (!id) return;
 
-            if (cb.checked) selectedIds.add(id);
+            if (target.checked) selectedIds.add(id);
             else selectedIds.delete(id);
 
             updateBulkUI();
             return;
         }
 
-        if (cb.id === 'projects_check_all') {
-            const on = !!cb.checked;
-            root.querySelectorAll('input.projects-check').forEach(x => {
-                x.checked = on;
-                const id = String(x.value || '');
+        if (target.id === 'projects_check_all') {
+            const checked = !!target.checked;
+            root.querySelectorAll('input.projects-check').forEach((checkbox) => {
+                checkbox.checked = checked;
+
+                const id = String(checkbox.value || '');
                 if (!id) return;
-                if (on) selectedIds.add(id);
+
+                if (checked) selectedIds.add(id);
                 else selectedIds.delete(id);
             });
+
             updateBulkUI();
-        }
-    }, { signal });
-
-    // close status popover on outside click
-    document.addEventListener('click', (e) => {
-        if (statusPop.style.display === 'block') {
-            const inside = statusPop.contains(e.target);
-            const trig = e.target?.closest?.('.js-status-trigger');
-            if (!inside && !trig) hideStatusPopover(statusPop);
-        }
-    }, { signal });
-
-    root.addEventListener('click', async (e) => {
-        // open status menu
-        const trig = e.target?.closest?.('.js-status-trigger');
-        if (trig && root.contains(trig)) {
-            const pid = trig.getAttribute('data-project-id');
-            const st = trig.getAttribute('data-status') || 'appointment_pending';
-
-            hideStatusPopover(statusPop);
-            showStatusPopover(statusPop, trig, pid, st, root);
             return;
         }
 
-        // row actions
-        const btn = e.target?.closest?.('[data-action]');
-        if (!btn || !root.contains(btn)) return;
+        if (target.classList.contains('js-featured-toggle')) {
+            const row = target.closest('tr');
+            const rollback = !target.checked;
 
-        const action = btn.getAttribute('data-action');
-        const id = btn.getAttribute('data-id') || btn.closest('tr')?.getAttribute('data-id');
-        if (!action || !id) return;
+            target.disabled = true;
 
-        if (btn.dataset.busy === '1') return;
-        btn.dataset.busy = '1';
+            postJson(target.dataset.url, { is_featured: target.checked ? 1 : 0 }, signal, 'PATCH')
+                .then((response) => {
+                    setFeaturedState(row, !!response?.data?.is_featured, response?.data?.featured_at || null);
+                    notify('success', response?.message || (target.checked ? 'Proje anasayfaya alindi.' : 'Proje anasayfadan kaldirildi.'));
+                    redrawOwningTable(target);
+                })
+                .catch((error) => {
+                    target.checked = rollback;
+                    notify('error', resolveErrorMessage(error, 'Vitrin durumu guncellenemedi.'));
+                })
+                .finally(() => {
+                    target.disabled = false;
+                });
+        }
+    }, { signal });
+
+    const api = window.initDataTable?.({
+        root,
+        table: '#projects_table',
+        search: '#projectsSearch',
+        pageSize: '#projectsPageSize',
+        info: '#projectsInfo',
+        pagination: '#projectsPagination',
+        pageLength: perPage,
+        lengthMenu: [10, 25, 50, 100],
+        order: [[4, 'desc']],
+        dom: 't',
+        emptyTemplate: '#dt-empty-projects',
+        zeroTemplate: '#dt-zero-projects',
+        columnDefs: [
+            { orderable: false, searchable: false, targets: [0, 5, 6] },
+            { className: 'text-right', targets: [5, 6] },
+        ],
+        signal,
+        cleanup: (fn) => ctx.cleanup(fn),
+        onDraw: (dtApi) => {
+            renderPagination(dtApi || api, root.querySelector('#projectsPagination'));
+            applySelectionToCurrentPage();
+        },
+    });
+
+    const searchInput = root.querySelector('#projectsSearch');
+    if (api && searchInput?.value) {
+        api.search(searchInput.value).draw();
+    }
+
+    const redrawFilters = () => api?.draw();
+    root.querySelector('#projectsStatusFilter')?.addEventListener('change', redrawFilters, { signal });
+    root.querySelector('#projectsCategoryFilter')?.addEventListener('change', redrawFilters, { signal });
+
+    root.querySelector('#projectsClearFiltersBtn')?.addEventListener('click', () => {
+        if (searchInput) {
+            searchInput.value = '';
+        }
+
+        const statusFilter = root.querySelector('#projectsStatusFilter');
+        if (statusFilter) {
+            statusFilter.value = 'all';
+            statusFilter.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        const categoryFilter = root.querySelector('#projectsCategoryFilter');
+        if (categoryFilter) {
+            Array.from(categoryFilter.options).forEach((option) => {
+                option.selected = false;
+            });
+            categoryFilter.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        api?.search('').draw();
+    }, { signal });
+
+    root.addEventListener('click', async (event) => {
+        const trigger = event.target?.closest?.('.js-status-trigger');
+        if (trigger && root.contains(trigger)) {
+            hideStatusPopover(statusPopover);
+            showStatusPopover(
+                statusPopover,
+                trigger,
+                trigger.dataset.status || '',
+                statusOptions,
+                trigger.dataset.statusUrl || ''
+            );
+            return;
+        }
+
+        const actionButton = event.target?.closest?.('[data-action]');
+        if (!actionButton || !root.contains(actionButton)) return;
+
+        const action = actionButton.getAttribute('data-action');
+        const url = actionButton.getAttribute('data-url');
+        if (!action || !url) return;
+        if (actionButton.dataset.busy === '1') return;
+
+        actionButton.dataset.busy = '1';
 
         try {
             if (action === 'delete') {
                 const ok = await showConfirmDialog({
                     type: 'warning',
                     title: 'Proje silinsin mi?',
-                    message: 'Proje çöp kutusuna taşınacak.',
+                    message: 'Proje cop kutusuna tasinacak.',
                     confirmButtonText: 'Sil',
                 });
                 if (!ok) return;
 
-                const j = await request(`/admin/projects/${id}`, { method: 'DELETE', ignoreGlobalError: true });
-                if (j?.ok === false) throw new Error(j?.error?.message || 'Silme başarısız');
-
-                notify('success', 'Silindi');
-                location.reload();
+                const response = await request(url, { method: 'DELETE', signal, ignoreGlobalError: true });
+                notify('success', response?.message || 'Proje silindi.');
+                window.location.reload();
                 return;
             }
 
             if (action === 'restore') {
                 const ok = await showConfirmDialog({
                     type: 'success',
-                    title: 'Proje geri yüklensin mi?',
-                    message: 'Kayıt tekrar aktif listeye alınacak.',
-                    confirmButtonText: 'Geri yükle',
+                    title: 'Proje geri yuklensin mi?',
+                    message: 'Kayit tekrar aktif listeye alinacak.',
+                    confirmButtonText: 'Geri yukle',
                 });
                 if (!ok) return;
 
-                await postJson(`/admin/projects/${id}/restore`, {});
-                notify('success', 'Geri yüklendi');
-                location.reload();
+                const response = await postJson(url, {}, signal);
+                notify('success', response?.message || 'Proje geri yuklendi.');
+                window.location.reload();
                 return;
             }
 
             if (action === 'force-delete') {
                 const ok = await showConfirmDialog({
                     type: 'error',
-                    title: 'Proje kalıcı silinsin mi?',
-                    message: 'Bu işlem geri alınamaz.',
-                    confirmButtonText: 'Kalıcı sil',
+                    title: 'Proje kalici olarak silinsin mi?',
+                    message: 'Bu islem geri alinamaz.',
+                    confirmButtonText: 'Kalici sil',
                 });
                 if (!ok) return;
 
-                const j = await request(`/admin/projects/${id}/force`, { method: 'DELETE', ignoreGlobalError: true });
-                if (j?.ok === false) throw new Error(j?.error?.message || 'Kalıcı silme başarısız');
-
-                notify('success', 'Kalıcı silindi');
-                location.reload();
+                const response = await request(url, { method: 'DELETE', signal, ignoreGlobalError: true });
+                notify('success', response?.message || 'Proje kalici olarak silindi.');
+                window.location.reload();
             }
-        } catch (err) {
-            notify('error', err?.message || 'İşlem başarısız');
-            console.error(err);
+        } catch (error) {
+            notify('error', resolveErrorMessage(error, 'Islem basarisiz.'));
         } finally {
-            btn.dataset.busy = '0';
+            actionButton.dataset.busy = '0';
         }
     }, { signal });
 
-    root.addEventListener('change', async (e) => {
-        const t = e.target;
+    document.addEventListener('click', (event) => {
+        if (statusPopover?.style.display !== 'block') return;
 
-        const ft = t?.closest?.('.js-featured-toggle');
-        if (ft && root.contains(ft)) {
-            const pid = ft.getAttribute('data-project-id');
-            if (!pid) return;
+        const insidePopover = statusPopover.contains(event.target);
+        const insideTrigger = event.target?.closest?.('.js-status-trigger');
 
-            const on = !!ft.checked;
-            ft.disabled = true;
-
-            try {
-                await postJson(`/admin/projects/${pid}/featured`, { is_featured: on }, 'PATCH');
-                updateFeaturedBadge(ft, on);
-                notify('success', on ? 'Anasayfa için işaretlendi' : 'Anasayfadan kaldırıldı');
-            } catch (err) {
-                ft.checked = !on;
-                updateFeaturedBadge(ft, !on);
-                notify('error', err?.message || 'İşlem başarısız');
-            } finally {
-                ft.disabled = false;
-            }
+        if (!insidePopover && !insideTrigger) {
+            hideStatusPopover(statusPopover);
         }
     }, { signal });
 
-    function updateFeaturedBadge(ft, isOn) {
-        const wrap = ft.closest('.flex.items-center.gap-2') || ft.parentElement;
-        const badge = wrap?.querySelector?.('.js-featured-badge');
-        if (!badge) return;
-
-        if (isOn) {
-            badge.hidden = false;
-            requestAnimationFrame(() => {
-                badge.classList.remove('opacity-0');
-                badge.classList.add('opacity-100');
-            });
-        } else {
-            badge.classList.remove('opacity-100');
-            badge.classList.add('opacity-0');
-
-            window.setTimeout(() => {
-                if (!ft.checked) badge.hidden = true;
-            }, 200);
-        }
-    }
-
-    // ✅ bulk actions
     btnBulkDelete?.addEventListener('click', async () => {
         const ids = [...selectedIds];
         if (!ids.length) return;
 
         const ok = await showConfirmDialog({
             type: 'warning',
-            title: 'Seçili projeler silinsin mi?',
-            message: `${ids.length} kayıt çöp kutusuna taşınacak.`,
+            title: 'Secili projeler silinsin mi?',
+            message: `${ids.length} kayit cop kutusuna tasinacak.`,
             confirmButtonText: 'Sil',
         });
         if (!ok) return;
 
         try {
-            await postJson('/admin/projects/bulk-destroy', { ids });
-            notify('success', 'Silindi');
+            const response = await postJson(root.dataset.bulkDeleteUrl, { ids }, signal);
+            notify('success', response?.message || 'Secili projeler silindi.');
             selectedIds.clear();
-            location.reload();
-        } catch (e) {
-            notify('error', e?.message || 'Silme başarısız');
-        } finally {
+            window.location.reload();
+        } catch (error) {
+            notify('error', resolveErrorMessage(error, 'Silme islemi basarisiz.'));
             updateBulkUI();
         }
-    });
+    }, { signal });
 
     btnBulkRestore?.addEventListener('click', async () => {
         const ids = [...selectedIds];
@@ -540,23 +620,22 @@ export default function init({ root }) {
 
         const ok = await showConfirmDialog({
             type: 'success',
-            title: 'Seçili projeler geri yüklensin mi?',
-            message: `${ids.length} kayıt tekrar aktif listeye alınacak.`,
-            confirmButtonText: 'Geri yükle',
+            title: 'Secili projeler geri yuklensin mi?',
+            message: `${ids.length} kayit tekrar aktif listeye alinacak.`,
+            confirmButtonText: 'Geri yukle',
         });
         if (!ok) return;
 
         try {
-            await postJson('/admin/projects/bulk-restore', { ids });
-            notify('success', 'Geri yüklendi');
+            const response = await postJson(root.dataset.bulkRestoreUrl, { ids }, signal);
+            notify('success', response?.message || 'Secili projeler geri yuklendi.');
             selectedIds.clear();
-            location.reload();
-        } catch (e) {
-            notify('error', e?.message || 'Geri yükleme başarısız');
-        } finally {
+            window.location.reload();
+        } catch (error) {
+            notify('error', resolveErrorMessage(error, 'Geri yukleme basarisiz.'));
             updateBulkUI();
         }
-    });
+    }, { signal });
 
     btnBulkForce?.addEventListener('click', async () => {
         const ids = [...selectedIds];
@@ -564,37 +643,36 @@ export default function init({ root }) {
 
         const ok = await showConfirmDialog({
             type: 'error',
-            title: 'Seçili projeler kalıcı silinsin mi?',
-            message: `${ids.length} kayıt geri alınamayacak şekilde silinecek.`,
-            confirmButtonText: 'Kalıcı sil',
+            title: 'Secili projeler kalici olarak silinsin mi?',
+            message: `${ids.length} kayit geri alinamayacak sekilde silinecek.`,
+            confirmButtonText: 'Kalici sil',
         });
         if (!ok) return;
 
         try {
-            await postJson('/admin/projects/bulk-force-destroy', { ids });
-            notify('success', 'Kalıcı silindi');
+            const response = await postJson(root.dataset.bulkForceDeleteUrl, { ids }, signal);
+            notify('success', response?.message || 'Secili projeler kalici olarak silindi.');
             selectedIds.clear();
-            location.reload();
-        } catch (e) {
-            notify('error', e?.message || 'Kalıcı silme başarısız');
-        } finally {
+            window.location.reload();
+        } catch (error) {
+            notify('error', resolveErrorMessage(error, 'Kalici silme basarisiz.'));
             updateBulkUI();
         }
+    }, { signal });
+
+    root.querySelectorAll('tr[data-status]').forEach((row) => {
+        setPublicState(row, publicStatuses.includes(row.dataset.status || ''));
+        setFeaturedState(row, row.dataset.featured === '1', row.querySelector('.js-featured-at')?.textContent?.replace(/^Secim:\s*/, '') || null);
     });
 
-    initPageSizeFromDataset(root);
     renderPagination(api, root.querySelector('#projectsPagination'));
-
-    window.addEventListener('beforeunload', () => {
-        try { ac.abort(); } catch {}
-        try { popEl.remove(); } catch {}
-        try { statusPop.remove(); } catch {}
-    }, { once: true });
+    updateBulkUI();
 }
 
 export function destroy() {
-    try { ac?.abort(); } catch {}
-    try { popEl?.remove(); } catch {}
-    ac = null;
-    popEl = null;
+    try { imagePopover?.remove(); } catch {}
+    try { statusPopover?.remove(); } catch {}
+
+    imagePopover = null;
+    statusPopover = null;
 }

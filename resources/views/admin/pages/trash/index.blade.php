@@ -4,6 +4,7 @@
     <div class="kt-container-fixed"
          data-page="trash.index"
          data-perpage="{{ $perPage ?? 25 }}"
+         data-initial-type="{{ $initialType ?? 'all' }}"
          data-list-url="{{ route('admin.trash.list') }}"
          data-bulk-restore-url="{{ route('admin.trash.bulkRestore') }}"
          data-bulk-force-delete-url="{{ route('admin.trash.bulkForceDestroy') }}">
@@ -17,44 +18,46 @@
                     <div class="flex flex-col">
                         <h3 class="kt-card-title text-lg font-semibold">Silinenler</h3>
                         <div class="text-sm text-muted-foreground">
-                            Media / Blog / Category kayıtlarını tek ekrandan geri yükle veya kalıcı sil
+                            Medya, blog, kategori, proje, urun ve galerileri tek ekrandan geri yukle veya kalici sil.
                         </div>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-3">
                         <input id="trashSearch"
                                class="kt-input w-[260px]"
-                               placeholder="Ara..."/>
+                               placeholder="Ara..." />
 
-                        <select id="trashType" class="kt-select w-[180px]" data-kt-select="true" data-kt-select-placeholder="Silinen Türü Seç">
-                            <option value="all">Tümü</option>
+                        <select id="trashType" class="kt-select w-[180px]" data-kt-select="true" data-kt-select-placeholder="Silinen Turu Sec">
+                            <option value="all">Tumu</option>
                             <option value="media">Medya</option>
                             <option value="blog">Blog</option>
                             <option value="category">Kategori</option>
+                            <option value="project">Proje</option>
+                            <option value="product">Urun</option>
+                            <option value="gallery">Galeri</option>
                         </select>
                     </div>
                 </div>
 
-                {{-- Bulk bar --}}
                 <div id="trashBulkBar" class="kt-card-content hidden border-b border-border py-3">
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <div class="flex items-center gap-3">
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <input type="checkbox" class="kt-checkbox kt-checkbox-sm" id="trash_check_all">
-                                <span class="text-sm">Tümünü seç</span>
+                                <span class="text-sm">Tumunu sec</span>
                             </label>
 
                             <span class="text-sm text-muted-foreground">
-                                Seçili: <span id="trashSelectedCount">0</span>
+                                Secili: <span id="trashSelectedCount">0</span>
                             </span>
                         </div>
 
                         <div class="flex items-center gap-2">
                             <button type="button" id="trashBulkRestoreBtn" class="kt-btn kt-btn-sm kt-btn-light" disabled>
-                                Geri Yükle
+                                Geri Yukle
                             </button>
                             <button type="button" id="trashBulkForceDeleteBtn" class="kt-btn kt-btn-sm kt-btn-danger" disabled>
-                                Kalıcı Sil
+                                Kalici Sil
                             </button>
                         </div>
                     </div>
@@ -68,21 +71,20 @@
                                 <th class="w-[55px]">
                                     <input class="kt-checkbox kt-checkbox-sm" id="trash_check_all_head" type="checkbox">
                                 </th>
-                                <th class="min-w-[160px]">Tür</th>
-                                <th class="min-w-[320px]">Başlık</th>
+                                <th class="min-w-[160px]">Tur</th>
+                                <th class="min-w-[320px]">Baslik</th>
                                 <th class="min-w-[180px]">Silinme</th>
-                                <th class="w-[160px] text-end">İşlem</th>
+                                <th class="w-[160px] text-end">Islem</th>
                             </tr>
                             </thead>
                             <tbody id="trashTbody"></tbody>
                         </table>
                     </div>
 
-                    {{-- Empty templates --}}
                     <template id="dt-empty-trash">
                         <tr>
                             <td colspan="5" class="py-10 text-center text-muted-foreground">
-                                Silinen kayıt yok
+                                Silinen kayit yok
                             </td>
                         </tr>
                     </template>
@@ -90,8 +92,8 @@
                     <template id="dt-zero-trash">
                         <tr>
                             <td colspan="5" class="py-10 text-center">
-                                <div class="font-medium">Sonuç bulunamadı</div>
-                                <div class="text-sm text-muted-foreground">Aramanı değiştirip tekrar dene.</div>
+                                <div class="font-medium">Sonuc bulunamadi</div>
+                                <div class="text-sm text-muted-foreground">Aramani degistirip tekrar dene.</div>
                             </td>
                         </tr>
                     </template>
@@ -99,7 +101,7 @@
 
                 <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
                     <div class="flex items-center gap-2 order-2 md:order-1">
-                        Göster
+                        Goster
                         <select class="kt-select w-16" id="trashPageSize" name="perpage"></select>
                         / sayfa
                     </div>

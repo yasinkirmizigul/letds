@@ -1,101 +1,59 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    @php
-        $currentStatus = old('status', \App\Models\Admin\Product\Product::STATUS_APPOINTMENT_PENDING);
-        $currentFeatured = (bool) old('is_featured', false);
-        $st = $statusOptions[$currentStatus] ?? $statusOptions[\App\Models\Admin\Product\Product::STATUS_APPOINTMENT_PENDING];
-    @endphp
-
-    <div class="kt-container-fixed"
-         data-page="products.create"
-         data-upload-url="{{ Route::has('admin.tinymce.upload') ? route('admin.tinymce.upload') : url('/admin/tinymce/upload') }}"
-         data-tinymce-src="{{ asset('assets/vendors/tinymce/tinymce.min.js') }}"
-         data-tinymce-base="{{ url('/assets/vendors/tinymce') }}"
-         data-tinymce-lang-url="{{ asset('assets/vendors/tinymce/langs/tr.js') }}"
-         data-status-options='@json($statusOptions)'>
-
+    <div
+        class="kt-container-fixed max-w-[96%]"
+        data-page="products.create"
+        data-upload-url="{{ route('admin.tinymce.upload') }}"
+        data-tinymce-src="{{ asset('assets/vendors/tinymce/tinymce.min.js') }}"
+        data-tinymce-base="{{ asset('assets/vendors/tinymce') }}"
+        data-tinymce-lang-url="{{ asset('assets/vendors/tinymce/langs/tr.js') }}"
+        data-slug-check-url="{{ route('admin.products.checkSlug') }}"
+        data-slug-ignore-id=""
+        data-status-options='@json($statusOptions)'
+    >
         @includeIf('admin.partials._flash')
 
-        <form method="POST" action="{{ route('admin.products.store') }}" class="grid gap-5 lg:gap-7.5">
+        <div class="flex flex-col gap-4 mb-6 lg:flex-row lg:items-end lg:justify-between">
+            <div class="grid gap-2">
+                <span class="kt-badge kt-badge-sm kt-badge-light w-fit">Yeni Urun</span>
+                <div>
+                    <h1 class="text-xl font-semibold">Urun Olustur</h1>
+                    <div class="text-sm text-muted-foreground">
+                        Workflow, fiyat, SEO ve vitrin yonetimini tek ekrandan kurun.
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <a href="{{ route('admin.products.index') }}" class="kt-btn kt-btn-light">Geri</a>
+                <button class="kt-btn kt-btn-primary" type="submit" form="product-create-form">Kaydet</button>
+            </div>
+        </div>
+
+        <form
+            id="product-create-form"
+            method="POST"
+            action="{{ route('admin.products.store') }}"
+            enctype="multipart/form-data"
+            class="grid gap-6"
+        >
             @csrf
 
             @include('admin.pages.products.partials._form', [
                 'product' => null,
-                'categories' => $categories ?? collect(),
+                'categoryOptions' => $categoryOptions ?? [],
                 'selectedCategoryIds' => $selectedCategoryIds ?? [],
                 'featuredMediaId' => null,
+                'statusOptions' => $statusOptions ?? [],
             ])
 
-            {{-- ✅ Durum + Anasayfa --}}
-            <div class="kt-card">
-                <div class="kt-card-header py-4">
-                    <h3 class="kt-card-title">Durum &amp; Anasayfa</h3>
-                </div>
-
-                <div class="kt-card-body grid gap-5 p-5">
-                    <div class="grid gap-2">
-                        <label for="status" class="kt-label">Durum</label>
-
-                        <div class="flex items-center gap-3">
-                            <select id="status"
-                                    name="status"
-                                    class="kt-select w-full"
-                                    data-status-select>
-                                @foreach($statusOptions as $key => $opt)
-                                    <option value="{{ $key }}" {{ $currentStatus === $key ? 'selected' : '' }}>
-                                        {{ $opt['label'] }}
-                                    </option>
-                                @endforeach
-                            </select>
-
-                            <span id="status_badge_preview"
-                                  class="{{ $st['badge'] }} whitespace-nowrap"
-                                  data-status-badge>
-                            {{ $st['label'] }}
-                        </span>
-                        </div>
-
-                        @error('status')
-                        <div class="kt-error">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="grid gap-2">
-                        <label class="kt-label">Anasayfada göster</label>
-
-                        <div class="flex items-center gap-3">
-                            <input type="hidden" name="is_featured" value="0" />
-                            <input type="checkbox"
-                                   id="is_featured"
-                                   class="kt-switch"
-                                   name="is_featured"
-                                   value="1"
-                                   data-featured-toggle
-                                {{ $currentFeatured ? 'checked' : '' }}>
-
-                            <span class="text-sm text-muted-foreground js-featured-label">
-                            {{ $currentFeatured ? 'Anasayfada' : 'Kapalı' }}
-                        </span>
-                        </div>
-
-                        <div class="text-xs text-muted-foreground">
-                            En fazla 5 ürün aynı anda anasayfada görünebilir.
-                        </div>
-
-                        @error('is_featured')
-                        <div class="kt-error">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-            </div>
-
             <div class="flex items-center justify-end gap-3">
+                <a href="{{ route('admin.products.index') }}" class="kt-btn kt-btn-light">Iptal</a>
                 <button type="submit" class="kt-btn kt-btn-primary">Kaydet</button>
-                <a href="{{ route('admin.products.index') }}" class="kt-btn kt-btn-light">İptal</a>
             </div>
         </form>
-    </div>
 
-    @include('admin.pages.media.partials._upload-modal')
+        @include('admin.pages.media.partials._upload-modal')
+    </div>
 @endsection

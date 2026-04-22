@@ -79,13 +79,13 @@ $menu = [
         'type'     => 'accordion',
         'title'    => 'Galeri',
         'icon'     => 'ki-filled ki-picture text-lg',
-        'perm'     => 'gallery.view',
+        'perm'     => 'galleries.view',
         'children' => [
             [
                 'title'  => 'Galeriler',
                 'route'  => 'admin.galleries.index',
                 'active' => ['admin.galleries.*'],
-                'perm'   => 'gallery.view',
+                'perm'   => 'galleries.view',
             ],
         ],
         'style' => '',
@@ -95,13 +95,13 @@ $menu = [
         'type'     => 'accordion',
         'title'    => 'Kategori',
         'icon'     => 'ki-filled ki-document text-lg',
-        'perm'     => 'category.view',
+        'perm'     => 'categories.view',
         'children' => [
             [
                 'title'  => 'Kategoriler',
                 'route'  => 'admin.categories.index',
                 'active' => ['admin.categories.*'],
-                'perm'   => 'category.view',
+                'perm'   => 'categories.view',
             ],
         ],
         'style' => '',
@@ -157,7 +157,8 @@ $menu = [
         'title' => 'Loglar',
         'icon'  => 'ki-filled ki-fingerprint-scanning text-lg',
         'route' => 'admin.audit-logs.index',
-        'active'=> ['admin.audit-logs'],
+        'active'=> ['admin.audit-logs.*'],
+        'perm'  => 'audit-logs.view',
         'style' => 'margin-inline-start: -5px;',
     ],
 
@@ -166,7 +167,8 @@ $menu = [
         'title' => 'Silinenler',
         'icon'  => 'ki-filled ki-trash text-lg',
         'route' => 'admin.trash.index',
-        'active'=> ['admin.trash'],
+        'active'=> ['admin.trash.*'],
+        'perm'  => 'trash.view',
         'style' => 'margin-inline-start: -5px;',
     ],
 

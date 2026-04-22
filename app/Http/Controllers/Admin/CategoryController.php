@@ -5,22 +5,23 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Category\StoreCategoryRequest;
 use App\Http\Requests\Admin\Category\UpdateCategoryRequest;
+use App\Models\Admin\BlogPost\BlogPost;
 use App\Models\Admin\Category;
+use App\Models\Admin\Product\Product;
+use App\Models\Admin\Project\Project;
 use App\Support\CategoryTree;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
-    // -------------------------
-    // Pages
-    // -------------------------
-
     public function index(): \Illuminate\View\View
     {
         return view('admin.pages.categories.index', [
             'pageTitle' => 'Kategoriler',
             'mode' => 'active',
+            'stats' => $this->stats(),
         ]);
     }
 
@@ -29,32 +30,39 @@ class CategoryController extends Controller
         return view('admin.pages.categories.index', [
             'pageTitle' => 'Kategoriler',
             'mode' => 'trash',
+            'stats' => $this->stats(),
         ]);
     }
-
-    // -------------------------
-    // JSON list (Media gibi)
-    // GET /admin/categories/list?mode=active|trash&q=...&perpage=25&page=1
-    // -------------------------
 
     public function listLegacy(Request $request)
     {
         $mode = $request->string('mode', 'active')->toString();
         $isTrash = $mode === 'trash';
-
         $q = trim($request->string('q', '')->toString());
         $perPage = max(1, min(200, (int) $request->input('perpage', 25)));
 
-        $query = $isTrash
-            ? Category::onlyTrashed()
-            : Category::query();
+        $query = $isTrash ? Category::onlyTrashed() : Category::query();
 
         $query
             ->with(['parent:id,name'])
-            ->withCount(['blogPosts'])
-            ->when($q !== '', function ($qq) use ($q) {
-                $qq->where(function ($w) use ($q) {
-                    $w->where('name', 'like', "%{$q}%")
+            ->withCount(['blogPosts', 'children'])
+            ->select('categories.*')
+            ->selectSub(
+                DB::table('categorizables')
+                    ->selectRaw('count(*)')
+                    ->whereColumn('category_id', 'categories.id')
+                    ->where('categorizable_type', Project::class),
+                'project_count'
+            )
+            ->selectSub(
+                DB::table('category_product')
+                    ->selectRaw('count(*)')
+                    ->whereColumn('category_id', 'categories.id'),
+                'product_count'
+            )
+            ->when($q !== '', function ($builder) use ($q) {
+                $builder->where(function ($nested) use ($q) {
+                    $nested->where('name', 'like', "%{$q}%")
                         ->orWhere('slug', 'like', "%{$q}%");
                 });
             })
@@ -64,18 +72,28 @@ class CategoryController extends Controller
 
         return response()->json([
             'ok' => true,
-            'data' => $items->getCollection()->map(fn (Category $c) => [
-                'id' => $c->id,
-                'name' => $c->name,
-                'slug' => $c->slug,
-                'parent_name' => $c->parent?->name,
-                'blog_posts_count' => (int) ($c->blog_posts_count ?? 0),
-                'deleted_at' => optional($c->deleted_at)->toISOString(),
-                'edit_url'   => route('admin.categories.edit', $c),
-                'delete_url' => route('admin.categories.destroy', $c),
-                'restore_url' => route('admin.categories.restore', $c->id),
-                'force_url'   => route('admin.categories.forceDestroy', $c->id),
-            ])->values(),
+            'data' => $items->getCollection()->map(function (Category $category) {
+                $blogCount = (int) ($category->blog_posts_count ?? 0);
+                $projectCount = (int) ($category->project_count ?? 0);
+                $productCount = (int) ($category->product_count ?? 0);
+
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'slug' => $category->slug,
+                    'parent_name' => $category->parent?->name,
+                    'children_count' => (int) ($category->children_count ?? 0),
+                    'blog_posts_count' => $blogCount,
+                    'project_count' => $projectCount,
+                    'product_count' => $productCount,
+                    'content_count' => $blogCount + $projectCount + $productCount,
+                    'deleted_at' => optional($category->deleted_at)->toISOString(),
+                    'edit_url' => route('admin.categories.edit', $category),
+                    'delete_url' => route('admin.categories.destroy', $category),
+                    'restore_url' => route('admin.categories.restore', $category->id),
+                    'force_url' => route('admin.categories.forceDestroy', $category->id),
+                ];
+            })->values(),
             'meta' => [
                 'current_page' => $items->currentPage(),
                 'last_page' => $items->lastPage(),
@@ -87,35 +105,34 @@ class CategoryController extends Controller
 
     public function list(Request $request)
     {
-        $draw   = (int) $request->input('draw', 1);
-        $start  = (int) $request->input('start', 0);
+        $draw = (int) $request->input('draw', 1);
+        $start = (int) $request->input('start', 0);
         $length = (int) $request->input('length', 10);
         $search = trim((string) $request->input('search.value', ''));
 
-        $q = Category::query()
+        $query = Category::query()
             ->with('parent:id,name')
             ->withCount('blogPosts');
 
         if ($search !== '') {
-            $q->where(function ($w) use ($search) {
-                $w->where('name', 'like', "%{$search}%")
+            $query->where(function ($builder) use ($search) {
+                $builder->where('name', 'like', "%{$search}%")
                     ->orWhere('slug', 'like', "%{$search}%");
             });
         }
 
         $recordsTotal = Category::count();
-        $recordsFiltered = (clone $q)->count();
+        $recordsFiltered = (clone $query)->count();
+        $items = $query->skip($start)->take($length)->get();
 
-        $items = $q->skip($start)->take($length)->get();
-
-        $data = $items->map(function ($c) {
+        $data = $items->map(function ($category) {
             return [
-                'checkbox' => '<input type="checkbox" class="kt-checkbox" data-row-check value="'.$c->id.'">',
-                'name' => e($c->name),
-                'slug' => e($c->slug),
-                'parent_name' => e(optional($c->parent)->name),
-                'blog_posts_count' => (int) $c->blog_posts_count,
-                'actions' => view('admin.pages.categories.partials._actions', compact('c'))->render(),
+                'checkbox' => '<input type="checkbox" class="kt-checkbox" data-row-check value="' . $category->id . '">',
+                'name' => e($category->name),
+                'slug' => e($category->slug),
+                'parent_name' => e(optional($category->parent)->name),
+                'blog_posts_count' => (int) $category->blog_posts_count,
+                'actions' => view('admin.pages.categories.partials._actions', ['c' => $category])->render(),
             ];
         });
 
@@ -126,11 +143,6 @@ class CategoryController extends Controller
             'data' => $data,
         ]);
     }
-
-
-    // -------------------------
-    // CRUD (senin mevcut yapın)
-    // -------------------------
 
     public function create()
     {
@@ -154,23 +166,20 @@ class CategoryController extends Controller
 
         return redirect()
             ->route('admin.categories.index')
-            ->with('success', 'Kategori oluşturuldu.');
+            ->with('success', 'Kategori olusturuldu.');
     }
 
     public function edit(Category $category)
     {
         $all = CategoryTree::all();
         $byParent = CategoryTree::indexByParent($all);
-
         $descendantIds = CategoryTree::descendantIdsFromAll($category->id, $byParent);
         $excludeIds = array_merge([$category->id], $descendantIds);
 
-        $parentOptions = CategoryTree::optionsFromIndex($byParent, $excludeIds);
-
         return view('admin.pages.categories.edit', [
-            'pageTitle' => 'Kategori Düzenle',
+            'pageTitle' => 'Kategori Duzenle',
             'category' => $category,
-            'parentOptions' => $parentOptions,
+            'parentOptions' => CategoryTree::optionsFromIndex($byParent, $excludeIds),
         ]);
     }
 
@@ -185,19 +194,15 @@ class CategoryController extends Controller
 
         return redirect()
             ->route('admin.categories.index')
-            ->with('success', 'Kategori güncellendi.');
+            ->with('success', 'Kategori guncellendi.');
     }
-
-    // -------------------------
-    // Soft delete / trash ops
-    // -------------------------
 
     public function destroy(Category $category)
     {
         $category->delete();
 
         if (request()->expectsJson()) {
-            return response()->json(['ok' => true]);
+            return response()->json(['ok' => true, 'message' => 'Kategori cop kutusuna tasindi.']);
         }
 
         return redirect()
@@ -207,81 +212,101 @@ class CategoryController extends Controller
 
     public function restore(int $id): JsonResponse
     {
-        $cat = Category::onlyTrashed()->findOrFail($id);
-        $cat->restore();
+        $category = Category::onlyTrashed()->findOrFail($id);
+        $category->restore();
 
-        return response()->json(['ok' => true]);
+        return response()->json(['ok' => true, 'message' => 'Kategori geri yuklendi.']);
     }
 
     public function forceDestroy(int $id): JsonResponse
     {
-        $cat = Category::onlyTrashed()->findOrFail($id);
+        $category = Category::onlyTrashed()->findOrFail($id);
+        $guard = $this->guardCategoryForceDelete($category->id);
 
-        $hasChildren = Category::withTrashed()->where('parent_id', $cat->id)->exists();
-        if ($hasChildren) {
+        if (!$guard['ok']) {
             return response()->json([
                 'ok' => false,
-                'message' => 'Bu kategorinin alt kategorileri var. Önce alt kategorileri taşıyın/silin.',
+                'message' => $guard['message'],
             ], 422);
         }
 
-        $cat->forceDelete();
+        $category->forceDelete();
 
-        return response()->json(['ok' => true]);
+        return response()->json(['ok' => true, 'message' => 'Kategori kalici olarak silindi.']);
     }
 
     public function bulkDestroy(Request $request): JsonResponse
     {
-        $ids = $request->input('ids', []);
-        $ids = array_values(array_filter(array_map('intval', is_array($ids) ? $ids : [])));
-        if (!$ids) return response()->json(['ok' => true]);
+        $ids = $this->validatedIds($request->input('ids', []));
+        if (count($ids) === 0) {
+            return response()->json(['ok' => true, 'message' => 'Secili kayit yok.']);
+        }
 
-        $hasChild = Category::whereIn('parent_id', $ids)->exists();
+        $hasChild = Category::query()
+            ->whereIn('parent_id', $ids)
+            ->exists();
+
         if ($hasChild) {
             return response()->json([
                 'ok' => false,
-                'message' => 'Seçim içinde alt kategorisi olan kayıt var. Önce altları taşıyın/silin.',
+                'message' => 'Secim icinde alt kategorisi olan kayit var. Once alt kategorileri tasiyin veya silin.',
             ], 422);
         }
 
-        Category::whereIn('id', $ids)->delete();
+        Category::query()->whereIn('id', $ids)->delete();
 
-        return response()->json(['ok' => true]);
+        return response()->json(['ok' => true, 'message' => 'Secili kategoriler silindi.']);
     }
 
     public function bulkRestore(Request $request): JsonResponse
     {
-        $ids = $request->input('ids', []);
-        $ids = array_values(array_filter(array_map('intval', is_array($ids) ? $ids : [])));
-        if (!$ids) return response()->json(['ok' => true]);
+        $ids = $this->validatedIds($request->input('ids', []));
+        if (count($ids) === 0) {
+            return response()->json(['ok' => true, 'message' => 'Secili kayit yok.']);
+        }
 
-        Category::onlyTrashed()->whereIn('id', $ids)->restore();
+        $count = Category::onlyTrashed()->whereIn('id', $ids)->restore();
 
-        return response()->json(['ok' => true]);
+        return response()->json([
+            'ok' => true,
+            'message' => $count > 0 ? 'Secili kategoriler geri yuklendi.' : 'Geri yuklenecek kayit bulunamadi.',
+        ]);
     }
 
     public function bulkForceDestroy(Request $request): JsonResponse
     {
-        $ids = $request->input('ids', []);
-        $ids = array_values(array_filter(array_map('intval', is_array($ids) ? $ids : [])));
-        if (!$ids) return response()->json(['ok' => true]);
-
-        $hasChild = Category::withTrashed()->whereIn('parent_id', $ids)->exists();
-        if ($hasChild) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Seçim içinde alt kategorisi olan kayıt var. Önce altları taşıyın/silin.',
-            ], 422);
+        $ids = $this->validatedIds($request->input('ids', []));
+        if (count($ids) === 0) {
+            return response()->json(['ok' => true, 'message' => 'Secili kayit yok.']);
         }
 
-        Category::onlyTrashed()->whereIn('id', $ids)->forceDelete();
+        $blocked = [];
+        foreach ($ids as $id) {
+            $guard = $this->guardCategoryForceDelete($id);
+            if (!$guard['ok']) {
+                $blocked[] = [
+                    'id' => $id,
+                    'reason' => $guard['message'],
+                ];
+            }
+        }
 
-        return response()->json(['ok' => true]);
+        $blockedIds = array_column($blocked, 'id');
+        $allowedIds = array_values(array_diff($ids, $blockedIds));
+
+        if (count($allowedIds) > 0) {
+            Category::onlyTrashed()->whereIn('id', $allowedIds)->forceDelete();
+        }
+
+        return response()->json([
+            'ok' => true,
+            'done' => count($allowedIds),
+            'failed' => array_map(fn ($item) => ['type' => 'category', 'id' => $item['id'], 'reason' => $item['reason']], $blocked),
+            'message' => count($blocked) > 0
+                ? 'Bazi kategoriler korunarak atlandi.'
+                : 'Secili kategoriler kalici olarak silindi.',
+        ]);
     }
-
-    // -------------------------
-    // Slug check (senin mevcut)
-    // -------------------------
 
     public function checkSlug(Request $request)
     {
@@ -292,44 +317,43 @@ class CategoryController extends Controller
             return response()->json([
                 'ok' => false,
                 'available' => false,
-                'message' => 'Slug boş olamaz.',
+                'message' => 'Slug bos olamaz.',
             ]);
         }
 
         $exists = Category::query()
-            ->when($ignoreId, fn($q) => $q->whereKeyNot($ignoreId))
+            ->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
             ->where('slug', $slug)
             ->exists();
 
         return response()->json([
             'ok' => true,
             'available' => !$exists,
-            'message' => $exists ? 'Bu slug zaten kullanılıyor.' : 'Slug uygun.',
+            'message' => $exists ? 'Bu slug zaten kullaniliyor.' : 'Slug uygun.',
         ]);
     }
 
     public function trashList(Request $request)
     {
-        $draw   = (int) $request->input('draw', 1);
-        $start  = (int) $request->input('start', 0);
+        $draw = (int) $request->input('draw', 1);
+        $start = (int) $request->input('start', 0);
         $length = (int) $request->input('length', 10);
 
-        $q = Category::onlyTrashed()
+        $query = Category::onlyTrashed()
             ->with('parent:id,name')
             ->withCount('blogPosts');
 
         $recordsTotal = Category::onlyTrashed()->count();
-        $recordsFiltered = (clone $q)->count();
+        $recordsFiltered = (clone $query)->count();
+        $items = $query->skip($start)->take($length)->get();
 
-        $items = $q->skip($start)->take($length)->get();
-
-        $data = $items->map(function ($c) {
+        $data = $items->map(function ($category) {
             return [
-                'name' => e($c->name),
-                'slug' => e($c->slug),
-                'parent_name' => e(optional($c->parent)->name),
-                'deleted_at' => optional($c->deleted_at)->format('d.m.Y H:i'),
-                'actions' => view('admin.pages.categories.partials._trash_actions', compact('c'))->render(),
+                'name' => e($category->name),
+                'slug' => e($category->slug),
+                'parent_name' => e(optional($category->parent)->name),
+                'deleted_at' => optional($category->deleted_at)->format('d.m.Y H:i'),
+                'actions' => view('admin.pages.categories.partials._trash_actions', ['c' => $category])->render(),
             ];
         });
 
@@ -339,5 +363,62 @@ class CategoryController extends Controller
             'recordsFiltered' => $recordsFiltered,
             'data' => $data,
         ]);
+    }
+
+    private function stats(): array
+    {
+        return [
+            'total' => Category::query()->count(),
+            'roots' => Category::query()->whereNull('parent_id')->count(),
+            'blog_links' => DB::table('categorizables')->where('categorizable_type', BlogPost::class)->count(),
+            'project_links' => DB::table('categorizables')->where('categorizable_type', Project::class)->count(),
+            'product_links' => DB::table('category_product')->count(),
+            'trash' => Category::onlyTrashed()->count(),
+        ];
+    }
+
+    private function validatedIds($ids): array
+    {
+        return array_values(array_filter(array_map('intval', is_array($ids) ? $ids : [])));
+    }
+
+    private function guardCategoryForceDelete(int $categoryId): array
+    {
+        $hasChildren = Category::withTrashed()
+            ->where('parent_id', $categoryId)
+            ->exists();
+
+        if ($hasChildren) {
+            return ['ok' => false, 'message' => 'Bu kategorinin alt kategorileri var. Once alt kategorileri tasiyin veya silin.'];
+        }
+
+        $blogCount = DB::table('categorizables')
+            ->where('category_id', $categoryId)
+            ->where('categorizable_type', BlogPost::class)
+            ->count();
+
+        $projectCount = DB::table('categorizables')
+            ->where('category_id', $categoryId)
+            ->where('categorizable_type', Project::class)
+            ->count();
+
+        $productCount = DB::table('category_product')
+            ->where('category_id', $categoryId)
+            ->count();
+
+        $totalUsage = $blogCount + $projectCount + $productCount;
+        if ($totalUsage === 0) {
+            return ['ok' => true, 'message' => ''];
+        }
+
+        $parts = [];
+        if ($blogCount > 0) $parts[] = "blog: {$blogCount}";
+        if ($projectCount > 0) $parts[] = "proje: {$projectCount}";
+        if ($productCount > 0) $parts[] = "urun: {$productCount}";
+
+        return [
+            'ok' => false,
+            'message' => 'Kategori iceriklere bagli. Once iliskileri kaldirin: ' . implode(', ', $parts),
+        ];
     }
 }

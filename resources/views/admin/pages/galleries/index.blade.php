@@ -5,28 +5,54 @@
 
     <div class="kt-container-fixed"
          data-page="galleries.index"
-         data-mode="{{ $isTrash ? 'trash' : 'active' }}">
+         data-mode="{{ $isTrash ? 'trash' : 'active' }}"
+         data-list-url="{{ route('admin.galleries.list') }}">
         <div class="grid gap-5 lg:gap-7.5">
 
             @includeIf('admin.partials._flash')
 
+            <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <div class="kt-card">
+                    <div class="kt-card-content p-5">
+                        <div class="text-sm text-muted-foreground">Aktif galeri</div>
+                        <div class="mt-2 text-2xl font-semibold">{{ number_format((int) ($stats['active'] ?? 0)) }}</div>
+                    </div>
+                </div>
+                <div class="kt-card">
+                    <div class="kt-card-content p-5">
+                        <div class="text-sm text-muted-foreground">Cop kutusu</div>
+                        <div class="mt-2 text-2xl font-semibold text-warning">{{ number_format((int) ($stats['trash'] ?? 0)) }}</div>
+                    </div>
+                </div>
+                <div class="kt-card">
+                    <div class="kt-card-content p-5">
+                        <div class="text-sm text-muted-foreground">Galeri ogesi</div>
+                        <div class="mt-2 text-2xl font-semibold">{{ number_format((int) ($stats['items'] ?? 0)) }}</div>
+                    </div>
+                </div>
+                <div class="kt-card">
+                    <div class="kt-card-content p-5">
+                        <div class="text-sm text-muted-foreground">Icerik bagi</div>
+                        <div class="mt-2 text-2xl font-semibold">{{ number_format((int) ($stats['attached'] ?? 0)) }}</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                    <h1 class="text-xl font-semibold">
-                        {{ $isTrash ? 'Galeriler - Çöp Kutusu' : 'Galeriler' }}
-                    </h1>
+                    <h1 class="text-xl font-semibold">{{ $isTrash ? 'Galeriler - Cop Kutusu' : 'Galeriler' }}</h1>
                     <div class="text-sm text-muted-foreground">
-                        Galeri oluştur, düzenle, içeriklere bağla.
+                        Galeri olustur, duzenle ve iceriklere bagli kullanim yogunlugunu takip et.
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 flex-wrap">
                     @if(!$isTrash)
                         <a href="{{ route('admin.galleries.create') }}" class="kt-btn kt-btn-primary">
                             <i class="ki-outline ki-plus"></i> Yeni Galeri
                         </a>
                         <a href="{{ route('admin.galleries.trash') }}" class="kt-btn kt-btn-light">
-                            <i class="ki-outline ki-trash"></i> Çöp
+                            <i class="ki-outline ki-trash"></i> Silinenler
                         </a>
                     @else
                         <a href="{{ route('admin.galleries.index') }}" class="kt-btn kt-btn-light">
@@ -59,9 +85,8 @@
                 </div>
 
                 <div class="kt-card-content p-5">
-                    <div id="galleriesEmpty"
-                         class="hidden text-sm text-muted-foreground">
-                        Kayıt yok.
+                    <div id="galleriesEmpty" class="hidden text-sm text-muted-foreground">
+                        Kayit yok.
                     </div>
 
                     <div id="galleriesList" class="grid gap-3">

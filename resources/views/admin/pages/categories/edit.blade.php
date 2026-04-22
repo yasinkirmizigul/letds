@@ -127,7 +127,7 @@
                                     </button>
 
                                     {{-- DELETE (modal open) --}}
-                                    @perm('category.delete')
+                                    @perm('categories.delete')
                                         <button type="button"
                                                 class="kt-btn kt-btn-destructive"
                                                 data-kt-modal-target="#deleteCategoryModal">
@@ -145,7 +145,7 @@
                 </form>
 
                 {{-- DELETE FORM (separate; used by modal confirm) --}}
-                @perm('category.delete')
+                @perm('categories.delete')
                     <form id="category-delete-form"
                           method="POST"
                           action="{{ route('admin.categories.destroy', ['category' => $category->id]) }}">
@@ -157,7 +157,7 @@
             </div>
 
             {{-- DELETE MODAL --}}
-        @perm('category.delete')
+        @perm('categories.delete')
                 <div id="deleteCategoryModal"
                      class="kt-modal hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                     <div class="kt-card max-w-md">

@@ -157,7 +157,7 @@ Route::middleware(['auth', 'audit'])
                 ->name('update');
 
             Route::get('/trash', [CategoryController::class, 'trash'])
-                ->middleware('permission:categories.view')
+                ->middleware('permission:categories.trash')
                 ->name('trash');
 
             Route::get('/trash/list', [CategoryController::class, 'trashList'])
@@ -173,8 +173,20 @@ Route::middleware(['auth', 'audit'])
                 ->name('restore');
 
             Route::delete('/{id}/force', [CategoryController::class, 'forceDestroy'])
-                ->middleware('permission:categories.forceDelete')
+                ->middleware('permission:categories.force_delete')
                 ->name('forceDestroy');
+
+            Route::post('/bulk-delete', [CategoryController::class, 'bulkDestroy'])
+                ->middleware('permission:categories.delete')
+                ->name('bulkDestroy');
+
+            Route::post('/bulk-restore', [CategoryController::class, 'bulkRestore'])
+                ->middleware('permission:categories.restore')
+                ->name('bulkRestore');
+
+            Route::post('/bulk-force-delete', [CategoryController::class, 'bulkForceDestroy'])
+                ->middleware('permission:categories.force_delete')
+                ->name('bulkForceDestroy');
         });
 
         // Blog
@@ -405,8 +417,18 @@ Route::middleware(['auth', 'audit'])
                 ->name('bulkRestore');
 
             Route::delete('/bulk-force-delete', [MediaController::class, 'bulkForceDestroy'])
-                ->middleware('permission:media.forceDelete')
+                ->middleware('permission:media.force_delete')
                 ->name('bulkForceDestroy');
+
+            Route::post('/{id}/restore', [MediaController::class, 'restore'])
+                ->whereNumber('id')
+                ->middleware('permission:media.restore')
+                ->name('restore');
+
+            Route::delete('/{id}/force', [MediaController::class, 'forceDestroy'])
+                ->whereNumber('id')
+                ->middleware('permission:media.force_delete')
+                ->name('forceDestroy');
 
             Route::delete('/{media}', [MediaController::class, 'destroy'])
                 ->whereNumber('media')
@@ -445,9 +467,9 @@ Route::middleware(['auth', 'audit'])
                 ->name('destroy');
 
             Route::get('/trash', function () {
-                return redirect()->route('admin.trash.index');
+                return redirect()->route('admin.trash.index', ['type' => 'gallery']);
             })
-                ->middleware('permission:trash.view')
+                ->middleware('permission:galleries.trash')
                 ->name('trash');
         });
 
@@ -493,7 +515,7 @@ Route::middleware(['auth', 'audit'])
                 ->name('bulkRestore');
 
             Route::post('/bulk-force-delete', [TrashController::class, 'bulkForceDestroy'])
-                ->middleware('permission:trash.force-delete')
+                ->middleware('permission:trash.force_delete')
                 ->name('bulkForceDestroy');
 
             Route::post('/{type}/{id}/restore', [TrashController::class, 'restore'])
@@ -501,7 +523,7 @@ Route::middleware(['auth', 'audit'])
                 ->name('restoreOne');
 
             Route::delete('/{type}/{id}', [TrashController::class, 'forceDestroy'])
-                ->middleware('permission:trash.force-delete')
+                ->middleware('permission:trash.force_delete')
                 ->name('forceDestroyOne');
         });
 
@@ -540,15 +562,6 @@ Route::middleware(['auth', 'audit'])
             Route::get('/', [ProjectGalleryController::class, 'index'])
                 ->middleware('permission:projects.update')
                 ->name('index');
-
-            Route::post('/projects/bulk-delete', [ProjectController::class, 'bulkDelete'])
-                ->name('projects.bulkDelete');
-
-            Route::post('/projects/bulk-restore', [ProjectController::class, 'bulkRestore'])
-                ->name('projects.bulkRestore');
-
-            Route::post('/projects/bulk-force-delete', [ProjectController::class, 'bulkForceDelete'])
-                ->name('projects.bulkForceDelete');
 
             Route::post('/attach', [ProjectGalleryController::class, 'attach'])
                 ->middleware('permission:projects.update')

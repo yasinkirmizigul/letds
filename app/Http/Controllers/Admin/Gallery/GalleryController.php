@@ -17,6 +17,7 @@ class GalleryController extends Controller
         return view('admin.pages.galleries.index', [
             'pageTitle' => 'Galeriler',
             'mode' => 'active',
+            'stats' => $this->stats(),
         ]);
     }
 
@@ -25,6 +26,7 @@ class GalleryController extends Controller
         return view('admin.pages.galleries.index', [
             'pageTitle' => 'Galeri Silinen',
             'mode' => 'trash',
+            'stats' => $this->stats(),
         ]);
     }
 
@@ -32,29 +34,43 @@ class GalleryController extends Controller
     {
         $mode = $request->string('mode', 'active')->toString();
 
-        $q = $mode === 'trash'
+        $query = $mode === 'trash'
             ? Gallery::onlyTrashed()->latest('id')
             : Gallery::query()->latest('id');
 
         if ($term = $request->string('q')->toString()) {
-            $q->where(function ($qq) use ($term) {
-                $qq->where('name', 'like', "%{$term}%")
+            $query->where(function ($builder) use ($term) {
+                $builder->where('name', 'like', "%{$term}%")
                     ->orWhere('slug', 'like', "%{$term}%");
             });
         }
 
+        $query
+            ->withCount('items')
+            ->select('galleries.*')
+            ->selectSub(
+                DB::table('galleryables')
+                    ->selectRaw('count(*)')
+                    ->whereColumn('gallery_id', 'galleries.id'),
+                'attached_count'
+            );
+
         $perPage = max(1, min(96, (int) $request->input('perpage', 24)));
-        $items = $q->paginate($perPage);
+        $items = $query->paginate($perPage);
 
         return response()->json([
             'ok' => true,
-            'data' => $items->getCollection()->map(fn (Gallery $g) => [
-                'id' => $g->id,
-                'name' => $g->name,
-                'slug' => $g->slug,
-                'description' => $g->description,
-                'deleted_at' => $g->deleted_at?->toDateTimeString(),
-                'updated_at' => $g->updated_at?->toDateTimeString(),
+            'data' => $items->getCollection()->map(fn (Gallery $gallery) => [
+                'id' => $gallery->id,
+                'name' => $gallery->name,
+                'slug' => $gallery->slug,
+                'description' => $gallery->description,
+                'items_count' => (int) ($gallery->items_count ?? 0),
+                'attached_count' => (int) ($gallery->attached_count ?? 0),
+                'deleted_at' => $gallery->deleted_at?->toDateTimeString(),
+                'updated_at' => $gallery->updated_at?->toDateTimeString(),
+                'edit_url' => route('admin.galleries.edit', $gallery),
+                'delete_url' => route('admin.galleries.destroy', $gallery),
             ])->values(),
             'meta' => [
                 'current_page' => $items->currentPage(),
@@ -68,35 +84,35 @@ class GalleryController extends Controller
     public function create()
     {
         return view('admin.pages.galleries.create', [
-            'pageTitle' => 'Galeri Oluştur',
+            'pageTitle' => 'Galeri Olustur',
         ]);
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => ['required','string','max:180'],
-            'slug' => ['nullable','string','max:220','unique:galleries,slug'],
-            'description' => ['nullable','string'],
+            'name' => ['required', 'string', 'max:180'],
+            'slug' => ['nullable', 'string', 'max:220', 'unique:galleries,slug'],
+            'description' => ['nullable', 'string'],
         ]);
 
         $data['slug'] = $data['slug'] ? Str::slug($data['slug']) : Str::slug($data['name']);
         $data['created_by'] = auth()->id();
         $data['updated_by'] = auth()->id();
 
-        $g = Gallery::create($data);
+        $gallery = Gallery::create($data);
 
-        AuditEvent::log('gallery.create', ['gallery_id' => $g->id]);
+        AuditEvent::log('gallery.create', ['gallery_id' => $gallery->id]);
 
         return redirect()
-            ->route('admin.galleries.edit', ['gallery' => $g->id])
-            ->with('success', 'Galeri oluşturuldu.');
+            ->route('admin.galleries.edit', ['gallery' => $gallery->id])
+            ->with('success', 'Galeri olusturuldu.');
     }
 
     public function edit(Gallery $gallery)
     {
         return view('admin.pages.galleries.edit', [
-            'pageTitle' => 'Galeri Düzenle',
+            'pageTitle' => 'Galeri Duzenle',
             'gallery' => $gallery,
         ]);
     }
@@ -104,9 +120,9 @@ class GalleryController extends Controller
     public function update(Request $request, Gallery $gallery)
     {
         $data = $request->validate([
-            'name' => ['required','string','max:180'],
-            'slug' => ['nullable','string','max:220','unique:galleries,slug,' . $gallery->id],
-            'description' => ['nullable','string'],
+            'name' => ['required', 'string', 'max:180'],
+            'slug' => ['nullable', 'string', 'max:220', 'unique:galleries,slug,' . $gallery->id],
+            'description' => ['nullable', 'string'],
         ]);
 
         $data['slug'] = $data['slug'] ? Str::slug($data['slug']) : Str::slug($data['name']);
@@ -116,7 +132,7 @@ class GalleryController extends Controller
 
         AuditEvent::log('gallery.update', ['gallery_id' => $gallery->id]);
 
-        return back()->with('success', 'Galeri güncellendi.');
+        return back()->with('success', 'Galeri guncellendi.');
     }
 
     public function destroy(Gallery $gallery)
@@ -125,36 +141,42 @@ class GalleryController extends Controller
 
         AuditEvent::log('gallery.delete', ['gallery_id' => $gallery->id]);
 
-        return back()->with('success', 'Galeri çöp kutusuna taşındı.');
+        if (request()->expectsJson()) {
+            return response()->json([
+                'ok' => true,
+                'message' => 'Galeri cop kutusuna tasindi.',
+            ]);
+        }
+
+        return back()->with('success', 'Galeri cop kutusuna tasindi.');
     }
 
     public function restore(int $id)
     {
-        $g = Gallery::onlyTrashed()->findOrFail($id);
-        $g->restore();
+        $gallery = Gallery::onlyTrashed()->findOrFail($id);
+        $gallery->restore();
 
-        AuditEvent::log('gallery.restore', ['gallery_id' => $g->id]);
+        AuditEvent::log('gallery.restore', ['gallery_id' => $gallery->id]);
 
-        return back()->with('success', 'Galeri geri yüklendi.');
+        return back()->with('success', 'Galeri geri yuklendi.');
     }
 
     public function forceDestroy(int $id)
     {
-        $g = Gallery::onlyTrashed()->findOrFail($id);
+        $gallery = Gallery::onlyTrashed()->findOrFail($id);
 
         $attachedCount = DB::table('galleryables')
-            ->where('gallery_id', $g->id)
+            ->where('gallery_id', $gallery->id)
             ->count();
 
         if ($attachedCount > 0) {
-            return back()->with('error', 'Bu galeri içeriklere bağlı. Önce bağlantıları kaldır.');
+            return back()->with('error', 'Bu galeri iceriklere bagli. Once baglantilari kaldir.');
         }
 
-        $g->forceDelete();
-
+        $gallery->forceDelete();
         AuditEvent::log('gallery.force_delete', ['gallery_id' => $id]);
 
-        return back()->with('success', 'Galeri kalıcı silindi.');
+        return back()->with('success', 'Galeri kalici silindi.');
     }
 
     public function bulkDestroy(Request $request): JsonResponse
@@ -205,5 +227,15 @@ class GalleryController extends Controller
         ]);
 
         return response()->json(['ok' => true, 'blocked' => $blocked]);
+    }
+
+    private function stats(): array
+    {
+        return [
+            'active' => Gallery::query()->count(),
+            'trash' => Gallery::onlyTrashed()->count(),
+            'items' => DB::table('gallery_items')->count(),
+            'attached' => DB::table('galleryables')->count(),
+        ];
     }
 }

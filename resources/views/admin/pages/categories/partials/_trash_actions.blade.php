@@ -2,12 +2,12 @@
     <button data-restore
             data-url="{{ route('admin.categories.restore', $c->id) }}"
             class="kt-btn kt-btn-sm kt-btn-light">
-        Geri Yükle
+        Geri Yukle
     </button>
 
-    <button data-force-delete
-            data-url="{{ route('admin.categories.force', $c->id) }}"
+    <button data-force
+            data-url="{{ route('admin.categories.forceDestroy', $c->id) }}"
             class="kt-btn kt-btn-sm kt-btn-danger">
-        Kalıcı Sil
+        Kalici Sil
     </button>
 </div>

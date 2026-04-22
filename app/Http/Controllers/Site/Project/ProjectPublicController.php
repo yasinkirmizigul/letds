@@ -15,8 +15,8 @@ class ProjectPublicController extends Controller
     {
         // Sadece ACTIVE yayınla (draft/archived public'te görünmesin)
         $project = Project::query()
+            ->publicVisible()
             ->where('slug', $slug)
-            ->where('status', 'active')
             ->firstOrFail();
 
         // Featured image: mediables(collection=featured) üzerinden
