@@ -33,11 +33,11 @@
     $initialWordCount = $isEdit ? $product->contentWordCount() : 0;
     $initialReadTime = $isEdit ? $product->estimatedReadTimeMinutes() : 0;
     $initialSeoScore = $isEdit ? $product->seoCompletenessScore() : 0;
-    $initialPreviewTitle = $currentMetaTitle ?: ($currentTitle ?: 'Meta baslik burada gorunecek');
-    $initialPreviewDescription = $currentMetaDescription ?: ($product?->excerptPreview(155) ?: 'Meta aciklama burada gorunecek.');
+    $initialPreviewTitle = $currentMetaTitle ?: ($currentTitle ?: 'Meta başlık burada görünecek');
+    $initialPreviewDescription = $currentMetaDescription ?: ($product?->excerptPreview(155) ?: 'Meta açıklama burada görünecek.');
     $resolvedPrice = $currentPrice !== '' ? number_format((float) $currentPrice, 2, ',', '.') . ' ' . ($currentCurrency ?: 'TRY') : 'Fiyat bilgisi yok';
     $stockBadgeClass = ((int) $currentStock) <= 0 ? 'kt-badge-light-danger' : (((int) $currentStock) <= 5 ? 'kt-badge-light-warning' : 'kt-badge-light-success');
-    $stockBadgeLabel = $currentStock === '' ? 'Stok bekleniyor' : (((int) $currentStock) <= 0 ? 'Stok yok' : (((int) $currentStock) <= 5 ? 'Dusuk stok: ' . (int) $currentStock : 'Stok iyi: ' . (int) $currentStock));
+    $stockBadgeLabel = $currentStock === '' ? 'Stok bekleniyor' : (((int) $currentStock) <= 0 ? 'Stok yok' : (((int) $currentStock) <= 5 ? 'Düşük stok: ' . (int) $currentStock : 'Stok iyi: ' . (int) $currentStock));
 @endphp
 
 <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.55fr)_400px] gap-6">
@@ -45,9 +45,9 @@
         <div class="kt-card overflow-hidden">
             <div class="kt-card-header py-5">
                 <div>
-                    <h3 class="kt-card-title">Urun Icerigi</h3>
+                    <h3 class="kt-card-title">Ürün İçeriği</h3>
                     <div class="text-sm text-muted-foreground">
-                        Baslik, slug ve ana icerigi tek akista yonetin.
+                        Başlık, slug ve ana içeriği tek akışta yönetin.
                     </div>
                 </div>
             </div>
@@ -55,7 +55,7 @@
             <div class="kt-card-content p-6 grid gap-6">
                 <div class="grid gap-2">
                     <div class="flex items-center justify-between gap-3">
-                        <label class="kt-form-label font-normal text-mono" for="title">Baslik</label>
+                        <label class="kt-form-label font-normal text-mono" for="title">Başlık</label>
                         <span class="text-xs text-muted-foreground" data-product-title-count>{{ mb_strlen($currentTitle) }}/255</span>
                     </div>
                     <input
@@ -63,7 +63,7 @@
                         name="title"
                         class="kt-input @error('title') kt-input-invalid @enderror"
                         value="{{ $currentTitle }}"
-                        placeholder="Urun basligini yazin"
+                        placeholder="Ürün başlığını yazın"
                     >
                     @error('title')
                         <div class="text-xs text-danger">{{ $message }}</div>
@@ -73,7 +73,7 @@
                 <div class="grid gap-3 rounded-3xl app-surface-card app-surface-card--soft p-4">
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <label class="kt-form-label font-normal text-mono mb-0" for="slug">Slug ve URL</label>
-                        <span class="text-xs text-muted-foreground">URL stabilitesini korumak icin sadece gerektiginde degistirin.</span>
+                        <span class="text-xs text-muted-foreground">URL stabilitesini korumak için sadece gerektiginde değiştirin.</span>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
@@ -82,10 +82,10 @@
                             name="slug"
                             class="kt-input flex-1 @error('slug') kt-input-invalid @enderror"
                             value="{{ $currentSlug }}"
-                            placeholder="otomatik-olusturulur"
+                            placeholder="otomatik-oluşturulur"
                         >
 
-                        <button type="button" id="slug_regen" class="kt-btn kt-btn-light">Olustur</button>
+                        <button type="button" id="slug_regen" class="kt-btn kt-btn-light">Oluştur</button>
 
                         <label class="kt-switch shrink-0" title="Otomatik slug">
                             <input
@@ -103,19 +103,19 @@
                     @enderror
 
                     <div class="rounded-2xl app-surface-card px-4 py-3 text-sm text-muted-foreground">
-                        URL onizleme:
+                        URL önizleme:
                         <span class="font-medium text-foreground">{{ url('/products') }}/<span id="url_slug_preview">{{ $currentSlug }}</span></span>
                     </div>
 
                     <div id="slugCheckHint" class="text-xs text-muted-foreground">
-                        Slug girildiginde uygunluk kontrolu yapilir.
+                        Slug girildiğinde uygunluk kontrolü yapılır.
                     </div>
                 </div>
 
                 <div class="grid gap-2">
                     <div class="flex items-center justify-between gap-3">
-                        <label class="kt-form-label font-normal text-mono" for="content_editor">Urun Detayi</label>
-                        <span class="text-xs text-muted-foreground">TinyMCE ile zengin icerik duzenleme</span>
+                        <label class="kt-form-label font-normal text-mono" for="content_editor">Ürün Detayı</label>
+                        <span class="text-xs text-muted-foreground">TinyMCE ile zengin içerik düzenleme</span>
                     </div>
                     <textarea
                         id="content_editor"
@@ -134,7 +134,7 @@
                 <div>
                     <h3 class="kt-card-title">Ticari Bilgiler</h3>
                     <div class="text-sm text-muted-foreground">
-                        Fiyat, stok, barkod ve lojistik alanlarini ayni blokta yonetin.
+                        Fiyat, stok, barkod ve lojistik alanlarıni aynı blokta yönetin.
                     </div>
                 </div>
             </div>
@@ -159,7 +159,7 @@
 
                     <div class="grid gap-2">
                         <label class="kt-form-label font-normal text-mono" for="brand">Marka</label>
-                        <input id="brand" name="brand" class="kt-input @error('brand') kt-input-invalid @enderror" value="{{ $currentBrand }}" placeholder="Marka adi">
+                        <input id="brand" name="brand" class="kt-input @error('brand') kt-input-invalid @enderror" value="{{ $currentBrand }}" placeholder="Marka adı">
                         @error('brand')
                             <div class="text-xs text-danger">{{ $message }}</div>
                         @enderror
@@ -176,7 +176,7 @@
                     </div>
 
                     <div class="grid gap-2">
-                        <label class="kt-form-label font-normal text-mono" for="sale_price">Indirimli Fiyat</label>
+                        <label class="kt-form-label font-normal text-mono" for="sale_price">İndirimli Fiyat</label>
                         <input id="sale_price" name="sale_price" type="number" step="0.01" min="0" class="kt-input @error('sale_price') kt-input-invalid @enderror" value="{{ $currentSalePrice }}" placeholder="0.00">
                         @error('sale_price')
                             <div class="text-xs text-danger">{{ $message }}</div>
@@ -210,7 +210,7 @@
                     </div>
 
                     <div class="grid gap-2">
-                        <label class="kt-form-label font-normal text-mono" for="weight">Agirlik (kg)</label>
+                        <label class="kt-form-label font-normal text-mono" for="weight">Ağırlık (kg)</label>
                         <input id="weight" name="weight" type="number" step="0.001" min="0" class="kt-input @error('weight') kt-input-invalid @enderror" value="{{ $currentWeight }}" placeholder="0.000">
                         @error('weight')
                             <div class="text-xs text-danger">{{ $message }}</div>
@@ -244,7 +244,7 @@
 
                 <div class="grid gap-5 md:grid-cols-2">
                     <div class="grid gap-2">
-                        <label class="kt-form-label font-normal text-mono" for="sort_order">Liste Sirasi</label>
+                        <label class="kt-form-label font-normal text-mono" for="sort_order">Liste Sırası</label>
                         <input id="sort_order" name="sort_order" type="number" min="0" class="kt-input @error('sort_order') kt-input-invalid @enderror" value="{{ $currentSortOrder }}">
                         @error('sort_order')
                             <div class="text-xs text-danger">{{ $message }}</div>
@@ -265,9 +265,9 @@
         <div class="kt-card overflow-hidden">
             <div class="kt-card-header py-5">
                 <div>
-                    <h3 class="kt-card-title">SEO ve Arama Onizlemesi</h3>
+                    <h3 class="kt-card-title">SEO ve Arama Önizlemesi</h3>
                     <div class="text-sm text-muted-foreground">
-                        Meta alanlarini girerken arama sonucunda gorunumu canli izleyin.
+                        Meta alanlarıni girerken arama sonucunda görünümü canli izleyin.
                     </div>
                 </div>
             </div>
@@ -277,13 +277,13 @@
                     <div class="grid gap-2">
                         <div class="flex items-center justify-between gap-3">
                             <label class="kt-form-label font-normal text-mono">Meta Title</label>
-                            <span class="text-xs text-muted-foreground" data-product-meta-title-count>{{ mb_strlen($currentMetaTitle) }}/60 onerisi</span>
+                            <span class="text-xs text-muted-foreground" data-product-meta-title-count>{{ mb_strlen($currentMetaTitle) }}/60 önerisi</span>
                         </div>
                         <input
                             name="meta_title"
                             class="kt-input @error('meta_title') kt-input-invalid @enderror"
                             value="{{ $currentMetaTitle }}"
-                            placeholder="Arama sonucunda gorunecek baslik"
+                            placeholder="Arama sonucunda görünecek başlık"
                         >
                         @error('meta_title')
                             <div class="text-xs text-danger">{{ $message }}</div>
@@ -293,13 +293,13 @@
                     <div class="grid gap-2">
                         <div class="flex items-center justify-between gap-3">
                             <label class="kt-form-label font-normal text-mono">Meta Description</label>
-                            <span class="text-xs text-muted-foreground" data-product-meta-description-count>{{ mb_strlen($currentMetaDescription) }}/160 onerisi</span>
+                            <span class="text-xs text-muted-foreground" data-product-meta-description-count>{{ mb_strlen($currentMetaDescription) }}/160 önerisi</span>
                         </div>
                         <textarea
                             name="meta_description"
                             rows="4"
                             class="kt-textarea @error('meta_description') kt-input-invalid @enderror"
-                            placeholder="Arama sonucunda gorunecek aciklama"
+                            placeholder="Arama sonucunda görünecek açıklama"
                         >{{ $currentMetaDescription }}</textarea>
                         @error('meta_description')
                             <div class="text-xs text-danger">{{ $message }}</div>
@@ -312,7 +312,7 @@
                             name="meta_keywords"
                             class="kt-input @error('meta_keywords') kt-input-invalid @enderror"
                             value="{{ $currentMetaKeywords }}"
-                            placeholder="anahtar,kelimeler,seklinde"
+                            placeholder="anahtar,kelimeler,şeklinde"
                         >
                         @error('meta_keywords')
                             <div class="text-xs text-danger">{{ $message }}</div>
@@ -328,7 +328,7 @@
                                 {{ $initialPreviewTitle }}
                             </div>
                             <div class="text-sm text-success">
-                                {{ url('/products') }}/<span data-product-seo-preview-slug>{{ $currentSlug ?: 'ornek-urun' }}</span>
+                                {{ url('/products') }}/<span data-product-seo-preview-slug>{{ $currentSlug ?: 'örnek-ürün' }}</span>
                             </div>
                             <div class="text-sm leading-6 text-muted-foreground" data-product-seo-preview-description>
                                 {{ $initialPreviewDescription }}
@@ -337,7 +337,7 @@
                     </div>
 
                     <div class="rounded-3xl app-surface-card app-surface-card--soft p-4 text-sm text-muted-foreground">
-                        Meta title icin 30-60, meta description icin 100-160 karakter araligi daha dengeli gorunur.
+                        Meta title için 30-60, meta description için 100-160 karakter aralığı daha dengeli görünür.
                     </div>
                 </div>
             </div>
@@ -354,7 +354,7 @@
                 <div>
                     <h3 class="kt-card-title">Durum ve Vitrin</h3>
                     <div class="text-sm text-muted-foreground">
-                        Workflow, aktiflik ve anasayfa vitrini ayarlarini yonetin.
+                        Workflow, aktiflik ve anasayfa vitrini ayarlarını yönetin.
                     </div>
                 </div>
             </div>
@@ -385,7 +385,7 @@
                         </select>
 
                         <div class="text-xs text-muted-foreground" data-product-status-hint>
-                            Workflow secimi yapildiginda urunun operasyonel asamasi netlesir.
+                            Workflow seçimi yapıldığında ürünün operasyonel aşaması netleşir.
                         </div>
 
                         @error('status')
@@ -398,7 +398,7 @@
                     <div class="flex items-start justify-between gap-3">
                         <div class="grid gap-1">
                             <div class="font-medium text-foreground">Anasayfa Vitrini</div>
-                            <div class="text-sm text-muted-foreground">En fazla 5 urun one cikarilabilir.</div>
+                            <div class="text-sm text-muted-foreground">En fazla 5 ürün öne çıkarılabilir.</div>
                         </div>
 
                         <div class="flex items-center gap-3">
@@ -417,7 +417,7 @@
                                 id="product_featured_badge"
                                 class="kt-badge kt-badge-sm {{ $currentFeatured ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }}"
                             >
-                                {{ $currentFeatured ? 'Anasayfada' : 'Kapali' }}
+                                {{ $currentFeatured ? 'Anasayfada' : 'Kapalı' }}
                             </span>
                         </div>
                     </div>
@@ -431,7 +431,7 @@
                     <div class="flex items-start justify-between gap-3">
                         <div class="grid gap-1">
                             <div class="font-medium text-foreground">Aktiflik</div>
-                            <div class="text-sm text-muted-foreground">Listeleme ve operasyonel kullanim kontrolu.</div>
+                            <div class="text-sm text-muted-foreground">Listeleme ve operasyonel kullanım kontrolü.</div>
                         </div>
 
                         <div class="flex items-center gap-3">
@@ -465,9 +465,9 @@
         <div class="kt-card overflow-hidden">
             <div class="kt-card-header py-5">
                 <div>
-                    <h3 class="kt-card-title">Icerik Icgoruleri</h3>
+                    <h3 class="kt-card-title">İçerik İçgörüleri</h3>
                     <div class="text-sm text-muted-foreground">
-                        Icerik, fiyat, stok ve SEO kalitesini anlik izleyin.
+                        İçerik, fiyat, stok ve SEO kalitesini anlık izleyin.
                     </div>
                 </div>
             </div>
@@ -500,9 +500,9 @@
                 <div class="rounded-3xl app-surface-card app-surface-card--soft p-4">
                     <div class="flex items-center justify-between gap-3">
                         <div>
-                            <div class="text-xs uppercase tracking-[0.18em] text-muted-foreground">SEO Tamamlilik</div>
+                            <div class="text-xs uppercase tracking-[0.18em] text-muted-foreground">SEO Tamamlılık</div>
                             <div class="mt-1 text-sm text-muted-foreground" data-product-seo-summary>
-                                {{ $initialSeoScore >= 80 ? 'SEO hazirligi guclu gorunuyor.' : ($initialSeoScore >= 50 ? 'Temel alanlar iyi, birkac iyilestirme daha yapilabilir.' : 'Meta alanlari ve one cikan gorsel tarafini guclendirmek faydali olur.') }}
+                                {{ $initialSeoScore >= 80 ? 'SEO hazırlığı güçlü görünüyor.' : ($initialSeoScore >= 50 ? 'Temel alanlar iyi, birkaç iyileştirme daha yapılabilir.' : 'Meta alanları ve öne çıkan görsel tarafını güçlendirmek faydalı olur.') }}
                             </div>
                         </div>
                         <div
@@ -521,7 +521,7 @@
                 <div>
                     <h3 class="kt-card-title">Kategoriler</h3>
                     <div class="text-sm text-muted-foreground">
-                        Urunu dogru kategorilerle etiketleyerek bulunurlugu artirin.
+                        Ürünü doğru kategorilerle etiketleyerek bulunurluğu artırın.
                     </div>
                 </div>
             </div>
@@ -535,7 +535,7 @@
                     data-kt-select-placeholder="Kategoriler"
                     data-kt-select-multiple="true"
                     data-kt-select-tags="false"
-                    data-kt-select-config='{"showSelectedCount":true,"enableSelectAll":true,"selectAllText":"Tumunu Sec","clearAllText":"Temizle"}'
+                    data-kt-select-config='{"showSelectedCount":true,"enableSelectAll":true,"selectAllText":"Tümünü Seç","clearAllText":"Temizle"}'
                 >
                     @foreach($categoryOptions ?? [] as $option)
                         <option value="{{ $option['id'] }}" @selected(in_array($option['id'], $selectedCategoryIds))>
@@ -545,7 +545,7 @@
                 </select>
 
                 <div class="text-xs text-muted-foreground">
-                    Birden fazla kategori secilebilir. Alt kategoriler hiyerarsi korunarak listelenir.
+                    Birden fazla kategori seçilebilir. Alt kategoriler hiyerarşi korunarak listelenir.
                 </div>
 
                 @error('category_ids')
@@ -558,8 +558,8 @@
         </div>
 
         @include('admin.components.featured-image-manager', [
-            'title' => 'One Cikan Gorsel',
-            'hint' => 'Dosya yukleyebilir veya medya kutuphanesinden secim yapabilirsiniz.',
+            'title' => 'Öne Çıkan Görsel',
+            'hint' => 'Dosya yükleyebilir veya medya kütüphanesinden seçim yapabilirsiniz.',
             'fileName' => 'featured_image',
             'mediaIdName' => 'featured_media_id',
             'clearFlagName' => 'clear_featured_image',
@@ -578,24 +578,24 @@
             <div class="kt-card overflow-hidden">
                 <div class="kt-card-header py-5">
                     <div>
-                        <h3 class="kt-card-title">Kayit Bilgisi</h3>
+                        <h3 class="kt-card-title">Kayıt Bilgisi</h3>
                         <div class="text-sm text-muted-foreground">
-                            Bu urunun son guncelleme ozetini izleyin.
+                            Bu ürünün son güncelleme özetini izleyin.
                         </div>
                     </div>
                 </div>
 
                 <div class="kt-card-content p-6 grid gap-3 text-sm">
                     <div class="flex items-center justify-between gap-3">
-                        <span class="text-muted-foreground">Kayit ID</span>
+                        <span class="text-muted-foreground">Kayıt ID</span>
                         <span class="font-medium text-foreground">#{{ $product->id }}</span>
                     </div>
                     <div class="flex items-center justify-between gap-3">
-                        <span class="text-muted-foreground">Olusturulma</span>
+                        <span class="text-muted-foreground">Oluşturulma</span>
                         <span class="font-medium text-foreground">{{ $product->created_at?->format('d.m.Y H:i') }}</span>
                     </div>
                     <div class="flex items-center justify-between gap-3">
-                        <span class="text-muted-foreground">Son guncelleme</span>
+                        <span class="text-muted-foreground">Son güncelleme</span>
                         <span class="font-medium text-foreground">{{ $product->updated_at?->format('d.m.Y H:i') }}</span>
                     </div>
                 </div>

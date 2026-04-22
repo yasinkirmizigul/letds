@@ -15,8 +15,8 @@
     $initialWordCount = $isEdit ? $blogPost->contentWordCount() : 0;
     $initialReadTime = $isEdit ? $blogPost->estimatedReadTimeMinutes() : 0;
     $initialSeoScore = $isEdit ? $blogPost->seoCompletenessScore() : 0;
-    $previewTitle = $currentMetaTitle ?: ($currentTitle ?: 'Meta baslik burada gorunecek');
-    $previewDescription = $currentMetaDescription ?: ($currentExcerpt ?: 'Meta aciklama veya ozet burada gorunecek.');
+    $previewTitle = $currentMetaTitle ?: ($currentTitle ?: 'Meta başlık burada görünecek');
+    $previewDescription = $currentMetaDescription ?: ($currentExcerpt ?: 'Meta açıklama veya özet burada görünecek.');
 @endphp
 
 <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.6fr)_400px] gap-6">
@@ -24,9 +24,9 @@
         <div class="kt-card overflow-hidden">
             <div class="kt-card-header py-5">
                 <div>
-                    <h3 class="kt-card-title">Yazi Govdesi</h3>
+                    <h3 class="kt-card-title">Yazı Gövdesi</h3>
                     <div class="text-sm text-muted-foreground">
-                        Baslik, ozet, slug ve ana icerigi tek akista duzenle.
+                        Başlık, özet, slug ve ana içeriği tek akışta düzenle.
                     </div>
                 </div>
             </div>
@@ -34,7 +34,7 @@
             <div class="kt-card-content p-6 grid gap-6">
                 <div class="grid gap-2">
                     <div class="flex items-center justify-between gap-3">
-                        <label class="kt-form-label font-normal text-mono" for="title">Baslik</label>
+                        <label class="kt-form-label font-normal text-mono" for="title">Başlık</label>
                         <span class="text-xs text-muted-foreground" data-blog-title-count>{{ mb_strlen($currentTitle) }}/255</span>
                     </div>
                     <input
@@ -42,7 +42,7 @@
                         name="title"
                         class="kt-input @error('title') kt-input-invalid @enderror"
                         value="{{ $currentTitle }}"
-                        placeholder="Yazi basligini yazin"
+                        placeholder="Yazı başlığını yazın"
                     >
                     @error('title')
                         <div class="text-xs text-danger">{{ $message }}</div>
@@ -52,7 +52,7 @@
                 <div class="grid gap-3 rounded-3xl app-surface-card app-surface-card--soft p-4">
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <label class="kt-form-label font-normal text-mono mb-0" for="slug">Slug ve URL</label>
-                        <span class="text-xs text-muted-foreground">URL stabilitesi icin sadece gerektiğinde degistirin.</span>
+                        <span class="text-xs text-muted-foreground">URL stabilitesi için sadece gerektiğinde değiştirin.</span>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
@@ -61,10 +61,10 @@
                             name="slug"
                             class="kt-input flex-1 @error('slug') kt-input-invalid @enderror"
                             value="{{ $currentSlug }}"
-                            placeholder="otomatik-olusturulur"
+                            placeholder="otomatik-oluşturulur"
                         >
 
-                        <button type="button" id="slug_regen" class="kt-btn kt-btn-light">Olustur</button>
+                        <button type="button" id="slug_regen" class="kt-btn kt-btn-light">Oluştur</button>
 
                         <label class="kt-switch shrink-0" title="Otomatik slug">
                             <input
@@ -82,18 +82,18 @@
                     @enderror
 
                     <div class="rounded-2xl app-surface-card px-4 py-3 text-sm text-muted-foreground">
-                        URL onizleme:
+                        URL önizleme:
                         <span class="font-medium text-foreground">{{ url('/blog') }}/<span id="url_slug_preview">{{ $currentSlug }}</span></span>
                     </div>
 
                     <div id="slugCheckHint" class="text-xs text-muted-foreground">
-                        Slug girildiginde uygunluk kontrolu yapilir.
+                        Slug girildiğinde uygunluk kontrolü yapılır.
                     </div>
                 </div>
 
                 <div class="grid gap-2">
                     <div class="flex items-center justify-between gap-3">
-                        <label class="kt-form-label font-normal text-mono" for="excerpt">Ozet</label>
+                        <label class="kt-form-label font-normal text-mono" for="excerpt">Özet</label>
                         <span class="text-xs text-muted-foreground" data-blog-excerpt-count>{{ mb_strlen($currentExcerpt) }} karakter</span>
                     </div>
                     <textarea
@@ -101,7 +101,7 @@
                         name="excerpt"
                         rows="4"
                         class="kt-textarea @error('excerpt') kt-input-invalid @enderror"
-                        placeholder="Liste gorunumu, arama sonucunda ozet ve paylasim kartlari icin kisa aciklama yazin"
+                        placeholder="Liste görünümü, arama sonucunda özet ve paylaşım kartları için kısa açıklama yazın"
                     >{{ $currentExcerpt }}</textarea>
                     @error('excerpt')
                         <div class="text-xs text-danger">{{ $message }}</div>
@@ -110,8 +110,8 @@
 
                 <div class="grid gap-2">
                     <div class="flex items-center justify-between gap-3">
-                        <label class="kt-form-label font-normal text-mono" for="content_editor">Icerik</label>
-                        <span class="text-xs text-muted-foreground">TinyMCE ile zengin icerik duzenleme</span>
+                        <label class="kt-form-label font-normal text-mono" for="content_editor">İçerik</label>
+                        <span class="text-xs text-muted-foreground">TinyMCE ile zengin içerik düzenleme</span>
                     </div>
                     <textarea
                         id="content_editor"
@@ -128,9 +128,9 @@
         <div class="kt-card overflow-hidden">
             <div class="kt-card-header py-5">
                 <div>
-                    <h3 class="kt-card-title">SEO ve Arama Onizlemesi</h3>
+                    <h3 class="kt-card-title">SEO ve Arama Önizlemesi</h3>
                     <div class="text-sm text-muted-foreground">
-                        Meta alanlarini doldururken arama sonucunda nasil gorunecegini aninda izle.
+                        Meta alanlarıni doldururken arama sonucunda nasil görünecegini anında izle.
                     </div>
                 </div>
             </div>
@@ -140,13 +140,13 @@
                     <div class="grid gap-2">
                         <div class="flex items-center justify-between gap-3">
                             <label class="kt-form-label font-normal text-mono">Meta Title</label>
-                            <span class="text-xs text-muted-foreground" data-blog-meta-title-count>{{ mb_strlen($currentMetaTitle) }}/60 onerisi</span>
+                            <span class="text-xs text-muted-foreground" data-blog-meta-title-count>{{ mb_strlen($currentMetaTitle) }}/60 önerisi</span>
                         </div>
                         <input
                             name="meta_title"
                             class="kt-input @error('meta_title') kt-input-invalid @enderror"
                             value="{{ $currentMetaTitle }}"
-                            placeholder="Arama sonucunda gosterilecek baslik"
+                            placeholder="Arama sonucunda gösterilecek başlık"
                         >
                         @error('meta_title')
                             <div class="text-xs text-danger">{{ $message }}</div>
@@ -156,13 +156,13 @@
                     <div class="grid gap-2">
                         <div class="flex items-center justify-between gap-3">
                             <label class="kt-form-label font-normal text-mono">Meta Description</label>
-                            <span class="text-xs text-muted-foreground" data-blog-meta-description-count>{{ mb_strlen($currentMetaDescription) }}/160 onerisi</span>
+                            <span class="text-xs text-muted-foreground" data-blog-meta-description-count>{{ mb_strlen($currentMetaDescription) }}/160 önerisi</span>
                         </div>
                         <textarea
                             name="meta_description"
                             rows="4"
                             class="kt-textarea @error('meta_description') kt-input-invalid @enderror"
-                            placeholder="Arama sonucunda gosterilecek aciklama"
+                            placeholder="Arama sonucunda gösterilecek açıklama"
                         >{{ $currentMetaDescription }}</textarea>
                         @error('meta_description')
                             <div class="text-xs text-danger">{{ $message }}</div>
@@ -175,7 +175,7 @@
                             name="meta_keywords"
                             class="kt-input @error('meta_keywords') kt-input-invalid @enderror"
                             value="{{ $currentMetaKeywords }}"
-                            placeholder="anahtar,kelimeler,seklinde"
+                            placeholder="anahtar,kelimeler,şeklinde"
                         >
                         @error('meta_keywords')
                             <div class="text-xs text-danger">{{ $message }}</div>
@@ -185,13 +185,13 @@
 
                 <div class="grid gap-4 self-start">
                     <div class="rounded-[28px] app-surface-card p-5">
-                        <div class="text-[11px] uppercase tracking-[0.24em] text-muted-foreground">Arama Onizlemesi</div>
+                        <div class="text-[11px] uppercase tracking-[0.24em] text-muted-foreground">Arama Önizlemesi</div>
                         <div class="mt-4 grid gap-2">
                             <div class="text-base font-semibold leading-6 text-primary" data-blog-seo-preview-title>
                                 {{ $previewTitle }}
                             </div>
                             <div class="text-sm text-success">
-                                {{ url('/blog') }}/<span data-blog-seo-preview-slug>{{ $currentSlug ?: 'ornek-blog-yazisi' }}</span>
+                                {{ url('/blog') }}/<span data-blog-seo-preview-slug>{{ $currentSlug ?: 'örnek-blog-yazısı' }}</span>
                             </div>
                             <div class="text-sm leading-6 text-muted-foreground" data-blog-seo-preview-description>
                                 {{ $previewDescription }}
@@ -200,7 +200,7 @@
                     </div>
 
                     <div class="rounded-3xl app-surface-card app-surface-card--soft p-4 text-sm text-muted-foreground">
-                        Meta title icin 30-60, meta description icin 100-160 karakter araligi daha saglikli gorunur.
+                        Meta title için 30-60, meta description için 100-160 karakter aralığı daha sağlıklı görünür.
                     </div>
                 </div>
             </div>
@@ -212,7 +212,7 @@
                     <div>
                         <h3 class="kt-card-title">Galeriler</h3>
                         <div class="text-sm text-muted-foreground">
-                            Bu yaziya bagli galeri alanlarini slot bazinda yonetebilirsin.
+                            Bu yaziya bağlı galeri alanlarıni slot bazinda yönetebilirsin.
                         </div>
                     </div>
                 </div>
@@ -242,9 +242,9 @@
         <div class="kt-card overflow-hidden">
             <div class="kt-card-header py-5">
                 <div>
-                    <h3 class="kt-card-title">Yayin Akisi</h3>
+                    <h3 class="kt-card-title">Yayın Akişi</h3>
                     <div class="text-sm text-muted-foreground">
-                        Gorunurluk ve anasayfa durumunu tek panelden yonet.
+                        Görünürlük ve anasayfa durumunu tek panelden yönet.
                     </div>
                 </div>
             </div>
@@ -253,8 +253,8 @@
                 <div class="rounded-3xl app-surface-card app-surface-card--soft p-4">
                     <div class="flex items-start justify-between gap-3">
                         <div class="grid gap-1">
-                            <div class="font-medium text-foreground">Yayin Durumu</div>
-                            <div class="text-sm text-muted-foreground">Taslak veya yayinda olarak isaretleyin.</div>
+                            <div class="font-medium text-foreground">Yayın Durumu</div>
+                            <div class="text-sm text-muted-foreground">Taslak veya yayında olarak işaretleyin.</div>
                         </div>
 
                         <div class="flex items-center gap-3">
@@ -273,7 +273,7 @@
                                 id="blog_publish_badge"
                                 class="kt-badge kt-badge-sm {{ $currentPublished ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }}"
                             >
-                                {{ $currentPublished ? 'Yayinda' : 'Taslak' }}
+                                {{ $currentPublished ? 'Yayında' : 'Taslak' }}
                             </span>
                         </div>
                     </div>
@@ -287,7 +287,7 @@
                     <div class="flex items-start justify-between gap-3">
                         <div class="grid gap-1">
                             <div class="font-medium text-foreground">Anasayfa Vitrini</div>
-                            <div class="text-sm text-muted-foreground">En fazla 5 yazi one cikarilabilir.</div>
+                            <div class="text-sm text-muted-foreground">En fazla 5 yazı öne çıkarılabilir.</div>
                         </div>
 
                         <div class="flex items-center gap-3">
@@ -306,13 +306,13 @@
                                 id="blog_featured_badge"
                                 class="kt-badge kt-badge-sm {{ $currentFeatured ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }}"
                             >
-                                {{ $currentFeatured ? 'Anasayfada' : 'Kapali' }}
+                                {{ $currentFeatured ? 'Anasayfada' : 'Kapalı' }}
                             </span>
                         </div>
                     </div>
 
                     <div class="mt-3 text-xs text-muted-foreground">
-                        One cikan yazilarin yayinda olmasi, site tarafindaki akislarda daha tutarli gorunur.
+                        Öne çıkan yazıların yayında olması, site tarafındaki akışlarda daha tutarlı görünür.
                     </div>
 
                     @error('is_featured')
@@ -325,9 +325,9 @@
         <div class="kt-card overflow-hidden">
             <div class="kt-card-header py-5">
                 <div>
-                    <h3 class="kt-card-title">Icerik Icgoruleri</h3>
+                    <h3 class="kt-card-title">İçerik İçgörüleri</h3>
                     <div class="text-sm text-muted-foreground">
-                        Yazi yogunlugu ve SEO hazirligini canli takip et.
+                        Yazı yoğunluğu ve SEO hazırlığını canlı takip et.
                     </div>
                 </div>
             </div>
@@ -347,9 +347,9 @@
                 <div class="rounded-3xl app-surface-card app-surface-card--soft p-4">
                     <div class="flex items-center justify-between gap-3">
                         <div>
-                            <div class="text-xs uppercase tracking-[0.18em] text-muted-foreground">SEO Tamamlilik</div>
+                            <div class="text-xs uppercase tracking-[0.18em] text-muted-foreground">SEO Tamamlılık</div>
                             <div class="mt-1 text-sm text-muted-foreground" data-blog-seo-summary>
-                                {{ $initialSeoScore >= 80 ? 'SEO hazirligi guclu gorunuyor.' : ($initialSeoScore >= 50 ? 'Yazi iyi gidiyor, birkac alan daha guclendirilebilir.' : 'Ozet, meta alanlar ve gorsel tarafinda guclendirme gerekiyor.') }}
+                                {{ $initialSeoScore >= 80 ? 'SEO hazırlığı güçlü görünüyor.' : ($initialSeoScore >= 50 ? 'Yazı iyi gidiyor, birkaç alan daha güçlendirilebilir.' : 'Özet, meta alanlar ve görsel tarafında güçlendirme gerekiyor.') }}
                             </div>
                         </div>
                         <div
@@ -368,7 +368,7 @@
                 <div>
                     <h3 class="kt-card-title">Kategoriler</h3>
                     <div class="text-sm text-muted-foreground">
-                        Yaziyi dogru kategorilerle etiketleyip kesfetmeyi kolaylastir.
+                        Yazıyı doğru kategorilerle etiketleyip keşfetmeyi kolaylaştır.
                     </div>
                 </div>
             </div>
@@ -382,7 +382,7 @@
                     data-kt-select-placeholder="Kategoriler"
                     data-kt-select-multiple="true"
                     data-kt-select-tags="false"
-                    data-kt-select-config='{"showSelectedCount":true,"enableSelectAll":true,"selectAllText":"Tumunu Sec","clearAllText":"Temizle"}'
+                    data-kt-select-config='{"showSelectedCount":true,"enableSelectAll":true,"selectAllText":"Tümünü Seç","clearAllText":"Temizle"}'
                 >
                     @foreach($categoryOptions ?? [] as $option)
                         <option value="{{ $option['id'] }}" @selected(in_array($option['id'], $selectedCategoryIds))>
@@ -392,7 +392,7 @@
                 </select>
 
                 <div class="text-xs text-muted-foreground">
-                    Birden fazla kategori secilebilir. Alt kategoriler, hiyerarsi korunarak listelenir.
+                    Birden fazla kategori seçilebilir. Alt kategoriler, hiyerarşi korunarak listelenir.
                 </div>
 
                 @error('category_ids')
@@ -405,8 +405,8 @@
         </div>
 
         @include('admin.components.featured-image-manager', [
-            'title' => 'One Cikan Gorsel',
-            'hint' => 'Dosya yukleyebilir veya medya kutuphanesinden secim yapabilirsiniz.',
+            'title' => 'Öne Çıkan Görsel',
+            'hint' => 'Dosya yükleyebilir veya medya kütüphanesinden seçim yapabilirsiniz.',
             'name' => 'featured_image',
             'mediaIdName' => 'featured_media_id',
             'clearFlagName' => 'clear_featured_image',
@@ -425,16 +425,16 @@
             <div class="kt-card overflow-hidden">
                 <div class="kt-card-header py-5">
                     <div>
-                        <h3 class="kt-card-title">Kayit Bilgileri</h3>
+                        <h3 class="kt-card-title">Kayıt Bilgileri</h3>
                         <div class="text-sm text-muted-foreground">
-                            Yazar, editor ve tarih bilgilerini hizlica takip et.
+                            Yazar, editör ve tarih bilgilerini hızlıca takip et.
                         </div>
                     </div>
                 </div>
 
                 <div class="kt-card-content p-6 grid gap-3 text-sm">
                     <div class="rounded-2xl app-surface-card px-4 py-3">
-                        <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Kayit No</div>
+                        <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Kayıt No</div>
                         <div class="mt-1 font-medium text-foreground">#{{ $blogPost->id }}</div>
                     </div>
                     <div class="rounded-2xl app-surface-card px-4 py-3">
@@ -442,20 +442,20 @@
                         <div class="mt-1 font-medium text-foreground">{{ $blogPost->author?->name ?: 'Belirlenmedi' }}</div>
                     </div>
                     <div class="rounded-2xl app-surface-card px-4 py-3">
-                        <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Son Editor</div>
-                        <div class="mt-1 font-medium text-foreground">{{ $blogPost->editor?->name ?: 'Belirlenmedi' }}</div>
+                        <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Son Editör</div>
+                        <div class="mt-1 font-medium text-foreground">{{ $blogPost->editör?->name ?: 'Belirlenmedi' }}</div>
                     </div>
                     <div class="rounded-2xl app-surface-card px-4 py-3">
-                        <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Olusturulma</div>
+                        <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Oluşturulma</div>
                         <div class="mt-1 font-medium text-foreground">{{ $blogPost->created_at?->format('d.m.Y H:i') ?: '-' }}</div>
                     </div>
                     <div class="rounded-2xl app-surface-card px-4 py-3">
-                        <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Son Guncelleme</div>
+                        <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Son Güncelleme</div>
                         <div class="mt-1 font-medium text-foreground">{{ $blogPost->updated_at?->format('d.m.Y H:i') ?: '-' }}</div>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div class="rounded-2xl app-surface-card px-4 py-3">
-                            <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Yayin</div>
+                            <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Yayın</div>
                             <div class="mt-1 font-medium text-foreground">{{ $blogPost->published_at?->format('d.m.Y H:i') ?: 'Yok' }}</div>
                         </div>
                         <div class="rounded-2xl app-surface-card px-4 py-3">

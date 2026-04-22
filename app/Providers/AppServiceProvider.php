@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use App\Console\Commands\MakeAdminModule;
+use App\Models\Site\SiteNavigationItem;
+use App\Models\Site\SiteSetting;
+use App\Support\Site\NavigationTree;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
@@ -20,6 +23,14 @@ class AppServiceProvider extends ServiceProvider
             if (auth()->check() && (request()->is('admin') || request()->is('admin/*'))) {
                 auth()->user()->loadMissing('roles.permissions', 'avatarMedia');
             }
+        });
+
+        View::composer('site.*', function ($view) {
+            $view->with([
+                'siteSettings' => SiteSetting::current(),
+                'sitePrimaryNavigation' => NavigationTree::forLocation(SiteNavigationItem::LOCATION_PRIMARY, true),
+                'siteFooterNavigation' => NavigationTree::forLocation(SiteNavigationItem::LOCATION_FOOTER, true),
+            ]);
         });
 
         Paginator::defaultView('admin.vendor.pagination.kt');

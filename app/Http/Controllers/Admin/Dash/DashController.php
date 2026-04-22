@@ -144,39 +144,39 @@ class DashController extends Controller
 
         $kpis = [
             [
-                'label' => 'Icerik havuzu',
+                'label' => 'İçerik havuzu',
                 'value' => $contentTotal,
-                'hint' => "{$blogStats['total']} blog, {$projectStats['total']} proje, {$productStats['total']} urun",
+                'hint' => "{$blogStats['total']} blog, {$projectStats['total']} proje, {$productStats['total']} ürün",
                 'icon' => 'ki-filled ki-element-11',
                 'accent' => '#3e97ff',
             ],
             [
-                'label' => 'Okunmamis mesaj',
+                'label' => 'Okunmamış mesaj',
                 'value' => $messageStats['unread'],
-                'hint' => $messageStats['urgent'] > 0 ? "{$messageStats['urgent']} yuksek oncelik" : 'Mesaj kutusunu takip et',
+                'hint' => $messageStats['urgent'] > 0 ? "{$messageStats['urgent']} yüksek öncelik" : 'Mesaj kutusunu takip et',
                 'icon' => 'ki-filled ki-messages',
                 'accent' => '#f6b100',
             ],
             [
                 'label' => 'Bu hafta randevu',
                 'value' => $appointmentsWeek,
-                'hint' => $appointmentsToday > 0 ? "Bugun {$appointmentsToday} randevu var" : 'Takvim sakin gozukuyor',
+                'hint' => $appointmentsToday > 0 ? "Bugün {$appointmentsToday} randevu var" : 'Takvim sakin gözükuyor',
                 'icon' => 'ki-filled ki-calendar-8',
                 'accent' => '#17c653',
             ],
             [
-                'label' => 'Dusuk stok',
+                'label' => 'Düşük stok',
                 'value' => $productStats['lowStock'],
-                'hint' => $productStats['active'] > 0 ? "{$productStats['active']} aktif urun yayinli" : 'Stok akisina goz at',
+                'hint' => $productStats['active'] > 0 ? "{$productStats['active']} aktif ürün yayınlı" : 'Stok akışına göz at',
                 'icon' => 'ki-filled ki-handcart',
                 'accent' => '#f1416c',
             ],
             [
-                'label' => $can['auditView'] ? 'Sistem uyarisi' : 'Cop kutusu',
+                'label' => $can['auditView'] ? 'Sistem uyarısı' : 'Çöp kutusu',
                 'value' => $can['auditView'] ? $auditStats['errors'] : $trashTotal,
                 'hint' => $can['auditView']
-                    ? ($auditStats['today'] > 0 ? "Bugun {$auditStats['today']} log olustu" : 'Kritik loglari takip et')
-                    : "{$trashTotal} kayit geri yuklenebilir",
+                    ? ($auditStats['today'] > 0 ? "Bugün {$auditStats['today']} log oluştu" : 'Kritik logları takip et')
+                    : "{$trashTotal} kayıt geri yüklenebilir",
                 'icon' => $can['auditView'] ? 'ki-filled ki-fingerprint-scanning' : 'ki-filled ki-trash',
                 'accent' => $can['auditView'] ? '#7239ea' : '#1f2937',
             ],
@@ -208,7 +208,7 @@ class DashController extends Controller
                 'icon' => 'ki-filled ki-briefcase',
             ] : null,
             $can['productsCreate'] ? [
-                'label' => 'Yeni urun',
+                'label' => 'Yeni ürün',
                 'url' => route('admin.products.create'),
                 'style' => 'kt-btn-light',
                 'icon' => 'ki-filled ki-handcart',
@@ -223,41 +223,41 @@ class DashController extends Controller
 
         $focusItems = array_values(array_filter([
             $messageStats['unread'] > 0 ? [
-                'label' => 'Okunmamis mesajlar',
+                'label' => 'Okunmamış mesajlar',
                 'count' => $messageStats['unread'],
-                'hint' => 'Mesaj kutusu yeni geri donus bekliyor.',
+                'hint' => 'Mesaj kutusu yeni geri dönüş bekliyor.',
                 'url' => route('admin.messages.index'),
                 'icon' => 'ki-filled ki-messages',
                 'accent' => '#f6b100',
             ] : null,
             $messageStats['urgent'] > 0 ? [
-                'label' => 'Yuksek oncelikli talepler',
+                'label' => 'Yüksek öncelikli talepler',
                 'count' => $messageStats['urgent'],
-                'hint' => 'Acil veya yuksek talepleri onde tut.',
+                'hint' => 'Acil veya yüksek talepleri önde tut.',
                 'url' => route('admin.messages.index'),
                 'icon' => 'ki-filled ki-notification-status',
                 'accent' => '#f1416c',
             ] : null,
             $appointmentsToday > 0 && $can['appointmentsView'] ? [
-                'label' => 'Bugunku randevular',
+                'label' => 'Bugünkü randevular',
                 'count' => $appointmentsToday,
-                'hint' => 'Takvimde bugun icin planlanan gorusmeleri kontrol et.',
+                'hint' => 'Takvimde bugün için planlanan görüşmeleri kontrol et.',
                 'url' => route('admin.appointments.calendar'),
                 'icon' => 'ki-filled ki-calendar-8',
                 'accent' => '#17c653',
             ] : null,
             $productStats['lowStock'] > 0 && $can['productsView'] ? [
-                'label' => 'Dusuk stoklu urunler',
+                'label' => 'Düşük stoklu ürünler',
                 'count' => $productStats['lowStock'],
-                'hint' => 'Stok yenileme veya yayin kararlarini gozden gecir.',
+                'hint' => 'Stok yenileme veya yayın kararlarını gözden geçir.',
                 'url' => route('admin.products.index'),
                 'icon' => 'ki-filled ki-handcart',
                 'accent' => '#3e97ff',
             ] : null,
             $trashTotal > 0 && $can['trashView'] ? [
-                'label' => 'Cop kutusunda bekleyen kayitlar',
+                'label' => 'Çöp kutusunda bekleyen kayıtlar',
                 'count' => $trashTotal,
-                'hint' => 'Geri yukleme veya kalici silme karari bekliyor.',
+                'hint' => 'Geri yükleme veya kalıcı silme kararı bekliyor.',
                 'url' => route('admin.trash.index'),
                 'icon' => 'ki-filled ki-trash',
                 'accent' => '#1f2937',
@@ -268,9 +268,9 @@ class DashController extends Controller
             $can['blogView'] ? [
                 'title' => 'Blog',
                 'value' => $blogStats['total'],
-                'hint' => "{$blogStats['published']} yayinda, {$blogStats['draft']} taslak",
+                'hint' => "{$blogStats['published']} yayında, {$blogStats['draft']} taslak",
                 'route' => route('admin.blog.index'),
-                'action_label' => $can['blogCreate'] ? 'Yeni yazi' : null,
+                'action_label' => $can['blogCreate'] ? 'Yeni yazı' : null,
                 'action_url' => $can['blogCreate'] ? route('admin.blog.create') : null,
                 'icon' => 'ki-filled ki-book',
                 'accent' => '#3e97ff',
@@ -278,7 +278,7 @@ class DashController extends Controller
             $can['projectsView'] ? [
                 'title' => 'Projeler',
                 'value' => $projectStats['total'],
-                'hint' => "{$projectStats['public']} sitede gorunebilir, {$projectStats['featured']} vitrin",
+                'hint' => "{$projectStats['public']} sitede görünebilir, {$projectStats['featured']} vitrin",
                 'route' => route('admin.projects.index'),
                 'action_label' => $can['projectsCreate'] ? 'Yeni proje' : null,
                 'action_url' => $can['projectsCreate'] ? route('admin.projects.create') : null,
@@ -286,11 +286,11 @@ class DashController extends Controller
                 'accent' => '#17c653',
             ] : null,
             $can['productsView'] ? [
-                'title' => 'Urunler',
+                'title' => 'Ürünler',
                 'value' => $productStats['total'],
-                'hint' => "{$productStats['lowStock']} dusuk stok, {$productStats['featured']} vitrin",
+                'hint' => "{$productStats['lowStock']} düşük stok, {$productStats['featured']} vitrin",
                 'route' => route('admin.products.index'),
-                'action_label' => $can['productsCreate'] ? 'Yeni urun' : null,
+                'action_label' => $can['productsCreate'] ? 'Yeni ürün' : null,
                 'action_url' => $can['productsCreate'] ? route('admin.products.create') : null,
                 'icon' => 'ki-filled ki-handcart',
                 'accent' => '#f1416c',
@@ -298,9 +298,9 @@ class DashController extends Controller
             $can['messagesView'] ? [
                 'title' => 'Mesajlar',
                 'value' => $messageStats['total'],
-                'hint' => "{$messageStats['unread']} okunmamis, {$messageStats['guest']} ziyaretci",
+                'hint' => "{$messageStats['unread']} okunmamış, {$messageStats['guest']} ziyaretçi",
                 'route' => route('admin.messages.index'),
-                'action_label' => 'Kutuyu ac',
+                'action_label' => 'Kutuyu aç',
                 'action_url' => route('admin.messages.index'),
                 'icon' => 'ki-filled ki-messages',
                 'accent' => '#f6b100',
@@ -308,9 +308,9 @@ class DashController extends Controller
             $can['appointmentsView'] ? [
                 'title' => 'Randevular',
                 'value' => $appointmentsWeek,
-                'hint' => $appointmentsToday > 0 ? "Bugun {$appointmentsToday} gorusme var" : 'Haftalik plan sakin',
+                'hint' => $appointmentsToday > 0 ? "Bugün {$appointmentsToday} görüşme var" : 'Haftalık plan sakin',
                 'route' => route('admin.appointments.calendar'),
-                'action_label' => 'Takvimi ac',
+                'action_label' => 'Takvimi aç',
                 'action_url' => route('admin.appointments.calendar'),
                 'icon' => 'ki-filled ki-calendar-8',
                 'accent' => '#7239ea',
@@ -320,7 +320,7 @@ class DashController extends Controller
                 'value' => $mediaStats['total'],
                 'hint' => "{$mediaStats['images']} gorsel, {$mediaStats['videos']} video",
                 'route' => route('admin.media.index'),
-                'action_label' => 'Kutuphane',
+                'action_label' => 'Kütüphane',
                 'action_url' => route('admin.media.index'),
                 'icon' => 'ki-filled ki-screen',
                 'accent' => '#0ea5e9',
@@ -328,7 +328,7 @@ class DashController extends Controller
             $can['galleriesView'] ? [
                 'title' => 'Galeriler',
                 'value' => $galleryStats['total'],
-                'hint' => "{$galleryStats['items']} oge, {$galleryStats['attached']} bagli kullanim",
+                'hint' => "{$galleryStats['items']} öge, {$galleryStats['attached']} bağlı kullanım",
                 'route' => route('admin.galleries.index'),
                 'action_label' => $can['galleriesCreate'] ? 'Yeni galeri' : null,
                 'action_url' => $can['galleriesCreate'] ? route('admin.galleries.create') : null,
@@ -346,11 +346,11 @@ class DashController extends Controller
                 'accent' => '#ef4444',
             ] : null,
             $can['usersView'] ? [
-                'title' => 'Kullanicilar',
+                'title' => 'Kullanıcılar',
                 'value' => $userStats['total'],
                 'hint' => "{$userStats['active']} aktif, {$userStats['admins']} admin",
                 'route' => route('admin.users.index'),
-                'action_label' => 'Listeyi ac',
+                'action_label' => 'Listeyi aç',
                 'action_url' => route('admin.users.index'),
                 'icon' => 'ki-filled ki-profile-circle',
                 'accent' => '#8b5cf6',
@@ -358,9 +358,9 @@ class DashController extends Controller
             $can['trashView'] ? [
                 'title' => 'Silinenler',
                 'value' => $trashTotal,
-                'hint' => "{$trashStats['media']} medya, {$trashStats['products']} urun, {$trashStats['blog']} blog",
+                'hint' => "{$trashStats['media']} medya, {$trashStats['products']} ürün, {$trashStats['blog']} blog",
                 'route' => route('admin.trash.index'),
-                'action_label' => 'Cop kutusu',
+                'action_label' => 'Çöp kutusu',
                 'action_url' => route('admin.trash.index'),
                 'icon' => 'ki-filled ki-trash',
                 'accent' => '#334155',
@@ -368,9 +368,9 @@ class DashController extends Controller
             $can['auditView'] ? [
                 'title' => 'Loglar',
                 'value' => $auditStats['errors'],
-                'hint' => "{$auditStats['today']} bugun, sistem akislarini kontrol et",
+                'hint' => "{$auditStats['today']} bugün, sistem akışlarını kontrol et",
                 'route' => route('admin.audit-logs.index'),
-                'action_label' => 'Loglari ac',
+                'action_label' => 'Logları ac',
                 'action_url' => route('admin.audit-logs.index'),
                 'icon' => 'ki-filled ki-fingerprint-scanning',
                 'accent' => '#a855f7',
@@ -389,7 +389,7 @@ class DashController extends Controller
                     'data' => $this->seriesByMonth(Project::query(), $monthStart, $monthKeys),
                 ] : null,
                 $can['productsView'] ? [
-                    'name' => 'Urunler',
+                    'name' => 'Ürünler',
                     'data' => $this->seriesByMonth(Product::query(), $monthStart, $monthKeys),
                 ] : null,
                 $can['mediaView'] ? [
@@ -404,11 +404,11 @@ class DashController extends Controller
         ];
 
         $actionSeries = array_values(array_filter([
-            $messageStats['unread'] > 0 ? ['label' => 'Okunmamis', 'value' => $messageStats['unread']] : null,
-            $messageStats['urgent'] > 0 ? ['label' => 'Yuksek oncelik', 'value' => $messageStats['urgent']] : null,
-            $appointmentsToday > 0 ? ['label' => 'Bugunku randevu', 'value' => $appointmentsToday] : null,
-            $productStats['lowStock'] > 0 ? ['label' => 'Dusuk stok', 'value' => $productStats['lowStock']] : null,
-            $trashTotal > 0 ? ['label' => 'Cop kutusu', 'value' => $trashTotal] : null,
+            $messageStats['unread'] > 0 ? ['label' => 'Okunmamış', 'value' => $messageStats['unread']] : null,
+            $messageStats['urgent'] > 0 ? ['label' => 'Yüksek öncelik', 'value' => $messageStats['urgent']] : null,
+            $appointmentsToday > 0 ? ['label' => 'Bugünkü randevu', 'value' => $appointmentsToday] : null,
+            $productStats['lowStock'] > 0 ? ['label' => 'Düşük stok', 'value' => $productStats['lowStock']] : null,
+            $trashTotal > 0 ? ['label' => 'Çöp kutusu', 'value' => $trashTotal] : null,
         ]));
         if (count($actionSeries) === 0) {
             $actionSeries[] = ['label' => 'Takip bekleyen is yok', 'value' => 1];
@@ -533,8 +533,8 @@ class DashController extends Controller
     {
         return match (true) {
             $hour < 12 => 'Gunaydin',
-            $hour < 18 => 'Iyi gunler',
-            default => 'Iyi aksamlar',
+            $hour < 18 => 'İyi günler',
+            default => 'İyi akşamlar',
         };
     }
 
@@ -543,23 +543,23 @@ class DashController extends Controller
         $parts = [];
 
         if ($appointmentsToday > 0) {
-            $parts[] = "bugun {$appointmentsToday} randevu";
+            $parts[] = "bugün {$appointmentsToday} randevu";
         }
 
         if ($unreadMessages > 0) {
-            $parts[] = "{$unreadMessages} okunmamis mesaj";
+            $parts[] = "{$unreadMessages} okunmamış mesaj";
         }
 
         if ($lowStock > 0) {
-            $parts[] = "{$lowStock} dusuk stok alarmi";
+            $parts[] = "{$lowStock} düşük stok alarmı";
         }
 
         if ($trashTotal > 0) {
-            $parts[] = "{$trashTotal} silinmis kayit";
+            $parts[] = "{$trashTotal} silinmiş kayıt";
         }
 
         if (count($parts) === 0) {
-            return "{$user->name}, panel sakin gorunuyor. Hemen yonetmek istedigin modulu acip gunluk akisi hizlandirabilirsin.";
+            return "{$user->name}, panel sakin görünüyor. Hemen yönetmek istedigin modülü açıp günlük akışı hızlandirabilirsin.";
         }
 
         return "{$user->name}, " . implode(', ', $parts) . ' seni bekliyor.';
@@ -637,7 +637,7 @@ class DashController extends Controller
                     ->map(fn (BlogPost $post) => [
                         'type' => 'Blog',
                         'title' => $post->title,
-                        'meta' => $post->is_published ? 'Yayinda' : 'Taslak',
+                        'meta' => $post->is_published ? 'Yayında' : 'Taslak',
                         'badge' => $post->is_published ? 'kt-badge kt-badge-sm kt-badge-light-success' : 'kt-badge kt-badge-sm kt-badge-light',
                         'url' => route('admin.blog.edit', $post),
                         'updated_at' => $post->updated_at,
@@ -669,7 +669,7 @@ class DashController extends Controller
                     ->limit(3)
                     ->get(['id', 'title', 'status', 'updated_at'])
                     ->map(fn (Product $product) => [
-                        'type' => 'Urun',
+                        'type' => 'Ürün',
                         'title' => $product->title,
                         'meta' => Product::statusLabel($product->status),
                         'badge' => Product::statusBadgeClass($product->status),

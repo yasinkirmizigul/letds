@@ -81,7 +81,7 @@ function createStatusPopover() {
     element.style.display = 'none';
     element.className = 'kt-card shadow-lg p-2 w-[280px] transition transform duration-150 ease-out';
     element.innerHTML = `
-        <div class="text-xs text-muted-foreground px-2 py-1">Workflow durumu sec</div>
+        <div class="text-xs text-muted-foreground px-2 py-1">Workflow durumu seç</div>
         <div class="grid gap-1" data-status-menu></div>
     `;
     document.body.appendChild(element);
@@ -215,7 +215,7 @@ async function postJson(url, body, signal, method = 'POST') {
     });
 
     if (response?.ok === false) {
-        throw new Error(response?.message || 'Islem basarisiz.');
+        throw new Error(response?.message || 'İşlem başarısız.');
     }
 
     return response;
@@ -241,7 +241,7 @@ function setPublicState(row, isPublic) {
         badge.classList.remove('kt-badge-light-success', 'kt-badge-light', 'text-muted-foreground');
         if (isPublic) {
             badge.classList.add('kt-badge-light-success');
-            badge.textContent = 'Sitede gorunebilir';
+            badge.textContent = 'Sitede görünebilir';
         } else {
             badge.classList.add('kt-badge-light', 'text-muted-foreground');
             badge.textContent = 'Sitede gizli';
@@ -250,8 +250,8 @@ function setPublicState(row, isPublic) {
 
     if (hint) {
         hint.textContent = isPublic
-            ? 'Bu statu site tarafinda gorunebilir.'
-            : 'Bu statu admin ici workflow asamasinda kalir.';
+            ? 'Bu statü site tarafında görünebilir.'
+            : 'Bu statü admin içi workflow aşamasında kalır.';
     }
 }
 
@@ -270,14 +270,14 @@ function setFeaturedState(row, isFeatured, featuredAt) {
             badge.textContent = 'Anasayfada';
         } else {
             badge.classList.add('kt-badge-light', 'text-muted-foreground');
-            badge.textContent = 'Kapali';
+            badge.textContent = 'Kapalı';
         }
     }
 
     if (featuredAtText) {
         featuredAtText.textContent = isFeatured && featuredAt
-            ? `Secim: ${featuredAt}`
-            : 'Secim yapilmamis';
+            ? `Seçim: ${featuredAt}`
+            : 'Seçim yapılmamış';
     }
 }
 
@@ -373,11 +373,11 @@ export default function init(ctx) {
             const row = trigger?.closest('tr');
 
             setStatusState(trigger, row, response);
-            notify('success', response?.message || 'Durum guncellendi.');
+            notify('success', response?.message || 'Durum güncellendi.');
             hideStatusPopover(statusPopover);
             redrawOwningTable(trigger);
         } catch (error) {
-            notify('error', resolveErrorMessage(error, 'Durum guncellenemedi.'));
+            notify('error', resolveErrorMessage(error, 'Durum güncellenemedi.'));
         }
     }, { signal });
 
@@ -436,12 +436,12 @@ export default function init(ctx) {
             postJson(target.dataset.url, { is_featured: target.checked ? 1 : 0 }, signal, 'PATCH')
                 .then((response) => {
                     setFeaturedState(row, !!response?.data?.is_featured, response?.data?.featured_at || null);
-                    notify('success', response?.message || (target.checked ? 'Proje anasayfaya alindi.' : 'Proje anasayfadan kaldirildi.'));
+                    notify('success', response?.message || (target.checked ? 'Proje anasayfaya alındı.' : 'Proje anasayfadan kaldırıldı.'));
                     redrawOwningTable(target);
                 })
                 .catch((error) => {
                     target.checked = rollback;
-                    notify('error', resolveErrorMessage(error, 'Vitrin durumu guncellenemedi.'));
+                    notify('error', resolveErrorMessage(error, 'Vitrin durumu güncellenemedi.'));
                 })
                 .finally(() => {
                     target.disabled = false;
@@ -534,7 +534,7 @@ export default function init(ctx) {
                 const ok = await showConfirmDialog({
                     type: 'warning',
                     title: 'Proje silinsin mi?',
-                    message: 'Proje cop kutusuna tasinacak.',
+                    message: 'Proje çöp kutusuna taşınacak.',
                     confirmButtonText: 'Sil',
                 });
                 if (!ok) return;
@@ -548,14 +548,14 @@ export default function init(ctx) {
             if (action === 'restore') {
                 const ok = await showConfirmDialog({
                     type: 'success',
-                    title: 'Proje geri yuklensin mi?',
-                    message: 'Kayit tekrar aktif listeye alinacak.',
-                    confirmButtonText: 'Geri yukle',
+                    title: 'Proje geri yüklensin mi?',
+                    message: 'Kayıt tekrar aktif listeye alınacak.',
+                    confirmButtonText: 'Geri yükle',
                 });
                 if (!ok) return;
 
                 const response = await postJson(url, {}, signal);
-                notify('success', response?.message || 'Proje geri yuklendi.');
+                notify('success', response?.message || 'Proje geri yüklendi.');
                 window.location.reload();
                 return;
             }
@@ -563,18 +563,18 @@ export default function init(ctx) {
             if (action === 'force-delete') {
                 const ok = await showConfirmDialog({
                     type: 'error',
-                    title: 'Proje kalici olarak silinsin mi?',
-                    message: 'Bu islem geri alinamaz.',
-                    confirmButtonText: 'Kalici sil',
+                    title: 'Proje kalıcı olarak silinsin mi?',
+                    message: 'Bu işlem geri alınamaz.',
+                    confirmButtonText: 'Kalıcı sil',
                 });
                 if (!ok) return;
 
                 const response = await request(url, { method: 'DELETE', signal, ignoreGlobalError: true });
-                notify('success', response?.message || 'Proje kalici olarak silindi.');
+                notify('success', response?.message || 'Proje kalıcı olarak silindi.');
                 window.location.reload();
             }
         } catch (error) {
-            notify('error', resolveErrorMessage(error, 'Islem basarisiz.'));
+            notify('error', resolveErrorMessage(error, 'İşlem başarısız.'));
         } finally {
             actionButton.dataset.busy = '0';
         }
@@ -597,19 +597,19 @@ export default function init(ctx) {
 
         const ok = await showConfirmDialog({
             type: 'warning',
-            title: 'Secili projeler silinsin mi?',
-            message: `${ids.length} kayit cop kutusuna tasinacak.`,
+            title: 'Seçili projeler silinsin mi?',
+            message: `${ids.length} kayıt çöp kutusuna taşınacak.`,
             confirmButtonText: 'Sil',
         });
         if (!ok) return;
 
         try {
             const response = await postJson(root.dataset.bulkDeleteUrl, { ids }, signal);
-            notify('success', response?.message || 'Secili projeler silindi.');
+            notify('success', response?.message || 'Seçili projeler silindi.');
             selectedIds.clear();
             window.location.reload();
         } catch (error) {
-            notify('error', resolveErrorMessage(error, 'Silme islemi basarisiz.'));
+            notify('error', resolveErrorMessage(error, 'Silme işlemi başarısız.'));
             updateBulkUI();
         }
     }, { signal });
@@ -620,19 +620,19 @@ export default function init(ctx) {
 
         const ok = await showConfirmDialog({
             type: 'success',
-            title: 'Secili projeler geri yuklensin mi?',
-            message: `${ids.length} kayit tekrar aktif listeye alinacak.`,
-            confirmButtonText: 'Geri yukle',
+            title: 'Seçili projeler geri yüklensin mi?',
+            message: `${ids.length} kayıt tekrar aktif listeye alınacak.`,
+            confirmButtonText: 'Geri yükle',
         });
         if (!ok) return;
 
         try {
             const response = await postJson(root.dataset.bulkRestoreUrl, { ids }, signal);
-            notify('success', response?.message || 'Secili projeler geri yuklendi.');
+            notify('success', response?.message || 'Seçili projeler geri yüklendi.');
             selectedIds.clear();
             window.location.reload();
         } catch (error) {
-            notify('error', resolveErrorMessage(error, 'Geri yukleme basarisiz.'));
+            notify('error', resolveErrorMessage(error, 'Geri yükleme başarısız.'));
             updateBulkUI();
         }
     }, { signal });
@@ -643,26 +643,26 @@ export default function init(ctx) {
 
         const ok = await showConfirmDialog({
             type: 'error',
-            title: 'Secili projeler kalici olarak silinsin mi?',
-            message: `${ids.length} kayit geri alinamayacak sekilde silinecek.`,
-            confirmButtonText: 'Kalici sil',
+            title: 'Seçili projeler kalıcı olarak silinsin mi?',
+            message: `${ids.length} kayıt geri alinamayacak sekilde silinecek.`,
+            confirmButtonText: 'Kalıcı sil',
         });
         if (!ok) return;
 
         try {
             const response = await postJson(root.dataset.bulkForceDeleteUrl, { ids }, signal);
-            notify('success', response?.message || 'Secili projeler kalici olarak silindi.');
+            notify('success', response?.message || 'Seçili projeler kalıcı olarak silindi.');
             selectedIds.clear();
             window.location.reload();
         } catch (error) {
-            notify('error', resolveErrorMessage(error, 'Kalici silme basarisiz.'));
+            notify('error', resolveErrorMessage(error, 'Kalıcı silme başarısız.'));
             updateBulkUI();
         }
     }, { signal });
 
     root.querySelectorAll('tr[data-status]').forEach((row) => {
         setPublicState(row, publicStatuses.includes(row.dataset.status || ''));
-        setFeaturedState(row, row.dataset.featured === '1', row.querySelector('.js-featured-at')?.textContent?.replace(/^Secim:\s*/, '') || null);
+        setFeaturedState(row, row.dataset.featured === '1', row.querySelector('.js-featured-at')?.textContent?.replace(/^Seçim:\s*/, '') || null);
     });
 
     renderPagination(api, root.querySelector('#projectsPagination'));

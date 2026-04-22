@@ -124,7 +124,7 @@ class BlogPostController extends Controller
         return view('admin.pages.blog.create', [
             'categoryOptions' => $this->categoryOptions($categories),
             'selectedCategoryIds' => [],
-            'pageTitle' => 'Yazi Ekle',
+            'pageTitle' => 'Yazı Ekle',
         ]);
     }
 
@@ -148,7 +148,7 @@ class BlogPostController extends Controller
 
         return redirect()
             ->route('admin.blog.index')
-            ->with('success', 'Blog yazisi olusturuldu.');
+            ->with('success', 'Blog yazısı oluşturuldu.');
     }
 
     public function edit(BlogPost $blogPost): View
@@ -157,7 +157,7 @@ class BlogPostController extends Controller
             'categories:id,name,parent_id',
             'featuredMedia',
             'author:id,name',
-            'editor:id,name',
+            'editör:id,name',
         ]);
 
         $categories = Category::query()
@@ -172,7 +172,7 @@ class BlogPostController extends Controller
                 ->map(fn ($value) => (int) $value)
                 ->values()
                 ->all(),
-            'pageTitle' => 'Yazi Duzenle',
+            'pageTitle' => 'Yazı Düzenle',
         ]);
     }
 
@@ -195,7 +195,7 @@ class BlogPostController extends Controller
 
         return redirect()
             ->route('admin.blog.index')
-            ->with('success', 'Blog yazisi guncellendi.');
+            ->with('success', 'Blog yazısı güncellendi.');
     }
 
     public function destroy(Request $request, BlogPost $blogPost)
@@ -205,13 +205,13 @@ class BlogPostController extends Controller
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
                 'ok' => true,
-                'message' => 'Blog yazisi cop kutusuna tasindi.',
+                'message' => 'Blog yazısı çöp kutusuna taşındı.',
             ]);
         }
 
         return redirect()
             ->route('admin.blog.index')
-            ->with('success', 'Blog yazisi cop kutusuna tasindi.');
+            ->with('success', 'Blog yazısı çöp kutusuna taşındı.');
     }
 
     public function restore(int $id): JsonResponse
@@ -221,7 +221,7 @@ class BlogPostController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => 'Blog yazisi geri yuklendi.',
+            'message' => 'Blog yazısı geri yüklendi.',
             'data' => ['restored' => true],
         ]);
     }
@@ -239,7 +239,7 @@ class BlogPostController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => 'Blog yazisi kalici olarak silindi.',
+            'message' => 'Blog yazısı kalıcı olarak silindi.',
             'data' => ['force_deleted' => true],
         ]);
     }
@@ -251,7 +251,7 @@ class BlogPostController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => $count . ' blog yazisi cop kutusuna tasindi.',
+            'message' => $count . ' blog yazısı çöp kutusuna taşındı.',
             'data' => ['deleted' => $count],
         ]);
     }
@@ -263,7 +263,7 @@ class BlogPostController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => $count . ' blog yazisi geri yuklendi.',
+            'message' => $count . ' blog yazısı geri yüklendi.',
             'data' => ['restored' => $count],
         ]);
     }
@@ -284,7 +284,7 @@ class BlogPostController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => $posts->count() . ' blog yazisi kalici olarak silindi.',
+            'message' => $posts->count() . ' blog yazısı kalıcı olarak silindi.',
             'data' => ['force_deleted' => $posts->count()],
         ]);
     }
@@ -305,12 +305,12 @@ class BlogPostController extends Controller
             $blogPost->save();
 
             $badgeHtml = $blogPost->is_published
-                ? '<span class="kt-badge kt-badge-sm kt-badge-success">Yayinda</span>'
+                ? '<span class="kt-badge kt-badge-sm kt-badge-success">Yayında</span>'
                 : '<span class="kt-badge kt-badge-sm kt-badge-light">Taslak</span>';
 
             return response()->json([
                 'ok' => true,
-                'message' => $blogPost->is_published ? 'Yayin durumu guncellendi.' : 'Yazi taslak durumuna alindi.',
+                'message' => $blogPost->is_published ? 'Yayın durumu güncellendi.' : 'Yazı taslak durumuna alındı.',
                 'is_published' => (bool) $blogPost->is_published,
                 'published_at' => $blogPost->published_at ? $blogPost->published_at->format('d.m.Y H:i') : null,
                 'badge_html' => $badgeHtml,
@@ -342,11 +342,11 @@ class BlogPostController extends Controller
 
             $badgeHtml = $blogPost->is_featured
                 ? '<span class="kt-badge kt-badge-sm kt-badge-light-success">Anasayfada</span>'
-                : '<span class="kt-badge kt-badge-sm kt-badge-light text-muted-foreground">Kapali</span>';
+                : '<span class="kt-badge kt-badge-sm kt-badge-light text-muted-foreground">Kapalı</span>';
 
             return response()->json([
                 'ok' => true,
-                'message' => $blogPost->is_featured ? 'Yazi anasayfada gosterilecek.' : 'Yazi anasayfadan kaldirildi.',
+                'message' => $blogPost->is_featured ? 'Yazı anasayfada gösterilecek.' : 'Yazı anasayfadan kaldırıldı.',
                 'is_featured' => (bool) $blogPost->is_featured,
                 'featured_at' => $blogPost->featured_at ? $blogPost->featured_at->format('d.m.Y H:i') : null,
                 'badge_html' => $badgeHtml,
@@ -364,7 +364,7 @@ class BlogPostController extends Controller
             return response()->json([
                 'ok' => false,
                 'available' => false,
-                'message' => 'Slug bos olamaz.',
+                'message' => 'Slug boş olamaz.',
             ]);
         }
 
@@ -376,7 +376,7 @@ class BlogPostController extends Controller
             'available' => $isAvailable,
             'normalized' => $normalizedSlug,
             'suggested' => $suggested,
-            'message' => $isAvailable ? 'Slug uygun.' : 'Bu slug kullaniliyor. Onerilen slug hazirlandi.',
+            'message' => $isAvailable ? 'Slug uygun.' : 'Bu slug kullanılıyor. Onerilen slug hazırlandı.',
         ]);
     }
 
@@ -516,7 +516,7 @@ class BlogPostController extends Controller
 
         if ($query->count() >= 5) {
             throw ValidationException::withMessages([
-                'is_featured' => 'Ayni anda en fazla 5 blog anasayfada gosterilebilir.',
+                'is_featured' => 'Aynı anda en fazla 5 blog anasayfada gösterilebilir.',
             ]);
         }
     }
@@ -546,7 +546,7 @@ class BlogPostController extends Controller
 
         if (!is_array($ids) || count($ids) === 0) {
             throw ValidationException::withMessages([
-                'ids' => 'Secili kayit yok.',
+                'ids' => 'Seçili kayıt yok.',
             ]);
         }
 

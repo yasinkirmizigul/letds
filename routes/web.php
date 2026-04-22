@@ -20,6 +20,8 @@ use App\Http\Controllers\Admin\User\RoleController;
 use App\Http\Controllers\Admin\User\UserController;
 use App\Http\Controllers\Site\Appointment\AppointmentController;
 use App\Http\Controllers\Site\Auth\MemberAuthController;
+use App\Http\Controllers\Site\Cms\HomeController;
+use App\Http\Controllers\Site\Cms\PageController;
 use App\Http\Controllers\Site\ContactMessageController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +30,9 @@ use Illuminate\Support\Facades\Route;
 | Auth
 |--------------------------------------------------------------------------
 */
+
+Route::get('/', [HomeController::class, 'index'])
+    ->name('site.home');
 
 Route::get('/login', [AuthController::class, 'showLogin'])
     ->name('login');
@@ -655,3 +660,6 @@ Route::get('/iletisim', [ContactMessageController::class, 'create'])
 
 Route::post('/iletisim', [ContactMessageController::class, 'store'])
     ->name('site.contact-messages.store');
+
+Route::get('/{slug}', [PageController::class, 'show'])
+    ->name('site.pages.show');

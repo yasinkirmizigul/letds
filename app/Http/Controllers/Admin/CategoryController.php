@@ -166,7 +166,7 @@ class CategoryController extends Controller
 
         return redirect()
             ->route('admin.categories.index')
-            ->with('success', 'Kategori olusturuldu.');
+            ->with('success', 'Kategori oluşturuldu.');
     }
 
     public function edit(Category $category)
@@ -177,7 +177,7 @@ class CategoryController extends Controller
         $excludeIds = array_merge([$category->id], $descendantIds);
 
         return view('admin.pages.categories.edit', [
-            'pageTitle' => 'Kategori Duzenle',
+            'pageTitle' => 'Kategori Düzenle',
             'category' => $category,
             'parentOptions' => CategoryTree::optionsFromIndex($byParent, $excludeIds),
         ]);
@@ -194,7 +194,7 @@ class CategoryController extends Controller
 
         return redirect()
             ->route('admin.categories.index')
-            ->with('success', 'Kategori guncellendi.');
+            ->with('success', 'Kategori güncellendi.');
     }
 
     public function destroy(Category $category)
@@ -202,7 +202,7 @@ class CategoryController extends Controller
         $category->delete();
 
         if (request()->expectsJson()) {
-            return response()->json(['ok' => true, 'message' => 'Kategori cop kutusuna tasindi.']);
+            return response()->json(['ok' => true, 'message' => 'Kategori çöp kutusuna taşındı.']);
         }
 
         return redirect()
@@ -215,7 +215,7 @@ class CategoryController extends Controller
         $category = Category::onlyTrashed()->findOrFail($id);
         $category->restore();
 
-        return response()->json(['ok' => true, 'message' => 'Kategori geri yuklendi.']);
+        return response()->json(['ok' => true, 'message' => 'Kategori geri yüklendi.']);
     }
 
     public function forceDestroy(int $id): JsonResponse
@@ -232,14 +232,14 @@ class CategoryController extends Controller
 
         $category->forceDelete();
 
-        return response()->json(['ok' => true, 'message' => 'Kategori kalici olarak silindi.']);
+        return response()->json(['ok' => true, 'message' => 'Kategori kalıcı olarak silindi.']);
     }
 
     public function bulkDestroy(Request $request): JsonResponse
     {
         $ids = $this->validatedIds($request->input('ids', []));
         if (count($ids) === 0) {
-            return response()->json(['ok' => true, 'message' => 'Secili kayit yok.']);
+            return response()->json(['ok' => true, 'message' => 'Seçili kayıt yok.']);
         }
 
         $hasChild = Category::query()
@@ -249,27 +249,27 @@ class CategoryController extends Controller
         if ($hasChild) {
             return response()->json([
                 'ok' => false,
-                'message' => 'Secim icinde alt kategorisi olan kayit var. Once alt kategorileri tasiyin veya silin.',
+                'message' => 'Seçim içinde alt kategorisi olan kayıt var. Önce alt kategorileri taşıyın veya silin.',
             ], 422);
         }
 
         Category::query()->whereIn('id', $ids)->delete();
 
-        return response()->json(['ok' => true, 'message' => 'Secili kategoriler silindi.']);
+        return response()->json(['ok' => true, 'message' => 'Seçili kategoriler silindi.']);
     }
 
     public function bulkRestore(Request $request): JsonResponse
     {
         $ids = $this->validatedIds($request->input('ids', []));
         if (count($ids) === 0) {
-            return response()->json(['ok' => true, 'message' => 'Secili kayit yok.']);
+            return response()->json(['ok' => true, 'message' => 'Seçili kayıt yok.']);
         }
 
         $count = Category::onlyTrashed()->whereIn('id', $ids)->restore();
 
         return response()->json([
             'ok' => true,
-            'message' => $count > 0 ? 'Secili kategoriler geri yuklendi.' : 'Geri yuklenecek kayit bulunamadi.',
+            'message' => $count > 0 ? 'Seçili kategoriler geri yüklendi.' : 'Geri yüklenecek kayıt bulunamadı.',
         ]);
     }
 
@@ -277,7 +277,7 @@ class CategoryController extends Controller
     {
         $ids = $this->validatedIds($request->input('ids', []));
         if (count($ids) === 0) {
-            return response()->json(['ok' => true, 'message' => 'Secili kayit yok.']);
+            return response()->json(['ok' => true, 'message' => 'Seçili kayıt yok.']);
         }
 
         $blocked = [];
@@ -304,7 +304,7 @@ class CategoryController extends Controller
             'failed' => array_map(fn ($item) => ['type' => 'category', 'id' => $item['id'], 'reason' => $item['reason']], $blocked),
             'message' => count($blocked) > 0
                 ? 'Bazi kategoriler korunarak atlandi.'
-                : 'Secili kategoriler kalici olarak silindi.',
+                : 'Seçili kategoriler kalıcı olarak silindi.',
         ]);
     }
 
@@ -317,7 +317,7 @@ class CategoryController extends Controller
             return response()->json([
                 'ok' => false,
                 'available' => false,
-                'message' => 'Slug bos olamaz.',
+                'message' => 'Slug boş olamaz.',
             ]);
         }
 
@@ -329,7 +329,7 @@ class CategoryController extends Controller
         return response()->json([
             'ok' => true,
             'available' => !$exists,
-            'message' => $exists ? 'Bu slug zaten kullaniliyor.' : 'Slug uygun.',
+            'message' => $exists ? 'Bu slug zaten kullanılıyor.' : 'Slug uygun.',
         ]);
     }
 
@@ -389,7 +389,7 @@ class CategoryController extends Controller
             ->exists();
 
         if ($hasChildren) {
-            return ['ok' => false, 'message' => 'Bu kategorinin alt kategorileri var. Once alt kategorileri tasiyin veya silin.'];
+            return ['ok' => false, 'message' => 'Bu kategorinin alt kategorileri var. Önce alt kategorileri taşıyın veya silin.'];
         }
 
         $blogCount = DB::table('categorizables')
@@ -414,11 +414,11 @@ class CategoryController extends Controller
         $parts = [];
         if ($blogCount > 0) $parts[] = "blog: {$blogCount}";
         if ($projectCount > 0) $parts[] = "proje: {$projectCount}";
-        if ($productCount > 0) $parts[] = "urun: {$productCount}";
+        if ($productCount > 0) $parts[] = "ürün: {$productCount}";
 
         return [
             'ok' => false,
-            'message' => 'Kategori iceriklere bagli. Once iliskileri kaldirin: ' . implode(', ', $parts),
+            'message' => 'Kategori içeriklere bağlı. Önce ilişkileri kaldırın: ' . implode(', ', $parts),
         ];
     }
 }

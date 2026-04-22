@@ -30,11 +30,10 @@ class AvailabilityService
             ]);
         }
 
-        $workingHour = ProviderWorkingHour::query()
-            ->where('provider_id', $providerId)
-            ->where('day_of_week', (int) $startAt->dayOfWeekIso)
-            ->where('is_enabled', true)
-            ->first();
+        $workingHour = $this->findWorkingHourForDay(
+            $providerId,
+            $this->resolveStoredDayOfWeek($startAt)
+        );
 
         if (!$workingHour || !$workingHour->start_time || !$workingHour->end_time) {
             throw ValidationException::withMessages([
@@ -75,13 +74,9 @@ class AvailabilityService
         $blocks = max(1, $blocks);
 
         $dateLocal = $date->copy()->setTimezone($this->tz)->startOfDay();
-        $dayOfWeek = (int) $dateLocal->dayOfWeekIso;
+        $dayOfWeek = $this->resolveStoredDayOfWeek($dateLocal);
 
-        $workingHour = ProviderWorkingHour::query()
-            ->where('provider_id', $providerId)
-            ->where('day_of_week', $dayOfWeek)
-            ->where('is_enabled', true)
-            ->first();
+        $workingHour = $this->findWorkingHourForDay($providerId, $dayOfWeek);
 
         if (!$workingHour || !$workingHour->start_time || !$workingHour->end_time) {
             return [];
@@ -194,6 +189,22 @@ class AvailabilityService
         return ((int) $dateLocal->minute % 30 === 0) && ((int) $dateLocal->second === 0);
     }
 
+    protected function resolveStoredDayOfWeek(Carbon $dateLocal): int
+    {
+        return (int) $dateLocal->dayOfWeek;
+    }
+
+    protected function findWorkingHourForDay(int $providerId, int $dayOfWeek): ?ProviderWorkingHour
+    {
+        $acceptableDays = $dayOfWeek === 0 ? [0, 7] : [$dayOfWeek];
+
+        return ProviderWorkingHour::query()
+            ->where('provider_id', $providerId)
+            ->whereIn('day_of_week', $acceptableDays)
+            ->where('is_enabled', true)
+            ->first();
+    }
+
     public function getCalendarAvailability(int $providerId, Carbon $start, Carbon $end): array
     {
         $startLocal = $start->copy()->setTimezone($this->tz)->startOfDay();
@@ -203,7 +214,15 @@ class AvailabilityService
             ->where('provider_id', $providerId)
             ->where('is_enabled', true)
             ->get()
-            ->keyBy('day_of_week');
+            ->mapWithKeys(function (ProviderWorkingHour $workingHour) {
+                $normalizedDay = (int) $workingHour->day_of_week;
+
+                if ($normalizedDay === 7) {
+                    $normalizedDay = 0;
+                }
+
+                return [$normalizedDay => $workingHour];
+            });
 
         $occupied = AppointmentSlot::query()
             ->where('provider_id', $providerId)
@@ -264,7 +283,7 @@ class AvailabilityService
         Collection $blackouts
     ): array {
         $dateLocal = $date->copy()->setTimezone($this->tz)->startOfDay();
-        $dayOfWeek = (int) $dateLocal->dayOfWeekIso;
+        $dayOfWeek = $this->resolveStoredDayOfWeek($dateLocal);
 
         $workingHour = $workingHours->get($dayOfWeek);
 

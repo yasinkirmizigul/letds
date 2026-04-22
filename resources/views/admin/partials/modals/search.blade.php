@@ -3,7 +3,7 @@
         <div class="kt-modal-header py-4 px-5">
             <i class="ki-filled ki-magnifier text-muted-foreground text-xl">
             </i>
-            <input class="kt-input kt-input-ghost" name="query" placeholder="Tap to start search" type="text" value="" />
+            <input class="kt-input kt-input-ghost" name="query" placeholder="Aramaya başlamak için yazın" type="text" value="" />
             <button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-dim shrink-0" data-kt-modal-dismiss="true">
                 <i class="ki-filled ki-cross">
                 </i>
@@ -31,7 +31,7 @@
                         Empty
                     </button>
                     <button class="kt-tab-toggle py-5" data-kt-tab-toggle="#search_modal_no-results">
-                        No Results
+                        Sonuç Yok
                     </button>
                 </div>
                 <div class="kt-menu -mt-px" data-kt-menu="true">
@@ -371,7 +371,7 @@
                             </a>
                         </div>
                         <div class="text-xs text-secondary-foreground font-medium pt-2.5 ps-5 pt-2.5 pb-1.5">
-                            Actions
+                            İşlemler
                         </div>
                         <div class="kt-menu-item">
                             <a class="kt-menu-link" href="#">
@@ -861,7 +861,7 @@
                         </div>
                         <div class="flex flex-col gap-1.5">
                             <h3 class="text-base font-semibold text-mono text-center">
-                                No Results Found
+                                Sonuç Bulunamadı
                             </h3>
                             <span class="text-sm font-medium text-center text-secondary-foreground">
                                 Refine your query to discover relevant items

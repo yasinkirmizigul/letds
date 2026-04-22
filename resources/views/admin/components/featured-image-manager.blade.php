@@ -11,7 +11,7 @@
     $currentUrl = $currentUrl ?? null;
     $currentMediaId = $currentMediaId ?? null;
 
-    $title = $title ?? 'One Cikan Gorsel';
+    $title = $title ?? 'Öne Çıkan Görsel';
     $hint = $hint ?? null;
 
     $hasImage = !empty($currentUrl);
@@ -43,7 +43,7 @@
                  data-featured-placeholder>
                 <div class="grid place-items-center gap-2 py-10">
                     <i class="ki-outline ki-picture text-3xl"></i>
-                    <div class="text-sm">Henuz gorsel yok</div>
+                    <div class="text-sm">Henüz görsel yok</div>
                 </div>
             </div>
 
@@ -67,7 +67,7 @@
                     data-media-picker-target='[data-featured-uid="{{ $uid }}"] [data-featured-media-id]'
                     data-media-picker-preview='[data-featured-uid="{{ $uid }}"] [data-featured-preview]'>
                 <i class="ki-outline ki-folder"></i>
-                Medyadan Sec
+                Medyadan Seç
             </button>
 
             <button type="button"
@@ -79,8 +79,8 @@
         </div>
 
         <div class="text-xs text-muted-foreground p-3">
-            Dosya yukleyebilir veya kutuphaneden secebilirsin.
-            Kutuphaneden secim yapinca dosya secimi temizlenir; dosya secince de mediaId temizlenir.
+            Dosya yükleyebilir veya kütüphaneden seçim yapabilirsin.
+            Kütüphaneden seçim yapınca dosya seçimi temizlenir; dosya seçince de mediaId temizlenir.
         </div>
     </div>
 </div>

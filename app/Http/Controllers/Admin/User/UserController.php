@@ -36,7 +36,7 @@ class UserController extends Controller
         ];
 
         return view('admin.pages.users.index', [
-            'pageTitle' => 'Kullanicilar',
+            'pageTitle' => 'Kullanıcılar',
             'users' => $users,
             'roles' => $roles,
             'stats' => $stats,
@@ -48,7 +48,7 @@ class UserController extends Controller
         $roles = Role::orderBy('name')->get();
 
         return view('admin.pages.users.create', [
-            'pageTitle' => 'Kullanici Ekle',
+            'pageTitle' => 'Kullanıcı Ekle',
         ], compact('roles'));
     }
 
@@ -73,7 +73,7 @@ class UserController extends Controller
         $user->roles()->sync($validated['roles'] ?? []);
         Rbac::bumpVersion();
 
-        return redirect()->route('admin.users.index')->with('ok', 'Kullanici olusturuldu.');
+        return redirect()->route('admin.users.index')->with('ok', 'Kullanıcı oluşturuldu.');
     }
 
     public function edit(User $user)
@@ -82,7 +82,7 @@ class UserController extends Controller
         $user->load('roles');
 
         return view('admin.pages.users.edit', [
-            'pageTitle' => 'Kullanici Duzenle',
+            'pageTitle' => 'Kullanıcı Düzenle',
         ], compact('user', 'roles'));
     }
 
@@ -109,7 +109,7 @@ class UserController extends Controller
         $user->roles()->sync($validated['roles'] ?? []);
         Rbac::bumpVersion();
 
-        return redirect()->route('admin.users.index')->with('ok', 'Kullanici guncellendi.');
+        return redirect()->route('admin.users.index')->with('ok', 'Kullanıcı güncellendi.');
     }
 
     public function destroy(User $user)
@@ -122,6 +122,6 @@ class UserController extends Controller
         $user->delete();
         Rbac::bumpVersion();
 
-        return redirect()->route('admin.users.index')->with('ok', 'Kullanici silindi.');
+        return redirect()->route('admin.users.index')->with('ok', 'Kullanıcı silindi.');
     }
 }

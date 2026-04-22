@@ -38,7 +38,7 @@
             <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Method</div>
+                        <div class="text-sm text-muted-foreground">Yöntem</div>
                         <div class="mt-2"><span class="{{ $methodBadge($row->method) }}">{{ strtoupper((string) $row->method) }}</span></div>
                     </div>
                 </div>
@@ -50,13 +50,13 @@
                 </div>
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Action</div>
+                        <div class="text-sm text-muted-foreground">İşlem</div>
                         <div class="mt-2 font-semibold">{{ $row->action ?: '-' }}</div>
                     </div>
                 </div>
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Sure</div>
+                        <div class="text-sm text-muted-foreground">Süre</div>
                         <div class="mt-2 font-semibold">{{ (int) ($row->duration_ms ?? 0) }} ms</div>
                     </div>
                 </div>
@@ -65,7 +65,7 @@
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
                 <div class="kt-card">
                     <div class="kt-card-content p-5 grid gap-3">
-                        <div class="text-sm font-semibold">Istek Ozeti</div>
+                        <div class="text-sm font-semibold">İstek Özeti</div>
                         <div class="text-sm">Route: <span class="font-medium">{{ $row->route ?: '-' }}</span></div>
                         <div class="text-sm">URI: <span class="font-medium break-all">{{ $row->uri ?: '-' }}</span></div>
                         <div class="text-sm">IP: <span class="font-medium">{{ $row->ip ?: '-' }}</span></div>
@@ -74,7 +74,7 @@
 
                 <div class="kt-card">
                     <div class="kt-card-content p-5 grid gap-3">
-                        <div class="text-sm font-semibold">Kullanici</div>
+                        <div class="text-sm font-semibold">Kullanıcı</div>
                         <div class="text-sm">Ad: <span class="font-medium">{{ $row->user_name ?: '-' }}</span></div>
                         <div class="text-sm">E-posta: <span class="font-medium">{{ $row->user_email ?: '-' }}</span></div>
                         <div class="text-sm">User agent:</div>

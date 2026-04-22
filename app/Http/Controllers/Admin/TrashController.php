@@ -35,7 +35,7 @@ class TrashController extends Controller
 
         $sources = $this->sources();
         if ($type !== 'all' && !isset($sources[$type])) {
-            return response()->json(['ok' => false, 'message' => 'type gecersiz'], 422);
+            return response()->json(['ok' => false, 'message' => 'type geçersiz'], 422);
         }
 
         $pick = ($type === 'all') ? array_keys($sources) : [$type];
@@ -90,7 +90,7 @@ class TrashController extends Controller
         $sources = $this->sources();
 
         if (!isset($sources[$type])) {
-            return response()->json(['ok' => false, 'message' => 'type gecersiz'], 422);
+            return response()->json(['ok' => false, 'message' => 'type geçersiz'], 422);
         }
 
         $permission = $sources[$type]['perm_restore'] ?? null;
@@ -102,12 +102,12 @@ class TrashController extends Controller
         $model = $modelClass::onlyTrashed()->find($id);
 
         if (!$model) {
-            return response()->json(['ok' => false, 'message' => 'Kayit bulunamadi'], 404);
+            return response()->json(['ok' => false, 'message' => 'Kayıt bulunamadı'], 404);
         }
 
         $model->restore();
 
-        return response()->json(['ok' => true, 'message' => 'Kayit geri yuklendi.']);
+        return response()->json(['ok' => true, 'message' => 'Kayıt geri yüklendi.']);
     }
 
     public function forceDestroy(string $type, int $id): JsonResponse
@@ -115,7 +115,7 @@ class TrashController extends Controller
         $sources = $this->sources();
 
         if (!isset($sources[$type])) {
-            return response()->json(['ok' => false, 'message' => 'type gecersiz'], 422);
+            return response()->json(['ok' => false, 'message' => 'type geçersiz'], 422);
         }
 
         $permission = $sources[$type]['perm_force'] ?? null;
@@ -127,21 +127,21 @@ class TrashController extends Controller
         $model = $modelClass::onlyTrashed()->find($id);
 
         if (!$model) {
-            return response()->json(['ok' => false, 'message' => 'Kayit bulunamadi'], 404);
+            return response()->json(['ok' => false, 'message' => 'Kayıt bulunamadı'], 404);
         }
 
         $guard = $this->canForceDelete($type, $model);
         if (!($guard['ok'] ?? false)) {
             return response()->json([
                 'ok' => false,
-                'message' => $guard['reason'] ?? 'Islem engellendi',
+                'message' => $guard['reason'] ?? 'İşlem engellendi',
                 'usage' => $guard['usage'] ?? null,
             ], 422);
         }
 
         $this->performForceDelete($type, $model);
 
-        return response()->json(['ok' => true, 'message' => 'Kayit kalici olarak silindi.']);
+        return response()->json(['ok' => true, 'message' => 'Kayıt kalıcı olarak silindi.']);
     }
 
     public function bulkRestore(Request $request): JsonResponse
@@ -244,7 +244,7 @@ class TrashController extends Controller
                     $failed[] = [
                         'type' => $type,
                         'id' => $id,
-                        'reason' => $guard['reason'] ?? 'Islem engellendi',
+                        'reason' => $guard['reason'] ?? 'İşlem engellendi',
                     ];
                     continue;
                 }
@@ -357,7 +357,7 @@ class TrashController extends Controller
                     return [
                         'type' => 'product',
                         'id' => $product->id,
-                        'title' => $product->title ?: 'Urun',
+                        'title' => $product->title ?: 'Ürün',
                         'sub' => $product->sku ?: ($product->slug ?: ''),
                         'deleted_at' => optional($product->deleted_at)->toISOString(),
                         'restore_url' => route('admin.trash.restoreOne', ['type' => 'product', 'id' => $product->id]),
@@ -410,7 +410,7 @@ class TrashController extends Controller
             if (($usage['total'] ?? 0) > 0) {
                 return [
                     'ok' => false,
-                    'reason' => 'Bu medya kullaniliyor. Once iliskileri kaldirin: ' . ($usage['summary'] ?? ''),
+                    'reason' => 'Bu medya kullanılıyor. Önce ilişkileri kaldırın: ' . ($usage['summary'] ?? ''),
                     'usage' => $usage,
                 ];
             }
@@ -443,7 +443,7 @@ class TrashController extends Controller
                 ->exists();
 
             if ($hasBlog || $hasProject || $hasProduct) {
-                return ['ok' => false, 'reason' => 'Kategori iceriklere bagli'];
+                return ['ok' => false, 'reason' => 'Kategori içeriklere bağlı'];
             }
         }
 
@@ -453,7 +453,7 @@ class TrashController extends Controller
                 ->count();
 
             if ($attachedCount > 0) {
-                return ['ok' => false, 'reason' => 'Bu galeri iceriklere bagli'];
+                return ['ok' => false, 'reason' => 'Bu galeri içeriklere bağlı'];
             }
         }
 
@@ -599,7 +599,7 @@ class TrashController extends Controller
     private function humanizeTableName(string $table, string $column): string
     {
         $map = [
-            'gallery_items' => 'Galeri ogeleri',
+            'gallery_items' => 'Galeri ögeleri',
         ];
 
         return $map[$table] ?? "{$table}.{$column}";

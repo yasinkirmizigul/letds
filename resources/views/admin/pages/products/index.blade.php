@@ -24,24 +24,24 @@
         <div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
             <div>
                 <h1 class="text-xl font-semibold">
-                    {{ $isTrash ? 'Urunler Cop Kutusu' : 'Urun Yonetimi' }}
+                    {{ $isTrash ? 'Ürünler Çöp Kutusu' : 'Ürün Yönetimi' }}
                 </h1>
                 <div class="text-sm text-muted-foreground">
-                    {{ $isTrash ? 'Silinen urunleri geri yukleyebilir veya kalici olarak silebilirsiniz.' : 'Workflow, fiyat, stok ve vitrin akislarini tek ekrandan yonetin.' }}
+                    {{ $isTrash ? 'Silinen ürünleri geri yükleyebilir veya kalıcı olarak silebilirsiniz.' : 'Workflow, fiyat, stok ve vitrin akışlarını tek ekrandan yönetin.' }}
                 </div>
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
                 <a href="{{ route('admin.products.index') }}" class="kt-btn kt-btn-sm {{ $isTrash ? 'kt-btn-light' : 'kt-btn-primary' }}">
-                    Aktif Kayitlar
+                    Aktif Kayıtlar
                 </a>
                 <a href="{{ route('admin.products.trash') }}" class="kt-btn kt-btn-sm {{ $isTrash ? 'kt-btn-primary' : 'kt-btn-light' }}">
-                    Cop Kutusu
+                    Çöp Kutusu
                 </a>
 
                 @perm('products.create')
                     <a href="{{ route('admin.products.create') }}" class="kt-btn kt-btn-sm kt-btn-primary">
-                        Yeni Urun
+                        Yeni Ürün
                     </a>
                 @endperm
             </div>
@@ -61,11 +61,11 @@
                 <div class="mt-2 text-3xl font-semibold text-primary">{{ $stats['featured'] ?? 0 }}</div>
             </div>
             <div class="rounded-3xl app-stat-card p-5">
-                <div class="text-sm text-muted-foreground">Dusuk Stok</div>
+                <div class="text-sm text-muted-foreground">Düşük Stok</div>
                 <div class="mt-2 text-3xl font-semibold text-warning">{{ $stats['low_stock'] ?? 0 }}</div>
             </div>
             <div class="rounded-3xl app-stat-card p-5">
-                <div class="text-sm text-muted-foreground">Copte</div>
+                <div class="text-sm text-muted-foreground">Çöpte</div>
                 <div class="mt-2 text-3xl font-semibold text-danger">{{ $stats['trash'] ?? 0 }}</div>
             </div>
         </div>
@@ -73,9 +73,9 @@
         <div class="kt-card kt-card-grid min-w-full">
             <div class="kt-card-header py-5 flex-wrap gap-4">
                 <div>
-                    <h3 class="kt-card-title">{{ $isTrash ? 'Silinen Urunler' : 'Urun Listesi' }}</h3>
+                    <h3 class="kt-card-title">{{ $isTrash ? 'Silinen Ürünler' : 'Ürün Listesi' }}</h3>
                     <div class="text-sm text-muted-foreground">
-                        Durum, stok, kategori ve vitrin secimini tek satirda inceleyin.
+                        Durum, stok, kategori ve vitrin seçimini tek satırda inceleyin.
                     </div>
                 </div>
 
@@ -84,7 +84,7 @@
                         id="productsSearch"
                         type="text"
                         class="kt-input kt-input-sm w-full md:w-[260px]"
-                        placeholder="Baslik, slug, SKU, barkod ara..."
+                        placeholder="Başlık, slug, SKU, barkod ara..."
                         value="{{ $q }}"
                     />
 
@@ -94,7 +94,7 @@
                         data-kt-select="true"
                         data-kt-select-placeholder="Durum"
                     >
-                        <option value="all" @selected($status === 'all')>Tum durumlar</option>
+                        <option value="all" @selected($status === 'all')>Tüm durumlar</option>
                         @foreach(($statusOptions ?? []) as $key => $option)
                             <option value="{{ $key }}" @selected($status === $key)>{{ $option['label'] }}</option>
                         @endforeach
@@ -108,7 +108,7 @@
                         data-kt-select-placeholder="Kategoriler"
                         data-kt-select-multiple="true"
                         data-kt-select-tags="false"
-                        data-kt-select-config='{"showSelectedCount":true,"enableSelectAll":true,"selectAllText":"Tumunu Sec","clearAllText":"Temizle"}'
+                        data-kt-select-config='{"showSelectedCount":true,"enableSelectAll":true,"selectAllText":"Tümünü Seç","clearAllText":"Temizle"}'
                     >
                         @foreach(($categoryOptions ?? []) as $option)
                             <option value="{{ $option['id'] }}" @selected(in_array($option['id'], $selectedCategoryIds))>
@@ -127,19 +127,19 @@
                 <div id="productsBulkBar" class="hidden kt-card mb-4 border border-border">
                     <div class="kt-card-content p-3 flex items-center justify-between gap-3">
                         <div class="text-sm text-muted-foreground">
-                            Secili: <b id="productsSelectedCount">0</b>
+                            Seçili: <b id="productsSelectedCount">0</b>
                         </div>
 
                         <div class="flex items-center gap-2">
                             @if($isTrash)
                                 @perm('products.restore')
                                     <button type="button" class="kt-btn kt-btn-sm kt-btn-success" id="productsBulkRestoreBtn" disabled>
-                                        Geri Yukle
+                                        Geri Yükle
                                     </button>
                                 @endperm
                                 @perm('products.force_delete')
                                     <button type="button" class="kt-btn kt-btn-sm kt-btn-destructive" id="productsBulkForceDeleteBtn" disabled>
-                                        Kalici Sil
+                                        Kalıcı Sil
                                     </button>
                                 @endperm
                             @else
@@ -161,11 +161,11 @@
                                 <th class="w-[55px] dt-orderable-none">
                                     <input class="kt-checkbox kt-checkbox-sm" id="products_check_all" type="checkbox">
                                 </th>
-                                <th class="min-w-[360px]">Urun</th>
+                                <th class="min-w-[360px]">Ürün</th>
                                 <th class="min-w-[220px]">Ticari Durum</th>
                                 <th class="min-w-[220px]">Workflow</th>
                                 <th class="min-w-[220px]">Vitrin</th>
-                                <th class="min-w-[180px]">Son Guncelleme</th>
+                                <th class="min-w-[180px]">Son Güncelleme</th>
                                 <th class="w-[64px]"></th>
                                 <th class="w-[80px]"></th>
                             </tr>
@@ -223,7 +223,7 @@
                                                         SEO %{{ $seoScore }}
                                                     </span>
                                                     <span class="kt-badge kt-badge-sm kt-badge-light">
-                                                        {{ $readTime > 0 ? $readTime . ' dk okuma' : 'Kisa icerik' }}
+                                                        {{ $readTime > 0 ? $readTime . ' dk okuma' : 'Kısa içerik' }}
                                                     </span>
                                                 </div>
 
@@ -232,7 +232,7 @@
                                                 </div>
 
                                                 <div class="text-sm text-muted-foreground leading-6">
-                                                    {{ $product->excerptPreview(130) ?: 'Icerik ozeti bulunmuyor.' }}
+                                                    {{ $product->excerptPreview(130) ?: 'İçerik özeti bulunmuyor.' }}
                                                 </div>
 
                                                 <div class="flex flex-wrap items-center gap-1">
@@ -264,7 +264,7 @@
                                                     <span class="kt-badge kt-badge-sm kt-badge-light-success">Indirim: {{ number_format((float) $product->sale_price, 2, ',', '.') }}</span>
                                                 @endif
                                                 <span class="kt-badge kt-badge-sm {{ is_null($stock) ? 'kt-badge-light' : ($stock <= 0 ? 'kt-badge-light-danger' : ($stock <= 5 ? 'kt-badge-light-warning' : 'kt-badge-light-success')) }}">
-                                                    {{ is_null($stock) ? 'Stok belirtilmedi' : ($stock <= 0 ? 'Stok yok' : ($stock <= 5 ? 'Dusuk stok: ' . $stock : 'Stok: ' . $stock)) }}
+                                                    {{ is_null($stock) ? 'Stok belirtilmedi' : ($stock <= 0 ? 'Stok yok' : ($stock <= 5 ? 'Düşük stok: ' . $stock : 'Stok: ' . $stock)) }}
                                                 </span>
                                             </div>
                                             <div class="text-xs text-muted-foreground">
@@ -297,11 +297,11 @@
                                                     @disabled($isTrash)
                                                 >
                                                 <span class="kt-badge kt-badge-sm {{ $product->is_featured ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }} js-featured-badge">
-                                                    {{ $product->is_featured ? 'Anasayfada' : 'Kapali' }}
+                                                    {{ $product->is_featured ? 'Anasayfada' : 'Kapalı' }}
                                                 </span>
                                             </label>
                                             <div class="text-xs text-muted-foreground js-featured-at">
-                                                {{ $product->is_featured && $product->featured_at ? 'Secim: ' . $product->featured_at->format('d.m.Y H:i') : 'Secim yapilmamis' }}
+                                                {{ $product->is_featured && $product->featured_at ? 'Seçim: ' . $product->featured_at->format('d.m.Y H:i') : 'Seçim yapılmamış' }}
                                             </div>
                                         </div>
                                     </td>
@@ -317,7 +317,7 @@
                                         @if(!$isTrash)
                                             @perm('products.update')
                                                 <a class="kt-btn kt-btn-sm kt-btn-light" href="{{ route('admin.products.edit', $product) }}">
-                                                    Duzenle
+                                                    Düzenle
                                                 </a>
                                             @endperm
                                         @endif
@@ -333,7 +333,7 @@
                                                 @endperm
                                                 @perm('products.force_delete')
                                                     <button type="button" class="kt-btn kt-btn-sm kt-btn-danger" data-action="force-delete" data-url="{{ route('admin.products.forceDestroy', $product->id) }}">
-                                                        Kalici Sil
+                                                        Kalıcı Sil
                                                     </button>
                                                 @endperm
                                             @else
@@ -356,8 +356,8 @@
                             <td colspan="8" class="py-12">
                                 <div class="grid place-items-center gap-2 text-center text-muted-foreground">
                                     <i class="ki-outline ki-box text-4xl"></i>
-                                    <div class="font-semibold">{{ $isTrash ? 'Silinen urun yok' : 'Henuz urun yok' }}</div>
-                                    <div class="text-sm">{{ $isTrash ? 'Geri yuklenebilir urun bulunmuyor.' : 'Yeni urun ekleyerek bu listeyi doldurabilirsiniz.' }}</div>
+                                    <div class="font-semibold">{{ $isTrash ? 'Silinen ürün yok' : 'Henüz ürün yok' }}</div>
+                                    <div class="text-sm">{{ $isTrash ? 'Geri yüklenebilir ürün bulunmuyor.' : 'Yeni ürün ekleyerek bu listeyi doldurabilirsiniz.' }}</div>
                                 </div>
                             </td>
                         </tr>
@@ -368,8 +368,8 @@
                             <td colspan="8" class="py-12">
                                 <div class="grid place-items-center gap-2 text-center text-muted-foreground">
                                     <i class="ki-outline ki-search-list text-4xl"></i>
-                                    <div class="font-semibold">Sonuc bulunamadi</div>
-                                    <div class="text-sm">Arama veya filtreleri degistirip tekrar deneyin.</div>
+                                    <div class="font-semibold">Sonuç bulunamadı</div>
+                                    <div class="text-sm">Arama veya filtreleri değiştirip tekrar deneyin.</div>
                                 </div>
                             </td>
                         </tr>
@@ -377,7 +377,7 @@
 
                     <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
                         <div class="flex items-center gap-2 order-2 md:order-1">
-                            Goster
+                            Göster
                             <select class="kt-select w-16" id="productsPageSize" data-kt-select="true"></select>
                             / sayfa
                         </div>

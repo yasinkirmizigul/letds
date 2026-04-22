@@ -102,8 +102,8 @@ export default function init(ctx) {
 
         const ok = await showConfirmDialog({
             type: 'warning',
-            title: 'Kullanici silinsin mi?',
-            message: 'Kullanici kaydi cop kutusuna tasinacak.',
+            title: 'Kullanıcı silinsin mi?',
+            message: 'Kullanıcı kaydı çöp kutusuna taşınacak.',
             confirmButtonText: 'Sil',
         });
 

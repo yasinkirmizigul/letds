@@ -15,11 +15,11 @@
 
         <div class="flex flex-col gap-4 mb-6 lg:flex-row lg:items-end lg:justify-between">
             <div class="grid gap-2">
-                <span class="kt-badge kt-badge-sm kt-badge-light w-fit">Yeni Blog Yazisi</span>
+                <span class="kt-badge kt-badge-sm kt-badge-light w-fit">Yeni Blog Yazısı</span>
                 <div>
-                    <h1 class="text-xl font-semibold">Blog Yazisi Olustur</h1>
+                    <h1 class="text-xl font-semibold">Blog Yazısı Oluştur</h1>
                     <div class="text-sm text-muted-foreground">
-                        Icerik, SEO, kategori ve yayin akisini tek ekranda yonetin.
+                        İçerik, SEO, kategori ve yayın akışını tek ekranda yönetin.
                     </div>
                 </div>
             </div>
@@ -48,7 +48,7 @@
             ])
 
             <div class="flex items-center justify-end gap-3">
-                <a href="{{ route('admin.blog.index') }}" class="kt-btn kt-btn-light">Iptal</a>
+                <a href="{{ route('admin.blog.index') }}" class="kt-btn kt-btn-light">İptal</a>
                 <button type="submit" class="kt-btn kt-btn-primary">Kaydet</button>
             </div>
         </form>

@@ -23,10 +23,10 @@
         <div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
             <div>
                 <h1 class="text-xl font-semibold">
-                    {{ $isTrash ? 'Blog Cop Kutusu' : 'Blog Yonetimi' }}
+                    {{ $isTrash ? 'Blog Çöp Kutusu' : 'Blog Yönetimi' }}
                 </h1>
                 <div class="text-sm text-muted-foreground">
-                    {{ $isTrash ? 'Silinen yazilari geri yukleyebilir veya kalici olarak silebilirsiniz.' : 'Icerik, yayin akisi ve vitrin secimlerini tek ekrandan yonetin.' }}
+                    {{ $isTrash ? 'Silinen yazıları geri yükleyebilir veya kalıcı olarak silebilirsiniz.' : 'İçerik, yayın akışı ve vitrin seçimlerini tek ekrandan yönetin.' }}
                 </div>
             </div>
 
@@ -41,12 +41,12 @@
                     href="{{ route('admin.blog.trash') }}"
                     class="kt-btn kt-btn-sm {{ $isTrash ? 'kt-btn-primary' : 'kt-btn-light' }}"
                 >
-                    Cop Kutusu
+                    Çöp Kutusu
                 </a>
 
                 @perm('blog.create')
                     <a href="{{ route('admin.blog.create') }}" class="kt-btn kt-btn-sm kt-btn-primary">
-                        Yeni Yazi
+                        Yeni Yazı
                     </a>
                 @endperm
             </div>
@@ -54,11 +54,11 @@
 
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
             <div class="rounded-3xl app-stat-card p-5">
-                <div class="text-sm text-muted-foreground">Toplam Yazi</div>
+                <div class="text-sm text-muted-foreground">Toplam Yazı</div>
                 <div class="mt-2 text-3xl font-semibold text-foreground">{{ $stats['all'] ?? 0 }}</div>
             </div>
             <div class="rounded-3xl app-stat-card p-5">
-                <div class="text-sm text-muted-foreground">Yayinda</div>
+                <div class="text-sm text-muted-foreground">Yayında</div>
                 <div class="mt-2 text-3xl font-semibold text-success">{{ $stats['published'] ?? 0 }}</div>
             </div>
             <div class="rounded-3xl app-stat-card p-5">
@@ -70,7 +70,7 @@
                 <div class="mt-2 text-3xl font-semibold text-primary">{{ $stats['featured'] ?? 0 }}</div>
             </div>
             <div class="rounded-3xl app-stat-card p-5">
-                <div class="text-sm text-muted-foreground">Copte</div>
+                <div class="text-sm text-muted-foreground">Çöpte</div>
                 <div class="mt-2 text-3xl font-semibold text-danger">{{ $stats['trash'] ?? 0 }}</div>
             </div>
         </div>
@@ -78,9 +78,9 @@
         <div class="kt-card kt-card-grid min-w-full">
             <div class="kt-card-header py-5 flex-wrap gap-4">
                 <div>
-                    <h3 class="kt-card-title">{{ $isTrash ? 'Silinen Yazilar' : 'Yazi Listesi' }}</h3>
+                    <h3 class="kt-card-title">{{ $isTrash ? 'Silinen Yazilar' : 'Yazı Listesi' }}</h3>
                     <div class="text-sm text-muted-foreground">
-                        Durum, kategori, SEO yeterliligi ve son guncelleme bilgisini tek satirda gorebilirsiniz.
+                        Durum, kategori, SEO yeterliligi ve son güncelleme bilgisini tek satirda görebilirsiniz.
                     </div>
                 </div>
 
@@ -89,7 +89,7 @@
                         id="blogSearch"
                         type="text"
                         class="kt-input kt-input-sm w-full md:w-[260px]"
-                        placeholder="Baslik, slug, ozet ara..."
+                        placeholder="Başlık, slug, özet ara..."
                         value="{{ $q }}"
                     />
 
@@ -99,8 +99,8 @@
                         data-kt-select="true"
                         data-kt-select-placeholder="Durum"
                     >
-                        <option value="all" @selected($status === 'all')>Tum durumlar</option>
-                        <option value="published" @selected($status === 'published')>Yayinda</option>
+                        <option value="all" @selected($status === 'all')>Tüm durumlar</option>
+                        <option value="published" @selected($status === 'published')>Yayında</option>
                         <option value="draft" @selected($status === 'draft')>Taslak</option>
                         <option value="featured" @selected($status === 'featured')>Anasayfada</option>
                     </select>
@@ -113,7 +113,7 @@
                         data-kt-select-placeholder="Kategoriler"
                         data-kt-select-multiple="true"
                         data-kt-select-tags="false"
-                        data-kt-select-config='{"showSelectedCount":true,"enableSelectAll":true,"selectAllText":"Tumunu Sec","clearAllText":"Temizle"}'
+                        data-kt-select-config='{"showSelectedCount":true,"enableSelectAll":true,"selectAllText":"Tümünü Seç","clearAllText":"Temizle"}'
                     >
                         @foreach(($categoryOptions ?? []) as $option)
                             <option value="{{ $option['id'] }}" @selected(in_array($option['id'], $selectedCategoryIds))>
@@ -132,19 +132,19 @@
                 <div id="blogBulkBar" class="hidden kt-card mb-4 border border-border">
                     <div class="kt-card-content p-3 flex items-center justify-between gap-3">
                         <div class="text-sm text-muted-foreground">
-                            Secili: <b id="blogSelectedCount">0</b>
+                            Seçili: <b id="blogSelectedCount">0</b>
                         </div>
 
                         <div class="flex items-center gap-2">
                             @if($isTrash)
                                 @perm('blog.restore')
                                     <button type="button" class="kt-btn kt-btn-sm kt-btn-success" id="blogBulkRestoreBtn" disabled>
-                                        Geri Yukle
+                                        Geri Yükle
                                     </button>
                                 @endperm
                                 @perm('blog.force_delete')
                                     <button type="button" class="kt-btn kt-btn-sm kt-btn-destructive" id="blogBulkForceDeleteBtn" disabled>
-                                        Kalici Sil
+                                        Kalıcı Sil
                                     </button>
                                 @endperm
                             @else
@@ -166,11 +166,11 @@
                                 <th class="w-[55px] dt-orderable-none">
                                     <input class="kt-checkbox kt-checkbox-sm" id="blog_check_all" type="checkbox">
                                 </th>
-                                <th class="min-w-[360px]">Yazi</th>
+                                <th class="min-w-[360px]">Yazı</th>
                                 <th class="min-w-[280px]">URL ve SEO</th>
                                 <th class="min-w-[230px]">Durum</th>
                                 <th class="min-w-[220px]">Anasayfa</th>
-                                <th class="min-w-[180px]">Son Guncelleme</th>
+                                <th class="min-w-[180px]">Son Güncelleme</th>
                                 <th class="w-[64px]"></th>
                                 <th class="w-[72px]"></th>
                             </tr>
@@ -226,12 +226,12 @@
                                                         SEO %{{ $seoScore }}
                                                     </span>
                                                     <span class="kt-badge kt-badge-sm kt-badge-light">
-                                                        {{ $readTime > 0 ? $readTime . ' dk okuma' : 'Kisa yazi' }}
+                                                        {{ $readTime > 0 ? $readTime . ' dk okuma' : 'Kisa yazı' }}
                                                     </span>
                                                 </div>
 
                                                 <div class="text-sm text-muted-foreground leading-6">
-                                                    {{ $post->excerptPreview(130) ?: 'Ozet bulunmuyor.' }}
+                                                    {{ $post->excerptPreview(130) ?: 'Özet bulunmuyor.' }}
                                                 </div>
 
                                                 <div class="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
@@ -253,7 +253,7 @@
                                                 /blog/{{ $post->slug }}
                                             </div>
                                             <div class="text-sm text-muted-foreground">
-                                                {{ $post->meta_title ?: 'Meta baslik girilmemis.' }}
+                                                {{ $post->meta_title ?: 'Meta başlık girilmemis.' }}
                                             </div>
                                             <div class="text-xs text-muted-foreground leading-5">
                                                 {{ \Illuminate\Support\Str::limit($post->meta_description ?: $post->excerptPreview(120), 120) }}
@@ -266,13 +266,13 @@
                                             <div class="grid gap-2">
                                                 <div class="js-badge">
                                                     @if($post->is_published)
-                                                        <span class="kt-badge kt-badge-sm kt-badge-success">Yayinda</span>
+                                                        <span class="kt-badge kt-badge-sm kt-badge-success">Yayında</span>
                                                     @else
                                                         <span class="kt-badge kt-badge-sm kt-badge-light">Taslak</span>
                                                     @endif
                                                 </div>
                                                 <div class="text-xs text-muted-foreground js-published-at">
-                                                    {{ $post->published_at ? 'Yayin: ' . $post->published_at->format('d.m.Y H:i') : 'Yayin tarihi yok' }}
+                                                    {{ $post->published_at ? 'Yayın: ' . $post->published_at->format('d.m.Y H:i') : 'Yayın tarihi yok' }}
                                                 </div>
                                             </div>
 
@@ -296,11 +296,11 @@
                                                     @if($post->is_featured)
                                                         <span class="kt-badge kt-badge-sm kt-badge-light-success">Anasayfada</span>
                                                     @else
-                                                        <span class="kt-badge kt-badge-sm kt-badge-light text-muted-foreground">Kapali</span>
+                                                        <span class="kt-badge kt-badge-sm kt-badge-light text-muted-foreground">Kapalı</span>
                                                     @endif
                                                 </div>
                                                 <div class="text-xs text-muted-foreground js-featured-at">
-                                                    {{ $post->featured_at ? 'Secim: ' . $post->featured_at->format('d.m.Y H:i') : 'Secili degil' }}
+                                                    {{ $post->featured_at ? 'Seçim: ' . $post->featured_at->format('d.m.Y H:i') : 'Seçili degil' }}
                                                 </div>
                                             </div>
 
@@ -320,7 +320,7 @@
                                     <td data-order="{{ $post->updated_at?->timestamp ?? 0 }}">
                                         <div class="grid gap-1 text-sm">
                                             <span class="font-medium text-foreground">{{ $post->updated_at?->format('d.m.Y H:i') ?: '-' }}</span>
-                                            <span class="text-muted-foreground">{{ $post->editor?->name ?: 'Editor bilgisi yok' }}</span>
+                                            <span class="text-muted-foreground">{{ $post->editör?->name ?: 'Editör bilgisi yok' }}</span>
                                         </div>
                                     </td>
 
@@ -329,7 +329,7 @@
                                             <a
                                                 href="{{ route('admin.blog.edit', $post) }}"
                                                 class="kt-btn kt-btn-sm kt-btn-icon kt-btn-warning"
-                                                title="Duzenle"
+                                                title="Düzenle"
                                             >
                                                 <i class="ki-filled ki-notepad-edit"></i>
                                             </a>
@@ -385,8 +385,8 @@
                             <td colspan="8" class="py-12">
                                 <div class="flex flex-col items-center text-center gap-2">
                                     <i class="ki-outline ki-document text-3xl text-muted-foreground"></i>
-                                    <div class="font-semibold">Henuz blog yazisi bulunmuyor.</div>
-                                    <div class="text-sm text-muted-foreground">Yeni bir yazi olusturarak baslayabilirsiniz.</div>
+                                    <div class="font-semibold">Henüz blog yazısı bulunmuyor.</div>
+                                    <div class="text-sm text-muted-foreground">Yeni bir yazı oluşturarak baslayabilirsiniz.</div>
                                 </div>
                             </td>
                         </tr>
@@ -397,8 +397,8 @@
                             <td colspan="8" class="py-12">
                                 <div class="flex flex-col items-center text-center gap-2">
                                     <i class="ki-outline ki-magnifier text-3xl text-muted-foreground"></i>
-                                    <div class="font-semibold">Filtreye uygun yazi bulunamadi.</div>
-                                    <div class="text-sm text-muted-foreground">Arama ya da filtre secimlerini degistirip tekrar deneyin.</div>
+                                    <div class="font-semibold">Filtreye uygun yazı bulunamadı.</div>
+                                    <div class="text-sm text-muted-foreground">Arama ya da filtre seçimlerini değiştirip tekrar deneyin.</div>
                                 </div>
                             </td>
                         </tr>
@@ -406,7 +406,7 @@
 
                     <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
                         <div class="flex items-center gap-2 order-2 md:order-1">
-                            Goster
+                            Göster
                             <select class="kt-select w-16" id="blogPageSize" data-kt-select="true"></select>
                             / sayfa
                         </div>

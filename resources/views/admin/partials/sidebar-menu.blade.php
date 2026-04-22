@@ -394,7 +394,7 @@
 					<div class="kt-menu-item kt-menu-item-accordion" data-kt-menu-item-toggle="accordion" data-kt-menu-item-trigger="click">
 						<div class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-								Security
+								Güvenlik
 							</span>
 							<span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
 								<span class="inline-flex kt-menu-item-show:hidden">
@@ -418,7 +418,7 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Security Overview
+										Güvenlik Özeti
 									</span>
 								</a>
 							</div>
@@ -460,7 +460,7 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Security Log
+										Güvenlik Günlüğü
 									</span>
 								</a>
 							</div>
@@ -1031,14 +1031,14 @@
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Search Results - Grid
+								Arama Sonuçları - Izgara
 							</span>
 						</a>
 					</div>
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Search Results - List
+								Arama Sonuçları - Liste
 							</span>
 						</a>
 					</div>
@@ -1097,7 +1097,7 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Payment Method
+										Ödeme Yöntemi
 									</span>
 								</a>
 							</div>

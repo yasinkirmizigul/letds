@@ -186,6 +186,7 @@ class AppointmentCalendarController extends Controller
             'new_provider_id' => ['nullable', 'integer', 'exists:users,id'],
             'new_start_at' => ['required', 'date'],
             'blocks' => ['required', 'integer', 'min:1', 'max:6'],
+            'notes_internal' => ['nullable', 'string'],
         ]);
 
         $targetProviderId = isset($data['new_provider_id']) && $data['new_provider_id'] !== null
@@ -277,6 +278,7 @@ class AppointmentCalendarController extends Controller
                     'id' => $item->id,
                     'parent_id' => $item->parent_id,
                     'status' => $item->status,
+                    'status_label' => $this->appointmentEventColor($item->status)['label'] ?? $item->status,
                     'start_at' => $item->start_at?->format('d.m.Y H:i'),
                     'end_at' => $item->end_at?->format('d.m.Y H:i'),
                     'provider_name' => $item->provider?->name,
@@ -552,8 +554,8 @@ class AppointmentCalendarController extends Controller
 
         throw ValidationException::withMessages([
             'new_provider_id' => $actor->isSuperAdmin()
-                ? 'Secilen kisiye aktarim yapilamiyor.'
-                : 'Randevu sadece kendiniz disindaki ve super admin olmayan birine aktarilabilir.',
+                ? 'Seçilen kişiye aktarım yapilamiyor.'
+                : 'Randevu sadece kendiniz dışındaki ve süper admin olmayan birine aktarılabilir.',
         ]);
     }
 
@@ -658,7 +660,7 @@ class AppointmentCalendarController extends Controller
         $this->assertCanAccessAppointment($actor, $appointment);
 
         $appointment->load([
-            'member:id,name,surname',
+            'member:id,name,surname,email,phone',
             'provider:id,name,title',
             'parent:id,start_at,end_at,status',
         ]);
@@ -674,6 +676,8 @@ class AppointmentCalendarController extends Controller
             'provider_title' => $appointment->provider?->title,
             'member_id' => $appointment->member_id,
             'member_name' => $memberName,
+            'member_email' => $appointment->member?->email,
+            'member_phone' => $appointment->member?->phone,
             'start_at' => $appointment->start_at?->toIso8601String(),
             'end_at' => $appointment->end_at?->toIso8601String(),
             'blocks' => $appointment->blocks,

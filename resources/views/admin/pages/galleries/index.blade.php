@@ -20,19 +20,19 @@
                 </div>
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Cop kutusu</div>
+                        <div class="text-sm text-muted-foreground">Çöp kutusu</div>
                         <div class="mt-2 text-2xl font-semibold text-warning">{{ number_format((int) ($stats['trash'] ?? 0)) }}</div>
                     </div>
                 </div>
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Galeri ogesi</div>
+                        <div class="text-sm text-muted-foreground">Galeri ögesi</div>
                         <div class="mt-2 text-2xl font-semibold">{{ number_format((int) ($stats['items'] ?? 0)) }}</div>
                     </div>
                 </div>
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Icerik bagi</div>
+                        <div class="text-sm text-muted-foreground">İçerik bağı</div>
                         <div class="mt-2 text-2xl font-semibold">{{ number_format((int) ($stats['attached'] ?? 0)) }}</div>
                     </div>
                 </div>
@@ -40,9 +40,9 @@
 
             <div class="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                    <h1 class="text-xl font-semibold">{{ $isTrash ? 'Galeriler - Cop Kutusu' : 'Galeriler' }}</h1>
+                    <h1 class="text-xl font-semibold">{{ $isTrash ? 'Galeriler - Çöp Kutusu' : 'Galeriler' }}</h1>
                     <div class="text-sm text-muted-foreground">
-                        Galeri olustur, duzenle ve iceriklere bagli kullanim yogunlugunu takip et.
+                        Galeri oluştur, düzenle ve içeriklere bağlı kullanım yoğunluğunu takip et.
                     </div>
                 </div>
 
@@ -86,7 +86,7 @@
 
                 <div class="kt-card-content p-5">
                     <div id="galleriesEmpty" class="hidden text-sm text-muted-foreground">
-                        Kayit yok.
+                        Kayıt yok.
                     </div>
 
                     <div id="galleriesList" class="grid gap-3">

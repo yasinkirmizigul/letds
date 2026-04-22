@@ -147,7 +147,7 @@ export function initSlugTools(root, signal) {
         const slug = String(slugInput.value || '').trim();
 
         if (!slug) {
-            setSlugHint(hintEl, 'muted', 'Slug girildiğinde uygunluk kontrolü yapılır.');
+            setSlugHint(hintEl, 'muted', 'Slug girildiğinde uygunlük kontrolü yapılır.');
             return;
         }
 
@@ -235,11 +235,11 @@ export function initSeoPanel(root, signal, getContent) {
         const resolvedPreviewTitle =
             trimText(metaTitleInput?.value)
             || trimText(titleInput?.value)
-            || 'Meta baslik burada gorunecek';
+            || 'Meta başlık burada görünecek';
         const resolvedPreviewDescription =
             trimText(metaDescriptionInput?.value)
             || limitText(excerptInput?.value, 155)
-            || 'Meta aciklama veya ozet burada gorunecek.';
+            || 'Meta açıklama veya özet burada görünecek.';
 
         if (titleCount) titleCount.textContent = `${titleLength}/255`;
         if (excerptCount) excerptCount.textContent = `${excerptLength} karakter`;
@@ -250,7 +250,7 @@ export function initSeoPanel(root, signal, getContent) {
 
         if (previewTitle) previewTitle.textContent = resolvedPreviewTitle;
         if (previewDescription) previewDescription.textContent = resolvedPreviewDescription;
-        if (previewSlug) previewSlug.textContent = currentSlug || 'ornek-blog-yazisi';
+        if (previewSlug) previewSlug.textContent = currentSlug || 'ornek-blog-yazısı';
 
         syncRecommendedCount(metaTitleCount, metaTitleLength, 30, 60);
         syncRecommendedCount(metaDescriptionCount, metaDescriptionLength, 100, 160);
@@ -311,17 +311,17 @@ function csrfToken() {
     return meta ? meta.getAttribute('content') : '';
 }
 
-function loadScriptOnce(src) {
+function loadScriptÖnce(src) {
     if (!src) return Promise.reject(new Error('TinyMCE kaynagi eksik.'));
-    if (document.querySelector(`script[data-once="${src}"]`)) return Promise.resolve();
+    if (document.querySelector(`script[data-önce="${src}"]`)) return Promise.resolve();
 
     return new Promise((resolve, reject) => {
         const script = document.createElement('script');
         script.src = src;
         script.async = true;
-        script.dataset.once = src;
+        script.dataset.önce = src;
         script.onload = () => resolve();
-        script.onerror = () => reject(new Error(`Yuklenemedi: ${src}`));
+        script.onerror = () => reject(new Error(`Yüklenemedi: ${src}`));
         document.head.appendChild(script);
     });
 }
@@ -373,14 +373,14 @@ function initTiny({ selector, uploadUrl, baseUrl, langUrl, onContentChange }) {
         automatic_uploads: true,
         paste_data_images: true,
         autoresize_bottom_margin: 24,
-        setup: (editor) => {
+        setup: (editör) => {
             const sync = () => {
-                editor.save();
+                editör.save();
                 onContentChange?.();
             };
 
-            editor.on('init', sync);
-            editor.on('change input keyup undo redo setcontent', sync);
+            editör.on('init', sync);
+            editör.on('change input keyup undo redo setcontent', sync);
         },
         images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
@@ -438,7 +438,7 @@ export async function initTinyEditor(ctx, onContentChange) {
         return;
     }
 
-    await loadScriptOnce(tinymceSrc);
+    await loadScriptÖnce(tinymceSrc);
 
     const boot = () => initTiny({
         selector: '#content_editor',

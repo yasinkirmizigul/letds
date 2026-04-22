@@ -16,9 +16,9 @@
                 <div class="kt-card-content p-6 lg:p-8">
                     <div class="grid gap-6 xl:grid-cols-[1.25fr,.75fr] xl:items-start">
                         <div class="relative z-[1]">
-                            <div class="dashboard-kicker">Yonetim merkezi</div>
+                            <div class="dashboard-kicker">Yönetim merkezi</div>
                             <h1 class="mt-3 text-2xl font-semibold tracking-tight text-foreground lg:text-3xl">
-                                {{ $greeting }}, operasyon nabzi burada.
+                                {{ $greeting }}, operasyon nabzı burada.
                             </h1>
                             <p class="mt-3 max-w-[68ch] text-sm leading-6 text-muted-foreground lg:text-base">
                                 {{ $heroSummary }}
@@ -31,11 +31,11 @@
                                 </span>
                                 <span class="dashboard-chip">
                                     <i class="ki-filled ki-notification-status text-[13px]"></i>
-                                    {{ $focusTotal }} odak isi
+                                    {{ $focusTotal }} odak işi
                                 </span>
                                 <span class="dashboard-chip">
                                     <i class="ki-filled ki-element-11 text-[13px]"></i>
-                                    {{ count($moduleCards) }} hizli modul
+                                    {{ count($moduleCards) }} hızlı modül
                                 </span>
                             </div>
 
@@ -55,9 +55,9 @@
                             <div class="flex items-center justify-between gap-3">
                                 <div>
                                     <div class="text-sm font-semibold text-foreground">Odak listesi</div>
-                                    <div class="text-xs text-muted-foreground">En hizli aksiyon alinabilecek basliklar.</div>
+                                    <div class="text-xs text-muted-foreground">En hızlı aksiyon alınabilecek başlıklar.</div>
                                 </div>
-                                <span class="kt-badge kt-badge-light-primary">{{ count($focusItems) }} kayit</span>
+                                <span class="kt-badge kt-badge-light-primary">{{ count($focusItems) }} kayıt</span>
                             </div>
 
                             @if(count($focusItems))
@@ -81,7 +81,7 @@
                                 </div>
                             @else
                                 <div class="mt-4 rounded-2xl border border-dashed border-border bg-background/75 p-4 text-sm text-muted-foreground">
-                                    Su an icin acil takip bekleyen bir kayit gorunmuyor. Modullere hizli gecis yapip gunluk akisi buradan yonetebilirsin.
+                                    Şu an için acil takip bekleyen bir kayıt görünmüyor. Modüllere hızlı geçiş yapıp günlük akışı buradan yönetebilirsin.
                                 </div>
                             @endif
                         </div>
@@ -111,9 +111,9 @@
             <section class="kt-card">
                 <div class="kt-card-header py-5 flex-wrap gap-4">
                     <div>
-                        <h3 class="kt-card-title">Hizli erisim</h3>
+                        <h3 class="kt-card-title">Hızlı erişim</h3>
                         <div class="text-sm text-muted-foreground">
-                            En cok kullandigin yonetim sayfalarina dogrudan gec.
+                            En çok kullandığın yönetim sayfalarına doğrudan geç.
                         </div>
                     </div>
                 </div>
@@ -155,9 +155,9 @@
                 <section class="kt-card">
                     <div class="kt-card-header py-5 flex-wrap gap-4">
                         <div>
-                            <h3 class="kt-card-title">Son 6 ay uretim ve talep hizi</h3>
+                            <h3 class="kt-card-title">Son 6 ay uretim ve talep hızi</h3>
                             <div class="text-sm text-muted-foreground">
-                                Icerik, medya ve mesaj akisinin aylik yogunlugunu birlikte izle.
+                                İçerik, medya ve mesaj akışının aylık yoğunluğunu birlikte izle.
                             </div>
                         </div>
                     </div>
@@ -170,9 +170,9 @@
                     <section class="kt-card">
                         <div class="kt-card-header py-5 flex-wrap gap-4">
                             <div>
-                                <h3 class="kt-card-title">Takip dagilimi</h3>
+                            <h3 class="kt-card-title">Takip dağılımı</h3>
                                 <div class="text-sm text-muted-foreground">
-                                    Anlik operasyon yogunlugunu kategoriler halinde gor.
+                                    Anlık operasyon yoğunluğunu kategoriler halinde gör.
                                 </div>
                             </div>
                         </div>
@@ -185,9 +185,9 @@
                         <section class="kt-card">
                             <div class="kt-card-header py-5 flex-wrap gap-4">
                                 <div>
-                                    <h3 class="kt-card-title">7 gunluk randevu akisi</h3>
+                                    <h3 class="kt-card-title">7 günlük randevu akışı</h3>
                                     <div class="text-sm text-muted-foreground">
-                                        Takvimde onumuzdeki bir haftayi hizli gor.
+                                        Takvimde önümüzdeki bir haftayı hızlı gör.
                                     </div>
                                 </div>
                             </div>
@@ -204,7 +204,7 @@
                     <div class="kt-card-header py-5 flex-wrap gap-4">
                         <div>
                             <h3 class="kt-card-title">Son mesajlar</h3>
-                            <div class="text-sm text-muted-foreground">Yeni gelen talepleri hizli ac.</div>
+                            <div class="text-sm text-muted-foreground">Yeni gelen talepleri hızlı aç.</div>
                         </div>
                     </div>
                     <div class="kt-card-content p-5">
@@ -228,7 +228,7 @@
                             </div>
                         @else
                             <div class="dashboard-empty-state">
-                                Son mesaj kutusu su an bos gorunuyor.
+                                Son mesaj kutusu şu an boş görünüyor.
                             </div>
                         @endif
                     </div>
@@ -237,9 +237,9 @@
                 <section class="kt-card">
                     <div class="kt-card-header py-5 flex-wrap gap-4">
                         <div>
-                            <h3 class="kt-card-title">{{ $canAppointments ? 'Yaklasan randevular' : 'Operasyon notu' }}</h3>
+                            <h3 class="kt-card-title">{{ $canAppointments ? 'Yaklaşan randevular' : 'Operasyon notu' }}</h3>
                             <div class="text-sm text-muted-foreground">
-                                {{ $canAppointments ? 'Takvimde yaklasan gorusmeleri kacirma.' : 'Randevu modulu icin erisim yetkisi gereklidir.' }}
+                                {{ $canAppointments ? 'Takvimde yaklaşan görüşmeleri kaçırma.' : 'Randevu modülü için erişim yetkisi gereklidir.' }}
                             </div>
                         </div>
                     </div>
@@ -263,11 +263,11 @@
                             </div>
                         @elseif($canAppointments)
                             <div class="dashboard-empty-state">
-                                Onumuzdeki gunler icin planlanmis randevu gorunmuyor.
+                                Önümüzdeki günler için planlanmış randevu görünmüyor.
                             </div>
                         @else
                             <div class="dashboard-empty-state">
-                                Bu bolum sadece randevu goruntuleme yetkisi olan kullanicilar icin aktif olur.
+                                Bu bölüm sadece randevu görüntüleme yetkisi olan kullanıcılar için aktif olur.
                             </div>
                         @endif
                     </div>
@@ -276,8 +276,8 @@
                 <section class="kt-card">
                     <div class="kt-card-header py-5 flex-wrap gap-4">
                         <div>
-                            <h3 class="kt-card-title">Son guncellenen icerikler</h3>
-                            <div class="text-sm text-muted-foreground">Yarim kalan isi duzenleme ekranindan devam ettir.</div>
+                            <h3 class="kt-card-title">Son güncellenen içerikler</h3>
+                            <div class="text-sm text-muted-foreground">Yarım kalan işi düzenleme ekranından devam ettir.</div>
                         </div>
                     </div>
                     <div class="kt-card-content p-5">
@@ -299,7 +299,7 @@
                             </div>
                         @else
                             <div class="dashboard-empty-state">
-                                Goruntulenebilecek yeni bir icerik kaydi bulunmadi.
+                                Görüntülenebilecek yeni bir içerik kaydı bulunmadı.
                             </div>
                         @endif
                     </div>
@@ -310,13 +310,13 @@
                 <section class="kt-card">
                     <div class="kt-card-header py-5 flex-wrap gap-4">
                         <div>
-                            <h3 class="kt-card-title">Son sistem uyarilari</h3>
+                            <h3 class="kt-card-title">Son sistem uyarıları</h3>
                             <div class="text-sm text-muted-foreground">
-                                4xx ve 5xx kayitlarini hizli inceleyip ilgili sayfaya gec.
+                                4xx ve 5xx kayıtlarını hızlı inceleyip ilgili sayfaya geç.
                             </div>
                         </div>
                         <a href="{{ route('admin.audit-logs.index') }}" class="kt-btn kt-btn-sm kt-btn-light">
-                            Tum loglar
+                            Tüm loglar
                         </a>
                     </div>
                     <div class="kt-card-content p-0">
@@ -326,7 +326,7 @@
                                     <thead>
                                     <tr>
                                         <th class="min-w-[120px]">Status</th>
-                                        <th class="min-w-[120px]">Method</th>
+                                        <th class="min-w-[120px]">Yöntem</th>
                                         <th class="min-w-[320px]">Route / URI</th>
                                         <th class="min-w-[150px]">Zaman</th>
                                         <th class="w-[90px] text-end">Detay</th>
@@ -346,7 +346,7 @@
                                             <td class="font-medium text-foreground">{{ $issue['route'] }}</td>
                                             <td class="text-muted-foreground">{{ $issue['time'] }}</td>
                                             <td class="text-end">
-                                                <a href="{{ $issue['url'] }}" class="kt-btn kt-btn-sm kt-btn-light-primary">Ac</a>
+                                                <a href="{{ $issue['url'] }}" class="kt-btn kt-btn-sm kt-btn-light-primary">Aç</a>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -356,7 +356,7 @@
                         @else
                             <div class="p-5">
                                 <div class="dashboard-empty-state">
-                                    Son sistem akisi icinde kritik bir hata kaydi gorunmuyor.
+                                    Son sistem akışı içinde kritik bir hata kaydı görünmüyor.
                                 </div>
                             </div>
                         @endif

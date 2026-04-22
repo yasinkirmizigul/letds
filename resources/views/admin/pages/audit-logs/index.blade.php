@@ -32,20 +32,20 @@
             <div class="flex items-center justify-between flex-wrap gap-3">
                 <div>
                     <h1 class="text-xl font-semibold">Audit Log</h1>
-                    <div class="text-sm text-muted-foreground">Admin akislarini, hatalari ve sistem kayitlarini tek ekrandan incele.</div>
+                    <div class="text-sm text-muted-foreground">Admin akışlarını, hataları ve sistem kayıtlarini tek ekrandan incele.</div>
                 </div>
             </div>
 
             <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Toplam kayit</div>
+                        <div class="text-sm text-muted-foreground">Toplam kayıt</div>
                         <div class="mt-2 text-2xl font-semibold">{{ number_format((int) ($stats['total'] ?? 0)) }}</div>
                     </div>
                 </div>
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Kullanici istegi</div>
+                        <div class="text-sm text-muted-foreground">Kullanıcı istegi</div>
                         <div class="mt-2 text-2xl font-semibold">{{ number_format((int) ($stats['user'] ?? 0)) }}</div>
                     </div>
                 </div>
@@ -77,16 +77,16 @@
                             class="kt-input w-full"
                             name="q"
                             value="{{ $filters['q'] ?? '' }}"
-                            placeholder="Route, uri, kullanici veya IP ara..." />
+                            placeholder="Route, uri, kullanıcı veya IP ara..." />
 
                         <div class="flex items-center gap-2 flex-wrap">
                             <a class="kt-btn kt-btn-sm {{ $mode === 'all' ? 'kt-btn-primary' : 'kt-btn-light' }}"
                                href="{{ request()->fullUrlWithQuery(['mode' => 'all', 'page' => 1]) }}">
-                                Tumu
+                                Tümu
                             </a>
                             <a class="kt-btn kt-btn-sm {{ $mode === 'user' ? 'kt-btn-primary' : 'kt-btn-light' }}"
                                href="{{ request()->fullUrlWithQuery(['mode' => 'user', 'page' => 1]) }}">
-                                Kullanici
+                                Kullanıcı
                             </a>
                             <a class="kt-btn kt-btn-sm {{ $mode === 'system' ? 'kt-btn-primary' : 'kt-btn-light' }}"
                                href="{{ request()->fullUrlWithQuery(['mode' => 'system', 'page' => 1]) }}">
@@ -94,15 +94,15 @@
                             </a>
                         </div>
 
-                        <select class="kt-select w-full" name="method" data-kt-select="true" data-kt-select-placeholder="Method">
-                            <option value="">Method</option>
+                        <select class="kt-select w-full" name="method" data-kt-select="true" data-kt-select-placeholder="Yöntem">
+                            <option value="">Yöntem</option>
                             @foreach(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'CLI'] as $item)
                                 <option value="{{ $item }}" @selected(($filters['method'] ?? '') === $item)>{{ $item }}</option>
                             @endforeach
                         </select>
 
-                        <select class="kt-select w-full" name="action" data-kt-select="true" data-kt-select-placeholder="Action">
-                            <option value="">Action</option>
+                        <select class="kt-select w-full" name="action" data-kt-select="true" data-kt-select-placeholder="İşlem">
+                            <option value="">İşlem</option>
                             @foreach($actionOptions as $item)
                                 <option value="{{ $item }}" @selected(($filters['action'] ?? '') === $item)>{{ $item }}</option>
                             @endforeach
@@ -138,14 +138,14 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Zaman</th>
-                                <th>Kullanici</th>
-                                <th>Method</th>
+                                <th>Kullanıcı</th>
+                                <th>Yöntem</th>
                                 <th>Status</th>
-                                <th>Action</th>
+                                <th>İşlem</th>
                                 <th>Route</th>
                                 <th>URI</th>
                                 <th>IP</th>
-                                <th>Sure</th>
+                                <th>Süre</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -201,7 +201,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="10" class="text-center text-muted-foreground p-6">Kayit yok.</td>
+                                    <td colspan="10" class="text-center text-muted-foreground p-6">Kayıt yok.</td>
                                 </tr>
                             @endforelse
                             </tbody>

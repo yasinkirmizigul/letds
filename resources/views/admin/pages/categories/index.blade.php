@@ -24,31 +24,31 @@
                 </div>
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Kok kategori</div>
+                        <div class="text-sm text-muted-foreground">Kök kategori</div>
                         <div class="mt-2 text-2xl font-semibold">{{ number_format((int) ($stats['roots'] ?? 0)) }}</div>
                     </div>
                 </div>
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Blog bagi</div>
+                        <div class="text-sm text-muted-foreground">Blog bağı</div>
                         <div class="mt-2 text-2xl font-semibold">{{ number_format((int) ($stats['blog_links'] ?? 0)) }}</div>
                     </div>
                 </div>
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Proje bagi</div>
+                        <div class="text-sm text-muted-foreground">Proje bağı</div>
                         <div class="mt-2 text-2xl font-semibold">{{ number_format((int) ($stats['project_links'] ?? 0)) }}</div>
                     </div>
                 </div>
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Urun bagi</div>
+                        <div class="text-sm text-muted-foreground">Ürün bağı</div>
                         <div class="mt-2 text-2xl font-semibold">{{ number_format((int) ($stats['product_links'] ?? 0)) }}</div>
                     </div>
                 </div>
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Cop kutusu</div>
+                        <div class="text-sm text-muted-foreground">Çöp kutusu</div>
                         <div class="mt-2 text-2xl font-semibold text-warning">{{ number_format((int) ($stats['trash'] ?? 0)) }}</div>
                     </div>
                 </div>
@@ -59,7 +59,7 @@
                 <div class="kt-card-header py-5 flex-wrap gap-4">
                     <div class="flex flex-col">
                         <h3 class="kt-card-title">{{ $pageTitle ?? 'Kategoriler' }}</h3>
-                        <div class="text-sm text-muted-foreground">Blog, proje ve urun akislarinda kullanilan ortak kategori yapisi.</div>
+                        <div class="text-sm text-muted-foreground">Blog, proje ve ürün akışlarında kullanılan ortak kategori yapısı.</div>
                     </div>
 
                     <div class="flex items-center gap-2 flex-wrap">
@@ -67,7 +67,7 @@
                             id="categoriesSearch"
                             type="text"
                             class="kt-input kt-input-sm w-[240px]"
-                            placeholder="Kategori adi veya slug ara..." />
+                            placeholder="Kategori adı veya slug ara..." />
 
                         <a href="{{ route('admin.categories.index') }}"
                            class="kt-btn kt-btn-sm {{ $isTrash ? 'kt-btn-light' : 'kt-btn-primary' }}">
@@ -99,10 +99,10 @@
                                 <div class="flex items-center gap-3">
                                     <label class="flex items-center gap-2 text-sm">
                                         <input type="checkbox" class="kt-checkbox kt-checkbox-sm" id="categories_check_all">
-                                        <span>Tumunu sec</span>
+                                        <span>Tümünü seç</span>
                                     </label>
                                     <span class="text-sm text-muted-foreground">
-                                        Secili: <b id="categoriesSelectedCount">0</b>
+                                        Seçili: <b id="categoriesSelectedCount">0</b>
                                     </span>
                                 </div>
 
@@ -110,19 +110,19 @@
                                     @if($isTrash)
                                         @perm('categories.restore')
                                             <button type="button" class="kt-btn kt-btn-sm kt-btn-success" id="categoriesBulkRestoreBtn" disabled>
-                                                <i class="ki-outline ki-arrow-circle-left"></i> Geri Yukle
+                                                <i class="ki-outline ki-arrow-circle-left"></i> Geri Yükle
                                             </button>
                                         @endperm
 
                                         @perm('categories.force_delete')
                                             <button type="button" class="kt-btn kt-btn-sm kt-btn-destructive" id="categoriesBulkForceDeleteBtn" disabled>
-                                                <i class="ki-outline ki-trash"></i> Kalici Sil
+                                                <i class="ki-outline ki-trash"></i> Kalıcı Sil
                                             </button>
                                         @endperm
                                     @else
                                         @perm('categories.delete')
                                             <button type="button" class="kt-btn kt-btn-sm kt-btn-destructive" id="categoriesBulkDeleteBtn" disabled>
-                                                <i class="ki-outline ki-trash"></i> Secilenleri Sil
+                                                <i class="ki-outline ki-trash"></i> Seçilenleri Sil
                                             </button>
                                         @endperm
                                     @endif
@@ -141,8 +141,8 @@
                                     </th>
                                     <th class="min-w-[260px]">Ad</th>
                                     <th class="min-w-[220px]">Slug</th>
-                                    <th class="min-w-[220px]">Ust Kategori</th>
-                                    <th class="min-w-[220px]">Baglantilar</th>
+                                    <th class="min-w-[220px]">Üst Kategori</th>
+                                    <th class="min-w-[220px]">Bağlantılar</th>
                                     <th class="w-[220px]"></th>
                                 </tr>
                                 </thead>
@@ -155,8 +155,8 @@
                                 <td colspan="6" class="py-12">
                                     <div class="flex flex-col items-center text-center gap-2">
                                         <i class="ki-outline ki-folder text-3xl text-muted-foreground"></i>
-                                        <div class="font-semibold">Henuz kategori yok</div>
-                                        <div class="text-sm text-muted-foreground">Yeni bir kategori olustur.</div>
+                                        <div class="font-semibold">Henüz kategori yok</div>
+                                        <div class="text-sm text-muted-foreground">Yeni bir kategori oluştur.</div>
                                     </div>
                                 </td>
                             </tr>
@@ -167,8 +167,8 @@
                                 <td colspan="6" class="py-12">
                                     <div class="flex flex-col items-center text-center gap-2">
                                         <i class="ki-outline ki-magnifier text-3xl text-muted-foreground"></i>
-                                        <div class="font-semibold">Sonuc bulunamadi</div>
-                                        <div class="text-sm text-muted-foreground">Aramani degistirip tekrar dene.</div>
+                                        <div class="font-semibold">Sonuç bulunamadı</div>
+                                        <div class="text-sm text-muted-foreground">Aramanı değiştirip tekrar dene.</div>
                                     </div>
                                 </td>
                             </tr>
@@ -176,7 +176,7 @@
 
                         <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
                             <div class="flex items-center gap-2 order-2 md:order-1">
-                                Goster
+                                Göster
                                 <select class="kt-select w-16" id="categoriesPageSize" data-kt-select="true"></select>
                                 / sayfa
                             </div>

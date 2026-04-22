@@ -171,7 +171,7 @@ class ProjectController extends Controller
 
         return redirect()
             ->route('admin.projects.index')
-            ->with('success', 'Proje olusturuldu.');
+            ->with('success', 'Proje oluşturuldu.');
     }
 
     public function edit(Project $project): View
@@ -196,7 +196,7 @@ class ProjectController extends Controller
             'featuredMediaId' => $project->featuredMediaOne()?->id,
             'statusOptions' => Project::statusOptionsSorted(),
             'publicStatuses' => Project::PUBLIC_STATUSES,
-            'pageTitle' => 'Proje Duzenle',
+            'pageTitle' => 'Proje Düzenle',
         ]);
     }
 
@@ -232,7 +232,7 @@ class ProjectController extends Controller
 
         return redirect()
             ->route('admin.projects.edit', $project)
-            ->with('success', 'Proje guncellendi.');
+            ->with('success', 'Proje güncellendi.');
     }
 
     public function destroy(Request $request, Project $project)
@@ -246,13 +246,13 @@ class ProjectController extends Controller
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
                 'ok' => true,
-                'message' => 'Proje cop kutusuna tasindi.',
+                'message' => 'Proje çöp kutusuna taşındı.',
             ]);
         }
 
         return redirect()
             ->route('admin.projects.index')
-            ->with('success', 'Proje cop kutusuna tasindi.');
+            ->with('success', 'Proje çöp kutusuna taşındı.');
     }
 
     public function restore(int $id): JsonResponse
@@ -266,7 +266,7 @@ class ProjectController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => 'Proje geri yuklendi.',
+            'message' => 'Proje geri yüklendi.',
             'data' => ['restored' => true],
         ]);
     }
@@ -294,7 +294,7 @@ class ProjectController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => 'Proje kalici olarak silindi.',
+            'message' => 'Proje kalıcı olarak silindi.',
             'data' => ['force_deleted' => true],
         ]);
     }
@@ -311,7 +311,7 @@ class ProjectController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => $count . ' proje cop kutusuna tasindi.',
+            'message' => $count . ' proje çöp kutusuna taşındı.',
             'data' => ['deleted' => $count],
         ]);
     }
@@ -328,7 +328,7 @@ class ProjectController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => $count . ' proje geri yuklendi.',
+            'message' => $count . ' proje geri yüklendi.',
             'data' => ['restored' => $count],
         ]);
     }
@@ -360,7 +360,7 @@ class ProjectController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => $projects->count() . ' proje kalici olarak silindi.',
+            'message' => $projects->count() . ' proje kalıcı olarak silindi.',
             'data' => ['force_deleted' => $projects->count()],
         ]);
     }
@@ -375,7 +375,7 @@ class ProjectController extends Controller
             return response()->json([
                 'ok' => false,
                 'available' => false,
-                'message' => 'Slug bos olamaz.',
+                'message' => 'Slug boş olamaz.',
             ]);
         }
 
@@ -387,7 +387,7 @@ class ProjectController extends Controller
             'available' => $isAvailable,
             'normalized' => $normalizedSlug,
             'suggested' => $suggested,
-            'message' => $isAvailable ? 'Slug uygun.' : 'Bu slug kullaniliyor. Onerilen slug hazirlandi.',
+            'message' => $isAvailable ? 'Slug uygun.' : 'Bu slug kullanılıyor. Onerilen slug hazırlandı.',
         ]);
     }
 
@@ -413,7 +413,7 @@ class ProjectController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => 'Proje durumu guncellendi.',
+            'message' => 'Proje durumu güncellendi.',
             'data' => [
                 'id' => $project->id,
                 'status' => $project->status,
@@ -455,7 +455,7 @@ class ProjectController extends Controller
 
             return response()->json([
                 'ok' => true,
-                'message' => $project->is_featured ? 'Proje anasayfaya alindi.' : 'Proje anasayfadan kaldirildi.',
+                'message' => $project->is_featured ? 'Proje anasayfaya alındı.' : 'Proje anasayfadan kaldırıldı.',
                 'data' => [
                     'id' => $project->id,
                     'is_featured' => (bool) $project->is_featured,
@@ -596,7 +596,7 @@ class ProjectController extends Controller
 
         if ($query->count() >= 5) {
             throw ValidationException::withMessages([
-                'is_featured' => 'En fazla 5 proje ayni anda anasayfada gosterilebilir.',
+                'is_featured' => 'En fazla 5 proje aynı anda anasayfada gösterilebilir.',
             ]);
         }
     }
@@ -607,7 +607,7 @@ class ProjectController extends Controller
 
         if (!is_array($ids) || count($ids) === 0) {
             throw ValidationException::withMessages([
-                'ids' => 'Secili kayit yok.',
+                'ids' => 'Seçili kayıt yok.',
             ]);
         }
 

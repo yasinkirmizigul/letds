@@ -25,10 +25,10 @@
         <div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
             <div>
                 <h1 class="text-xl font-semibold">
-                    {{ $isTrash ? 'Projeler Cop Kutusu' : 'Proje Yonetimi' }}
+                    {{ $isTrash ? 'Projeler Çöp Kutusu' : 'Proje Yönetimi' }}
                 </h1>
                 <div class="text-sm text-muted-foreground">
-                    {{ $isTrash ? 'Silinen projeleri geri yukleyebilir veya kalici olarak silebilirsiniz.' : 'Workflow, SEO, vitrin ve kategori akislarini tek ekrandan yonetin.' }}
+                    {{ $isTrash ? 'Silinen projeleri geri yükleyebilir veya kalıcı olarak silebilirsiniz.' : 'Workflow, SEO, vitrin ve kategori akışlarını tek ekrandan yönetin.' }}
                 </div>
             </div>
 
@@ -37,13 +37,13 @@
                     href="{{ route('admin.projects.index') }}"
                     class="kt-btn kt-btn-sm {{ $isTrash ? 'kt-btn-light' : 'kt-btn-primary' }}"
                 >
-                    Aktif Kayitlar
+                    Aktif Kayıtlar
                 </a>
                 <a
                     href="{{ route('admin.projects.trash') }}"
                     class="kt-btn kt-btn-sm {{ $isTrash ? 'kt-btn-primary' : 'kt-btn-light' }}"
                 >
-                    Cop Kutusu
+                    Çöp Kutusu
                 </a>
 
                 @perm('projects.create')
@@ -60,7 +60,7 @@
                 <div class="mt-2 text-3xl font-semibold text-foreground">{{ $stats['all'] ?? 0 }}</div>
             </div>
             <div class="rounded-3xl app-stat-card p-5">
-                <div class="text-sm text-muted-foreground">Public Hazir</div>
+                <div class="text-sm text-muted-foreground">Public Hazır</div>
                 <div class="mt-2 text-3xl font-semibold text-success">{{ $stats['public'] ?? 0 }}</div>
             </div>
             <div class="rounded-3xl app-stat-card p-5">
@@ -68,11 +68,11 @@
                 <div class="mt-2 text-3xl font-semibold text-primary">{{ $stats['featured'] ?? 0 }}</div>
             </div>
             <div class="rounded-3xl app-stat-card p-5">
-                <div class="text-sm text-muted-foreground">Workflow Akisi</div>
+                <div class="text-sm text-muted-foreground">Workflow Akişi</div>
                 <div class="mt-2 text-3xl font-semibold text-warning">{{ $stats['workflow'] ?? 0 }}</div>
             </div>
             <div class="rounded-3xl app-stat-card p-5">
-                <div class="text-sm text-muted-foreground">Copte</div>
+                <div class="text-sm text-muted-foreground">Çöpte</div>
                 <div class="mt-2 text-3xl font-semibold text-danger">{{ $stats['trash'] ?? 0 }}</div>
             </div>
         </div>
@@ -82,7 +82,7 @@
                 <div>
                     <h3 class="kt-card-title">{{ $isTrash ? 'Silinen Projeler' : 'Proje Listesi' }}</h3>
                     <div class="text-sm text-muted-foreground">
-                        Status, public gorunurluk, vitrin secimi ve kategori dagilimini tek satirda inceleyin.
+                        Durum, public görünürlük, vitrin seçimi ve kategori dağılımını tek satırda inceleyin.
                     </div>
                 </div>
 
@@ -91,7 +91,7 @@
                         id="projectsSearch"
                         type="text"
                         class="kt-input kt-input-sm w-full md:w-[260px]"
-                        placeholder="Baslik, slug, icerik ara..."
+                        placeholder="Başlık, slug, içerik ara..."
                         value="{{ $q }}"
                     />
 
@@ -101,7 +101,7 @@
                         data-kt-select="true"
                         data-kt-select-placeholder="Durum"
                     >
-                        <option value="all" @selected($status === 'all')>Tum durumlar</option>
+                        <option value="all" @selected($status === 'all')>Tüm durumlar</option>
                         @foreach(($statusOptions ?? []) as $key => $option)
                             <option value="{{ $key }}" @selected($status === $key)>{{ $option['label'] }}</option>
                         @endforeach
@@ -115,7 +115,7 @@
                         data-kt-select-placeholder="Kategoriler"
                         data-kt-select-multiple="true"
                         data-kt-select-tags="false"
-                        data-kt-select-config='{"showSelectedCount":true,"enableSelectAll":true,"selectAllText":"Tumunu Sec","clearAllText":"Temizle"}'
+                        data-kt-select-config='{"showSelectedCount":true,"enableSelectAll":true,"selectAllText":"Tümünü Seç","clearAllText":"Temizle"}'
                     >
                         @foreach(($categoryOptions ?? []) as $option)
                             <option value="{{ $option['id'] }}" @selected(in_array($option['id'], $selectedCategoryIds))>
@@ -134,19 +134,19 @@
                 <div id="projectsBulkBar" class="hidden kt-card mb-4 border border-border">
                     <div class="kt-card-content p-3 flex items-center justify-between gap-3">
                         <div class="text-sm text-muted-foreground">
-                            Secili: <b id="projectsSelectedCount">0</b>
+                            Seçili: <b id="projectsSelectedCount">0</b>
                         </div>
 
                         <div class="flex items-center gap-2">
                             @if($isTrash)
                                 @perm('projects.restore')
                                     <button type="button" class="kt-btn kt-btn-sm kt-btn-success" id="projectsBulkRestoreBtn" disabled>
-                                        Geri Yukle
+                                        Geri Yükle
                                     </button>
                                 @endperm
                                 @perm('projects.force_delete')
                                     <button type="button" class="kt-btn kt-btn-sm kt-btn-destructive" id="projectsBulkForceDeleteBtn" disabled>
-                                        Kalici Sil
+                                        Kalıcı Sil
                                     </button>
                                 @endperm
                             @else
@@ -170,8 +170,8 @@
                                 </th>
                                 <th class="min-w-[360px]">Proje</th>
                                 <th class="min-w-[240px]">Workflow</th>
-                                <th class="min-w-[240px]">Gorunurluk ve Vitrin</th>
-                                <th class="min-w-[180px]">Son Guncelleme</th>
+                                <th class="min-w-[240px]">Görünürlük ve Vitrin</th>
+                                <th class="min-w-[180px]">Son Güncelleme</th>
                                 <th class="w-[64px]"></th>
                                 <th class="w-[80px]"></th>
                             </tr>
@@ -230,7 +230,7 @@
                                                         SEO %{{ $seoScore }}
                                                     </span>
                                                     <span class="kt-badge kt-badge-sm kt-badge-light">
-                                                        {{ $readTime > 0 ? $readTime . ' dk okuma' : 'Kisa yazi' }}
+                                                        {{ $readTime > 0 ? $readTime . ' dk okuma' : 'Kısa yazı' }}
                                                     </span>
                                                 </div>
 
@@ -239,7 +239,7 @@
                                                 </div>
 
                                                 <div class="text-sm text-muted-foreground leading-6">
-                                                    {{ $project->excerptPreview(130) ?: 'Icerik ozeti bulunmuyor.' }}
+                                                    {{ $project->excerptPreview(130) ?: 'İçerik özeti bulunmuyor.' }}
                                                 </div>
 
                                                 @if($project->categories->isNotEmpty())
@@ -265,7 +265,7 @@
                                                 <i class="ki-outline ki-down ml-1"></i>
                                             </button>
                                             <div class="text-xs text-muted-foreground js-public-hint">
-                                                {{ $isPublic ? 'Bu statu site tarafinda gorunebilir.' : 'Bu statu admin ici workflow asamasinda kalir.' }}
+                                                {{ $isPublic ? 'Bu statü site tarafında görünebilir.' : 'Bu statü admin içi workflow aşamasında kalır.' }}
                                             </div>
                                         </div>
                                     </td>
@@ -274,7 +274,7 @@
                                         <div class="grid gap-3">
                                             <div class="flex items-center justify-between gap-3">
                                                 <span class="js-public-badge kt-badge kt-badge-sm {{ $isPublic ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }}">
-                                                    {{ $isPublic ? 'Sitede gorunebilir' : 'Sitede gizli' }}
+                                                    {{ $isPublic ? 'Sitede görünebilir' : 'Sitede gizli' }}
                                                 </span>
                                                 @if(!$isTrash)
                                                     @perm('projects.update')
@@ -292,10 +292,10 @@
 
                                             <div class="js-featured-badge-wrap text-xs text-muted-foreground">
                                                 <span class="js-featured-badge kt-badge kt-badge-sm {{ $project->is_featured ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }}">
-                                                    {{ $project->is_featured ? 'Anasayfada' : 'Kapali' }}
+                                                    {{ $project->is_featured ? 'Anasayfada' : 'Kapalı' }}
                                                 </span>
                                                 <span class="block mt-1 js-featured-at">
-                                                    {{ $project->featured_at ? 'Secim: ' . $project->featured_at->format('d.m.Y H:i') : 'Secim yapilmamis' }}
+                                                    {{ $project->featured_at ? 'Seçim: ' . $project->featured_at->format('d.m.Y H:i') : 'Seçim yapılmamış' }}
                                                 </span>
                                             </div>
                                         </div>
@@ -304,14 +304,14 @@
                                     <td data-order="{{ $project->updated_at?->timestamp ?? 0 }}">
                                         <div class="grid gap-1 text-sm">
                                             <span class="font-medium text-foreground">{{ $project->updated_at?->format('d.m.Y H:i') ?: '-' }}</span>
-                                            <span class="text-muted-foreground">{{ $project->created_at?->format('d.m.Y H:i') ?: '-' }} olusturuldu</span>
+                                            <span class="text-muted-foreground">{{ $project->created_at?->format('d.m.Y H:i') ?: '-' }} oluşturuldu</span>
                                         </div>
                                     </td>
 
                                     <td class="text-end">
                                         @if(!$isTrash)
                                             @perm('projects.update')
-                                                <a class="kt-btn kt-btn-sm kt-btn-icon kt-btn-warning" href="{{ route('admin.projects.edit', $project->id) }}" title="Duzenle">
+                                                <a class="kt-btn kt-btn-sm kt-btn-icon kt-btn-warning" href="{{ route('admin.projects.edit', $project->id) }}" title="Düzenle">
                                                     <i class="ki-filled ki-notepad-edit"></i>
                                                 </a>
                                             @endperm
@@ -367,8 +367,8 @@
                             <td colspan="7" class="py-12">
                                 <div class="flex flex-col items-center text-center gap-2">
                                     <i class="ki-outline ki-folder text-3xl text-muted-foreground"></i>
-                                    <div class="font-semibold">Henuz proje bulunmuyor.</div>
-                                    <div class="text-sm text-muted-foreground">Yeni bir proje olusturarak baslayabilirsiniz.</div>
+                                    <div class="font-semibold">Henüz proje bulunmuyor.</div>
+                                    <div class="text-sm text-muted-foreground">Yeni bir proje oluşturarak başlayabilirsiniz.</div>
                                 </div>
                             </td>
                         </tr>
@@ -379,8 +379,8 @@
                             <td colspan="7" class="py-12">
                                 <div class="flex flex-col items-center text-center gap-2">
                                     <i class="ki-outline ki-magnifier text-3xl text-muted-foreground"></i>
-                                    <div class="font-semibold">Filtreye uygun proje bulunamadi.</div>
-                                    <div class="text-sm text-muted-foreground">Arama ve filtre secimlerini degistirip tekrar deneyin.</div>
+                                    <div class="font-semibold">Filtreye uygun proje bulunamadı.</div>
+                                    <div class="text-sm text-muted-foreground">Arama ve filtre seçimlerini değiştirip tekrar deneyin.</div>
                                 </div>
                             </td>
                         </tr>
@@ -388,7 +388,7 @@
 
                     <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
                         <div class="flex items-center gap-2 order-2 md:order-1">
-                            Goster
+                            Göster
                             <select class="kt-select w-16" id="projectsPageSize" data-kt-select="true"></select>
                             / sayfa
                         </div>

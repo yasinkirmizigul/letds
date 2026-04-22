@@ -2,10 +2,12 @@ import { Calendar } from '@fullcalendar/core'
 import interactionPlugin from '@fullcalendar/interaction'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
+import { getDateInputValue, setDateInputValue } from '@/core/date-input'
 import { get, request } from '@/core/http'
 import { showConfirmDialog, showToastMessage } from '@/core/swal-alert'
 
 let calendar = null
+let lastLoadedEvents = []
 let selectedEventId = null
 let blockModalMode = 'create'
 let activeContextEvent = null
@@ -64,7 +66,7 @@ async function loadBlockDetail(id) {
     return await fetchJson(`/admin/appointments/blocks/${id}`)
 }
 
-function renderHistory(root, items = []) {
+function legacyRenderHistory(root, items = []) {
     const historyWrap = qs(root, '#panelHistory')
     if (!historyWrap) return
 
@@ -87,13 +89,6 @@ function renderHistory(root, items = []) {
         </div>
     `).join('')
 }
-function toDateTimeLocalValue(dateLike) {
-    if (!dateLike) return ''
-    const d = new Date(dateLike)
-    const pad = (n) => String(n).padStart(2, '0')
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
-}
-
 async function loadAppointmentDetail(id) {
     return await fetchJson(`/admin/appointments/${id}`)
 }
@@ -131,7 +126,7 @@ function openAppointmentModal(root, data) {
             { emitEvents: false }
         )
     }
-    if (startAt) startAt.value = toDateTimeLocalValue(appointmentModalState.startAt)
+    setDateInputValue(startAt, appointmentModalState.startAt)
     if (blocks) blocks.value = String(appointmentModalState.blocks)
     if (notes) notes.value = appointmentModalState.notesInternal
     if (cancel) cancel.value = appointmentModalState.cancelReason
@@ -199,7 +194,7 @@ function formatDateTime(date) {
     }).format(date)
 }
 
-function buildEventContent(info) {
+function legacyBuildEventContent(info) {
     const entityType = info.event.extendedProps?.entity_type || 'appointment'
     const statusLabel = info.event.extendedProps?.status_label || ''
     const title = info.event.title || '-'
@@ -262,11 +257,11 @@ function hasVisibleEventConflict(event, nextStart, nextEnd) {
 function ensureProviderSelection(providerSelect) {
     if (getSelectedProviderId(providerSelect)) return true
 
-    notifyError('Randevu takvimini duzenlemek icin once kisi sec.')
+    notifyError('Randevu takvimini düzenlemek için önce kişi seç.')
     return false
 }
 
-function setActionDisabled(element, disabled) {
+function setİşlemDisabled(element, disabled) {
     if (!element) return
 
     element.disabled = disabled
@@ -283,12 +278,12 @@ function updateCalendarInteractionState(root, providerSelect) {
     calendar?.setOption('eventStartEditable', hasProvider)
     calendar?.setOption('eventDurationEditable', hasProvider)
 
-    setActionDisabled(qs(root, '#btnCancelAppointment'), !hasProvider)
-    setActionDisabled(qs(root, '#btnAppointmentSave'), !hasProvider)
-    setActionDisabled(qs(root, '#btnAppointmentCancel'), !hasProvider)
-    setActionDisabled(qs(root, '#btnSaveBlock'), !hasProvider)
-    setActionDisabled(qs(root, '#ctxEditBlock'), !hasProvider)
-    setActionDisabled(qs(root, '#ctxDeleteBlock'), !hasProvider)
+    setİşlemDisabled(qs(root, '#btnCancelAppointment'), !hasProvider)
+    setİşlemDisabled(qs(root, '#btnAppointmentSave'), !hasProvider)
+    setİşlemDisabled(qs(root, '#btnAppointmentCancel'), !hasProvider)
+    setİşlemDisabled(qs(root, '#btnSaveBlock'), !hasProvider)
+    setİşlemDisabled(qs(root, '#ctxEditBlock'), !hasProvider)
+    setİşlemDisabled(qs(root, '#ctxDeleteBlock'), !hasProvider)
 
     if (hint) {
         hint.classList.toggle('hidden', hasProvider)
@@ -296,7 +291,7 @@ function updateCalendarInteractionState(root, providerSelect) {
 }
 
 function notifyScheduleConflict() {
-    notifyError('Secilen zaman araliginda ayni kisi icin randevu veya blokaj var.')
+    notifyError('Seçilen zaman aralığında aynı kişi için randevu veya blokaj var.')
 }
 
 function resolveTransferProviderValue(selectEl, currentProviderId) {
@@ -467,7 +462,7 @@ function closeBlockModal(root) {
     document.body.classList.remove('overflow-hidden')
 }
 
-function fillDetailPanel(root, event) {
+function legacyFillDetailPanel(root, event) {
     const panelEmpty = qs(root, '#panelEmpty')
     const panelContent = qs(root, '#panelContent')
     const selectedAppointmentId = qs(root, '#selectedAppointmentId')
@@ -567,13 +562,13 @@ function toLocalIsoString(date) {
 
 function notifyError(message) {
     showToastMessage('error', message, {
-        title: 'Islem basarisiz',
+        title: 'İşlem başarısız',
     })
 }
 
 function notifySuccess(message) {
     showToastMessage('success', message, {
-        title: 'Islem tamamlandi',
+        title: 'İşlem tamamlandı',
     })
 }
 function resetBlockModalState(root) {
@@ -601,7 +596,7 @@ function resetBlockModalState(root) {
 
     setBlockSaveLoading(root, false)
 }
-function setBlockSaveLoading(root, loading) {
+function legacySetBlockSaveLoading(root, loading) {
     const btn = qs(root, '#btnSaveBlock')
     const text = qs(root, '#btnSaveBlock .btn-text')
 
@@ -669,6 +664,307 @@ function hideDragTooltip(root) {
     tip.style.left = ''
     tip.style.top = ''
     tip.textContent = ''
+}
+
+function renderHistory(root, items = []) {
+    const historyWrap = qs(root, '#panelHistory')
+    if (!historyWrap) return
+
+    if (!items.length) {
+        historyWrap.innerHTML = `<div class="text-xs text-gray-500 dark:text-zinc-400">Geçmiş kayıt yok.</div>`
+        return
+    }
+
+    historyWrap.innerHTML = items.map((item) => `
+        <div class="rounded-xl border border-gray-200 bg-white px-3 py-3 dark:border-zinc-800 dark:bg-zinc-900">
+            <div class="flex items-center justify-between gap-3">
+                <div class="text-sm font-medium text-gray-900 dark:text-zinc-100">${item.start_at} - ${item.end_at}</div>
+                <div class="text-xs ${item.is_current ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-zinc-400'}">
+                    ${item.is_current ? 'Aktif' : (item.status_label || item.status)}
+                </div>
+            </div>
+            <div class="mt-1 text-xs text-gray-500 dark:text-zinc-400">
+                ${item.provider_name || '-'} | ${item.member_name || '-'}
+            </div>
+        </div>
+    `).join('')
+}
+
+function formatDurationText(totalMinutes) {
+    const safe = Math.max(0, Number(totalMinutes || 0))
+    const hours = Math.floor(safe / 60)
+    const minutes = safe % 60
+
+    if (hours && minutes) return `${hours} sa ${minutes} dk`
+    if (hours) return `${hours} saat`
+    return `${minutes} dk`
+}
+
+function getSelectedProviderMeta(providerSelect) {
+    const option = providerSelect?.selectedOptions?.[0]
+
+    if (!providerSelect || !option) {
+        return {
+            name: 'Tüm aktif kişiler',
+            title: 'Super admin görünümü',
+        }
+    }
+
+    return {
+        name: option.dataset?.providerName || option.textContent?.trim() || 'Tüm aktif kişiler',
+        title: option.dataset?.providerTitle || '',
+    }
+}
+
+function viewLabel(viewType) {
+    return {
+        timeGridDay: 'Günlük görünüm',
+        timeGridWeek: 'Haftalık görünüm',
+        dayGridMonth: 'Aylık görünüm',
+    }[viewType] || 'Takvim görünümü'
+}
+
+function updateViewButtons(root) {
+    const activeView = calendar?.view?.type || ''
+
+    qsa(root, '[data-view]').forEach((button) => {
+        const isActive = button.getAttribute('data-view') === activeView
+        button.classList.toggle('kt-btn-primary', isActive)
+        button.classList.toggle('kt-btn-light', !isActive)
+    })
+}
+
+function updateCalendarHeader(root, providerSelect) {
+    const rangeEl = qs(root, '#calendarCurrentRange')
+    const viewLabelEl = qs(root, '#calendarCurrentViewLabel')
+    const providerLabelEl = qs(root, '#calendarSelectedProviderName')
+    const surfaceHintEl = qs(root, '#calendarSurfaceHint')
+    const providerMeta = getSelectedProviderMeta(providerSelect)
+    const hasProviderSelection = Boolean(getSelectedProviderId(providerSelect))
+
+    if (rangeEl) {
+        rangeEl.textContent = calendar?.view?.title || 'Takvim aralığı'
+    }
+
+    if (viewLabelEl) {
+        viewLabelEl.textContent = viewLabel(calendar?.view?.type)
+    }
+
+    if (providerLabelEl) {
+        providerLabelEl.textContent = providerMeta.name
+    }
+
+    if (surfaceHintEl) {
+        surfaceHintEl.textContent = hasProviderSelection
+            ? `${providerMeta.name} için düzenleme aktif`
+            : 'Salt görünüm modu'
+    }
+
+    updateViewButtons(root)
+}
+
+function renderCalendarMetrics(root, events = lastLoadedEvents, providerSelect) {
+    const appointmentEvents = (events || []).filter((item) => item?.extendedProps?.entity_type !== 'time_off')
+    const blockEvents = (events || []).filter((item) => item?.extendedProps?.entity_type === 'time_off')
+    const totalAppointmentMinutes = appointmentEvents.reduce((total, item) => {
+        const start = item?.start ? new Date(item.start) : null
+        const end = item?.end ? new Date(item.end) : null
+        if (!start || !end) return total
+        return total + Math.max(0, Math.round((end.getTime() - start.getTime()) / 60000))
+    }, 0)
+
+    const now = new Date()
+    const upcoming = [...(events || [])]
+        .filter((item) => item?.start && new Date(item.start) >= now)
+        .sort((left, right) => new Date(left.start).getTime() - new Date(right.start).getTime())[0] || null
+
+    const appointmentCountEl = qs(root, '#calendarMetricAppointments')
+    const blockCountEl = qs(root, '#calendarMetricBlocks')
+    const busyHoursEl = qs(root, '#calendarMetricBusyHours')
+    const nextEl = qs(root, '#calendarMetricNext')
+    const hintEl = qs(root, '#calendarMetricHint')
+
+    if (appointmentCountEl) appointmentCountEl.textContent = String(appointmentEvents.length)
+    if (blockCountEl) blockCountEl.textContent = String(blockEvents.length)
+    if (busyHoursEl) busyHoursEl.textContent = formatDurationText(totalAppointmentMinutes)
+
+    if (nextEl) {
+        nextEl.textContent = upcoming
+            ? `${upcoming.title || 'Kayıt'}`
+            : '-'
+    }
+
+    if (hintEl) {
+        if (!upcoming) {
+            hintEl.textContent = 'Yaklaşan kayıt bulunmuyor'
+            return
+        }
+
+        const providerMeta = getSelectedProviderMeta(providerSelect)
+        const typeLabel = upcoming?.extendedProps?.entity_type === 'time_off'
+            ? (upcoming?.extendedProps?.status_label || 'Blokaj')
+            : 'Randevu'
+
+        hintEl.textContent = `${typeLabel} | ${formatDateTime(upcoming.start)} | ${providerMeta.name}`
+    }
+}
+
+function hydrateAppointmentEvent(event, data) {
+    if (!event || !data) return
+
+    if (data.member_name) {
+        event.setProp('title', data.member_name)
+    }
+
+    event.setExtendedProp('provider_id', data.provider_id)
+    event.setExtendedProp('provider_name', data.provider_name)
+    event.setExtendedProp('provider_title', data.provider_title)
+    event.setExtendedProp('member_id', data.member_id)
+    event.setExtendedProp('member_name', data.member_name)
+    event.setExtendedProp('member_email', data.member_email)
+    event.setExtendedProp('member_phone', data.member_phone)
+    event.setExtendedProp('status', data.status)
+    event.setExtendedProp('status_label', data.status_label)
+    event.setExtendedProp('blocks', data.blocks)
+    event.setExtendedProp('notes_internal', data.notes_internal || '')
+    event.setExtendedProp('cancel_reason', data.cancel_reason || '')
+    event.setExtendedProp('parent_id', data.parent_id)
+    event.setExtendedProp('is_transferred', Boolean(data.is_transferred))
+}
+
+function hydrateBlockEvent(event, data) {
+    if (!event || !data) return
+
+    event.setExtendedProp('provider_id', data.provider_id)
+    event.setExtendedProp('reason', data.reason || '')
+    event.setExtendedProp('block_type', data.block_type || 'manual')
+}
+
+function buildEventContent(info) {
+    const entityType = info.event.extendedProps?.entity_type || 'appointment'
+    const statusLabel = info.event.extendedProps?.status_label || ''
+    const title = info.event.title || '-'
+
+    const wrapper = document.createElement('div')
+    wrapper.className = 'fc-event-custom flex flex-col gap-1 px-1 py-[2px]'
+
+    const badge = document.createElement('div')
+    badge.className = 'text-[10px] font-semibold uppercase tracking-wide opacity-90'
+    badge.textContent = entityType === 'time_off' ? statusLabel : `Randevu - ${statusLabel}`
+
+    const text = document.createElement('div')
+    text.className = 'text-[11px] font-medium leading-4 truncate'
+    text.textContent = title
+
+    wrapper.appendChild(badge)
+    wrapper.appendChild(text)
+
+    return { domNodes: [wrapper] }
+}
+
+function fillDetailPanel(root, event) {
+    const panelEmpty = qs(root, '#panelEmpty')
+    const panelContent = qs(root, '#panelContent')
+    const selectedAppointmentId = qs(root, '#selectedAppointmentId')
+    const pMember = qs(root, '#pMember')
+    const pProvider = qs(root, '#pProvider')
+    const pWhen = qs(root, '#pWhen')
+    const pDuration = qs(root, '#pDuration')
+    const pStatus = qs(root, '#pStatus')
+    const pTransfer = qs(root, '#pTransfer')
+    const pNotes = qs(root, '#pNotes')
+    const cancelReason = qs(root, '#cancelReason')
+    const cancelReasonLabel = qs(root, '#cancelReasonLabel')
+    const cancelReasonHelp = qs(root, '#cancelReasonHelp')
+    const btnCancelAppointment = qs(root, '#btnCancelAppointment')
+    const panelMetaBadge = qs(root, '#panelMetaBadge')
+
+    if (!panelEmpty || !panelContent || !selectedAppointmentId || !pMember || !pWhen || !pDuration || !pStatus) {
+        return
+    }
+
+    const entityType = event.extendedProps?.entity_type || 'appointment'
+    const blocks = Number(event.extendedProps?.blocks || 1)
+    const minutes = entityType === 'appointment'
+        ? blocks * 30
+        : Math.round((event.end.getTime() - event.start.getTime()) / 60000)
+
+    selectedEventId = event.id
+    selectedAppointmentId.value = event.id
+
+    panelEmpty.classList.add('hidden')
+    panelContent.classList.remove('hidden')
+
+    if (entityType === 'time_off') {
+        pMember.textContent = event.title || 'Kapalı zaman'
+        if (pProvider) {
+            const providerName = event.extendedProps?.provider_name || 'Seçili kişi'
+            const providerTitle = event.extendedProps?.provider_title || 'Takvim blokaji'
+            pProvider.textContent = `${providerName} | ${providerTitle}`
+        }
+        pStatus.textContent = event.extendedProps?.status_label || 'Kapalı'
+        if (pTransfer) pTransfer.textContent = 'Takvim blokaji'
+        if (pNotes) pNotes.textContent = event.extendedProps?.reason || 'Açıklama yok'
+        if (cancelReason) cancelReason.value = event.extendedProps?.reason || ''
+        if (cancelReasonLabel) cancelReasonLabel.textContent = 'Blokaj açıklamasi'
+        if (cancelReasonHelp) cancelReasonHelp.textContent = 'Silme öncesi referans olarak kullanabilirsin.'
+        if (btnCancelAppointment) btnCancelAppointment.textContent = 'Blokaji sil'
+        if (panelMetaBadge) {
+            panelMetaBadge.className = 'kt-badge kt-badge-sm kt-badge-light-warning'
+            panelMetaBadge.textContent = event.extendedProps?.status_label || 'Blokaj'
+        }
+    } else {
+        pMember.textContent = event.extendedProps?.member_name || event.title || '-'
+        if (pProvider) {
+            const providerName = event.extendedProps?.provider_name || 'Kişi bilgisi yok'
+            const providerTitle = event.extendedProps?.provider_title || 'Unvan yok'
+            const contact = [event.extendedProps?.member_phone, event.extendedProps?.member_email].filter(Boolean).join(' | ')
+            pProvider.textContent = contact ? `${providerName} | ${providerTitle} | ${contact}` : `${providerName} | ${providerTitle}`
+        }
+        pStatus.textContent = event.extendedProps?.status_label || event.extendedProps?.status || '-'
+        if (pTransfer) {
+            pTransfer.textContent = event.extendedProps?.is_transferred
+                ? 'Transfer geçmişi var'
+                : 'Orijinal rezervasyon'
+        }
+        if (pNotes) pNotes.textContent = event.extendedProps?.notes_internal || 'Ic not yok'
+        if (cancelReason) cancelReason.value = event.extendedProps?.cancel_reason || ''
+        if (cancelReasonLabel) cancelReasonLabel.textContent = 'İptal nedeni'
+        if (cancelReasonHelp) cancelReasonHelp.textContent = 'İptal aksiyonunda bu alan gonderilir.'
+        if (btnCancelAppointment) btnCancelAppointment.textContent = 'Randevuyu iptal et'
+        if (panelMetaBadge) {
+            panelMetaBadge.className = 'kt-badge kt-badge-sm kt-badge-light-primary'
+            panelMetaBadge.textContent = event.extendedProps?.status_label || 'Randevu'
+        }
+    }
+
+    pWhen.textContent = formatDateRange(event.start, event.end)
+    pDuration.textContent = formatDurationText(minutes)
+
+    if (entityType === 'appointment' && event.extendedProps?.entity_id) {
+        loadHistory(root, event.extendedProps.entity_id)
+    } else {
+        renderHistory(root, [])
+    }
+}
+
+function setBlockSaveLoading(root, loading) {
+    const btn = qs(root, '#btnSaveBlock')
+    const text = qs(root, '#btnSaveBlock .btn-text')
+
+    isSavingBlock = loading
+
+    if (!btn) return
+
+    btn.disabled = loading
+    btn.classList.toggle('opacity-60', loading)
+    btn.classList.toggle('pointer-events-none', loading)
+
+    if (text) {
+        text.textContent = loading
+            ? (blockModalMode === 'edit' ? 'Güncelleniyor...' : 'Kaydediliyor...')
+            : (blockModalMode === 'edit' ? 'Güncelle' : 'Kaydet')
+    }
 }
 
 export default async function init(ctx) {
@@ -800,11 +1096,18 @@ export default async function init(ctx) {
             year: 'numeric',
         },
 
+        datesSet() {
+            updateCalendarHeader(root, providerSelect)
+            renderCalendarMetrics(root, lastLoadedEvents, providerSelect)
+        },
+
         events: async (fetchInfo, success, failure) => {
             try {
                 const url = buildEventsUrl(providerSelect?.value, fetchInfo.startStr, fetchInfo.endStr)
                 const data = await get(url, { ignoreGlobalError: true })
-                success(Array.isArray(data) ? data : [])
+                lastLoadedEvents = Array.isArray(data) ? data : []
+                success(lastLoadedEvents)
+                requestAnimationFrame(() => renderCalendarMetrics(root, lastLoadedEvents, providerSelect))
             } catch (e) {
                 failure(e)
             }
@@ -820,6 +1123,8 @@ export default async function init(ctx) {
 
                 try {
                     const block = await loadBlockDetail(info.event.extendedProps.entity_id)
+                    hydrateBlockEvent(info.event, block)
+                    fillDetailPanel(root, info.event)
 
                     openBlockModal(root, {
                         mode: 'edit',
@@ -843,6 +1148,8 @@ export default async function init(ctx) {
 
                 try {
                     const appointment = await loadAppointmentDetail(info.event.extendedProps.entity_id)
+                    hydrateAppointmentEvent(info.event, appointment)
+                    fillDetailPanel(root, info.event)
                     openAppointmentModal(root, appointment)
                 } catch (e) {
                     notifyError(e.message || 'Randevu detayı alınamadı.')
@@ -973,6 +1280,8 @@ export default async function init(ctx) {
     })
 
     calendar.render()
+    updateCalendarHeader(root, providerSelect)
+    renderCalendarMetrics(root, lastLoadedEvents, providerSelect)
     updateCalendarInteractionState(root, providerSelect)
 
     if (providerSelect) {
@@ -983,6 +1292,9 @@ export default async function init(ctx) {
             hideDragTooltip(root)
             resetDetailPanel(root)
             updateCalendarInteractionState(root, providerSelect)
+            updateCalendarHeader(root, providerSelect)
+            lastLoadedEvents = []
+            renderCalendarMetrics(root, [], providerSelect)
             calendar?.refetchEvents()
         })
     }
@@ -1102,7 +1414,7 @@ export default async function init(ctx) {
 
                 await postJson(`/admin/appointments/${appointmentModalState.entityId}/transfer`, {
                     new_provider_id: nextProviderId,
-                    new_start_at: appointmentStartAt?.value,
+                    new_start_at: getDateInputValue(appointmentStartAt),
                     blocks: Number(appointmentBlocks?.value || 1),
                     notes_internal: appointmentNotesInternal?.value || null,
                 })
@@ -1270,6 +1582,7 @@ export function destroy() {
         calendar = null
     }
 
+    lastLoadedEvents = []
     selectedEventId = null
     blockModalMode = 'create'
     activeContextEvent = null

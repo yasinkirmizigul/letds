@@ -69,7 +69,7 @@ class ProductController extends Controller
                 'low_stock' => Product::query()->lowStock()->count(),
                 'trash' => Product::onlyTrashed()->count(),
             ],
-            'pageTitle' => 'Urunler',
+            'pageTitle' => 'Ürünler',
         ]);
     }
 
@@ -129,7 +129,7 @@ class ProductController extends Controller
             'categoryOptions' => $this->categoryOptions($categories),
             'selectedCategoryIds' => [],
             'statusOptions' => Product::statusOptionsSorted(),
-            'pageTitle' => 'Urun Ekle',
+            'pageTitle' => 'Ürün Ekle',
         ]);
     }
 
@@ -158,7 +158,7 @@ class ProductController extends Controller
 
         return redirect()
             ->route('admin.products.index')
-            ->with('success', 'Urun olusturuldu.');
+            ->with('success', 'Ürün oluşturuldu.');
     }
 
     public function edit(Product $product): View
@@ -179,7 +179,7 @@ class ProductController extends Controller
                 ->all(),
             'featuredMediaId' => $product->featuredMediaOne()?->id,
             'statusOptions' => Product::statusOptionsSorted(),
-            'pageTitle' => 'Urun Duzenle',
+            'pageTitle' => 'Ürün Düzenle',
         ]);
     }
 
@@ -215,7 +215,7 @@ class ProductController extends Controller
 
         return redirect()
             ->route('admin.products.edit', $product)
-            ->with('success', 'Urun guncellendi.');
+            ->with('success', 'Ürün güncellendi.');
     }
 
     public function destroy(Request $request, Product $product)
@@ -229,13 +229,13 @@ class ProductController extends Controller
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
                 'ok' => true,
-                'message' => 'Urun cop kutusuna tasindi.',
+                'message' => 'Ürün çöp kutusuna taşındı.',
             ]);
         }
 
         return redirect()
             ->route('admin.products.index')
-            ->with('success', 'Urun cop kutusuna tasindi.');
+            ->with('success', 'Ürün çöp kutusuna taşındı.');
     }
 
     public function restore(int $id): JsonResponse
@@ -249,7 +249,7 @@ class ProductController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => 'Urun geri yuklendi.',
+            'message' => 'Ürün geri yüklendi.',
             'data' => ['restored' => true],
         ]);
     }
@@ -277,7 +277,7 @@ class ProductController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => 'Urun kalici olarak silindi.',
+            'message' => 'Ürün kalıcı olarak silindi.',
             'data' => ['force_deleted' => true],
         ]);
     }
@@ -294,7 +294,7 @@ class ProductController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => $count . ' urun cop kutusuna tasindi.',
+            'message' => $count . ' ürün çöp kutusuna taşındı.',
             'data' => ['deleted' => $count],
         ]);
     }
@@ -311,7 +311,7 @@ class ProductController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => $count . ' urun geri yuklendi.',
+            'message' => $count . ' ürün geri yüklendi.',
             'data' => ['restored' => $count],
         ]);
     }
@@ -343,7 +343,7 @@ class ProductController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => $products->count() . ' urun kalici olarak silindi.',
+            'message' => $products->count() . ' ürün kalıcı olarak silindi.',
             'data' => ['force_deleted' => $products->count()],
         ]);
     }
@@ -358,7 +358,7 @@ class ProductController extends Controller
             return response()->json([
                 'ok' => false,
                 'available' => false,
-                'message' => 'Slug bos olamaz.',
+                'message' => 'Slug boş olamaz.',
             ]);
         }
 
@@ -370,7 +370,7 @@ class ProductController extends Controller
             'available' => $isAvailable,
             'normalized' => $normalizedSlug,
             'suggested' => $suggested,
-            'message' => $isAvailable ? 'Slug uygun.' : 'Bu slug kullaniliyor. Onerilen slug hazirlandi.',
+            'message' => $isAvailable ? 'Slug uygun.' : 'Bu slug kullanılıyor. Onerilen slug hazırlandı.',
         ]);
     }
 
@@ -396,7 +396,7 @@ class ProductController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => 'Urun durumu guncellendi.',
+            'message' => 'Ürün durumu güncellendi.',
             'data' => [
                 'id' => $product->id,
                 'status' => $product->status,
@@ -437,7 +437,7 @@ class ProductController extends Controller
 
             return response()->json([
                 'ok' => true,
-                'message' => $product->is_featured ? 'Urun anasayfaya alindi.' : 'Urun anasayfadan kaldirildi.',
+                'message' => $product->is_featured ? 'Ürün anasayfaya alındı.' : 'Ürün anasayfadan kaldırıldı.',
                 'data' => [
                     'id' => $product->id,
                     'is_featured' => (bool) $product->is_featured,
@@ -592,7 +592,7 @@ class ProductController extends Controller
 
         if ($query->count() >= 5) {
             throw ValidationException::withMessages([
-                'is_featured' => 'En fazla 5 urun ayni anda anasayfada gosterilebilir.',
+                'is_featured' => 'En fazla 5 ürün aynı anda anasayfada gösterilebilir.',
             ]);
         }
     }
@@ -603,7 +603,7 @@ class ProductController extends Controller
 
         if (!is_array($ids) || count($ids) === 0) {
             throw ValidationException::withMessages([
-                'ids' => 'Secili kayit yok.',
+                'ids' => 'Seçili kayıt yok.',
             ]);
         }
 

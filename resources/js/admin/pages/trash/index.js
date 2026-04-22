@@ -60,7 +60,7 @@ async function showNoticeDialog({
 }) {
     const swal = resolveSwal();
     if (!swal) {
-        console.warn('SweetAlert2 bulunamadi. Mesaj gosterilemedi.');
+        console.warn('SweetAlert2 bulunamadı. Mesaj gösterilemedi.');
         return;
     }
 
@@ -87,7 +87,7 @@ async function showNoticeDialog({
     });
 }
 
-function buildErrorMessage(json, fallback = 'Islem basarisiz.') {
+function buildErrorMessage(json, fallback = 'İşlem başarısız.') {
     if (!json) return fallback;
 
     const validationErrors = json?.errors;
@@ -104,7 +104,7 @@ function buildErrorMessage(json, fallback = 'Islem basarisiz.') {
     return message;
 }
 
-function showUsageDialog(json, fallbackTitle = 'Islem engellendi') {
+function showUsageDialog(json, fallbackTitle = 'İşlem engellendi') {
     const message = buildErrorMessage(json, fallbackTitle);
     let html = `<div class="whitespace-pre-line">${esc(message).replace(/\n/g, '<br>')}</div>`;
 
@@ -121,7 +121,7 @@ function showUsageDialog(json, fallbackTitle = 'Islem engellendi') {
 
         html += `
             <div class="mt-4">
-                <div class="text-sm font-medium mb-2">Kullanim detayi</div>
+                <div class="text-sm font-medium mb-2">Kullanım detayi</div>
                 <div class="kt-card kt-card-border">
                     <div class="kt-card-body p-0">
                         <table class="w-full text-sm">
@@ -340,7 +340,7 @@ export default function init(ctx) {
             tbodyEl.innerHTML = `
                 <tr>
                     <td colspan="5" class="py-10 text-center text-muted-foreground">
-                        Liste alinamadi.
+                        Liste alınamadı.
                     </td>
                 </tr>
             `;
@@ -375,7 +375,7 @@ export default function init(ctx) {
         setBulkUI();
     };
 
-    const showRequestError = async (json, title = 'Islem basarisiz') => {
+    const showRequestError = async (json, title = 'İşlem başarısız') => {
         if (json?.usage?.summary || (json?.usage?.details && Object.keys(json.usage.details).length > 0)) {
             await showUsageDialog(json, title);
             return;
@@ -396,7 +396,7 @@ export default function init(ctx) {
 
         const { res, j } = await jsonReq(url, method, method === 'POST' ? {} : null, signal);
         if (!res.ok || !j?.ok) {
-            await showRequestError(j, 'Islem engellendi');
+            await showRequestError(j, 'İşlem engellendi');
             return;
         }
 
@@ -431,11 +431,11 @@ export default function init(ctx) {
         if (!res.ok || !j?.ok) {
             backup.forEach((key) => selected.add(key));
             setBulkUI();
-            await showRequestError(j, 'Toplu islem basarisiz');
+            await showRequestError(j, 'Toplu işlem başarısız');
             return;
         }
 
-        let html = `<div class="font-medium">${esc(`${j.done || 0} kayit islendi.`)}</div>`;
+        let html = `<div class="font-medium">${esc(`${j.done || 0} kayıt islendi.`)}</div>`;
 
         if (Array.isArray(j.failed) && j.failed.length > 0) {
             const failedRows = j.failed
@@ -450,14 +450,14 @@ export default function init(ctx) {
 
             html += `
                 <div class="mt-3">
-                    <div class="text-sm font-medium mb-2">${esc(`${j.failed.length} kayit engellendi`)}</div>
+                    <div class="text-sm font-medium mb-2">${esc(`${j.failed.length} kayıt engellendi`)}</div>
                     <ul class="space-y-1 text-sm">${failedRows}</ul>
                 </div>
             `;
         }
 
         if (Array.isArray(j.denied) && j.denied.length > 0) {
-            html += `<div class="mt-3 text-sm text-muted-foreground">${esc(`${j.denied.length} kayit icin yetki yok.`)}</div>`;
+            html += `<div class="mt-3 text-sm text-muted-foreground">${esc(`${j.denied.length} kayıt için yetki yok.`)}</div>`;
         }
 
         await showNoticeDialog({
@@ -544,20 +544,20 @@ export default function init(ctx) {
                 if (action === 'restore') {
                     doSingleAction(url, 'POST', {
                         type: 'success',
-                        title: 'Bu kayit geri yuklensin mi?',
-                        message: 'Kayit tekrar aktif listeye alinacak.',
-                        confirmButtonText: 'Geri yukle',
-                    }, 'Kayit geri yuklendi.');
+                        title: 'Bu kayıt geri yüklensin mi?',
+                        message: 'Kayıt tekrar aktif listeye alınacak.',
+                        confirmButtonText: 'Geri yükle',
+                    }, 'Kayıt geri yüklendi.');
                     return;
                 }
 
                 if (action === 'force') {
                     doSingleAction(url, 'DELETE', {
                         type: 'error',
-                        title: 'Bu kayit kalici olarak silinsin mi?',
-                        message: 'Bu islem geri alinamaz.',
-                        confirmButtonText: 'Kalici sil',
-                    }, 'Kayit kalici olarak silindi.');
+                        title: 'Bu kayıt kalıcı olarak silinsin mi?',
+                        message: 'Bu işlem geri alınamaz.',
+                        confirmButtonText: 'Kalıcı sil',
+                    }, 'Kayıt kalıcı olarak silindi.');
                     return;
                 }
             }
@@ -589,10 +589,10 @@ export default function init(ctx) {
         bulkRestoreBtn.addEventListener('click', () => {
             doBulk(urls.bulkRestore, {
                 type: 'success',
-                title: 'Secili kayitlar geri yuklensin mi?',
-                message: 'Secili kayitlar tekrar aktif listeye alinacak.',
-                confirmButtonText: 'Geri yukle',
-            }, 'Toplu geri yukleme sonucu');
+                title: 'Seçili kayıtlar geri yüklensin mi?',
+                message: 'Seçili kayıtlar tekrar aktif listeye alınacak.',
+                confirmButtonText: 'Geri yükle',
+            }, 'Toplu geri yükleme sonucu');
         }, { signal });
     }
 
@@ -600,9 +600,9 @@ export default function init(ctx) {
         bulkForceBtn.addEventListener('click', () => {
             doBulk(urls.bulkForce, {
                 type: 'error',
-                title: 'Secili kayitlar kalici olarak silinsin mi?',
-                message: 'Bu islem geri alinamaz.',
-                confirmButtonText: 'Kalici sil',
+                title: 'Seçili kayıtlar kalıcı olarak silinsin mi?',
+                message: 'Bu işlem geri alınamaz.',
+                confirmButtonText: 'Kalıcı sil',
             }, 'Toplu silme sonucu');
         }, { signal });
     }

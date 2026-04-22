@@ -44,6 +44,16 @@ import ProductsTrash from './products/trash';
 import AppointmentsCalendar from './appointments/calendar';
 import AppointmentsSettings from './appointments/settings';
 import MessagesIndex from './messages/index';
+import SitePagesCreate from './site/pages/create';
+import SitePagesEdit from './site/pages/edit';
+import SitePagesIndex from './site/pages/index';
+import SiteFaqsIndex from './site/faqs/index';
+import SiteCountersIndex from './site/counters/index';
+import SiteNavigationIndex from './site/navigation/index';
+import SiteSettingsEdit from './site/settings/edit';
+import SiteSlidersCreate from './site/sliders/create';
+import SiteSlidersEdit from './site/sliders/edit';
+import SiteSlidersIndex from './site/sliders/index';
 
 
 export function registerPages() {
@@ -92,4 +102,15 @@ export function registerPages() {
     register('appointments.calendar', AppointmentsCalendar);
     register('appointments.settings', AppointmentsSettings);
     register('messages.index', MessagesIndex);
+
+    register('site.pages.index', SitePagesIndex);
+    register('site.pages.create', SitePagesCreate);
+    register('site.pages.edit', SitePagesEdit);
+    register('site.faqs.index', SiteFaqsIndex);
+    register('site.counters.index', SiteCountersIndex);
+    register('site.navigation.index', SiteNavigationIndex);
+    register('site.settings.edit', SiteSettingsEdit);
+    register('site.sliders.index', SiteSlidersIndex);
+    register('site.sliders.create', SiteSlidersCreate);
+    register('site.sliders.edit', SiteSlidersEdit);
 }

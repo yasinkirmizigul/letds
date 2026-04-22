@@ -69,6 +69,10 @@ Route::prefix('appointments')->as('appointments.')->group(function () {
         ->middleware('permission:appointments.update')
         ->name('providers.timeoffs.store');
 
+    Route::put('/providers/{provider}/time-offs/{timeOff}', [AppointmentSettingsController::class, 'updateTimeOff'])
+        ->middleware('permission:appointments.update')
+        ->name('providers.timeoffs.update');
+
     Route::delete('/providers/{provider}/time-offs/{timeOff}', [AppointmentSettingsController::class, 'destroyTimeOff'])
         ->middleware('permission:appointments.update')
         ->name('providers.timeoffs.destroy');
@@ -80,6 +84,10 @@ Route::prefix('appointments')->as('appointments.')->group(function () {
     Route::post('/blackouts', [AppointmentSettingsController::class, 'storeBlackout'])
         ->middleware('permission:appointments.update')
         ->name('blackouts.store');
+
+    Route::put('/blackouts/{blackout}', [AppointmentSettingsController::class, 'updateBlackout'])
+        ->middleware('permission:appointments.update')
+        ->name('blackouts.update');
 
     Route::delete('/blackouts/{blackout}', [AppointmentSettingsController::class, 'destroyBlackout'])
         ->middleware('permission:appointments.update')

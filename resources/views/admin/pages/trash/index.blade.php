@@ -18,7 +18,7 @@
                     <div class="flex flex-col">
                         <h3 class="kt-card-title text-lg font-semibold">Silinenler</h3>
                         <div class="text-sm text-muted-foreground">
-                            Medya, blog, kategori, proje, urun ve galerileri tek ekrandan geri yukle veya kalici sil.
+                            Medya, blog, kategori, proje, ürün ve galerileri tek ekrandan geri yükle veya kalıcı sil.
                         </div>
                     </div>
 
@@ -27,13 +27,13 @@
                                class="kt-input w-[260px]"
                                placeholder="Ara..." />
 
-                        <select id="trashType" class="kt-select w-[180px]" data-kt-select="true" data-kt-select-placeholder="Silinen Turu Sec">
-                            <option value="all">Tumu</option>
+                        <select id="trashType" class="kt-select w-[180px]" data-kt-select="true" data-kt-select-placeholder="Silinen Türü Seç">
+                            <option value="all">Tümu</option>
                             <option value="media">Medya</option>
                             <option value="blog">Blog</option>
                             <option value="category">Kategori</option>
                             <option value="project">Proje</option>
-                            <option value="product">Urun</option>
+                            <option value="product">Ürün</option>
                             <option value="gallery">Galeri</option>
                         </select>
                     </div>
@@ -44,20 +44,20 @@
                         <div class="flex items-center gap-3">
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <input type="checkbox" class="kt-checkbox kt-checkbox-sm" id="trash_check_all">
-                                <span class="text-sm">Tumunu sec</span>
+                                <span class="text-sm">Tümünü seç</span>
                             </label>
 
                             <span class="text-sm text-muted-foreground">
-                                Secili: <span id="trashSelectedCount">0</span>
+                                Seçili: <span id="trashSelectedCount">0</span>
                             </span>
                         </div>
 
                         <div class="flex items-center gap-2">
                             <button type="button" id="trashBulkRestoreBtn" class="kt-btn kt-btn-sm kt-btn-light" disabled>
-                                Geri Yukle
+                                Geri Yükle
                             </button>
                             <button type="button" id="trashBulkForceDeleteBtn" class="kt-btn kt-btn-sm kt-btn-danger" disabled>
-                                Kalici Sil
+                                Kalıcı Sil
                             </button>
                         </div>
                     </div>
@@ -72,9 +72,9 @@
                                     <input class="kt-checkbox kt-checkbox-sm" id="trash_check_all_head" type="checkbox">
                                 </th>
                                 <th class="min-w-[160px]">Tur</th>
-                                <th class="min-w-[320px]">Baslik</th>
+                                <th class="min-w-[320px]">Başlık</th>
                                 <th class="min-w-[180px]">Silinme</th>
-                                <th class="w-[160px] text-end">Islem</th>
+                                <th class="w-[160px] text-end">İşlem</th>
                             </tr>
                             </thead>
                             <tbody id="trashTbody"></tbody>
@@ -84,7 +84,7 @@
                     <template id="dt-empty-trash">
                         <tr>
                             <td colspan="5" class="py-10 text-center text-muted-foreground">
-                                Silinen kayit yok
+                                Silinen kayıt yok
                             </td>
                         </tr>
                     </template>
@@ -92,8 +92,8 @@
                     <template id="dt-zero-trash">
                         <tr>
                             <td colspan="5" class="py-10 text-center">
-                                <div class="font-medium">Sonuc bulunamadi</div>
-                                <div class="text-sm text-muted-foreground">Aramani degistirip tekrar dene.</div>
+                                <div class="font-medium">Sonuç bulunamadı</div>
+                                <div class="text-sm text-muted-foreground">Aramani değiştirip tekrar dene.</div>
                             </td>
                         </tr>
                     </template>
@@ -101,7 +101,7 @@
 
                 <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
                     <div class="flex items-center gap-2 order-2 md:order-1">
-                        Goster
+                        Göster
                         <select class="kt-select w-16" id="trashPageSize" name="perpage"></select>
                         / sayfa
                     </div>

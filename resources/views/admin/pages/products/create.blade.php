@@ -16,11 +16,11 @@
 
         <div class="flex flex-col gap-4 mb-6 lg:flex-row lg:items-end lg:justify-between">
             <div class="grid gap-2">
-                <span class="kt-badge kt-badge-sm kt-badge-light w-fit">Yeni Urun</span>
+                <span class="kt-badge kt-badge-sm kt-badge-light w-fit">Yeni Ürün</span>
                 <div>
-                    <h1 class="text-xl font-semibold">Urun Olustur</h1>
+                    <h1 class="text-xl font-semibold">Ürün Oluştur</h1>
                     <div class="text-sm text-muted-foreground">
-                        Workflow, fiyat, SEO ve vitrin yonetimini tek ekrandan kurun.
+                        Workflow, fiyat, SEO ve vitrin yönetimini tek ekrandan kurun.
                     </div>
                 </div>
             </div>
@@ -49,7 +49,7 @@
             ])
 
             <div class="flex items-center justify-end gap-3">
-                <a href="{{ route('admin.products.index') }}" class="kt-btn kt-btn-light">Iptal</a>
+                <a href="{{ route('admin.products.index') }}" class="kt-btn kt-btn-light">İptal</a>
                 <button type="submit" class="kt-btn kt-btn-primary">Kaydet</button>
             </div>
         </form>

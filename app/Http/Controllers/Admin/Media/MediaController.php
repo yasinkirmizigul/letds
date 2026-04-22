@@ -16,7 +16,7 @@ class MediaController extends Controller
     public function index()
     {
         return view('admin.pages.media.index', [
-            'pageTitle' => 'Medya Kutuphanesi',
+            'pageTitle' => 'Medya Kütüphanesi',
             'mode' => 'active',
             'stats' => $this->stats(),
         ]);
@@ -99,7 +99,7 @@ class MediaController extends Controller
 
                 return response()->json([
                     'ok' => true,
-                    'message' => 'Dosyalar yuklendi.',
+                    'message' => 'Dosyalar yüklendi.',
                     'data' => $uploaded,
                 ]);
             }
@@ -111,7 +111,7 @@ class MediaController extends Controller
 
             return response()->json([
                 'ok' => true,
-                'message' => 'Dosya yuklendi.',
+                'message' => 'Dosya yüklendi.',
                 'data' => $this->mediaPayload($media),
             ]);
         } catch (Throwable $exception) {
@@ -130,7 +130,7 @@ class MediaController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => 'Medya cop kutusuna tasindi.',
+            'message' => 'Medya çöp kutusuna taşındı.',
             'data' => ['deleted' => true],
         ]);
     }
@@ -142,7 +142,7 @@ class MediaController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => 'Medya geri yuklendi.',
+            'message' => 'Medya geri yüklendi.',
             'data' => ['restored' => true],
         ]);
     }
@@ -154,7 +154,7 @@ class MediaController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => 'Medya kalici olarak silindi.',
+            'message' => 'Medya kalıcı olarak silindi.',
             'data' => ['force_deleted' => true],
         ]);
     }
@@ -163,14 +163,14 @@ class MediaController extends Controller
     {
         $ids = $this->validatedIds($request->input('ids', []));
         if (count($ids) === 0) {
-            return response()->json(['ok' => false, 'error' => ['message' => 'Secili kayit yok.']], 422);
+            return response()->json(['ok' => false, 'error' => ['message' => 'Seçili kayıt yok.']], 422);
         }
 
         $count = Media::query()->whereIn('id', $ids)->delete();
 
         return response()->json([
             'ok' => true,
-            'message' => 'Secili medya kayitlari silindi.',
+            'message' => 'Seçili medya kayıtlari silindi.',
             'data' => ['deleted' => $count],
         ]);
     }
@@ -179,14 +179,14 @@ class MediaController extends Controller
     {
         $ids = $this->validatedIds($request->input('ids', []));
         if (count($ids) === 0) {
-            return response()->json(['ok' => false, 'error' => ['message' => 'Secili kayit yok.']], 422);
+            return response()->json(['ok' => false, 'error' => ['message' => 'Seçili kayıt yok.']], 422);
         }
 
         $count = Media::onlyTrashed()->whereIn('id', $ids)->restore();
 
         return response()->json([
             'ok' => true,
-            'message' => 'Secili medya kayitlari geri yuklendi.',
+            'message' => 'Seçili medya kayıtlari geri yüklendi.',
             'data' => ['restored' => $count],
         ]);
     }
@@ -195,7 +195,7 @@ class MediaController extends Controller
     {
         $ids = $this->validatedIds($request->input('ids', []));
         if (count($ids) === 0) {
-            return response()->json(['ok' => false, 'error' => ['message' => 'Secili kayit yok.']], 422);
+            return response()->json(['ok' => false, 'error' => ['message' => 'Seçili kayıt yok.']], 422);
         }
 
         $items = Media::withTrashed()->whereIn('id', $ids)->get();
@@ -205,7 +205,7 @@ class MediaController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => 'Secili medya kayitlari kalici olarak silindi.',
+            'message' => 'Seçili medya kayıtlari kalıcı olarak silindi.',
             'data' => ['force_deleted' => $items->count()],
         ]);
     }

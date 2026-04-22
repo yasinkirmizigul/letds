@@ -23,7 +23,7 @@
                 </div>
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Gorsel</div>
+                        <div class="text-sm text-muted-foreground">Görsel</div>
                         <div class="mt-2 text-2xl font-semibold">{{ number_format((int) ($stats['images'] ?? 0)) }}</div>
                     </div>
                 </div>
@@ -44,8 +44,8 @@
             <div class="kt-card">
                 <div class="kt-card-header py-5 flex-wrap gap-4">
                     <div class="flex flex-col">
-                        <h3 class="kt-card-title">{{ $isTrash ? 'Silinen Medyalar' : 'Medya Kutuphanesi' }}</h3>
-                        <div class="text-sm text-muted-foreground">Yukle, ara, filtrele, sec ve yonet.</div>
+                        <h3 class="kt-card-title">{{ $isTrash ? 'Silinen Medyalar' : 'Medya Kütüphanesi' }}</h3>
+                        <div class="text-sm text-muted-foreground">Yükle, ara, filtrele, seç ve yönet.</div>
                     </div>
 
                     <div class="flex items-center gap-2 ms-auto flex-wrap">
@@ -55,8 +55,8 @@
                                 data-kt-select="true"
                                 data-kt-select-placeholder="Medya Tipi"
                                 data-kt-select-config='{"optionsClass":"kt-scrollable overflow-auto max-h-[250px]"}'>
-                            <option value="">Tumu</option>
-                            <option value="image">Gorsel</option>
+                            <option value="">Tümu</option>
+                            <option value="image">Görsel</option>
                             <option value="video">Video</option>
                             <option value="pdf">PDF</option>
                         </select>
@@ -80,7 +80,7 @@
 
                         @if(!$isTrash)
                             <button type="button" class="kt-btn kt-btn-primary" data-kt-modal-toggle="#mediaUploadModal">
-                                <i class="ki-outline ki-cloud-add"></i> Yukle
+                                <i class="ki-outline ki-cloud-add"></i> Yükle
                             </button>
                         @endif
                     </div>
@@ -97,24 +97,24 @@
                             <div class="flex items-center gap-3">
                                 <label class="flex items-center gap-2 text-sm">
                                     <input type="checkbox" class="kt-checkbox kt-checkbox-sm" id="mediaCheckAll">
-                                    <span>Tumunu sec</span>
+                                    <span>Tümünü seç</span>
                                 </label>
                                 <span class="text-sm text-muted-foreground">
-                                    Secili: <b id="mediaSelectedCount">0</b>
+                                    Seçili: <b id="mediaSelectedCount">0</b>
                                 </span>
                             </div>
 
                             <div class="flex items-center gap-2">
                                 @if($isTrash)
                                     <button type="button" class="kt-btn kt-btn-sm kt-btn-success" id="mediaBulkRestoreBtn" disabled>
-                                        <i class="ki-outline ki-arrow-circle-left"></i> Geri Yukle
+                                        <i class="ki-outline ki-arrow-circle-left"></i> Geri Yükle
                                     </button>
                                     <button type="button" class="kt-btn kt-btn-sm kt-btn-danger" id="mediaBulkForceDeleteBtn" disabled>
-                                        <i class="ki-outline ki-trash"></i> Kalici Sil
+                                        <i class="ki-outline ki-trash"></i> Kalıcı Sil
                                     </button>
                                 @else
                                     <button type="button" class="kt-btn kt-btn-sm kt-btn-danger" id="mediaBulkDeleteBtn" disabled>
-                                        <i class="ki-outline ki-trash"></i> Secilenleri sil
+                                        <i class="ki-outline ki-trash"></i> Seçilenleri sil
                                     </button>
                                 @endif
                             </div>
@@ -126,7 +126,7 @@
                     <div id="mediaEmpty" class="hidden">
                         <div class="kt-card mt-4">
                             <div class="kt-card-content p-10 text-center text-muted-foreground">
-                                Medya bulunamadi.
+                                Medya bulunamadı.
                             </div>
                         </div>
                     </div>

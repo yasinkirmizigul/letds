@@ -23,8 +23,8 @@ export default async function init(ctx) {
     initSlugTools(root, signal);
 
     const seoPanel = initSeoPanel(root, signal, () => {
-        const editor = window.tinymce?.get?.('content_editor');
-        return editor ? editor.getContent({ format: 'html' }) : (root.querySelector('#content_editor')?.value || '');
+        const editör = window.tinymce?.get?.('content_editor');
+        return editör ? editör.getContent({ format: 'html' }) : (root.querySelector('#content_editor')?.value || '');
     });
 
     await initTinyEditor(ctx, () => seoPanel.sync());
@@ -37,7 +37,7 @@ export default async function init(ctx) {
 
     const updateForm = root.querySelector('#blog-update-form');
     if (updateForm) {
-        updateForm.addEventListener('submit', () => lockSubmitButtons(root, 'blog-update-form'), { signal, once: true });
+        updateForm.addEventListener('submit', () => lockSubmitButtons(root, 'blog-update-form'), { signal, önce: true });
     }
 
     const deleteForm = root.querySelector('#blog-delete-form');
@@ -47,8 +47,8 @@ export default async function init(ctx) {
 
             const ok = await showConfirmDialog({
                 type: 'warning',
-                title: 'Yazi silinsin mi?',
-                message: 'Yazi cop kutusuna tasinacak.',
+                title: 'Yazı silinsin mi?',
+                message: 'Yazı çöp kutusuna taşınacak.',
                 confirmButtonText: 'Sil',
             });
 
@@ -64,17 +64,17 @@ export default async function init(ctx) {
                 });
 
                 if (!data?.ok) {
-                    throw new Error(data?.message || 'Silme islemi tamamlanamadi.');
+                    throw new Error(data?.message || 'Silme işlemi tamamlanamadı.');
                 }
 
-                notify('success', data?.message || 'Yazi cop kutusuna tasindi.');
+                notify('success', data?.message || 'Yazı çöp kutusuna taşındı.');
 
                 window.setTimeout(() => {
                     window.location.assign(root.dataset.blogIndexUrl || '/admin/blog');
                 }, 650);
             } catch (error) {
                 setFormButtonsDisabled(root, 'blog-delete-form', false);
-                notify('error', error?.message || 'Silme islemi basarisiz oldu.');
+                notify('error', error?.message || 'Silme işlemi başarısız oldu.');
             }
         }, { signal });
     }

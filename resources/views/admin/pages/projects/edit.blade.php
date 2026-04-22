@@ -20,10 +20,10 @@
         <div class="flex flex-col gap-4 mb-6 lg:flex-row lg:items-end lg:justify-between">
             <div class="grid gap-2">
                 <span class="kt-badge kt-badge-sm {{ $project->is_featured ? 'kt-badge-light-success' : 'kt-badge-light' }} w-fit">
-                    {{ $project->is_featured ? 'Anasayfada' : 'Normal Kayit' }}
+                    {{ $project->is_featured ? 'Anasayfada' : 'Normal Kayıt' }}
                 </span>
                 <div>
-                    <h1 class="text-xl font-semibold">Projeyi Duzenle</h1>
+                    <h1 class="text-xl font-semibold">Projeyi Düzenle</h1>
                     <div class="text-sm text-muted-foreground">#{{ $project->id }} - {{ $project->title }}</div>
                 </div>
             </div>
@@ -57,8 +57,8 @@
             ])
 
             <div class="flex items-center justify-end gap-3">
-                <a href="{{ route('admin.projects.index') }}" class="kt-btn kt-btn-light">Iptal</a>
-                <button type="submit" class="kt-btn kt-btn-primary">Guncelle</button>
+                <a href="{{ route('admin.projects.index') }}" class="kt-btn kt-btn-light">İptal</a>
+                <button type="submit" class="kt-btn kt-btn-primary">Güncelle</button>
             </div>
         </form>
 

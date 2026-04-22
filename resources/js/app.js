@@ -5,6 +5,7 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 
 import Alpine from 'alpinejs';
 import { AppInit } from './core/app-init';
+import { initDateInputValues } from './core/date-input';
 import { registerPages } from './admin/pages/index';
 import { initMediaPicker } from './core/media-picker';
 import { initMediaUploadModal } from './core/media-upload-modal';
@@ -72,7 +73,7 @@ registerPages();
 
 function domReady(fn) {
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', fn, { once: true });
+        document.addEventListener('DOMContentLoaded', fn, { önce: true });
     } else {
         fn();
     }
@@ -80,6 +81,7 @@ function domReady(fn) {
 
 domReady(async () => {
     try {
+        initDateInputValues(document);
         await AppInit();
     } finally {
         document.documentElement.classList.remove('js-loading');

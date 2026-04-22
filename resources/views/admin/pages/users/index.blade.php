@@ -12,7 +12,7 @@
             <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Toplam kullanici</div>
+                        <div class="text-sm text-muted-foreground">Toplam kullanıcı</div>
                         <div class="mt-2 text-2xl font-semibold">{{ number_format((int) ($stats['total'] ?? 0)) }}</div>
                     </div>
                 </div>
@@ -45,8 +45,8 @@
             <div class="kt-card kt-card-grid min-w-full">
                 <div class="kt-card-header py-5 flex-wrap gap-4">
                     <div class="flex flex-col">
-                        <h3 class="kt-card-title">Kullanici Yonetimi</h3>
-                        <div class="text-sm text-muted-foreground">Rol, durum ve erisim akislarini tek listede yonet.</div>
+                        <h3 class="kt-card-title">Kullanıcı Yönetimi</h3>
+                        <div class="text-sm text-muted-foreground">Rol, durum ve erişim akışlarını tek listede yönet.</div>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
@@ -57,14 +57,14 @@
                             placeholder="Ad, e-posta veya rol ara..." />
 
                         <select id="usersRoleFilter" class="kt-select kt-select-sm w-[180px]" data-kt-select="true">
-                            <option value="all">Tum roller</option>
+                            <option value="all">Tüm roller</option>
                             @foreach($roles as $role)
                                 <option value="{{ $role->slug }}">{{ $role->name }}</option>
                             @endforeach
                         </select>
 
                         <select id="usersStatusFilter" class="kt-select kt-select-sm w-[160px]" data-kt-select="true">
-                            <option value="all">Tum durumlar</option>
+                            <option value="all">Tüm durumlar</option>
                             <option value="active">Aktif</option>
                             <option value="inactive">Pasif</option>
                         </select>
@@ -75,7 +75,7 @@
 
                         @perm('users.create')
                             <a href="{{ route('admin.users.create') }}" class="kt-btn kt-btn-sm kt-btn-primary">
-                                Kullanici Ekle
+                                Kullanıcı Ekle
                             </a>
                         @endperm
                     </div>
@@ -91,11 +91,11 @@
                                     <th class="w-[55px]">
                                         <input class="kt-checkbox kt-checkbox-sm flex" id="users_check_all" type="checkbox" />
                                     </th>
-                                    <th class="min-w-[260px]">Kullanici</th>
+                                    <th class="min-w-[260px]">Kullanıcı</th>
                                     <th class="min-w-[220px]">E-posta</th>
                                     <th class="min-w-[240px]">Roller</th>
                                     <th class="min-w-[140px]">Durum</th>
-                                    <th class="min-w-[160px]">Olusturulma</th>
+                                    <th class="min-w-[160px]">Oluşturulma</th>
                                     <th class="w-[70px]"></th>
                                     <th class="w-[90px]"></th>
                                 </tr>
@@ -204,8 +204,8 @@
                                     <td colspan="8" class="py-12">
                                         <div class="flex flex-col items-center justify-center gap-2 text-center text-muted-foreground">
                                             <i class="ki-outline ki-folder-open text-4xl mb-2"></i>
-                                            <div class="font-medium text-secondary-foreground">Henuz kayit bulunmuyor.</div>
-                                            <div class="text-sm">Yeni kayit ekleyerek baslayabilirsiniz.</div>
+                                            <div class="font-medium text-secondary-foreground">Henüz kayıt bulunmuyor.</div>
+                                            <div class="text-sm">Yeni kayıt ekleyerek baslayabilirsiniz.</div>
                                         </div>
                                     </td>
                                 </tr>
@@ -216,8 +216,8 @@
                                     <td colspan="8" class="py-12">
                                         <div class="flex flex-col items-center justify-center gap-2 text-center text-muted-foreground">
                                             <i class="ki-outline ki-search-list text-4xl mb-2"></i>
-                                            <div class="font-medium text-secondary-foreground">Sonuc bulunamadi.</div>
-                                            <div class="text-sm">Arama ve filtreleri degistirip tekrar dene.</div>
+                                            <div class="font-medium text-secondary-foreground">Sonuç bulunamadı.</div>
+                                            <div class="text-sm">Arama ve filtreleri değiştirip tekrar dene.</div>
                                         </div>
                                     </td>
                                 </tr>
@@ -226,7 +226,7 @@
 
                         <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
                             <div class="flex items-center gap-2 order-2 md:order-1">
-                                Goster
+                                Göster
                                 <select class="kt-select w-16" id="usersPageSize" data-kt-select="true"></select>
                                 / sayfa
                             </div>

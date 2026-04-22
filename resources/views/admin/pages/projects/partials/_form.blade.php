@@ -21,8 +21,8 @@
     $initialReadTime = $isEdit ? $project->estimatedReadTimeMinutes() : 0;
     $initialSeoScore = $isEdit ? $project->seoCompletenessScore() : 0;
     $initialPublicVisible = in_array($currentStatus, $publicStatuses, true);
-    $previewTitle = $currentMetaTitle ?: ($currentTitle ?: 'Meta baslik burada gorunecek');
-    $previewDescription = $currentMetaDescription ?: ($project?->excerptPreview(155) ?: 'Meta aciklama burada gorunecek.');
+    $previewTitle = $currentMetaTitle ?: ($currentTitle ?: 'Meta başlık burada görünecek');
+    $previewDescription = $currentMetaDescription ?: ($project?->excerptPreview(155) ?: 'Meta açıklama burada görünecek.');
 @endphp
 
 <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.55fr)_400px] gap-6">
@@ -32,7 +32,7 @@
                 <div>
                     <h3 class="kt-card-title">Proje Icerigi</h3>
                     <div class="text-sm text-muted-foreground">
-                        Baslik, slug ve proje detay metnini tek akista yonetin.
+                        Başlık, slug ve proje detay metnini tek akışta yönetin.
                     </div>
                 </div>
             </div>
@@ -40,7 +40,7 @@
             <div class="kt-card-content p-6 grid gap-6">
                 <div class="grid gap-2">
                     <div class="flex items-center justify-between gap-3">
-                        <label class="kt-form-label font-normal text-mono" for="title">Baslik</label>
+                        <label class="kt-form-label font-normal text-mono" for="title">Başlık</label>
                         <span class="text-xs text-muted-foreground" data-project-title-count>{{ mb_strlen($currentTitle) }}/255</span>
                     </div>
                     <input
@@ -58,7 +58,7 @@
                 <div class="grid gap-3 rounded-3xl app-surface-card app-surface-card--soft p-4">
                     <div class="flex flex-wrap items-center justify-between gap-3">
                         <label class="kt-form-label font-normal text-mono mb-0" for="slug">Slug ve URL</label>
-                        <span class="text-xs text-muted-foreground">URL stabilitesini korumak icin sadece gerektiginde degistirin.</span>
+                        <span class="text-xs text-muted-foreground">URL stabilitesini korumak için sadece gerektiginde değiştirin.</span>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
@@ -67,10 +67,10 @@
                             name="slug"
                             class="kt-input flex-1 @error('slug') kt-input-invalid @enderror"
                             value="{{ $currentSlug }}"
-                            placeholder="otomatik-olusturulur"
+                            placeholder="otomatik-oluşturulur"
                         >
 
-                        <button type="button" id="slug_regen" class="kt-btn kt-btn-light">Olustur</button>
+                        <button type="button" id="slug_regen" class="kt-btn kt-btn-light">Oluştur</button>
 
                         <label class="kt-switch shrink-0" title="Otomatik slug">
                             <input
@@ -93,14 +93,14 @@
                     </div>
 
                     <div id="slugCheckHint" class="text-xs text-muted-foreground">
-                        Slug girildiginde uygunluk kontrolu yapilir.
+                        Slug girildiginde uygunlük kontrolü yapılır.
                     </div>
                 </div>
 
                 <div class="grid gap-2">
                     <div class="flex items-center justify-between gap-3">
                         <label class="kt-form-label font-normal text-mono" for="content_editor">Proje Detayi</label>
-                        <span class="text-xs text-muted-foreground">TinyMCE ile zengin icerik duzenleme</span>
+                        <span class="text-xs text-muted-foreground">TinyMCE ile zengin içerik düzenleme</span>
                     </div>
                     <textarea
                         id="content_editor"
@@ -119,7 +119,7 @@
                 <div>
                     <h3 class="kt-card-title">SEO ve Arama Onizlemesi</h3>
                     <div class="text-sm text-muted-foreground">
-                        Meta alanlarini girerken arama sonucunda gorunumu canli izleyin.
+                        Meta alanlarıni girerken arama sonucunda görünümü canli izleyin.
                     </div>
                 </div>
             </div>
@@ -135,7 +135,7 @@
                             name="meta_title"
                             class="kt-input @error('meta_title') kt-input-invalid @enderror"
                             value="{{ $currentMetaTitle }}"
-                            placeholder="Arama sonucunda gorunecek baslik"
+                            placeholder="Arama sonucunda görünecek başlık"
                         >
                         @error('meta_title')
                             <div class="text-xs text-danger">{{ $message }}</div>
@@ -151,7 +151,7 @@
                             name="meta_description"
                             rows="4"
                             class="kt-textarea @error('meta_description') kt-input-invalid @enderror"
-                            placeholder="Arama sonucunda gorunecek aciklama"
+                            placeholder="Arama sonucunda görünecek açıklama"
                         >{{ $currentMetaDescription }}</textarea>
                         @error('meta_description')
                             <div class="text-xs text-danger">{{ $message }}</div>
@@ -189,7 +189,7 @@
                     </div>
 
                     <div class="rounded-3xl app-surface-card app-surface-card--soft p-4 text-sm text-muted-foreground">
-                        Meta title icin 30-60, meta description icin 100-160 karakter araligi daha dengeli gorunur.
+                        Meta title için 30-60, meta description için 100-160 karakter aralığı daha dengeli görünür.
                     </div>
                 </div>
             </div>
@@ -201,7 +201,7 @@
                     <div>
                         <h3 class="kt-card-title">Galeriler</h3>
                         <div class="text-sm text-muted-foreground">
-                            Proje galerilerini ana ve sidebar alanlarina gore yonetebilirsiniz.
+                            Proje galerilerini ana ve sidebar alanlarına göre yönetebilirsiniz.
                         </div>
                     </div>
                 </div>
@@ -219,7 +219,7 @@
                 <div>
                     <h3 class="kt-card-title">Workflow ve Vitrin</h3>
                     <div class="text-sm text-muted-foreground">
-                        Proje akis durumunu, public gorunurlugu ve anasayfa vitrini yonetin.
+                        Proje akış durumunu, public görünurlugu ve anasayfa vitrini yönetin.
                     </div>
                 </div>
             </div>
@@ -255,12 +255,12 @@
                                 class="kt-badge kt-badge-sm {{ $initialPublicVisible ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }}"
                                 data-project-public-badge
                             >
-                                {{ $initialPublicVisible ? 'Sitede gorunebilir' : 'Sitede gizli' }}
+                                {{ $initialPublicVisible ? 'Sitede görünebilir' : 'Sitede gizli' }}
                             </span>
                         </div>
 
                         <div class="text-xs text-muted-foreground" data-project-visibility-hint>
-                            {{ $initialPublicVisible ? 'Bu statu, proje detay sayfasinin site tarafinda acilmasina izin verir.' : 'Bu statu, projeyi admin icinde tutar; site tarafinda yayina cikmaz.' }}
+                            {{ $initialPublicVisible ? 'Bu statü, proje detay sayfasının site tarafında açılmasına izin verir.' : 'Bu statü, projeyi admin içinde tutar; site tarafında yayına çıkmaz.' }}
                         </div>
 
                         @error('status')
@@ -273,7 +273,7 @@
                     <div class="flex items-start justify-between gap-3">
                         <div class="grid gap-1">
                             <div class="font-medium text-foreground">Anasayfa Vitrini</div>
-                            <div class="text-sm text-muted-foreground">En fazla 5 proje one cikarilabilir.</div>
+                            <div class="text-sm text-muted-foreground">En fazla 5 proje öne çıkarılabilir.</div>
                         </div>
 
                         <div class="flex items-center gap-3">
@@ -292,7 +292,7 @@
                                 id="project_featured_badge"
                                 class="kt-badge kt-badge-sm {{ $currentFeatured ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }}"
                             >
-                                {{ $currentFeatured ? 'Anasayfada' : 'Kapali' }}
+                                {{ $currentFeatured ? 'Anasayfada' : 'Kapalı' }}
                             </span>
                         </div>
                     </div>
@@ -307,9 +307,9 @@
         <div class="kt-card overflow-hidden">
             <div class="kt-card-header py-5">
                 <div>
-                    <h3 class="kt-card-title">Icerik Icgoruleri</h3>
+                    <h3 class="kt-card-title">İçerik İçgörüleri</h3>
                     <div class="text-sm text-muted-foreground">
-                        Kelime yogunlugu ve SEO tamamliligini canli takip edin.
+                        Kelime yoğunluğu ve SEO tamamliligini canli takip edin.
                     </div>
                 </div>
             </div>
@@ -331,7 +331,7 @@
                         <div>
                             <div class="text-xs uppercase tracking-[0.18em] text-muted-foreground">SEO Tamamlilik</div>
                             <div class="mt-1 text-sm text-muted-foreground" data-project-seo-summary>
-                                {{ $initialSeoScore >= 80 ? 'SEO hazirligi guclu gorunuyor.' : ($initialSeoScore >= 50 ? 'Temel alanlar iyi, birkac iyilestirme daha yapilabilir.' : 'Meta alanlari ve one cikan gorsel tarafini guclendirmek faydali olur.') }}
+                                {{ $initialSeoScore >= 80 ? 'SEO hazırlığı güçlü görünüyor.' : ($initialSeoScore >= 50 ? 'Temel alanlar iyi, birkaç iyileştirme daha yapılabilir.' : 'Meta alanları ve öne çıkan görsel tarafını güçlendirmek faydalı olur.') }}
                             </div>
                         </div>
                         <div
@@ -350,7 +350,7 @@
                 <div>
                     <h3 class="kt-card-title">Kategoriler</h3>
                     <div class="text-sm text-muted-foreground">
-                        Projeyi dogru kategorilerle etiketleyerek bulunurlugu artirin.
+                        Projeyi doğru kategorilerle etiketleyerek bulunurluğu artirin.
                     </div>
                 </div>
             </div>
@@ -364,7 +364,7 @@
                     data-kt-select-placeholder="Kategoriler"
                     data-kt-select-multiple="true"
                     data-kt-select-tags="false"
-                    data-kt-select-config='{"showSelectedCount":true,"enableSelectAll":true,"selectAllText":"Tumunu Sec","clearAllText":"Temizle"}'
+                    data-kt-select-config='{"showSelectedCount":true,"enableSelectAll":true,"selectAllText":"Tümünü Seç","clearAllText":"Temizle"}'
                 >
                     @foreach($categoryOptions ?? [] as $option)
                         <option value="{{ $option['id'] }}" @selected(in_array($option['id'], $selectedCategoryIds))>
@@ -374,7 +374,7 @@
                 </select>
 
                 <div class="text-xs text-muted-foreground">
-                    Birden fazla kategori secilebilir. Alt kategoriler hiyerarsi korunarak listelenir.
+                    Birden fazla kategori seçilebilir. Alt kategoriler hiyerarşi korunarak listelenir.
                 </div>
 
                 @error('category_ids')
@@ -387,8 +387,8 @@
         </div>
 
         @include('admin.components.featured-image-manager', [
-            'title' => 'One Cikan Gorsel',
-            'hint' => 'Dosya yukleyebilir veya medya kutuphanesinden secim yapabilirsiniz.',
+            'title' => 'Öne Çıkan Görsel',
+            'hint' => 'Dosya yükleyebilir veya medya kütüphanesinden seçim yapabilirsiniz.',
             'fileName' => 'featured_image',
             'mediaIdName' => 'featured_media_id',
             'clearFlagName' => 'clear_featured_image',
@@ -408,7 +408,7 @@
                 <div>
                     <h3 class="kt-card-title">Ek Bilgiler</h3>
                     <div class="text-sm text-muted-foreground">
-                        Ihtiyaca gore randevu kaydi ile eslestirme yapabilirsiniz.
+                        Ihtiyaca göre randevu kaydı ile eslestirme yapabilirsiniz.
                     </div>
                 </div>
             </div>
@@ -431,19 +431,19 @@
                 @if($isEdit)
                     <div class="grid grid-cols-2 gap-3 text-sm">
                         <div class="rounded-2xl app-surface-card px-4 py-3">
-                            <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Kayit No</div>
+                            <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Kayıt No</div>
                             <div class="mt-1 font-medium text-foreground">#{{ $project->id }}</div>
                         </div>
                         <div class="rounded-2xl app-surface-card px-4 py-3">
-                            <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">One Cikma Tarihi</div>
+                            <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Öne Cikma Tarihi</div>
                             <div class="mt-1 font-medium text-foreground">{{ $project->featured_at?->format('d.m.Y H:i') ?: 'Yok' }}</div>
                         </div>
                         <div class="rounded-2xl app-surface-card px-4 py-3">
-                            <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Olusturulma</div>
+                            <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Oluşturulma</div>
                             <div class="mt-1 font-medium text-foreground">{{ $project->created_at?->format('d.m.Y H:i') ?: '-' }}</div>
                         </div>
                         <div class="rounded-2xl app-surface-card px-4 py-3">
-                            <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Son Guncelleme</div>
+                            <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Son Güncelleme</div>
                             <div class="mt-1 font-medium text-foreground">{{ $project->updated_at?->format('d.m.Y H:i') ?: '-' }}</div>
                         </div>
                     </div>

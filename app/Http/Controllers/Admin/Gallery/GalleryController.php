@@ -84,7 +84,7 @@ class GalleryController extends Controller
     public function create()
     {
         return view('admin.pages.galleries.create', [
-            'pageTitle' => 'Galeri Olustur',
+            'pageTitle' => 'Galeri Oluştur',
         ]);
     }
 
@@ -106,13 +106,13 @@ class GalleryController extends Controller
 
         return redirect()
             ->route('admin.galleries.edit', ['gallery' => $gallery->id])
-            ->with('success', 'Galeri olusturuldu.');
+            ->with('success', 'Galeri oluşturuldu.');
     }
 
     public function edit(Gallery $gallery)
     {
         return view('admin.pages.galleries.edit', [
-            'pageTitle' => 'Galeri Duzenle',
+            'pageTitle' => 'Galeri Düzenle',
             'gallery' => $gallery,
         ]);
     }
@@ -132,7 +132,7 @@ class GalleryController extends Controller
 
         AuditEvent::log('gallery.update', ['gallery_id' => $gallery->id]);
 
-        return back()->with('success', 'Galeri guncellendi.');
+        return back()->with('success', 'Galeri güncellendi.');
     }
 
     public function destroy(Gallery $gallery)
@@ -144,11 +144,11 @@ class GalleryController extends Controller
         if (request()->expectsJson()) {
             return response()->json([
                 'ok' => true,
-                'message' => 'Galeri cop kutusuna tasindi.',
+                'message' => 'Galeri çöp kutusuna taşındı.',
             ]);
         }
 
-        return back()->with('success', 'Galeri cop kutusuna tasindi.');
+        return back()->with('success', 'Galeri çöp kutusuna taşındı.');
     }
 
     public function restore(int $id)
@@ -158,7 +158,7 @@ class GalleryController extends Controller
 
         AuditEvent::log('gallery.restore', ['gallery_id' => $gallery->id]);
 
-        return back()->with('success', 'Galeri geri yuklendi.');
+        return back()->with('success', 'Galeri geri yüklendi.');
     }
 
     public function forceDestroy(int $id)
@@ -170,13 +170,13 @@ class GalleryController extends Controller
             ->count();
 
         if ($attachedCount > 0) {
-            return back()->with('error', 'Bu galeri iceriklere bagli. Once baglantilari kaldir.');
+            return back()->with('error', 'Bu galeri içeriklere bağlı. Önce bağlantıları kaldır.');
         }
 
         $gallery->forceDelete();
         AuditEvent::log('gallery.force_delete', ['gallery_id' => $id]);
 
-        return back()->with('success', 'Galeri kalici silindi.');
+        return back()->with('success', 'Galeri kalıcı silindi.');
     }
 
     public function bulkDestroy(Request $request): JsonResponse

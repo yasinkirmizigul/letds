@@ -129,7 +129,7 @@ function createMonthlyChart(element, payload) {
             intersect: false,
         },
         noData: {
-            text: 'Veri bulunamadi',
+            text: 'Veri bulunamadı',
             style: {
                 color: muted,
             },
@@ -209,11 +209,11 @@ function createActionChart(element, payload) {
         tooltip: {
             theme: chartTheme(),
             y: {
-                formatter: (value) => `${value} kayit`,
+                formatter: (value) => `${value} kayıt`,
             },
         },
         noData: {
-            text: 'Veri bulunamadi',
+            text: 'Veri bulunamadı',
             style: {
                 color: muted,
             },
@@ -284,7 +284,7 @@ function createScheduleChart(element, payload) {
             },
         },
         noData: {
-            text: 'Veri bulunamadi',
+            text: 'Veri bulunamadı',
             style: {
                 color: muted,
             },

@@ -17,10 +17,10 @@
         <div class="flex flex-col gap-4 mb-6 lg:flex-row lg:items-end lg:justify-between">
             <div class="grid gap-2">
                 <span class="kt-badge kt-badge-sm {{ $blogPost->is_published ? 'kt-badge-light-success' : 'kt-badge-light' }} w-fit">
-                    {{ $blogPost->is_published ? 'Yayinda' : 'Taslak' }}
+                    {{ $blogPost->is_published ? 'Yayında' : 'Taslak' }}
                 </span>
                 <div>
-                    <h1 class="text-xl font-semibold">Blog Yazisini Duzenle</h1>
+                    <h1 class="text-xl font-semibold">Blog Yazisini Düzenle</h1>
                     <div class="text-sm text-muted-foreground">#{{ $blogPost->id }} - {{ $blogPost->title }}</div>
                 </div>
             </div>
@@ -58,8 +58,8 @@
             ])
 
             <div class="flex items-center justify-end gap-3">
-                <a href="{{ route('admin.blog.index') }}" class="kt-btn kt-btn-light">Iptal</a>
-                <button type="submit" class="kt-btn kt-btn-primary">Guncelle</button>
+                <a href="{{ route('admin.blog.index') }}" class="kt-btn kt-btn-light">İptal</a>
+                <button type="submit" class="kt-btn kt-btn-primary">Güncelle</button>
             </div>
         </form>
 

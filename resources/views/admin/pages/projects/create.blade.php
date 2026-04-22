@@ -19,9 +19,9 @@
             <div class="grid gap-2">
                 <span class="kt-badge kt-badge-sm kt-badge-light w-fit">Yeni Proje</span>
                 <div>
-                    <h1 class="text-xl font-semibold">Proje Olustur</h1>
+                    <h1 class="text-xl font-semibold">Proje Oluştur</h1>
                     <div class="text-sm text-muted-foreground">
-                        Workflow, SEO, kategori ve vitrin yonetimini tek ekrandan kurun.
+                        Workflow, SEO, kategori ve vitrin yönetimini tek ekrandan kurun.
                     </div>
                 </div>
             </div>
@@ -51,7 +51,7 @@
             ])
 
             <div class="flex items-center justify-end gap-3">
-                <a href="{{ route('admin.projects.index') }}" class="kt-btn kt-btn-light">Iptal</a>
+                <a href="{{ route('admin.projects.index') }}" class="kt-btn kt-btn-light">İptal</a>
                 <button type="submit" class="kt-btn kt-btn-primary">Kaydet</button>
             </div>
         </form>

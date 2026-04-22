@@ -19,10 +19,10 @@
         <div class="flex flex-col gap-4 mb-6 lg:flex-row lg:items-end lg:justify-between">
             <div class="grid gap-2">
                 <span class="kt-badge kt-badge-sm {{ $product->is_featured ? 'kt-badge-light-success' : 'kt-badge-light' }} w-fit">
-                    {{ $product->is_featured ? 'Anasayfada' : 'Normal Kayit' }}
+                    {{ $product->is_featured ? 'Anasayfada' : 'Normal Kayıt' }}
                 </span>
                 <div>
-                    <h1 class="text-xl font-semibold">Urunu Duzenle</h1>
+                    <h1 class="text-xl font-semibold">Ürünü Düzenle</h1>
                     <div class="text-sm text-muted-foreground">#{{ $product->id }} - {{ $product->title }}</div>
                 </div>
             </div>
@@ -55,8 +55,8 @@
             ])
 
             <div class="flex items-center justify-end gap-3">
-                <a href="{{ route('admin.products.index') }}" class="kt-btn kt-btn-light">Iptal</a>
-                <button type="submit" class="kt-btn kt-btn-primary">Guncelle</button>
+                <a href="{{ route('admin.products.index') }}" class="kt-btn kt-btn-light">İptal</a>
+                <button type="submit" class="kt-btn kt-btn-primary">Güncelle</button>
             </div>
         </form>
 

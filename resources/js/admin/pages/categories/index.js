@@ -35,11 +35,11 @@ function renderActions(item, mode) {
             <div class="flex items-center justify-end gap-2">
                 <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-restore data-url="${escHtml(item.restore_url)}">
                     <i class="ki-outline ki-arrow-circle-left"></i>
-                    Geri Yukle
+                    Geri Yükle
                 </button>
                 <button type="button" class="kt-btn kt-btn-sm kt-btn-danger" data-force data-url="${escHtml(item.force_url)}">
                     <i class="ki-outline ki-trash"></i>
-                    Kalici Sil
+                    Kalıcı Sil
                 </button>
             </div>
         `;
@@ -49,7 +49,7 @@ function renderActions(item, mode) {
         <div class="flex items-center justify-end gap-2">
             <a href="${editUrl}" class="kt-btn kt-btn-sm kt-btn-warning">
                 <i class="ki-outline ki-pencil"></i>
-                Duzenle
+                Düzenle
             </a>
             <button type="button" class="kt-btn kt-btn-sm kt-btn-danger" data-delete data-url="${escHtml(item.delete_url)}">
                 <i class="ki-outline ki-trash"></i>
@@ -64,7 +64,7 @@ function renderConnections(item) {
         { label: 'Alt', value: Number(item.children_count || 0) },
         { label: 'Blog', value: Number(item.blog_posts_count || 0) },
         { label: 'Proje', value: Number(item.project_count || 0) },
-        { label: 'Urun', value: Number(item.product_count || 0) },
+        { label: 'Ürün', value: Number(item.product_count || 0) },
     ];
 
     return `
@@ -233,14 +233,14 @@ export default function init(ctx = {}) {
 
         tbody.innerHTML = `
             <tr>
-                <td colspan="6" class="py-10 text-center text-muted-foreground">Yukleniyor...</td>
+                <td colspan="6" class="py-10 text-center text-muted-foreground">Yükleniyor...</td>
             </tr>
         `;
 
         try {
             const json = await requestJson(url, { signal: abort.signal });
             if (!json || json.ok !== true) {
-                throw new Error(json?.message || 'Liste alinamadi');
+                throw new Error(json?.message || 'Liste alınamadı');
             }
 
             const rows = Array.isArray(json.data) ? json.data : [];
@@ -255,7 +255,7 @@ export default function init(ctx = {}) {
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="6" class="py-10 text-center text-muted-foreground">
-                            ${state.q ? 'Sonuc bulunamadi.' : 'Henuz kayit yok.'}
+                            ${state.q ? 'Sonuç bulunamadı.' : 'Henüz kayıt yok.'}
                         </td>
                     </tr>
                 `;
@@ -269,7 +269,7 @@ export default function init(ctx = {}) {
                 const currentPage = Number(lastMeta.current_page || 1);
                 const start = total === 0 ? 0 : (currentPage - 1) * perPage + 1;
                 const end = Math.min(currentPage * perPage, total);
-                infoEl.textContent = total === 0 ? 'Kayit yok' : `${start}-${end} / ${total}`;
+                infoEl.textContent = total === 0 ? 'Kayıt yok' : `${start}-${end} / ${total}`;
             }
 
             renderPagination(lastMeta, paginationEl);
@@ -278,7 +278,7 @@ export default function init(ctx = {}) {
             if (error?.name === 'AbortError') return;
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="6" class="py-10 text-center text-danger">${escHtml(error?.message || 'Hata olustu')}</td>
+                    <td colspan="6" class="py-10 text-center text-danger">${escHtml(error?.message || 'Hata oluştu')}</td>
                 </tr>
             `;
         }
@@ -298,7 +298,7 @@ export default function init(ctx = {}) {
             await load();
             return true;
         } catch (error) {
-            const message = error?.data?.message || error?.message || 'Islem basarisiz.';
+            const message = error?.data?.message || error?.message || 'İşlem başarısız.';
             showToastMessage('error', message);
             return false;
         }
@@ -320,14 +320,14 @@ export default function init(ctx = {}) {
 
             const failed = Array.isArray(json?.failed) ? json.failed.length : 0;
             if (failed > 0) {
-                showToastMessage('warning', `${json.done || 0} kayit islendi, ${failed} kayit atlandi.`, { duration: 2600 });
+                showToastMessage('warning', `${json.done || 0} kayıt islendi, ${failed} kayıt atlandi.`, { duration: 2600 });
             } else {
                 showToastMessage('success', json?.message || successMessage, { duration: 1800 });
             }
 
             await load();
         } catch (error) {
-            showToastMessage('error', error?.data?.message || error?.message || 'Toplu islem basarisiz.');
+            showToastMessage('error', error?.data?.message || error?.message || 'Toplu işlem başarısız.');
         }
     }
 
@@ -398,7 +398,7 @@ export default function init(ctx = {}) {
             await performAction(del.getAttribute('data-url'), 'DELETE', 'Kategori silindi.', {
                 type: 'warning',
                 title: 'Kategori silinsin mi?',
-                message: 'Kayit cop kutusuna tasinacak.',
+                message: 'Kayıt çöp kutusuna taşınacak.',
                 confirmButtonText: 'Sil',
             });
             return;
@@ -406,50 +406,50 @@ export default function init(ctx = {}) {
 
         if (restore) {
             event.preventDefault();
-            await performAction(restore.getAttribute('data-url'), 'POST', 'Kategori geri yuklendi.', {
+            await performAction(restore.getAttribute('data-url'), 'POST', 'Kategori geri yüklendi.', {
                 type: 'success',
-                title: 'Kategori geri yuklensin mi?',
-                message: 'Kayit tekrar aktif listeye alinacak.',
-                confirmButtonText: 'Geri yukle',
+                title: 'Kategori geri yüklensin mi?',
+                message: 'Kayıt tekrar aktif listeye alınacak.',
+                confirmButtonText: 'Geri yükle',
             });
             return;
         }
 
         if (force) {
             event.preventDefault();
-            await performAction(force.getAttribute('data-url'), 'DELETE', 'Kategori kalici olarak silindi.', {
+            await performAction(force.getAttribute('data-url'), 'DELETE', 'Kategori kalıcı olarak silindi.', {
                 type: 'error',
-                title: 'Kategori kalici olarak silinsin mi?',
-                message: 'Bu islem geri alinamaz.',
-                confirmButtonText: 'Kalici sil',
+                title: 'Kategori kalıcı olarak silinsin mi?',
+                message: 'Bu işlem geri alınamaz.',
+                confirmButtonText: 'Kalıcı sil',
             });
         }
     }, ctx.signal ? { signal: ctx.signal } : undefined);
 
     bulkDeleteBtn?.addEventListener('click', () => {
-        performBulk(bulkDeleteUrl, 'Secili kategoriler silindi.', {
+        performBulk(bulkDeleteUrl, 'Seçili kategoriler silindi.', {
             type: 'warning',
-            title: 'Secili kategoriler silinsin mi?',
-            message: `${selectedIds.size} kayit cop kutusuna tasinacak.`,
+            title: 'Seçili kategoriler silinsin mi?',
+            message: `${selectedIds.size} kayıt çöp kutusuna taşınacak.`,
             confirmButtonText: 'Sil',
         });
     }, ctx.signal ? { signal: ctx.signal } : undefined);
 
     bulkRestoreBtn?.addEventListener('click', () => {
-        performBulk(bulkRestoreUrl, 'Secili kategoriler geri yuklendi.', {
+        performBulk(bulkRestoreUrl, 'Seçili kategoriler geri yüklendi.', {
             type: 'success',
-            title: 'Secili kategoriler geri yuklensin mi?',
-            message: `${selectedIds.size} kayit tekrar aktif listeye alinacak.`,
-            confirmButtonText: 'Geri yukle',
+            title: 'Seçili kategoriler geri yüklensin mi?',
+            message: `${selectedIds.size} kayıt tekrar aktif listeye alınacak.`,
+            confirmButtonText: 'Geri yükle',
         });
     }, ctx.signal ? { signal: ctx.signal } : undefined);
 
     bulkForceBtn?.addEventListener('click', () => {
-        performBulk(bulkForceUrl, 'Secili kategoriler kalici olarak silindi.', {
+        performBulk(bulkForceUrl, 'Seçili kategoriler kalıcı olarak silindi.', {
             type: 'error',
-            title: 'Secili kategoriler kalici olarak silinsin mi?',
-            message: `${selectedIds.size} kayit geri alinamayacak sekilde silinecek.`,
-            confirmButtonText: 'Kalici sil',
+            title: 'Seçili kategoriler kalıcı olarak silinsin mi?',
+            message: `${selectedIds.size} kayıt geri alinamayacak sekilde silinecek.`,
+            confirmButtonText: 'Kalıcı sil',
         });
     }, ctx.signal ? { signal: ctx.signal } : undefined);
 

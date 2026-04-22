@@ -138,7 +138,7 @@ export function initStatusFeaturedUI(root, signal) {
             publicBadge.classList.remove('kt-badge-light-success', 'kt-badge-light', 'text-muted-foreground');
             if (isPublic) {
                 publicBadge.classList.add('kt-badge-light-success');
-                publicBadge.textContent = 'Sitede gorunebilir';
+                publicBadge.textContent = 'Sitede görünebilir';
             } else {
                 publicBadge.classList.add('kt-badge-light', 'text-muted-foreground');
                 publicBadge.textContent = 'Sitede gizli';
@@ -147,8 +147,8 @@ export function initStatusFeaturedUI(root, signal) {
 
         if (visibilityHint) {
             visibilityHint.textContent = isPublic
-                ? 'Bu statu, proje detay sayfasinin site tarafinda acilmasina izin verir.'
-                : 'Bu statu, projeyi admin icinde tutar; site tarafinda yayina cikmaz.';
+                ? 'Bu statü, proje detay sayfasının site tarafında açılmasına izin verir.'
+                : 'Bu statü, projeyi admin içinde tutar; site tarafında yayına çıkmaz.';
         }
     };
 
@@ -166,7 +166,7 @@ export function initStatusFeaturedUI(root, signal) {
         }
 
         featuredBadge.classList.add('kt-badge-light', 'text-muted-foreground');
-        featuredBadge.textContent = 'Kapali';
+        featuredBadge.textContent = 'Kapalı';
     };
 
     syncStatus();
@@ -205,7 +205,7 @@ export function initSlugTools(root, signal) {
         const slug = trimText(slugInput.value);
 
         if (!slug) {
-            setHintState(hintEl, 'muted', 'Slug girildiginde uygunluk kontrolu yapilir.');
+            setHintState(hintEl, 'muted', 'Slug girildiginde uygunlük kontrolü yapılır.');
             return;
         }
 
@@ -240,7 +240,7 @@ export function initSlugTools(root, signal) {
             const suggested = data.suggested ? ` Oneri: ${data.suggested}` : '';
             setHintState(hintEl, 'warning', `${data.message || 'Slug kullanimda.'}${suggested}`);
         } catch (error) {
-            setHintState(hintEl, 'danger', error?.message || 'Slug kontrolu basarisiz oldu.');
+            setHintState(hintEl, 'danger', error?.message || 'Slug kontrolü başarısız oldu.');
         }
     }, 320);
 
@@ -291,11 +291,11 @@ export function initSeoPanel(root, signal, getContent) {
         const resolvedPreviewTitle =
             trimText(metaTitleInput?.value)
             || trimText(titleInput?.value)
-            || 'Meta baslik burada gorunecek';
+            || 'Meta başlık burada görünecek';
         const resolvedPreviewDescription =
             trimText(metaDescriptionInput?.value)
             || limitText(content, 155)
-            || 'Meta aciklama burada gorunecek.';
+            || 'Meta açıklama burada görünecek.';
 
         if (titleCount) titleCount.textContent = `${titleLength}/255`;
         if (metaTitleCount) metaTitleCount.textContent = `${metaTitleLength}/60 onerisi`;
@@ -327,9 +327,9 @@ export function initSeoPanel(root, signal, getContent) {
         }
 
         if (seoSummary) {
-            if (score >= 80) seoSummary.textContent = 'SEO hazirligi guclu gorunuyor.';
-            else if (score >= 50) seoSummary.textContent = 'Temel alanlar iyi, birkac iyilestirme daha yapilabilir.';
-            else seoSummary.textContent = 'Meta alanlari ve one cikan gorsel tarafini guclendirmek faydali olur.';
+            if (score >= 80) seoSummary.textContent = 'SEO hazırlığı güçlü görünüyor.';
+            else if (score >= 50) seoSummary.textContent = 'Temel alanlar iyi, birkaç iyileştirme daha yapılabilir.';
+            else seoSummary.textContent = 'Meta alanları ve öne çıkan görsel tarafını güçlendirmek faydalı olur.';
         }
     };
 
@@ -349,17 +349,17 @@ function csrfToken() {
     return meta ? meta.getAttribute('content') : '';
 }
 
-function loadScriptOnce(src) {
+function loadScriptÖnce(src) {
     if (!src) return Promise.reject(new Error('TinyMCE kaynagi eksik.'));
-    if (document.querySelector(`script[data-once="${src}"]`)) return Promise.resolve();
+    if (document.querySelector(`script[data-önce="${src}"]`)) return Promise.resolve();
 
     return new Promise((resolve, reject) => {
         const script = document.createElement('script');
         script.src = src;
         script.async = true;
-        script.dataset.once = src;
+        script.dataset.önce = src;
         script.onload = () => resolve();
-        script.onerror = () => reject(new Error(`Yuklenemedi: ${src}`));
+        script.onerror = () => reject(new Error(`Yüklenemedi: ${src}`));
         document.head.appendChild(script);
     });
 }
@@ -411,14 +411,14 @@ function initTiny({ selector, uploadUrl, baseUrl, langUrl, onContentChange }) {
         automatic_uploads: true,
         paste_data_images: true,
         autoresize_bottom_margin: 24,
-        setup: (editor) => {
+        setup: (editör) => {
             const sync = () => {
-                editor.save();
+                editör.save();
                 onContentChange?.();
             };
 
-            editor.on('init', sync);
-            editor.on('change input keyup undo redo setcontent', sync);
+            editör.on('init', sync);
+            editör.on('change input keyup undo redo setcontent', sync);
         },
         images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
@@ -476,7 +476,7 @@ export async function initTinyEditor(ctx, onContentChange) {
         return;
     }
 
-    await loadScriptOnce(tinymceSrc);
+    await loadScriptÖnce(tinymceSrc);
 
     const boot = () => initTiny({
         selector: '#content_editor',

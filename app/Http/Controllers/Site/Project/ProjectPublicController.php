@@ -107,7 +107,7 @@ class ProjectPublicController extends Controller
 
     private function getProjectCategories(int $projectId): array
     {
-        // categorizables polymorphic: categorizable_type + categorizable_id
+        // categorizables polymorphiç: categorizable_type + categorizable_id
         // Blog ile aynı mantık
         $rows = DB::table('categorizables as cz')
             ->join('categories as c', 'c.id', '=', 'cz.category_id')

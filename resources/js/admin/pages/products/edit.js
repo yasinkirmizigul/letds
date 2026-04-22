@@ -21,8 +21,8 @@ export default async function init(ctx) {
     initSlugTools(root, signal);
 
     const seoPanel = initSeoPanel(root, signal, () => {
-        const editor = window.tinymce?.get?.('content_editor');
-        return editor ? editor.getContent({ format: 'html' }) : (root.querySelector('#content_editor')?.value || '');
+        const editör = window.tinymce?.get?.('content_editor');
+        return editör ? editör.getContent({ format: 'html' }) : (root.querySelector('#content_editor')?.value || '');
     });
 
     await initTinyEditor(ctx, () => seoPanel.sync());
@@ -30,7 +30,7 @@ export default async function init(ctx) {
 
     const updateForm = root.querySelector('#product-update-form');
     if (updateForm) {
-        updateForm.addEventListener('submit', () => lockSubmitButtons(root, 'product-update-form'), { signal, once: true });
+        updateForm.addEventListener('submit', () => lockSubmitButtons(root, 'product-update-form'), { signal, önce: true });
     }
 
     const deleteButton = root.querySelector('#productDeleteBtn');
@@ -39,8 +39,8 @@ export default async function init(ctx) {
     deleteButton.addEventListener('click', async () => {
         const ok = await showConfirmDialog({
             type: 'warning',
-            title: 'Urun silinsin mi?',
-            message: 'Urun cop kutusuna tasinacak.',
+            title: 'Ürün silinsin mi?',
+            message: 'Ürün çöp kutusuna taşınacak.',
             confirmButtonText: 'Sil',
         });
 
@@ -56,17 +56,17 @@ export default async function init(ctx) {
             });
 
             if (!data?.ok) {
-                throw new Error(data?.message || 'Silme islemi tamamlanamadi.');
+                throw new Error(data?.message || 'Silme işlemi tamamlanamadı.');
             }
 
-            notify('success', data?.message || 'Urun cop kutusuna tasindi.');
+            notify('success', data?.message || 'Ürün çöp kutusuna taşındı.');
 
             window.setTimeout(() => {
                 window.location.assign(root.dataset.productIndexUrl || '/admin/products');
             }, 650);
         } catch (error) {
             setFormButtonsDisabled(root, 'product-update-form', false);
-            notify('error', error?.message || 'Silme islemi basarisiz oldu.');
+            notify('error', error?.message || 'Silme işlemi başarısız oldu.');
         }
     }, { signal });
 }

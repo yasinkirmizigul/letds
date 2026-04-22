@@ -110,7 +110,7 @@ export default function init(ctx = {}) {
                         <div class="flex items-center gap-2 flex-wrap">
                             <a href="${editUrl}" class="font-medium hover:underline">${escapeHtml(gallery.name)}</a>
                             <span class="kt-badge kt-badge-outline">#${gallery.id}</span>
-                            ${mode === 'trash' ? '<span class="kt-badge kt-badge-outline">Cop</span>' : ''}
+                            ${mode === 'trash' ? '<span class="kt-badge kt-badge-outline">Çöp</span>' : ''}
                         </div>
 
                         <div class="text-xs text-muted-foreground">${escapeHtml(gallery.slug || '')}</div>
@@ -118,17 +118,17 @@ export default function init(ctx = {}) {
                         ${gallery.description ? `<div class="text-sm">${escapeHtml(gallery.description)}</div>` : ''}
 
                         <div class="flex flex-wrap gap-2">
-                            <span class="kt-badge kt-badge-light">Oge: ${Number(gallery.items_count || 0)}</span>
+                            <span class="kt-badge kt-badge-light">Öge: ${Number(gallery.items_count || 0)}</span>
                             <span class="kt-badge ${Number(gallery.attached_count || 0) > 0 ? 'kt-badge-light-primary' : 'kt-badge-light'}">
-                                Bagli icerik: ${Number(gallery.attached_count || 0)}
+                                Bağlı içerik: ${Number(gallery.attached_count || 0)}
                             </span>
-                            <span class="kt-badge kt-badge-light">Guncelleme: ${escapeHtml(gallery.updated_at || '-')}</span>
+                            <span class="kt-badge kt-badge-light">Güncelleme: ${escapeHtml(gallery.updated_at || '-')}</span>
                         </div>
                     </div>
 
                     <div class="flex items-center gap-2">
                         <a href="${editUrl}" class="kt-btn kt-btn-sm kt-btn-light">
-                            <i class="ki-outline ki-pencil"></i> Duzenle
+                            <i class="ki-outline ki-pencil"></i> Düzenle
                         </a>
                         ${deleteButton}
                     </div>
@@ -174,7 +174,7 @@ export default function init(ctx = {}) {
         const ok = await showConfirmDialog({
             type: 'warning',
             title: 'Galeri silinsin mi?',
-            message: 'Galeri cop kutusuna tasinacak.',
+            message: 'Galeri çöp kutusuna taşınacak.',
             confirmButtonText: 'Sil',
         });
         if (!ok) return;

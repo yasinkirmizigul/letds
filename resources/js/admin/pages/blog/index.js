@@ -76,7 +76,7 @@ async function togglePublish(input) {
         });
 
         if (!data?.ok) {
-            throw new Error(data?.message || 'Durum guncellenemedi.');
+            throw new Error(data?.message || 'Durum güncellenemedi.');
         }
 
         if (badgeWrap && data.badge_html) {
@@ -85,7 +85,7 @@ async function togglePublish(input) {
 
         if (publishedAt) {
             publishedAt.textContent = data.is_published && data.published_at
-                ? `Yayin Tarihi: ${data.published_at}`
+                ? `Yayın Tarihi: ${data.published_at}`
                 : '';
         }
 
@@ -93,11 +93,11 @@ async function togglePublish(input) {
             row.dataset.published = data.is_published ? '1' : '0';
         }
 
-        notify('success', data.message || (data.is_published ? 'Yazi yayina alindi.' : 'Yazi taslak durumuna alindi.'));
+        notify('success', data.message || (data.is_published ? 'Yazı yayına alındı.' : 'Yazı taslak durumuna alındı.'));
         redrawOwningTable(input);
     } catch (error) {
         input.checked = rollback;
-        notify('error', resolveErrorMessage(error, 'Durum guncellenemedi.'));
+        notify('error', resolveErrorMessage(error, 'Durum güncellenemedi.'));
     } finally {
         input.disabled = false;
         row?.classList.remove('opacity-50');
@@ -124,7 +124,7 @@ async function toggleFeatured(input) {
         });
 
         if (!data?.ok) {
-            throw new Error(data?.message || 'One cikan durumu guncellenemedi.');
+            throw new Error(data?.message || 'Öne cikan durumu güncellenemedi.');
         }
 
         if (badgeWrap && data.badge_html) {
@@ -133,7 +133,7 @@ async function toggleFeatured(input) {
 
         if (featuredAt) {
             featuredAt.textContent = data.is_featured && data.featured_at
-                ? `Secim: ${data.featured_at}`
+                ? `Seçim: ${data.featured_at}`
                 : '';
         }
 
@@ -141,11 +141,11 @@ async function toggleFeatured(input) {
             row.dataset.featured = data.is_featured ? '1' : '0';
         }
 
-        notify('success', data.message || (data.is_featured ? 'Yazi anasayfaya alindi.' : 'Yazi anasayfadan kaldirildi.'));
+        notify('success', data.message || (data.is_featured ? 'Yazı anasayfaya alındı.' : 'Yazı anasayfadan kaldırıldı.'));
         redrawOwningTable(input);
     } catch (error) {
         input.checked = rollback;
-        notify('error', resolveErrorMessage(error, 'Islem basarisiz.'));
+        notify('error', resolveErrorMessage(error, 'İşlem başarısız.'));
     } finally {
         input.disabled = false;
         row?.classList.remove('opacity-50');
@@ -161,7 +161,7 @@ async function postJson(url, body, signal) {
     });
 
     if (response?.ok === false) {
-        throw new Error(response?.message || 'Islem basarisiz.');
+        throw new Error(response?.message || 'İşlem başarısız.');
     }
 
     return response;
@@ -427,14 +427,14 @@ export default function init(ctx) {
             if (action === 'delete') {
                 const ok = await showConfirmDialog({
                     type: 'warning',
-                    title: 'Yazi silinsin mi?',
-                    message: 'Yazi cop kutusuna tasinacak.',
+                    title: 'Yazı silinsin mi?',
+                    message: 'Yazı çöp kutusuna taşınacak.',
                     confirmButtonText: 'Sil',
                 });
                 if (!ok) return;
 
                 const response = await request(url, { method: 'DELETE', signal, ignoreGlobalError: true });
-                notify('success', response?.message || 'Yazi silindi.');
+                notify('success', response?.message || 'Yazı silindi.');
                 window.location.reload();
                 return;
             }
@@ -442,14 +442,14 @@ export default function init(ctx) {
             if (action === 'restore') {
                 const ok = await showConfirmDialog({
                     type: 'success',
-                    title: 'Yazi geri yuklensin mi?',
-                    message: 'Kayit tekrar aktif listeye alinacak.',
-                    confirmButtonText: 'Geri yukle',
+                    title: 'Yazı geri yüklensin mi?',
+                    message: 'Kayıt tekrar aktif listeye alınacak.',
+                    confirmButtonText: 'Geri yükle',
                 });
                 if (!ok) return;
 
                 const response = await postJson(url, {}, signal);
-                notify('success', response?.message || 'Yazi geri yuklendi.');
+                notify('success', response?.message || 'Yazı geri yüklendi.');
                 window.location.reload();
                 return;
             }
@@ -457,18 +457,18 @@ export default function init(ctx) {
             if (action === 'force-delete') {
                 const ok = await showConfirmDialog({
                     type: 'error',
-                    title: 'Yazi kalici olarak silinsin mi?',
-                    message: 'Bu islem geri alinamaz.',
-                    confirmButtonText: 'Kalici sil',
+                    title: 'Yazı kalıcı olarak silinsin mi?',
+                    message: 'Bu işlem geri alınamaz.',
+                    confirmButtonText: 'Kalıcı sil',
                 });
                 if (!ok) return;
 
                 const response = await request(url, { method: 'DELETE', signal, ignoreGlobalError: true });
-                notify('success', response?.message || 'Yazi kalici olarak silindi.');
+                notify('success', response?.message || 'Yazı kalıcı olarak silindi.');
                 window.location.reload();
             }
         } catch (error) {
-            notify('error', resolveErrorMessage(error, 'Islem basarisiz.'));
+            notify('error', resolveErrorMessage(error, 'İşlem başarısız.'));
         } finally {
             button.dataset.busy = '0';
         }
@@ -480,19 +480,19 @@ export default function init(ctx) {
 
         const ok = await showConfirmDialog({
             type: 'warning',
-            title: 'Secili yazilar silinsin mi?',
-            message: `${ids.length} kayit cop kutusuna tasinacak.`,
+            title: 'Seçili yazilar silinsin mi?',
+            message: `${ids.length} kayıt çöp kutusuna taşınacak.`,
             confirmButtonText: 'Sil',
         });
         if (!ok) return;
 
         try {
             const response = await postJson(root.dataset.bulkDeleteUrl, { ids }, signal);
-            notify('success', response?.message || 'Secili yazilar silindi.');
+            notify('success', response?.message || 'Seçili yazilar silindi.');
             selectedIds.clear();
             window.location.reload();
         } catch (error) {
-            notify('error', resolveErrorMessage(error, 'Silme islemi basarisiz.'));
+            notify('error', resolveErrorMessage(error, 'Silme işlemi başarısız.'));
             updateBulkUI();
         }
     }, { signal });
@@ -503,19 +503,19 @@ export default function init(ctx) {
 
         const ok = await showConfirmDialog({
             type: 'success',
-            title: 'Secili yazilar geri yuklensin mi?',
-            message: `${ids.length} kayit tekrar aktif listeye alinacak.`,
-            confirmButtonText: 'Geri yukle',
+            title: 'Seçili yazilar geri yüklensin mi?',
+            message: `${ids.length} kayıt tekrar aktif listeye alınacak.`,
+            confirmButtonText: 'Geri yükle',
         });
         if (!ok) return;
 
         try {
             const response = await postJson(root.dataset.bulkRestoreUrl, { ids }, signal);
-            notify('success', response?.message || 'Secili yazilar geri yuklendi.');
+            notify('success', response?.message || 'Seçili yazilar geri yüklendi.');
             selectedIds.clear();
             window.location.reload();
         } catch (error) {
-            notify('error', resolveErrorMessage(error, 'Geri yukleme basarisiz.'));
+            notify('error', resolveErrorMessage(error, 'Geri yükleme başarısız.'));
             updateBulkUI();
         }
     }, { signal });
@@ -526,19 +526,19 @@ export default function init(ctx) {
 
         const ok = await showConfirmDialog({
             type: 'error',
-            title: 'Secili yazilar kalici olarak silinsin mi?',
-            message: `${ids.length} kayit geri alinamayacak sekilde silinecek.`,
-            confirmButtonText: 'Kalici sil',
+            title: 'Seçili yazilar kalıcı olarak silinsin mi?',
+            message: `${ids.length} kayıt geri alinamayacak sekilde silinecek.`,
+            confirmButtonText: 'Kalıcı sil',
         });
         if (!ok) return;
 
         try {
             const response = await postJson(root.dataset.bulkForceDeleteUrl, { ids }, signal);
-            notify('success', response?.message || 'Secili yazilar kalici olarak silindi.');
+            notify('success', response?.message || 'Seçili yazilar kalıcı olarak silindi.');
             selectedIds.clear();
             window.location.reload();
         } catch (error) {
-            notify('error', resolveErrorMessage(error, 'Kalici silme basarisiz.'));
+            notify('error', resolveErrorMessage(error, 'Kalıcı silme başarısız.'));
             updateBulkUI();
         }
     }, { signal });

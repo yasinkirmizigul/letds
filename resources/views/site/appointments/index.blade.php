@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container py-5">
-        <h3 class="mb-4">Randevu Al</h3>
+        <h3 class="mb-4">Randevu Oluştur</h3>
 
         @if($activeAppointment)
             <div class="p-4 border rounded bg-green-50 mb-4" id="active-appointment-card">
@@ -49,7 +49,24 @@
 
             <div id="calendar" class="mb-4"></div>
 
-            <input type="date" id="date" class="form-control mb-3">
+            <div class="kt-input mb-3 w-full">
+                <i class="ki-outline ki-calendar"></i>
+                <input
+                    id="date"
+                    class="grow"
+                    type="text"
+                    readonly
+                    placeholder="GG.AA.YYYY"
+                    data-app-date-picker="true"
+                    data-app-date-mode="date"
+                    data-kt-date-picker="true"
+                    data-kt-date-picker-input-mode="true"
+                    data-kt-date-picker-position-to-input="left"
+                    data-kt-date-picker-locale="tr-TR"
+                    data-kt-date-picker-first-weekday="1"
+                    data-kt-date-picker-date-format="DD.MM.YYYY"
+                >
+            </div>
 
             <div id="slots" class="grid grid-cols-3 md:grid-cols-5 gap-3"></div>
 

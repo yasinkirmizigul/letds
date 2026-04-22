@@ -106,7 +106,7 @@ class AppointmentService
                 'blocks' => $blocks,
                 'status' => Appointment::STATUS_BOOKED,
                 'created_by_user_id' => $actor->id,
-                'notes_internal' => $appointment->notes_internal,
+                'notes_internal' => $data['notes_internal'] ?? $appointment->notes_internal,
                 'parent_id' => $appointment->id,
             ]);
 
