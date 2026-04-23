@@ -1,6 +1,26 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
+    @php
+        $showHeroChips = $dashboardSectionVisibility['hero_chips'] ?? false;
+        $showHeroQuickActions = $dashboardSectionVisibility['hero_quick_actions'] ?? false;
+        $showHeroFocusList = $dashboardSectionVisibility['hero_focus_list'] ?? false;
+        $visibleKpis = collect($kpis)->filter(fn ($kpi) => $dashboardSectionVisibility[$kpi['visibility_key']] ?? true)->values();
+        $visibleModuleCards = collect($moduleCards)->filter(fn ($card) => $dashboardSectionVisibility[$card['visibility_key']] ?? true)->values();
+        $showMonthlyChart = $dashboardSectionVisibility['chart_monthly_activity'] ?? false;
+        $showActionChart = $dashboardSectionVisibility['chart_action_breakdown'] ?? false;
+        $showScheduleChart = ($dashboardSectionVisibility['chart_schedule_flow'] ?? false) && $canAppointments;
+        $hasRenderableDashboardSection =
+            ($dashboardSectionVisibility['hero_overview'] ?? false)
+            || (($dashboardSectionVisibility['kpi_overview'] ?? false) && $visibleKpis->isNotEmpty())
+            || (($dashboardSectionVisibility['module_overview'] ?? false) && $visibleModuleCards->isNotEmpty())
+            || (($dashboardSectionVisibility['activity_charts'] ?? false) && ($showMonthlyChart || $showActionChart || $showScheduleChart))
+            || ($dashboardSectionVisibility['recent_messages'] ?? false)
+            || ($dashboardSectionVisibility['upcoming_appointments'] ?? false)
+            || ($dashboardSectionVisibility['recent_content'] ?? false)
+            || (($dashboardSectionVisibility['audit_issues'] ?? false) && $canAudit);
+    @endphp
+
     <div class="kt-container-fixed max-w-[90%] dashboard-shell"
          data-page="dash.index"
          data-monthly-chart='@json($monthlyActivity)'
@@ -22,7 +42,7 @@
                 </a>
             </div>
 
-            @unless($hasVisibleDashboardSection)
+            @unless($hasRenderableDashboardSection)
                 <section class="kt-card overflow-hidden">
                     <div class="kt-card-content px-6 py-10 text-center">
                         <div class="mx-auto inline-flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -47,7 +67,7 @@
                     <div class="dashboard-hero__orb dashboard-hero__orb--secondary"></div>
 
                     <div class="kt-card-content p-6 lg:p-8">
-                        <div class="grid gap-6 xl:grid-cols-[1.25fr,.75fr] xl:items-start">
+                        <div class="grid gap-6 {{ $showHeroFocusList ? 'xl:grid-cols-[1.25fr,.75fr]' : '' }} xl:items-start">
                             <div class="relative z-[1]">
                                 <div class="dashboard-kicker">Yönetim merkezi</div>
                                 <h2 class="mt-3 text-2xl font-semibold tracking-tight text-foreground lg:text-3xl">
@@ -57,22 +77,24 @@
                                     {{ $heroSummary }}
                                 </p>
 
-                                <div class="mt-5 flex flex-wrap items-center gap-2">
-                                    <span class="dashboard-chip">
-                                        <i class="ki-filled ki-calendar-8 text-[13px]"></i>
-                                        {{ $nowLabel }}
-                                    </span>
-                                    <span class="dashboard-chip">
-                                        <i class="ki-filled ki-notification-status text-[13px]"></i>
-                                        {{ $focusTotal }} odak işi
-                                    </span>
-                                    <span class="dashboard-chip">
-                                        <i class="ki-filled ki-element-11 text-[13px]"></i>
-                                        {{ count($moduleCards) }} hızlı modül
-                                    </span>
-                                </div>
+                                @if($showHeroChips)
+                                    <div class="mt-5 flex flex-wrap items-center gap-2">
+                                        <span class="dashboard-chip">
+                                            <i class="ki-filled ki-calendar-8 text-[13px]"></i>
+                                            {{ $nowLabel }}
+                                        </span>
+                                        <span class="dashboard-chip">
+                                            <i class="ki-filled ki-notification-status text-[13px]"></i>
+                                            {{ $focusTotal }} odak işi
+                                        </span>
+                                        <span class="dashboard-chip">
+                                            <i class="ki-filled ki-element-11 text-[13px]"></i>
+                                            {{ $visibleModuleCards->count() }} hızlı modül
+                                        </span>
+                                    </div>
+                                @endif
 
-                                @if(count($quickActions))
+                                @if($showHeroQuickActions && count($quickActions))
                                     <div class="mt-6 flex flex-wrap gap-3">
                                         @foreach($quickActions as $action)
                                             <a href="{{ $action['url'] }}" class="kt-btn {{ $action['style'] }}">
@@ -84,48 +106,50 @@
                                 @endif
                             </div>
 
-                            <div class="dashboard-focus-panel">
-                                <div class="flex items-center justify-between gap-3">
-                                    <div>
-                                        <div class="text-sm font-semibold text-foreground">Odak listesi</div>
-                                        <div class="text-xs text-muted-foreground">En hızlı aksiyon alınabilecek başlıklar.</div>
+                            @if($showHeroFocusList)
+                                <div class="dashboard-focus-panel">
+                                    <div class="flex items-center justify-between gap-3">
+                                        <div>
+                                            <div class="text-sm font-semibold text-foreground">Odak listesi</div>
+                                            <div class="text-xs text-muted-foreground">En hızlı aksiyon alınabilecek başlıklar.</div>
+                                        </div>
+                                        <span class="kt-badge kt-badge-light-primary">{{ count($focusItems) }} kayıt</span>
                                     </div>
-                                    <span class="kt-badge kt-badge-light-primary">{{ count($focusItems) }} kayıt</span>
-                                </div>
 
-                                @if(count($focusItems))
-                                    <div class="mt-4 grid gap-3">
-                                        @foreach($focusItems as $item)
-                                            <a href="{{ $item['url'] }}"
-                                               class="dashboard-focus-item"
-                                               style="--dashboard-accent: {{ $item['accent'] }};">
-                                                <span class="dashboard-focus-item__icon">
-                                                    <i class="{{ $item['icon'] }}"></i>
-                                                </span>
-                                                <span class="min-w-0">
-                                                    <span class="flex items-center justify-between gap-3">
-                                                        <span class="truncate font-medium text-foreground">{{ $item['label'] }}</span>
-                                                        <span class="dashboard-focus-item__count">{{ $item['count'] }}</span>
+                                    @if(count($focusItems))
+                                        <div class="mt-4 grid gap-3">
+                                            @foreach($focusItems as $item)
+                                                <a href="{{ $item['url'] }}"
+                                                   class="dashboard-focus-item"
+                                                   style="--dashboard-accent: {{ $item['accent'] }};">
+                                                    <span class="dashboard-focus-item__icon">
+                                                        <i class="{{ $item['icon'] }}"></i>
                                                     </span>
-                                                    <span class="mt-1 block text-xs text-muted-foreground">{{ $item['hint'] }}</span>
-                                                </span>
-                                            </a>
-                                        @endforeach
-                                    </div>
-                                @else
-                                    <div class="mt-4 rounded-2xl border border-dashed border-border bg-background/75 p-4 text-sm text-muted-foreground">
-                                        Şu an için acil takip bekleyen bir kayıt görünmüyor. Modüllere hızlı geçiş yapıp günlük akışı buradan yönetebilirsin.
-                                    </div>
-                                @endif
-                            </div>
+                                                    <span class="min-w-0">
+                                                        <span class="flex items-center justify-between gap-3">
+                                                            <span class="truncate font-medium text-foreground">{{ $item['label'] }}</span>
+                                                            <span class="dashboard-focus-item__count">{{ $item['count'] }}</span>
+                                                        </span>
+                                                        <span class="mt-1 block text-xs text-muted-foreground">{{ $item['hint'] }}</span>
+                                                    </span>
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <div class="mt-4 rounded-2xl border border-dashed border-border bg-background/75 p-4 text-sm text-muted-foreground">
+                                            Şu an için acil takip bekleyen bir kayıt görünmüyor. Modüllere hızlı geçiş yapıp günlük akışı buradan yönetebilirsin.
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </section>
             @endif
 
-            @if($dashboardSectionVisibility['kpi_overview'] ?? false)
+            @if(($dashboardSectionVisibility['kpi_overview'] ?? false) && $visibleKpis->isNotEmpty())
                 <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-                    @foreach($kpis as $kpi)
+                    @foreach($visibleKpis as $kpi)
                         <article class="dashboard-kpi-card kt-card" style="--dashboard-accent: {{ $kpi['accent'] }};">
                             <div class="kt-card-content p-5">
                                 <div class="flex items-start justify-between gap-4">
@@ -144,7 +168,7 @@
                 </div>
             @endif
 
-            @if($dashboardSectionVisibility['module_overview'] ?? false)
+            @if(($dashboardSectionVisibility['module_overview'] ?? false) && $visibleModuleCards->isNotEmpty())
                 <section class="kt-card">
                     <div class="kt-card-header py-5 flex-wrap gap-4">
                         <div>
@@ -156,7 +180,7 @@
                     </div>
                     <div class="kt-card-content p-5">
                         <div class="grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
-                            @foreach($moduleCards as $card)
+                            @foreach($visibleModuleCards as $card)
                                 <article class="dashboard-module-card" style="--dashboard-accent: {{ $card['accent'] }};">
                                     <div class="dashboard-module-card__head">
                                         <span class="dashboard-module-card__icon">
@@ -189,38 +213,42 @@
                 </section>
             @endif
 
-            @if($dashboardSectionVisibility['activity_charts'] ?? false)
+            @if(($dashboardSectionVisibility['activity_charts'] ?? false) && ($showMonthlyChart || $showActionChart || $showScheduleChart))
                 <div class="grid gap-5 xl:grid-cols-[1.35fr,.65fr]">
-                    <section class="kt-card">
-                        <div class="kt-card-header py-5 flex-wrap gap-4">
-                            <div>
-                                <h3 class="kt-card-title">Son 6 ay üretim ve talep hızı</h3>
-                                <div class="text-sm text-muted-foreground">
-                                    İçerik, medya ve mesaj akışının aylık yoğunluğunu birlikte izle.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="kt-card-content p-5">
-                            <div id="dashboardMonthlyChart" class="dashboard-chart"></div>
-                        </div>
-                    </section>
-
-                    <div class="grid gap-5">
+                    @if($showMonthlyChart)
                         <section class="kt-card">
                             <div class="kt-card-header py-5 flex-wrap gap-4">
                                 <div>
-                                    <h3 class="kt-card-title">Takip dağılımı</h3>
+                                    <h3 class="kt-card-title">Son 6 ay üretim ve talep hızı</h3>
                                     <div class="text-sm text-muted-foreground">
-                                        Anlık operasyon yoğunluğunu kategoriler halinde gör.
+                                        İçerik, medya ve mesaj akışının aylık yoğunluğunu birlikte izle.
                                     </div>
                                 </div>
                             </div>
                             <div class="kt-card-content p-5">
-                                <div id="dashboardActionChart" class="dashboard-chart dashboard-chart--compact"></div>
+                                <div id="dashboardMonthlyChart" class="dashboard-chart"></div>
                             </div>
                         </section>
+                    @endif
 
-                        @if($canAppointments)
+                    <div class="grid gap-5">
+                        @if($showActionChart)
+                            <section class="kt-card">
+                                <div class="kt-card-header py-5 flex-wrap gap-4">
+                                    <div>
+                                        <h3 class="kt-card-title">Takip dağılımı</h3>
+                                        <div class="text-sm text-muted-foreground">
+                                            Anlık operasyon yoğunluğunu kategoriler halinde gör.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="kt-card-content p-5">
+                                    <div id="dashboardActionChart" class="dashboard-chart dashboard-chart--compact"></div>
+                                </div>
+                            </section>
+                        @endif
+
+                        @if($showScheduleChart)
                             <section class="kt-card">
                                 <div class="kt-card-header py-5 flex-wrap gap-4">
                                     <div>

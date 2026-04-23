@@ -54,45 +54,26 @@
                     </div>
 
                     <div class="grid gap-2">
-                        <label class="kt-form-label">Grup Etiketi</label>
-                        <input name="group_label" class="kt-input" value="{{ old('group_label') }}" placeholder="Örn. Teslimat / Randevu">
-                    </div>
-
-                    <div class="grid gap-2">
-                        <label class="kt-form-label">Soru</label>
-                        <input name="question" class="kt-input" value="{{ old('question') }}" placeholder="En çok sorulan soru başlığı">
-                    </div>
-
-                    <div class="grid gap-2">
-                        <label class="kt-form-label">Cevap</label>
-                        <textarea name="answer" rows="5" class="kt-textarea" placeholder="Ziyaretçiye gösterilecek detaylı cevap">{{ old('answer') }}</textarea>
-                    </div>
-
-                    <div class="grid gap-2">
                         <label class="kt-form-label">İkon</label>
                         <input name="icon_class" class="kt-input" value="{{ old('icon_class', 'ki-filled ki-questionnaire-tablet') }}" placeholder="ki-filled ki-questionnaire-tablet">
                     </div>
 
-                    @if($extraLanguages->isNotEmpty())
-                        <details class="rounded-3xl app-surface-card app-surface-card--soft p-4">
-                            <summary class="cursor-pointer list-none text-sm font-medium text-foreground">Dil karşılıklarını ekle</summary>
-                            <div class="mt-4 grid gap-4">
-                                @foreach($extraLanguages as $language)
-                                    <div class="rounded-2xl bg-background px-4 py-4">
-                                        <div class="mb-3 flex items-center justify-between gap-3">
-                                            <div class="font-medium text-foreground">{{ $language->native_name }}</div>
-                                            <span class="kt-badge kt-badge-sm kt-badge-light">{{ $language->code }}</span>
-                                        </div>
-                                        <div class="grid gap-3">
-                                            <input name="translations[{{ $language->code }}][group_label]" class="kt-input" value="{{ old("translations.{$language->code}.group_label") }}" placeholder="Grup etiketi">
-                                            <input name="translations[{{ $language->code }}][question]" class="kt-input" value="{{ old("translations.{$language->code}.question") }}" placeholder="Soru">
-                                            <textarea name="translations[{{ $language->code }}][answer]" rows="4" class="kt-textarea" placeholder="Cevap">{{ old("translations.{$language->code}.answer") }}</textarea>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </details>
-                    @endif
+                    @include('admin.components.localized-content-tabs', [
+                        'moduleKey' => 'site_faq_create',
+                        'title' => 'SSS Dil Sekmeleri',
+                        'description' => 'Varsayılan soru-cevap metinlerini ve diğer dil karşılıklarını aynı yapı içinde yönet.',
+                        'defaultValues' => [
+                            'group_label' => old('group_label'),
+                            'question' => old('question'),
+                            'answer' => old('answer'),
+                        ],
+                        'storedTranslations' => old('translations', []),
+                        'fields' => [
+                            ['name' => 'group_label', 'label' => 'Grup Etiketi', 'placeholder' => 'Örn. Teslimat / Randevu'],
+                            ['name' => 'question', 'label' => 'Soru', 'placeholder' => 'En çok sorulan soru başlığı'],
+                            ['name' => 'answer', 'type' => 'textarea', 'rows' => 4, 'label' => 'Cevap', 'placeholder' => 'Ziyaretçiye gösterilecek detaylı cevap'],
+                        ],
+                    ])
 
                     <label class="flex items-start gap-3 rounded-2xl app-surface-card app-surface-card--soft p-4">
                         <input type="hidden" name="is_active" value="0">
@@ -147,6 +128,18 @@
                                 @csrf
                                 @method('PUT')
 
+                                @php
+                                    $faqTranslations = collect($faq->translations)
+                                        ->mapWithKeys(fn ($translation) => [
+                                            $translation->locale => [
+                                                'group_label' => $translation->group_label,
+                                                'question' => $translation->question,
+                                                'answer' => $translation->answer,
+                                            ],
+                                        ])
+                                        ->toArray();
+                                @endphp
+
                                 <div class="grid gap-4 lg:grid-cols-2">
                                     <div class="grid gap-2">
                                         <label class="kt-form-label">Bağlı Sayfa</label>
@@ -159,51 +152,27 @@
                                     </div>
 
                                     <div class="grid gap-2">
-                                        <label class="kt-form-label">Grup Etiketi</label>
-                                        <input name="group_label" class="kt-input" value="{{ $faq->group_label }}">
-                                    </div>
-                                </div>
-
-                                <div class="grid gap-4 lg:grid-cols-2">
-                                    <div class="grid gap-2">
-                                        <label class="kt-form-label">Soru</label>
-                                        <input name="question" class="kt-input" value="{{ $faq->question }}">
-                                    </div>
-
-                                    <div class="grid gap-2">
                                         <label class="kt-form-label">İkon</label>
                                         <input name="icon_class" class="kt-input" value="{{ $faq->icon_class }}">
                                     </div>
                                 </div>
 
-                                <div class="grid gap-2">
-                                    <label class="kt-form-label">Cevap</label>
-                                    <textarea name="answer" rows="4" class="kt-textarea">{{ $faq->answer }}</textarea>
-                                </div>
-
-                                @if($extraLanguages->isNotEmpty())
-                                    <details class="rounded-3xl app-surface-card app-surface-card--soft p-4">
-                                        <summary class="cursor-pointer list-none text-sm font-medium text-foreground">Dil karşılıklarını düzenle</summary>
-                                        <div class="mt-4 grid gap-4">
-                                            @foreach($extraLanguages as $language)
-                                                @php
-                                                    $translation = $faq->translations->firstWhere('locale', $language->code);
-                                                @endphp
-                                                <div class="rounded-2xl bg-background px-4 py-4">
-                                                    <div class="mb-3 flex items-center justify-between gap-3">
-                                                        <div class="font-medium text-foreground">{{ $language->native_name }}</div>
-                                                        <span class="kt-badge kt-badge-sm kt-badge-light">{{ $language->code }}</span>
-                                                    </div>
-                                                    <div class="grid gap-3">
-                                                        <input name="translations[{{ $language->code }}][group_label]" class="kt-input" value="{{ old("translations.{$language->code}.group_label", $translation->group_label ?? '') }}" placeholder="Grup etiketi">
-                                                        <input name="translations[{{ $language->code }}][question]" class="kt-input" value="{{ old("translations.{$language->code}.question", $translation->question ?? '') }}" placeholder="Soru">
-                                                        <textarea name="translations[{{ $language->code }}][answer]" rows="4" class="kt-textarea" placeholder="Cevap">{{ old("translations.{$language->code}.answer", $translation->answer ?? '') }}</textarea>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    </details>
-                                @endif
+                                @include('admin.components.localized-content-tabs', [
+                                    'moduleKey' => 'site_faq_' . $faq->id,
+                                    'title' => 'SSS Dil Sekmeleri',
+                                    'description' => 'Bu SSS kartının tüm dil varyantlarını sekmelerden güncelle.',
+                                    'defaultValues' => [
+                                        'group_label' => $faq->group_label,
+                                        'question' => $faq->question,
+                                        'answer' => $faq->answer,
+                                    ],
+                                    'storedTranslations' => $faqTranslations,
+                                    'fields' => [
+                                        ['name' => 'group_label', 'label' => 'Grup Etiketi'],
+                                        ['name' => 'question', 'label' => 'Soru'],
+                                        ['name' => 'answer', 'type' => 'textarea', 'rows' => 4, 'label' => 'Cevap'],
+                                    ],
+                                ])
 
                                 <div class="flex flex-wrap items-center justify-between gap-3">
                                     <label class="flex items-center gap-3">

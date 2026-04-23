@@ -42,12 +42,17 @@
             @method('PUT')
 
             <input type="hidden" name="location" value="{{ $item->location }}">
+            @php
+                $navigationTranslations = collect($item->translations)
+                    ->mapWithKeys(fn ($translation) => [
+                        $translation->locale => [
+                            'title' => $translation->title,
+                        ],
+                    ])
+                    ->toArray();
+            @endphp
 
-            <div class="grid gap-4 lg:grid-cols-2">
-                <div class="grid gap-2">
-                    <label class="kt-form-label">Başlık</label>
-                    <input name="title" class="kt-input" value="{{ $item->title }}">
-                </div>
+            <div class="grid gap-4 lg:grid-cols-1">
                 <div class="grid gap-2">
                     <label class="kt-form-label">İkon</label>
                     <input name="icon_class" class="kt-input" value="{{ $item->icon_class }}">
@@ -88,30 +93,18 @@
                 <input name="url" class="kt-input" value="{{ $item->url }}" placeholder="https://ornek.com veya /iletisim">
             </div>
 
-            @if($extraLanguages->isNotEmpty())
-                <details class="rounded-3xl bg-background px-4 py-4">
-                    <summary class="cursor-pointer list-none text-sm font-medium text-foreground">Dil karşılıklarını düzenle</summary>
-                    <div class="mt-4 grid gap-4">
-                        @foreach($extraLanguages as $language)
-                            @php
-                                $translation = $item->translations->firstWhere('locale', $language->code);
-                            @endphp
-                            <div class="rounded-2xl bg-white px-4 py-4">
-                                <div class="mb-3 flex items-center justify-between gap-3">
-                                    <div class="font-medium text-foreground">{{ $language->native_name }}</div>
-                                    <span class="kt-badge kt-badge-sm kt-badge-light">{{ $language->code }}</span>
-                                </div>
-                                <input
-                                    name="translations[{{ $language->code }}][title]"
-                                    class="kt-input"
-                                    value="{{ old("translations.{$language->code}.title", $translation->title ?? '') }}"
-                                    placeholder="Bu dilde menü başlığı"
-                                >
-                            </div>
-                        @endforeach
-                    </div>
-                </details>
-            @endif
+            @include('admin.components.localized-content-tabs', [
+                'moduleKey' => 'site_navigation_' . $item->id,
+                'title' => 'Menü Başlığı Dil Sekmeleri',
+                'description' => 'Bu menü öğesinin farklı dillerde görünen başlığını sekmeler üzerinden yönet.',
+                'defaultValues' => [
+                    'title' => $item->title,
+                ],
+                'storedTranslations' => $navigationTranslations,
+                'fields' => [
+                    ['name' => 'title', 'label' => 'Menü Başlığı'],
+                ],
+            ])
 
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <label class="flex items-center gap-3">

@@ -2,7 +2,6 @@
 
 @section('content')
     @php
-        $extraLanguages = collect($siteLanguages ?? [])->where('code', '!=', $siteDefaultLocale)->values();
         $uiGroups = collect(config('site_ui_labels', []))->groupBy('group');
         $storedTranslations = old('translations');
 
@@ -23,6 +22,116 @@
                     ],
                 ])
                 ->toArray();
+        }
+
+        $defaultUiLines = old('ui_lines');
+        if (!is_array($defaultUiLines)) {
+            $defaultUiLines = collect(config('site_ui_labels', []))
+                ->mapWithKeys(fn ($item, $key) => [$key => $settings->uiLine($key, $siteDefaultLocale)])
+                ->all();
+        }
+
+        $localizedSettingsDefaultValues = [
+            'site_name' => old('site_name', $settings->site_name),
+            'site_tagline' => old('site_tagline', $settings->site_tagline),
+            'hero_notice' => old('hero_notice', $settings->hero_notice),
+            'address_line' => old('address_line', $settings->address_line),
+            'map_title' => old('map_title', $settings->map_title),
+            'office_hours' => old('office_hours', $settings->office_hours),
+            'footer_note' => old('footer_note', $settings->footer_note),
+            'under_construction_title' => old('under_construction_title', $settings->under_construction_title),
+            'under_construction_message' => old('under_construction_message', $settings->under_construction_message),
+            'ui_lines' => $defaultUiLines,
+        ];
+
+        $localizedSettingsFields = [
+            [
+                'type' => 'section',
+                'label' => 'Marka ve görünür metinler',
+                'description' => 'Site adı, slogan ve ziyaretçinin ilk gördüğü temel mesaj alanları.',
+                'wrapper_class' => 'lg:col-span-2',
+            ],
+            [
+                'name' => 'site_name',
+                'label' => 'Site Adı',
+            ],
+            [
+                'name' => 'site_tagline',
+                'label' => 'Kısa Slogan',
+            ],
+            [
+                'name' => 'hero_notice',
+                'type' => 'textarea',
+                'rows' => 3,
+                'label' => 'Hero Bildirimi',
+                'wrapper_class' => 'grid gap-2 lg:col-span-2',
+            ],
+            [
+                'name' => 'footer_note',
+                'type' => 'textarea',
+                'rows' => 3,
+                'label' => 'Footer Notu',
+                'wrapper_class' => 'grid gap-2 lg:col-span-2',
+            ],
+            [
+                'type' => 'section',
+                'label' => 'İletişim ve harita metinleri',
+                'description' => 'Adres, harita başlığı ve mesai notu gibi dil bazlı görünen alanlar.',
+                'wrapper_class' => 'lg:col-span-2',
+            ],
+            [
+                'name' => 'address_line',
+                'type' => 'textarea',
+                'rows' => 3,
+                'label' => 'Adres',
+                'wrapper_class' => 'grid gap-2 lg:col-span-2',
+            ],
+            [
+                'name' => 'map_title',
+                'label' => 'Harita Başlığı',
+            ],
+            [
+                'name' => 'office_hours',
+                'type' => 'textarea',
+                'rows' => 3,
+                'label' => 'Mesai Bilgisi',
+            ],
+            [
+                'type' => 'section',
+                'label' => 'Yapım aşaması metinleri',
+                'description' => 'Bakım veya açılış öncesi ziyaretçiye gösterilen içerikler.',
+                'wrapper_class' => 'lg:col-span-2',
+            ],
+            [
+                'name' => 'under_construction_title',
+                'label' => 'Yapım Aşaması Başlığı',
+            ],
+            [
+                'name' => 'under_construction_message',
+                'type' => 'textarea',
+                'rows' => 4,
+                'label' => 'Yapım Aşaması Mesajı',
+                'wrapper_class' => 'grid gap-2 lg:col-span-2',
+            ],
+        ];
+
+        foreach ($uiGroups as $group => $items) {
+            $localizedSettingsFields[] = [
+                'type' => 'section',
+                'label' => $group,
+                'description' => 'Bu gruptaki sabit arayüz metinleri her dil için ayrı yönetilir.',
+                'wrapper_class' => 'lg:col-span-2',
+            ];
+
+            foreach ($items as $key => $item) {
+                $localizedSettingsFields[] = [
+                    'name' => 'ui_lines.' . $key,
+                    'binding' => 'ui_lines.' . $key,
+                    'segments' => ['ui_lines', $key],
+                    'label' => $item['label'],
+                    'placeholder' => $item['placeholder'] ?? '',
+                ];
+            }
         }
     @endphp
 
@@ -55,42 +164,21 @@
 
             <div class="grid gap-6 xl:grid-cols-[minmax(0,1.5fr)_420px]">
                 <div class="grid gap-6">
-                    <div class="kt-card">
-                        <div class="kt-card-header py-5">
-                            <div>
-                                <h3 class="kt-card-title">Varsayılan Dil İçeriği</h3>
-                                <div class="text-sm text-muted-foreground">Marka, hero ve footer metinlerinin temel sürümü.</div>
-                            </div>
-                        </div>
-
-                        <div class="kt-card-content grid gap-4 p-6">
-                            <div class="grid gap-2">
-                                <label class="kt-form-label">Site Adı</label>
-                                <input name="site_name" class="kt-input" value="{{ old('site_name', $settings->site_name) }}">
-                            </div>
-
-                            <div class="grid gap-2">
-                                <label class="kt-form-label">Kısa Slogan</label>
-                                <input name="site_tagline" class="kt-input" value="{{ old('site_tagline', $settings->site_tagline) }}">
-                            </div>
-
-                            <div class="grid gap-2">
-                                <label class="kt-form-label">Hero Bildirimi</label>
-                                <textarea name="hero_notice" rows="3" class="kt-textarea">{{ old('hero_notice', $settings->hero_notice) }}</textarea>
-                            </div>
-
-                            <div class="grid gap-2">
-                                <label class="kt-form-label">Footer Notu</label>
-                                <textarea name="footer_note" rows="3" class="kt-textarea">{{ old('footer_note', $settings->footer_note) }}</textarea>
-                            </div>
-                        </div>
-                    </div>
+                    @include('admin.components.localized-content-tabs', [
+                        'moduleKey' => 'site_settings',
+                        'title' => 'Çok Dilli Site İçeriği',
+                        'description' => 'Varsayılan dil ve eklediğin diğer diller için görünen metinleri aynı yatay sekme düzeninde yönet.',
+                        'defaultValues' => $localizedSettingsDefaultValues,
+                        'storedTranslations' => $storedTranslations,
+                        'fields' => $localizedSettingsFields,
+                        'contentGridClass' => 'grid gap-5 lg:grid-cols-2',
+                    ])
 
                     <div class="kt-card">
                         <div class="kt-card-header py-5">
                             <div>
-                                <h3 class="kt-card-title">İletişim ve Harita</h3>
-                                <div class="text-sm text-muted-foreground">Ziyaretçinin seni bulacağı temel temas noktaları.</div>
+                                <h3 class="kt-card-title">İletişim Kanalları ve Harita Entegrasyonu</h3>
+                                <div class="text-sm text-muted-foreground">Dil fark etmeksizin sabit kalan sistem alanları burada yönetilir.</div>
                             </div>
                         </div>
 
@@ -98,7 +186,7 @@
                             <div class="grid gap-4 lg:grid-cols-3">
                                 <div class="grid gap-2">
                                     <label class="kt-form-label">E-posta</label>
-                                    <input name="contact_email" class="kt-input" value="{{ old('contact_email', $settings->contact_email) }}">
+                                    <input name="contact_email" type="email" class="kt-input" value="{{ old('contact_email', $settings->contact_email) }}">
                                 </div>
                                 <div class="grid gap-2">
                                     <label class="kt-form-label">Telefon</label>
@@ -107,22 +195,6 @@
                                 <div class="grid gap-2">
                                     <label class="kt-form-label">WhatsApp</label>
                                     <input name="whatsapp_phone" class="kt-input" value="{{ old('whatsapp_phone', $settings->whatsapp_phone) }}">
-                                </div>
-                            </div>
-
-                            <div class="grid gap-2">
-                                <label class="kt-form-label">Adres</label>
-                                <textarea name="address_line" rows="3" class="kt-textarea">{{ old('address_line', $settings->address_line) }}</textarea>
-                            </div>
-
-                            <div class="grid gap-4 lg:grid-cols-2">
-                                <div class="grid gap-2">
-                                    <label class="kt-form-label">Harita Başlığı</label>
-                                    <input name="map_title" class="kt-input" value="{{ old('map_title', $settings->map_title) }}">
-                                </div>
-                                <div class="grid gap-2">
-                                    <label class="kt-form-label">Mesai Bilgisi</label>
-                                    <textarea name="office_hours" rows="3" class="kt-textarea">{{ old('office_hours', $settings->office_hours) }}</textarea>
                                 </div>
                             </div>
 
@@ -150,159 +222,14 @@
                             @endforeach
                         </div>
                     </div>
-
-                    <div class="kt-card">
-                        <div class="kt-card-header py-5">
-                            <div>
-                                <h3 class="kt-card-title">Arayüz Metinleri</h3>
-                                <div class="text-sm text-muted-foreground">Navbar, ana sayfa ve içerik şablonlarında görünen sabit metinleri buradan çevir.</div>
-                            </div>
-                        </div>
-
-                        <div class="kt-card-content grid gap-6 p-6">
-                            @foreach($uiGroups as $group => $items)
-                                <div class="rounded-[28px] app-surface-card p-5">
-                                    <div class="mb-4 text-sm font-semibold uppercase tracking-[0.24em] text-muted-foreground">{{ $group }}</div>
-                                    <div class="grid gap-4 lg:grid-cols-2">
-                                        @foreach($items as $key => $item)
-                                            <div class="grid gap-2">
-                                                <label class="kt-form-label">{{ $item['label'] }}</label>
-                                                <input
-                                                    name="ui_lines[{{ $key }}]"
-                                                    class="kt-input"
-                                                    value="{{ old("ui_lines.$key", $settings->uiLine($key, $siteDefaultLocale)) }}"
-                                                    placeholder="{{ $item['placeholder'] ?? '' }}"
-                                                >
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    <div class="kt-card">
-                        <div class="kt-card-header py-5">
-                            <div>
-                                <h3 class="kt-card-title">Dil Varyantları</h3>
-                                <div class="text-sm text-muted-foreground">Her ek dil için marka ve arayüz metinlerini ayrı ayrı tanımla.</div>
-                            </div>
-                        </div>
-
-                        <div class="kt-card-content p-6">
-                            @if($extraLanguages->isEmpty())
-                                <div class="rounded-3xl border border-dashed border-border px-6 py-10 text-center text-sm text-muted-foreground">
-                                    Yeni bir dil eklediğinde ayar çevirileri burada görünecek.
-                                </div>
-                            @else
-                                <div class="kt-tabs kt-tabs-line mb-6" data-kt-tabs="true">
-                                    <div class="flex flex-wrap gap-2">
-                                        @foreach($extraLanguages as $language)
-                                            <button class="kt-tab-toggle {{ $loop->first ? 'active' : '' }}" data-kt-tab-toggle="#settings_translation_{{ $language->code }}">
-                                                {{ $language->native_name }}
-                                            </button>
-                                        @endforeach
-                                    </div>
-                                </div>
-
-                                @foreach($extraLanguages as $language)
-                                    @php
-                                        $row = $storedTranslations[$language->code] ?? [];
-                                        $rowUiLines = data_get($row, 'ui_lines', []);
-                                    @endphp
-
-                                    <div id="settings_translation_{{ $language->code }}" class="{{ $loop->first ? '' : 'hidden' }} grid gap-6">
-                                        <div class="rounded-[28px] app-surface-card p-5">
-                                            <div class="mb-5 flex items-center justify-between gap-3">
-                                                <div>
-                                                    <div class="font-semibold text-foreground">{{ $language->native_name }}</div>
-                                                    <div class="text-sm text-muted-foreground">{{ $language->code }} diline özel marka ve iletişim metinleri</div>
-                                                </div>
-                                                <span class="kt-badge kt-badge-sm kt-badge-light">{{ $language->code }}</span>
-                                            </div>
-
-                                            <div class="grid gap-4">
-                                                <div class="grid gap-4 lg:grid-cols-2">
-                                                    <div class="grid gap-2">
-                                                        <label class="kt-form-label">Site Adı</label>
-                                                        <input name="translations[{{ $language->code }}][site_name]" class="kt-input" value="{{ data_get($row, 'site_name', '') }}">
-                                                    </div>
-                                                    <div class="grid gap-2">
-                                                        <label class="kt-form-label">Kısa Slogan</label>
-                                                        <input name="translations[{{ $language->code }}][site_tagline]" class="kt-input" value="{{ data_get($row, 'site_tagline', '') }}">
-                                                    </div>
-                                                </div>
-
-                                                <div class="grid gap-2">
-                                                    <label class="kt-form-label">Hero Bildirimi</label>
-                                                    <textarea name="translations[{{ $language->code }}][hero_notice]" rows="3" class="kt-textarea">{{ data_get($row, 'hero_notice', '') }}</textarea>
-                                                </div>
-
-                                                <div class="grid gap-2">
-                                                    <label class="kt-form-label">Adres</label>
-                                                    <textarea name="translations[{{ $language->code }}][address_line]" rows="3" class="kt-textarea">{{ data_get($row, 'address_line', '') }}</textarea>
-                                                </div>
-
-                                                <div class="grid gap-4 lg:grid-cols-2">
-                                                    <div class="grid gap-2">
-                                                        <label class="kt-form-label">Harita Başlığı</label>
-                                                        <input name="translations[{{ $language->code }}][map_title]" class="kt-input" value="{{ data_get($row, 'map_title', '') }}">
-                                                    </div>
-                                                    <div class="grid gap-2">
-                                                        <label class="kt-form-label">Mesai Bilgisi</label>
-                                                        <textarea name="translations[{{ $language->code }}][office_hours]" rows="3" class="kt-textarea">{{ data_get($row, 'office_hours', '') }}</textarea>
-                                                    </div>
-                                                </div>
-
-                                                <div class="grid gap-2">
-                                                    <label class="kt-form-label">Footer Notu</label>
-                                                    <textarea name="translations[{{ $language->code }}][footer_note]" rows="3" class="kt-textarea">{{ data_get($row, 'footer_note', '') }}</textarea>
-                                                </div>
-
-                                                <div class="grid gap-4 lg:grid-cols-2">
-                                                    <div class="grid gap-2">
-                                                        <label class="kt-form-label">Yapım Aşaması Başlığı</label>
-                                                        <input name="translations[{{ $language->code }}][under_construction_title]" class="kt-input" value="{{ data_get($row, 'under_construction_title', '') }}">
-                                                    </div>
-                                                    <div class="grid gap-2">
-                                                        <label class="kt-form-label">Yapım Aşaması Mesajı</label>
-                                                        <textarea name="translations[{{ $language->code }}][under_construction_message]" rows="3" class="kt-textarea">{{ data_get($row, 'under_construction_message', '') }}</textarea>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        @foreach($uiGroups as $group => $items)
-                                            <div class="rounded-[28px] app-surface-card p-5">
-                                                <div class="mb-4 text-sm font-semibold uppercase tracking-[0.24em] text-muted-foreground">{{ $group }}</div>
-                                                <div class="grid gap-4 lg:grid-cols-2">
-                                                    @foreach($items as $key => $item)
-                                                        <div class="grid gap-2">
-                                                            <label class="kt-form-label">{{ $item['label'] }}</label>
-                                                            <input
-                                                                name="translations[{{ $language->code }}][ui_lines][{{ $key }}]"
-                                                                class="kt-input"
-                                                                value="{{ data_get($rowUiLines, $key, '') }}"
-                                                                placeholder="{{ $item['placeholder'] ?? '' }}"
-                                                            >
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                @endforeach
-                            @endif
-                        </div>
-                    </div>
                 </div>
 
                 <div class="grid gap-6 self-start xl:sticky xl:top-6">
                     <div class="kt-card">
                         <div class="kt-card-header py-5">
                             <div>
-                                <h3 class="kt-card-title">Yapım Aşaması</h3>
-                                <div class="text-sm text-muted-foreground">Geçici bakım veya lansman öncesi uyarı alanı.</div>
+                                <h3 class="kt-card-title">Yapım Aşaması Durumu</h3>
+                                <div class="text-sm text-muted-foreground">Aktivasyon burada, metin içerikleri ise dil sekmelerinde yönetilir.</div>
                             </div>
                         </div>
 
@@ -316,14 +243,8 @@
                                 </span>
                             </label>
 
-                            <div class="grid gap-2">
-                                <label class="kt-form-label">Başlık</label>
-                                <input name="under_construction_title" class="kt-input" value="{{ old('under_construction_title', $settings->under_construction_title) }}">
-                            </div>
-
-                            <div class="grid gap-2">
-                                <label class="kt-form-label">Mesaj</label>
-                                <textarea name="under_construction_message" rows="4" class="kt-textarea">{{ old('under_construction_message', $settings->under_construction_message) }}</textarea>
+                            <div class="rounded-2xl border border-dashed border-border bg-background/70 px-4 py-4 text-sm leading-6 text-muted-foreground">
+                                Başlık ve açıklama metinleri yukarıdaki çok dilli sekmelerden yönetilir. Böylece her dil için farklı yapım aşaması mesajı gösterebilirsin.
                             </div>
                         </div>
                     </div>

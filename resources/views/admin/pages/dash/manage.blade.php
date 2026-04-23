@@ -18,7 +18,7 @@
 
                 <div class="flex flex-wrap items-center gap-3">
                     <span class="rounded-2xl app-surface-card px-4 py-3 text-sm text-muted-foreground">
-                        <span class="font-semibold text-foreground">{{ $activeSectionCount }}</span> / {{ $availableSectionCount }} blok görünür
+                        <span class="font-semibold text-foreground">{{ $activeSectionCount }}</span> / {{ $availableSectionCount }} bileşen görünür
                     </span>
                     <a href="{{ route('admin.dashboard') }}" class="kt-btn kt-btn-light">
                         Dashboard'a dön
@@ -57,7 +57,7 @@
 
                                     <div class="grid gap-4 xl:grid-cols-2 2xl:grid-cols-3">
                                         @foreach($sections as $section)
-                                            <label class="rounded-[28px] app-surface-card p-5 transition hover:border-primary/20 hover:shadow-sm">
+                                            <div class="rounded-[28px] app-surface-card p-5 transition hover:border-primary/20 hover:shadow-sm">
                                                 <div class="flex items-start gap-4">
                                                     <input
                                                         type="checkbox"
@@ -76,12 +76,36 @@
                                                                 <div>
                                                                     <div class="font-semibold text-foreground">{{ $section['label'] }}</div>
                                                                     <div class="mt-1 text-sm text-muted-foreground">{{ $section['description'] }}</div>
-                                                                    </div>
                                                                 </div>
+                                                            </div>
                                                         </div>
+
+                                                        @if(!empty($section['children']))
+                                                            <div class="mt-4 grid gap-3 rounded-2xl bg-background/70 px-4 py-4">
+                                                                <div class="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                                                                    Alt bileşenler
+                                                                </div>
+
+                                                                @foreach($section['children'] as $child)
+                                                                    <label class="flex items-start gap-3 rounded-2xl border border-border/70 bg-background px-3 py-3">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            name="visible_sections[]"
+                                                                            value="{{ $child['key'] }}"
+                                                                            class="kt-checkbox mt-1"
+                                                                            @checked($child['visible'])
+                                                                        >
+                                                                        <span class="min-w-0">
+                                                                            <span class="block font-medium text-foreground">{{ $child['label'] }}</span>
+                                                                            <span class="mt-1 block text-sm text-muted-foreground">{{ $child['description'] }}</span>
+                                                                        </span>
+                                                                    </label>
+                                                                @endforeach
+                                                            </div>
+                                                        @endif
                                                     </div>
                                                 </div>
-                                            </label>
+                                            </div>
                                         @endforeach
                                     </div>
                                 </section>

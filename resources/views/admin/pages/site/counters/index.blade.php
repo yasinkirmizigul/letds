@@ -53,60 +53,35 @@
                         </select>
                     </div>
 
-                    <div class="grid gap-2">
-                        <label class="kt-form-label">Etiket</label>
-                        <input name="label" class="kt-input" value="{{ old('label') }}" placeholder="Örn. Mutlu Müşteri">
-                    </div>
-
                     <div class="grid gap-4 lg:grid-cols-3">
                         <div class="grid gap-2 lg:col-span-2">
                             <label class="kt-form-label">Değer</label>
                             <input type="number" name="value" class="kt-input" min="0" value="{{ old('value', 0) }}">
                         </div>
-                        <div class="grid gap-2">
-                            <label class="kt-form-label">Önek</label>
-                            <input name="prefix" class="kt-input" value="{{ old('prefix') }}" placeholder="+">
+                        <div class="grid gap-2 lg:col-span-1">
+                            <label class="kt-form-label">İkon</label>
+                            <input name="icon_class" class="kt-input" value="{{ old('icon_class', 'ki-filled ki-chart-simple') }}">
                         </div>
                     </div>
 
-                    <div class="grid gap-2">
-                        <label class="kt-form-label">Sonek</label>
-                        <input name="suffix" class="kt-input" value="{{ old('suffix') }}" placeholder="+">
-                    </div>
-
-                    <div class="grid gap-2">
-                        <label class="kt-form-label">Açıklama</label>
-                        <textarea name="description" rows="4" class="kt-textarea" placeholder="Sayaç kartının alt açıklaması">{{ old('description') }}</textarea>
-                    </div>
-
-                    <div class="grid gap-2">
-                        <label class="kt-form-label">İkon</label>
-                        <input name="icon_class" class="kt-input" value="{{ old('icon_class', 'ki-filled ki-chart-simple') }}">
-                    </div>
-
-                    @if($extraLanguages->isNotEmpty())
-                        <details class="rounded-3xl app-surface-card app-surface-card--soft p-4">
-                            <summary class="cursor-pointer list-none text-sm font-medium text-foreground">Dil karşılıklarını ekle</summary>
-                            <div class="mt-4 grid gap-4">
-                                @foreach($extraLanguages as $language)
-                                    <div class="rounded-2xl bg-background px-4 py-4">
-                                        <div class="mb-3 flex items-center justify-between gap-3">
-                                            <div class="font-medium text-foreground">{{ $language->native_name }}</div>
-                                            <span class="kt-badge kt-badge-sm kt-badge-light">{{ $language->code }}</span>
-                                        </div>
-                                        <div class="grid gap-3">
-                                            <input name="translations[{{ $language->code }}][label]" class="kt-input" value="{{ old("translations.{$language->code}.label") }}" placeholder="Etiket">
-                                            <div class="grid gap-3 lg:grid-cols-2">
-                                                <input name="translations[{{ $language->code }}][prefix]" class="kt-input" value="{{ old("translations.{$language->code}.prefix") }}" placeholder="Önek">
-                                                <input name="translations[{{ $language->code }}][suffix]" class="kt-input" value="{{ old("translations.{$language->code}.suffix") }}" placeholder="Sonek">
-                                            </div>
-                                            <textarea name="translations[{{ $language->code }}][description]" rows="3" class="kt-textarea" placeholder="Açıklama">{{ old("translations.{$language->code}.description") }}</textarea>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </details>
-                    @endif
+                    @include('admin.components.localized-content-tabs', [
+                        'moduleKey' => 'site_counter_create',
+                        'title' => 'Sayaç Dil Sekmeleri',
+                        'description' => 'Sayaç etiketini ve açıklamasını tüm diller için aynı panelden yönet.',
+                        'defaultValues' => [
+                            'label' => old('label'),
+                            'prefix' => old('prefix'),
+                            'suffix' => old('suffix'),
+                            'description' => old('description'),
+                        ],
+                        'storedTranslations' => old('translations', []),
+                        'fields' => [
+                            ['name' => 'label', 'label' => 'Etiket', 'placeholder' => 'Örn. Mutlu Müşteri'],
+                            ['name' => 'prefix', 'label' => 'Önek', 'placeholder' => '+'],
+                            ['name' => 'suffix', 'label' => 'Sonek', 'placeholder' => '+'],
+                            ['name' => 'description', 'type' => 'textarea', 'rows' => 3, 'label' => 'Açıklama', 'placeholder' => 'Sayaç kartının alt açıklaması'],
+                        ],
+                    ])
 
                     <label class="flex items-start gap-3 rounded-2xl app-surface-card app-surface-card--soft p-4">
                         <input type="hidden" name="is_active" value="0">
@@ -156,6 +131,19 @@
                                 @csrf
                                 @method('PUT')
 
+                                @php
+                                    $counterTranslations = collect($counter->translations)
+                                        ->mapWithKeys(fn ($translation) => [
+                                            $translation->locale => [
+                                                'label' => $translation->label,
+                                                'prefix' => $translation->prefix,
+                                                'suffix' => $translation->suffix,
+                                                'description' => $translation->description,
+                                            ],
+                                        ])
+                                        ->toArray();
+                                @endphp
+
                                 <div class="grid gap-4 lg:grid-cols-2">
                                     <div class="grid gap-2">
                                         <label class="kt-form-label">Bağlı Sayfa</label>
@@ -166,64 +154,37 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="grid gap-2">
-                                        <label class="kt-form-label">Etiket</label>
-                                        <input name="label" class="kt-input" value="{{ $counter->label }}">
-                                    </div>
                                 </div>
 
-                                <div class="grid gap-4 lg:grid-cols-4">
+                                <div class="grid gap-4 lg:grid-cols-3">
                                     <div class="grid gap-2 lg:col-span-2">
                                         <label class="kt-form-label">Değer</label>
                                         <input type="number" name="value" class="kt-input" min="0" value="{{ $counter->value }}">
                                     </div>
                                     <div class="grid gap-2">
-                                        <label class="kt-form-label">Önek</label>
-                                        <input name="prefix" class="kt-input" value="{{ $counter->prefix }}">
-                                    </div>
-                                    <div class="grid gap-2">
-                                        <label class="kt-form-label">Sonek</label>
-                                        <input name="suffix" class="kt-input" value="{{ $counter->suffix }}">
-                                    </div>
-                                </div>
-
-                                <div class="grid gap-4 lg:grid-cols-2">
-                                    <div class="grid gap-2">
                                         <label class="kt-form-label">İkon</label>
                                         <input name="icon_class" class="kt-input" value="{{ $counter->icon_class }}">
                                     </div>
-                                    <div class="grid gap-2">
-                                        <label class="kt-form-label">Açıklama</label>
-                                        <textarea name="description" rows="3" class="kt-textarea">{{ $counter->description }}</textarea>
-                                    </div>
                                 </div>
 
-                                @if($extraLanguages->isNotEmpty())
-                                    <details class="rounded-3xl app-surface-card app-surface-card--soft p-4">
-                                        <summary class="cursor-pointer list-none text-sm font-medium text-foreground">Dil karşılıklarını düzenle</summary>
-                                        <div class="mt-4 grid gap-4">
-                                            @foreach($extraLanguages as $language)
-                                                @php
-                                                    $translation = $counter->translations->firstWhere('locale', $language->code);
-                                                @endphp
-                                                <div class="rounded-2xl bg-background px-4 py-4">
-                                                    <div class="mb-3 flex items-center justify-between gap-3">
-                                                        <div class="font-medium text-foreground">{{ $language->native_name }}</div>
-                                                        <span class="kt-badge kt-badge-sm kt-badge-light">{{ $language->code }}</span>
-                                                    </div>
-                                                    <div class="grid gap-3">
-                                                        <input name="translations[{{ $language->code }}][label]" class="kt-input" value="{{ old("translations.{$language->code}.label", $translation->label ?? '') }}" placeholder="Etiket">
-                                                        <div class="grid gap-3 lg:grid-cols-2">
-                                                            <input name="translations[{{ $language->code }}][prefix]" class="kt-input" value="{{ old("translations.{$language->code}.prefix", $translation->prefix ?? '') }}" placeholder="Önek">
-                                                            <input name="translations[{{ $language->code }}][suffix]" class="kt-input" value="{{ old("translations.{$language->code}.suffix", $translation->suffix ?? '') }}" placeholder="Sonek">
-                                                        </div>
-                                                        <textarea name="translations[{{ $language->code }}][description]" rows="3" class="kt-textarea" placeholder="Açıklama">{{ old("translations.{$language->code}.description", $translation->description ?? '') }}</textarea>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    </details>
-                                @endif
+                                @include('admin.components.localized-content-tabs', [
+                                    'moduleKey' => 'site_counter_' . $counter->id,
+                                    'title' => 'Sayaç Dil Sekmeleri',
+                                    'description' => 'Bu sayaç kartının tüm dil karşılıklarını sekmeler üzerinden güncelle.',
+                                    'defaultValues' => [
+                                        'label' => $counter->label,
+                                        'prefix' => $counter->prefix,
+                                        'suffix' => $counter->suffix,
+                                        'description' => $counter->description,
+                                    ],
+                                    'storedTranslations' => $counterTranslations,
+                                    'fields' => [
+                                        ['name' => 'label', 'label' => 'Etiket'],
+                                        ['name' => 'prefix', 'label' => 'Önek'],
+                                        ['name' => 'suffix', 'label' => 'Sonek'],
+                                        ['name' => 'description', 'type' => 'textarea', 'rows' => 3, 'label' => 'Açıklama'],
+                                    ],
+                                ])
 
                                 <div class="flex flex-wrap items-center justify-between gap-3">
                                     <label class="flex items-center gap-3">

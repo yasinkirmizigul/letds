@@ -64,11 +64,6 @@
                     </div>
 
                     <div class="grid gap-2">
-                        <label class="kt-form-label">Başlık</label>
-                        <input name="title" class="kt-input @error('title') kt-input-invalid @enderror" value="{{ old('title') }}" placeholder="Örn. Hizmetlerimiz">
-                    </div>
-
-                    <div class="grid gap-2">
                         <label class="kt-form-label">Bağlantı Türü</label>
                         <select name="link_type" class="kt-select" data-kt-select="true" data-link-type-select="true">
                             @foreach($linkTypeOptions as $value => $label)
@@ -108,22 +103,18 @@
                         </select>
                     </div>
 
-                    @if($extraLanguages->isNotEmpty())
-                        <details class="rounded-3xl app-surface-card app-surface-card--soft p-4">
-                            <summary class="cursor-pointer list-none text-sm font-medium text-foreground">Dil karşılıklarını ekle</summary>
-                            <div class="mt-4 grid gap-4">
-                                @foreach($extraLanguages as $language)
-                                    <div class="rounded-2xl bg-background px-4 py-4">
-                                        <div class="mb-3 flex items-center justify-between gap-3">
-                                            <div class="font-medium text-foreground">{{ $language->native_name }}</div>
-                                            <span class="kt-badge kt-badge-sm kt-badge-light">{{ $language->code }}</span>
-                                        </div>
-                                        <input name="translations[{{ $language->code }}][title]" class="kt-input" value="{{ old("translations.{$language->code}.title") }}" placeholder="Bu dilde menü başlığı">
-                                    </div>
-                                @endforeach
-                            </div>
-                        </details>
-                    @endif
+                    @include('admin.components.localized-content-tabs', [
+                        'moduleKey' => 'site_navigation_create',
+                        'title' => 'Menü Başlığı Dil Sekmeleri',
+                        'description' => 'Menü öğesinin görünen başlığını her dil için ayrı tanımla.',
+                        'defaultValues' => [
+                            'title' => old('title'),
+                        ],
+                        'storedTranslations' => old('translations', []),
+                        'fields' => [
+                            ['name' => 'title', 'label' => 'Menü Başlığı', 'placeholder' => 'Örn. Hizmetlerimiz'],
+                        ],
+                    ])
 
                     <label class="flex items-start gap-3 rounded-2xl app-surface-card app-surface-card--soft p-4">
                         <input type="hidden" name="is_active" value="0">

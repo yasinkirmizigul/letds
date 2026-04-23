@@ -153,6 +153,7 @@ class DashController extends Controller
                 'hint' => "{$blogStats['total']} blog, {$projectStats['total']} proje, {$productStats['total']} ürün",
                 'icon' => 'ki-filled ki-element-11',
                 'accent' => '#3e97ff',
+                'visibility_key' => 'kpi_content_pool',
             ],
             [
                 'label' => 'Okunmamış mesaj',
@@ -160,6 +161,7 @@ class DashController extends Controller
                 'hint' => $messageStats['urgent'] > 0 ? "{$messageStats['urgent']} yüksek öncelik" : 'Mesaj kutusunu takip et',
                 'icon' => 'ki-filled ki-messages',
                 'accent' => '#f6b100',
+                'visibility_key' => 'kpi_unread_messages',
             ],
             [
                 'label' => 'Bu hafta randevu',
@@ -167,6 +169,7 @@ class DashController extends Controller
                 'hint' => $appointmentsToday > 0 ? "Bugün {$appointmentsToday} randevu var" : 'Takvim sakin gözüküyor',
                 'icon' => 'ki-filled ki-calendar-8',
                 'accent' => '#17c653',
+                'visibility_key' => 'kpi_weekly_appointments',
             ],
             [
                 'label' => 'Düşük stok',
@@ -174,6 +177,7 @@ class DashController extends Controller
                 'hint' => $productStats['active'] > 0 ? "{$productStats['active']} aktif ürün yayınlı" : 'Stok akışına göz at',
                 'icon' => 'ki-filled ki-handcart',
                 'accent' => '#f1416c',
+                'visibility_key' => 'kpi_low_stock',
             ],
             [
                 'label' => $can['auditView'] ? 'Sistem uyarısı' : 'Çöp kutusu',
@@ -183,6 +187,7 @@ class DashController extends Controller
                     : "{$trashTotal} kayıt geri yüklenebilir",
                 'icon' => $can['auditView'] ? 'ki-filled ki-fingerprint-scanning' : 'ki-filled ki-trash',
                 'accent' => $can['auditView'] ? '#7239ea' : '#1f2937',
+                'visibility_key' => 'kpi_system_alerts',
             ],
         ];
 
@@ -278,6 +283,7 @@ class DashController extends Controller
                 'action_url' => $can['blogCreate'] ? route('admin.blog.create') : null,
                 'icon' => 'ki-filled ki-book',
                 'accent' => '#3e97ff',
+                'visibility_key' => 'module_blog',
             ] : null,
             $can['projectsView'] ? [
                 'title' => 'Projeler',
@@ -288,6 +294,7 @@ class DashController extends Controller
                 'action_url' => $can['projectsCreate'] ? route('admin.projects.create') : null,
                 'icon' => 'ki-filled ki-briefcase',
                 'accent' => '#17c653',
+                'visibility_key' => 'module_projects',
             ] : null,
             $can['productsView'] ? [
                 'title' => 'Ürünler',
@@ -298,6 +305,7 @@ class DashController extends Controller
                 'action_url' => $can['productsCreate'] ? route('admin.products.create') : null,
                 'icon' => 'ki-filled ki-handcart',
                 'accent' => '#f1416c',
+                'visibility_key' => 'module_products',
             ] : null,
             $can['messagesView'] ? [
                 'title' => 'Mesajlar',
@@ -308,6 +316,7 @@ class DashController extends Controller
                 'action_url' => route('admin.messages.index'),
                 'icon' => 'ki-filled ki-messages',
                 'accent' => '#f6b100',
+                'visibility_key' => 'module_messages',
             ] : null,
             $can['appointmentsView'] ? [
                 'title' => 'Randevular',
@@ -318,6 +327,7 @@ class DashController extends Controller
                 'action_url' => route('admin.appointments.calendar'),
                 'icon' => 'ki-filled ki-calendar-8',
                 'accent' => '#7239ea',
+                'visibility_key' => 'module_appointments',
             ] : null,
             $can['mediaView'] ? [
                 'title' => 'Medya',
@@ -328,6 +338,7 @@ class DashController extends Controller
                 'action_url' => route('admin.media.index'),
                 'icon' => 'ki-filled ki-screen',
                 'accent' => '#0ea5e9',
+                'visibility_key' => 'module_media',
             ] : null,
             $can['galleriesView'] ? [
                 'title' => 'Galeriler',
@@ -338,6 +349,7 @@ class DashController extends Controller
                 'action_url' => $can['galleriesCreate'] ? route('admin.galleries.create') : null,
                 'icon' => 'ki-filled ki-picture',
                 'accent' => '#14b8a6',
+                'visibility_key' => 'module_galleries',
             ] : null,
             $can['categoriesView'] ? [
                 'title' => 'Kategoriler',
@@ -348,6 +360,7 @@ class DashController extends Controller
                 'action_url' => $can['categoriesCreate'] ? route('admin.categories.create') : null,
                 'icon' => 'ki-filled ki-document',
                 'accent' => '#ef4444',
+                'visibility_key' => 'module_categories',
             ] : null,
             $can['usersView'] ? [
                 'title' => 'Kullanıcılar',
@@ -358,6 +371,7 @@ class DashController extends Controller
                 'action_url' => route('admin.users.index'),
                 'icon' => 'ki-filled ki-profile-circle',
                 'accent' => '#8b5cf6',
+                'visibility_key' => 'module_users',
             ] : null,
             $can['trashView'] ? [
                 'title' => 'Silinenler',
@@ -368,6 +382,7 @@ class DashController extends Controller
                 'action_url' => route('admin.trash.index'),
                 'icon' => 'ki-filled ki-trash',
                 'accent' => '#334155',
+                'visibility_key' => 'module_trash',
             ] : null,
             $can['auditView'] ? [
                 'title' => 'Loglar',
@@ -378,6 +393,7 @@ class DashController extends Controller
                 'action_url' => route('admin.audit-logs.index'),
                 'icon' => 'ki-filled ki-fingerprint-scanning',
                 'accent' => '#a855f7',
+                'visibility_key' => 'module_audit',
             ] : null,
         ]));
 
@@ -536,6 +552,14 @@ class DashController extends Controller
             'messagesView' => $user->canAccessAdmin(),
             'appointmentsView' => $this->can($user, 'appointments.view'),
             'auditView' => $this->can($user, 'audit-logs.view'),
+            'blogView' => $this->can($user, 'blog.view'),
+            'projectsView' => $this->can($user, 'projects.view'),
+            'productsView' => $this->can($user, 'products.view'),
+            'mediaView' => $this->can($user, 'media.view'),
+            'galleriesView' => $this->can($user, 'galleries.view'),
+            'categoriesView' => $this->can($user, 'categories.view'),
+            'usersView' => $this->can($user, 'users.view'),
+            'trashView' => $this->can($user, 'trash.view'),
         ];
 
         $dashboardSections = $this->dashboardSectionDefinitions($capabilities);
@@ -546,6 +570,16 @@ class DashController extends Controller
             ->map(function (array $section, string $key) use ($dashboardSectionVisibility) {
                 $section['key'] = $key;
                 $section['visible'] = (bool) ($dashboardSectionVisibility[$key] ?? false);
+                $section['children'] = collect($section['children'] ?? [])
+                    ->filter(fn (array $child) => ($child['available'] ?? false) === true)
+                    ->map(function (array $child, string $childKey) use ($dashboardSectionVisibility) {
+                        $child['key'] = $childKey;
+                        $child['visible'] = (bool) ($dashboardSectionVisibility[$childKey] ?? false);
+
+                        return $child;
+                    })
+                    ->values()
+                    ->all();
 
                 return $section;
             })
@@ -557,7 +591,7 @@ class DashController extends Controller
             'dashboardSectionGroups' => $groupedSections,
             'dashboardSectionVisibility' => $dashboardSectionVisibility,
             'activeSectionCount' => collect($dashboardSectionVisibility)->filter()->count(),
-            'availableSectionCount' => collect($dashboardSections)->filter(fn (array $section) => ($section['available'] ?? false) === true)->count(),
+            'availableSectionCount' => count(DashboardSectionRegistry::availableKeys($dashboardSections)),
         ]);
     }
 
@@ -570,6 +604,14 @@ class DashController extends Controller
             'messagesView' => $user->canAccessAdmin(),
             'appointmentsView' => $this->can($user, 'appointments.view'),
             'auditView' => $this->can($user, 'audit-logs.view'),
+            'blogView' => $this->can($user, 'blog.view'),
+            'projectsView' => $this->can($user, 'projects.view'),
+            'productsView' => $this->can($user, 'products.view'),
+            'mediaView' => $this->can($user, 'media.view'),
+            'galleriesView' => $this->can($user, 'galleries.view'),
+            'categoriesView' => $this->can($user, 'categories.view'),
+            'usersView' => $this->can($user, 'users.view'),
+            'trashView' => $this->can($user, 'trash.view'),
         ];
 
         $dashboardSections = $this->dashboardSectionDefinitions($capabilities);
@@ -589,10 +631,7 @@ class DashController extends Controller
                 ->with('success', 'Dashboard görünümü varsayılan ayarlara döndürüldü.');
         }
 
-        $availableKeys = collect($dashboardSections)
-            ->filter(fn (array $section) => ($section['available'] ?? false) === true)
-            ->keys()
-            ->all();
+        $availableKeys = DashboardSectionRegistry::availableKeys($dashboardSections);
 
         $selectedKeys = collect($validated['visible_sections'] ?? [])
             ->map(fn ($key) => (string) $key)
@@ -675,6 +714,14 @@ class DashController extends Controller
             'messagesView' => (bool) ($capabilities['messagesView'] ?? false),
             'appointmentsView' => (bool) ($capabilities['appointmentsView'] ?? false),
             'auditView' => (bool) ($capabilities['auditView'] ?? false),
+            'blogView' => (bool) ($capabilities['blogView'] ?? false),
+            'projectsView' => (bool) ($capabilities['projectsView'] ?? false),
+            'productsView' => (bool) ($capabilities['productsView'] ?? false),
+            'mediaView' => (bool) ($capabilities['mediaView'] ?? false),
+            'galleriesView' => (bool) ($capabilities['galleriesView'] ?? false),
+            'categoriesView' => (bool) ($capabilities['categoriesView'] ?? false),
+            'usersView' => (bool) ($capabilities['usersView'] ?? false),
+            'trashView' => (bool) ($capabilities['trashView'] ?? false),
         ]);
     }
 
@@ -688,14 +735,10 @@ class DashController extends Controller
         }
 
         $visibility = [];
-        foreach ($dashboardSections as $key => $section) {
-            if (($section['available'] ?? false) !== true) {
-                continue;
-            }
-
+        foreach ($defaults as $key => $default) {
             $visibility[$key] = array_key_exists($key, $stored)
                 ? (bool) $stored[$key]
-                : (bool) ($section['default'] ?? true);
+                : (bool) $default;
         }
 
         return $visibility;

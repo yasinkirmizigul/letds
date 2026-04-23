@@ -2,6 +2,7 @@
     $moduleKey = $moduleKey ?? 'content';
     $title = $title ?? 'İçerik Dilleri';
     $description = $description ?? 'Varsayılan dil ve ek dillerdeki içerikleri sekmeler halinde yönetin.';
+    $contentGridClass = $contentGridClass ?? 'grid gap-5';
     $languages = collect($languages ?? $siteLanguages ?? []);
     $defaultLocale = $defaultLocale ?? $siteDefaultLocale ?? $languages->first()?->code;
     $defaultLanguage = $languages->firstWhere('code', $defaultLocale) ?? $languages->first();
@@ -68,97 +69,131 @@
                             <span class="kt-badge kt-badge-sm kt-badge-light">{{ $language->code }}</span>
                         </div>
 
-                        <div class="grid gap-5">
+                        <div class="{{ $contentGridClass }}">
                             @foreach($fields as $field)
                                 @php
-                                    $name = $field['name'];
                                     $type = $field['type'] ?? 'text';
-                                    $label = $field['label'] ?? str($name)->headline();
-                                    $placeholder = $field['placeholder'] ?? '';
-                                    $value = data_get($row, $name, '');
-                                    $fieldName = $isDefault ? $name : "translations[{$language->code}][{$name}]";
-                                    $errorKey = $isDefault ? $name : "translations.{$language->code}.{$name}";
-                                    $id = $isDefault
-                                        ? ($field['id'] ?? $name)
-                                        : "{$moduleKey}_{$name}_{$language->code}";
-                                    $rows = $field['rows'] ?? 3;
-                                    $hasError = $viewErrors->has($errorKey);
-                                    $errorMessage = $viewErrors->first($errorKey);
                                 @endphp
 
-                                @if($type === 'slug')
-                                    <div class="grid gap-3 rounded-3xl app-surface-card app-surface-card--soft p-4">
-                                        <div class="flex flex-wrap items-center justify-between gap-3">
-                                            <label class="kt-form-label mb-0" for="{{ $id }}">{{ $label }}</label>
-                                            <span class="text-xs text-muted-foreground">Boş bırakılırsa başlıktan otomatik üretilir.</span>
+                                @if($type === 'section')
+                                    <div class="{{ $field['wrapper_class'] ?? '' }}">
+                                        <div class="rounded-2xl border border-dashed border-border/70 bg-background/75 px-4 py-4">
+                                            <div class="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                                                {{ $field['label'] ?? 'Bölüm' }}
+                                            </div>
+                                            @if(!empty($field['description']))
+                                                <div class="mt-2 text-sm text-muted-foreground">
+                                                    {{ $field['description'] }}
+                                                </div>
+                                            @endif
                                         </div>
+                                    </div>
+                                @else
+                                    @php
+                                        $name = (string) ($field['name'] ?? '');
+                                        $binding = (string) ($field['binding'] ?? $name);
+                                        $segments = collect($field['segments'] ?? ($name !== '' ? explode('.', $name) : []))
+                                            ->map(fn ($segment) => (string) $segment)
+                                            ->filter(fn ($segment) => $segment !== '')
+                                            ->values()
+                                            ->all();
+                                        $firstSegment = array_shift($segments);
+                                        $label = $field['label'] ?? str($binding)->headline();
+                                        $placeholder = $field['placeholder'] ?? '';
+                                        $value = data_get($row, $binding, '');
+                                        $rows = $field['rows'] ?? 3;
+                                        $inputType = $field['input_type'] ?? 'text';
+                                        $wrapperClass = trim((string) ($field['wrapper_class'] ?? 'grid gap-2'));
+                                        $fieldName = $isDefault
+                                            ? (string) $firstSegment
+                                            : 'translations[' . $language->code . '][' . $firstSegment . ']';
 
-                                        <div class="flex flex-wrap items-center gap-2">
+                                        foreach ($segments as $segment) {
+                                            $fieldName .= '[' . $segment . ']';
+                                        }
+
+                                        $errorKey = $isDefault ? $binding : 'translations.' . $language->code . '.' . $binding;
+                                        $idBase = $field['id'] ?? str_replace(['.', '[', ']'], '_', $binding);
+                                        $id = $isDefault ? $idBase : $moduleKey . '_' . $idBase . '_' . $language->code;
+                                        $hasError = $viewErrors->has($errorKey);
+                                        $errorMessage = $viewErrors->first($errorKey);
+                                    @endphp
+
+                                    @if($type === 'slug')
+                                        <div class="{{ $wrapperClass }} rounded-3xl app-surface-card app-surface-card--soft p-4">
+                                            <div class="flex flex-wrap items-center justify-between gap-3">
+                                                <label class="kt-form-label mb-0" for="{{ $id }}">{{ $label }}</label>
+                                                <span class="text-xs text-muted-foreground">Boş bırakılırsa başlıktan otomatik üretilir.</span>
+                                            </div>
+
+                                            <div class="flex flex-wrap items-center gap-2">
+                                                <input
+                                                    id="{{ $id }}"
+                                                    name="{{ $fieldName }}"
+                                                    class="kt-input flex-1 {{ $hasError ? 'kt-input-invalid' : '' }}"
+                                                    value="{{ $value }}"
+                                                    placeholder="{{ $placeholder ?: 'otomatik-olusturulur' }}"
+                                                    @unless($isDefault) data-locale-slug="true" @endunless
+                                                >
+                                                <button
+                                                    type="button"
+                                                    class="kt-btn kt-btn-light"
+                                                    @if($isDefault) id="slug_regen" @else data-slug-regen="true" @endif
+                                                >Oluştur</button>
+                                                <label class="kt-switch shrink-0">
+                                                    <input
+                                                        type="checkbox"
+                                                        class="kt-switch"
+                                                        @if($isDefault) id="slug_auto" @else data-slug-auto="true" @endif
+                                                        @checked($value === '')
+                                                    >
+                                                    <span class="kt-switch-slider"></span>
+                                                </label>
+                                            </div>
+
+                                            <div class="rounded-2xl app-surface-card px-4 py-3 text-sm text-muted-foreground">
+                                                URL önizleme:
+                                                <span class="font-medium text-foreground">
+                                                    {{ $urlBase }}{{ $isDefault ? '' : '/' . $language->code }}/<span @if($isDefault) id="url_slug_preview" @else data-slug-preview="true" @endif>{{ $value }}</span>
+                                                </span>
+                                            </div>
+
+                                            @if($hasError)
+                                                <div class="text-xs text-danger">{{ $errorMessage }}</div>
+                                            @endif
+                                        </div>
+                                    @elseif($type === 'textarea' || $type === 'editor')
+                                        <div class="{{ $wrapperClass }}">
+                                            <label class="kt-form-label" for="{{ $id }}">{{ $label }}</label>
+                                            <textarea
+                                                id="{{ $id }}"
+                                                name="{{ $fieldName }}"
+                                                rows="{{ $rows }}"
+                                                class="kt-textarea {{ $hasError ? 'kt-input-invalid' : '' }}"
+                                                placeholder="{{ $placeholder }}"
+                                                @if($type === 'editor') data-localized-content-editor="true" @endif
+                                            >{{ $value }}</textarea>
+                                            @if($hasError)
+                                                <div class="text-xs text-danger">{{ $errorMessage }}</div>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <div class="{{ $wrapperClass }}">
+                                            <label class="kt-form-label" for="{{ $id }}">{{ $label }}</label>
                                             <input
                                                 id="{{ $id }}"
                                                 name="{{ $fieldName }}"
-                                                class="kt-input flex-1 {{ $hasError ? 'kt-input-invalid' : '' }}"
+                                                type="{{ $inputType }}"
+                                                class="kt-input {{ $hasError ? 'kt-input-invalid' : '' }}"
                                                 value="{{ $value }}"
-                                                placeholder="{{ $placeholder ?: 'otomatik-olusturulur' }}"
-                                                @unless($isDefault) data-locale-slug="true" @endunless
+                                                placeholder="{{ $placeholder }}"
+                                                @unless($isDefault) @if(($field['slug_source'] ?? false) === true) data-locale-title="true" @endif @endunless
                                             >
-                                            <button
-                                                type="button"
-                                                class="kt-btn kt-btn-light"
-                                                @if($isDefault) id="slug_regen" @else data-slug-regen="true" @endif
-                                            >Oluştur</button>
-                                            <label class="kt-switch shrink-0">
-                                                <input
-                                                    type="checkbox"
-                                                    class="kt-switch"
-                                                    @if($isDefault) id="slug_auto" @else data-slug-auto="true" @endif
-                                                    @checked($value === '')
-                                                >
-                                                <span class="kt-switch-slider"></span>
-                                            </label>
+                                            @if($hasError)
+                                                <div class="text-xs text-danger">{{ $errorMessage }}</div>
+                                            @endif
                                         </div>
-
-                                        <div class="rounded-2xl app-surface-card px-4 py-3 text-sm text-muted-foreground">
-                                            URL önizleme:
-                                            <span class="font-medium text-foreground">
-                                                {{ $urlBase }}{{ $isDefault ? '' : '/' . $language->code }}/<span @if($isDefault) id="url_slug_preview" @else data-slug-preview="true" @endif>{{ $value }}</span>
-                                            </span>
-                                        </div>
-
-                                        @if($hasError)
-                                            <div class="text-xs text-danger">{{ $errorMessage }}</div>
-                                        @endif
-                                    </div>
-                                @elseif($type === 'textarea' || $type === 'editor')
-                                    <div class="grid gap-2">
-                                        <label class="kt-form-label" for="{{ $id }}">{{ $label }}</label>
-                                        <textarea
-                                            id="{{ $id }}"
-                                            name="{{ $fieldName }}"
-                                            rows="{{ $rows }}"
-                                            class="kt-textarea {{ $hasError ? 'kt-input-invalid' : '' }}"
-                                            placeholder="{{ $placeholder }}"
-                                            @if($type === 'editor') data-localized-content-editor="true" @endif
-                                        >{{ $value }}</textarea>
-                                        @if($hasError)
-                                            <div class="text-xs text-danger">{{ $errorMessage }}</div>
-                                        @endif
-                                    </div>
-                                @else
-                                    <div class="grid gap-2">
-                                        <label class="kt-form-label" for="{{ $id }}">{{ $label }}</label>
-                                        <input
-                                            id="{{ $id }}"
-                                            name="{{ $fieldName }}"
-                                            class="kt-input {{ $hasError ? 'kt-input-invalid' : '' }}"
-                                            value="{{ $value }}"
-                                            placeholder="{{ $placeholder }}"
-                                            @unless($isDefault) @if(($field['slug_source'] ?? false) === true) data-locale-title="true" @endif @endunless
-                                        >
-                                        @if($hasError)
-                                            <div class="text-xs text-danger">{{ $errorMessage }}</div>
-                                        @endif
-                                    </div>
+                                    @endif
                                 @endif
                             @endforeach
                         </div>
