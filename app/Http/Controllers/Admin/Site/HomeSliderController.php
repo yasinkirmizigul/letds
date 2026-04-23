@@ -171,7 +171,7 @@ class HomeSliderController extends Controller
             'cta_label' => ['nullable', 'string', 'max:120'],
             'cta_url' => ['nullable', 'string', 'max:500'],
             'image_media_id' => ['nullable', 'integer', 'exists:media,id'],
-            'image' => ['nullable', 'image', 'max:8192'],
+            'image' => ['nullable', 'file', 'max:8192', 'mimes:jpg,jpeg,png,webp,gif'],
             'clear_image' => ['nullable', 'boolean'],
             'crop_x' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'crop_y' => ['nullable', 'numeric', 'min:0', 'max:100'],

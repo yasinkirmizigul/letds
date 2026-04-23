@@ -9,6 +9,7 @@ use App\Models\Admin\Category;
 use App\Models\Admin\Product\Product;
 use App\Models\Admin\Product\ProductTranslation;
 use App\Services\Content\LocalizedContentTranslationService;
+use App\Support\Security\HtmlSanitizer;
 use App\Support\Audit\AuditEvent;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -471,7 +472,7 @@ class ProductController extends Controller
         $data = [
             'title' => $validated['title'],
             'slug' => $this->uniqueSlug($slugSource, $product?->id),
-            'content' => $validated['content'] ?? null,
+            'content' => HtmlSanitizer::sanitize($validated['content'] ?? null),
             'sku' => $validated['sku'] ?? null,
             'price' => $validated['price'] ?? null,
             'stock' => $validated['stock'] ?? null,

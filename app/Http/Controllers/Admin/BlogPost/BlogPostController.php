@@ -9,6 +9,7 @@ use App\Models\Admin\BlogPost\BlogPost;
 use App\Models\Admin\BlogPost\BlogPostTranslation;
 use App\Models\Admin\Category;
 use App\Services\Content\LocalizedContentTranslationService;
+use App\Support\Security\HtmlSanitizer;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -409,7 +410,7 @@ class BlogPostController extends Controller
             'title' => $validated['title'],
             'slug' => $this->uniqueSlug($slugSource, $blogPost?->id),
             'excerpt' => $validated['excerpt'] ?? null,
-            'content' => $validated['content'] ?? null,
+            'content' => HtmlSanitizer::sanitize($validated['content'] ?? null),
             'meta_title' => $validated['meta_title'] ?? null,
             'meta_description' => $validated['meta_description'] ?? null,
             'meta_keywords' => $validated['meta_keywords'] ?? null,

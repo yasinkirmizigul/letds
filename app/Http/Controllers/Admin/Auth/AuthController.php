@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -11,7 +13,7 @@ class AuthController extends Controller
     public function showLogin()
     {
         return view('admin.pages.auth.index', [
-            'pageTitle' => 'Giriş Yap',
+            'pageTitle' => 'Giris Yap',
         ]);
     }
 
@@ -23,32 +25,36 @@ class AuthController extends Controller
             'remember' => ['nullable', 'boolean'],
         ]);
 
+        $this->ensureIsNotRateLimited($request);
+
+        $email = Str::lower(trim((string) $validated['email']));
         $remember = (bool) ($validated['remember'] ?? false);
 
         if (!auth()->attempt(
-            ['email' => $validated['email'], 'password' => $validated['password']],
+            ['email' => $email, 'password' => $validated['password']],
             $remember
         )) {
+            RateLimiter::hit($this->throttleKey($request), 60);
+
             throw ValidationException::withMessages([
-                'email' => 'E-posta veya şifre hatalı.',
+                'email' => 'E-posta veya sifre hatali.',
             ]);
         }
 
-        // ✅ BURADA: kullanıcı artık auth oldu
         $user = auth()->user();
 
-        // Pasif kullanıcı kontrolü
-        if (!$user || !$user->is_active) {
+        if (!$user || !method_exists($user, 'canAccessBackoffice') || !$user->canAccessBackoffice()) {
             auth()->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
+            RateLimiter::hit($this->throttleKey($request), 60);
 
             throw ValidationException::withMessages([
-                'email' => 'Hesabınız pasif. Lütfen yönetici ile iletişime geçin.',
+                'email' => 'E-posta veya sifre hatali.',
             ]);
         }
 
-        // ✅ Bundan sonra session’ı güvenli şekilde yenile
+        RateLimiter::clear($this->throttleKey($request));
         $request->session()->regenerate();
 
         return redirect()->intended(route('admin.dashboard'));
@@ -62,5 +68,27 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('login');
+    }
+
+    private function ensureIsNotRateLimited(Request $request): void
+    {
+        $key = $this->throttleKey($request);
+
+        if (!RateLimiter::tooManyAttempts($key, 5)) {
+            return;
+        }
+
+        $seconds = RateLimiter::availableIn($key);
+
+        throw ValidationException::withMessages([
+            'email' => "Cok fazla giris denemesi yapildi. {$seconds} saniye sonra tekrar deneyin.",
+        ]);
+    }
+
+    private function throttleKey(Request $request): string
+    {
+        $email = Str::lower(trim((string) $request->input('email', '')));
+
+        return 'admin-login:' . sha1($email . '|' . $request->ip());
     }
 }

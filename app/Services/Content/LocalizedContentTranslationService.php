@@ -3,6 +3,7 @@
 namespace App\Services\Content;
 
 use App\Models\Site\SiteLanguage;
+use App\Support\Security\HtmlSanitizer;
 use App\Support\Site\SiteLocalization;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -39,7 +40,7 @@ class LocalizedContentTranslationService
                     continue;
                 }
 
-                $payload[$field] = $this->normalize($values[$field]);
+                $payload[$field] = $this->normalize($field, $values[$field]);
             }
 
             if (!$this->hasMeaningfulContent($payload)) {
@@ -125,19 +126,23 @@ class LocalizedContentTranslationService
         return $this->uniqueSlug((string) $source, $config, (int) $model->getKey(), $locale);
     }
 
-    private function normalize(mixed $value): mixed
+    private function normalize(string $field, mixed $value): mixed
     {
         if (is_array($value)) {
             $normalized = [];
 
             foreach ($value as $key => $nestedValue) {
-                $normalized[$key] = $this->normalize($nestedValue);
+                $normalized[$key] = $this->normalize((string) $key, $nestedValue);
             }
 
             return $normalized;
         }
 
         if (is_string($value)) {
+            if ($field === 'content') {
+                return HtmlSanitizer::sanitize($value);
+            }
+
             $value = trim($value);
 
             return $value === '' ? null : $value;

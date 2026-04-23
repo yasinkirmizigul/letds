@@ -103,7 +103,7 @@ class ProductStoreRequest extends FormRequest
             'appointment_id' => ['nullable', 'integer', 'min:1'],
 
             'featured_media_id' => ['nullable', 'integer', 'exists:media,id'],
-            'featured_image' => ['nullable', 'image', 'max:5120'],
+            'featured_image' => ['nullable', 'file', 'max:5120', 'mimes:jpg,jpeg,png,webp,gif'],
 
             'category_ids' => ['nullable', 'array'],
             'category_ids.*' => [

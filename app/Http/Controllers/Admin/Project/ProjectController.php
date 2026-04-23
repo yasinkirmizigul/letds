@@ -9,6 +9,7 @@ use App\Models\Admin\Category;
 use App\Models\Admin\Project\Project;
 use App\Models\Admin\Project\ProjectTranslation;
 use App\Services\Content\LocalizedContentTranslationService;
+use App\Support\Security\HtmlSanitizer;
 use App\Support\Audit\AuditEvent;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -491,7 +492,7 @@ class ProjectController extends Controller
         $data = [
             'title' => $validated['title'],
             'slug' => $this->uniqueSlug($slugSource, $project?->id),
-            'content' => $validated['content'] ?? null,
+            'content' => HtmlSanitizer::sanitize($validated['content'] ?? null),
             'meta_title' => $validated['meta_title'] ?? null,
             'meta_description' => $validated['meta_description'] ?? null,
             'meta_keywords' => $validated['meta_keywords'] ?? null,

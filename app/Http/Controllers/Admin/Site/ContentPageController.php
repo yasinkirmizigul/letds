@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Site\SitePage;
 use App\Models\Site\SitePageTranslation;
 use App\Services\Site\SiteTranslationSyncService;
+use App\Support\Security\HtmlSanitizer;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -178,7 +179,7 @@ class ContentPageController extends Controller
             'content' => ['nullable', 'string'],
             'icon_class' => ['nullable', 'string', 'max:255'],
             'featured_media_id' => ['nullable', 'integer', 'exists:media,id'],
-            'featured_image' => ['nullable', 'image', 'max:8192'],
+            'featured_image' => ['nullable', 'file', 'max:8192', 'mimes:jpg,jpeg,png,webp,gif'],
             'clear_featured_image' => ['nullable', 'boolean'],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string'],
@@ -217,7 +218,7 @@ class ContentPageController extends Controller
             'slug' => $this->uniqueSlug((string) ($validated['slug'] ?: $validated['title']), $page?->id),
             'hero_kicker' => $validated['hero_kicker'] ?? null,
             'excerpt' => $validated['excerpt'] ?? null,
-            'content' => $validated['content'] ?? null,
+            'content' => HtmlSanitizer::sanitize($validated['content'] ?? null),
             'icon_class' => $validated['icon_class'] ?? null,
             'meta_title' => $validated['meta_title'] ?? null,
             'meta_description' => $validated['meta_description'] ?? null,
@@ -247,7 +248,7 @@ class ContentPageController extends Controller
                 'slug' => null,
                 'hero_kicker' => $this->cleanText($translation['hero_kicker'] ?? null),
                 'excerpt' => $this->cleanText($translation['excerpt'] ?? null),
-                'content' => $this->cleanText($translation['content'] ?? null),
+                'content' => HtmlSanitizer::sanitize($translation['content'] ?? null),
                 'meta_title' => $this->cleanText($translation['meta_title'] ?? null),
                 'meta_description' => $this->cleanText($translation['meta_description'] ?? null),
                 'meta_keywords' => $this->cleanText($translation['meta_keywords'] ?? null),

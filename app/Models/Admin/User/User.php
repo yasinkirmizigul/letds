@@ -150,6 +150,19 @@ class User extends Authenticatable
         return $this->isAdmin() && (bool) $this->is_active;
     }
 
+    public function canAccessBackoffice(): bool
+    {
+        if (!(bool) $this->is_active) {
+            return false;
+        }
+
+        if ($this->isAdmin() || $this->hasRole('provider')) {
+            return true;
+        }
+
+        return count($this->permissionSlugsCached()) > 0;
+    }
+
     /**
      * Sidebar + UI için: superadmin bypass + permission
      */

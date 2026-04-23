@@ -35,6 +35,7 @@ Route::get('/login', [AuthController::class, 'showLogin'])
     ->name('login');
 
 Route::post('/login', [AuthController::class, 'login'])
+    ->middleware('throttle:10,1')
     ->name('login.post');
 
 Route::post('/logout', [AuthController::class, 'logout'])
@@ -46,7 +47,7 @@ Route::post('/logout', [AuthController::class, 'logout'])
 | Admin
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'audit'])
+Route::middleware(['auth', 'admin', 'audit'])
     ->prefix('admin')
     ->as('admin.')
     ->group(function () {
@@ -604,6 +605,10 @@ Route::middleware(['auth', 'audit'])
             });
 
         Route::post('/tinymce/upload', [TinyMceController::class, 'upload'])
+            ->middleware([
+                'permission:blog.create,blog.update,projects.create,projects.update,products.create,products.update,site_pages.create,site_pages.update',
+                'throttle:20,1',
+            ])
             ->name('tinymce.upload');
 
         // [ADMIN_MODULE_ROUTES:START]
@@ -627,13 +632,16 @@ Route::middleware(['site.locale', 'guest:member'])->group(function () {
         ->name('member.register');
 
     Route::post('/uye-kayit', [MemberAuthController::class, 'register'])
+        ->middleware('throttle:6,10')
         ->name('member.register.post');
 });
 
 Route::middleware('site.locale')->prefix('member')->name('member.')->group(function () {
     Route::middleware('guest:member')->group(function () {
         Route::get('/login', [MemberAuthController::class, 'showLogin'])->name('login');
-        Route::post('/login', [MemberAuthController::class, 'login'])->name('login.post');
+        Route::post('/login', [MemberAuthController::class, 'login'])
+            ->middleware('throttle:10,1')
+            ->name('login.post');
     });
 
     Route::post('/logout', [MemberAuthController::class, 'logout'])
@@ -675,6 +683,7 @@ Route::middleware('site.locale')->group(function () {
         ->name('site.contact-messages.create');
 
     Route::post('/iletisim', [ContactMessageController::class, 'store'])
+        ->middleware('throttle:12,1')
         ->name('site.contact-messages.store');
 
     Route::prefix('{locale}')

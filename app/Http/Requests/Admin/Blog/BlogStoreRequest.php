@@ -72,7 +72,7 @@ class BlogStoreRequest extends FormRequest
             'translations.*.meta_description' => ['nullable', 'string', 'max:255'],
             'translations.*.meta_keywords' => ['nullable', 'string', 'max:500'],
             'featured_media_id' => ['nullable', 'integer', 'exists:media,id'],
-            'featured_image' => ['nullable', 'image', 'max:5120'],
+            'featured_image' => ['nullable', 'file', 'max:5120', 'mimes:jpg,jpeg,png,webp,gif'],
             'is_published' => ['nullable', 'boolean'],
             'is_featured' => ['nullable', 'boolean'],
             'clear_featured_image' => ['nullable', 'boolean'],

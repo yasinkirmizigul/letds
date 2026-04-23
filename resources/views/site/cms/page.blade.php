@@ -34,7 +34,7 @@
 
         <section class="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
             <article class="rounded-[32px] border border-border bg-white/85 p-6 leading-8 text-foreground shadow-sm lg:p-10">
-                {!! $page->localized('content') !!}
+                {!! \App\Support\Security\HtmlSanitizer::sanitize($page->localized('content')) !!}
             </article>
 
             <aside class="grid gap-5 self-start lg:sticky lg:top-24">

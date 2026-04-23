@@ -94,7 +94,7 @@ class AppointmentController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'message' => 'Randevu olusturulurken beklenmeyen bir hata olustu.',
             ], 500);
         }
     }

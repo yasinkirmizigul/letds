@@ -117,8 +117,8 @@ class ProfileController extends Controller
                 'uuid' => $uuid,
                 'disk' => $disk,
                 'path' => $path,
-                'original_name' => $file->getClientOriginalName(),
-                'mime_type' => $mime,
+                'original_name' => $this->sanitizeOriginalName($file->getClientOriginalName()),
+                'mime_type' => $mime ?: $file->getClientMimeType(),
                 'size' => $file->getSize(),
                 'width' => $width,
                 'height' => $height,
@@ -196,6 +196,15 @@ class ProfileController extends Controller
         }
 
         $media->delete();
+    }
+
+    private function sanitizeOriginalName(string $name): string
+    {
+        $name = basename(trim($name));
+        $name = preg_replace('/[^A-Za-z0-9._-]+/', '-', $name) ?: 'dosya';
+        $name = trim($name, '.-');
+
+        return $name !== '' ? $name : 'dosya';
     }
 
 }

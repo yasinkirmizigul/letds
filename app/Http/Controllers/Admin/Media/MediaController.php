@@ -8,11 +8,13 @@ use App\Services\Admin\Media\MediaService;
 use App\Services\Content\LocalizedContentTranslationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class MediaController extends Controller
 {
     private const TRANSLATION_FIELDS = ['title', 'alt', 'caption', 'description'];
+    private const UPLOAD_MIMES = 'jpg,jpeg,png,webp,gif,pdf,mp4,mov,webm';
 
     public function __construct(
         private readonly MediaService $mediaService,
@@ -91,9 +93,9 @@ class MediaController extends Controller
     {
         try {
             $request->validate([
-                'file' => ['required_without:files', 'file', 'max:20480'],
-                'files' => ['required_without:file', 'array'],
-                'files.*' => ['file', 'max:20480'],
+                'file' => ['required_without:files', 'file', 'max:20480', 'mimes:' . self::UPLOAD_MIMES],
+                'files' => ['required_without:file', 'array', 'max:24'],
+                'files.*' => ['file', 'max:20480', 'mimes:' . self::UPLOAD_MIMES],
                 'title' => ['nullable', 'string', 'max:255'],
                 'alt' => ['nullable', 'string', 'max:255'],
                 'translations' => ['nullable', 'array'],
@@ -141,10 +143,15 @@ class MediaController extends Controller
         } catch (Throwable $exception) {
             report($exception);
 
+            $status = $exception instanceof ValidationException ? 422 : 500;
+            $message = $exception instanceof ValidationException
+                ? (collect($exception->errors())->flatten()->first() ?: 'Gecersiz dosya verisi.')
+                : 'Dosya yuklenirken beklenmeyen bir hata olustu.';
+
             return response()->json([
                 'ok' => false,
-                'error' => ['message' => $exception->getMessage()],
-            ], 422);
+                'error' => ['message' => $message],
+            ], $status);
         }
     }
 

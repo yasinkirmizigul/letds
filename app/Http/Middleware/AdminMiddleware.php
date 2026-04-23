@@ -15,12 +15,10 @@ class AdminMiddleware
             abort(403);
         }
 
-        // admin veya superadmin
-        if (!$user->isAdmin()) {
-            abort(403, 'Bu alan sadece admin yetkisine açıktır.');
+        if (!method_exists($user, 'canAccessBackoffice') || !$user->canAccessBackoffice()) {
+            abort(403, 'Bu alan sadece yetkili panel kullanicilarina aciktir.');
         }
 
         return $next($request);
     }
 }
-

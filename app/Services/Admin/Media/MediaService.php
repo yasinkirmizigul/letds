@@ -27,7 +27,7 @@ class MediaService
 
     private function isImage(UploadedFile $file): bool
     {
-        return str_starts_with((string) $file->getClientMimeType(), 'image/');
+        return str_starts_with((string) ($file->getMimeType() ?: $file->getClientMimeType()), 'image/');
     }
 
     public function store(UploadedFile $file, array $attrs = []): Media
@@ -79,8 +79,8 @@ class MediaService
             'disk'          => $disk,
             'path'          => $originalPath,
             'variants'      => $variants,
-            'original_name' => $file->getClientOriginalName(),
-            'mime_type'     => $file->getClientMimeType(),
+            'original_name' => $this->sanitizeOriginalName($file->getClientOriginalName()),
+            'mime_type'     => $file->getMimeType() ?: $file->getClientMimeType(),
             'size'          => $file->getSize(),
             'width'         => $width,
             'height'        => $height,
@@ -88,6 +88,15 @@ class MediaService
             'alt'           => $attrs['alt'] ?? null,
             'meta'          => $attrs['meta'] ?? null,
         ]);
+    }
+
+    private function sanitizeOriginalName(string $name): string
+    {
+        $name = basename(trim($name));
+        $name = preg_replace('/[^A-Za-z0-9._-]+/', '-', $name) ?: 'dosya';
+        $name = trim($name, '.-');
+
+        return $name !== '' ? $name : 'dosya';
     }
 
     public function delete(Media $media): void

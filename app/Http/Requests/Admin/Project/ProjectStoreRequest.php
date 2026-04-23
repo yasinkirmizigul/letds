@@ -64,7 +64,7 @@ class ProjectStoreRequest extends FormRequest
             'is_featured' => ['nullable', 'boolean'],
             'appointment_id' => ['nullable', 'integer', 'min:1'],
             'featured_media_id' => ['nullable', 'integer', 'exists:media,id'],
-            'featured_image' => ['nullable', 'image', 'max:5120'],
+            'featured_image' => ['nullable', 'file', 'max:5120', 'mimes:jpg,jpeg,png,webp,gif'],
             'clear_featured_image' => ['nullable', 'boolean'],
             'category_ids' => ['nullable', 'array'],
             'category_ids.*' => [

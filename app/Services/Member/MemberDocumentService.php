@@ -50,9 +50,18 @@ class MemberDocumentService
         return [
             'filepath' => $file->store('members/documents', 'local'),
             'file_disk' => 'local',
-            'file_original_name' => $file->getClientOriginalName(),
+            'file_original_name' => $this->sanitizeOriginalName($file->getClientOriginalName()),
             'file_mime_type' => $file->getClientMimeType() ?: $file->getMimeType(),
             'file_size' => $file->getSize(),
         ];
+    }
+
+    private function sanitizeOriginalName(string $name): string
+    {
+        $name = basename(trim($name));
+        $name = preg_replace('/[^A-Za-z0-9._-]+/', '-', $name) ?: 'dosya';
+        $name = trim($name, '.-');
+
+        return $name !== '' ? $name : 'dosya';
     }
 }
