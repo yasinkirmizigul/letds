@@ -52,6 +52,8 @@ Route::middleware(['auth', 'audit'])
     ->group(function () {
 
         Route::get('/', [DashController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard/manage', [DashController::class, 'manage'])->name('dashboard.manage');
+        Route::put('/dashboard/manage', [DashController::class, 'updatePreferences'])->name('dashboard.manage.update');
 
         // Roles
         Route::middleware('permission:roles.view')->group(function () {

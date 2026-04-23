@@ -2,11 +2,13 @@
 
 namespace App\Models\Admin\User;
 
+use App\Models\Admin\Dash\AdminDashboardPreference;
 use App\Models\Admin\Media\Media;
 use App\Models\ContactMessage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Cache;
@@ -192,6 +194,11 @@ class User extends Authenticatable
     public function receivedContactMessages(): HasMany
     {
         return $this->hasMany(ContactMessage::class, 'recipient_user_id');
+    }
+
+    public function dashboardPreference(): HasOne
+    {
+        return $this->hasOne(AdminDashboardPreference::class);
     }
 
     public function avatarUrl(): string

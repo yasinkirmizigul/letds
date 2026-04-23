@@ -13,13 +13,17 @@ use App\Models\Admin\Project\Project;
 use App\Models\Admin\User\User;
 use App\Models\Appointment\Appointment;
 use App\Models\ContactMessage;
+use App\Support\Admin\DashboardSectionRegistry;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class DashController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         /** @var User $user */
         $user = auth()->user();
@@ -160,7 +164,7 @@ class DashController extends Controller
             [
                 'label' => 'Bu hafta randevu',
                 'value' => $appointmentsWeek,
-                'hint' => $appointmentsToday > 0 ? "Bugün {$appointmentsToday} randevu var" : 'Takvim sakin gözükuyor',
+                'hint' => $appointmentsToday > 0 ? "Bugün {$appointmentsToday} randevu var" : 'Takvim sakin gözüküyor',
                 'icon' => 'ki-filled ki-calendar-8',
                 'accent' => '#17c653',
             ],
@@ -318,7 +322,7 @@ class DashController extends Controller
             $can['mediaView'] ? [
                 'title' => 'Medya',
                 'value' => $mediaStats['total'],
-                'hint' => "{$mediaStats['images']} gorsel, {$mediaStats['videos']} video",
+                'hint' => "{$mediaStats['images']} görsel, {$mediaStats['videos']} video",
                 'route' => route('admin.media.index'),
                 'action_label' => 'Kütüphane',
                 'action_url' => route('admin.media.index'),
@@ -338,7 +342,7 @@ class DashController extends Controller
             $can['categoriesView'] ? [
                 'title' => 'Kategoriler',
                 'value' => $categoryStats['total'],
-                'hint' => "{$categoryStats['roots']} kok kategori",
+                'hint' => "{$categoryStats['roots']} kök kategori",
                 'route' => route('admin.categories.index'),
                 'action_label' => $can['categoriesCreate'] ? 'Yeni kategori' : null,
                 'action_url' => $can['categoriesCreate'] ? route('admin.categories.create') : null,
@@ -370,7 +374,7 @@ class DashController extends Controller
                 'value' => $auditStats['errors'],
                 'hint' => "{$auditStats['today']} bugün, sistem akışlarını kontrol et",
                 'route' => route('admin.audit-logs.index'),
-                'action_label' => 'Logları ac',
+                'action_label' => 'Logları aç',
                 'action_url' => route('admin.audit-logs.index'),
                 'icon' => 'ki-filled ki-fingerprint-scanning',
                 'accent' => '#a855f7',
@@ -441,7 +445,7 @@ class DashController extends Controller
                         'priority_label' => ContactMessage::priorityLabel($message->priority),
                         'priority_badge' => ContactMessage::priorityBadgeClass($message->priority),
                         'status_badge' => $message->isRead() ? 'kt-badge kt-badge-sm kt-badge-light-success' : 'kt-badge kt-badge-sm kt-badge-light-warning',
-                        'status_label' => $message->isRead() ? 'Okundu' : 'Okunmadi',
+                        'status_label' => $message->isRead() ? 'Okundu' : 'Okunmadı',
                         'url' => route('admin.messages.show', $message),
                     ];
                 })
@@ -476,6 +480,10 @@ class DashController extends Controller
                 $item['updated_label'] = optional($item['updated_at'])->diffForHumans();
                 return $item;
             });
+
+        $dashboardSections = $this->dashboardSectionDefinitions($can);
+        $dashboardSectionVisibility = $this->resolveDashboardSectionVisibility($user, $dashboardSections);
+        $hasVisibleDashboardSection = collect($dashboardSectionVisibility)->contains(fn (bool $visible) => $visible === true);
 
         $recentAuditIssues = $can['auditView']
             ? AuditLog::query()
@@ -513,7 +521,103 @@ class DashController extends Controller
             'canAppointments' => $can['appointmentsView'],
             'focusTotal' => $focusTotal,
             'nowLabel' => $now->format('d M Y, H:i'),
+            'dashboardSections' => $dashboardSections,
+            'dashboardSectionVisibility' => $dashboardSectionVisibility,
+            'hasVisibleDashboardSection' => $hasVisibleDashboardSection,
         ]);
+    }
+
+    public function manage(): View
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        $capabilities = [
+            'messagesView' => $user->canAccessAdmin(),
+            'appointmentsView' => $this->can($user, 'appointments.view'),
+            'auditView' => $this->can($user, 'audit-logs.view'),
+        ];
+
+        $dashboardSections = $this->dashboardSectionDefinitions($capabilities);
+        $dashboardSectionVisibility = $this->resolveDashboardSectionVisibility($user, $dashboardSections);
+
+        $groupedSections = collect($dashboardSections)
+            ->filter(fn (array $section) => ($section['available'] ?? false) === true)
+            ->map(function (array $section, string $key) use ($dashboardSectionVisibility) {
+                $section['key'] = $key;
+                $section['visible'] = (bool) ($dashboardSectionVisibility[$key] ?? false);
+
+                return $section;
+            })
+            ->groupBy('group');
+
+        return view('admin.pages.dash.manage', [
+            'pageTitle' => 'Dashboard Yönetimi',
+            'pageDescription' => 'Dashboard Yönetimi',
+            'dashboardSectionGroups' => $groupedSections,
+            'dashboardSectionVisibility' => $dashboardSectionVisibility,
+            'activeSectionCount' => collect($dashboardSectionVisibility)->filter()->count(),
+            'availableSectionCount' => collect($dashboardSections)->filter(fn (array $section) => ($section['available'] ?? false) === true)->count(),
+        ]);
+    }
+
+    public function updatePreferences(Request $request): RedirectResponse
+    {
+        /** @var User $user */
+        $user = auth()->user();
+
+        $capabilities = [
+            'messagesView' => $user->canAccessAdmin(),
+            'appointmentsView' => $this->can($user, 'appointments.view'),
+            'auditView' => $this->can($user, 'audit-logs.view'),
+        ];
+
+        $dashboardSections = $this->dashboardSectionDefinitions($capabilities);
+        $defaults = DashboardSectionRegistry::defaults($dashboardSections);
+
+        $validated = $request->validate([
+            'action' => ['nullable', 'string', 'in:save,reset'],
+            'visible_sections' => ['nullable', 'array'],
+            'visible_sections.*' => ['string'],
+        ]);
+
+        if (($validated['action'] ?? 'save') === 'reset') {
+            $user->dashboardPreference()->delete();
+
+            return redirect()
+                ->route('admin.dashboard.manage')
+                ->with('success', 'Dashboard görünümü varsayılan ayarlara döndürüldü.');
+        }
+
+        $availableKeys = collect($dashboardSections)
+            ->filter(fn (array $section) => ($section['available'] ?? false) === true)
+            ->keys()
+            ->all();
+
+        $selectedKeys = collect($validated['visible_sections'] ?? [])
+            ->map(fn ($key) => (string) $key)
+            ->filter(fn ($key) => in_array($key, $availableKeys, true))
+            ->unique()
+            ->values()
+            ->all();
+
+        $visibleSections = [];
+        foreach ($availableKeys as $key) {
+            $visibleSections[$key] = in_array($key, $selectedKeys, true);
+        }
+
+        if ($visibleSections === $defaults) {
+            $user->dashboardPreference()->delete();
+        } else {
+            $user->dashboardPreference()->updateOrCreate(
+                ['user_id' => $user->id],
+                ['visible_sections' => $visibleSections]
+            );
+        }
+
+        return redirect()
+            ->route('admin.dashboard.manage')
+            ->with('success', 'Dashboard görünürlüğü güncellendi.');
     }
 
     private function can(?User $user, string $permission): bool
@@ -532,7 +636,7 @@ class DashController extends Controller
     private function greetingForHour(int $hour): string
     {
         return match (true) {
-            $hour < 12 => 'Gunaydin',
+            $hour < 12 => 'Günaydın',
             $hour < 18 => 'İyi günler',
             default => 'İyi akşamlar',
         };
@@ -559,10 +663,42 @@ class DashController extends Controller
         }
 
         if (count($parts) === 0) {
-            return "{$user->name}, panel sakin görünüyor. Hemen yönetmek istedigin modülü açıp günlük akışı hızlandirabilirsin.";
+            return "{$user->name}, panel sakin görünüyor. Hemen yönetmek istediğin modülü açıp günlük akışı hızlandırabilirsin.";
         }
 
         return "{$user->name}, " . implode(', ', $parts) . ' seni bekliyor.';
+    }
+
+    private function dashboardSectionDefinitions(array $capabilities): array
+    {
+        return DashboardSectionRegistry::definitions([
+            'messagesView' => (bool) ($capabilities['messagesView'] ?? false),
+            'appointmentsView' => (bool) ($capabilities['appointmentsView'] ?? false),
+            'auditView' => (bool) ($capabilities['auditView'] ?? false),
+        ]);
+    }
+
+    private function resolveDashboardSectionVisibility(User $user, array $dashboardSections): array
+    {
+        $stored = $user->dashboardPreference?->visible_sections;
+        $defaults = DashboardSectionRegistry::defaults($dashboardSections);
+
+        if (!is_array($stored) || $stored === []) {
+            return $defaults;
+        }
+
+        $visibility = [];
+        foreach ($dashboardSections as $key => $section) {
+            if (($section['available'] ?? false) !== true) {
+                continue;
+            }
+
+            $visibility[$key] = array_key_exists($key, $stored)
+                ? (bool) $stored[$key]
+                : (bool) ($section['default'] ?? true);
+        }
+
+        return $visibility;
     }
 
     private function monthBuckets(Carbon $now, int $months): array
