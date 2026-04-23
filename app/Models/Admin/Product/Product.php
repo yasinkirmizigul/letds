@@ -4,15 +4,18 @@ namespace App\Models\Admin\Product;
 
 use App\Models\Admin\Category;
 use App\Models\Admin\Media\Media;
+use App\Models\Concerns\HasSiteLocaleTranslations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class Product extends Model
 {
+    use HasSiteLocaleTranslations;
     use SoftDeletes;
 
     protected $table = 'products';
@@ -100,7 +103,15 @@ class Product extends Model
                 ->orWhere('sku', 'like', "%{$term}%")
                 ->orWhere('barcode', 'like', "%{$term}%")
                 ->orWhere('brand', 'like', "%{$term}%")
-                ->orWhere('meta_title', 'like', "%{$term}%");
+                ->orWhere('meta_title', 'like', "%{$term}%")
+                ->orWhereHas('translations', function (Builder $translationQuery) use ($term) {
+                    $translationQuery
+                        ->where('title', 'like', "%{$term}%")
+                        ->orWhere('slug', 'like', "%{$term}%")
+                        ->orWhere('content', 'like', "%{$term}%")
+                        ->orWhere('meta_title', 'like', "%{$term}%")
+                        ->orWhere('meta_description', 'like', "%{$term}%");
+                });
         });
     }
 
@@ -150,6 +161,11 @@ class Product extends Model
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'category_product', 'product_id', 'category_id');
+    }
+
+    public function translations(): HasMany
+    {
+        return $this->hasMany(ProductTranslation::class, 'product_id');
     }
 
     public function featuredMedia(): MorphToMany
@@ -220,7 +236,7 @@ class Product extends Model
 
     public function excerptPreview(int $limit = 140): string
     {
-        $normalized = preg_replace('/\s+/u', ' ', trim(strip_tags((string) $this->content)));
+        $normalized = preg_replace('/\s+/u', ' ', trim(strip_tags((string) $this->localizedValue('content'))));
 
         return Str::limit((string) $normalized, $limit);
     }

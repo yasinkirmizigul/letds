@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Site;
 use App\Http\Controllers\Controller;
 use App\Models\Site\SiteCounter;
 use App\Models\Site\SitePage;
+use App\Services\Site\SiteTranslationSyncService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -13,17 +14,21 @@ use Illuminate\Support\Facades\DB;
 
 class SiteCounterController extends Controller
 {
+    public function __construct(
+        private readonly SiteTranslationSyncService $translationSyncService,
+    ) {}
+
     public function index(): View
     {
         $counters = SiteCounter::query()
-            ->with('page:id,title')
+            ->with(['page:id,title', 'translations'])
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get();
 
         return view('admin.pages.site.counters.index', [
             'counters' => $counters,
-            'pages' => SitePage::query()->orderBy('title')->get(['id', 'title']),
+            'pages' => SitePage::query()->with('translations')->orderBy('title')->get(['id', 'title']),
             'stats' => [
                 'all' => SiteCounter::query()->count(),
                 'active' => SiteCounter::query()->where('is_active', true)->count(),
@@ -35,7 +40,17 @@ class SiteCounterController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        SiteCounter::create($this->validated($request));
+        $validated = $this->validated($request);
+        $payload = collect($validated)->except('translations')->all();
+
+        $counter = SiteCounter::create($payload);
+
+        $this->translationSyncService->sync(
+            $counter,
+            'translations',
+            $validated['translations'] ?? [],
+            ['label', 'prefix', 'suffix', 'description']
+        );
 
         return redirect()
             ->route('admin.site.counters.index')
@@ -44,7 +59,17 @@ class SiteCounterController extends Controller
 
     public function update(Request $request, SiteCounter $siteCounter): RedirectResponse
     {
-        $siteCounter->update($this->validated($request));
+        $validated = $this->validated($request);
+        $payload = collect($validated)->except('translations')->all();
+
+        $siteCounter->update($payload);
+
+        $this->translationSyncService->sync(
+            $siteCounter,
+            'translations',
+            $validated['translations'] ?? [],
+            ['label', 'prefix', 'suffix', 'description']
+        );
 
         return redirect()
             ->route('admin.site.counters.index')
@@ -92,6 +117,11 @@ class SiteCounterController extends Controller
             'description' => ['nullable', 'string', 'max:500'],
             'icon_class' => ['nullable', 'string', 'max:255'],
             'is_active' => ['nullable', 'boolean'],
+            'translations' => ['nullable', 'array'],
+            'translations.*.label' => ['nullable', 'string', 'max:120'],
+            'translations.*.prefix' => ['nullable', 'string', 'max:30'],
+            'translations.*.suffix' => ['nullable', 'string', 'max:30'],
+            'translations.*.description' => ['nullable', 'string', 'max:500'],
         ]) + [
             'is_active' => $request->boolean('is_active'),
         ];

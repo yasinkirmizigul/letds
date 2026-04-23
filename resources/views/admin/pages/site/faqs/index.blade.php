@@ -1,6 +1,10 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
+    @php
+        $extraLanguages = collect($siteLanguages ?? [])->where('code', '!=', $siteDefaultLocale)->values();
+    @endphp
+
     <div
         class="kt-container-fixed max-w-[96%] grid gap-6"
         data-page="site.faqs.index"
@@ -14,7 +18,7 @@
                 <div>
                     <h1 class="text-xl font-semibold">Sıkça Sorulan Sorular</h1>
                     <div class="text-sm text-muted-foreground">
-                        Global veya sayfa bazlı SSS alanlarını sürükle-bırak sıralama ile yönet.
+                        Global veya sayfa bazlı SSS alanlarını sürükle-bırak sıralama ile yönet, dil karşılıklarını aynı karttan gir.
                     </div>
                 </div>
             </div>
@@ -27,7 +31,7 @@
             <div class="rounded-3xl app-stat-card p-5"><div class="text-sm text-muted-foreground">Sayfaya Bağlı</div><div class="mt-2 text-3xl font-semibold text-warning">{{ $stats['linked'] ?? 0 }}</div></div>
         </div>
 
-        <div class="grid gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
+        <div class="grid gap-6 xl:grid-cols-[400px_minmax(0,1fr)]">
             <div class="kt-card">
                 <div class="kt-card-header py-5">
                     <div>
@@ -68,6 +72,27 @@
                         <label class="kt-form-label">İkon</label>
                         <input name="icon_class" class="kt-input" value="{{ old('icon_class', 'ki-filled ki-questionnaire-tablet') }}" placeholder="ki-filled ki-questionnaire-tablet">
                     </div>
+
+                    @if($extraLanguages->isNotEmpty())
+                        <details class="rounded-3xl app-surface-card app-surface-card--soft p-4">
+                            <summary class="cursor-pointer list-none text-sm font-medium text-foreground">Dil karşılıklarını ekle</summary>
+                            <div class="mt-4 grid gap-4">
+                                @foreach($extraLanguages as $language)
+                                    <div class="rounded-2xl bg-background px-4 py-4">
+                                        <div class="mb-3 flex items-center justify-between gap-3">
+                                            <div class="font-medium text-foreground">{{ $language->native_name }}</div>
+                                            <span class="kt-badge kt-badge-sm kt-badge-light">{{ $language->code }}</span>
+                                        </div>
+                                        <div class="grid gap-3">
+                                            <input name="translations[{{ $language->code }}][group_label]" class="kt-input" value="{{ old("translations.{$language->code}.group_label") }}" placeholder="Grup etiketi">
+                                            <input name="translations[{{ $language->code }}][question]" class="kt-input" value="{{ old("translations.{$language->code}.question") }}" placeholder="Soru">
+                                            <textarea name="translations[{{ $language->code }}][answer]" rows="4" class="kt-textarea" placeholder="Cevap">{{ old("translations.{$language->code}.answer") }}</textarea>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </details>
+                    @endif
 
                     <label class="flex items-start gap-3 rounded-2xl app-surface-card app-surface-card--soft p-4">
                         <input type="hidden" name="is_active" value="0">
@@ -155,6 +180,30 @@
                                     <label class="kt-form-label">Cevap</label>
                                     <textarea name="answer" rows="4" class="kt-textarea">{{ $faq->answer }}</textarea>
                                 </div>
+
+                                @if($extraLanguages->isNotEmpty())
+                                    <details class="rounded-3xl app-surface-card app-surface-card--soft p-4">
+                                        <summary class="cursor-pointer list-none text-sm font-medium text-foreground">Dil karşılıklarını düzenle</summary>
+                                        <div class="mt-4 grid gap-4">
+                                            @foreach($extraLanguages as $language)
+                                                @php
+                                                    $translation = $faq->translations->firstWhere('locale', $language->code);
+                                                @endphp
+                                                <div class="rounded-2xl bg-background px-4 py-4">
+                                                    <div class="mb-3 flex items-center justify-between gap-3">
+                                                        <div class="font-medium text-foreground">{{ $language->native_name }}</div>
+                                                        <span class="kt-badge kt-badge-sm kt-badge-light">{{ $language->code }}</span>
+                                                    </div>
+                                                    <div class="grid gap-3">
+                                                        <input name="translations[{{ $language->code }}][group_label]" class="kt-input" value="{{ old("translations.{$language->code}.group_label", $translation->group_label ?? '') }}" placeholder="Grup etiketi">
+                                                        <input name="translations[{{ $language->code }}][question]" class="kt-input" value="{{ old("translations.{$language->code}.question", $translation->question ?? '') }}" placeholder="Soru">
+                                                        <textarea name="translations[{{ $language->code }}][answer]" rows="4" class="kt-textarea" placeholder="Cevap">{{ old("translations.{$language->code}.answer", $translation->answer ?? '') }}</textarea>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </details>
+                                @endif
 
                                 <div class="flex flex-wrap items-center justify-between gap-3">
                                     <label class="flex items-center gap-3">

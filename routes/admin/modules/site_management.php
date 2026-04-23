@@ -5,10 +5,37 @@ use App\Http\Controllers\Admin\Site\FaqController;
 use App\Http\Controllers\Admin\Site\HomeSliderController;
 use App\Http\Controllers\Admin\Site\NavigationController;
 use App\Http\Controllers\Admin\Site\SiteCounterController;
+use App\Http\Controllers\Admin\Site\SiteLanguageController;
 use App\Http\Controllers\Admin\Site\SiteSettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('site')->as('site.')->group(function () {
+    Route::prefix('languages')->as('languages.')->group(function () {
+        Route::get('/', [SiteLanguageController::class, 'index'])
+            ->middleware('permission:site_languages.view')
+            ->name('index');
+
+        Route::post('/', [SiteLanguageController::class, 'store'])
+            ->middleware('permission:site_languages.create')
+            ->name('store');
+
+        Route::put('/{siteLanguage}', [SiteLanguageController::class, 'update'])
+            ->middleware('permission:site_languages.update')
+            ->name('update');
+
+        Route::patch('/{siteLanguage}/toggle-active', [SiteLanguageController::class, 'toggleActive'])
+            ->middleware('permission:site_languages.update')
+            ->name('toggleActive');
+
+        Route::patch('/{siteLanguage}/make-default', [SiteLanguageController::class, 'makeDefault'])
+            ->middleware('permission:site_languages.update')
+            ->name('makeDefault');
+
+        Route::delete('/{siteLanguage}', [SiteLanguageController::class, 'destroy'])
+            ->middleware('permission:site_languages.delete')
+            ->name('destroy');
+    });
+
     Route::prefix('pages')->as('pages.')->group(function () {
         Route::get('/', [ContentPageController::class, 'index'])
             ->middleware('permission:site_pages.view')

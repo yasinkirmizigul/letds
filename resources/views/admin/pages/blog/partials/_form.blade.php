@@ -1,222 +1,65 @@
 @php
     $isEdit = isset($blogPost) && $blogPost;
-    $currentTitle = old('title', $blogPost->title ?? '');
-    $currentSlug = old('slug', $blogPost->slug ?? '');
-    $currentExcerpt = old('excerpt', $blogPost->excerpt ?? '');
-    $currentContent = old('content', $blogPost->content ?? '');
-    $currentMetaTitle = old('meta_title', $blogPost->meta_title ?? '');
-    $currentMetaDescription = old('meta_description', $blogPost->meta_description ?? '');
-    $currentMetaKeywords = old('meta_keywords', $blogPost->meta_keywords ?? '');
-    $currentPublished = (bool) old('is_published', (bool) ($blogPost->is_published ?? false));
-    $currentFeatured = (bool) old('is_featured', (bool) ($blogPost->is_featured ?? false));
     $selectedCategoryIds = old('category_ids', $selectedCategoryIds ?? []);
     $featuredMediaId = old('featured_media_id', $featuredMediaId ?? null);
     $currentFeaturedUrl = $currentFeaturedUrl ?? null;
-    $initialWordCount = $isEdit ? $blogPost->contentWordCount() : 0;
-    $initialReadTime = $isEdit ? $blogPost->estimatedReadTimeMinutes() : 0;
-    $initialSeoScore = $isEdit ? $blogPost->seoCompletenessScore() : 0;
-    $previewTitle = $currentMetaTitle ?: ($currentTitle ?: 'Meta başlık burada görünecek');
-    $previewDescription = $currentMetaDescription ?: ($currentExcerpt ?: 'Meta açıklama veya özet burada görünecek.');
+    $currentPublished = (bool) old('is_published', (bool) ($blogPost->is_published ?? false));
+    $currentFeatured = (bool) old('is_featured', (bool) ($blogPost->is_featured ?? false));
+    $storedTranslations = old('translations');
+
+    if (!is_array($storedTranslations)) {
+        $storedTranslations = collect($blogPost?->translations ?? [])
+            ->mapWithKeys(fn ($translation) => [
+                $translation->locale => [
+                    'title' => $translation->title,
+                    'slug' => $translation->slug,
+                    'excerpt' => $translation->excerpt,
+                    'content' => $translation->content,
+                    'meta_title' => $translation->meta_title,
+                    'meta_description' => $translation->meta_description,
+                    'meta_keywords' => $translation->meta_keywords,
+                ],
+            ])
+            ->toArray();
+    }
 @endphp
 
 <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.6fr)_400px] gap-6">
     <div class="grid gap-6">
-        <div class="kt-card overflow-hidden">
-            <div class="kt-card-header py-5">
-                <div>
-                    <h3 class="kt-card-title">Yazı Gövdesi</h3>
-                    <div class="text-sm text-muted-foreground">
-                        Başlık, özet, slug ve ana içeriği tek akışta düzenle.
-                    </div>
-                </div>
-            </div>
-
-            <div class="kt-card-content p-6 grid gap-6">
-                <div class="grid gap-2">
-                    <div class="flex items-center justify-between gap-3">
-                        <label class="kt-form-label font-normal text-mono" for="title">Başlık</label>
-                        <span class="text-xs text-muted-foreground" data-blog-title-count>{{ mb_strlen($currentTitle) }}/255</span>
-                    </div>
-                    <input
-                        id="title"
-                        name="title"
-                        class="kt-input @error('title') kt-input-invalid @enderror"
-                        value="{{ $currentTitle }}"
-                        placeholder="Yazı başlığını yazın"
-                    >
-                    @error('title')
-                        <div class="text-xs text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="grid gap-3 rounded-3xl app-surface-card app-surface-card--soft p-4">
-                    <div class="flex flex-wrap items-center justify-between gap-3">
-                        <label class="kt-form-label font-normal text-mono mb-0" for="slug">Slug ve URL</label>
-                        <span class="text-xs text-muted-foreground">URL stabilitesi için sadece gerektiğinde değiştirin.</span>
-                    </div>
-
-                    <div class="flex flex-wrap items-center gap-2">
-                        <input
-                            id="slug"
-                            name="slug"
-                            class="kt-input flex-1 @error('slug') kt-input-invalid @enderror"
-                            value="{{ $currentSlug }}"
-                            placeholder="otomatik-oluşturulur"
-                        >
-
-                        <button type="button" id="slug_regen" class="kt-btn kt-btn-light">Oluştur</button>
-
-                        <label class="kt-switch shrink-0" title="Otomatik slug">
-                            <input
-                                type="checkbox"
-                                class="kt-switch"
-                                id="slug_auto"
-                                @checked($currentSlug === '')
-                            >
-                            <span class="kt-switch-slider"></span>
-                        </label>
-                    </div>
-
-                    @error('slug')
-                        <div class="text-xs text-danger">{{ $message }}</div>
-                    @enderror
-
-                    <div class="rounded-2xl app-surface-card px-4 py-3 text-sm text-muted-foreground">
-                        URL önizleme:
-                        <span class="font-medium text-foreground">{{ url('/blog') }}/<span id="url_slug_preview">{{ $currentSlug }}</span></span>
-                    </div>
-
-                    <div id="slugCheckHint" class="text-xs text-muted-foreground">
-                        Slug girildiğinde uygunluk kontrolü yapılır.
-                    </div>
-                </div>
-
-                <div class="grid gap-2">
-                    <div class="flex items-center justify-between gap-3">
-                        <label class="kt-form-label font-normal text-mono" for="excerpt">Özet</label>
-                        <span class="text-xs text-muted-foreground" data-blog-excerpt-count>{{ mb_strlen($currentExcerpt) }} karakter</span>
-                    </div>
-                    <textarea
-                        id="excerpt"
-                        name="excerpt"
-                        rows="4"
-                        class="kt-textarea @error('excerpt') kt-input-invalid @enderror"
-                        placeholder="Liste görünümü, arama sonucunda özet ve paylaşım kartları için kısa açıklama yazın"
-                    >{{ $currentExcerpt }}</textarea>
-                    @error('excerpt')
-                        <div class="text-xs text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="grid gap-2">
-                    <div class="flex items-center justify-between gap-3">
-                        <label class="kt-form-label font-normal text-mono" for="content_editor">İçerik</label>
-                        <span class="text-xs text-muted-foreground">TinyMCE ile zengin içerik düzenleme</span>
-                    </div>
-                    <textarea
-                        id="content_editor"
-                        name="content"
-                        class="kt-textarea @error('content') kt-input-invalid @enderror"
-                    >{{ $currentContent }}</textarea>
-                    @error('content')
-                        <div class="text-xs text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-        </div>
-
-        <div class="kt-card overflow-hidden">
-            <div class="kt-card-header py-5">
-                <div>
-                    <h3 class="kt-card-title">SEO ve Arama Önizlemesi</h3>
-                    <div class="text-sm text-muted-foreground">
-                        Meta alanlarıni doldururken arama sonucunda nasil görünecegini anında izle.
-                    </div>
-                </div>
-            </div>
-
-            <div class="kt-card-content p-6 grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_320px]">
-                <div class="grid gap-5">
-                    <div class="grid gap-2">
-                        <div class="flex items-center justify-between gap-3">
-                            <label class="kt-form-label font-normal text-mono">Meta Title</label>
-                            <span class="text-xs text-muted-foreground" data-blog-meta-title-count>{{ mb_strlen($currentMetaTitle) }}/60 önerisi</span>
-                        </div>
-                        <input
-                            name="meta_title"
-                            class="kt-input @error('meta_title') kt-input-invalid @enderror"
-                            value="{{ $currentMetaTitle }}"
-                            placeholder="Arama sonucunda gösterilecek başlık"
-                        >
-                        @error('meta_title')
-                            <div class="text-xs text-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="grid gap-2">
-                        <div class="flex items-center justify-between gap-3">
-                            <label class="kt-form-label font-normal text-mono">Meta Description</label>
-                            <span class="text-xs text-muted-foreground" data-blog-meta-description-count>{{ mb_strlen($currentMetaDescription) }}/160 önerisi</span>
-                        </div>
-                        <textarea
-                            name="meta_description"
-                            rows="4"
-                            class="kt-textarea @error('meta_description') kt-input-invalid @enderror"
-                            placeholder="Arama sonucunda gösterilecek açıklama"
-                        >{{ $currentMetaDescription }}</textarea>
-                        @error('meta_description')
-                            <div class="text-xs text-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="grid gap-2">
-                        <label class="kt-form-label font-normal text-mono">Meta Keywords</label>
-                        <input
-                            name="meta_keywords"
-                            class="kt-input @error('meta_keywords') kt-input-invalid @enderror"
-                            value="{{ $currentMetaKeywords }}"
-                            placeholder="anahtar,kelimeler,şeklinde"
-                        >
-                        @error('meta_keywords')
-                            <div class="text-xs text-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="grid gap-4 self-start">
-                    <div class="rounded-[28px] app-surface-card p-5">
-                        <div class="text-[11px] uppercase tracking-[0.24em] text-muted-foreground">Arama Önizlemesi</div>
-                        <div class="mt-4 grid gap-2">
-                            <div class="text-base font-semibold leading-6 text-primary" data-blog-seo-preview-title>
-                                {{ $previewTitle }}
-                            </div>
-                            <div class="text-sm text-success">
-                                {{ url('/blog') }}/<span data-blog-seo-preview-slug>{{ $currentSlug ?: 'örnek-blog-yazısı' }}</span>
-                            </div>
-                            <div class="text-sm leading-6 text-muted-foreground" data-blog-seo-preview-description>
-                                {{ $previewDescription }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="rounded-3xl app-surface-card app-surface-card--soft p-4 text-sm text-muted-foreground">
-                        Meta title için 30-60, meta description için 100-160 karakter aralığı daha sağlıklı görünür.
-                    </div>
-                </div>
-            </div>
-        </div>
+        @include('admin.components.localized-content-tabs', [
+            'moduleKey' => 'blog',
+            'title' => 'Blog İçerik Dilleri',
+            'description' => 'Varsayılan dil ve ek diller için başlık, slug, içerik ve SEO alanlarını sekmelerden yönetin.',
+            'urlBase' => url('/blog'),
+            'defaultValues' => [
+                'title' => old('title', $blogPost->title ?? ''),
+                'slug' => old('slug', $blogPost->slug ?? ''),
+                'excerpt' => old('excerpt', $blogPost->excerpt ?? ''),
+                'content' => old('content', $blogPost->content ?? ''),
+                'meta_title' => old('meta_title', $blogPost->meta_title ?? ''),
+                'meta_description' => old('meta_description', $blogPost->meta_description ?? ''),
+                'meta_keywords' => old('meta_keywords', $blogPost->meta_keywords ?? ''),
+            ],
+            'storedTranslations' => $storedTranslations,
+            'fields' => [
+                ['name' => 'title', 'id' => 'title', 'label' => 'Başlık', 'placeholder' => 'Blog başlığını yazın', 'slug_source' => true],
+                ['name' => 'slug', 'id' => 'slug', 'type' => 'slug', 'label' => 'Slug ve URL'],
+                ['name' => 'excerpt', 'type' => 'textarea', 'rows' => 4, 'label' => 'Özet', 'placeholder' => 'Liste ve arama sonuçlarında kullanılacak kısa açıklama'],
+                ['name' => 'content', 'id' => 'content_editor', 'type' => 'editor', 'rows' => 10, 'label' => 'İçerik'],
+                ['name' => 'meta_title', 'label' => 'Meta Başlık', 'placeholder' => 'Arama sonucunda görünecek başlık'],
+                ['name' => 'meta_description', 'type' => 'textarea', 'rows' => 3, 'label' => 'Meta Açıklama'],
+                ['name' => 'meta_keywords', 'label' => 'Meta Anahtar Kelimeler', 'placeholder' => 'anahtar, kelimeler, şeklinde'],
+            ],
+        ])
 
         @if($isEdit)
             <div class="kt-card">
                 <div class="kt-card-header py-5">
                     <div>
                         <h3 class="kt-card-title">Galeriler</h3>
-                        <div class="text-sm text-muted-foreground">
-                            Bu yaziya bağlı galeri alanlarıni slot bazinda yönetebilirsin.
-                        </div>
+                        <div class="text-sm text-muted-foreground">Bu yazıya bağlı galeri alanlarını slot bazında yönetin.</div>
                     </div>
                 </div>
-
                 <div class="kt-card-content p-6">
                     @include('admin.components.gallery-manager', [
                         'id' => 'blog-' . $blogPost->id,
@@ -242,123 +85,47 @@
         <div class="kt-card overflow-hidden">
             <div class="kt-card-header py-5">
                 <div>
-                    <h3 class="kt-card-title">Yayın Akişi</h3>
-                    <div class="text-sm text-muted-foreground">
-                        Görünürlük ve anasayfa durumunu tek panelden yönet.
-                    </div>
+                    <h3 class="kt-card-title">Yayın Akışı</h3>
+                    <div class="text-sm text-muted-foreground">Görünürlük ve anasayfa durumunu tek panelden yönetin.</div>
                 </div>
             </div>
-
             <div class="kt-card-content p-6 grid gap-4">
                 <div class="rounded-3xl app-surface-card app-surface-card--soft p-4">
                     <div class="flex items-start justify-between gap-3">
-                        <div class="grid gap-1">
+                        <div>
                             <div class="font-medium text-foreground">Yayın Durumu</div>
                             <div class="text-sm text-muted-foreground">Taslak veya yayında olarak işaretleyin.</div>
                         </div>
-
                         <div class="flex items-center gap-3">
                             <input type="hidden" name="is_published" value="0">
                             <label class="kt-switch kt-switch-sm">
-                                <input
-                                    type="checkbox"
-                                    class="kt-switch"
-                                    id="blog_is_published"
-                                    name="is_published"
-                                    value="1"
-                                    @checked($currentPublished)
-                                >
+                                <input type="checkbox" class="kt-switch" id="blog_is_published" name="is_published" value="1" @checked($currentPublished)>
                             </label>
-                            <span
-                                id="blog_publish_badge"
-                                class="kt-badge kt-badge-sm {{ $currentPublished ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }}"
-                            >
+                            <span id="blog_publish_badge" class="kt-badge kt-badge-sm {{ $currentPublished ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }}">
                                 {{ $currentPublished ? 'Yayında' : 'Taslak' }}
                             </span>
                         </div>
                     </div>
-
-                    @error('is_published')
-                        <div class="mt-2 text-xs text-danger">{{ $message }}</div>
-                    @enderror
+                    @error('is_published')<div class="mt-2 text-xs text-danger">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="rounded-3xl app-surface-card app-surface-card--soft p-4">
                     <div class="flex items-start justify-between gap-3">
-                        <div class="grid gap-1">
+                        <div>
                             <div class="font-medium text-foreground">Anasayfa Vitrini</div>
                             <div class="text-sm text-muted-foreground">En fazla 5 yazı öne çıkarılabilir.</div>
                         </div>
-
                         <div class="flex items-center gap-3">
                             <input type="hidden" name="is_featured" value="0">
                             <label class="kt-switch kt-switch-sm">
-                                <input
-                                    type="checkbox"
-                                    class="kt-switch"
-                                    id="blog_is_featured"
-                                    name="is_featured"
-                                    value="1"
-                                    @checked($currentFeatured)
-                                >
+                                <input type="checkbox" class="kt-switch" id="blog_is_featured" name="is_featured" value="1" @checked($currentFeatured)>
                             </label>
-                            <span
-                                id="blog_featured_badge"
-                                class="kt-badge kt-badge-sm {{ $currentFeatured ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }}"
-                            >
+                            <span id="blog_featured_badge" class="kt-badge kt-badge-sm {{ $currentFeatured ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }}">
                                 {{ $currentFeatured ? 'Anasayfada' : 'Kapalı' }}
                             </span>
                         </div>
                     </div>
-
-                    <div class="mt-3 text-xs text-muted-foreground">
-                        Öne çıkan yazıların yayında olması, site tarafındaki akışlarda daha tutarlı görünür.
-                    </div>
-
-                    @error('is_featured')
-                        <div class="mt-2 text-xs text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-        </div>
-
-        <div class="kt-card overflow-hidden">
-            <div class="kt-card-header py-5">
-                <div>
-                    <h3 class="kt-card-title">İçerik İçgörüleri</h3>
-                    <div class="text-sm text-muted-foreground">
-                        Yazı yoğunluğu ve SEO hazırlığını canlı takip et.
-                    </div>
-                </div>
-            </div>
-
-            <div class="kt-card-content p-6 grid gap-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="rounded-3xl app-surface-card p-4">
-                        <div class="text-xs uppercase tracking-[0.18em] text-muted-foreground">Kelime</div>
-                        <div class="mt-2 text-2xl font-semibold text-foreground" data-blog-word-count>{{ $initialWordCount }} kelime</div>
-                    </div>
-                    <div class="rounded-3xl app-surface-card p-4">
-                        <div class="text-xs uppercase tracking-[0.18em] text-muted-foreground">Okuma</div>
-                        <div class="mt-2 text-2xl font-semibold text-foreground" data-blog-read-time>{{ $initialReadTime }} dk</div>
-                    </div>
-                </div>
-
-                <div class="rounded-3xl app-surface-card app-surface-card--soft p-4">
-                    <div class="flex items-center justify-between gap-3">
-                        <div>
-                            <div class="text-xs uppercase tracking-[0.18em] text-muted-foreground">SEO Tamamlılık</div>
-                            <div class="mt-1 text-sm text-muted-foreground" data-blog-seo-summary>
-                                {{ $initialSeoScore >= 80 ? 'SEO hazırlığı güçlü görünüyor.' : ($initialSeoScore >= 50 ? 'Yazı iyi gidiyor, birkaç alan daha güçlendirilebilir.' : 'Özet, meta alanlar ve görsel tarafında güçlendirme gerekiyor.') }}
-                            </div>
-                        </div>
-                        <div
-                            class="text-3xl font-semibold {{ $initialSeoScore >= 80 ? 'text-success' : ($initialSeoScore >= 50 ? 'text-warning' : 'text-danger') }}"
-                            data-blog-seo-score
-                        >
-                            %{{ $initialSeoScore }}
-                        </div>
-                    </div>
+                    @error('is_featured')<div class="mt-2 text-xs text-danger">{{ $message }}</div>@enderror
                 </div>
             </div>
         </div>
@@ -367,12 +134,9 @@
             <div class="kt-card-header py-5">
                 <div>
                     <h3 class="kt-card-title">Kategoriler</h3>
-                    <div class="text-sm text-muted-foreground">
-                        Yazıyı doğru kategorilerle etiketleyip keşfetmeyi kolaylaştır.
-                    </div>
+                    <div class="text-sm text-muted-foreground">Yazıyı doğru kategorilerle ilişkilendirin.</div>
                 </div>
             </div>
-
             <div class="kt-card-content p-6 grid gap-3">
                 <select
                     name="category_ids[]"
@@ -385,22 +149,11 @@
                     data-kt-select-config='{"showSelectedCount":true,"enableSelectAll":true,"selectAllText":"Tümünü Seç","clearAllText":"Temizle"}'
                 >
                     @foreach($categoryOptions ?? [] as $option)
-                        <option value="{{ $option['id'] }}" @selected(in_array($option['id'], $selectedCategoryIds))>
-                            {{ $option['label'] }}
-                        </option>
+                        <option value="{{ $option['id'] }}" @selected(in_array($option['id'], $selectedCategoryIds))>{{ $option['label'] }}</option>
                     @endforeach
                 </select>
-
-                <div class="text-xs text-muted-foreground">
-                    Birden fazla kategori seçilebilir. Alt kategoriler, hiyerarşi korunarak listelenir.
-                </div>
-
-                @error('category_ids')
-                    <div class="text-xs text-danger">{{ $message }}</div>
-                @enderror
-                @error('category_ids.*')
-                    <div class="text-xs text-danger">{{ $message }}</div>
-                @enderror
+                @error('category_ids')<div class="text-xs text-danger">{{ $message }}</div>@enderror
+                @error('category_ids.*')<div class="text-xs text-danger">{{ $message }}</div>@enderror
             </div>
         </div>
 
@@ -408,61 +161,25 @@
             'title' => 'Öne Çıkan Görsel',
             'hint' => 'Dosya yükleyebilir veya medya kütüphanesinden seçim yapabilirsiniz.',
             'name' => 'featured_image',
+            'fileName' => 'featured_image',
             'mediaIdName' => 'featured_media_id',
             'clearFlagName' => 'clear_featured_image',
             'currentMediaId' => $featuredMediaId,
             'currentUrl' => $currentFeaturedUrl,
         ])
 
-        @error('featured_image')
-            <div class="text-xs text-danger -mt-3">{{ $message }}</div>
-        @enderror
-        @error('featured_media_id')
-            <div class="text-xs text-danger -mt-3">{{ $message }}</div>
-        @enderror
+        @error('featured_image')<div class="text-xs text-danger -mt-3">{{ $message }}</div>@enderror
+        @error('featured_media_id')<div class="text-xs text-danger -mt-3">{{ $message }}</div>@enderror
 
         @if($isEdit)
-            <div class="kt-card overflow-hidden">
-                <div class="kt-card-header py-5">
-                    <div>
-                        <h3 class="kt-card-title">Kayıt Bilgileri</h3>
-                        <div class="text-sm text-muted-foreground">
-                            Yazar, editör ve tarih bilgilerini hızlıca takip et.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="kt-card-content p-6 grid gap-3 text-sm">
-                    <div class="rounded-2xl app-surface-card px-4 py-3">
-                        <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Kayıt No</div>
-                        <div class="mt-1 font-medium text-foreground">#{{ $blogPost->id }}</div>
-                    </div>
-                    <div class="rounded-2xl app-surface-card px-4 py-3">
-                        <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Yazar</div>
-                        <div class="mt-1 font-medium text-foreground">{{ $blogPost->author?->name ?: 'Belirlenmedi' }}</div>
-                    </div>
-                    <div class="rounded-2xl app-surface-card px-4 py-3">
-                        <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Son Editör</div>
-                        <div class="mt-1 font-medium text-foreground">{{ $blogPost->editör?->name ?: 'Belirlenmedi' }}</div>
-                    </div>
-                    <div class="rounded-2xl app-surface-card px-4 py-3">
-                        <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Oluşturulma</div>
-                        <div class="mt-1 font-medium text-foreground">{{ $blogPost->created_at?->format('d.m.Y H:i') ?: '-' }}</div>
-                    </div>
-                    <div class="rounded-2xl app-surface-card px-4 py-3">
-                        <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Son Güncelleme</div>
-                        <div class="mt-1 font-medium text-foreground">{{ $blogPost->updated_at?->format('d.m.Y H:i') ?: '-' }}</div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="rounded-2xl app-surface-card px-4 py-3">
-                            <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Yayın</div>
-                            <div class="mt-1 font-medium text-foreground">{{ $blogPost->published_at?->format('d.m.Y H:i') ?: 'Yok' }}</div>
-                        </div>
-                        <div class="rounded-2xl app-surface-card px-4 py-3">
-                            <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Anasayfa</div>
-                            <div class="mt-1 font-medium text-foreground">{{ $blogPost->featured_at?->format('d.m.Y H:i') ?: 'Yok' }}</div>
-                        </div>
-                    </div>
+            <div class="rounded-3xl app-surface-card p-5 text-sm text-muted-foreground">
+                <div class="font-medium text-foreground">Kayıt Bilgileri</div>
+                <div class="mt-3 grid gap-2">
+                    <div>No: #{{ $blogPost->id }}</div>
+                    <div>Yazar: {{ $blogPost->author?->name ?: 'Belirlenmedi' }}</div>
+                    <div>Son editör: {{ $blogPost->editor?->name ?: 'Belirlenmedi' }}</div>
+                    <div>Oluşturulma: {{ $blogPost->created_at?->format('d.m.Y H:i') ?: '-' }}</div>
+                    <div>Son güncelleme: {{ $blogPost->updated_at?->format('d.m.Y H:i') ?: '-' }}</div>
                 </div>
             </div>
         @endif

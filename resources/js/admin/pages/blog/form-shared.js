@@ -136,6 +136,17 @@ export function initSlugTools(root, signal) {
         generateOnInit: true,
     }, signal);
 
+    root.querySelectorAll('[data-locale-slug-scope="true"]').forEach((scope) => {
+        initSlugManager(scope, {
+            sourceSelector: '[data-locale-title="true"]',
+            slugSelector: '[data-locale-slug="true"]',
+            previewSelector: '[data-slug-preview="true"]',
+            autoSelector: '[data-slug-auto="true"]',
+            regenSelector: '[data-slug-regen="true"]',
+            generateOnInit: true,
+        }, signal);
+    });
+
     const slugInput = root.querySelector('#slug');
     const hintEl = root.querySelector('#slugCheckHint');
     const checkUrl = root.dataset.slugCheckUrl;
@@ -206,7 +217,7 @@ export function initSeoPanel(root, signal, getContent) {
     const titleInput = root.querySelector('#title');
     const excerptInput = root.querySelector('textarea[name="excerpt"]');
     const metaTitleInput = root.querySelector('input[name="meta_title"]');
-    const metaDescriptionInput = root.querySelector('input[name="meta_description"]');
+    const metaDescriptionInput = root.querySelector('textarea[name="meta_description"], input[name="meta_description"]');
     const slugInput = root.querySelector('#slug');
     const featuredPreview = root.querySelector('[data-featured-preview]');
 
@@ -425,7 +436,7 @@ function initTiny({ selector, uploadUrl, baseUrl, langUrl, onContentChange }) {
     });
 }
 
-export async function initTinyEditor(ctx, onContentChange) {
+export async function initTinyEditor(ctx, onContentChange, selector = '#content_editor') {
     const root = ctx.root;
     const dataset = root.dataset;
 
@@ -441,7 +452,7 @@ export async function initTinyEditor(ctx, onContentChange) {
     await loadScriptÖnce(tinymceSrc);
 
     const boot = () => initTiny({
-        selector: '#content_editor',
+        selector,
         uploadUrl,
         baseUrl: tinymceBase,
         langUrl: tinymceLangUrl,
@@ -454,7 +465,7 @@ export async function initTinyEditor(ctx, onContentChange) {
 
     ctx.cleanup(() => {
         try { observer.disconnect(); } catch {}
-        safeTinyRemove('#content_editor');
+        safeTinyRemove(selector);
     });
 }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Site;
 
 use App\Http\Controllers\Controller;
 use App\Models\Site\HomeSlider;
+use App\Services\Site\SiteTranslationSyncService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -14,10 +15,14 @@ use Illuminate\Validation\ValidationException;
 
 class HomeSliderController extends Controller
 {
+    public function __construct(
+        private readonly SiteTranslationSyncService $translationSyncService,
+    ) {}
+
     public function index(): View
     {
         return view('admin.pages.site.sliders.index', [
-            'sliders' => HomeSlider::query()->with('imageMedia')->ordered()->get(),
+            'sliders' => HomeSlider::query()->with(['imageMedia', 'translations'])->ordered()->get(),
             'stats' => [
                 'all' => HomeSlider::query()->count(),
                 'active' => HomeSlider::query()->where('is_active', true)->count(),
@@ -31,6 +36,7 @@ class HomeSliderController extends Controller
     {
         return view('admin.pages.site.sliders.create', [
             'slider' => null,
+            'sliderTranslations' => collect(),
             'themeOptions' => HomeSlider::themeOptions(),
         ]);
     }
@@ -38,10 +44,18 @@ class HomeSliderController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $this->validated($request);
+        $payload = collect($validated)->except(['translations', 'image', 'clear_image'])->all();
 
-        $slider = HomeSlider::create(array_merge($validated, [
+        $slider = HomeSlider::create(array_merge($payload, [
             'sort_order' => (int) HomeSlider::query()->max('sort_order') + 1,
         ]));
+
+        $this->translationSyncService->sync(
+            $slider,
+            'translations',
+            $validated['translations'] ?? [],
+            ['badge', 'title', 'subtitle', 'body', 'cta_label', 'cta_url']
+        );
 
         $this->syncImageAsset(
             $slider,
@@ -57,10 +71,11 @@ class HomeSliderController extends Controller
 
     public function edit(HomeSlider $homeSlider): View
     {
-        $homeSlider->load('imageMedia');
+        $homeSlider->load(['imageMedia', 'translations']);
 
         return view('admin.pages.site.sliders.edit', [
             'slider' => $homeSlider,
+            'sliderTranslations' => $homeSlider->translations->keyBy('locale'),
             'themeOptions' => HomeSlider::themeOptions(),
         ]);
     }
@@ -68,8 +83,16 @@ class HomeSliderController extends Controller
     public function update(Request $request, HomeSlider $homeSlider): RedirectResponse
     {
         $validated = $this->validated($request);
+        $payload = collect($validated)->except(['translations', 'image', 'clear_image'])->all();
 
-        $homeSlider->update($validated);
+        $homeSlider->update($payload);
+
+        $this->translationSyncService->sync(
+            $homeSlider,
+            'translations',
+            $validated['translations'] ?? [],
+            ['badge', 'title', 'subtitle', 'body', 'cta_label', 'cta_url']
+        );
 
         $this->syncImageAsset(
             $homeSlider,
@@ -156,6 +179,13 @@ class HomeSliderController extends Controller
             'overlay_strength' => ['nullable', 'integer', 'min:0', 'max:90'],
             'theme' => ['required', 'string'],
             'is_active' => ['nullable', 'boolean'],
+            'translations' => ['nullable', 'array'],
+            'translations.*.badge' => ['nullable', 'string', 'max:120'],
+            'translations.*.title' => ['nullable', 'string', 'max:255'],
+            'translations.*.subtitle' => ['nullable', 'string', 'max:500'],
+            'translations.*.body' => ['nullable', 'string'],
+            'translations.*.cta_label' => ['nullable', 'string', 'max:120'],
+            'translations.*.cta_url' => ['nullable', 'string', 'max:500'],
         ]);
 
         if (!array_key_exists((string) $validated['theme'], HomeSlider::themeOptions())) {

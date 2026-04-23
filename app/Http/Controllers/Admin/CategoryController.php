@@ -7,15 +7,24 @@ use App\Http\Requests\Admin\Category\StoreCategoryRequest;
 use App\Http\Requests\Admin\Category\UpdateCategoryRequest;
 use App\Models\Admin\BlogPost\BlogPost;
 use App\Models\Admin\Category;
+use App\Models\Admin\CategoryTranslation;
 use App\Models\Admin\Product\Product;
 use App\Models\Admin\Project\Project;
+use App\Services\Content\LocalizedContentTranslationService;
 use App\Support\CategoryTree;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
+    private const TRANSLATION_FIELDS = ['name', 'slug', 'description'];
+
+    public function __construct(
+        private readonly LocalizedContentTranslationService $translationService,
+    ) {}
+
     public function index(): \Illuminate\View\View
     {
         return view('admin.pages.categories.index', [
@@ -44,7 +53,7 @@ class CategoryController extends Controller
         $query = $isTrash ? Category::onlyTrashed() : Category::query();
 
         $query
-            ->with(['parent:id,name'])
+            ->with(['parent:id,name', 'translations'])
             ->withCount(['blogPosts', 'children'])
             ->select('categories.*')
             ->selectSub(
@@ -63,7 +72,13 @@ class CategoryController extends Controller
             ->when($q !== '', function ($builder) use ($q) {
                 $builder->where(function ($nested) use ($q) {
                     $nested->where('name', 'like', "%{$q}%")
-                        ->orWhere('slug', 'like', "%{$q}%");
+                        ->orWhere('slug', 'like', "%{$q}%")
+                        ->orWhereHas('translations', function ($translationQuery) use ($q) {
+                            $translationQuery
+                                ->where('name', 'like', "%{$q}%")
+                                ->orWhere('slug', 'like', "%{$q}%")
+                                ->orWhere('description', 'like', "%{$q}%");
+                        });
                 });
             })
             ->orderBy('name');
@@ -112,12 +127,19 @@ class CategoryController extends Controller
 
         $query = Category::query()
             ->with('parent:id,name')
+            ->with('translations')
             ->withCount('blogPosts');
 
         if ($search !== '') {
             $query->where(function ($builder) use ($search) {
                 $builder->where('name', 'like', "%{$search}%")
-                    ->orWhere('slug', 'like', "%{$search}%");
+                    ->orWhere('slug', 'like', "%{$search}%")
+                    ->orWhereHas('translations', function ($translationQuery) use ($search) {
+                        $translationQuery
+                            ->where('name', 'like', "%{$search}%")
+                            ->orWhere('slug', 'like', "%{$search}%")
+                            ->orWhere('description', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -159,10 +181,17 @@ class CategoryController extends Controller
     {
         $data = $request->validated();
 
-        Category::create([
-            'name' => $data['name'],
-            'parent_id' => $data['parent_id'] ?? null,
-        ]);
+        DB::transaction(function () use ($data) {
+            $category = Category::create([
+                'name' => $data['name'],
+                'slug' => $this->uniqueSlug(($data['slug'] ?? '') ?: $data['name']),
+                'description' => $data['description'] ?? null,
+                'parent_id' => $data['parent_id'] ?? null,
+                'is_active' => (bool) ($data['is_active'] ?? true),
+            ]);
+
+            $this->syncTranslations($category, $data['translations'] ?? []);
+        });
 
         return redirect()
             ->route('admin.categories.index')
@@ -171,6 +200,8 @@ class CategoryController extends Controller
 
     public function edit(Category $category)
     {
+        $category->loadMissing('translations');
+
         $all = CategoryTree::all();
         $byParent = CategoryTree::indexByParent($all);
         $descendantIds = CategoryTree::descendantIdsFromAll($category->id, $byParent);
@@ -187,10 +218,17 @@ class CategoryController extends Controller
     {
         $data = $request->validated();
 
-        $category->update([
-            'name' => $data['name'],
-            'parent_id' => $data['parent_id'] ?? null,
-        ]);
+        DB::transaction(function () use ($category, $data) {
+            $category->update([
+                'name' => $data['name'],
+                'slug' => $this->uniqueSlug(($data['slug'] ?? '') ?: $data['name'], $category->id),
+                'description' => $data['description'] ?? null,
+                'parent_id' => $data['parent_id'] ?? null,
+                'is_active' => (bool) ($data['is_active'] ?? false),
+            ]);
+
+            $this->syncTranslations($category, $data['translations'] ?? []);
+        });
 
         return redirect()
             ->route('admin.categories.index')
@@ -321,14 +359,15 @@ class CategoryController extends Controller
             ]);
         }
 
-        $exists = Category::query()
-            ->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
-            ->where('slug', $slug)
-            ->exists();
+        $normalized = Str::slug($slug) ?: 'kategori';
+        $suggested = $this->uniqueSlug($normalized, $ignoreId ?: null);
+        $exists = $suggested !== $normalized;
 
         return response()->json([
             'ok' => true,
             'available' => !$exists,
+            'normalized' => $normalized,
+            'suggested' => $suggested,
             'message' => $exists ? 'Bu slug zaten kullanılıyor.' : 'Slug uygun.',
         ]);
     }
@@ -363,6 +402,32 @@ class CategoryController extends Controller
             'recordsFiltered' => $recordsFiltered,
             'data' => $data,
         ]);
+    }
+
+    private function syncTranslations(Category $category, array $translations): void
+    {
+        $this->translationService->sync(
+            $category,
+            'translations',
+            $translations,
+            self::TRANSLATION_FIELDS,
+            $this->slugConfig('kategori')
+        );
+    }
+
+    private function uniqueSlug(string $slug, ?int $ignoreId = null): string
+    {
+        return $this->translationService->uniqueSlug($slug, $this->slugConfig('kategori'), $ignoreId);
+    }
+
+    private function slugConfig(string $fallback): array
+    {
+        return [
+            'base_model' => Category::class,
+            'translation_model' => CategoryTranslation::class,
+            'foreign_key' => 'category_id',
+            'fallback' => $fallback,
+        ];
     }
 
     private function stats(): array

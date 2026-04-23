@@ -17,11 +17,12 @@ class AdminSeeder extends Seeder
             ['name' => 'Admin']
         );
 
-        // Admin -> only auth management (no users module by default)
+        // Admin -> auth management + membership operations
         $adminPerms = Permission::whereIn('slug', [
             'admin.access',
             'roles.view','roles.create','roles.update','roles.delete',
             'permissions.view','permissions.create','permissions.update','permissions.delete',
+            'members.view','members.update','members.delete',
         ])->pluck('id')->all();
 
         $admin->permissions()->sync($adminPerms);

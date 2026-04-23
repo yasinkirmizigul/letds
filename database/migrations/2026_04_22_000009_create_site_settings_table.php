@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('under_construction_title')->nullable();
             $table->text('under_construction_message')->nullable();
             $table->json('social_links')->nullable();
+            $table->json('ui_lines')->nullable();
             $table->timestamps();
         });
     }

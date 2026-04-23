@@ -1,4 +1,4 @@
-<div class="kt-modal kt-modal-center" id="mediaUploadModal" data-kt-modal="true" data-media-bulk-delete-url="/admin/media/bulkDelete">
+<div class="kt-modal kt-modal-center" id="mediaUploadModal" data-kt-modal="true" data-media-bulk-delete-url="{{ route('admin.media.bulkDestroy') }}">
     <div class="kt-modal-content max-w-[60%]" style="max-height: 97vh">
         <div class="kt-modal-header">
             <h3 class="kt-modal-title">Medya</h3>
@@ -82,6 +82,32 @@
                                 İpucu: Her dosya satırında ayrıca ayrı başlık/alt girebilirsin. Satır içi alan boşsa global değer kullanılır.
                             </div>
                         </div>
+
+                        @php
+                            $mediaExtraLanguages = collect($siteLanguages ?? [])->where('code', '!=', $siteDefaultLocale)->values();
+                        @endphp
+
+                        @if($mediaExtraLanguages->isNotEmpty())
+                            <div class="rounded-2xl app-surface-card app-surface-card--soft p-4">
+                                <div class="mb-3 font-medium text-foreground">Ek Dil Meta Bilgileri</div>
+                                <div class="kt-tabs kt-tabs-line mb-4" data-kt-tabs="true">
+                                    <div class="flex flex-wrap gap-2">
+                                        @foreach($mediaExtraLanguages as $language)
+                                            <button type="button" class="kt-tab-toggle {{ $loop->first ? 'active' : '' }}" data-kt-tab-toggle="#media_meta_{{ $language->code }}">
+                                                {{ $language->native_name }}
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+                                @foreach($mediaExtraLanguages as $language)
+                                    <div id="media_meta_{{ $language->code }}" class="{{ $loop->first ? '' : 'hidden' }} grid gap-3 md:grid-cols-2">
+                                        <input class="kt-input" placeholder="{{ $language->native_name }} başlık" data-media-translation="true" data-locale="{{ $language->code }}" data-field="title">
+                                        <input class="kt-input" placeholder="{{ $language->native_name }} alt metin" data-media-translation="true" data-locale="{{ $language->code }}" data-field="alt">
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
 
                         <div id="mediaUploadError" class="hidden text-sm text-destructive whitespace-pre-wrap"></div>
 

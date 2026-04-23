@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->dateTime('start_at');
             $table->dateTime('end_at');
             $table->string('reason')->nullable();
+            $table->string('block_type', 50)->default('manual');
 
             $table->timestamps();
 

@@ -2,12 +2,15 @@
 
 namespace App\Models\Admin\Media;
 
+use App\Models\Concerns\HasSiteLocaleTranslations;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
 class Media extends Model
 {
+    use HasSiteLocaleTranslations;
     use SoftDeletes;
 
     protected $table = 'media';
@@ -78,6 +81,11 @@ class Media extends Model
     public function thumbUrl(): string
     {
         return $this->url('thumb');
+    }
+
+    public function translations(): HasMany
+    {
+        return $this->hasMany(MediaTranslation::class, 'media_id');
     }
 
     public function isImage(): bool

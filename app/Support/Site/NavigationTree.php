@@ -3,6 +3,7 @@
 namespace App\Support\Site;
 
 use App\Models\Site\SiteNavigationItem;
+use App\Support\Site\SiteLocalization;
 use Illuminate\Support\Collection;
 
 class NavigationTree
@@ -10,7 +11,11 @@ class NavigationTree
     public static function forLocation(string $location, bool $activeOnly = false): Collection
     {
         $items = SiteNavigationItem::query()
-            ->with('page:id,title,slug,is_active,published_at')
+            ->with([
+                'translations',
+                'page:id,title,slug,is_active,published_at',
+                'page.translations',
+            ])
             ->forLocation($location)
             ->ordered()
             ->get();

@@ -6,6 +6,7 @@ use App\Console\Commands\MakeAdminModule;
 use App\Models\Site\SiteNavigationItem;
 use App\Models\Site\SiteSetting;
 use App\Support\Site\NavigationTree;
+use App\Support\Site\SiteLocalization;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
@@ -26,10 +27,30 @@ class AppServiceProvider extends ServiceProvider
         });
 
         View::composer('site.*', function ($view) {
+            $settings = SiteSetting::current()->loadMissing('translations');
+
             $view->with([
-                'siteSettings' => SiteSetting::current(),
+                'siteSettings' => $settings,
                 'sitePrimaryNavigation' => NavigationTree::forLocation(SiteNavigationItem::LOCATION_PRIMARY, true),
                 'siteFooterNavigation' => NavigationTree::forLocation(SiteNavigationItem::LOCATION_FOOTER, true),
+                'siteLanguages' => SiteLocalization::languages(),
+                'siteCurrentLocale' => SiteLocalization::currentLocale(),
+                'siteCurrentLanguage' => SiteLocalization::currentLanguage(),
+            ]);
+        });
+
+        View::composer([
+            'admin.pages.site.*',
+            'admin.pages.blog.*',
+            'admin.pages.projects.*',
+            'admin.pages.products.*',
+            'admin.pages.categories.*',
+            'admin.pages.media.*',
+            'admin.pages.galleries.*',
+        ], function ($view) {
+            $view->with([
+                'siteLanguages' => SiteLocalization::languages(false),
+                'siteDefaultLocale' => SiteLocalization::defaultLocale(),
             ]);
         });
 

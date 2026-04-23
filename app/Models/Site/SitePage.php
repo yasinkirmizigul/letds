@@ -3,6 +3,8 @@
 namespace App\Models\Site;
 
 use App\Models\Admin\Media\Media;
+use App\Models\Concerns\HasSiteLocaleTranslations;
+use App\Support\Site\SiteLocalization;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,7 +15,7 @@ use Illuminate\Support\Str;
 
 class SitePage extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasSiteLocaleTranslations;
 
     protected $fillable = [
         'title',
@@ -92,6 +94,11 @@ class SitePage extends Model
         return $this->hasMany(SiteFaq::class)->orderBy('sort_order')->orderBy('id');
     }
 
+    public function translations(): HasMany
+    {
+        return $this->hasMany(SitePageTranslation::class)->orderBy('locale');
+    }
+
     public function counters(): HasMany
     {
         return $this->hasMany(SiteCounter::class)->orderBy('sort_order')->orderBy('id');
@@ -110,14 +117,15 @@ class SitePage extends Model
 
     public function excerptPreview(int $limit = 160): string
     {
-        $normalized = preg_replace('/\s+/u', ' ', trim(strip_tags((string) ($this->excerpt ?: $this->content))));
+        $source = $this->localizedValue('excerpt') ?: $this->localizedValue('content');
+        $normalized = preg_replace('/\s+/u', ' ', trim(strip_tags((string) $source)));
 
         return Str::limit((string) $normalized, $limit);
     }
 
     public function contentWordCount(): int
     {
-        preg_match_all('/[\pL\pN]+/u', strip_tags((string) $this->content), $matches);
+        preg_match_all('/[\pL\pN]+/u', strip_tags((string) $this->localizedValue('content')), $matches);
 
         return count($matches[0] ?? []);
     }
@@ -135,9 +143,19 @@ class SitePage extends Model
         return (int) round((collect($checks)->filter()->count() / count($checks)) * 100);
     }
 
-    public function publicUrl(): string
+    public function publicUrl(?string $locale = null): string
     {
-        return route('site.pages.show', $this->slug);
+        $locale = $locale ?: SiteLocalization::currentLocale();
+        $slug = $this->slugForLocale($locale);
+
+        if (SiteLocalization::isDefault($locale)) {
+            return route('site.pages.show', ['slug' => $slug]);
+        }
+
+        return route('site.pages.show.localized', [
+            'locale' => $locale,
+            'slug' => $slug,
+        ]);
     }
 
     public function readingTimeMinutes(int $wordsPerMinute = 220): int
@@ -157,5 +175,15 @@ class SitePage extends Model
         $publishedAt = $this->published_at;
 
         return $this->is_active && ($publishedAt === null || $publishedAt->lte(now()));
+    }
+
+    public function localized(string $field, ?string $locale = null, mixed $fallback = null): mixed
+    {
+        return $this->localizedValue($field, $locale, $fallback);
+    }
+
+    public function slugForLocale(?string $locale = null): string
+    {
+        return (string) $this->localizedValue('slug', $locale, $this->getRawOriginal('slug'));
     }
 }

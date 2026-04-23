@@ -6,6 +6,7 @@ return [
         'title' => 'Site Yönetimi',
         'icon' => 'ki-filled ki-abstract-26 text-lg',
         'permAny' => [
+            'site_languages.view',
             'site_pages.view',
             'site_faqs.view',
             'site_counters.view',
@@ -14,6 +15,12 @@ return [
             'home_sliders.view',
         ],
         'children' => [
+            [
+                'title' => 'Dil Yönetimi',
+                'route' => 'admin.site.languages.index',
+                'active' => ['admin.site.languages.*'],
+                'perm' => 'site_languages.view',
+            ],
             [
                 'title' => 'İçerik Üretimi',
                 'route' => 'admin.site.pages.index',

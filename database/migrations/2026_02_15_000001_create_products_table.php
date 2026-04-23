@@ -42,6 +42,7 @@ return new class extends Migration
             $table->string('meta_title', 255)->nullable();
             $table->string('meta_description', 255)->nullable();
             $table->string('meta_keywords', 500)->nullable();
+            $table->string('featured_image_path', 255)->nullable();
 
             // Status
             $table->string('status', 20)->default('draft')->index(); // draft|active|archived|appointment_pending

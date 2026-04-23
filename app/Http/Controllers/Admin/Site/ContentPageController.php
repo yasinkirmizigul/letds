@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin\Site;
 
 use App\Http\Controllers\Controller;
 use App\Models\Site\SitePage;
+use App\Models\Site\SitePageTranslation;
+use App\Services\Site\SiteTranslationSyncService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -25,13 +27,17 @@ class ContentPageController extends Controller
         'iletisim',
     ];
 
+    public function __construct(
+        private readonly SiteTranslationSyncService $translationSyncService,
+    ) {}
+
     public function index(Request $request): View
     {
         $search = trim((string) $request->string('q'));
         $status = (string) $request->string('status', 'all');
 
         $pages = SitePage::query()
-            ->with('featuredMedia')
+            ->with(['featuredMedia', 'translations'])
             ->withCount(['faqs', 'counters'])
             ->search($search)
             ->when($status === 'active', fn ($query) => $query->where('is_active', true))
@@ -58,6 +64,7 @@ class ContentPageController extends Controller
     {
         return view('admin.pages.site.pages.create', [
             'page' => null,
+            'pageTranslations' => collect(),
         ]);
     }
 
@@ -66,7 +73,16 @@ class ContentPageController extends Controller
         $validated = $this->validatePayload($request);
 
         $page = DB::transaction(function () use ($validated) {
-            return SitePage::create($this->buildPayload($validated));
+            $page = SitePage::create($this->buildPayload($validated));
+
+            $this->translationSyncService->sync(
+                $page,
+                'translations',
+                $validated['translations'] ?? [],
+                ['title', 'slug', 'hero_kicker', 'excerpt', 'content', 'meta_title', 'meta_description', 'meta_keywords']
+            );
+
+            return $page;
         });
 
         $this->syncFeaturedAsset(
@@ -83,10 +99,11 @@ class ContentPageController extends Controller
 
     public function edit(SitePage $sitePage): View
     {
-        $sitePage->load('featuredMedia');
+        $sitePage->load(['featuredMedia', 'translations']);
 
         return view('admin.pages.site.pages.edit', [
             'page' => $sitePage,
+            'pageTranslations' => $sitePage->translations->keyBy('locale'),
         ]);
     }
 
@@ -96,6 +113,13 @@ class ContentPageController extends Controller
 
         DB::transaction(function () use ($sitePage, $validated) {
             $sitePage->update($this->buildPayload($validated, $sitePage));
+
+            $this->translationSyncService->sync(
+                $sitePage,
+                'translations',
+                $validated['translations'] ?? [],
+                ['title', 'slug', 'hero_kicker', 'excerpt', 'content', 'meta_title', 'meta_description', 'meta_keywords']
+            );
         });
 
         $this->syncFeaturedAsset(
@@ -165,22 +189,23 @@ class ContentPageController extends Controller
             'is_active' => ['nullable', 'boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'published_at' => ['nullable', 'string', 'max:32'],
+            'translations' => ['nullable', 'array'],
+            'translations.*.title' => ['nullable', 'string', 'max:255'],
+            'translations.*.slug' => ['nullable', 'string', 'max:255'],
+            'translations.*.hero_kicker' => ['nullable', 'string', 'max:255'],
+            'translations.*.excerpt' => ['nullable', 'string'],
+            'translations.*.content' => ['nullable', 'string'],
+            'translations.*.meta_title' => ['nullable', 'string', 'max:255'],
+            'translations.*.meta_description' => ['nullable', 'string'],
+            'translations.*.meta_keywords' => ['nullable', 'string'],
         ]);
 
-        $slugSource = (string) ($validated['slug'] ?: $validated['title']);
-        $normalized = Str::slug($slugSource);
+        $this->assertAllowedSlug((string) ($validated['slug'] ?: $validated['title']), 'slug');
 
-        if ($normalized === '') {
-            throw ValidationException::withMessages([
-                'slug' => 'Geçerli bir sayfa bağlantısı üretilemedi.',
-            ]);
-        }
-
-        if (in_array($normalized, self::RESERVED_SLUGS, true)) {
-            throw ValidationException::withMessages([
-                'slug' => 'Bu bağlantı anahtar kelimesi sistem tarafından ayrılmış durumda.',
-            ]);
-        }
+        $validated['translations'] = $this->buildTranslationsPayload(
+            is_array($validated['translations'] ?? null) ? $validated['translations'] : [],
+            $page
+        );
 
         return $validated;
     }
@@ -204,6 +229,39 @@ class ContentPageController extends Controller
             'sort_order' => (int) ($validated['sort_order'] ?? 0),
             'published_at' => $this->parseDateTime($validated['published_at'] ?? null),
         ];
+    }
+
+    private function buildTranslationsPayload(array $translations, ?SitePage $page = null): array
+    {
+        $payload = [];
+
+        foreach ($translations as $locale => $translation) {
+            if (!is_array($translation)) {
+                continue;
+            }
+
+            $title = $this->cleanText($translation['title'] ?? null);
+            $slugSource = $this->cleanText(($translation['slug'] ?? null) ?: $title);
+            $row = [
+                'title' => $title,
+                'slug' => null,
+                'hero_kicker' => $this->cleanText($translation['hero_kicker'] ?? null),
+                'excerpt' => $this->cleanText($translation['excerpt'] ?? null),
+                'content' => $this->cleanText($translation['content'] ?? null),
+                'meta_title' => $this->cleanText($translation['meta_title'] ?? null),
+                'meta_description' => $this->cleanText($translation['meta_description'] ?? null),
+                'meta_keywords' => $this->cleanText($translation['meta_keywords'] ?? null),
+            ];
+
+            if ($slugSource !== null) {
+                $this->assertAllowedSlug($slugSource, "translations.$locale.slug");
+                $row['slug'] = $this->uniqueSlug($slugSource, $page?->id, (string) $locale);
+            }
+
+            $payload[(string) $locale] = $row;
+        }
+
+        return $payload;
     }
 
     private function syncFeaturedAsset(
@@ -274,22 +332,64 @@ class ContentPageController extends Controller
         }
     }
 
-    private function uniqueSlug(string $slug, ?int $ignoreId = null): string
+    private function uniqueSlug(string $slug, ?int $ignoreId = null, ?string $ignoreLocale = null): string
     {
         $base = Str::slug($slug) ?: 'sayfa';
         $candidate = $base;
         $suffix = 2;
 
-        while (
-            SitePage::query()
-                ->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
-                ->where('slug', $candidate)
-                ->exists()
-        ) {
+        while ($this->slugExists($candidate, $ignoreId, $ignoreLocale)) {
             $candidate = $base . '-' . $suffix;
             $suffix++;
         }
 
         return $candidate;
+    }
+
+    private function slugExists(string $slug, ?int $ignoreId = null, ?string $ignoreLocale = null): bool
+    {
+        $pageExists = SitePage::query()
+            ->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
+            ->where('slug', $slug)
+            ->exists();
+
+        if ($pageExists) {
+            return true;
+        }
+
+        return SitePageTranslation::query()
+            ->where('slug', $slug)
+            ->when($ignoreId && $ignoreLocale, function ($query) use ($ignoreId, $ignoreLocale) {
+                $query->where(function ($nestedQuery) use ($ignoreId, $ignoreLocale) {
+                    $nestedQuery
+                        ->where('site_page_id', '!=', $ignoreId)
+                        ->orWhere('locale', '!=', $ignoreLocale);
+                });
+            })
+            ->exists();
+    }
+
+    private function assertAllowedSlug(string $slugSource, string $errorKey): void
+    {
+        $normalized = Str::slug($slugSource);
+
+        if ($normalized === '') {
+            throw ValidationException::withMessages([
+                $errorKey => 'Geçerli bir sayfa bağlantısı üretilemedi.',
+            ]);
+        }
+
+        if (in_array($normalized, self::RESERVED_SLUGS, true)) {
+            throw ValidationException::withMessages([
+                $errorKey => 'Bu bağlantı anahtar kelimesi sistem tarafından ayrılmış durumda.',
+            ]);
+        }
+    }
+
+    private function cleanText(mixed $value): ?string
+    {
+        $value = trim((string) $value);
+
+        return $value === '' ? null : $value;
     }
 }

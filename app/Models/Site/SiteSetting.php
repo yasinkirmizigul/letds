@@ -2,10 +2,15 @@
 
 namespace App\Models\Site;
 
+use App\Models\Concerns\HasSiteLocaleTranslations;
+use App\Support\Site\SiteLocalization;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 
 class SiteSetting extends Model
 {
+    use HasSiteLocaleTranslations;
+
     protected $fillable = [
         'site_name',
         'site_tagline',
@@ -22,11 +27,13 @@ class SiteSetting extends Model
         'under_construction_title',
         'under_construction_message',
         'social_links',
+        'ui_lines',
     ];
 
     protected $casts = [
         'under_construction_enabled' => 'boolean',
         'social_links' => 'array',
+        'ui_lines' => 'array',
     ];
 
     public static function current(): self
@@ -43,5 +50,35 @@ class SiteSetting extends Model
         $value = $links[$key] ?? null;
 
         return filled($value) ? (string) $value : $fallback;
+    }
+
+    public function translations(): HasMany
+    {
+        return $this->hasMany(SiteSettingTranslation::class)->orderBy('locale');
+    }
+
+    public function localized(string $field, ?string $locale = null, mixed $fallback = null): mixed
+    {
+        return $this->localizedValue($field, $locale, $fallback);
+    }
+
+    public function uiLine(string $key, ?string $locale = null): string
+    {
+        $locale = $locale ?: SiteLocalization::currentLocale();
+        $fallbacks = config('site_ui_labels', []);
+        $default = (string) ($fallbacks[$key]['default'] ?? $key);
+
+        if (!SiteLocalization::isDefault($locale)) {
+            $translation = $this->translationFor($locale);
+            $translated = is_array($translation?->ui_lines) ? ($translation->ui_lines[$key] ?? null) : null;
+
+            if (filled($translated)) {
+                return (string) $translated;
+            }
+        }
+
+        $base = is_array($this->ui_lines) ? ($this->ui_lines[$key] ?? null) : null;
+
+        return filled($base) ? (string) $base : $default;
     }
 }

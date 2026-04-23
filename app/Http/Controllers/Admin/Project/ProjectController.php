@@ -7,6 +7,8 @@ use App\Http\Requests\Admin\Project\ProjectStoreRequest;
 use App\Http\Requests\Admin\Project\ProjectUpdateRequest;
 use App\Models\Admin\Category;
 use App\Models\Admin\Project\Project;
+use App\Models\Admin\Project\ProjectTranslation;
+use App\Services\Content\LocalizedContentTranslationService;
 use App\Support\Audit\AuditEvent;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -19,6 +21,19 @@ use Illuminate\Validation\ValidationException;
 
 class ProjectController extends Controller
 {
+    private const TRANSLATION_FIELDS = [
+        'title',
+        'slug',
+        'content',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
+    ];
+
+    public function __construct(
+        private readonly LocalizedContentTranslationService $translationService,
+    ) {}
+
     public function index(Request $request): View
     {
         $mode = $request->string('mode', 'active')->toString();
@@ -44,6 +59,7 @@ class ProjectController extends Controller
             ->with([
                 'categories:id,name',
                 'featuredMedia',
+                'translations',
             ])
             ->search($q)
             ->inStatus($status)
@@ -108,7 +124,7 @@ class ProjectController extends Controller
             ->all();
 
         $items = ($mode === 'trash' ? Project::onlyTrashed() : Project::query())
-            ->with(['categories:id,name', 'featuredMedia'])
+            ->with(['categories:id,name', 'featuredMedia', 'translations'])
             ->search($q)
             ->inStatus($status)
             ->when(!empty($selectedCategoryIds), function ($builder) use ($selectedCategoryIds) {
@@ -153,6 +169,7 @@ class ProjectController extends Controller
         $project = DB::transaction(function () use ($validated) {
             $project = Project::create($this->buildPersistenceData($validated));
             $this->syncCategories($project, $validated['category_ids'] ?? []);
+            $this->syncTranslations($project, $validated['translations'] ?? []);
 
             return $project;
         });
@@ -179,6 +196,7 @@ class ProjectController extends Controller
         $project->load([
             'categories:id,name,parent_id',
             'featuredMedia',
+            'translations',
         ]);
 
         $categories = Category::query()
@@ -209,6 +227,7 @@ class ProjectController extends Controller
             $project = Project::query()->lockForUpdate()->findOrFail($project->id);
             $project->update($this->buildPersistenceData($validated, $project));
             $this->syncCategories($project, $validated['category_ids'] ?? []);
+            $this->syncTranslations($project, $validated['translations'] ?? []);
         });
 
         $this->syncFeaturedAsset(
@@ -501,6 +520,17 @@ class ProjectController extends Controller
         $project->categories()->sync($ids);
     }
 
+    private function syncTranslations(Project $project, array $translations): void
+    {
+        $this->translationService->sync(
+            $project,
+            'translations',
+            $translations,
+            self::TRANSLATION_FIELDS,
+            $this->slugConfig('proje')
+        );
+    }
+
     private function syncFeaturedAsset(
         Project $project,
         Request $request,
@@ -625,12 +655,25 @@ class ProjectController extends Controller
                 ->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
                 ->where('slug', $candidate)
                 ->exists()
+            || ProjectTranslation::query()
+                ->where('slug', $candidate)
+                ->exists()
         ) {
             $candidate = $base . '-' . $suffix;
             $suffix++;
         }
 
         return $candidate;
+    }
+
+    private function slugConfig(string $fallback): array
+    {
+        return [
+            'base_model' => Project::class,
+            'translation_model' => ProjectTranslation::class,
+            'foreign_key' => 'project_id',
+            'fallback' => $fallback,
+        ];
     }
 
     private function categoryOptions($categories): array

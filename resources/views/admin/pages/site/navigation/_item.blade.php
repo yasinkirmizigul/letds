@@ -1,3 +1,7 @@
+@php
+    $extraLanguages = collect($siteLanguages ?? [])->where('code', '!=', $siteDefaultLocale)->values();
+@endphp
+
 <div class="rounded-[28px] app-surface-card p-5 js-navigation-item" data-id="{{ $item->id }}">
     <div class="flex items-start justify-between gap-3">
         <div class="flex items-start gap-3">
@@ -83,6 +87,31 @@
                 <label class="kt-form-label">Özel URL</label>
                 <input name="url" class="kt-input" value="{{ $item->url }}" placeholder="https://ornek.com veya /iletisim">
             </div>
+
+            @if($extraLanguages->isNotEmpty())
+                <details class="rounded-3xl bg-background px-4 py-4">
+                    <summary class="cursor-pointer list-none text-sm font-medium text-foreground">Dil karşılıklarını düzenle</summary>
+                    <div class="mt-4 grid gap-4">
+                        @foreach($extraLanguages as $language)
+                            @php
+                                $translation = $item->translations->firstWhere('locale', $language->code);
+                            @endphp
+                            <div class="rounded-2xl bg-white px-4 py-4">
+                                <div class="mb-3 flex items-center justify-between gap-3">
+                                    <div class="font-medium text-foreground">{{ $language->native_name }}</div>
+                                    <span class="kt-badge kt-badge-sm kt-badge-light">{{ $language->code }}</span>
+                                </div>
+                                <input
+                                    name="translations[{{ $language->code }}][title]"
+                                    class="kt-input"
+                                    value="{{ old("translations.{$language->code}.title", $translation->title ?? '') }}"
+                                    placeholder="Bu dilde menü başlığı"
+                                >
+                            </div>
+                        @endforeach
+                    </div>
+                </details>
+            @endif
 
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <label class="flex items-center gap-3">

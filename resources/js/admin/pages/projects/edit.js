@@ -27,7 +27,7 @@ export default async function init(ctx) {
         return editör ? editör.getContent({ format: 'html' }) : (root.querySelector('#content_editor')?.value || '');
     });
 
-    await initTinyEditor(ctx, () => seoPanel.sync());
+    await initTinyEditor(ctx, () => seoPanel.sync(), '[data-localized-content-editor="true"]');
     seoPanel.sync();
 
     initGalleryManager(root);

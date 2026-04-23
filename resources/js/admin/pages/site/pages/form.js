@@ -37,12 +37,30 @@ export default async function initPageForm(ctx) {
         generateOnInit: true,
     }, signal);
 
+    root.querySelectorAll('[data-locale-slug-scope="true"]').forEach((scope) => {
+        const titleInput = scope.querySelector('[data-locale-title="true"]');
+        const slugInput = scope.querySelector('[data-locale-slug="true"]');
+
+        if (!titleInput || !slugInput) {
+            return;
+        }
+
+        initSlugManager(scope, {
+            sourceSelector: '[data-locale-title="true"]',
+            slugSelector: '[data-locale-slug="true"]',
+            previewSelector: '[data-slug-preview="true"]',
+            autoSelector: '[data-slug-auto="true"]',
+            regenSelector: '[data-slug-regen="true"]',
+            generateOnInit: true,
+        }, signal);
+    });
+
     ['#title', '#slug', '#excerpt', 'input[name="meta_title"]', 'textarea[name="meta_description"]']
         .forEach((selector) => {
             root.querySelector(selector)?.addEventListener('input', () => syncPreview(root), { signal });
         });
 
     bindIconChips(root, signal);
-    await initTinyEditor(ctx, () => syncPreview(root));
+    await initTinyEditor(ctx, () => syncPreview(root), '[data-localized-content-editor="true"], [data-page-content-editor="true"]');
     syncPreview(root);
 }

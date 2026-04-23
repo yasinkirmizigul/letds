@@ -32,7 +32,7 @@ class AppointmentSettingsController extends Controller
             ->get(['id', 'name', 'title']);
 
         return view('admin.pages.appointments.settings', [
-            'pageTitle' => 'Randevu Ayarlari',
+            'pageTitle' => 'Randevu Ayarları',
             'providers' => $providers,
             'providerCount' => $providers->count(),
             'timeOffCount' => ProviderTimeOff::query()->count(),

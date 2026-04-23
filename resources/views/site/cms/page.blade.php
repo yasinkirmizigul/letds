@@ -5,9 +5,9 @@
         <section class="overflow-hidden rounded-[36px] border border-border bg-white/85 shadow-sm">
             <div class="grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_420px]">
                 <div class="p-6 lg:p-10">
-                    @if($page->hero_kicker)
+                    @if($page->localized('hero_kicker'))
                         <div class="inline-flex rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-primary">
-                            {{ $page->hero_kicker }}
+                            {{ $page->localized('hero_kicker') }}
                         </div>
                     @endif
 
@@ -16,9 +16,9 @@
                             <i class="{{ $page->icon_class ?: 'ki-filled ki-abstract-26' }}"></i>
                         </div>
                         <div>
-                            <h1 class="text-4xl font-semibold text-foreground">{{ $page->title }}</h1>
-                            @if($page->excerpt)
-                                <p class="mt-4 max-w-3xl text-base leading-8 text-muted-foreground">{{ $page->excerpt }}</p>
+                            <h1 class="text-4xl font-semibold text-foreground">{{ $page->localized('title') }}</h1>
+                            @if($page->localized('excerpt'))
+                                <p class="mt-4 max-w-3xl text-base leading-8 text-muted-foreground">{{ $page->localized('excerpt') }}</p>
                             @endif
                         </div>
                     </div>
@@ -34,25 +34,25 @@
 
         <section class="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
             <article class="rounded-[32px] border border-border bg-white/85 p-6 leading-8 text-foreground shadow-sm lg:p-10">
-                {!! $page->content !!}
+                {!! $page->localized('content') !!}
             </article>
 
             <aside class="grid gap-5 self-start lg:sticky lg:top-24">
                 <div class="rounded-[28px] border border-border bg-white/85 p-5 shadow-sm">
-                    <div class="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">Özet</div>
+                    <div class="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">{{ $siteSettings->uiLine('page_summary_label') }}</div>
                     <div class="mt-4 grid gap-2 text-sm text-muted-foreground">
-                        <div>Okuma süresi: {{ $page->readingTimeMinutes() }} dk</div>
-                        <div>SEO skoru: %{{ $page->seoCompletenessScore() }}</div>
-                        <div>Bağlantı: /{{ $page->slug }}</div>
+                        <div>{{ $siteSettings->uiLine('page_reading_time_label') }}: {{ $page->readingTimeMinutes() }} dk</div>
+                        <div>{{ $siteSettings->uiLine('page_seo_score_label') }}: %{{ $page->seoCompletenessScore() }}</div>
+                        <div>{{ $siteSettings->uiLine('page_link_label') }}: /{{ $page->slugForLocale($siteCurrentLocale) }}</div>
                     </div>
                 </div>
 
                 <div class="rounded-[28px] border border-border bg-white/85 p-5 shadow-sm">
-                    <div class="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">Hızlı Eylem</div>
+                    <div class="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">{{ $siteSettings->uiLine('page_quick_actions_label') }}</div>
                     <div class="mt-4 flex flex-col gap-3">
-                        <a href="{{ route('site.contact-messages.create') }}" class="kt-btn kt-btn-primary w-full">Mesaj Gönder</a>
-                        <a href="{{ auth('member')->check() ? route('member.appointments.index') : route('member.login') }}" class="kt-btn kt-btn-light w-full">
-                            {{ auth('member')->check() ? 'Randevu Paneli' : 'Üye Girişi' }}
+                        <a href="{{ route('site.contact-messages.create', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary w-full">{{ $siteSettings->uiLine('page_send_message_label') }}</a>
+                        <a href="{{ auth('member')->check() ? route('member.appointments.index', ['site_locale' => $siteCurrentLocale]) : route('member.login', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full">
+                            {{ auth('member')->check() ? $siteSettings->uiLine('nav_member_panel_label') : $siteSettings->uiLine('nav_member_login_label') }}
                         </a>
                     </div>
                 </div>
@@ -67,13 +67,13 @@
                             <i class="{{ $counter->icon_class ?: 'ki-filled ki-chart-simple' }}"></i>
                         </div>
                         <div class="mt-5 text-4xl font-semibold text-foreground">
-                            {{ $counter->prefix }}
+                            {{ $counter->localized('prefix') }}
                             <span data-countup-value="{{ $counter->value }}">0</span>
-                            {{ $counter->suffix }}
+                            {{ $counter->localized('suffix') }}
                         </div>
-                        <div class="mt-3 text-base font-medium text-foreground">{{ $counter->label }}</div>
-                        @if($counter->description)
-                            <div class="mt-2 text-sm leading-6 text-muted-foreground">{{ $counter->description }}</div>
+                        <div class="mt-3 text-base font-medium text-foreground">{{ $counter->localized('label') }}</div>
+                        @if($counter->localized('description'))
+                            <div class="mt-2 text-sm leading-6 text-muted-foreground">{{ $counter->localized('description') }}</div>
                         @endif
                     </div>
                 @endforeach
@@ -83,16 +83,16 @@
         @if($page->show_faqs && $page->faqs->isNotEmpty())
             <section class="mt-12">
                 <div class="mb-6">
-                    <div class="text-xs font-semibold uppercase tracking-[0.28em] text-primary">Sıkça Sorulan Sorular</div>
-                    <h2 class="mt-2 text-3xl font-semibold text-foreground">Sayfa ile ilgili hızlı cevaplar</h2>
+                    <div class="text-xs font-semibold uppercase tracking-[0.28em] text-primary">SSS</div>
+                    <h2 class="mt-2 text-3xl font-semibold text-foreground">{{ $siteSettings->uiLine('page_faq_heading') }}</h2>
                 </div>
                 <div class="grid gap-4">
                     @foreach($page->faqs as $faq)
                         <details class="rounded-[28px] border border-border bg-white/85 p-5 shadow-sm">
                             <summary class="cursor-pointer list-none text-base font-semibold text-foreground">
-                                {{ $faq->question }}
+                                {{ $faq->localized('question') }}
                             </summary>
-                            <div class="mt-4 text-sm leading-7 text-muted-foreground">{!! nl2br(e($faq->answer)) !!}</div>
+                            <div class="mt-4 text-sm leading-7 text-muted-foreground">{!! nl2br(e($faq->localized('answer'))) !!}</div>
                         </details>
                     @endforeach
                 </div>

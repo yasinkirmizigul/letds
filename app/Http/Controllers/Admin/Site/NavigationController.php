@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Site;
 use App\Http\Controllers\Controller;
 use App\Models\Site\SiteNavigationItem;
 use App\Models\Site\SitePage;
+use App\Services\Site\SiteTranslationSyncService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -14,10 +15,15 @@ use Illuminate\Validation\ValidationException;
 
 class NavigationController extends Controller
 {
+    public function __construct(
+        private readonly SiteTranslationSyncService $translationSyncService,
+    ) {}
+
     public function index(): View
     {
         return view('admin.pages.site.navigation.index', [
             'pages' => SitePage::query()
+                ->with('translations')
                 ->orderByDesc('is_active')
                 ->orderBy('title')
                 ->get(['id', 'title', 'slug', 'is_active', 'published_at']),
@@ -38,13 +44,21 @@ class NavigationController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $payload = $this->validated($request);
+        $recordPayload = collect($payload)->except('translations')->all();
 
-        $item = SiteNavigationItem::create(array_merge($payload, [
+        $item = SiteNavigationItem::create(array_merge($recordPayload, [
             'sort_order' => $this->nextSortOrder(
                 $payload['location'],
                 $payload['parent_id'] ?? null
             ),
         ]));
+
+        $this->translationSyncService->sync(
+            $item,
+            'translations',
+            $payload['translations'] ?? [],
+            ['title']
+        );
 
         return redirect()
             ->route('admin.site.navigation.index', ['highlight' => $item->id])
@@ -54,7 +68,14 @@ class NavigationController extends Controller
     public function update(Request $request, SiteNavigationItem $siteNavigationItem): RedirectResponse
     {
         $payload = $this->validated($request, $siteNavigationItem);
-        $siteNavigationItem->update($payload);
+        $siteNavigationItem->update(collect($payload)->except('translations')->all());
+
+        $this->translationSyncService->sync(
+            $siteNavigationItem,
+            'translations',
+            $payload['translations'] ?? [],
+            ['title']
+        );
 
         return redirect()
             ->route('admin.site.navigation.index', ['highlight' => $siteNavigationItem->id])
@@ -152,6 +173,8 @@ class NavigationController extends Controller
             'url' => ['nullable', 'string', 'max:500'],
             'target' => ['required', 'string'],
             'is_active' => ['nullable', 'boolean'],
+            'translations' => ['nullable', 'array'],
+            'translations.*.title' => ['nullable', 'string', 'max:120'],
         ]);
 
         $location = (string) $validated['location'];
@@ -221,6 +244,7 @@ class NavigationController extends Controller
             'url' => $linkType === SiteNavigationItem::LINK_TYPE_CUSTOM ? ($validated['url'] ?? null) : null,
             'target' => $target,
             'is_active' => $request->boolean('is_active'),
+            'translations' => is_array($validated['translations'] ?? null) ? $validated['translations'] : [],
         ];
     }
 

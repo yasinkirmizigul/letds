@@ -3,6 +3,7 @@
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\AuditRequestMiddleware;
 use App\Http\Middleware\PermissionMiddleware;
+use App\Http\Middleware\SiteLocaleMiddleware;
 use App\Http\Middleware\SuperAdminMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -37,6 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'superadmin' => SuperAdminMiddleware::class,
             'admin'      => AdminMiddleware::class,
             'audit'      => AuditRequestMiddleware::class,
+            'site.locale' => SiteLocaleMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

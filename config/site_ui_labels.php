@@ -1,0 +1,148 @@
+<?php
+
+return [
+    'nav_home_label' => [
+        'group' => 'navigation',
+        'label' => 'Ana sayfa menü etiketi',
+        'placeholder' => 'Ana Sayfa',
+        'default' => 'Ana Sayfa',
+    ],
+    'nav_contact_label' => [
+        'group' => 'navigation',
+        'label' => 'İletişim butonu',
+        'placeholder' => 'İletişim',
+        'default' => 'İletişim',
+    ],
+    'nav_member_panel_label' => [
+        'group' => 'navigation',
+        'label' => 'Üye paneli butonu',
+        'placeholder' => 'Üye Paneli',
+        'default' => 'Üye Paneli',
+    ],
+    'nav_member_login_label' => [
+        'group' => 'navigation',
+        'label' => 'Üye girişi butonu',
+        'placeholder' => 'Üye Girişi',
+        'default' => 'Üye Girişi',
+    ],
+    'nav_member_register_label' => [
+        'group' => 'navigation',
+        'label' => 'Üye ol butonu',
+        'placeholder' => 'Üye Ol',
+        'default' => 'Üye Ol',
+    ],
+    'nav_logout_label' => [
+        'group' => 'navigation',
+        'label' => 'Çıkış butonu',
+        'placeholder' => 'Çıkış Yap',
+        'default' => 'Çıkış Yap',
+    ],
+    'footer_navigation_label' => [
+        'group' => 'footer',
+        'label' => 'Alt menü başlığı',
+        'placeholder' => 'Alt Menü',
+        'default' => 'Alt Menü',
+    ],
+    'footer_social_label' => [
+        'group' => 'footer',
+        'label' => 'Sosyal ağlar başlığı',
+        'placeholder' => 'Sosyal Ağlar',
+        'default' => 'Sosyal Ağlar',
+    ],
+    'home_featured_kicker' => [
+        'group' => 'home',
+        'label' => 'Öne çıkan sayfalar kicker',
+        'placeholder' => 'Öne Çıkan Sayfalar',
+        'default' => 'Öne Çıkan Sayfalar',
+    ],
+    'home_featured_heading' => [
+        'group' => 'home',
+        'label' => 'Öne çıkan sayfalar başlığı',
+        'placeholder' => 'Yönettiğin içerikler doğrudan sahnede',
+        'default' => 'Yönettiğin içerikler doğrudan sahnede',
+    ],
+    'home_featured_cta_label' => [
+        'group' => 'home',
+        'label' => 'Öne çıkan kart CTA etiketi',
+        'placeholder' => 'Sayfayı Aç',
+        'default' => 'Sayfayı Aç',
+    ],
+    'home_faq_kicker' => [
+        'group' => 'home',
+        'label' => 'SSS kicker',
+        'placeholder' => 'Sıkça Sorulan Sorular',
+        'default' => 'Sıkça Sorulan Sorular',
+    ],
+    'home_faq_heading' => [
+        'group' => 'home',
+        'label' => 'SSS başlığı',
+        'placeholder' => 'Ziyaretçinin kararını hızlandıran net cevaplar',
+        'default' => 'Ziyaretçinin kararını hızlandıran net cevaplar',
+    ],
+    'home_faq_description' => [
+        'group' => 'home',
+        'label' => 'SSS açıklaması',
+        'placeholder' => 'Yönetim panelinden eklediğin global SSS kayıtları burada otomatik olarak görünür.',
+        'default' => 'Yönetim panelinden eklediğin global SSS kayıtları burada otomatik olarak görünür.',
+    ],
+    'home_contact_kicker' => [
+        'group' => 'home',
+        'label' => 'İletişim kicker',
+        'placeholder' => 'İletişim',
+        'default' => 'İletişim',
+    ],
+    'home_contact_heading' => [
+        'group' => 'home',
+        'label' => 'İletişim başlığı',
+        'placeholder' => 'Bir sonraki adımı birlikte planlayalım',
+        'default' => 'Bir sonraki adımı birlikte planlayalım',
+    ],
+    'home_contact_primary_cta_label' => [
+        'group' => 'home',
+        'label' => 'İletişim ana CTA',
+        'placeholder' => 'Mesaj Gönder',
+        'default' => 'Mesaj Gönder',
+    ],
+    'page_summary_label' => [
+        'group' => 'page',
+        'label' => 'Sayfa özet kartı başlığı',
+        'placeholder' => 'Özet',
+        'default' => 'Özet',
+    ],
+    'page_quick_actions_label' => [
+        'group' => 'page',
+        'label' => 'Sayfa hızlı eylemler başlığı',
+        'placeholder' => 'Hızlı Eylem',
+        'default' => 'Hızlı Eylem',
+    ],
+    'page_reading_time_label' => [
+        'group' => 'page',
+        'label' => 'Okuma süresi etiketi',
+        'placeholder' => 'Okuma süresi',
+        'default' => 'Okuma süresi',
+    ],
+    'page_seo_score_label' => [
+        'group' => 'page',
+        'label' => 'SEO skoru etiketi',
+        'placeholder' => 'SEO skoru',
+        'default' => 'SEO skoru',
+    ],
+    'page_link_label' => [
+        'group' => 'page',
+        'label' => 'Bağlantı etiketi',
+        'placeholder' => 'Bağlantı',
+        'default' => 'Bağlantı',
+    ],
+    'page_send_message_label' => [
+        'group' => 'page',
+        'label' => 'Sayfa mesaj butonu',
+        'placeholder' => 'Mesaj Gönder',
+        'default' => 'Mesaj Gönder',
+    ],
+    'page_faq_heading' => [
+        'group' => 'page',
+        'label' => 'Sayfa SSS başlığı',
+        'placeholder' => 'Sayfa ile ilgili hızlı cevaplar',
+        'default' => 'Sayfa ile ilgili hızlı cevaplar',
+    ],
+];

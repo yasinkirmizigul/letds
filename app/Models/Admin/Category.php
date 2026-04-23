@@ -3,6 +3,7 @@
 namespace App\Models\Admin;
 
 use App\Models\Admin\BlogPost\BlogPost;
+use App\Models\Concerns\HasSiteLocaleTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,18 +13,20 @@ use Illuminate\Support\Str;
 
 class Category extends Model
 {
+    use HasSiteLocaleTranslations;
     use SoftDeletes;
 
     protected $casts = [
         'deleted_at' => 'datetime',
+        'is_active' => 'boolean',
     ];
-    protected $fillable = ['name', 'slug', 'parent_id'];
+    protected $fillable = ['name', 'slug', 'description', 'parent_id', 'is_active'];
     protected static function booted()
     {
         static::saving(function (Category $category) {
 
             // slug boşsa veya name değiştiyse yeniden üret
-            if (blank($category->slug) || $category->isDirty('name')) {
+            if (blank($category->slug)) {
 
                 $base = Str::slug($category->name) ?: 'category';
                 $slug = $base;
@@ -49,6 +52,11 @@ class Category extends Model
     public function children()
     {
         return $this->hasMany(self::class, 'parent_id');
+    }
+
+    public function translations(): HasMany
+    {
+        return $this->hasMany(CategoryTranslation::class, 'category_id');
     }
 
     public function descendantIds(): array

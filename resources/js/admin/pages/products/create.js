@@ -18,7 +18,7 @@ export default async function init(ctx) {
         return editor ? editor.getContent({ format: 'html' }) : (root.querySelector('#content_editor')?.value || '');
     });
 
-    await initTinyEditor(ctx, () => seoPanel.sync());
+    await initTinyEditor(ctx, () => seoPanel.sync(), '[data-localized-content-editor="true"]');
     seoPanel.sync();
 
     const createForm = root.querySelector('#product-create-form');

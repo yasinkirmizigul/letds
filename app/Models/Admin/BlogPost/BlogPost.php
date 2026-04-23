@@ -6,15 +6,18 @@ use App\Models\Admin\Category;
 use App\Models\Admin\Gallery\Gallery;
 use App\Models\Admin\Media\Media;
 use App\Models\Admin\User\User;
+use App\Models\Concerns\HasSiteLocaleTranslations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class BlogPost extends Model
 {
+    use HasSiteLocaleTranslations;
     use SoftDeletes;
 
     protected $table = 'blog_posts';
@@ -56,7 +59,15 @@ class BlogPost extends Model
                 ->orWhere('slug', 'like', "%{$term}%")
                 ->orWhere('excerpt', 'like', "%{$term}%")
                 ->orWhere('meta_title', 'like', "%{$term}%")
-                ->orWhere('meta_description', 'like', "%{$term}%");
+                ->orWhere('meta_description', 'like', "%{$term}%")
+                ->orWhereHas('translations', function (Builder $translationQuery) use ($term) {
+                    $translationQuery
+                        ->where('title', 'like', "%{$term}%")
+                        ->orWhere('slug', 'like', "%{$term}%")
+                        ->orWhere('excerpt', 'like', "%{$term}%")
+                        ->orWhere('meta_title', 'like', "%{$term}%")
+                        ->orWhere('meta_description', 'like', "%{$term}%");
+                });
         });
     }
 
@@ -83,6 +94,11 @@ class BlogPost extends Model
     public function editor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function translations(): HasMany
+    {
+        return $this->hasMany(BlogPostTranslation::class, 'blog_post_id');
     }
 
     public function featuredMedia(): MorphToMany
@@ -161,7 +177,7 @@ class BlogPost extends Model
 
     public function excerptPreview(int $limit = 140): string
     {
-        $source = $this->excerpt ?: strip_tags((string) $this->content);
+        $source = $this->localizedValue('excerpt') ?: strip_tags((string) $this->localizedValue('content'));
         $normalized = preg_replace('/\s+/u', ' ', trim((string) $source));
 
         return Str::limit($normalized, $limit);

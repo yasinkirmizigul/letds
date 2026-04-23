@@ -1,4 +1,6 @@
-@php($product = $product ?? null)
+@php
+    $product = $product ?? null;
+@endphp
 
 <div class="kt-card kt-card-border" data-gallery-manager
      data-galleryable-type="{{ addslashes(\App\Models\Admin\Product\Product::class) }}"

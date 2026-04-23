@@ -15,9 +15,27 @@ class UpdateCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'      => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
+            'slug' => ['nullable', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'is_active' => ['nullable', 'boolean'],
             'parent_id' => ['nullable', 'integer', 'exists:categories,id'],
+            'translations' => ['nullable', 'array'],
+            'translations.*.name' => ['nullable', 'string', 'max:255'],
+            'translations.*.slug' => ['nullable', 'string', 'max:255'],
+            'translations.*.description' => ['nullable', 'string'],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->input('parent_id') === '') {
+            $this->merge(['parent_id' => null]);
+        }
+
+        if (!$this->has('is_active')) {
+            $this->merge(['is_active' => 0]);
+        }
     }
 
     public function withValidator($validator): void

@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'site_languages.view' => 'Site Languages View',
+    'site_languages.create' => 'Site Languages Create',
+    'site_languages.update' => 'Site Languages Update',
+    'site_languages.delete' => 'Site Languages Delete',
+
     'site_pages.view' => 'Site Pages View',
     'site_pages.create' => 'Site Pages Create',
     'site_pages.update' => 'Site Pages Update',

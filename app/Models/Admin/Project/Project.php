@@ -5,14 +5,17 @@ namespace App\Models\Admin\Project;
 use App\Models\Admin\Category;
 use App\Models\Admin\Gallery\Gallery;
 use App\Models\Admin\Media\Media;
+use App\Models\Concerns\HasSiteLocaleTranslations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class Project extends Model
 {
+    use HasSiteLocaleTranslations;
     use SoftDeletes;
 
     protected $table = 'projects';
@@ -127,7 +130,15 @@ class Project extends Model
                 ->orWhere('slug', 'like', "%{$term}%")
                 ->orWhere('content', 'like', "%{$term}%")
                 ->orWhere('meta_title', 'like', "%{$term}%")
-                ->orWhere('meta_description', 'like', "%{$term}%");
+                ->orWhere('meta_description', 'like', "%{$term}%")
+                ->orWhereHas('translations', function (Builder $translationQuery) use ($term) {
+                    $translationQuery
+                        ->where('title', 'like', "%{$term}%")
+                        ->orWhere('slug', 'like', "%{$term}%")
+                        ->orWhere('content', 'like', "%{$term}%")
+                        ->orWhere('meta_title', 'like', "%{$term}%")
+                        ->orWhere('meta_description', 'like', "%{$term}%");
+                });
         });
     }
 
@@ -188,6 +199,11 @@ class Project extends Model
         )
             ->withTimestamps()
             ->withTrashed();
+    }
+
+    public function translations(): HasMany
+    {
+        return $this->hasMany(ProjectTranslation::class, 'project_id');
     }
 
     public function galleries(): MorphToMany
@@ -272,7 +288,7 @@ class Project extends Model
 
     public function excerptPreview(int $limit = 140): string
     {
-        $normalized = preg_replace('/\s+/u', ' ', trim(strip_tags((string) $this->content)));
+        $normalized = preg_replace('/\s+/u', ' ', trim(strip_tags((string) $this->localizedValue('content'))));
 
         return Str::limit($normalized, $limit);
     }

@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Blog\BlogStoreRequest;
 use App\Http\Requests\Admin\Blog\BlogUpdateRequest;
 use App\Models\Admin\BlogPost\BlogPost;
+use App\Models\Admin\BlogPost\BlogPostTranslation;
 use App\Models\Admin\Category;
+use App\Services\Content\LocalizedContentTranslationService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -18,6 +20,20 @@ use Illuminate\Validation\ValidationException;
 
 class BlogPostController extends Controller
 {
+    private const TRANSLATION_FIELDS = [
+        'title',
+        'slug',
+        'excerpt',
+        'content',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
+    ];
+
+    public function __construct(
+        private readonly LocalizedContentTranslationService $translationService,
+    ) {}
+
     public function index(Request $request): View
     {
         $mode = $request->string('mode', 'active')->toString();
@@ -44,6 +60,7 @@ class BlogPostController extends Controller
                 'author:id,name',
                 'categories:id,name',
                 'featuredMedia',
+                'translations',
             ])
             ->search($q)
             ->when(!empty($selectedCategoryIds), function ($builder) use ($selectedCategoryIds) {
@@ -94,7 +111,7 @@ class BlogPostController extends Controller
         $perPage = max(1, min(100, (int) $request->input('perpage', 25)));
 
         $query = ($mode === 'trash' ? BlogPost::onlyTrashed() : BlogPost::query())
-            ->with(['categories:id,name', 'author:id,name'])
+            ->with(['categories:id,name', 'author:id,name', 'translations'])
             ->search($q)
             ->when($status === 'published', fn ($builder) => $builder->published())
             ->when($status === 'draft', fn ($builder) => $builder->draft())
@@ -135,6 +152,7 @@ class BlogPostController extends Controller
         $post = DB::transaction(function () use ($validated, $request) {
             $post = BlogPost::create($this->buildPersistenceData($validated, $request));
             $this->syncCategories($post, $validated['category_ids'] ?? []);
+            $this->syncTranslations($post, $validated['translations'] ?? []);
 
             return $post;
         });
@@ -157,8 +175,10 @@ class BlogPostController extends Controller
             'categories:id,name,parent_id',
             'featuredMedia',
             'author:id,name',
-            'editör:id,name',
+            'editor:id,name',
         ]);
+
+        $blogPost->loadMissing('translations');
 
         $categories = Category::query()
             ->orderBy('name')
@@ -184,6 +204,7 @@ class BlogPostController extends Controller
             $blogPost = BlogPost::query()->lockForUpdate()->findOrFail($blogPost->id);
             $blogPost->update($this->buildPersistenceData($validated, $request, $blogPost));
             $this->syncCategories($blogPost, $validated['category_ids'] ?? []);
+            $this->syncTranslations($blogPost, $validated['translations'] ?? []);
         });
 
         $this->syncFeaturedAsset(
@@ -426,6 +447,17 @@ class BlogPostController extends Controller
         $post->categories()->sync($ids);
     }
 
+    private function syncTranslations(BlogPost $post, array $translations): void
+    {
+        $this->translationService->sync(
+            $post,
+            'translations',
+            $translations,
+            self::TRANSLATION_FIELDS,
+            $this->slugConfig('blog-yazisi')
+        );
+    }
+
     private function syncFeaturedAsset(
         BlogPost $post,
         Request $request,
@@ -532,12 +564,25 @@ class BlogPostController extends Controller
                 ->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
                 ->where('slug', $candidate)
                 ->exists()
+            || BlogPostTranslation::query()
+                ->where('slug', $candidate)
+                ->exists()
         ) {
             $candidate = $base . '-' . $suffix;
             $suffix++;
         }
 
         return $candidate;
+    }
+
+    private function slugConfig(string $fallback): array
+    {
+        return [
+            'base_model' => BlogPost::class,
+            'translation_model' => BlogPostTranslation::class,
+            'foreign_key' => 'blog_post_id',
+            'fallback' => $fallback,
+        ];
     }
 
     private function validatedBulkIds(Request $request): array

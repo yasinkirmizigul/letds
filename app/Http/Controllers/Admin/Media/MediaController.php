@@ -5,13 +5,19 @@ namespace App\Http\Controllers\Admin\Media;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Media\Media;
 use App\Services\Admin\Media\MediaService;
+use App\Services\Content\LocalizedContentTranslationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Throwable;
 
 class MediaController extends Controller
 {
-    public function __construct(private readonly MediaService $mediaService) {}
+    private const TRANSLATION_FIELDS = ['title', 'alt', 'caption', 'description'];
+
+    public function __construct(
+        private readonly MediaService $mediaService,
+        private readonly LocalizedContentTranslationService $translationService,
+    ) {}
 
     public function index()
     {
@@ -53,9 +59,18 @@ class MediaController extends Controller
             $query->where(function ($builder) use ($term) {
                 $builder->where('original_name', 'like', "%{$term}%")
                     ->orWhere('title', 'like', "%{$term}%")
-                    ->orWhere('alt', 'like', "%{$term}%");
+                    ->orWhere('alt', 'like', "%{$term}%")
+                    ->orWhereHas('translations', function ($translationQuery) use ($term) {
+                        $translationQuery
+                            ->where('title', 'like', "%{$term}%")
+                            ->orWhere('alt', 'like', "%{$term}%")
+                            ->orWhere('caption', 'like', "%{$term}%")
+                            ->orWhere('description', 'like', "%{$term}%");
+                    });
             });
         }
+
+        $query->with('translations');
 
         $perPage = max(1, min(96, (int) $request->input('perpage', 24)));
         $items = $query->paginate($perPage);
@@ -81,6 +96,11 @@ class MediaController extends Controller
                 'files.*' => ['file', 'max:20480'],
                 'title' => ['nullable', 'string', 'max:255'],
                 'alt' => ['nullable', 'string', 'max:255'],
+                'translations' => ['nullable', 'array'],
+                'translations.*.title' => ['nullable', 'string', 'max:255'],
+                'translations.*.alt' => ['nullable', 'string', 'max:255'],
+                'translations.*.caption' => ['nullable', 'string'],
+                'translations.*.description' => ['nullable', 'string'],
             ]);
 
             $title = $request->input('title');
@@ -94,6 +114,8 @@ class MediaController extends Controller
                         'title' => $title,
                         'alt' => $alt,
                     ]);
+                    $this->syncTranslations($media, $request->input('translations', []));
+                    $media->load('translations');
                     $uploaded[] = $this->mediaPayload($media);
                 }
 
@@ -108,6 +130,8 @@ class MediaController extends Controller
                 'title' => $title,
                 'alt' => $alt,
             ]);
+            $this->syncTranslations($media, $request->input('translations', []));
+            $media->load('translations');
 
             return response()->json([
                 'ok' => true,
@@ -122,6 +146,32 @@ class MediaController extends Controller
                 'error' => ['message' => $exception->getMessage()],
             ], 422);
         }
+    }
+
+    public function update(Request $request, Media $media): JsonResponse
+    {
+        $payload = $request->validate([
+            'title' => ['nullable', 'string', 'max:255'],
+            'alt' => ['nullable', 'string', 'max:255'],
+            'translations' => ['nullable', 'array'],
+            'translations.*.title' => ['nullable', 'string', 'max:255'],
+            'translations.*.alt' => ['nullable', 'string', 'max:255'],
+            'translations.*.caption' => ['nullable', 'string'],
+            'translations.*.description' => ['nullable', 'string'],
+        ]);
+
+        $media->update([
+            'title' => $payload['title'] ?? null,
+            'alt' => $payload['alt'] ?? null,
+        ]);
+
+        $this->syncTranslations($media, $payload['translations'] ?? []);
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'Medya bilgileri güncellendi.',
+            'data' => $this->mediaPayload($media->fresh('translations')),
+        ]);
     }
 
     public function destroy(Media $media): JsonResponse
@@ -218,6 +268,8 @@ class MediaController extends Controller
             'url' => $media->url(),
             'thumb_url' => $media->thumbUrl(),
             'original_name' => $media->original_name,
+            'title' => $media->title,
+            'alt' => $media->alt,
             'mime_type' => $media->mime_type,
             'size' => (int) $media->size,
             'width' => $media->width,
@@ -225,7 +277,29 @@ class MediaController extends Controller
             'is_image' => $media->isImage(),
             'created_at' => $media->created_at?->toDateTimeString(),
             'deleted_at' => $media->deleted_at?->toDateTimeString(),
+            'translations' => $media->relationLoaded('translations')
+                ? $media->translations
+                    ->mapWithKeys(fn ($translation) => [
+                        $translation->locale => [
+                            'title' => $translation->title,
+                            'alt' => $translation->alt,
+                            'caption' => $translation->caption,
+                            'description' => $translation->description,
+                        ],
+                    ])
+                    ->all()
+                : [],
         ];
+    }
+
+    private function syncTranslations(Media $media, array $translations): void
+    {
+        $this->translationService->sync(
+            $media,
+            'translations',
+            $translations,
+            self::TRANSLATION_FIELDS
+        );
     }
 
     private function validatedIds($ids): array

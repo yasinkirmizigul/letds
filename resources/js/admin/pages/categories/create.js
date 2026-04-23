@@ -1,48 +1,23 @@
-function slugifyTR(str) {
-    return String(str || '')
-        .trim()
-        .toLowerCase()
-        .replaceAll('ğ', 'g').replaceAll('ü', 'u').replaceAll('ş', 's')
-        .replaceAll('ı', 'i').replaceAll('ö', 'o').replaceAll('ç', 'c')
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '');
-}
+import initSlugManager from '@/core/slug-manager';
 
-export default function init({ root }) {
-    const nameEl = root.querySelector('#cat_name');
-    const slugEl = root.querySelector('#cat_slug');
-    const autoEl = root.querySelector('#slug_auto');
-    const regenEl = root.querySelector('#slug_regen');
-    const previewEl = root.querySelector('#slug_preview');
+export default function init({ root, signal }) {
+    initSlugManager(root, {
+        sourceSelector: '#cat_name',
+        slugSelector: '#cat_slug',
+        previewSelector: '#url_slug_preview',
+        autoSelector: '#slug_auto',
+        regenSelector: '#slug_regen',
+        generateOnInit: true,
+    }, signal);
 
-    if (!slugEl) return;
-
-    const syncPreview = () => {
-        if (!previewEl) return;
-        previewEl.textContent = (slugEl.value || '').trim();
-    };
-
-    const setSlugFromName = () => {
-        if (!nameEl) return;
-        slugEl.value = slugifyTR(nameEl.value);
-        syncPreview();
-    };
-
-    // ilk render
-    syncPreview();
-
-    // auto: name -> slug
-    nameEl?.addEventListener('input', () => {
-        if (!autoEl?.checked) return;
-        setSlugFromName();
+    root.querySelectorAll('[data-locale-slug-scope="true"]').forEach((scope) => {
+        initSlugManager(scope, {
+            sourceSelector: '[data-locale-title="true"]',
+            slugSelector: '[data-locale-slug="true"]',
+            previewSelector: '[data-slug-preview="true"]',
+            autoSelector: '[data-slug-auto="true"]',
+            regenSelector: '[data-slug-regen="true"]',
+            generateOnInit: true,
+        }, signal);
     });
-
-    // manuel slug yazınca preview güncelle
-    slugEl.addEventListener('input', syncPreview);
-
-    // regen
-    regenEl?.addEventListener('click', setSlugFromName);
 }

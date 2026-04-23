@@ -7,6 +7,8 @@ use App\Http\Requests\Admin\Product\ProductStoreRequest;
 use App\Http\Requests\Admin\Product\ProductUpdateRequest;
 use App\Models\Admin\Category;
 use App\Models\Admin\Product\Product;
+use App\Models\Admin\Product\ProductTranslation;
+use App\Services\Content\LocalizedContentTranslationService;
 use App\Support\Audit\AuditEvent;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -19,6 +21,19 @@ use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
 {
+    private const TRANSLATION_FIELDS = [
+        'title',
+        'slug',
+        'content',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
+    ];
+
+    public function __construct(
+        private readonly LocalizedContentTranslationService $translationService,
+    ) {}
+
     public function index(Request $request): View
     {
         $mode = $request->string('mode', 'active')->toString();
@@ -41,7 +56,7 @@ class ProductController extends Controller
             ->get(['id', 'name', 'parent_id']);
 
         $products = ($isTrash ? Product::onlyTrashed() : Product::query())
-            ->with(['categories:id,name', 'featuredMedia'])
+            ->with(['categories:id,name', 'featuredMedia', 'translations'])
             ->search($q)
             ->inStatus($status)
             ->when(!empty($selectedCategoryIds), function ($builder) use ($selectedCategoryIds) {
@@ -96,7 +111,7 @@ class ProductController extends Controller
             ->all();
 
         $items = ($mode === 'trash' ? Product::onlyTrashed() : Product::query())
-            ->with(['categories:id,name', 'featuredMedia'])
+            ->with(['categories:id,name', 'featuredMedia', 'translations'])
             ->search($q)
             ->inStatus($status)
             ->when(!empty($selectedCategoryIds), function ($builder) use ($selectedCategoryIds) {
@@ -140,6 +155,7 @@ class ProductController extends Controller
         $product = DB::transaction(function () use ($validated) {
             $product = Product::create($this->buildPersistenceData($validated));
             $this->syncCategories($product, $validated['category_ids'] ?? []);
+            $this->syncTranslations($product, $validated['translations'] ?? []);
 
             return $product;
         });
@@ -163,7 +179,7 @@ class ProductController extends Controller
 
     public function edit(Product $product): View
     {
-        $product->load(['categories:id,name,parent_id', 'featuredMedia']);
+        $product->load(['categories:id,name,parent_id', 'featuredMedia', 'translations']);
 
         $categories = Category::query()
             ->orderBy('name')
@@ -192,6 +208,7 @@ class ProductController extends Controller
             $product = Product::query()->lockForUpdate()->findOrFail($product->id);
             $product->update($this->buildPersistenceData($validated, $product));
             $this->syncCategories($product, $validated['category_ids'] ?? []);
+            $this->syncTranslations($product, $validated['translations'] ?? []);
         });
 
         $this->syncFeaturedAsset(
@@ -497,6 +514,17 @@ class ProductController extends Controller
         $product->categories()->sync($ids);
     }
 
+    private function syncTranslations(Product $product, array $translations): void
+    {
+        $this->translationService->sync(
+            $product,
+            'translations',
+            $translations,
+            self::TRANSLATION_FIELDS,
+            $this->slugConfig('urun')
+        );
+    }
+
     private function syncFeaturedAsset(
         Product $product,
         Request $request,
@@ -621,12 +649,25 @@ class ProductController extends Controller
                 ->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
                 ->where('slug', $candidate)
                 ->exists()
+            || ProductTranslation::query()
+                ->where('slug', $candidate)
+                ->exists()
         ) {
             $candidate = $base . '-' . $suffix;
             $suffix++;
         }
 
         return $candidate;
+    }
+
+    private function slugConfig(string $fallback): array
+    {
+        return [
+            'base_model' => Product::class,
+            'translation_model' => ProductTranslation::class,
+            'foreign_key' => 'product_id',
+            'fallback' => $fallback,
+        ];
     }
 
     private function categoryOptions($categories): array

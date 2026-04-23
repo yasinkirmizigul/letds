@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('avatar_media_id')->nullable()->constrained('media')->nullOnDelete();
             $table->string('name');
+            $table->string('title')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

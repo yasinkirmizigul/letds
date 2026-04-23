@@ -173,6 +173,18 @@ export function initMediaUploadModal(scope = document) {
         renderQueue();
     }
 
+    function appendTranslations(formData) {
+        modal.querySelectorAll('[data-media-translation="true"]').forEach((input) => {
+            const locale = input.getAttribute('data-locale') || '';
+            const field = input.getAttribute('data-field') || '';
+            const value = String(input.value || '').trim();
+
+            if (!locale || !field || !value) return;
+
+            formData.append(`translations[${locale}][${field}]`, value);
+        });
+    }
+
     async function uploadOne(q) {
         q.status = 'uploading';
         q.progress = 30;
@@ -186,6 +198,7 @@ export function initMediaUploadModal(scope = document) {
         const a = (q.alt || '').trim() || (altEl?.value || '').trim();
         if (t) fd.append('title', t);
         if (a) fd.append('alt', a);
+        appendTranslations(fd);
 
         let j = {};
         try {

@@ -5,6 +5,7 @@
         $createLocation = old('location', \App\Models\Site\SiteNavigationItem::LOCATION_PRIMARY);
         $createLinkType = old('link_type', $pages->isNotEmpty() ? \App\Models\Site\SiteNavigationItem::LINK_TYPE_PAGE : \App\Models\Site\SiteNavigationItem::LINK_TYPE_CUSTOM);
         $createTarget = old('target', \App\Models\Site\SiteNavigationItem::TARGET_SELF);
+        $extraLanguages = collect($siteLanguages ?? [])->where('code', '!=', $siteDefaultLocale)->values();
     @endphp
 
     <div
@@ -28,7 +29,7 @@
                 <div>
                     <h1 class="text-xl font-semibold">Menü ve Navbar Yönetimi</h1>
                     <div class="text-sm text-muted-foreground">
-                        İçerik sayfalarını menüye bağla, parent-child yapıyı sürükle-bırak ile kur ve aktiflik durumlarını yönet.
+                        İçerik sayfalarını menüye bağla, parent-child yapıyı sürükle-bırak ile kur ve her dildeki menü başlıklarını yönet.
                     </div>
                 </div>
             </div>
@@ -41,7 +42,7 @@
             <div class="rounded-3xl app-stat-card p-5"><div class="text-sm text-muted-foreground">Alt Menü</div><div class="mt-2 text-3xl font-semibold text-warning">{{ $stats['footer'] ?? 0 }}</div></div>
         </div>
 
-        <div class="grid gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
+        <div class="grid gap-6 xl:grid-cols-[420px_minmax(0,1fr)]">
             <div class="kt-card">
                 <div class="kt-card-header py-5">
                     <div>
@@ -60,17 +61,11 @@
                                 <option value="{{ $value }}" @selected($createLocation === $value)>{{ $label }}</option>
                             @endforeach
                         </select>
-                        @error('location')
-                            <div class="text-xs text-danger">{{ $message }}</div>
-                        @enderror
                     </div>
 
                     <div class="grid gap-2">
                         <label class="kt-form-label">Başlık</label>
                         <input name="title" class="kt-input @error('title') kt-input-invalid @enderror" value="{{ old('title') }}" placeholder="Örn. Hizmetlerimiz">
-                        @error('title')
-                            <div class="text-xs text-danger">{{ $message }}</div>
-                        @enderror
                     </div>
 
                     <div class="grid gap-2">
@@ -80,9 +75,6 @@
                                 <option value="{{ $value }}" @selected($createLinkType === $value)>{{ $label }}</option>
                             @endforeach
                         </select>
-                        @error('link_type')
-                            <div class="text-xs text-danger">{{ $message }}</div>
-                        @enderror
                     </div>
 
                     <div class="grid gap-2 {{ $createLinkType === \App\Models\Site\SiteNavigationItem::LINK_TYPE_PAGE ? '' : 'hidden' }}" data-link-field="page">
@@ -95,30 +87,16 @@
                                 </option>
                             @endforeach
                         </select>
-                        @if($pages->isEmpty())
-                            <div class="text-xs text-warning">
-                                İçerik sayfası bulunamadı. Özel URL seçerek devam edebilir veya önce içerik üretebilirsin.
-                            </div>
-                        @endif
-                        @error('site_page_id')
-                            <div class="text-xs text-danger">{{ $message }}</div>
-                        @enderror
                     </div>
 
                     <div class="grid gap-2 {{ $createLinkType === \App\Models\Site\SiteNavigationItem::LINK_TYPE_CUSTOM ? '' : 'hidden' }}" data-link-field="url">
                         <label class="kt-form-label">Özel URL</label>
                         <input name="url" class="kt-input @error('url') kt-input-invalid @enderror" value="{{ old('url') }}" placeholder="https://ornek.com veya /iletisim">
-                        @error('url')
-                            <div class="text-xs text-danger">{{ $message }}</div>
-                        @enderror
                     </div>
 
                     <div class="grid gap-2">
                         <label class="kt-form-label">İkon</label>
                         <input name="icon_class" class="kt-input @error('icon_class') kt-input-invalid @enderror" value="{{ old('icon_class', 'ki-filled ki-arrow-right') }}">
-                        @error('icon_class')
-                            <div class="text-xs text-danger">{{ $message }}</div>
-                        @enderror
                     </div>
 
                     <div class="grid gap-2">
@@ -128,10 +106,24 @@
                                 <option value="{{ $value }}" @selected($createTarget === $value)>{{ $label }}</option>
                             @endforeach
                         </select>
-                        @error('target')
-                            <div class="text-xs text-danger">{{ $message }}</div>
-                        @enderror
                     </div>
+
+                    @if($extraLanguages->isNotEmpty())
+                        <details class="rounded-3xl app-surface-card app-surface-card--soft p-4">
+                            <summary class="cursor-pointer list-none text-sm font-medium text-foreground">Dil karşılıklarını ekle</summary>
+                            <div class="mt-4 grid gap-4">
+                                @foreach($extraLanguages as $language)
+                                    <div class="rounded-2xl bg-background px-4 py-4">
+                                        <div class="mb-3 flex items-center justify-between gap-3">
+                                            <div class="font-medium text-foreground">{{ $language->native_name }}</div>
+                                            <span class="kt-badge kt-badge-sm kt-badge-light">{{ $language->code }}</span>
+                                        </div>
+                                        <input name="translations[{{ $language->code }}][title]" class="kt-input" value="{{ old("translations.{$language->code}.title") }}" placeholder="Bu dilde menü başlığı">
+                                    </div>
+                                @endforeach
+                            </div>
+                        </details>
+                    @endif
 
                     <label class="flex items-start gap-3 rounded-2xl app-surface-card app-surface-card--soft p-4">
                         <input type="hidden" name="is_active" value="0">

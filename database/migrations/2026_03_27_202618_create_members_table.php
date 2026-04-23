@@ -12,12 +12,20 @@ return new class extends Migration {
             $table->string('name');
             $table->string('surname');
             $table->string('filepath')->nullable();
+            $table->string('file_disk', 40)->nullable();
+            $table->string('file_original_name')->nullable();
+            $table->string('file_mime_type', 190)->nullable();
+            $table->unsignedBigInteger('file_size')->nullable();
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->boolean('is_active')->default(true);
+            $table->timestamp('last_login_at')->nullable();
+            $table->timestamp('suspended_at')->nullable();
+            $table->string('suspension_reason')->nullable();
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
 
             $table->index(['is_active', 'email']);

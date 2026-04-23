@@ -47,7 +47,9 @@
                  data-kt-menu="true"
                  data-kt-menu-accordion-expand-all="false"
                  id="sidebar_menu">
-                @php($menu = config('admin_menu', []))
+                @php
+                    $menu = config('admin_menu', []);
+                @endphp
 
                 @foreach($menu as $item)
                     @include('admin.layouts.main.sidebar._sidebar_item', ['item' => $item])

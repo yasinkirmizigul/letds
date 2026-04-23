@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Site;
 use App\Http\Controllers\Controller;
 use App\Models\Site\SiteFaq;
 use App\Models\Site\SitePage;
+use App\Services\Site\SiteTranslationSyncService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -13,17 +14,21 @@ use Illuminate\Support\Facades\DB;
 
 class FaqController extends Controller
 {
+    public function __construct(
+        private readonly SiteTranslationSyncService $translationSyncService,
+    ) {}
+
     public function index(): View
     {
         $faqs = SiteFaq::query()
-            ->with('page:id,title')
+            ->with(['page:id,title', 'translations'])
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get();
 
         return view('admin.pages.site.faqs.index', [
             'faqs' => $faqs,
-            'pages' => SitePage::query()->orderBy('title')->get(['id', 'title']),
+            'pages' => SitePage::query()->with('translations')->orderBy('title')->get(['id', 'title']),
             'stats' => [
                 'all' => SiteFaq::query()->count(),
                 'active' => SiteFaq::query()->where('is_active', true)->count(),
@@ -35,7 +40,17 @@ class FaqController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        SiteFaq::create($this->validated($request));
+        $validated = $this->validated($request);
+        $payload = collect($validated)->except('translations')->all();
+
+        $faq = SiteFaq::create($payload);
+
+        $this->translationSyncService->sync(
+            $faq,
+            'translations',
+            $validated['translations'] ?? [],
+            ['group_label', 'question', 'answer']
+        );
 
         return redirect()
             ->route('admin.site.faqs.index')
@@ -44,7 +59,17 @@ class FaqController extends Controller
 
     public function update(Request $request, SiteFaq $siteFaq): RedirectResponse
     {
-        $siteFaq->update($this->validated($request));
+        $validated = $this->validated($request);
+        $payload = collect($validated)->except('translations')->all();
+
+        $siteFaq->update($payload);
+
+        $this->translationSyncService->sync(
+            $siteFaq,
+            'translations',
+            $validated['translations'] ?? [],
+            ['group_label', 'question', 'answer']
+        );
 
         return redirect()
             ->route('admin.site.faqs.index')
@@ -90,6 +115,10 @@ class FaqController extends Controller
             'answer' => ['required', 'string'],
             'icon_class' => ['nullable', 'string', 'max:255'],
             'is_active' => ['nullable', 'boolean'],
+            'translations' => ['nullable', 'array'],
+            'translations.*.group_label' => ['nullable', 'string', 'max:120'],
+            'translations.*.question' => ['nullable', 'string', 'max:255'],
+            'translations.*.answer' => ['nullable', 'string'],
         ]) + [
             'is_active' => $request->boolean('is_active'),
         ];

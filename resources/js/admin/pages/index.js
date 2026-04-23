@@ -44,9 +44,12 @@ import ProductsTrash from './products/trash';
 import AppointmentsCalendar from './appointments/calendar';
 import AppointmentsSettings from './appointments/settings';
 import MessagesIndex from './messages/index';
+import MembersIndex from './members/index';
+import MembersShow from './members/show';
 import SitePagesCreate from './site/pages/create';
 import SitePagesEdit from './site/pages/edit';
 import SitePagesIndex from './site/pages/index';
+import SiteLanguagesIndex from './site/languages/index';
 import SiteFaqsIndex from './site/faqs/index';
 import SiteCountersIndex from './site/counters/index';
 import SiteNavigationIndex from './site/navigation/index';
@@ -102,7 +105,10 @@ export function registerPages() {
     register('appointments.calendar', AppointmentsCalendar);
     register('appointments.settings', AppointmentsSettings);
     register('messages.index', MessagesIndex);
+    register('members.index', MembersIndex);
+    register('members.show', MembersShow);
 
+    register('site.languages.index', SiteLanguagesIndex);
     register('site.pages.index', SitePagesIndex);
     register('site.pages.create', SitePagesCreate);
     register('site.pages.edit', SitePagesEdit);

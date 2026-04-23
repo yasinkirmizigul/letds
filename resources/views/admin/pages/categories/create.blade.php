@@ -2,128 +2,30 @@
 
 @section('content')
     <div class="kt-container-fixed max-w-[90%]" data-page="categories.create">
-        <div class="grid gap-5 lg:gap-7.5">
+        @includeIf('admin.partials._flash')
 
-            @includeIf('admin.partials._flash')
-
-            <div class="flex items-center justify-between flex-wrap gap-4">
-                <div class="flex flex-col">
-                    <h1 class="text-xl font-semibold">{{ $pageTitle ?? 'Yeni Kategori' }}</h1>
-                    <div class="text-sm text-muted-foreground">Ortak kategori sistemi (blog/galeri/ürün)</div>
-                </div>
-
-                <a href="{{ route('admin.categories.index') }}" class="kt-btn kt-btn-light">
-                    Geri
-                </a>
+        <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <div>
+                <h1 class="text-xl font-semibold">{{ $pageTitle ?? 'Yeni Kategori' }}</h1>
+                <div class="text-sm text-muted-foreground">Blog, proje ve ürünlerde ortak kullanılan kategori yapısı.</div>
             </div>
-
-            <div class="kt-card kt-card-grid min-w-full">
-                <form method="POST" action="{{ route('admin.categories.store') }}">
-                    @csrf
-
-                    <div class="kt-card-content p-8">
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-                            {{-- LEFT --}}
-                            <div class="lg:col-span-2 flex flex-col gap-6">
-
-                                {{-- Name + Slug Auto (same row) --}}
-                                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-end">
-                                    <div class="lg:col-span-2 flex flex-col gap-2">
-                                        <label class="kt-form-label font-normal text-mono">Kategori Adı</label>
-                                        <input
-                                            id="cat_name"
-                                            class="kt-input @error('name') kt-input-invalid @enderror"
-                                            name="name"
-                                            value="{{ old('name') }}"
-                                            required
-                                        />
-                                        @error('name')
-                                        <div class="text-xs text-danger">{{ $message }}</div> @enderror
-                                    </div>
-
-                                    <div class="flex items-center justify-between gap-3">
-                                        <div class="flex flex-col">
-                                            <span class="font-medium">Slug otomatik</span>
-                                            <span class="text-sm text-muted-foreground">Açık olursa ad→slug</span>
-                                        </div>
-
-                                        <label class="kt-switch kt-switch-sm">
-                                            <input id="slug_auto" type="checkbox" class="kt-switch kt-switch-mono"
-                                                   checked>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                {{-- Slug + Regen (same row) --}}
-                                <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 items-end">
-                                    <div class="lg:col-span-2 flex flex-col gap-2">
-                                        <label class="kt-form-label font-normal text-mono">Slug</label>
-                                        <div class="flex items-center justify-between gap-3">
-                                            <input
-                                                id="cat_slug"
-                                                class="kt-input @error('slug') kt-input-invalid @enderror"
-                                                name="slug"
-                                                value="{{ old('slug') }}"
-                                                placeholder="otomatik oluşur (istersen değiştir)"
-                                                required
-                                            />
-                                            <button type="button" id="slug_regen" class="kt-btn kt-btn-light">
-                                                Yeniden üret
-                                            </button>
-                                        </div>
-                                        @error('slug')
-                                        <div class="text-xs text-danger">{{ $message }}</div> @enderror
-
-                                        <div class="text-sm text-muted-foreground">
-                                            URL önizleme:
-                                            <span class="font-medium">/kategori/</span><span id="slug_preview"
-                                                                                             class="font-medium"></span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            {{-- RIGHT --}}
-                            <div class="lg:col-span-1 flex flex-col gap-6">
-                                {{-- Parent --}}
-                                <div class="flex flex-col gap-2">
-                                    <label class="kt-form-label font-normal text-mono">Üst Kategori</label>
-                                    <select id="parent_id" name="parent_id"
-                                            class="kt-select @error('parent_id') kt-input-invalid @enderror"
-                                            data-kt-select="true"
-                                            data-kt-select-placeholder="Üst Kategoriler..."
-                                            data-kt-select-config='{
-                                              "showSelectedCount": true
-                                            }'>
-                                        @foreach(($parentOptions ?? []) as $opt)
-                                            <option value="{{ $opt['id'] }}" @selected(old('parent_id') == $opt['id'])>
-                                                {{ $opt['label'] }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('parent_id')
-                                    <div class="text-sm text-danger mt-1">{{ $message }}</div>
-                                    @enderror
-
-                                    <div class="text-sm text-muted-foreground">
-                                        Üst kategori seçersen hiyerarşik bir ağaç oluşur.
-                                    </div>
-                                </div>
-
-                                <div class="flex gap-2 justify-center">
-                                    <button type="submit" class="kt-btn kt-btn-primary">Kaydet</button>
-                                    <a href="{{ route('admin.categories.index') }}"
-                                       class="kt-btn kt-btn-light">İptal</a>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </form>
+            <div class="flex items-center gap-2">
+                <a href="{{ route('admin.categories.index') }}" class="kt-btn kt-btn-light">Geri</a>
+                <button type="submit" form="category-create-form" class="kt-btn kt-btn-primary">Kaydet</button>
             </div>
-
         </div>
+
+        <form id="category-create-form" method="POST" action="{{ route('admin.categories.store') }}" class="grid gap-6">
+            @csrf
+            @include('admin.pages.categories.partials.form', [
+                'category' => null,
+                'parentOptions' => $parentOptions ?? [],
+            ])
+
+            <div class="flex justify-end gap-2">
+                <a href="{{ route('admin.categories.index') }}" class="kt-btn kt-btn-light">İptal</a>
+                <button type="submit" class="kt-btn kt-btn-primary">Kaydet</button>
+            </div>
+        </form>
     </div>
 @endsection

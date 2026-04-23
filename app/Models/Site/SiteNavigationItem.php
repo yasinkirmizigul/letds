@@ -2,7 +2,9 @@
 
 namespace App\Models\Site;
 
+use App\Models\Concerns\HasSiteLocaleTranslations;
 use App\Support\Site\NavigationTree;
+use App\Support\Site\SiteLocalization;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +13,8 @@ use Illuminate\Support\Collection;
 
 class SiteNavigationItem extends Model
 {
+    use HasSiteLocaleTranslations;
+
     public const LOCATION_PRIMARY = 'primary';
     public const LOCATION_FOOTER = 'footer';
 
@@ -69,10 +73,17 @@ class SiteNavigationItem extends Model
         return $this->belongsTo(SitePage::class, 'site_page_id');
     }
 
-    public function resolvedUrl(): string
+    public function translations(): HasMany
     {
+        return $this->hasMany(SiteNavigationItemTranslation::class)->orderBy('locale');
+    }
+
+    public function resolvedUrl(?string $locale = null): string
+    {
+        $locale = $locale ?: SiteLocalization::currentLocale();
+
         if ($this->link_type === self::LINK_TYPE_PAGE && $this->page?->slug) {
-            return route('site.pages.show', $this->page->slug);
+            return $this->page->publicUrl($locale);
         }
 
         return $this->url ?: '#';
@@ -105,5 +116,10 @@ class SiteNavigationItem extends Model
     public static function treeForLocation(string $location, bool $activeOnly = false): Collection
     {
         return NavigationTree::forLocation($location, $activeOnly);
+    }
+
+    public function localized(string $field, ?string $locale = null, mixed $fallback = null): mixed
+    {
+        return $this->localizedValue($field, $locale, $fallback);
     }
 }

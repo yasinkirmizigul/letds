@@ -9,16 +9,21 @@ use App\Models\Site\SiteFaq;
 use App\Models\Site\SiteNavigationItem;
 use App\Models\Site\SitePage;
 use App\Models\Site\SiteSetting;
+use App\Services\Site\SiteTranslationSyncService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class SiteSettingsController extends Controller
 {
+    public function __construct(
+        private readonly SiteTranslationSyncService $translationSyncService,
+    ) {}
+
     public function edit(): View
     {
         return view('admin.pages.site.settings.edit', [
-            'settings' => SiteSetting::current(),
+            'settings' => SiteSetting::current()->loadMissing('translations'),
             'stats' => [
                 'pages' => SitePage::query()->count(),
                 'sliders' => HomeSlider::query()->count(),
@@ -48,9 +53,25 @@ class SiteSettingsController extends Controller
             'under_construction_message' => ['nullable', 'string'],
             'social_links' => ['nullable', 'array'],
             'social_links.*' => ['nullable', 'string', 'max:255'],
+            'ui_lines' => ['nullable', 'array'],
+            'ui_lines.*' => ['nullable', 'string', 'max:500'],
+            'translations' => ['nullable', 'array'],
+            'translations.*.site_name' => ['nullable', 'string', 'max:255'],
+            'translations.*.site_tagline' => ['nullable', 'string', 'max:255'],
+            'translations.*.hero_notice' => ['nullable', 'string', 'max:500'],
+            'translations.*.address_line' => ['nullable', 'string'],
+            'translations.*.map_title' => ['nullable', 'string', 'max:255'],
+            'translations.*.office_hours' => ['nullable', 'string'],
+            'translations.*.footer_note' => ['nullable', 'string'],
+            'translations.*.under_construction_title' => ['nullable', 'string', 'max:255'],
+            'translations.*.under_construction_message' => ['nullable', 'string'],
+            'translations.*.ui_lines' => ['nullable', 'array'],
+            'translations.*.ui_lines.*' => ['nullable', 'string', 'max:500'],
         ]);
 
-        SiteSetting::current()->update([
+        $settings = SiteSetting::current();
+
+        $settings->update([
             'site_name' => $validated['site_name'] ?? null,
             'site_tagline' => $validated['site_tagline'] ?? null,
             'hero_notice' => $validated['hero_notice'] ?? null,
@@ -66,7 +87,26 @@ class SiteSettingsController extends Controller
             'under_construction_title' => $validated['under_construction_title'] ?? null,
             'under_construction_message' => $validated['under_construction_message'] ?? null,
             'social_links' => array_filter($validated['social_links'] ?? [], fn ($value) => filled($value)),
+            'ui_lines' => array_filter($validated['ui_lines'] ?? [], fn ($value) => filled($value)),
         ]);
+
+        $this->translationSyncService->sync(
+            $settings,
+            'translations',
+            $validated['translations'] ?? [],
+            [
+                'site_name',
+                'site_tagline',
+                'hero_notice',
+                'address_line',
+                'map_title',
+                'office_hours',
+                'footer_note',
+                'under_construction_title',
+                'under_construction_message',
+                'ui_lines',
+            ]
+        );
 
         return redirect()
             ->route('admin.site.settings.edit')

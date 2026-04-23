@@ -110,6 +110,13 @@ class ProductStoreRequest extends FormRequest
                 'integer',
                 Rule::exists('categories', 'id')->where(fn ($query) => $query->whereNull('deleted_at')),
             ],
+            'translations' => ['nullable', 'array'],
+            'translations.*.title' => ['nullable', 'string', 'max:255'],
+            'translations.*.slug' => ['nullable', 'string', 'max:255'],
+            'translations.*.content' => ['nullable', 'string'],
+            'translations.*.meta_title' => ['nullable', 'string', 'max:255'],
+            'translations.*.meta_description' => ['nullable', 'string', 'max:255'],
+            'translations.*.meta_keywords' => ['nullable', 'string', 'max:500'],
         ];
     }
 }

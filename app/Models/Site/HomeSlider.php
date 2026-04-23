@@ -3,12 +3,16 @@
 namespace App\Models\Site;
 
 use App\Models\Admin\Media\Media;
+use App\Models\Concerns\HasSiteLocaleTranslations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class HomeSlider extends Model
 {
+    use HasSiteLocaleTranslations;
+
     public const THEME_DARK = 'dark';
     public const THEME_LIGHT = 'light';
     public const THEME_BRAND = 'brand';
@@ -54,6 +58,11 @@ class HomeSlider extends Model
         return $this->belongsTo(Media::class, 'image_media_id');
     }
 
+    public function translations(): HasMany
+    {
+        return $this->hasMany(HomeSliderTranslation::class)->orderBy('locale');
+    }
+
     public function imageUrl(): ?string
     {
         if ($this->imageMedia) {
@@ -81,5 +90,10 @@ class HomeSlider extends Model
         $zoom = number_format(max(1, (float) ($this->crop_zoom ?? 1)), 2, '.', '');
 
         return sprintf('object-position:%s%% %s%%; transform:scale(%s);', $positionX, $positionY, $zoom);
+    }
+
+    public function localized(string $field, ?string $locale = null, mixed $fallback = null): mixed
+    {
+        return $this->localizedValue($field, $locale, $fallback);
     }
 }

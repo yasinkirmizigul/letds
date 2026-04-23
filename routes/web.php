@@ -31,9 +31,6 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', [HomeController::class, 'index'])
-    ->name('site.home');
-
 Route::get('/login', [AuthController::class, 'showLogin'])
     ->name('login');
 
@@ -435,6 +432,11 @@ Route::middleware(['auth', 'audit'])
                 ->middleware('permission:media.force_delete')
                 ->name('forceDestroy');
 
+            Route::patch('/{media}', [MediaController::class, 'update'])
+                ->whereNumber('media')
+                ->middleware('permission:media.update')
+                ->name('update');
+
             Route::delete('/{media}', [MediaController::class, 'destroy'])
                 ->whereNumber('media')
                 ->middleware('permission:media.delete')
@@ -618,7 +620,15 @@ Route::middleware(['auth', 'audit'])
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('member')->name('member.')->group(function () {
+Route::middleware(['site.locale', 'guest:member'])->group(function () {
+    Route::get('/uye-kayit', [MemberAuthController::class, 'showRegister'])
+        ->name('member.register');
+
+    Route::post('/uye-kayit', [MemberAuthController::class, 'register'])
+        ->name('member.register.post');
+});
+
+Route::middleware('site.locale')->prefix('member')->name('member.')->group(function () {
     Route::middleware('guest:member')->group(function () {
         Route::get('/login', [MemberAuthController::class, 'showLogin'])->name('login');
         Route::post('/login', [MemberAuthController::class, 'login'])->name('login.post');
@@ -635,7 +645,7 @@ Route::prefix('member')->name('member.')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth:member')->group(function () {
+Route::middleware(['site.locale', 'auth:member'])->group(function () {
     Route::get('/randevu-al', [AppointmentController::class, 'index'])
         ->name('member.appointments.index');
 
@@ -655,11 +665,26 @@ Route::middleware('auth:member')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/iletisim', [ContactMessageController::class, 'create'])
-    ->name('site.contact-messages.create');
+Route::middleware('site.locale')->group(function () {
+    Route::get('/', [HomeController::class, 'index'])
+        ->name('site.home');
 
-Route::post('/iletisim', [ContactMessageController::class, 'store'])
-    ->name('site.contact-messages.store');
+    Route::get('/iletisim', [ContactMessageController::class, 'create'])
+        ->name('site.contact-messages.create');
 
-Route::get('/{slug}', [PageController::class, 'show'])
-    ->name('site.pages.show');
+    Route::post('/iletisim', [ContactMessageController::class, 'store'])
+        ->name('site.contact-messages.store');
+
+    Route::prefix('{locale}')
+        ->where(['locale' => '[A-Za-z]{2}(?:-[A-Za-z]{2})?'])
+        ->group(function () {
+            Route::get('/', [HomeController::class, 'index'])
+                ->name('site.home.localized');
+
+            Route::get('/{slug}', [PageController::class, 'show'])
+                ->name('site.pages.show.localized');
+        });
+
+    Route::get('/{slug}', [PageController::class, 'show'])
+        ->name('site.pages.show');
+});

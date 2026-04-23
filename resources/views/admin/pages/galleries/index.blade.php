@@ -1,7 +1,9 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    @php($isTrash = ($mode ?? 'active') === 'trash')
+    @php
+        $isTrash = ($mode ?? 'active') === 'trash';
+    @endphp
 
     <div class="kt-container-fixed"
          data-page="galleries.index"
