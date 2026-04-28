@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Admin\User\Permission;
 use App\Models\Admin\User\Role;
 use App\Models\Admin\User\User;
+use App\Support\Rbac;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -23,6 +24,7 @@ class AdminSeeder extends Seeder
             'roles.view','roles.create','roles.update','roles.delete',
             'permissions.view','permissions.create','permissions.update','permissions.delete',
             'members.view','members.update','members.delete',
+            'site_payments.view','site_payments.create','site_payments.update','site_payments.delete',
         ])->pluck('id')->all();
 
         $admin->permissions()->sync($adminPerms);
@@ -45,6 +47,8 @@ class AdminSeeder extends Seeder
         } else {
             $this->command?->warn('AdminSeeder: user creation skipped (SEED_CREATE_USERS disabled).');
         }
+
+        Rbac::bumpVersion();
 
         $this->command?->info('AdminSeeder: role synced (auth management perms).');
     }

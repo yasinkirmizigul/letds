@@ -10,6 +10,7 @@ import { registerPages } from './admin/pages/index';
 import { initMediaPicker } from './core/media-picker';
 import { initMediaUploadModal } from './core/media-upload-modal';
 import initFeaturedImageManager from '@/core/featured-image-manager';
+import './site/auth/member-register';
 
 window.Swal = Swal;
 window.swal = Swal;

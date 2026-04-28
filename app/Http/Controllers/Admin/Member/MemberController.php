@@ -103,6 +103,7 @@ class MemberController extends Controller
                 'phone' => filled($validated['phone'] ?? null) ? trim((string) $validated['phone']) : null,
                 'is_active' => $isActive,
                 'suspended_at' => $isActive ? null : ($member->suspended_at ?: now()),
+                'membership_ended_at' => $isActive ? null : $member->membership_ended_at,
                 'suspension_reason' => $isActive ? null : ($suspensionReason ?: 'Yönetici işlemi ile askıya alındı.'),
             ];
 
@@ -135,6 +136,7 @@ class MemberController extends Controller
         $member->forceFill([
             'is_active' => $activate,
             'suspended_at' => $activate ? null : now(),
+            'membership_ended_at' => $activate ? null : $member->membership_ended_at,
             'suspension_reason' => $activate
                 ? null
                 : (filled($validated['suspension_reason'] ?? null)

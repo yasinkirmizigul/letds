@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use App\Models\ContactMessage;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Notifications\MemberResetPasswordNotification;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,7 +14,9 @@ use Illuminate\Support\Facades\Storage;
 
 class Member extends Authenticatable
 {
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory;
+    use Notifiable;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -28,8 +31,11 @@ class Member extends Authenticatable
         'password',
         'is_active',
         'email_verified_at',
+        'membership_terms_accepted_at',
+        'membership_terms_version',
         'last_login_at',
         'suspended_at',
+        'membership_ended_at',
         'suspension_reason',
     ];
 
@@ -43,9 +49,11 @@ class Member extends Authenticatable
         return [
             'password' => 'hashed',
             'email_verified_at' => 'datetime',
+            'membership_terms_accepted_at' => 'datetime',
             'is_active' => 'boolean',
             'last_login_at' => 'datetime',
             'suspended_at' => 'datetime',
+            'membership_ended_at' => 'datetime',
             'deleted_at' => 'datetime',
         ];
     }
@@ -166,6 +174,21 @@ class Member extends Authenticatable
     public function isSuspended(): bool
     {
         return !$this->is_active;
+    }
+
+    public function hasAcceptedMembershipTerms(): bool
+    {
+        return $this->membership_terms_accepted_at !== null;
+    }
+
+    public function hasEndedMembership(): bool
+    {
+        return $this->membership_ended_at !== null;
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new MemberResetPasswordNotification((string) $token));
     }
 
     public function statusLabel(): string

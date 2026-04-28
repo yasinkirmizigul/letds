@@ -102,6 +102,9 @@ return new class extends Migration {
                 $table->string('map_title')->nullable();
                 $table->text('office_hours')->nullable();
                 $table->text('footer_note')->nullable();
+                $table->string('member_terms_title')->nullable();
+                $table->text('member_terms_summary')->nullable();
+                $table->longText('member_terms_content')->nullable();
                 $table->string('under_construction_title')->nullable();
                 $table->text('under_construction_message')->nullable();
                 $table->json('ui_lines')->nullable();

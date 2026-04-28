@@ -18,6 +18,14 @@ class AuditRequestMiddleware
         'secret',
         'api_key',
         'authorization',
+        'credentials',
+        'client_secret',
+        'merchant_key',
+        'merchant_secret',
+        'merchant_salt',
+        'webhook_secret',
+        'secret_key',
+        'private_key',
     ];
 
     public function handle(Request $request, Closure $next): Response
@@ -72,7 +80,7 @@ class AuditRequestMiddleware
             return '[truncated]';
         }
 
-        if ($key !== null && in_array(strtolower($key), self::REDACTED_KEYS, true)) {
+        if ($key !== null && $this->shouldRedactKey($key)) {
             return '[redacted]';
         }
 
@@ -104,5 +112,26 @@ class AuditRequestMiddleware
         }
 
         return $value;
+    }
+
+    private function shouldRedactKey(string $key): bool
+    {
+        $normalized = strtolower(trim($key));
+
+        if ($normalized === '') {
+            return false;
+        }
+
+        if (in_array($normalized, self::REDACTED_KEYS, true)) {
+            return true;
+        }
+
+        foreach (['password', 'token', 'secret', 'api_key', 'merchant_', 'private_key', 'credentials'] as $fragment) {
+            if (str_contains($normalized, $fragment)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

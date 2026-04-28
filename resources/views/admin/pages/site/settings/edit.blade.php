@@ -16,6 +16,9 @@
                         'map_title' => $translation->map_title,
                         'office_hours' => $translation->office_hours,
                         'footer_note' => $translation->footer_note,
+                        'member_terms_title' => $translation->member_terms_title,
+                        'member_terms_summary' => $translation->member_terms_summary,
+                        'member_terms_content' => $translation->member_terms_content,
                         'under_construction_title' => $translation->under_construction_title,
                         'under_construction_message' => $translation->under_construction_message,
                         'ui_lines' => is_array($translation->ui_lines) ? $translation->ui_lines : [],
@@ -39,6 +42,9 @@
             'map_title' => old('map_title', $settings->map_title),
             'office_hours' => old('office_hours', $settings->office_hours),
             'footer_note' => old('footer_note', $settings->footer_note),
+            'member_terms_title' => old('member_terms_title', $settings->member_terms_title ?: config('membership_terms.title')),
+            'member_terms_summary' => old('member_terms_summary', $settings->member_terms_summary ?: config('membership_terms.summary')),
+            'member_terms_content' => old('member_terms_content', $settings->member_terms_content ?: config('membership_terms.content')),
             'under_construction_title' => old('under_construction_title', $settings->under_construction_title),
             'under_construction_message' => old('under_construction_message', $settings->under_construction_message),
             'ui_lines' => $defaultUiLines,
@@ -71,6 +77,30 @@
                 'type' => 'textarea',
                 'rows' => 3,
                 'label' => 'Footer Notu',
+                'wrapper_class' => 'grid gap-2 lg:col-span-2',
+            ],
+            [
+                'type' => 'section',
+                'label' => 'Üyelik bilgilendirmesi',
+                'description' => 'Kayıt formunda okunup kabul edilmesi gereken metinleri her dil için ayrı yönetin.',
+                'wrapper_class' => 'lg:col-span-2',
+            ],
+            [
+                'name' => 'member_terms_title',
+                'label' => 'Bilgilendirme Başlığı',
+            ],
+            [
+                'name' => 'member_terms_summary',
+                'type' => 'textarea',
+                'rows' => 3,
+                'label' => 'Kısa Özet',
+                'wrapper_class' => 'grid gap-2 lg:col-span-2',
+            ],
+            [
+                'name' => 'member_terms_content',
+                'type' => 'textarea',
+                'rows' => 10,
+                'label' => 'Bilgilendirme Metni',
                 'wrapper_class' => 'grid gap-2 lg:col-span-2',
             ],
             [
@@ -144,7 +174,7 @@
                 <div>
                     <h1 class="text-xl font-semibold">Site Ayarları</h1>
                     <div class="text-sm text-muted-foreground">
-                        İletişim, harita, sosyal ağlar, yapım aşaması uyarıları ve arayüz metinlerini merkezi olarak yönet.
+                        İletişim, harita, sosyal ağlar, yapım aşaması uyarıları, üyelik bilgilendirmesi ve arayüz metinlerini merkezi olarak yönetin.
                     </div>
                 </div>
             </div>
@@ -167,7 +197,7 @@
                     @include('admin.components.localized-content-tabs', [
                         'moduleKey' => 'site_settings',
                         'title' => 'Çok Dilli Site İçeriği',
-                        'description' => 'Varsayılan dil ve eklediğin diğer diller için görünen metinleri aynı yatay sekme düzeninde yönet.',
+                        'description' => 'Varsayılan dil ve eklediğiniz diğer diller için görünen metinleri aynı yatay sekme düzeninde yönetin.',
                         'defaultValues' => $localizedSettingsDefaultValues,
                         'storedTranslations' => $storedTranslations,
                         'fields' => $localizedSettingsFields,
@@ -228,6 +258,27 @@
                     <div class="kt-card">
                         <div class="kt-card-header py-5">
                             <div>
+                                <h3 class="kt-card-title">Üyelik Metni Versiyonu</h3>
+                                <div class="text-sm text-muted-foreground">Kayıt sırasında hangi metin sürümünün kabul edildiğini takip etmek için kullanılır.</div>
+                            </div>
+                        </div>
+
+                        <div class="kt-card-content grid gap-4 p-6">
+                            <div class="grid gap-2">
+                                <label class="kt-form-label">Versiyon</label>
+                                <input
+                                    name="member_terms_version"
+                                    class="kt-input"
+                                    value="{{ old('member_terms_version', $settings->member_terms_version ?: config('membership_terms.version')) }}"
+                                    placeholder="1.0"
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header py-5">
+                            <div>
                                 <h3 class="kt-card-title">Yapım Aşaması Durumu</h3>
                                 <div class="text-sm text-muted-foreground">Aktivasyon burada, metin içerikleri ise dil sekmelerinde yönetilir.</div>
                             </div>
@@ -244,7 +295,7 @@
                             </label>
 
                             <div class="rounded-2xl border border-dashed border-border bg-background/70 px-4 py-4 text-sm leading-6 text-muted-foreground">
-                                Başlık ve açıklama metinleri yukarıdaki çok dilli sekmelerden yönetilir. Böylece her dil için farklı yapım aşaması mesajı gösterebilirsin.
+                                Başlık ve açıklama metinleri yukarıdaki çok dilli sekmelerden yönetilir. Böylece her dil için farklı yapım aşaması mesajı gösterebilirsiniz.
                             </div>
                         </div>
                     </div>

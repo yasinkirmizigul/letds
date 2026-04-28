@@ -13,6 +13,7 @@ return [
             'site_navigation.view',
             'site_settings.view',
             'home_sliders.view',
+            'site_payments.view',
         ],
         'children' => [
             [
@@ -50,6 +51,12 @@ return [
                 'route' => 'admin.site.sliders.index',
                 'active' => ['admin.site.sliders.*'],
                 'perm' => 'home_sliders.view',
+            ],
+            [
+                'title' => 'Ödeme Entegrasyonları',
+                'route' => 'admin.site.payments.index',
+                'active' => ['admin.site.payments.*'],
+                'perm' => 'site_payments.view',
             ],
             [
                 'title' => 'Site Ayarları',

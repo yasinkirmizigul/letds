@@ -19,6 +19,12 @@ return [
         'placeholder' => 'Üye Paneli',
         'default' => 'Üye Paneli',
     ],
+    'nav_member_account_label' => [
+        'group' => 'navigation',
+        'label' => 'Üyelik hesabım butonu',
+        'placeholder' => 'Hesabım',
+        'default' => 'Hesabım',
+    ],
     'nav_member_login_label' => [
         'group' => 'navigation',
         'label' => 'Üye girişi butonu',

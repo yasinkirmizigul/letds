@@ -11,6 +11,10 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-background text-foreground">
+@php
+    $siteMember = auth('member')->user();
+    $hasActiveMemberSession = $siteMember && $siteMember->is_active && !$siteMember->trashed();
+@endphp
 <div class="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(62,151,255,0.12),transparent_24%),linear-gradient(180deg,#f8fafc_0%,#ffffff_100%)]">
     @if($siteSettings->under_construction_enabled)
         <div class="border-b border-border bg-warning/10">
@@ -89,7 +93,10 @@
                     {{ $siteSettings->uiLine('nav_contact_label') }}
                 </a>
 
-                @if(auth('member')->check())
+                @if($hasActiveMemberSession)
+                    <a href="{{ route('member.account.show', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light">
+                        {{ $siteSettings->uiLine('nav_member_account_label') }}
+                    </a>
                     <a href="{{ route('member.appointments.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary">
                         {{ $siteSettings->uiLine('nav_member_panel_label') }}
                     </a>

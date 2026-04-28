@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\Site\ContentPageController;
 use App\Http\Controllers\Admin\Site\FaqController;
 use App\Http\Controllers\Admin\Site\HomeSliderController;
 use App\Http\Controllers\Admin\Site\NavigationController;
+use App\Http\Controllers\Admin\Site\PaymentIntegrationController;
 use App\Http\Controllers\Admin\Site\SiteCounterController;
 use App\Http\Controllers\Admin\Site\SiteLanguageController;
 use App\Http\Controllers\Admin\Site\SiteSettingsController;
@@ -175,6 +176,40 @@ Route::prefix('site')->as('site.')->group(function () {
 
         Route::delete('/{homeSlider}', [HomeSliderController::class, 'destroy'])
             ->middleware('permission:home_sliders.delete')
+            ->name('destroy');
+    });
+
+    Route::prefix('payments')->as('payments.')->group(function () {
+        Route::get('/', [PaymentIntegrationController::class, 'index'])
+            ->middleware('permission:site_payments.view')
+            ->name('index');
+
+        Route::get('/create', [PaymentIntegrationController::class, 'create'])
+            ->middleware('permission:site_payments.create')
+            ->name('create');
+
+        Route::post('/', [PaymentIntegrationController::class, 'store'])
+            ->middleware('permission:site_payments.create')
+            ->name('store');
+
+        Route::get('/{paymentIntegration}/edit', [PaymentIntegrationController::class, 'edit'])
+            ->middleware('permission:site_payments.update')
+            ->name('edit');
+
+        Route::put('/{paymentIntegration}', [PaymentIntegrationController::class, 'update'])
+            ->middleware('permission:site_payments.update')
+            ->name('update');
+
+        Route::patch('/{paymentIntegration}/toggle-active', [PaymentIntegrationController::class, 'toggleActive'])
+            ->middleware('permission:site_payments.update')
+            ->name('toggleActive');
+
+        Route::patch('/{paymentIntegration}/make-default', [PaymentIntegrationController::class, 'makeDefault'])
+            ->middleware('permission:site_payments.update')
+            ->name('makeDefault');
+
+        Route::delete('/{paymentIntegration}', [PaymentIntegrationController::class, 'destroy'])
+            ->middleware('permission:site_payments.delete')
             ->name('destroy');
     });
 });

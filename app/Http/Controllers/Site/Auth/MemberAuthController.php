@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Site\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Member;
+use App\Models\Site\SiteSetting;
 use App\Services\Member\MemberDocumentService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -34,6 +35,13 @@ class MemberAuthController extends Controller
         ]);
     }
 
+    public function showMembershipInformation(): View
+    {
+        return view('site.auth.member-terms', [
+            'pageTitle' => 'Üyelik Bilgilendirmesi',
+        ]);
+    }
+
     public function register(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -43,10 +51,17 @@ class MemberAuthController extends Controller
             'phone' => ['nullable', 'string', 'max:50'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'filepath' => ['nullable', 'file', 'max:12288', 'mimes:pdf,jpg,jpeg,png,webp,doc,docx'],
+            'membership_terms_read' => ['accepted'],
+            'membership_terms_accepted' => ['accepted'],
+        ], [
+            'membership_terms_read.accepted' => 'Üyelik bilgilendirme metnini okuyup onaylamanız gerekiyor.',
+            'membership_terms_accepted.accepted' => 'Üyelik bilgilendirme metnini kabul etmeniz gerekiyor.',
         ]);
 
+        $settings = SiteSetting::current();
+
         /** @var Member $member */
-        $member = DB::transaction(function () use ($validated, $request) {
+        $member = DB::transaction(function () use ($validated, $request, $settings) {
             $member = Member::create([
                 'name' => trim((string) $validated['name']),
                 'surname' => trim((string) $validated['surname']),
@@ -54,6 +69,8 @@ class MemberAuthController extends Controller
                 'phone' => filled($validated['phone'] ?? null) ? trim((string) $validated['phone']) : null,
                 'password' => (string) $validated['password'],
                 'is_active' => true,
+                'membership_terms_accepted_at' => now(),
+                'membership_terms_version' => $settings->memberTermsVersion(),
             ]);
 
             if ($request->hasFile('filepath')) {
@@ -91,7 +108,9 @@ class MemberAuthController extends Controller
 
         if ($member && !$member->is_active) {
             throw ValidationException::withMessages([
-                'email' => 'Üyeliğiniz şu anda askıya alınmış durumda. Lütfen site yöneticisi ile iletişime geçin.',
+                'email' => $member->membership_ended_at
+                    ? 'Üyeliğiniz daha önce sonlandırılmış durumda. Yeniden değerlendirme için bizimle iletişime geçebilirsiniz.'
+                    : 'Üyeliğiniz şu anda askıya alınmış durumda. Lütfen site yöneticisi ile iletişime geçin.',
             ]);
         }
 

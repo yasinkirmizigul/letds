@@ -19,10 +19,13 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->timestamp('email_verified_at')->nullable();
+            $table->timestamp('membership_terms_accepted_at')->nullable();
+            $table->string('membership_terms_version', 50)->nullable();
             $table->string('password');
             $table->boolean('is_active')->default(true);
             $table->timestamp('last_login_at')->nullable();
             $table->timestamp('suspended_at')->nullable();
+            $table->timestamp('membership_ended_at')->nullable();
             $table->string('suspension_reason')->nullable();
             $table->rememberToken();
             $table->softDeletes();

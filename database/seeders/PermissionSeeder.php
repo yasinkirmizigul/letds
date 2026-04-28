@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Admin\User\Permission;
+use App\Support\Rbac;
 use Illuminate\Database\Seeder;
 
 class PermissionSeeder extends Seeder
@@ -74,6 +75,8 @@ class PermissionSeeder extends Seeder
                 ['name' => $name]
             );
         }
+
+        Rbac::bumpVersion();
 
         $this->command?->info('PermissionSeeder: permissions upserted (' . count($permissions) . ').');
     }

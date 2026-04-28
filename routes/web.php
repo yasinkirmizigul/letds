@@ -20,9 +20,11 @@ use App\Http\Controllers\Admin\User\RoleController;
 use App\Http\Controllers\Admin\User\UserController;
 use App\Http\Controllers\Site\Appointment\AppointmentController;
 use App\Http\Controllers\Site\Auth\MemberAuthController;
+use App\Http\Controllers\Site\Auth\MemberPasswordResetController;
 use App\Http\Controllers\Site\Cms\HomeController;
 use App\Http\Controllers\Site\Cms\PageController;
 use App\Http\Controllers\Site\ContactMessageController;
+use App\Http\Controllers\Site\Member\MemberAccountController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -634,6 +636,20 @@ Route::middleware(['site.locale', 'guest:member'])->group(function () {
     Route::post('/uye-kayit', [MemberAuthController::class, 'register'])
         ->middleware('throttle:6,10')
         ->name('member.register.post');
+
+    Route::get('/member/forgot-password', [MemberPasswordResetController::class, 'showLinkRequestForm'])
+        ->name('member.password.request');
+
+    Route::post('/member/forgot-password', [MemberPasswordResetController::class, 'sendResetLinkEmail'])
+        ->middleware('throttle:6,10')
+        ->name('member.password.email');
+
+    Route::get('/member/reset-password/{token}', [MemberPasswordResetController::class, 'showResetForm'])
+        ->name('member.password.reset');
+
+    Route::post('/member/reset-password', [MemberPasswordResetController::class, 'reset'])
+        ->middleware('throttle:6,10')
+        ->name('member.password.update');
 });
 
 Route::middleware('site.locale')->prefix('member')->name('member.')->group(function () {
@@ -649,13 +665,18 @@ Route::middleware('site.locale')->prefix('member')->name('member.')->group(funct
         ->name('logout');
 });
 
+Route::middleware('site.locale')->group(function () {
+    Route::get('/uyelik-bilgilendirmesi', [MemberAuthController::class, 'showMembershipInformation'])
+        ->name('member.terms.show');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Member Appointments
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['site.locale', 'auth:member'])->group(function () {
+Route::middleware(['site.locale', 'auth:member', 'member.active'])->group(function () {
     Route::get('/randevu-al', [AppointmentController::class, 'index'])
         ->name('member.appointments.index');
 
@@ -666,6 +687,13 @@ Route::middleware(['site.locale', 'auth:member'])->group(function () {
         Route::post('/', [AppointmentController::class, 'store'])->name('store');
         Route::post('/{id}/cancel', [AppointmentController::class, 'cancel'])->name('cancel');
         Route::post('/{id}/reschedule', [AppointmentController::class, 'reschedule'])->name('reschedule');
+    });
+
+    Route::prefix('member/account')->name('member.account.')->group(function () {
+        Route::get('/', [MemberAccountController::class, 'show'])->name('show');
+        Route::post('/terminate', [MemberAccountController::class, 'terminate'])
+            ->middleware('throttle:4,10')
+            ->name('terminate');
     });
 });
 

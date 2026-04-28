@@ -1,5 +1,12 @@
 @extends('site.layouts.main.app')
 
+@php
+    $membershipTermsTitle = $siteSettings->localized('member_terms_title') ?: config('membership_terms.title');
+    $membershipTermsSummary = $siteSettings->localized('member_terms_summary') ?: config('membership_terms.summary');
+    $membershipTermsContent = $siteSettings->localized('member_terms_content') ?: config('membership_terms.content');
+    $hasReadTerms = old('membership_terms_read') === '1' || old('membership_terms_read') === 1;
+@endphp
+
 @section('content')
     <div class="mx-auto max-w-7xl px-4 py-10">
         <div class="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_560px]">
@@ -23,13 +30,26 @@
                         </div>
                         <div class="rounded-[28px] border border-border bg-muted/20 p-5">
                             <div class="text-xs uppercase tracking-[0.24em] text-muted-foreground">2. Adım</div>
-                            <div class="mt-3 text-lg font-semibold text-foreground">Belgeni Yükle</div>
-                            <div class="mt-2 text-sm leading-7 text-muted-foreground">Gerekliyse PDF, görsel veya ofis dokümanınızı güvenli şekilde ekleyin.</div>
+                            <div class="mt-3 text-lg font-semibold text-foreground">Bilgi Metnini Oku</div>
+                            <div class="mt-2 text-sm leading-7 text-muted-foreground">Üyelik bilgilendirmesini okuyup onayladıktan sonra kayıt tamamlanır.</div>
                         </div>
                         <div class="rounded-[28px] border border-border bg-muted/20 p-5">
                             <div class="text-xs uppercase tracking-[0.24em] text-muted-foreground">3. Adım</div>
                             <div class="mt-3 text-lg font-semibold text-foreground">Panele Geç</div>
                             <div class="mt-2 text-sm leading-7 text-muted-foreground">Kaydınız tamamlandığında üye paneline yönlendirilirsiniz.</div>
+                        </div>
+                    </div>
+
+                    <div class="rounded-[28px] border border-border bg-gradient-to-br from-primary/10 via-white to-white p-6">
+                        <div class="text-xs font-semibold uppercase tracking-[0.24em] text-primary">Üyelik Bilgilendirmesi</div>
+                        <div class="mt-3 text-2xl font-semibold text-foreground">{{ $membershipTermsTitle }}</div>
+                        <div class="mt-3 text-sm leading-7 text-muted-foreground">{{ $membershipTermsSummary }}</div>
+                        <div class="mt-5 flex flex-wrap gap-3">
+                            <button type="button" class="kt-btn kt-btn-primary" data-membership-terms-open>Metni Oku</button>
+                            <a href="{{ route('member.terms.show', ['site_locale' => $siteCurrentLocale]) }}" target="_blank" class="kt-btn kt-btn-light">Tam Sayfada Aç</a>
+                        </div>
+                        <div class="mt-4 text-xs text-muted-foreground" data-membership-terms-status>
+                            Metni açıp sonuna kadar kaydırdıktan sonra kabul kutusu aktif olur.
                         </div>
                     </div>
                 </div>
@@ -159,14 +179,77 @@
                         @enderror
                     </div>
 
+                    <input type="hidden" name="membership_terms_read" value="{{ $hasReadTerms ? 1 : 0 }}" data-membership-terms-read-input>
+
+                    <div class="rounded-3xl border border-white/10 bg-white/10 p-5">
+                        <div class="flex flex-wrap items-start justify-between gap-3">
+                            <div>
+                                <div class="text-sm font-semibold text-white">Üyelik bilgilendirmesi onayı</div>
+                                <div class="mt-2 text-sm leading-7 text-white/70">
+                                    Kayıt işleminden önce bilgilendirme metnini okuyup onaylamanız gerekir.
+                                </div>
+                            </div>
+                            <button type="button" class="kt-btn kt-btn-light" data-membership-terms-open>Metni Aç</button>
+                        </div>
+
+                        <label class="mt-4 flex items-start gap-3 rounded-2xl border border-white/10 bg-black/10 px-4 py-4 text-sm text-white/80">
+                            <input
+                                type="checkbox"
+                                name="membership_terms_accepted"
+                                value="1"
+                                class="kt-checkbox mt-1"
+                                data-membership-terms-checkbox
+                                @checked(old('membership_terms_accepted'))
+                                @disabled(!$hasReadTerms)
+                            >
+                            <span>
+                                Üyelik bilgilendirme metnini okudum ve kabul ediyorum.
+                                <span class="mt-2 block text-xs text-white/60">Kutu, metin okunmadan aktif hale gelmez.</span>
+                            </span>
+                        </label>
+                        @error('membership_terms_read')
+                            <div class="mt-2 text-xs text-danger">{{ $message }}</div>
+                        @enderror
+                        @error('membership_terms_accepted')
+                            <div class="mt-2 text-xs text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <button type="submit" class="kt-btn kt-btn-primary w-full">Üyeliği Oluştur</button>
                 </form>
 
                 <div class="mt-6 rounded-[28px] border border-white/10 bg-white/10 p-5 text-sm leading-7 text-white/70">
                     Zaten hesabınız varsa doğrudan giriş yapabilirsiniz.
-                    <a href="{{ route('member.login') }}" class="ml-2 font-medium text-white underline underline-offset-4">Üye girişine git</a>
+                    <a href="{{ route('member.login', ['site_locale' => $siteCurrentLocale]) }}" class="ml-2 font-medium text-white underline underline-offset-4">Üye girişine git</a>
                 </div>
             </section>
+        </div>
+    </div>
+
+    <div class="fixed inset-0 z-[120] hidden bg-slate-950/60 px-4 py-6" data-membership-terms-modal>
+        <div class="mx-auto flex h-full max-w-4xl flex-col overflow-hidden rounded-[32px] border border-border bg-white shadow-2xl">
+            <div class="flex items-start justify-between gap-4 border-b border-border px-6 py-5">
+                <div>
+                    <div class="text-xs font-semibold uppercase tracking-[0.24em] text-primary">Üyelik Bilgilendirmesi</div>
+                    <h3 class="mt-2 text-2xl font-semibold text-foreground">{{ $membershipTermsTitle }}</h3>
+                    <div class="mt-2 text-sm text-muted-foreground">{{ $membershipTermsSummary }}</div>
+                </div>
+                <button type="button" class="kt-btn kt-btn-light" data-membership-terms-close>Kapat</button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto px-6 py-6 text-sm leading-8 text-muted-foreground" data-membership-terms-scrollable>
+                {!! nl2br(e($membershipTermsContent)) !!}
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 border-t border-border px-6 py-5">
+                <div class="text-sm text-muted-foreground" data-membership-terms-modal-status>
+                    Metnin sonuna ulaştığınızda kabul kutusu aktifleşir.
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <a href="{{ route('member.terms.show', ['site_locale' => $siteCurrentLocale]) }}" target="_blank" class="kt-btn kt-btn-light">Tam Sayfada Aç</a>
+                    <button type="button" class="kt-btn kt-btn-primary" data-membership-terms-close>Okumaya Devam Et</button>
+                </div>
+            </div>
         </div>
     </div>
 @endsection

@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\AuditRequestMiddleware;
+use App\Http\Middleware\EnsureActiveMemberSession;
 use App\Http\Middleware\PermissionMiddleware;
 use App\Http\Middleware\SiteLocaleMiddleware;
 use App\Http\Middleware\SuperAdminMiddleware;
@@ -39,6 +40,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin'      => AdminMiddleware::class,
             'audit'      => AuditRequestMiddleware::class,
             'site.locale' => SiteLocaleMiddleware::class,
+            'member.active' => EnsureActiveMemberSession::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

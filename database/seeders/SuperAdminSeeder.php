@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Admin\User\Permission;
 use App\Models\Admin\User\Role;
 use App\Models\Admin\User\User;
+use App\Support\Rbac;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -38,6 +39,8 @@ class SuperAdminSeeder extends Seeder
         } else {
             $this->command?->warn('SuperAdminSeeder: user creation skipped (SEED_CREATE_USERS disabled).');
         }
+
+        Rbac::bumpVersion();
 
         $this->command?->info('SuperAdminSeeder: role synced to all permissions.');
     }

@@ -24,7 +24,7 @@
                         <div class="rounded-[28px] border border-white/10 bg-white/10 p-5 backdrop-blur">
                             <div class="text-xs uppercase tracking-[0.24em] text-white/60">Güvenlik</div>
                             <div class="mt-3 text-lg font-semibold">Yetkili Kullanım</div>
-                            <div class="mt-2 text-sm leading-7 text-white/70">Askıya alınan veya kaldırılan üyeliklerde sistem net geri bildirim verir.</div>
+                            <div class="mt-2 text-sm leading-7 text-white/70">Askıya alınan veya sonlandırılan üyeliklerde sistem net geri bildirim verir.</div>
                         </div>
                     </div>
                 </div>
@@ -42,6 +42,12 @@
                 @if(session('success'))
                     <div class="mb-5 rounded-2xl border border-success/20 bg-success/10 px-4 py-3 text-sm text-success">
                         {{ session('success') }}
+                    </div>
+                @endif
+
+                @if(session('status'))
+                    <div class="mb-5 rounded-2xl border border-primary/15 bg-primary/10 px-4 py-3 text-sm text-primary">
+                        {{ session('status') }}
                     </div>
                 @endif
 
@@ -66,7 +72,12 @@
                     </div>
 
                     <div class="grid gap-2">
-                        <label class="text-sm font-medium text-foreground" for="member_login_password">Şifre</label>
+                        <div class="flex items-center justify-between gap-3">
+                            <label class="text-sm font-medium text-foreground" for="member_login_password">Şifre</label>
+                            <a href="{{ route('member.password.request', ['site_locale' => $siteCurrentLocale]) }}" class="text-xs font-medium text-primary hover:underline">
+                                Şifremi unuttum
+                            </a>
+                        </div>
                         <input
                             id="member_login_password"
                             type="password"
@@ -94,7 +105,10 @@
                     <div class="mt-2 text-sm leading-7 text-muted-foreground">
                         Profil bilgilerinizi, iletişim bilgilerinizi ve varsa belge ekinizi yükleyerek yeni hesabınızı hemen oluşturabilirsiniz.
                     </div>
-                    <a href="{{ route('member.register') }}" class="mt-4 inline-flex kt-btn kt-btn-light">Üye Kayıt Sayfasına Git</a>
+                    <div class="mt-4 flex flex-wrap gap-3">
+                        <a href="{{ route('member.register', ['site_locale' => $siteCurrentLocale]) }}" class="inline-flex kt-btn kt-btn-light">Üye Kayıt Sayfasına Git</a>
+                        <a href="{{ route('member.terms.show', ['site_locale' => $siteCurrentLocale]) }}" class="inline-flex kt-btn kt-btn-light">Üyelik Bilgilendirmesini Oku</a>
+                    </div>
                 </div>
             </section>
         </div>

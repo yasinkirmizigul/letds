@@ -4,8 +4,8 @@ namespace App\Models\Site;
 
 use App\Models\Concerns\HasSiteLocaleTranslations;
 use App\Support\Site\SiteLocalization;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SiteSetting extends Model
 {
@@ -23,6 +23,10 @@ class SiteSetting extends Model
         'map_title',
         'office_hours',
         'footer_note',
+        'member_terms_version',
+        'member_terms_title',
+        'member_terms_summary',
+        'member_terms_content',
         'under_construction_enabled',
         'under_construction_title',
         'under_construction_message',
@@ -41,7 +45,15 @@ class SiteSetting extends Model
         return static::query()->firstOrCreate([], [
             'site_name' => config('app.name'),
             'site_tagline' => 'Dijital vitrin ve içerik yönetimi',
+            'member_terms_version' => config('membership_terms.version'),
         ]);
+    }
+
+    public function memberTermsVersion(): string
+    {
+        $version = trim((string) $this->member_terms_version);
+
+        return $version !== '' ? $version : (string) config('membership_terms.version');
     }
 
     public function social(string $key, ?string $fallback = null): ?string
