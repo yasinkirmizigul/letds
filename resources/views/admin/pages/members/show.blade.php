@@ -12,7 +12,7 @@
 @endphp
 
 @section('content')
-    <div class="kt-container-fixed max-w-[96%] grid gap-6" data-page="members.show">
+    <div class="kt-container-fixed max-w-[96%] grid gap-6" data-page="members.show" data-form-accordions="true">
         @includeIf('admin.partials._flash')
 
         <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">

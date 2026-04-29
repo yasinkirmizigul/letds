@@ -87,8 +87,8 @@
             </section>
 
             <div class="grid gap-5 2xl:grid-cols-[1.15fr,.85fr]">
-                <div class="grid gap-5">
-                    <section class="kt-card">
+                <div class="grid gap-5" data-appointment-settings-stack="true">
+                    <section class="kt-card" data-form-accordion-skip="true">
                         <div class="kt-card-header py-5 flex-wrap gap-4">
                             <div>
                                 <h3 class="kt-card-title">Kişi ve yönetim zemini</h3>
@@ -224,7 +224,7 @@
                     </section>
                 </div>
 
-                <div class="grid gap-5">
+                <div class="grid gap-5" data-appointment-settings-stack="true">
                     <section class="kt-card">
                         <div class="kt-card-header py-5 flex-wrap gap-4">
                             <div>

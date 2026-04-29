@@ -8,6 +8,7 @@
     <div
         class="kt-container-fixed max-w-[96%] grid gap-6"
         data-page="site.counters.index"
+        data-form-accordions="true"
         data-reorder-url="{{ route('admin.site.counters.reorder') }}"
     >
         @includeIf('admin.partials._flash')

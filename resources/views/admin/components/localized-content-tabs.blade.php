@@ -12,6 +12,7 @@
     $defaultValues = $defaultValues ?? [];
     $storedTranslations = $storedTranslations ?? [];
     $fields = $fields ?? [];
+    $sectionAccordions = (bool) ($sectionAccordions ?? false);
     $urlBase = rtrim((string) ($urlBase ?? url('/')), '/');
     $viewErrors = $errors ?? new \Illuminate\Support\ViewErrorBag();
 @endphp
@@ -69,14 +70,21 @@
                             <span class="kt-badge kt-badge-sm kt-badge-light">{{ $language->code }}</span>
                         </div>
 
-                        <div class="{{ $contentGridClass }}">
+                        <div class="{{ $contentGridClass }}" @if($sectionAccordions) data-localized-section-container="true" @endif>
                             @foreach($fields as $field)
                                 @php
                                     $type = $field['type'] ?? 'text';
                                 @endphp
 
                                 @if($type === 'section')
-                                    <div class="{{ $field['wrapper_class'] ?? '' }}">
+                                    <div
+                                        class="{{ $field['wrapper_class'] ?? '' }}"
+                                        @if($sectionAccordions)
+                                            data-localized-section-marker="true"
+                                            data-section-title="{{ $field['label'] ?? 'Bölüm' }}"
+                                            data-section-description="{{ $field['description'] ?? '' }}"
+                                        @endif
+                                    >
                                         <div class="rounded-2xl border border-dashed border-border/70 bg-background/75 px-4 py-4">
                                             <div class="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                                                 {{ $field['label'] ?? 'Bölüm' }}

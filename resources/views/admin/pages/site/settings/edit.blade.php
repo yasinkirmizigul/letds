@@ -199,7 +199,7 @@
             @method('PUT')
 
             <div class="grid gap-6 xl:grid-cols-[minmax(0,1.5fr)_420px]">
-                <div class="grid gap-6">
+                <div class="grid gap-6" data-site-settings-card-stack="true">
                     @include('admin.components.localized-content-tabs', [
                         'moduleKey' => 'site_settings',
                         'title' => 'Çok Dilli Site İçeriği',
@@ -208,6 +208,7 @@
                         'storedTranslations' => $storedTranslations,
                         'fields' => $localizedSettingsFields,
                         'contentGridClass' => 'grid gap-5 lg:grid-cols-2',
+                        'sectionAccordions' => true,
                     ])
 
                     <div class="kt-card">
@@ -361,7 +362,7 @@
                     </div>
                 </div>
 
-                <div class="grid gap-6 self-start xl:sticky xl:top-6">
+                <div class="grid gap-6 self-start xl:sticky xl:top-6" data-site-settings-card-stack="true">
                     <div class="kt-card">
                         <div class="kt-card-header py-5">
                             <div>

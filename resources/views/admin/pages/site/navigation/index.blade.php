@@ -11,6 +11,7 @@
     <div
         class="kt-container-fixed max-w-[96%] grid gap-6"
         data-page="site.navigation.index"
+        data-form-accordions="true"
         data-tree-url="{{ route('admin.site.navigation.tree') }}"
     >
         @includeIf('admin.partials._flash')

@@ -1,6 +1,7 @@
 import { get, request } from '@/core/http'
 import { clearDateInputValue, getDateInputValue, setDateInputValue, todayMachineDate } from '@/core/date-input'
 import { showConfirmDialog, showToastMessage } from '@/core/swal-alert'
+import { wrapDirectCardStack } from '@/core/create-form-accordion'
 
 const DAY_DEFS = [
     { value: 1, label: 'Pazartesi', short: 'Pzt' },
@@ -624,8 +625,19 @@ function findBlackoutById(id) {
     return state.blackouts.find((item) => Number(item.id) === Number(id)) || null
 }
 
+function initSettingsAccordions(root) {
+    qsa(root, '[data-appointment-settings-stack="true"]').forEach((stack) => {
+        wrapDirectCardStack(stack, {
+            attributeName: 'data-appointment-settings-accordion',
+            openFirst: true,
+        })
+    })
+}
+
 export default async function init(ctx) {
     const root = ctx?.root || document
+    initSettingsAccordions(root)
+
     const providerSelect = qs(root, '#settingsProviderSelect')
     const btnSaveWorkingHours = qs(root, '#btnSaveWorkingHours')
     const btnAddTimeOff = qs(root, '#btnAddTimeOff')

@@ -1476,6 +1476,11 @@ thead th.dt-orderable-none .dt-column-order { display:none !important; }
     display: none !important;
 }
 
+.form-section-accordion--keep-card-header .form-section-accordion__card > .kt-card-header,
+.form-section-accordion--keep-card-header .form-section-accordion__card > .kt-card-head {
+    display: flex !important;
+}
+
 .dark .form-section-accordion {
     box-shadow: 0 18px 42px rgb(0 0 0 / 24%);
 }
