@@ -2,23 +2,26 @@
     $product = $product ?? null;
 @endphp
 
-<div class="kt-card kt-card-border" data-gallery-manager
-     data-galleryable-type="{{ addslashes(\App\Models\Admin\Product\Product::class) }}"
-     data-galleryable-id="{{ $product->id }}"
->
-    <div class="kt-card-header">
-        <h3 class="kt-card-title">Galeri</h3>
-    </div>
-
-    <div class="kt-card-content p-6 grid gap-4">
+@if(empty($product) || empty($product->id))
+    <div class="kt-alert kt-alert-light">
         <div class="text-sm text-muted-foreground">
-            Bu panel ProjectGallery mantığıyla birebir çalışacak şekilde hazırlandı.
-            Ürün-galeri route/controller’ını eklediğinde otomatik aktif olur.
-        </div>
-
-        {{-- Burayı kendi gallery-manager contract’ına göre dolduruyorsun --}}
-        <div class="rounded-xl border border-border p-4 text-sm text-muted-foreground">
-            Gallery Manager placeholder
+            Galeri eklemek için ürünü önce kaydedin.
         </div>
     </div>
-</div>
+@else
+    @include('admin.components.gallery-manager', [
+        'id' => 'product-' . $product->id,
+        'title' => 'Galeriler',
+        'routes' => [
+            'list' => route('admin.galleries.list'),
+            'index' => route('admin.products.galleries.index', $product),
+            'attach' => route('admin.products.galleries.attach', $product),
+            'detach' => route('admin.products.galleries.detach', $product),
+            'reorder' => route('admin.products.galleries.reorder', $product),
+        ],
+        'slots' => [
+            'main' => 'Ana',
+            'sidebar' => 'Sidebar',
+        ],
+    ])
+@endif
