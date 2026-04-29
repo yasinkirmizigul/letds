@@ -38,6 +38,15 @@ function qsa(root, sel) {
     return Array.from((root || document).querySelectorAll(sel))
 }
 
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;')
+}
+
 function buildEventsUrl(providerId, from, to) {
     const u = new URL('/admin/appointments/calendar/events', window.location.origin)
     if (providerId) u.searchParams.set('provider_id', providerId)
@@ -683,6 +692,116 @@ function hideDragTooltip(root) {
     tip.textContent = ''
 }
 
+function eventTypeLabel(event) {
+    return event?.extendedProps?.entity_type === 'time_off' ? 'Blokaj' : 'Randevu'
+}
+
+function eventDurationText(event) {
+    if (!event?.start || !event?.end) return '-'
+
+    const minutes = Math.max(0, Math.round((event.end.getTime() - event.start.getTime()) / 60000))
+    return formatDurationText(minutes)
+}
+
+function tooltipRows(rows) {
+    return rows
+        .filter((row) => row.value !== null && row.value !== undefined && String(row.value).trim() !== '')
+        .map((row) => `
+            <div class="calendar-event-tooltip__row">
+                <span>${escapeHtml(row.label)}</span>
+                <strong>${escapeHtml(row.value)}</strong>
+            </div>
+        `)
+        .join('')
+}
+
+function buildEventTooltipHtml(event) {
+    const entityType = event.extendedProps?.entity_type || 'appointment'
+    const typeLabel = eventTypeLabel(event)
+    const title = entityType === 'time_off'
+        ? (event.extendedProps?.reason || event.title || 'Kapalı zaman')
+        : (event.extendedProps?.member_name || event.title || 'Randevu')
+    const provider = [
+        event.extendedProps?.provider_name,
+        event.extendedProps?.provider_title,
+    ].filter(Boolean).join(' - ')
+
+    const rows = entityType === 'time_off'
+        ? [
+            { label: 'Durum', value: event.extendedProps?.status_label || 'Kapalı' },
+            { label: 'Kişi', value: provider || 'Seçili kişi' },
+            { label: 'Zaman', value: formatDateRange(event.start, event.end) },
+            { label: 'Süre', value: eventDurationText(event) },
+            { label: 'Açıklama', value: event.extendedProps?.reason || event.title || '-' },
+        ]
+        : [
+            { label: 'Durum', value: event.extendedProps?.status_label || 'Randevu' },
+            { label: 'Kişi', value: provider || 'Kişi bilgisi yok' },
+            { label: 'Zaman', value: formatDateRange(event.start, event.end) },
+            { label: 'Süre', value: eventDurationText(event) },
+            { label: 'Üye', value: event.extendedProps?.member_name || event.title || '-' },
+            { label: 'Telefon', value: event.extendedProps?.member_phone || '' },
+            { label: 'E-posta', value: event.extendedProps?.member_email || '' },
+            { label: 'İç not', value: event.extendedProps?.notes_internal || '' },
+        ]
+
+    return `
+        <div class="calendar-event-tooltip__head">
+            <span class="calendar-event-tooltip__badge">${escapeHtml(typeLabel)}</span>
+            <span class="calendar-event-tooltip__time">${escapeHtml(formatDateTime(event.start))}</span>
+        </div>
+        <div class="calendar-event-tooltip__title">${escapeHtml(title)}</div>
+        <div class="calendar-event-tooltip__grid">
+            ${tooltipRows(rows)}
+        </div>
+    `
+}
+
+function positionEventTooltip(tip, x, y) {
+    const margin = 16
+    const offset = 18
+    const rect = tip.getBoundingClientRect()
+    let left = x + offset
+    let top = y + offset
+
+    if (left + rect.width > window.innerWidth - margin) {
+        left = x - rect.width - offset
+    }
+
+    if (top + rect.height > window.innerHeight - margin) {
+        top = y - rect.height - offset
+    }
+
+    tip.style.left = `${Math.max(margin, left)}px`
+    tip.style.top = `${Math.max(margin, top)}px`
+}
+
+function showEventTooltip(root, event, x, y) {
+    const tip = qs(root, '#calendarEventTooltip')
+    if (!tip) return
+
+    tip.innerHTML = buildEventTooltipHtml(event)
+    tip.classList.remove('hidden')
+    positionEventTooltip(tip, x, y)
+}
+
+function moveEventTooltip(root, x, y) {
+    const tip = qs(root, '#calendarEventTooltip')
+    if (!tip || tip.classList.contains('hidden')) return
+
+    positionEventTooltip(tip, x, y)
+}
+
+function hideEventTooltip(root) {
+    const tip = qs(root, '#calendarEventTooltip')
+    if (!tip) return
+
+    tip.classList.add('hidden')
+    tip.style.left = ''
+    tip.style.top = ''
+    tip.innerHTML = ''
+}
+
 function renderHistory(root, items = []) {
     const historyWrap = qs(root, '#panelHistory')
     if (!historyWrap) return
@@ -875,23 +994,14 @@ function hydrateBlockEvent(event, data) {
 }
 
 function buildEventContent(info) {
-    const entityType = info.event.extendedProps?.entity_type || 'appointment'
-    const statusLabel = info.event.extendedProps?.status_label || ''
-    const title = info.event.title || '-'
-
     const wrapper = document.createElement('div')
-    wrapper.className = 'fc-event-custom flex flex-col gap-1 px-1 py-[2px]'
+    wrapper.className = 'fc-event-custom calendar-event-chip'
 
     const badge = document.createElement('div')
-    badge.className = 'text-[10px] font-semibold uppercase tracking-wide opacity-90'
-    badge.textContent = entityType === 'time_off' ? statusLabel : `Randevu - ${statusLabel}`
-
-    const text = document.createElement('div')
-    text.className = 'text-[11px] font-medium leading-4 truncate'
-    text.textContent = title
+    badge.className = 'calendar-event-chip__label'
+    badge.textContent = eventTypeLabel(info.event)
 
     wrapper.appendChild(badge)
-    wrapper.appendChild(text)
 
     return { domNodes: [wrapper] }
 }
@@ -1170,6 +1280,7 @@ export default async function init(ctx) {
         },
 
         eventClick: async (info) => {
+            hideEventTooltip(root)
             fillDetailPanel(root, info.event)
 
             if (info.event.extendedProps?.entity_type === 'time_off') {
@@ -1216,9 +1327,23 @@ export default async function init(ctx) {
         eventDidMount(info) {
             const entityType = info.event.extendedProps?.entity_type || 'appointment'
 
+            if (info.el) {
+                info.el.setAttribute('aria-label', `${eventTypeLabel(info.event)} - ${formatDateRange(info.event.start, info.event.end)}`)
+                info.el.addEventListener('mouseenter', (e) => {
+                    showEventTooltip(root, info.event, e.clientX, e.clientY)
+                })
+                info.el.addEventListener('mousemove', (e) => {
+                    moveEventTooltip(root, e.clientX, e.clientY)
+                })
+                info.el.addEventListener('mouseleave', () => {
+                    hideEventTooltip(root)
+                })
+            }
+
             if (entityType === 'time_off' && info.el) {
                 info.el.addEventListener('contextmenu', (e) => {
                     e.preventDefault()
+                    hideEventTooltip(root)
                     fillDetailPanel(root, info.event)
 
                     if (!getSelectedProviderId(providerSelect)) {
@@ -1232,6 +1357,7 @@ export default async function init(ctx) {
 
         eventDragStart(info) {
             closeContextMenu(root)
+            hideEventTooltip(root)
             showDragTooltip(root, formatTimeRange(info.event.start, info.event.end))
         },
 
@@ -1241,6 +1367,7 @@ export default async function init(ctx) {
 
         eventResizeStart(info) {
             closeContextMenu(root)
+            hideEventTooltip(root)
             showDragTooltip(root, formatTimeRange(info.event.start, info.event.end))
         },
 
@@ -1346,6 +1473,7 @@ export default async function init(ctx) {
             closeAppointmentModal(root)
             closeBlockModal(root)
             hideDragTooltip(root)
+            hideEventTooltip(root)
             resetDetailPanel(root)
             updateCalendarInteractionState(root, providerSelect)
             updateCalendarHeader(root, providerSelect)

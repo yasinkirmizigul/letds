@@ -48,7 +48,7 @@ class AppointmentCalendarController extends Controller
 
         $appointmentsQuery = Appointment::query()
             ->with([
-                'member:id,name,surname',
+                'member:id,name,surname,email,phone',
                 'provider:id,name,title',
             ])
             ->where('status', Appointment::STATUS_BOOKED);
@@ -91,9 +91,12 @@ class AppointmentCalendarController extends Controller
                         'provider_title' => $appointment->provider?->title,
                         'member_id' => $appointment->member_id,
                         'member_name' => $memberName,
+                        'member_email' => $appointment->member?->email,
+                        'member_phone' => $appointment->member?->phone,
                         'status' => $appointment->status,
                         'status_label' => $color['label'],
                         'blocks' => $appointment->blocks,
+                        'notes_internal' => $appointment->notes_internal,
                         'parent_id' => $appointment->parent_id,
                         'is_transferred' => !is_null($appointment->parent_id),
                     ],

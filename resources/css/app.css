@@ -1225,6 +1225,98 @@ thead th.dt-orderable-none .dt-column-order { display:none !important; }
     min-height: 100%;
 }
 
+.calendar-event-chip {
+    align-items: center;
+    display: flex;
+    min-height: 100%;
+    padding: .16rem .32rem;
+}
+
+.calendar-event-chip__label {
+    font-size: .7rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.calendar-event-tooltip {
+    width: min(22rem, calc(100vw - 2rem));
+    border: 1px solid color-mix(in oklab, var(--border) 84%, var(--foreground) 16%);
+    border-radius: 1rem;
+    background:
+        radial-gradient(circle at top left, color-mix(in oklab, var(--color-primary, #3e97ff) 12%, transparent), transparent 42%),
+        color-mix(in oklab, var(--background) 94%, var(--foreground) 6%);
+    box-shadow: 0 24px 54px rgb(15 23 42 / 18%);
+    color: var(--foreground);
+    padding: 1rem;
+    backdrop-filter: blur(18px);
+}
+
+.calendar-event-tooltip__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+}
+
+.calendar-event-tooltip__badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    background: color-mix(in oklab, var(--color-primary, #3e97ff) 13%, var(--background));
+    color: var(--color-primary, #3e97ff);
+    font-size: .68rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    padding: .35rem .6rem;
+    text-transform: uppercase;
+}
+
+.calendar-event-tooltip__time {
+    color: var(--muted-foreground);
+    font-size: .72rem;
+    font-weight: 700;
+}
+
+.calendar-event-tooltip__title {
+    color: var(--foreground);
+    font-size: .98rem;
+    font-weight: 750;
+    line-height: 1.5;
+    margin-top: .75rem;
+}
+
+.calendar-event-tooltip__grid {
+    display: grid;
+    gap: .55rem;
+    margin-top: .9rem;
+}
+
+.calendar-event-tooltip__row {
+    display: grid;
+    gap: .35rem;
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    align-items: baseline;
+}
+
+.calendar-event-tooltip__row span {
+    color: var(--muted-foreground);
+    font-size: .72rem;
+    font-weight: 700;
+}
+
+.calendar-event-tooltip__row strong {
+    color: var(--foreground);
+    font-size: .78rem;
+    font-weight: 650;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
 .appointment-calendar-shell .fc .fc-daygrid-event {
     margin-top: .25rem;
 }
@@ -1251,6 +1343,10 @@ thead th.dt-orderable-none .dt-column-order { display:none !important; }
 
 .dark .appointment-calendar-shell .fc .fc-event {
     box-shadow: 0 14px 28px rgb(0 0 0 / 28%);
+}
+
+.dark .calendar-event-tooltip {
+    box-shadow: 0 24px 54px rgb(0 0 0 / 38%);
 }
 
 @media (max-width: 768px) {

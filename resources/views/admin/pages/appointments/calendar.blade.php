@@ -420,5 +420,11 @@
             id="calendarDragTooltip"
             class="pointer-events-none hidden fixed z-[10001] rounded-lg bg-black px-3 py-2 text-xs font-medium text-white shadow-lg"
         ></div>
+
+        <div
+            id="calendarEventTooltip"
+            class="calendar-event-tooltip pointer-events-none hidden fixed z-[10002]"
+            role="tooltip"
+        ></div>
     </div>
 @endsection

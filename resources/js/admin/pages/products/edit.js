@@ -2,7 +2,6 @@ import { request } from '@/core/http';
 import { showConfirmDialog, showToastMessage } from '@/core/swal-alert';
 import initGalleryManager, { destroyGalleryManager } from '@/core/gallery-manager';
 import initLibraryAttach from '@/core/library-attach';
-import initGalleryManager, { destroyGalleryManager } from '@/core/gallery-manager';
 import {
     initSeoPanel,
     initSlugTools,

@@ -65,21 +65,7 @@
                     </div>
                 </div>
                 <div class="kt-card-content p-6">
-                    @include('admin.components.gallery-manager', [
-                        'id' => 'blog-' . $blogPost->id,
-                        'title' => 'Galeriler',
-                        'routes' => [
-                            'list' => route('admin.galleries.list'),
-                            'index' => route('admin.blog.galleries.index', $blogPost),
-                            'attach' => route('admin.blog.galleries.attach', $blogPost),
-                            'detach' => route('admin.blog.galleries.detach', $blogPost),
-                            'reorder' => route('admin.blog.galleries.reorder', $blogPost),
-                        ],
-                        'slots' => [
-                            'main' => 'Ana',
-                            'sidebar' => 'Sidebar',
-                        ],
-                    ])
+                    @include('admin.pages.blog.partials._gallery', ['blogPost' => $blogPost])
                 </div>
             </div>
         @endif
