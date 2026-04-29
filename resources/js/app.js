@@ -10,6 +10,7 @@ import { registerPages } from './admin/pages/index';
 import { initMediaPicker } from './core/media-picker';
 import { initMediaUploadModal } from './core/media-upload-modal';
 import initFeaturedImageManager from '@/core/featured-image-manager';
+import initCreateFormAccordions from '@/core/create-form-accordion';
 import './site/auth/member-register';
 
 window.Swal = Swal;
@@ -82,6 +83,7 @@ function domReady(fn) {
 
 domReady(async () => {
     try {
+        initCreateFormAccordions(document);
         initDateInputValues(document);
         await AppInit();
     } finally {

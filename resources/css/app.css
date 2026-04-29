@@ -1349,6 +1349,141 @@ thead th.dt-orderable-none .dt-column-order { display:none !important; }
     box-shadow: 0 24px 54px rgb(0 0 0 / 38%);
 }
 
+.form-section-accordion {
+    display: block;
+    border: 1px solid color-mix(in oklab, var(--border) 88%, var(--foreground) 12%);
+    border-radius: 1rem;
+    background: color-mix(in oklab, var(--background) 94%, var(--foreground) 6%);
+    box-shadow: 0 16px 36px rgb(15 23 42 / 7%);
+    overflow: visible;
+}
+
+.form-section-accordion + .form-section-accordion {
+    margin-top: .15rem;
+}
+
+.form-section-accordion__summary {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    list-style: none;
+    padding: 1rem 1.15rem;
+    user-select: none;
+}
+
+.form-section-accordion__summary::-webkit-details-marker {
+    display: none;
+}
+
+.form-section-accordion__summary:hover {
+    background: color-mix(in oklab, var(--color-primary, #3e97ff) 7%, transparent);
+}
+
+.form-section-accordion__text {
+    display: grid;
+    gap: .25rem;
+    min-width: 0;
+}
+
+.form-section-accordion__title {
+    color: var(--foreground);
+    font-size: .95rem;
+    font-weight: 750;
+    letter-spacing: -.01em;
+}
+
+.form-section-accordion__hint {
+    color: var(--muted-foreground);
+    font-size: .78rem;
+    line-height: 1.45;
+}
+
+.form-section-accordion__actions {
+    align-items: center;
+    display: inline-flex;
+    gap: .55rem;
+    flex-shrink: 0;
+}
+
+.form-section-accordion__help {
+    align-items: center;
+    background: color-mix(in oklab, var(--color-primary, #3e97ff) 13%, var(--background));
+    border: 1px solid color-mix(in oklab, var(--color-primary, #3e97ff) 24%, var(--border));
+    border-radius: 9999px;
+    color: var(--color-primary, #3e97ff);
+    display: inline-flex;
+    font-size: .7rem;
+    font-weight: 850;
+    height: 1.45rem;
+    justify-content: center;
+    position: relative;
+    width: 1.45rem;
+}
+
+.form-section-accordion__help::after {
+    background: color-mix(in oklab, var(--background) 92%, var(--foreground) 8%);
+    border: 1px solid color-mix(in oklab, var(--border) 84%, var(--foreground) 16%);
+    border-radius: .85rem;
+    box-shadow: 0 18px 42px rgb(15 23 42 / 16%);
+    color: var(--foreground);
+    content: attr(data-form-section-tooltip);
+    font-size: .76rem;
+    font-weight: 600;
+    inline-size: min(18rem, 72vw);
+    inset-inline-end: 0;
+    line-height: 1.55;
+    opacity: 0;
+    padding: .8rem .9rem;
+    pointer-events: none;
+    position: absolute;
+    text-align: left;
+    top: calc(100% + .65rem);
+    transform: translateY(-.25rem);
+    transition: opacity .16s ease, transform .16s ease;
+    z-index: 40;
+}
+
+.form-section-accordion__help:hover::after,
+.form-section-accordion__help:focus-visible::after {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.form-section-accordion__chevron {
+    color: var(--muted-foreground);
+    font-size: 1.05rem;
+    transition: transform .18s ease;
+}
+
+.form-section-accordion[open] > .form-section-accordion__summary {
+    border-bottom: 1px solid var(--border);
+}
+
+.form-section-accordion[open] .form-section-accordion__chevron {
+    transform: rotate(180deg);
+}
+
+.form-section-accordion__card {
+    border: 0 !important;
+    border-radius: 0 0 1rem 1rem !important;
+    box-shadow: none !important;
+}
+
+.form-section-accordion__card > .kt-card-header,
+.form-section-accordion__card > .kt-card-head {
+    display: none !important;
+}
+
+.dark .form-section-accordion {
+    box-shadow: 0 18px 42px rgb(0 0 0 / 24%);
+}
+
+.dark .form-section-accordion__help::after {
+    box-shadow: 0 20px 44px rgb(0 0 0 / 36%);
+}
+
 @media (max-width: 768px) {
     .appointment-calendar-shell .fc .fc-toolbar.fc-header-toolbar {
         align-items: stretch;
