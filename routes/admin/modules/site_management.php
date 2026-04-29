@@ -145,6 +145,10 @@ Route::prefix('site')->as('site.')->group(function () {
         ->middleware('permission:site_settings.update')
         ->name('settings.update');
 
+    Route::post('/settings/test-mail', [SiteSettingsController::class, 'sendTestMail'])
+        ->middleware('permission:site_settings.update')
+        ->name('settings.test-mail');
+
     Route::prefix('sliders')->as('sliders.')->group(function () {
         Route::get('/', [HomeSliderController::class, 'index'])
             ->middleware('permission:home_sliders.view')

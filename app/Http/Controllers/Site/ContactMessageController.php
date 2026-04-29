@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Site;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Site\StoreContactMessageRequest;
+use App\Jobs\SendContactMessageReceivedMailJob;
 use App\Models\Admin\User\User;
 use App\Models\ContactMessage;
 use App\Models\Member;
@@ -79,7 +80,9 @@ class ContactMessageController extends Controller
             ]);
         }
 
-        ContactMessage::create($payload);
+        $contactMessage = ContactMessage::create($payload);
+
+        SendContactMessageReceivedMailJob::dispatch($contactMessage->id);
 
         return redirect()
             ->route('site.contact-messages.create')
