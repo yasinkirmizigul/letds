@@ -3,6 +3,7 @@
 namespace App\Services\Appointment;
 
 use App\Jobs\SendAppointmentUpdatedMailJob;
+use App\Jobs\SendAppointmentAdminNotificationMailJob;
 use App\Models\Admin\User\User;
 use App\Models\Appointment\Appointment;
 use Carbon\Carbon;
@@ -22,7 +23,7 @@ class AppointmentService
 
     public function create(array $data, ?int $actorUserId = null): Appointment
     {
-        return DB::transaction(function () use ($data, $actorUserId) {
+        $appointment = DB::transaction(function () use ($data, $actorUserId) {
             $startAt = Carbon::parse($data['start_at'], $this->tz)->seconds(0);
 
             $this->assertStartAtNotInPast($startAt);
@@ -62,6 +63,10 @@ class AppointmentService
 
             return $appointment->fresh(['member', 'provider']);
         });
+
+        SendAppointmentAdminNotificationMailJob::dispatch($appointment->id, 'created', $actorUserId);
+
+        return $appointment;
     }
 
     public function transfer(Appointment $appointment, array $data, User $actor): Appointment
@@ -116,6 +121,7 @@ class AppointmentService
         });
 
         SendAppointmentUpdatedMailJob::dispatch($new->id, 'transferred');
+        SendAppointmentAdminNotificationMailJob::dispatch($new->id, 'transferred', $actor->id);
 
         return $new;
     }
@@ -158,6 +164,7 @@ class AppointmentService
         });
 
         SendAppointmentUpdatedMailJob::dispatch($updated->id, 'resized');
+        SendAppointmentAdminNotificationMailJob::dispatch($updated->id, 'resized', $actor->id);
 
         return $updated;
     }
@@ -181,6 +188,7 @@ class AppointmentService
         });
 
         SendAppointmentUpdatedMailJob::dispatch($cancelled->id, 'cancelled');
+        SendAppointmentAdminNotificationMailJob::dispatch($cancelled->id, 'cancelled_by_provider', $actor->id);
 
         return $cancelled;
     }
@@ -211,7 +219,7 @@ class AppointmentService
 
         $this->assertCanTransition($appointment, Appointment::STATUS_CANCELLED_BY_MEMBER);
 
-        return DB::transaction(function () use ($appointment) {
+        $cancelled = DB::transaction(function () use ($appointment) {
             $appointment->update([
                 'status' => Appointment::STATUS_CANCELLED_BY_MEMBER,
                 'cancelled_at' => Carbon::now($this->tz),
@@ -221,6 +229,10 @@ class AppointmentService
 
             return $appointment->fresh(['member', 'provider', 'parent', 'children']);
         });
+
+        SendAppointmentAdminNotificationMailJob::dispatch($cancelled->id, 'cancelled_by_member');
+
+        return $cancelled;
     }
 
     public function rescheduleByMember(Appointment $appointment, array $data, int $memberId): Appointment
@@ -239,7 +251,7 @@ class AppointmentService
 
         $this->assertCanTransition($appointment, Appointment::STATUS_TRANSFERRED);
 
-        return DB::transaction(function () use ($appointment, $data) {
+        $newAppointment = DB::transaction(function () use ($appointment, $data) {
             $newStartAt = Carbon::parse($data['start_at'], $this->tz)->seconds(0);
             $this->assertStartAtNotInPast($newStartAt);
 
@@ -283,6 +295,10 @@ class AppointmentService
 
             return $newAppointment->fresh(['member', 'provider', 'parent']);
         });
+
+        SendAppointmentAdminNotificationMailJob::dispatch($newAppointment->id, 'rescheduled_by_member');
+
+        return $newAppointment;
     }
 
     protected function authorizeManage(Appointment $appointment, User $actor): void

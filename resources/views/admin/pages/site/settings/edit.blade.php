@@ -34,6 +34,12 @@
                 ->all();
         }
 
+        $mailNotificationsEnabled = old('mail_notifications_enabled', $settings->mail_notifications_enabled);
+        $notifyContactMessages = old('notify_contact_messages', $settings->notify_contact_messages ?? true);
+        $notifyAppointments = old('notify_appointments', $settings->notify_appointments ?? true);
+        $smtpScheme = old('smtp_scheme', $settings->smtp_scheme ?: 'smtp');
+        $smtpPasswordIsSet = filled($settings->smtp_password);
+
         $localizedSettingsDefaultValues = [
             'site_name' => old('site_name', $settings->site_name),
             'site_tagline' => old('site_tagline', $settings->site_tagline),
@@ -238,6 +244,107 @@
                     <div class="kt-card">
                         <div class="kt-card-header py-5">
                             <div>
+                                <h3 class="kt-card-title">E-posta Bildirimleri ve SMTP</h3>
+                                <div class="text-sm text-muted-foreground">Panel kullanıcılarına giden mesaj ve randevu e-postaları için gönderim altyapısı.</div>
+                            </div>
+                        </div>
+
+                        <div class="kt-card-content grid gap-5 p-6">
+                            <label class="flex items-start gap-3 rounded-2xl app-surface-card app-surface-card--soft p-4">
+                                <input type="hidden" name="mail_notifications_enabled" value="0">
+                                <input type="checkbox" name="mail_notifications_enabled" value="1" class="kt-checkbox mt-1" @checked($mailNotificationsEnabled)>
+                                <span>
+                                    <span class="block font-medium text-foreground">E-posta bildirimlerini aktif et</span>
+                                    <span class="text-sm text-muted-foreground">Kapalıyken mesaj ve randevu bildirimleri kuyruğa alınmaz.</span>
+                                </span>
+                            </label>
+
+                            <div class="grid gap-4 lg:grid-cols-2">
+                                <label class="flex items-start gap-3 rounded-2xl border border-border bg-background/70 p-4">
+                                    <input type="hidden" name="notify_contact_messages" value="0">
+                                    <input type="checkbox" name="notify_contact_messages" value="1" class="kt-checkbox mt-1" @checked($notifyContactMessages)>
+                                    <span>
+                                        <span class="block font-medium text-foreground">Mesaj bildirimi</span>
+                                        <span class="text-sm text-muted-foreground">İletişim formu mesajları seçilen panel kullanıcısına gider.</span>
+                                    </span>
+                                </label>
+
+                                <label class="flex items-start gap-3 rounded-2xl border border-border bg-background/70 p-4">
+                                    <input type="hidden" name="notify_appointments" value="0">
+                                    <input type="checkbox" name="notify_appointments" value="1" class="kt-checkbox mt-1" @checked($notifyAppointments)>
+                                    <span>
+                                        <span class="block font-medium text-foreground">Randevu bildirimi</span>
+                                        <span class="text-sm text-muted-foreground">Yeni, taşınan veya iptal edilen randevular ilgili panel kullanıcısına gider.</span>
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="grid gap-4 lg:grid-cols-2">
+                                <div class="grid gap-2">
+                                    <label class="kt-form-label">Gönderen E-posta</label>
+                                    <input name="mail_from_address" type="email" class="kt-input" value="{{ old('mail_from_address', $settings->mail_from_address ?: $settings->contact_email) }}" placeholder="noreply@site.com">
+                                </div>
+                                <div class="grid gap-2">
+                                    <label class="kt-form-label">Gönderen Adı</label>
+                                    <input name="mail_from_name" class="kt-input" value="{{ old('mail_from_name', $settings->mail_from_name ?: $settings->site_name) }}" placeholder="{{ config('app.name') }}">
+                                </div>
+                            </div>
+
+                            <div class="grid gap-4 lg:grid-cols-4">
+                                <div class="grid gap-2 lg:col-span-2">
+                                    <label class="kt-form-label">SMTP Host</label>
+                                    <input name="smtp_host" class="kt-input" value="{{ old('smtp_host', $settings->smtp_host) }}" placeholder="smtp.domain.com">
+                                </div>
+                                <div class="grid gap-2">
+                                    <label class="kt-form-label">Port</label>
+                                    <input name="smtp_port" type="number" min="1" max="65535" class="kt-input" value="{{ old('smtp_port', $settings->smtp_port ?: 587) }}">
+                                </div>
+                                <div class="grid gap-2">
+                                    <label class="kt-form-label">Güvenlik</label>
+                                    <select name="smtp_scheme" class="kt-select">
+                                        <option value="smtp" @selected($smtpScheme === 'smtp')>TLS / STARTTLS</option>
+                                        <option value="smtps" @selected($smtpScheme === 'smtps')>SSL</option>
+                                        <option value="smtp_plain" @selected($smtpScheme === 'smtp_plain')>Yok</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid gap-4 lg:grid-cols-3">
+                                <div class="grid gap-2">
+                                    <label class="kt-form-label">Kullanıcı Adı</label>
+                                    <input name="smtp_username" class="kt-input" value="{{ old('smtp_username', $settings->smtp_username) }}" autocomplete="off">
+                                </div>
+                                <div class="grid gap-2">
+                                    <label class="kt-form-label">Parola</label>
+                                    <input name="smtp_password" type="password" class="kt-input" value="" autocomplete="new-password" placeholder="{{ $smtpPasswordIsSet ? 'Kayıtlı parola korunur' : '' }}">
+                                </div>
+                                <div class="grid gap-2">
+                                    <label class="kt-form-label">Timeout (sn)</label>
+                                    <input name="smtp_timeout" type="number" min="1" max="120" class="kt-input" value="{{ old('smtp_timeout', $settings->smtp_timeout ?: 10) }}">
+                                </div>
+                            </div>
+
+                            @if($smtpPasswordIsSet)
+                                <label class="flex items-center gap-3 text-sm text-muted-foreground">
+                                    <input type="hidden" name="smtp_password_clear" value="0">
+                                    <input type="checkbox" name="smtp_password_clear" value="1" class="kt-checkbox">
+                                    Kayıtlı SMTP parolasını temizle
+                                </label>
+                            @endif
+
+                            <div class="grid gap-3 rounded-2xl border border-dashed border-border bg-background/70 p-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+                                <div class="grid gap-2">
+                                    <label class="kt-form-label">Test E-postası</label>
+                                    <input form="site-settings-test-mail" name="test_email" type="email" class="kt-input" value="{{ old('test_email', auth()->user()?->email) }}" placeholder="mail@domain.com">
+                                </div>
+                                <button type="submit" form="site-settings-test-mail" class="kt-btn kt-btn-light-primary">Test Gönder</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header py-5">
+                            <div>
                                 <h3 class="kt-card-title">Sosyal Ağlar</h3>
                                 <div class="text-sm text-muted-foreground">Footer ve iletişim alanında gösterilecek bağlantılar.</div>
                             </div>
@@ -314,6 +421,10 @@
                     <button type="submit" class="kt-btn kt-btn-primary">Site Ayarlarını Kaydet</button>
                 </div>
             </div>
+        </form>
+
+        <form id="site-settings-test-mail" method="POST" action="{{ route('admin.site.settings.test-mail') }}" class="hidden">
+            @csrf
         </form>
     </div>
 @endsection

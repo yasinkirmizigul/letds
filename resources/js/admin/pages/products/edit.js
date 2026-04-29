@@ -1,6 +1,8 @@
 import { request } from '@/core/http';
 import { showConfirmDialog, showToastMessage } from '@/core/swal-alert';
 import initGalleryManager, { destroyGalleryManager } from '@/core/gallery-manager';
+import initLibraryAttach from '@/core/library-attach';
+import initGalleryManager, { destroyGalleryManager } from '@/core/gallery-manager';
 import {
     initSeoPanel,
     initSlugTools,
@@ -30,6 +32,8 @@ export default async function init(ctx) {
     seoPanel.sync();
     initGalleryManager(root);
     ctx.cleanup(() => destroyGalleryManager(root));
+
+    initLibraryAttach(root);
 
     const updateForm = root.querySelector('#product-update-form');
     if (updateForm) {

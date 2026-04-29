@@ -151,7 +151,7 @@ async function renderCalendar() {
 
     isMonthLoading = true;
     updateCalendarTitle();
-    container.innerHTML = `<div class="text-sm text-gray-500">Takvim yükleniyor...</div>`;
+    container.innerHTML = `<div class="text-sm text-muted-foreground">Takvim yükleniyor...</div>`;
 
     try {
         const year = currentMonth.getFullYear();
@@ -179,16 +179,16 @@ async function renderCalendar() {
             html += `
                 <button
                     type="button"
-                    class="calendar-day p-2 text-center border rounded transition ${
+                    class="calendar-day app-calendar-day ${
                         isDisabled
-                            ? 'bg-gray-100 opacity-50 cursor-not-allowed'
-                            : 'bg-green-50 hover:bg-green-100 cursor-pointer'
+                            ? 'is-disabled'
+                            : 'is-available'
                     }"
                     ${!isDisabled ? `data-date="${dateStr}"` : 'disabled'}
                     title="${isDisabled ? 'Uygun slot yok' : `${freeCount} uygun slot`}"
                 >
                     <div>${day}</div>
-                    ${!isDisabled ? `<div class="text-[11px] text-gray-500 mt-1">${freeCount}</div>` : ''}
+                    ${!isDisabled ? `<div class="mt-1 text-[11px] text-muted-foreground">${freeCount}</div>` : ''}
                 </button>
             `;
         }
@@ -211,14 +211,14 @@ async function renderCalendar() {
 
 function highlightSelectedDate() {
     document.querySelectorAll('.calendar-day').forEach((el) => {
-        el.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+        el.classList.remove('is-selected');
     });
 
     if (!selectedDate) return;
 
     const selectedEl = document.querySelector(`.calendar-day[data-date="${selectedDate}"]`);
     if (selectedEl) {
-        selectedEl.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
+        selectedEl.classList.add('is-selected');
     }
 }
 
@@ -231,7 +231,7 @@ async function loadSlots() {
 
     isDayLoading = true;
     selectedSlot = null;
-    container.innerHTML = `<div class="text-sm text-gray-500">Saatler yükleniyor...</div>`;
+    container.innerHTML = `<div class="text-sm text-muted-foreground">Saatler yükleniyor...</div>`;
     empty?.classList.add('hidden');
 
     try {
@@ -267,7 +267,7 @@ function selectDate(date) {
 function createSlotElement(slot) {
     const el = document.createElement('button');
     el.type = 'button';
-    el.className = 'p-3 border rounded cursor-pointer text-center hover:bg-blue-50 transition';
+    el.className = 'app-slot-button text-center';
     el.innerText = formatTime(slot.start_at);
     el.addEventListener('click', () => selectSlot(el, slot));
 
@@ -278,10 +278,10 @@ function selectSlot(el, slot) {
     if (isSubmitting) return;
 
     document.querySelectorAll('#slots > button').forEach((button) => {
-        button.classList.remove('bg-blue-500', 'text-white', 'border-blue-500');
+        button.classList.remove('is-selected');
     });
 
-    el.classList.add('bg-blue-500', 'text-white', 'border-blue-500');
+    el.classList.add('is-selected');
     selectedSlot = slot;
 
     if (isRescheduleMode) {

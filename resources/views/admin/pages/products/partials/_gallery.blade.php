@@ -1,15 +1,17 @@
+@php
+    $product = $product ?? null;
+@endphp
+
 @if(empty($product) || empty($product->id))
-    <div class="kt-card">
-        <div class="kt-card-content p-5">
-            <div class="rounded-2xl border border-dashed border-border bg-background/75 px-4 py-4 text-sm text-muted-foreground">
-                Galeri eklemek için ürünü önce kaydedin. Kayıttan sonra galerileri ana alan ve yan alan olarak bağlayabilirsiniz.
-            </div>
+    <div class="kt-alert kt-alert-light">
+        <div class="text-sm text-muted-foreground">
+            Galeri eklemek için ürünü önce kaydedin.
         </div>
     </div>
 @else
     @include('admin.components.gallery-manager', [
         'id' => 'product-' . $product->id,
-        'title' => 'Ürün Galerileri',
+        'title' => 'Galeriler',
         'routes' => [
             'list' => route('admin.galleries.list'),
             'index' => route('admin.products.galleries.index', $product),
@@ -18,8 +20,8 @@
             'reorder' => route('admin.products.galleries.reorder', $product),
         ],
         'slots' => [
-            'main' => 'Ana Alan',
-            'sidebar' => 'Yan Alan',
+            'main' => 'Ana',
+            'sidebar' => 'Sidebar',
         ],
     ])
 @endif

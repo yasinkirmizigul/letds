@@ -133,7 +133,9 @@
             </div>
         </div>
 
-        @include('admin.pages.products.partials._gallery', ['product' => $product])
+        @if($isEdit)
+            @includeIf('admin.pages.products.partials._gallery', ['product' => $product])
+        @endif
     </div>
 
     <div class="grid gap-6 self-start xl:sticky xl:top-6">

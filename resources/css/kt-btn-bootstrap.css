@@ -16,11 +16,18 @@
     --kt-warning: #ffc107;
     --kt-info:    #0dcaf0;
     --kt-dark:    #212529;
-    --kt-light:   #f8f9fa;
+    --kt-light:   color-mix(in oklab, var(--foreground, #111827) 4%, var(--background, #f8f9fa));
 
-    --kt-border:  rgba(0,0,0,.12);
-    --kt-text:    #111827;
+    --kt-border:  color-mix(in oklab, var(--foreground, #111827) 12%, transparent);
+    --kt-text:    var(--foreground, #111827);
     --kt-white:   #ffffff;
+}
+
+.dark{
+    --kt-border: color-mix(in oklab, var(--foreground, #f4f4f5) 16%, transparent);
+    --kt-text: var(--foreground, #f4f4f5);
+    --kt-dark: var(--foreground, #f4f4f5);
+    --kt-light: color-mix(in oklab, var(--foreground, #f4f4f5) 8%, var(--background, #09090b));
 }
 
 /* ---------- Base .kt-btn ---------- */
@@ -51,7 +58,7 @@
 
 .kt-btn[disabled],
 .kt-btn:disabled{
-    opacity: .6;
+    opacity: .72;
     cursor: not-allowed;
     pointer-events: none;
 }
@@ -111,20 +118,98 @@
 .kt-btn-light{
     background: var(--kt-light);
     border-color: var(--kt-border);
-    color: var(--kt-dark);
+    color: var(--kt-text);
 }
-.kt-btn-light:hover{ background: #e9ecef; border-color: rgba(0,0,0,.16); }
+.kt-btn-light:hover{
+    background: color-mix(in oklab, var(--foreground, #111827) 7%, var(--background, #fff));
+    border-color: color-mix(in oklab, var(--foreground, #111827) 18%, transparent);
+}
 .kt-btn-light:focus{ box-shadow: 0 0 0 .2rem rgba(248,249,250,.35); }
+
+.dark .kt-btn-light:hover{
+    background: color-mix(in oklab, var(--foreground, #f4f4f5) 12%, var(--background, #09090b));
+    border-color: color-mix(in oklab, var(--foreground, #f4f4f5) 24%, transparent);
+}
+
+.kt-btn-light-primary{
+    background: rgba(13,110,253,.10);
+    border-color: rgba(13,110,253,.20);
+    color: #0b5ed7;
+}
+.kt-btn-light-primary:hover{ background: rgba(13,110,253,.16); border-color: rgba(13,110,253,.32); }
+
+.kt-btn-light-success{
+    background: rgba(25,135,84,.11);
+    border-color: rgba(25,135,84,.22);
+    color: #146c43;
+}
+.kt-btn-light-success:hover{ background: rgba(25,135,84,.17); border-color: rgba(25,135,84,.34); }
+
+.kt-btn-light-danger{
+    background: rgba(220,53,69,.11);
+    border-color: rgba(220,53,69,.22);
+    color: #b02a37;
+}
+.kt-btn-light-danger:hover{ background: rgba(220,53,69,.17); border-color: rgba(220,53,69,.34); }
+
+.kt-btn-light-warning{
+    background: rgba(255,193,7,.18);
+    border-color: rgba(255,193,7,.28);
+    color: #8a6400;
+}
+.kt-btn-light-warning:hover{ background: rgba(255,193,7,.24); border-color: rgba(255,193,7,.4); }
+
+.kt-btn-light-info{
+    background: rgba(13,202,240,.13);
+    border-color: rgba(13,202,240,.24);
+    color: #087990;
+}
+.kt-btn-light-info:hover{ background: rgba(13,202,240,.19); border-color: rgba(13,202,240,.34); }
+
+.dark .kt-btn-light-primary{
+    background: color-mix(in oklab, #3e97ff 18%, var(--background));
+    border-color: color-mix(in oklab, #3e97ff 34%, var(--border, transparent));
+    color: #8fc4ff;
+}
+.dark .kt-btn-light-primary:hover{ background: color-mix(in oklab, #3e97ff 25%, var(--background)); }
+
+.dark .kt-btn-light-success{
+    background: color-mix(in oklab, #17c653 18%, var(--background));
+    border-color: color-mix(in oklab, #17c653 34%, var(--border, transparent));
+    color: #6fe6a1;
+}
+.dark .kt-btn-light-success:hover{ background: color-mix(in oklab, #17c653 25%, var(--background)); }
+
+.dark .kt-btn-light-danger{
+    background: color-mix(in oklab, #f1416c 18%, var(--background));
+    border-color: color-mix(in oklab, #f1416c 34%, var(--border, transparent));
+    color: #ff91aa;
+}
+.dark .kt-btn-light-danger:hover{ background: color-mix(in oklab, #f1416c 25%, var(--background)); }
+
+.dark .kt-btn-light-warning{
+    background: color-mix(in oklab, #f6b100 20%, var(--background));
+    border-color: color-mix(in oklab, #f6b100 36%, var(--border, transparent));
+    color: #ffd86f;
+}
+.dark .kt-btn-light-warning:hover{ background: color-mix(in oklab, #f6b100 28%, var(--background)); }
+
+.dark .kt-btn-light-info{
+    background: color-mix(in oklab, #0dcaf0 18%, var(--background));
+    border-color: color-mix(in oklab, #0dcaf0 34%, var(--border, transparent));
+    color: #83e9ff;
+}
+.dark .kt-btn-light-info:hover{ background: color-mix(in oklab, #0dcaf0 25%, var(--background)); }
 
 /* ---------- Outline variants ---------- */
 .kt-btn-outline{
     background: transparent;
     border-color: var(--kt-border);
-    color: var(--kt-dark);
+    color: var(--kt-text);
 }
 .kt-btn-outline:hover{
-    background: rgba(0,0,0,.04);
-    border-color: rgba(0,0,0,.18);
+    background: color-mix(in oklab, var(--foreground, #111827) 5%, var(--background, #fff));
+    border-color: color-mix(in oklab, var(--foreground, #111827) 20%, transparent);
 }
 
 /* Outline color helpers (optional) */

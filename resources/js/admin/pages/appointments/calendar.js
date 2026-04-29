@@ -71,19 +71,19 @@ function legacyRenderHistory(root, items = []) {
     if (!historyWrap) return
 
     if (!items.length) {
-        historyWrap.innerHTML = `<div class="text-xs text-gray-500 dark:text-zinc-400">Geçmiş kayıt yok.</div>`
+        historyWrap.innerHTML = `<div class="text-xs text-muted-foreground">Geçmiş kayıt yok.</div>`
         return
     }
 
     historyWrap.innerHTML = items.map((item) => `
-        <div class="rounded-xl border border-gray-200 bg-white px-3 py-3 dark:border-zinc-800 dark:bg-zinc-900">
+        <div class="rounded-xl border border-border bg-background/70 px-3 py-3">
             <div class="flex items-center justify-between gap-3">
-                <div class="text-sm font-medium text-gray-900 dark:text-zinc-100">${item.start_at} - ${item.end_at}</div>
-                <div class="text-xs ${item.is_current ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-zinc-400'}">
+                <div class="text-sm font-medium text-foreground">${item.start_at} - ${item.end_at}</div>
+                <div class="text-xs ${item.is_current ? 'text-green-600' : 'text-muted-foreground'}">
                     ${item.is_current ? 'Aktif' : item.status}
                 </div>
             </div>
-            <div class="mt-1 text-xs text-gray-500 dark:text-zinc-400">
+            <div class="mt-1 text-xs text-muted-foreground">
                 ${item.provider_name || '-'} • ${item.member_name || '-'}
             </div>
         </div>
@@ -688,19 +688,19 @@ function renderHistory(root, items = []) {
     if (!historyWrap) return
 
     if (!items.length) {
-        historyWrap.innerHTML = `<div class="text-xs text-gray-500 dark:text-zinc-400">Geçmiş kayıt yok.</div>`
+        historyWrap.innerHTML = `<div class="text-xs text-muted-foreground">Geçmiş kayıt yok.</div>`
         return
     }
 
     historyWrap.innerHTML = items.map((item) => `
-        <div class="rounded-xl border border-gray-200 bg-white px-3 py-3 dark:border-zinc-800 dark:bg-zinc-900">
+        <div class="rounded-xl border border-border bg-background/70 px-3 py-3">
             <div class="flex items-center justify-between gap-3">
-                <div class="text-sm font-medium text-gray-900 dark:text-zinc-100">${item.start_at} - ${item.end_at}</div>
-                <div class="text-xs ${item.is_current ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-zinc-400'}">
+                <div class="text-sm font-medium text-foreground">${item.start_at} - ${item.end_at}</div>
+                <div class="text-xs ${item.is_current ? 'text-green-600' : 'text-muted-foreground'}">
                     ${item.is_current ? 'Aktif' : (item.status_label || item.status)}
                 </div>
             </div>
-            <div class="mt-1 text-xs text-gray-500 dark:text-zinc-400">
+            <div class="mt-1 text-xs text-muted-foreground">
                 ${item.provider_name || '-'} | ${item.member_name || '-'}
             </div>
         </div>

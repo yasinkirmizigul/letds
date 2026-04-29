@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Mail\AppointmentUpdatedMail;
+use App\Mail\AdminAppointmentNotificationMail;
 use App\Models\Appointment\Appointment;
 use App\Models\Site\SiteSetting;
 use App\Services\Mail\SiteMailConfigurator;
@@ -15,39 +15,43 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
 
-class SendAppointmentUpdatedMailJob implements ShouldQueue
+class SendAppointmentAdminNotificationMailJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
         public int $appointmentId,
-        public string $type
+        public string $type,
+        public ?int $actorUserId = null
     ) {}
 
     public function handle(SiteMailConfigurator $mailConfigurator): void
     {
         $appointment = Appointment::query()
-            ->with(['member', 'provider'])
+            ->with(['member:id,name,surname,email,phone', 'provider:id,name,email,title', 'parent:id,start_at,end_at,status'])
             ->find($this->appointmentId);
 
-        if (!$appointment) {
+        if (!$appointment?->provider?->email) {
             return;
         }
 
-        if (!$appointment->member?->email) {
+        if ($this->actorUserId && (int) $appointment->provider_id === (int) $this->actorUserId) {
             return;
         }
 
         $settings = SiteSetting::current();
 
-        $mailConfigurator->apply($settings);
+        if (!$mailConfigurator->readyFor(SiteMailConfigurator::FEATURE_APPOINTMENTS, $settings)) {
+            return;
+        }
 
         try {
-            Mail::to($appointment->member->email)
-                ->send(new AppointmentUpdatedMail($appointment, $this->type));
+            Mail::to($appointment->provider->email, $appointment->provider->name)
+                ->send(new AdminAppointmentNotificationMail($appointment, $this->type, $settings));
         } catch (Throwable $e) {
-            Log::error('Üye randevu bildirimi gönderilemedi.', [
+            Log::error('Panel randevu bildirimi gönderilemedi.', [
                 'appointment_id' => $appointment->id,
+                'provider_id' => $appointment->provider_id,
                 'type' => $this->type,
                 'message' => $e->getMessage(),
             ]);

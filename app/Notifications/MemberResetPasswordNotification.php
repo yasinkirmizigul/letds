@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Services\Mail\SiteMailConfigurator;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -22,6 +23,8 @@ class MemberResetPasswordNotification extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
+        app(SiteMailConfigurator::class)->apply();
+
         $url = route('member.password.reset', [
             'token' => $this->token,
             'email' => $notifiable->getEmailForPasswordReset(),

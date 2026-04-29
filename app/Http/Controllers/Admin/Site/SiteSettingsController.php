@@ -3,16 +3,21 @@
 namespace App\Http\Controllers\Admin\Site;
 
 use App\Http\Controllers\Controller;
+use App\Mail\SiteMailTestMail;
 use App\Models\Site\HomeSlider;
 use App\Models\Site\SiteCounter;
 use App\Models\Site\SiteFaq;
 use App\Models\Site\SiteNavigationItem;
 use App\Models\Site\SitePage;
 use App\Models\Site\SiteSetting;
+use App\Services\Mail\SiteMailConfigurator;
 use App\Services\Site\SiteTranslationSyncService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class SiteSettingsController extends Controller
 {
@@ -59,6 +64,18 @@ class SiteSettingsController extends Controller
             'social_links.*' => ['nullable', 'string', 'max:255'],
             'ui_lines' => ['nullable', 'array'],
             'ui_lines.*' => ['nullable', 'string', 'max:500'],
+            'mail_notifications_enabled' => ['nullable', 'boolean'],
+            'notify_contact_messages' => ['nullable', 'boolean'],
+            'notify_appointments' => ['nullable', 'boolean'],
+            'mail_from_address' => ['nullable', 'required_if:mail_notifications_enabled,1', 'email', 'max:255'],
+            'mail_from_name' => ['nullable', 'string', 'max:255'],
+            'smtp_host' => ['nullable', 'required_if:mail_notifications_enabled,1', 'string', 'max:255'],
+            'smtp_port' => ['nullable', 'required_if:mail_notifications_enabled,1', 'integer', 'min:1', 'max:65535'],
+            'smtp_scheme' => ['nullable', 'string', 'in:smtp,smtps,smtp_plain'],
+            'smtp_username' => ['nullable', 'string', 'max:255'],
+            'smtp_password' => ['nullable', 'string', 'max:1000'],
+            'smtp_password_clear' => ['nullable', 'boolean'],
+            'smtp_timeout' => ['nullable', 'integer', 'min:1', 'max:120'],
             'translations' => ['nullable', 'array'],
             'translations.*.site_name' => ['nullable', 'string', 'max:255'],
             'translations.*.site_tagline' => ['nullable', 'string', 'max:255'],
@@ -99,7 +116,23 @@ class SiteSettingsController extends Controller
             'under_construction_message' => $validated['under_construction_message'] ?? null,
             'social_links' => array_filter($validated['social_links'] ?? [], fn ($value) => filled($value)),
             'ui_lines' => array_filter($validated['ui_lines'] ?? [], fn ($value) => filled($value)),
+            'mail_notifications_enabled' => $request->boolean('mail_notifications_enabled'),
+            'notify_contact_messages' => $request->boolean('notify_contact_messages'),
+            'notify_appointments' => $request->boolean('notify_appointments'),
+            'mail_from_address' => $validated['mail_from_address'] ?? null,
+            'mail_from_name' => $validated['mail_from_name'] ?? null,
+            'smtp_host' => $validated['smtp_host'] ?? null,
+            'smtp_port' => $validated['smtp_port'] ?? null,
+            'smtp_scheme' => $validated['smtp_scheme'] ?? 'smtp',
+            'smtp_username' => $validated['smtp_username'] ?? null,
+            'smtp_timeout' => $validated['smtp_timeout'] ?? null,
         ]);
+
+        if ($request->boolean('smtp_password_clear')) {
+            $settings->forceFill(['smtp_password' => null])->save();
+        } elseif ($request->filled('smtp_password')) {
+            $settings->forceFill(['smtp_password' => $validated['smtp_password']])->save();
+        }
 
         $this->translationSyncService->sync(
             $settings,
@@ -125,5 +158,36 @@ class SiteSettingsController extends Controller
         return redirect()
             ->route('admin.site.settings.edit')
             ->with('success', 'Site ayarları güncellendi.');
+    }
+
+    public function sendTestMail(Request $request, SiteMailConfigurator $mailConfigurator): RedirectResponse
+    {
+        $validated = $request->validate([
+            'test_email' => ['required', 'email', 'max:255'],
+        ]);
+
+        $settings = SiteSetting::current();
+
+        if (!$mailConfigurator->apply($settings)) {
+            return back()
+                ->withInput()
+                ->with('error', 'Test e-postası için SMTP host, port ve gönderen adresini kaydedin.');
+        }
+
+        try {
+            Mail::to($validated['test_email'])
+                ->send(new SiteMailTestMail($settings));
+        } catch (Throwable $e) {
+            Log::error('SMTP test e-postası gönderilemedi.', [
+                'recipient' => $validated['test_email'],
+                'message' => $e->getMessage(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Test e-postası gönderilemedi. SMTP bilgilerini ve sunucu erişimini kontrol edin.');
+        }
+
+        return back()->with('success', 'Test e-postası gönderildi.');
     }
 }

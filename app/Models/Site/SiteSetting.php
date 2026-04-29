@@ -32,12 +32,29 @@ class SiteSetting extends Model
         'under_construction_message',
         'social_links',
         'ui_lines',
+        'mail_notifications_enabled',
+        'notify_contact_messages',
+        'notify_appointments',
+        'mail_from_address',
+        'mail_from_name',
+        'smtp_host',
+        'smtp_port',
+        'smtp_scheme',
+        'smtp_username',
+        'smtp_password',
+        'smtp_timeout',
     ];
 
     protected $casts = [
         'under_construction_enabled' => 'boolean',
         'social_links' => 'array',
         'ui_lines' => 'array',
+        'mail_notifications_enabled' => 'boolean',
+        'notify_contact_messages' => 'boolean',
+        'notify_appointments' => 'boolean',
+        'smtp_port' => 'integer',
+        'smtp_password' => 'encrypted',
+        'smtp_timeout' => 'integer',
     ];
 
     public static function current(): self

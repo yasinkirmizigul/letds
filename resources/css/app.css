@@ -7,7 +7,7 @@
     --background: var(--color-zinc-100);
     --foreground: var(--color-zinc-950);
     --border: var(--color-zinc-200);
-    --muted-foreground: var(--color-gray-500);
+    --muted-foreground: var(--color-slate-600);
     --secondary-foreground: var(--color-zinc-950);
 }
 
@@ -15,7 +15,7 @@
     --background: var(--color-zinc-950);
     --foreground: var(--color-zinc-100);
     --border: color-mix(in oklab, var(--color-zinc-100) 12%, var(--color-zinc-950));
-    --muted-foreground: var(--color-gray-500);
+    --muted-foreground: var(--color-zinc-400);
     --secondary-foreground: var(--color-zinc-100);
 }
 
@@ -153,6 +153,229 @@
     .kt-toggle-group { border: 1px solid var(--border); border-radius: .75rem; display:inline-flex; }
     .kt-toggle-group .kt-btn { @apply rounded-none border-0 first:rounded-l-lg last:rounded-r-lg; }
 }
+
+/* =========================
+   Metronic Forms + Theme Guardrails
+   ========================= */
+
+.text-foreground { color: var(--foreground) !important; }
+.text-muted-foreground { color: var(--muted-foreground) !important; }
+.bg-background { background-color: var(--background) !important; }
+.bg-background\/70 { background-color: color-mix(in oklab, var(--background) 82%, transparent) !important; }
+.bg-muted\/15 { background-color: color-mix(in oklab, var(--muted-foreground) 10%, var(--background)) !important; }
+.border-border { border-color: var(--border) !important; }
+
+.kt-form-label {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    color: color-mix(in oklab, var(--foreground) 86%, var(--muted-foreground));
+    font-size: .875rem;
+    font-weight: 600;
+}
+
+.kt-input,
+.kt-select,
+textarea.kt-input,
+select.kt-input,
+input.kt-input {
+    min-height: 2.625rem;
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: .625rem;
+    background: color-mix(in oklab, var(--background) 96%, white 4%);
+    color: var(--foreground);
+    box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
+    transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease, color .15s ease;
+}
+
+.dark .kt-input,
+.dark .kt-select,
+.dark textarea.kt-input,
+.dark select.kt-input,
+.dark input.kt-input {
+    background: color-mix(in oklab, var(--foreground) 5%, var(--background));
+    box-shadow: 0 1px 2px rgb(0 0 0 / 18%);
+}
+
+.kt-input:not(input):not(textarea):not(select) {
+    display: flex;
+    align-items: center;
+    gap: .625rem;
+    padding: 0 .875rem;
+}
+
+input.kt-input,
+select.kt-input,
+textarea.kt-input,
+.kt-select {
+    padding: .625rem .875rem;
+}
+
+textarea.kt-input {
+    min-height: 6rem;
+    line-height: 1.5;
+}
+
+.kt-input > i,
+.kt-input > svg {
+    flex: 0 0 auto;
+    color: var(--muted-foreground);
+}
+
+.kt-input > input,
+.kt-input > textarea,
+.kt-input > select {
+    min-width: 0;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    outline: none;
+    box-shadow: none;
+}
+
+.kt-input > input::placeholder,
+.kt-input > textarea::placeholder,
+input.kt-input::placeholder,
+textarea.kt-input::placeholder {
+    color: color-mix(in oklab, var(--muted-foreground) 78%, transparent);
+}
+
+.kt-input:focus-within,
+input.kt-input:focus,
+select.kt-input:focus,
+textarea.kt-input:focus,
+.kt-select:focus {
+    border-color: color-mix(in oklab, #3e97ff 70%, var(--border));
+    box-shadow: 0 0 0 .18rem rgb(62 151 255 / 16%);
+    outline: none;
+}
+
+.kt-input:has(:disabled),
+input.kt-input:disabled,
+select.kt-input:disabled,
+textarea.kt-input:disabled,
+.kt-select:disabled {
+    opacity: .72;
+    cursor: not-allowed;
+    background: color-mix(in oklab, var(--foreground) 5%, var(--background));
+}
+
+input[type="date"].kt-input,
+input[type="datetime-local"].kt-input,
+input[type="time"].kt-input,
+.kt-input input[type="date"],
+.kt-input input[type="datetime-local"],
+.kt-input input[type="time"],
+.kt-input input[data-app-date-picker="true"] {
+    color-scheme: light;
+}
+
+.dark input[type="date"].kt-input,
+.dark input[type="datetime-local"].kt-input,
+.dark input[type="time"].kt-input,
+.dark .kt-input input[type="date"],
+.dark .kt-input input[type="datetime-local"],
+.dark .kt-input input[type="time"],
+.dark .kt-input input[data-app-date-picker="true"] {
+    color-scheme: dark;
+}
+
+.dark input[type="date"].kt-input::-webkit-calendar-picker-indicator,
+.dark input[type="datetime-local"].kt-input::-webkit-calendar-picker-indicator,
+.dark input[type="time"].kt-input::-webkit-calendar-picker-indicator,
+.dark .kt-input input[type="date"]::-webkit-calendar-picker-indicator,
+.dark .kt-input input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+.dark .kt-input input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(1.45);
+    opacity: .78;
+}
+
+.app-calendar-day,
+.app-slot-button {
+    border: 1px solid var(--border);
+    border-radius: .75rem;
+    background: color-mix(in oklab, var(--foreground) 3%, var(--background));
+    color: var(--foreground);
+    transition: border-color .15s ease, background-color .15s ease, color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+.app-calendar-day {
+    min-height: 3.25rem;
+    padding: .55rem .35rem;
+    text-align: center;
+}
+
+.app-calendar-day.is-available {
+    border-color: color-mix(in oklab, #17c653 22%, var(--border));
+    background: color-mix(in oklab, #17c653 9%, var(--background));
+    cursor: pointer;
+}
+
+.app-calendar-day.is-available:hover {
+    background: color-mix(in oklab, #17c653 15%, var(--background));
+    box-shadow: 0 10px 24px rgb(23 198 83 / 12%);
+}
+
+.app-calendar-day.is-disabled {
+    color: var(--muted-foreground);
+    opacity: .68;
+    cursor: not-allowed;
+}
+
+.app-calendar-day.is-selected,
+.app-slot-button.is-selected {
+    border-color: #3e97ff;
+    background: color-mix(in oklab, #3e97ff 18%, var(--background));
+    color: var(--foreground);
+    box-shadow: 0 0 0 .18rem rgb(62 151 255 / 18%);
+}
+
+.app-slot-button {
+    min-height: 3rem;
+    padding: .75rem;
+    font-weight: 600;
+}
+
+.app-slot-button:hover {
+    border-color: color-mix(in oklab, #3e97ff 45%, var(--border));
+    background: color-mix(in oklab, #3e97ff 9%, var(--background));
+}
+
+.dark :where(.bg-white, .bg-white\/95, .bg-white\/90, .bg-white\/85, .bg-white\/80) {
+    background-color: color-mix(in oklab, var(--foreground) 6%, var(--background)) !important;
+}
+
+.dark :where(.bg-gray-50, .bg-gray-100, .bg-slate-50, .bg-slate-100, .bg-zinc-50, .bg-zinc-100) {
+    background-color: color-mix(in oklab, var(--foreground) 8%, var(--background)) !important;
+}
+
+.dark :where(.bg-blue-50, .bg-green-50, .bg-red-50, .bg-amber-50, .bg-yellow-50, .bg-violet-50) {
+    background-color: color-mix(in oklab, currentColor 12%, var(--background)) !important;
+}
+
+.dark :where(.text-gray-900, .text-gray-800, .text-slate-900, .text-slate-800, .text-zinc-900, .text-zinc-800) {
+    color: var(--foreground) !important;
+}
+
+.dark :where(.text-gray-700, .text-slate-700, .text-zinc-700) {
+    color: color-mix(in oklab, var(--foreground) 88%, var(--muted-foreground)) !important;
+}
+
+.dark :where(.text-gray-600, .text-gray-500, .text-slate-600, .text-slate-500, .text-zinc-600, .text-zinc-500) {
+    color: var(--muted-foreground) !important;
+}
+
+.dark :where(.border-gray-200, .border-gray-300, .border-slate-200, .border-slate-300, .border-zinc-200, .border-zinc-300) {
+    border-color: var(--border) !important;
+}
+
+.dark :where(.text-blue-600) { color: #7eb7ff !important; }
+.dark :where(.text-green-600) { color: #54d98c !important; }
+.dark :where(.text-red-600) { color: #ff7f9b !important; }
+.dark :where(.text-amber-600, .text-yellow-600) { color: #ffd36b !important; }
+.dark :where(.text-violet-600) { color: #b69cff !important; }
 
 /* =========================
    UTILITIES

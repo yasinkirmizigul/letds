@@ -589,7 +589,7 @@ Route::middleware(['auth', 'admin', 'audit'])
                 ->name('reorder');
         });
 
-        // Products <-> Galleries
+        // Products ↔ Galleries
         Route::prefix('products/{product}/galleries')->as('products.galleries.')->group(function () {
             Route::get('/', [ProductGalleryController::class, 'index'])
                 ->middleware('permission:products.update')
