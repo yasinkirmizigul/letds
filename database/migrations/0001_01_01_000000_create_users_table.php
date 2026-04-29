@@ -16,6 +16,13 @@ return new class extends Migration
             $table->foreignId('avatar_media_id')->nullable()->constrained('media')->nullOnDelete();
             $table->string('name');
             $table->string('title')->nullable();
+            $table->string('phone', 40)->nullable();
+            $table->string('company')->nullable();
+            $table->string('location')->nullable();
+            $table->string('website_url', 500)->nullable();
+            $table->string('linkedin_url', 500)->nullable();
+            $table->text('bio')->nullable();
+            $table->json('skills')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

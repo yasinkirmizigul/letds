@@ -113,6 +113,9 @@ Route::middleware(['auth', 'admin', 'audit'])
         Route::middleware('permission:users.view')->group(function () {
             Route::get('/users', [UserController::class, 'index'])->name('users.index');
 
+            Route::get('/users/{user}/profile', [ProfileController::class, 'show'])
+                ->name('users.profile');
+
             Route::get('/users/create', [UserController::class, 'create'])
                 ->middleware('permission:users.create')
                 ->name('users.create');
@@ -618,11 +621,9 @@ Route::middleware(['auth', 'admin', 'audit'])
                 Route::put('/', [ProfileController::class, 'update'])->name('update');
 
                 Route::post('/avatar', [ProfileController::class, 'updateAvatar'])
-                    ->middleware('permission:users.update')
                     ->name('avatar');
 
                 Route::delete('/avatar', [ProfileController::class, 'removeAvatar'])
-                    ->middleware('permission:users.update')
                     ->name('avatar.remove');
             });
 

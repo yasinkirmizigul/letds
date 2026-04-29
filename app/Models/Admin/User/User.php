@@ -20,9 +20,19 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name',
+        'title',
+        'phone',
+        'company',
+        'location',
+        'website_url',
+        'linkedin_url',
+        'bio',
+        'skills',
         'email',
         'password',
-        // is_active varsa fillable'a koymak zorunda değilsin (formdan alıyorsan koy)
+        'is_active',
+        'avatar_media_id',
+        'avatar',
     ];
 
     protected $hidden = [
@@ -35,7 +45,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_active' => 'boolean', // varsa
+            'is_active' => 'boolean',
+            'skills' => 'array',
         ];
     }
 
@@ -217,9 +228,11 @@ class User extends Authenticatable
     public function avatarUrl(): string
     {
         // 1) media bağlıysa onu kullan
-        if ($this->avatar_media_id && $this->relationLoaded('avatarMedia') ? $this->avatarMedia : $this->avatarMedia()->exists()) {
+        if ($this->avatar_media_id) {
             $m = $this->relationLoaded('avatarMedia') ? $this->avatarMedia : $this->avatarMedia()->first();
-            if ($m && $m->isImage()) return $m->url();
+            if ($m && $m->isImage()) {
+                return $m->url();
+            }
         }
 
         // 2) legacy avatar path varsa onu kullan
@@ -229,5 +242,44 @@ class User extends Authenticatable
 
         // 3) default
         return asset('assets/media/blank.png');
+    }
+
+    public function skillTags(): array
+    {
+        $skills = $this->skills;
+
+        if (is_string($skills)) {
+            $decoded = json_decode($skills, true);
+            $skills = is_array($decoded) ? $decoded : preg_split('/[,;\r\n]+/', $skills);
+        }
+
+        if (!is_array($skills)) {
+            return [];
+        }
+
+        return collect($skills)
+            ->map(fn ($skill) => trim((string) $skill))
+            ->filter()
+            ->unique(fn ($skill) => mb_strtolower($skill))
+            ->values()
+            ->all();
+    }
+
+    public function profileCompletionPercentage(): int
+    {
+        $checks = [
+            filled($this->name),
+            filled($this->email),
+            filled($this->title),
+            filled($this->phone),
+            filled($this->company),
+            filled($this->location),
+            filled($this->bio),
+            count($this->skillTags()) > 0,
+            filled($this->website_url) || filled($this->linkedin_url),
+            filled($this->avatar_media_id) || filled($this->avatar),
+        ];
+
+        return (int) round((count(array_filter($checks)) / count($checks)) * 100);
     }
 }

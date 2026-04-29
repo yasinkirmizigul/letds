@@ -1,6 +1,11 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
+    @php
+        $authUser = auth()->user();
+        $canViewUserProfiles = (bool) ($authUser?->isSuperAdmin());
+    @endphp
+
     <div class="kt-container-fixed max-w-[90%]"
          data-page="users.index"
          data-current-user-id="{{ auth()->id() }}">
@@ -96,7 +101,7 @@
                                     <th class="min-w-[240px]">Roller</th>
                                     <th class="min-w-[140px]">Durum</th>
                                     <th class="min-w-[160px]">Oluşturulma</th>
-                                    <th class="w-[70px]"></th>
+                                    <th class="w-[120px]"></th>
                                     <th class="w-[90px]"></th>
                                 </tr>
                                 </thead>
@@ -132,7 +137,7 @@
                                                     @endif
                                                 </div>
                                                 <span class="text-sm text-secondary-foreground">
-                                                    {{ $user->is_active ? 'Panele erisebilir.' : 'Hesap pasif durumda.' }}
+                                                    {{ $user->is_active ? 'Panele erişebilir.' : 'Hesap pasif durumda.' }}
                                                 </span>
                                             </div>
                                         </td>
@@ -147,7 +152,7 @@
                                                     @endforeach
                                                 </div>
                                             @else
-                                                <span class="text-muted-foreground">Rol atanmis degil</span>
+                                                <span class="text-muted-foreground">Rol atanmamış.</span>
                                             @endif
                                         </td>
 
@@ -164,12 +169,23 @@
                                         </td>
 
                                         <td>
-                                            @perm('users.update')
-                                                <a href="{{ route('admin.users.edit', $user) }}"
-                                                   class="kt-btn kt-btn-sm kt-btn-icon kt-btn-warning">
-                                                    <i class="ki-filled ki-notepad-edit"></i>
-                                                </a>
-                                            @endperm
+                                            <div class="flex items-center gap-2">
+                                                @if($canViewUserProfiles)
+                                                    <a href="{{ $isCurrentUser ? route('admin.profile.index') : route('admin.users.profile', $user) }}"
+                                                       class="kt-btn kt-btn-sm kt-btn-icon kt-btn-light"
+                                                       title="Profili görüntüle">
+                                                        <i class="ki-filled ki-eye"></i>
+                                                    </a>
+                                                @endif
+
+                                                @perm('users.update')
+                                                    <a href="{{ route('admin.users.edit', $user) }}"
+                                                       class="kt-btn kt-btn-sm kt-btn-icon kt-btn-warning"
+                                                       title="Kullanıcı hesabını düzenle">
+                                                        <i class="ki-filled ki-notepad-edit"></i>
+                                                    </a>
+                                                @endperm
+                                            </div>
                                         </td>
 
                                         <td>
@@ -178,8 +194,8 @@
                                                     <button type="button"
                                                             class="kt-btn kt-btn-sm kt-btn-light"
                                                             disabled
-                                                            title="Kendi hesabini silemezsin">
-                                                        Korumali
+                                                            title="Kendi hesabını silemezsin">
+                                                        Korumalı
                                                     </button>
                                                 @else
                                                     <form method="POST"
