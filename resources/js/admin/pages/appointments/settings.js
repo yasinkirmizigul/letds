@@ -224,10 +224,10 @@ function renderWorkingHours(root, hours = []) {
                     </div>
                 </td>
                 <td>
-                    <input type="time" class="kt-input w-full" data-day-start="${day.value}" value="${escapeHtml(startTime)}">
+                    <input type="time" class="kt-input kt-time-input w-full" data-kt-time-input="true" data-day-start="${day.value}" value="${escapeHtml(startTime)}">
                 </td>
                 <td>
-                    <input type="time" class="kt-input w-full" data-day-end="${day.value}" value="${escapeHtml(endTime)}">
+                    <input type="time" class="kt-input kt-time-input w-full" data-kt-time-input="true" data-day-end="${day.value}" value="${escapeHtml(endTime)}">
                 </td>
                 <td>
                     <span class="text-sm font-medium text-foreground" data-day-duration="${day.value}">

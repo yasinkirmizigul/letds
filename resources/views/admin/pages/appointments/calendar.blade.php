@@ -33,7 +33,7 @@
 
                     <div class="mt-6 grid gap-4 lg:grid-cols-[minmax(0,320px),1fr] lg:items-end">
                         <div class="flex flex-col gap-2 min-w-[280px]">
-                            <label class="kt-form-label mb-1 text-gray-700 dark:text-zinc-200">Kişi</label>
+                            <label class="kt-form-label mb-1 text-foreground">Kişi</label>
                             <select
                                 id="providerSelect"
                                 data-initial-provider-id="{{ $selectedProviderId ?? '' }}"
@@ -102,22 +102,22 @@
             </div>
         </section>
 
-        <div class="kt-card border border-gray-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <div class="kt-card app-surface-card rounded-2xl">
             <div class="kt-card-body px-5 py-4">
                 <div class="flex flex-wrap gap-3 text-xs">
-                    <span class="inline-flex items-center gap-2 text-gray-700 dark:text-zinc-300">
+                    <span class="inline-flex items-center gap-2 text-muted-foreground">
                         <span class="h-3 w-3 rounded-full bg-blue-600"></span> Aktif randevu
                     </span>
-                    <span class="inline-flex items-center gap-2 text-gray-700 dark:text-zinc-300">
+                    <span class="inline-flex items-center gap-2 text-muted-foreground">
                         <span class="h-3 w-3 rounded-full bg-amber-600"></span> Genel kapalı
                     </span>
-                    <span class="inline-flex items-center gap-2 text-gray-700 dark:text-zinc-300">
+                    <span class="inline-flex items-center gap-2 text-muted-foreground">
                         <span class="h-3 w-3 rounded-full bg-green-600"></span> Mola
                     </span>
-                    <span class="inline-flex items-center gap-2 text-gray-700 dark:text-zinc-300">
+                    <span class="inline-flex items-center gap-2 text-muted-foreground">
                         <span class="h-3 w-3 rounded-full bg-violet-600"></span> Toplantı
                     </span>
-                    <span class="inline-flex items-center gap-2 text-gray-700 dark:text-zinc-300">
+                    <span class="inline-flex items-center gap-2 text-muted-foreground">
                         <span class="h-3 w-3 rounded-full bg-red-600"></span> İzin / iptal
                     </span>
                 </div>
@@ -126,7 +126,7 @@
 
         <div class="grid grid-cols-12 gap-6 items-start">
             <div class="col-span-12 2xl:col-span-8">
-                <div class="kt-card border border-gray-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+                <div class="kt-card app-surface-card rounded-2xl">
                     <div class="kt-card-header py-5 flex-wrap gap-4">
                         <div>
                             <h3 class="kt-card-title">Operasyon takvimi</h3>
@@ -144,11 +144,11 @@
 
             <div class="col-span-12 2xl:col-span-4">
                 <div class="grid gap-6">
-                    <div class="kt-card border border-gray-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-                        <div class="kt-card-header border-b border-gray-200 px-5 py-4 dark:border-zinc-800">
+                    <div class="kt-card app-surface-card rounded-2xl">
+                        <div class="kt-card-header border-b border-border px-5 py-4">
                             <div class="flex items-center justify-between gap-3">
                                 <div>
-                                    <h3 class="kt-card-title text-base font-semibold text-gray-900 dark:text-zinc-100">
+                                    <h3 class="kt-card-title text-base font-semibold text-foreground">
                                         Seçili kayıt
                                     </h3>
                                     <div class="text-xs text-muted-foreground">Detay, not ve geçmiş akışına hızlı bakış</div>
@@ -203,7 +203,7 @@
                                     <textarea
                                         id="cancelReason"
                                         rows="4"
-                                        class="kt-input w-full p-2 border-gray-300 bg-white text-gray-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 min-h-[44px]"
+                                        class="kt-input w-full p-2 min-h-[44px]"
                                     ></textarea>
                                 </div>
 
@@ -221,7 +221,7 @@
                         </div>
                     </div>
 
-                    <div class="kt-card border border-gray-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+                    <div class="kt-card app-surface-card rounded-2xl">
                         <div class="kt-card-header py-5">
                             <h3 class="kt-card-title">Operasyon notları</h3>
                         </div>
@@ -247,9 +247,9 @@
             <div class="absolute inset-0 bg-black/70" data-block-modal-close></div>
 
             <div class="absolute inset-0 flex items-center justify-center p-4">
-                <div class="w-full max-w-lg rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-950">
-                    <div class="flex items-center justify-between border-b border-gray-200 px-5 py-4 dark:border-zinc-800">
-                        <h3 class="text-base font-semibold text-gray-900 dark:text-zinc-100" id="blockModalTitle">
+                <div class="w-full max-w-lg rounded-2xl border border-border bg-background text-foreground shadow-2xl">
+                    <div class="flex items-center justify-between border-b border-border px-5 py-4">
+                        <h3 class="text-base font-semibold text-foreground" id="blockModalTitle">
                             Takvim blokajı
                         </h3>
                         <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-block-modal-close>Kapat</button>
@@ -261,7 +261,7 @@
                         <input type="hidden" id="blockEndAt">
 
                         <div>
-                            <label class="kt-form-label text-gray-700 dark:text-zinc-200 mb-3">Blok tipi</label>
+                            <label class="kt-form-label text-foreground mb-3">Blok tipi</label>
                             <select id="blockType" class="kt-select">
                                 <option value="manual">Genel kapalı</option>
                                 <option value="break">Mola</option>
@@ -271,22 +271,22 @@
                         </div>
 
                         <div>
-                            <label class="kt-form-label text-gray-700 dark:text-zinc-200 mb-3">Açıklama</label>
+                            <label class="kt-form-label text-foreground mb-3">Açıklama</label>
                             <input
                                 type="text"
                                 id="blockReason"
-                                class="kt-input w-full border-gray-300 bg-white text-gray-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                                class="kt-input w-full"
                                 placeholder="Örn: Öğle arası"
                             >
                         </div>
 
-                        <div class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200">
+                        <div class="rounded-xl border border-border bg-background/70 px-4 py-3 text-sm text-foreground">
                             <div><strong>Başlangıç:</strong> <span id="blockStartPreview">-</span></div>
                             <div class="mt-1"><strong>Bitiş:</strong> <span id="blockEndPreview">-</span></div>
                         </div>
                     </div>
 
-                    <div class="flex justify-end gap-2 border-t border-gray-200 px-5 py-4 dark:border-zinc-800">
+                    <div class="flex justify-end gap-2 border-t border-border px-5 py-4">
                         <button type="button" class="kt-btn kt-btn-light" data-block-modal-close>Vazgeç</button>
                         <button type="button" class="kt-btn kt-btn-primary" id="btnSaveBlock">
                             <span class="btn-text">Kaydet</span>
@@ -300,9 +300,9 @@
             <div class="absolute inset-0 bg-black/70" data-appointment-modal-close></div>
 
             <div class="absolute inset-0 flex items-center justify-center p-4">
-                <div class="w-full max-w-2xl rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-950">
-                    <div class="flex items-center justify-between border-b border-gray-200 px-5 py-4 dark:border-zinc-800">
-                        <h3 class="text-base font-semibold text-gray-900 dark:text-zinc-100" id="appointmentModalTitle">
+                <div class="w-full max-w-2xl rounded-2xl border border-border bg-background text-foreground shadow-2xl">
+                    <div class="flex items-center justify-between border-b border-border px-5 py-4">
+                        <h3 class="text-base font-semibold text-foreground" id="appointmentModalTitle">
                             Randevu detayi
                         </h3>
                         <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-appointment-modal-close>Kapat</button>
@@ -379,7 +379,7 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-between gap-3 border-t border-gray-200 px-5 py-4 dark:border-zinc-800">
+                    <div class="flex items-center justify-between gap-3 border-t border-border px-5 py-4">
                         <button type="button" class="kt-btn kt-btn-danger" id="btnAppointmentCancel">
                             Randevuyu iptal et
                         </button>
@@ -397,12 +397,12 @@
 
         <div
             id="calendarContextMenu"
-            class="hidden fixed z-[10000] min-w-[180px] rounded-xl border border-gray-200 bg-white p-2 shadow-2xl dark:border-zinc-800 dark:bg-zinc-950"
+            class="hidden fixed z-[10000] min-w-[180px] rounded-xl border border-border bg-background p-2 text-foreground shadow-2xl"
         >
             <button
                 type="button"
                 id="ctxEditBlock"
-                class="flex w-full items-center rounded-lg px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-zinc-200 dark:hover:bg-zinc-900"
+                class="flex w-full items-center rounded-lg px-3 py-2 text-left text-sm text-foreground hover:bg-background/70"
             >
                 Blokaji düzenle
             </button>
