@@ -1,18 +1,11 @@
 @php
-    /**
-     * Params:
-     * - $id (string) unique prefix (e.g. 'blog-123' / 'project-55')
-     * - $title (string) card title
-     * - $routes (array) ['list','index','attach','detach','reorder']
-     * - $slots (array) slotKey => label (default: ['main'=>'Ana','sidebar'=>'Sidebar'])
-     */
     $id = $id ?? 'gm';
     $title = $title ?? 'Galeriler';
-    $slots = $slots ?? ['main' => 'Ana', 'sidebar' => 'Sidebar'];
+    $slots = $slots ?? ['main' => 'Ana Alan', 'sidebar' => 'Yan Alan'];
 
     $routes = $routes ?? [];
-    foreach (['list','index','attach','detach','reorder'] as $k) {
-        if (!isset($routes[$k])) $routes[$k] = '';
+    foreach (['list', 'index', 'attach', 'detach', 'reorder'] as $key) {
+        $routes[$key] = $routes[$key] ?? '';
     }
 @endphp
 
@@ -28,7 +21,10 @@
 >
     <div class="kt-card">
         <div class="kt-card-header py-4">
-            <h3 class="kt-card-title">{{ $title }}</h3>
+            <div>
+                <h3 class="kt-card-title">{{ $title }}</h3>
+                <div class="text-sm text-muted-foreground">İçeriğe bağlı galerileri ana alan ve yan alan olarak yönetin.</div>
+            </div>
 
             <div class="kt-card-toolbar flex items-center gap-2">
                 <button
@@ -43,25 +39,24 @@
         </div>
 
         <div class="kt-card-content p-5 grid gap-6">
-            <div data-gm="empty" class="hidden text-sm text-muted-foreground">
+            <div data-gm="empty" class="hidden rounded-2xl border border-dashed border-border bg-background/75 px-4 py-4 text-sm text-muted-foreground">
                 Henüz galeri eklenmemiş.
             </div>
 
             <div class="grid grid-cols-1 gap-7">
                 <div class="grid gap-3">
-                    <div class="font-medium">{{ $slots['main'] ?? 'Ana' }}</div>
+                    <div class="font-medium text-foreground">{{ $slots['main'] ?? 'Ana Alan' }}</div>
                     <div data-gm="slot-main" class="grid gap-3" data-slot="main"></div>
                 </div>
                 <div class="h-px bg-border"></div>
                 <div class="grid gap-3">
-                    <div class="font-medium">{{ $slots['sidebar'] ?? 'Sidebar' }}</div>
+                    <div class="font-medium text-foreground">{{ $slots['sidebar'] ?? 'Yan Alan' }}</div>
                     <div data-gm="slot-sidebar" class="grid gap-3" data-slot="sidebar"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- Picker Modal --}}
     <div class="kt-modal kt-modal-center" id="{{ $id }}-pickerModal" data-kt-modal="true">
         <div class="kt-modal-content max-w-3xl" style="max-height: 92vh">
             <div class="kt-modal-header">
@@ -72,17 +67,17 @@
             </div>
 
             <div class="kt-modal-body p-6 grid gap-4 overflow-hidden">
-                <div class="flex flex-col md:flex-row md:items-center gap-3">
+                <div class="flex flex-col gap-3 md:flex-row md:items-center">
                     <input
                         type="text"
                         class="kt-input grow"
-                        placeholder="Ara..."
+                        placeholder="Galeri ara..."
                         data-gm="picker-search"
-                    />
+                    >
 
-                    <select class="kt-select w-full md:w-56" data-gm="picker-slot" data-kt-select="true" data-kt-select-placeholder="Galeri Konum">
-                        @foreach($slots as $k => $label)
-                            <option value="{{ $k }}">{{ $k }}</option>
+                    <select class="kt-select w-full md:w-56" data-gm="picker-slot" data-kt-select="true" data-kt-select-placeholder="Galeri konumu">
+                        @foreach($slots as $key => $label)
+                            <option value="{{ $key }}">{{ $label }}</option>
                         @endforeach
                     </select>
 

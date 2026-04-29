@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Dash\DashController;
 use App\Http\Controllers\Admin\Gallery\BlogPostGalleryController;
 use App\Http\Controllers\Admin\Gallery\GalleryController;
 use App\Http\Controllers\Admin\Gallery\GalleryItemsController;
+use App\Http\Controllers\Admin\Gallery\ProductGalleryController;
 use App\Http\Controllers\Admin\Gallery\ProjectGalleryController;
 use App\Http\Controllers\Admin\Media\MediaController;
 use App\Http\Controllers\Admin\Product\ProductController;
@@ -585,6 +586,25 @@ Route::middleware(['auth', 'admin', 'audit'])
 
             Route::post('/reorder', [ProjectGalleryController::class, 'reorder'])
                 ->middleware('permission:projects.update')
+                ->name('reorder');
+        });
+
+        // Products <-> Galleries
+        Route::prefix('products/{product}/galleries')->as('products.galleries.')->group(function () {
+            Route::get('/', [ProductGalleryController::class, 'index'])
+                ->middleware('permission:products.update')
+                ->name('index');
+
+            Route::post('/attach', [ProductGalleryController::class, 'attach'])
+                ->middleware('permission:products.update')
+                ->name('attach');
+
+            Route::post('/detach', [ProductGalleryController::class, 'detach'])
+                ->middleware('permission:products.update')
+                ->name('detach');
+
+            Route::post('/reorder', [ProductGalleryController::class, 'reorder'])
+                ->middleware('permission:products.update')
                 ->name('reorder');
         });
 

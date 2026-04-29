@@ -60,8 +60,8 @@ function attachedRowHtml(r) {
 
       <div class="w-36">
         <select class="kt-select js-gal-slot" data-gm-slot-select="1" data-kt-select="true">
-          <option value="main">main</option>
-          <option value="sidebar">sidebar</option>
+          <option value="main">Ana Alan</option>
+          <option value="sidebar">Yan Alan</option>
         </select>
       </div>
 
@@ -195,7 +195,9 @@ function mountOne(mgr) {
             wrapper.querySelector('[data-kt-select-display]') ||
             wrapper.querySelector('.kt-select-display');
 
-        if (display) display.textContent = value;
+        const selectedLabel = sel.selectedOptions?.[0]?.textContent?.trim() || value;
+
+        if (display) display.textContent = selectedLabel;
 
         // option list’te selected state’i düzelt
         wrapper.querySelectorAll('[data-kt-select-option]').forEach((li) => {
@@ -225,6 +227,36 @@ function mountOne(mgr) {
 
         galleriesMain.querySelectorAll('[data-gallery-id]').forEach((row) => setSlot(row, 'main'));
         galleriesSidebar.querySelectorAll('[data-gallery-id]').forEach((row) => setSlot(row, 'sidebar'));
+    }
+
+    function localizeDynamicControls(scopeEl) {
+        scopeEl.querySelectorAll('.js-detach').forEach((btn) => {
+            btn.textContent = 'Kaldır';
+        });
+
+        scopeEl.querySelectorAll('.js-picker-attach').forEach((btn) => {
+            btn.textContent = 'Bağla';
+        });
+    }
+
+    function cleanPickerMessage(message) {
+        return String(message ?? '')
+            .replaceAll('Ä°stek hatasÄ±', 'İstek hatası')
+            .replaceAll('Liste alÄ±namadÄ±', 'Liste alınamadı');
+    }
+
+    function localizePagerControls() {
+        if (!pickerPagination) return;
+
+        const buttons = [...pickerPagination.querySelectorAll('button[data-page]')];
+        if (buttons.length >= 2) {
+            buttons[0].textContent = '‹';
+            buttons[buttons.length - 1].textContent = '›';
+        }
+
+        pickerPagination.querySelectorAll('span').forEach((span) => {
+            span.textContent = '…';
+        });
     }
 
     async function persistBothSlots() {
@@ -318,6 +350,7 @@ function mountOne(mgr) {
 
         galleriesMain.innerHTML = main.map(attachedRowHtml).join('');
         galleriesSidebar.innerHTML = side.map(attachedRowHtml).join('');
+        localizeDynamicControls(mgr);
 
         ensureKTSelects(mgr);
 
@@ -332,7 +365,7 @@ function mountOne(mgr) {
     function renderPickerError(message) {
         pickerList.innerHTML = `
           <div class="kt-text-muted kt-text-sm py-6 text-center">
-            ${escapeHtml(message)}
+            ${escapeHtml(cleanPickerMessage(message))}
           </div>
         `;
         if (pickerEmpty) pickerEmpty.classList.remove('hidden');
@@ -392,6 +425,7 @@ function mountOne(mgr) {
                 `;
             })
             .join('');
+        localizeDynamicControls(mgr);
 
         if (pickerEmpty) pickerEmpty.classList.toggle('hidden', items.length > 0);
 
@@ -401,7 +435,10 @@ function mountOne(mgr) {
         const to = items.length ? from + items.length - 1 : 0;
 
         if (pickerInfo) pickerInfo.textContent = `${from}-${to} / ${meta.total ?? items.length}`;
-        if (pickerPagination) pickerPagination.innerHTML = renderPager(meta);
+        if (pickerPagination) {
+            pickerPagination.innerHTML = renderPager(meta);
+            localizePagerControls();
+        }
     }
 
     // ---- Events (scoped) ----

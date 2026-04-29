@@ -126,7 +126,7 @@
 
         <div class="grid grid-cols-12 gap-6 items-start">
             <div class="col-span-12 2xl:col-span-8">
-                <div class="kt-card border border-gray-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+                <div class="kt-card appointment-calendar-shell border border-border bg-background shadow-sm">
                     <div class="kt-card-header py-5 flex-wrap gap-4">
                         <div>
                             <h3 class="kt-card-title">Operasyon takvimi</h3>
@@ -136,8 +136,8 @@
                         </div>
                         <span class="kt-badge kt-badge-sm kt-badge-light" id="calendarSurfaceHint">Takvim hazırlanıyor</span>
                     </div>
-                    <div class="kt-card-body p-4 lg:p-5">
-                        <div id="appointmentsCalendar"></div>
+                    <div class="kt-card-body p-0">
+                        <div id="appointmentsCalendar" class="min-h-[720px]"></div>
                     </div>
                 </div>
             </div>

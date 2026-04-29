@@ -169,6 +169,9 @@ function calcBlocks(start, end) {
 }
 
 function formatDateRange(start, end) {
+    start = normalizeDate(start)
+    end = normalizeDate(end)
+
     if (!start || !end) return '-'
 
     const fmt = new Intl.DateTimeFormat('tr-TR', {
@@ -182,7 +185,17 @@ function formatDateRange(start, end) {
     return `${fmt.format(start)} - ${fmt.format(end)}`
 }
 
+function normalizeDate(value) {
+    if (!value) return null
+
+    const date = value instanceof Date ? value : new Date(value)
+
+    return Number.isNaN(date.getTime()) ? null : date
+}
+
 function formatDateTime(date) {
+    date = normalizeDate(date)
+
     if (!date) return '-'
 
     return new Intl.DateTimeFormat('tr-TR', {
@@ -217,7 +230,11 @@ function legacyBuildEventContent(info) {
 }
 
 function formatTimeRange(start, end) {
+    start = normalizeDate(start)
+    end = normalizeDate(end)
+
     if (!start || !end) return '-'
+
     return `${formatDateTime(start)} → ${formatDateTime(end)}`
 }
 function normalizeProviderId(value) {
@@ -734,6 +751,20 @@ function updateViewButtons(root) {
     })
 }
 
+function switchCalendarView(root, providerSelect, view) {
+    if (!calendar || !['dayGridMonth', 'timeGridWeek', 'timeGridDay'].includes(view)) return
+
+    if (calendar.view?.type !== view) {
+        calendar.changeView(view)
+    }
+
+    requestAnimationFrame(() => {
+        try { calendar?.updateSize?.() } catch (_) {}
+        updateCalendarHeader(root, providerSelect)
+        renderCalendarMetrics(root, lastLoadedEvents, providerSelect)
+    })
+}
+
 function updateCalendarHeader(root, providerSelect) {
     const rangeEl = qs(root, '#calendarCurrentRange')
     const viewLabelEl = qs(root, '#calendarCurrentViewLabel')
@@ -767,16 +798,19 @@ function renderCalendarMetrics(root, events = lastLoadedEvents, providerSelect) 
     const appointmentEvents = (events || []).filter((item) => item?.extendedProps?.entity_type !== 'time_off')
     const blockEvents = (events || []).filter((item) => item?.extendedProps?.entity_type === 'time_off')
     const totalAppointmentMinutes = appointmentEvents.reduce((total, item) => {
-        const start = item?.start ? new Date(item.start) : null
-        const end = item?.end ? new Date(item.end) : null
+        const start = normalizeDate(item?.start)
+        const end = normalizeDate(item?.end)
         if (!start || !end) return total
         return total + Math.max(0, Math.round((end.getTime() - start.getTime()) / 60000))
     }, 0)
 
     const now = new Date()
     const upcoming = [...(events || [])]
-        .filter((item) => item?.start && new Date(item.start) >= now)
-        .sort((left, right) => new Date(left.start).getTime() - new Date(right.start).getTime())[0] || null
+        .map((item) => ({ item, startAt: normalizeDate(item?.start) }))
+        .filter(({ startAt }) => startAt && startAt >= now)
+        .sort((left, right) => left.startAt.getTime() - right.startAt.getTime())[0] || null
+    const upcomingEvent = upcoming?.item || null
+    const upcomingStartAt = upcoming?.startAt || null
 
     const appointmentCountEl = qs(root, '#calendarMetricAppointments')
     const blockCountEl = qs(root, '#calendarMetricBlocks')
@@ -789,8 +823,8 @@ function renderCalendarMetrics(root, events = lastLoadedEvents, providerSelect) 
     if (busyHoursEl) busyHoursEl.textContent = formatDurationText(totalAppointmentMinutes)
 
     if (nextEl) {
-        nextEl.textContent = upcoming
-            ? `${upcoming.title || 'Kayıt'}`
+        nextEl.textContent = upcomingEvent
+            ? `${upcomingEvent.title || 'Kayıt'}`
             : '-'
     }
 
@@ -801,11 +835,11 @@ function renderCalendarMetrics(root, events = lastLoadedEvents, providerSelect) 
         }
 
         const providerMeta = getSelectedProviderMeta(providerSelect)
-        const typeLabel = upcoming?.extendedProps?.entity_type === 'time_off'
-            ? (upcoming?.extendedProps?.status_label || 'Blokaj')
+        const typeLabel = upcomingEvent?.extendedProps?.entity_type === 'time_off'
+            ? (upcomingEvent?.extendedProps?.status_label || 'Blokaj')
             : 'Randevu'
 
-        hintEl.textContent = `${typeLabel} | ${formatDateTime(upcoming.start)} | ${providerMeta.name}`
+        hintEl.textContent = `${typeLabel} | ${formatDateTime(upcomingStartAt)} | ${providerMeta.name}`
     }
 }
 
@@ -1022,16 +1056,35 @@ export default async function init(ctx) {
 
         initialView: 'timeGridWeek',
         height: 'auto',
+        contentHeight: 'auto',
+        expandRows: true,
+        stickyHeaderDates: true,
+        navLinks: true,
+        dayMaxEvents: true,
+        dayMaxEventRows: 4,
 
         slotDuration: '00:30:00',
         snapDuration: '00:30:00',
         nowIndicator: true,
         allDaySlot: false,
-        headerToolbar: false,
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay',
+        },
+        buttonText: {
+            today: 'Bugün',
+            month: 'Ay',
+            week: 'Hafta',
+            day: 'Gün',
+        },
         selectable: true,
+        selectMirror: true,
+        unselectAuto: true,
         editable: true,
         eventStartEditable: true,
         eventDurationEditable: true,
+        eventDisplay: 'block',
 
         eventAllow(dropInfo, draggedEvent) {
             if (dropInfo.start < new Date()) {
@@ -1099,6 +1152,9 @@ export default async function init(ctx) {
         datesSet() {
             updateCalendarHeader(root, providerSelect)
             renderCalendarMetrics(root, lastLoadedEvents, providerSelect)
+            requestAnimationFrame(() => {
+                try { calendar?.updateSize?.() } catch (_) {}
+            })
         },
 
         events: async (fetchInfo, success, failure) => {
@@ -1566,8 +1622,7 @@ export default async function init(ctx) {
     qsa(root, '[data-view]').forEach((btn) => {
         btn.addEventListener('click', () => {
             const view = btn.getAttribute('data-view')
-            if (!calendar || !view) return
-            calendar.changeView(view)
+            switchCalendarView(root, providerSelect, view)
         })
     })
 

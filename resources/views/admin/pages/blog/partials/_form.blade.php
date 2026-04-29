@@ -52,6 +52,10 @@
             ],
         ])
 
+        @if(!$isEdit)
+            @include('admin.pages.blog.partials._gallery', ['blogPost' => null])
+        @endif
+
         @if($isEdit)
             <div class="kt-card">
                 <div class="kt-card-header py-5">

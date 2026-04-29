@@ -3,6 +3,7 @@
 namespace App\Models\Admin\Product;
 
 use App\Models\Admin\Category;
+use App\Models\Admin\Gallery\Gallery;
 use App\Models\Admin\Media\Media;
 use App\Models\Concerns\HasSiteLocaleTranslations;
 use Illuminate\Database\Eloquent\Builder;
@@ -166,6 +167,20 @@ class Product extends Model
     public function translations(): HasMany
     {
         return $this->hasMany(ProductTranslation::class, 'product_id');
+    }
+
+    public function galleries(): MorphToMany
+    {
+        return $this->morphToMany(
+            Gallery::class,
+            'galleryable',
+            'galleryables',
+            'galleryable_id',
+            'gallery_id'
+        )
+            ->withPivot(['slot', 'sort_order'])
+            ->withTimestamps()
+            ->orderBy('pivot_sort_order');
     }
 
     public function featuredMedia(): MorphToMany

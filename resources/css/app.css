@@ -869,4 +869,180 @@ thead th.dt-orderable-none .dt-column-order { display:none !important; }
     }
 }
 
+.appointment-calendar-shell {
+    overflow: hidden;
+}
+
+.appointment-calendar-shell .fc {
+    --fc-border-color: color-mix(in oklab, var(--border) 84%, var(--foreground) 16%);
+    --fc-page-bg-color: transparent;
+    --fc-neutral-bg-color: color-mix(in oklab, var(--foreground) 4%, transparent);
+    --fc-list-event-hover-bg-color: color-mix(in oklab, var(--foreground) 6%, transparent);
+    color: var(--foreground);
+    font-size: .875rem;
+}
+
+.appointment-calendar-shell .fc .fc-toolbar.fc-header-toolbar {
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    gap: .75rem;
+    margin: 0;
+    padding: 1.15rem 1.25rem;
+}
+
+.appointment-calendar-shell .fc .fc-toolbar-chunk {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.appointment-calendar-shell .fc .fc-toolbar-title {
+    color: var(--foreground);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+}
+
+.appointment-calendar-shell .fc .fc-button {
+    background: color-mix(in oklab, var(--foreground) 5%, var(--background));
+    border: 1px solid color-mix(in oklab, var(--border) 88%, var(--foreground) 12%);
+    border-radius: .75rem;
+    box-shadow: none;
+    color: var(--foreground);
+    font-size: .78rem;
+    font-weight: 650;
+    line-height: 1;
+    padding: .7rem .9rem;
+    text-transform: none;
+    transition: background-color .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+}
+
+.appointment-calendar-shell .fc .fc-button:hover,
+.appointment-calendar-shell .fc .fc-button:focus {
+    background: color-mix(in oklab, var(--color-primary, #3e97ff) 10%, var(--background));
+    border-color: color-mix(in oklab, var(--color-primary, #3e97ff) 34%, var(--border));
+    color: var(--foreground);
+    transform: translateY(-1px);
+}
+
+.appointment-calendar-shell .fc .fc-button-primary:not(:disabled).fc-button-active,
+.appointment-calendar-shell .fc .fc-button-primary:not(:disabled):active {
+    background: var(--color-violet-600);
+    border-color: var(--color-violet-600);
+    color: #fff;
+}
+
+.appointment-calendar-shell .fc .fc-button:disabled {
+    opacity: .45;
+}
+
+.appointment-calendar-shell .fc-theme-standard td,
+.appointment-calendar-shell .fc-theme-standard th,
+.appointment-calendar-shell .fc-scrollgrid {
+    border-color: var(--fc-border-color);
+}
+
+.appointment-calendar-shell .fc .fc-col-header-cell {
+    background: color-mix(in oklab, var(--foreground) 4%, transparent);
+    padding-block: .7rem;
+}
+
+.appointment-calendar-shell .fc .fc-col-header-cell-cushion,
+.appointment-calendar-shell .fc .fc-daygrid-day-number,
+.appointment-calendar-shell .fc .fc-timegrid-slot-label-cushion {
+    color: var(--muted-foreground);
+    font-weight: 650;
+    text-decoration: none;
+}
+
+.appointment-calendar-shell .fc .fc-daygrid-day-frame {
+    min-height: 8.5rem;
+    padding: .25rem;
+}
+
+.appointment-calendar-shell .fc .fc-day-today {
+    background: color-mix(in oklab, var(--color-primary, #3e97ff) 8%, transparent);
+}
+
+.appointment-calendar-shell .fc .fc-timegrid-axis,
+.appointment-calendar-shell .fc .fc-timegrid-slot {
+    background: transparent;
+}
+
+.appointment-calendar-shell .fc .fc-timegrid-slot {
+    height: 2.75rem;
+}
+
+.appointment-calendar-shell .fc .fc-timegrid-now-indicator-line {
+    border-color: var(--color-danger, #f1416c);
+    border-width: 2px 0 0;
+}
+
+.appointment-calendar-shell .fc .fc-timegrid-now-indicator-arrow {
+    border-color: var(--color-danger, #f1416c);
+}
+
+.appointment-calendar-shell .fc .fc-highlight {
+    background: color-mix(in oklab, var(--color-primary, #3e97ff) 16%, transparent);
+}
+
+.appointment-calendar-shell .fc .fc-event {
+    border-radius: .7rem;
+    box-shadow: 0 10px 24px rgb(15 23 42 / 12%);
+    line-height: 1.25;
+    overflow: hidden;
+    padding: .12rem .18rem;
+}
+
+.appointment-calendar-shell .fc .fc-event-main {
+    padding: .08rem .12rem;
+}
+
+.appointment-calendar-shell .fc .fc-event-custom {
+    min-height: 100%;
+}
+
+.appointment-calendar-shell .fc .fc-daygrid-event {
+    margin-top: .25rem;
+}
+
+.appointment-calendar-shell .fc .fc-more-link {
+    color: var(--color-primary, #3e97ff);
+    font-weight: 700;
+}
+
+.dark .bg-white,
+.dark .bg-white\/70,
+.dark .bg-white\/80,
+.dark .bg-white\/85,
+.dark .bg-white\/90,
+.dark .bg-white\/95 {
+    background-color: color-mix(in oklab, var(--background) 88%, var(--foreground) 12%) !important;
+}
+
+.dark .text-gray-700,
+.dark .text-gray-800,
+.dark .text-gray-900 {
+    color: var(--foreground) !important;
+}
+
+.dark .appointment-calendar-shell .fc .fc-event {
+    box-shadow: 0 14px 28px rgb(0 0 0 / 28%);
+}
+
+@media (max-width: 768px) {
+    .appointment-calendar-shell .fc .fc-toolbar.fc-header-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .appointment-calendar-shell .fc .fc-toolbar-chunk {
+        justify-content: center;
+    }
+
+    .appointment-calendar-shell .fc .fc-toolbar-title {
+        text-align: center;
+    }
+}
+
 @import "./kt-btn-bootstrap.css";
