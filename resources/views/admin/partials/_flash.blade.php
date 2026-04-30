@@ -11,9 +11,9 @@
 @endif
 
 @if (session('success'))
-    <div class="kt-alert kt-alert-success">{{ session('success') }}</div>
+    <div class="kt-alert kt-alert-success mb-5">{{ session('success') }}</div>
 @endif
 
 @if (session('error'))
-    <div class="kt-alert kt-alert-danger">{{ session('error') }}</div>
+    <div class="kt-alert kt-alert-danger mb-5">{{ session('error') }}</div>
 @endif

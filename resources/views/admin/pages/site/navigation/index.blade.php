@@ -17,7 +17,7 @@
         @includeIf('admin.partials._flash')
 
         @if($errors->any())
-            <div class="kt-alert kt-alert-danger">
+            <div class="kt-alert kt-alert-danger mb-5">
                 <div class="kt-alert-text">
                     Menü öğesi kaydedilemedi. Lütfen form alanlarını kontrol et.
                 </div>

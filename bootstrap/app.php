@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\AjaxRedirectResponseMiddleware;
 use App\Http\Middleware\AuditRequestMiddleware;
 use App\Http\Middleware\EnsureActiveMemberSession;
 use App\Http\Middleware\PermissionMiddleware;
@@ -33,6 +34,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
             return route('admin.dashboard');
         });
+
+        $middleware->web(append: [
+            AjaxRedirectResponseMiddleware::class,
+        ]);
 
         $middleware->alias([
             'permission' => PermissionMiddleware::class,

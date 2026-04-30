@@ -121,7 +121,7 @@ export async function showConfirmDialog(options = {}) {
         reverseButtons: true,
         buttonsStyling: false,
         allowOutsideClick: options.allowOutsideClick ?? false,
-        allowEscapeKey: true,
+        allowEscapeKey: options.allowEscapeKey ?? true,
         backdrop: 'rgba(15, 23, 42, 0.52)',
         customClass: {
             popup: `swal2-kt-popup swal2-kt-popup--${meta.variant}`,

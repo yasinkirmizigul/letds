@@ -26,7 +26,7 @@
                 </div>
             </div>
 
-            <form method="POST" action="{{ route('admin.dashboard.manage.update') }}" class="grid gap-6">
+            <form method="POST" action="{{ route('admin.dashboard.manage.update') }}" class="grid gap-6" data-ajax-redirect="true">
                 @csrf
                 @method('PUT')
 

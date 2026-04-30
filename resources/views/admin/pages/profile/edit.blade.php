@@ -150,7 +150,8 @@
 
                         <form method="POST"
                               action="{{ route('admin.profile.update') }}"
-                              class="kt-card-content p-6 flex flex-col gap-6">
+                              class="kt-card-content p-6 flex flex-col gap-6"
+                              data-profile-form="true">
                             @csrf
                             @method('PUT')
 
@@ -260,6 +261,7 @@
                                         <input type="password"
                                                class="kt-input @error('password') kt-input-invalid @enderror"
                                                name="password"
+                                               data-password-input="true"
                                                autocomplete="new-password">
                                         @error('password') <div class="text-xs text-danger">{{ $message }}</div> @enderror
                                     </div>
@@ -267,16 +269,21 @@
                                     <div class="flex flex-col gap-2">
                                         <label class="kt-form-label mb-2">Yeni Şifre Tekrar</label>
                                         <input type="password"
-                                               class="kt-input"
+                                               class="kt-input @error('password_confirmation') kt-input-invalid @enderror"
                                                name="password_confirmation"
+                                               data-password-confirmation-input="true"
                                                autocomplete="new-password">
+                                        <div class="rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-xs text-warning hidden" data-password-confirmation-message="true">
+                                            Şifre tekrarı yeni şifre ile aynı olmalı.
+                                        </div>
+                                        @error('password_confirmation') <div class="text-xs text-danger">{{ $message }}</div> @enderror
                                     </div>
                                 </div>
                             </div>
 
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('admin.profile.index') }}" class="kt-btn kt-btn-light">İptal</a>
-                                <button type="submit" class="kt-btn kt-btn-primary">Bilgileri Kaydet</button>
+                                <button type="submit" class="kt-btn kt-btn-primary" data-profile-submit="true">Bilgileri Kaydet</button>
                             </div>
                         </form>
                     </div>

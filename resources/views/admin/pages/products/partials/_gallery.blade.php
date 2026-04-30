@@ -3,7 +3,7 @@
 @endphp
 
 @if(empty($product) || empty($product->id))
-    <div class="kt-alert kt-alert-light">
+    <div class="kt-alert kt-alert-light mb-5">
         <div class="text-sm text-muted-foreground">
             Galeri eklemek için ürünü önce kaydedin.
         </div>

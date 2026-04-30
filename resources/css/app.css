@@ -103,6 +103,14 @@
 
     .kt-card-content { @apply p-5; }
 
+    .kt-alert {
+        margin-bottom: 1.25rem;
+    }
+
+    .kt-alert:last-child {
+        margin-bottom: 0;
+    }
+
     /* Menu Styles */
     .kt-menu{
         background: var(--background);

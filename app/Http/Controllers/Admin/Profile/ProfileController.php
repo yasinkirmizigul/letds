@@ -7,6 +7,7 @@ use App\Models\Admin\Media\Media;
 use App\Models\Admin\User\User;
 use App\Support\Audit\AuditWriter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -64,6 +65,14 @@ class ProfileController extends Controller
             'bio' => ['nullable', 'string', 'max:2000'],
             'skills_text' => ['nullable', 'string', 'max:1000'],
             'password' => ['nullable', 'string', 'min:8', 'max:190', 'confirmed'],
+        ], [
+            'password.string' => 'Yeni şifre metin formatında olmalı.',
+            'password.min' => 'Yeni şifre en az :min karakter olmalı.',
+            'password.max' => 'Yeni şifre en fazla :max karakter olabilir.',
+            'password.confirmed' => 'Şifre tekrarı yeni şifre ile aynı olmalı.',
+        ], [
+            'password' => 'yeni şifre',
+            'password_confirmation' => 'şifre tekrarı',
         ]);
 
         $emailChanged = $user->email !== $data['email'];
@@ -85,7 +94,9 @@ class ProfileController extends Controller
             $user->email_verified_at = null;
         }
 
-        if (!empty($data['password'])) {
+        $passwordChanged = !empty($data['password']);
+
+        if ($passwordChanged) {
             $user->password = Hash::make($data['password']);
         }
 
@@ -94,7 +105,29 @@ class ProfileController extends Controller
         AuditWriter::system('profile.updated', [
             'user_id' => $user->id,
             'email_changed' => $emailChanged,
+            'password_changed' => $passwordChanged,
         ]);
+
+        if ($passwordChanged) {
+            $message = 'Şifreniz başarıyla değiştirildi. Güvenlik için çıkış yapıp tekrar giriş yapmanız gerekiyor.';
+            $redirectUrl = route('login');
+
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => $message,
+                    'password_changed' => true,
+                    'redirect_url' => $redirectUrl,
+                ]);
+            }
+
+            return redirect()
+                ->to($redirectUrl)
+                ->with('success', $message);
+        }
 
         return redirect()
             ->route('admin.profile.index')

@@ -57,7 +57,8 @@ export default async function init(ctx) {
             setFormButtonsDisabled(root, 'blog-delete-form', true);
 
             try {
-                const data = await request(deleteForm.action, {
+                const action = new URL(deleteForm.getAttribute('action') || window.location.href, window.location.href).toString();
+                const data = await request(action, {
                     method: 'DELETE',
                     ignoreGlobalError: true,
                     signal,

@@ -202,7 +202,7 @@
             <div class="rounded-3xl app-stat-card p-5"><div class="text-sm text-muted-foreground">SEO Dosyası</div><div class="mt-2 text-3xl font-semibold text-info">{{ $seoFilesReadyCount }}/3</div></div>
         </div>
 
-        <form method="POST" action="{{ route('admin.site.settings.update') }}" class="grid gap-6">
+        <form method="POST" action="{{ route('admin.site.settings.update') }}" class="grid gap-6" data-native-submit="true">
             @csrf
             @method('PUT')
 

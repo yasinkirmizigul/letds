@@ -22,9 +22,15 @@
             >
                 @csrf
 
+                @if (session('success'))
+                    <div class="kt-alert kt-alert-success mb-5">
+                        <div class="kt-alert-text">{{ session('success') }}</div>
+                    </div>
+                @endif
+
                 {{-- Genel hata kutusu (isteğe bağlı) --}}
                 @if ($errors->any())
-                    <div class="kt-alert kt-alert-danger">
+                    <div class="kt-alert kt-alert-danger mb-5">
                         <div class="kt-alert-title">Hata</div>
                         <div class="kt-alert-text">
                             <ul class="list-disc pl-5 space-y-1">
