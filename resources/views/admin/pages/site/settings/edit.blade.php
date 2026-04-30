@@ -39,6 +39,13 @@
         $notifyAppointments = old('notify_appointments', $settings->notify_appointments ?? true);
         $smtpScheme = old('smtp_scheme', $settings->smtp_scheme ?: 'smtp');
         $smtpPasswordIsSet = filled($settings->smtp_password);
+        $seoFileStatus = collect($seoFileStatus ?? []);
+        $seoFilesReadyCount = $seoFileStatus->where('exists', true)->count();
+        $seoBaseUrl = old('seo_base_url', $settings->seo_base_url ?: config('app.url'));
+        $sitemapIncludeHome = old('sitemap_include_home', $settings->sitemap_include_home ?? true);
+        $sitemapIncludePages = old('sitemap_include_pages', $settings->sitemap_include_pages ?? true);
+        $sitemapIncludeContact = old('sitemap_include_contact', $settings->sitemap_include_contact ?? true);
+        $sitemapIncludeMemberPages = old('sitemap_include_member_pages', $settings->sitemap_include_member_pages ?? true);
 
         $localizedSettingsDefaultValues = [
             'site_name' => old('site_name', $settings->site_name),
@@ -186,12 +193,13 @@
             </div>
         </div>
 
-        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
             <div class="rounded-3xl app-stat-card p-5"><div class="text-sm text-muted-foreground">Sayfa</div><div class="mt-2 text-3xl font-semibold">{{ $stats['pages'] ?? 0 }}</div></div>
             <div class="rounded-3xl app-stat-card p-5"><div class="text-sm text-muted-foreground">Slider</div><div class="mt-2 text-3xl font-semibold text-primary">{{ $stats['sliders'] ?? 0 }}</div></div>
             <div class="rounded-3xl app-stat-card p-5"><div class="text-sm text-muted-foreground">SSS</div><div class="mt-2 text-3xl font-semibold text-success">{{ $stats['faqs'] ?? 0 }}</div></div>
             <div class="rounded-3xl app-stat-card p-5"><div class="text-sm text-muted-foreground">Menü Öğesi</div><div class="mt-2 text-3xl font-semibold text-warning">{{ $stats['navigation'] ?? 0 }}</div></div>
             <div class="rounded-3xl app-stat-card p-5"><div class="text-sm text-muted-foreground">Sayaç</div><div class="mt-2 text-3xl font-semibold text-danger">{{ $stats['counters'] ?? 0 }}</div></div>
+            <div class="rounded-3xl app-stat-card p-5"><div class="text-sm text-muted-foreground">SEO Dosyası</div><div class="mt-2 text-3xl font-semibold text-info">{{ $seoFilesReadyCount }}/3</div></div>
         </div>
 
         <form method="POST" action="{{ route('admin.site.settings.update') }}" class="grid gap-6">
@@ -346,6 +354,125 @@
                     <div class="kt-card">
                         <div class="kt-card-header py-5">
                             <div>
+                                <h3 class="kt-card-title">SEO Dosyaları</h3>
+                                <div class="text-sm text-muted-foreground">sitemap.xml, robots.txt ve llms.txt dosyalarını aynı ayarlardan oluşturun.</div>
+                            </div>
+                        </div>
+
+                        <div class="kt-card-content grid gap-5 p-6">
+                            <div class="grid gap-3 lg:grid-cols-3">
+                                @foreach($seoFileStatus as $file)
+                                    <div class="rounded-2xl border border-border bg-background/70 p-4">
+                                        <div class="flex items-center justify-between gap-3">
+                                            <div class="font-medium text-foreground">{{ $file['name'] }}</div>
+                                            <span class="kt-badge kt-badge-sm {{ $file['exists'] ? 'kt-badge-light-success' : 'kt-badge-light-warning' }}">
+                                                {{ $file['exists'] ? 'Hazır' : 'Eksik' }}
+                                            </span>
+                                        </div>
+                                        <div class="mt-3 text-xs leading-5 text-muted-foreground">
+                                            @if($file['exists'])
+                                                {{ optional($file['modified_at'])->format('d.m.Y H:i') }} · {{ number_format(($file['size'] ?? 0) / 1024, 1) }} KB
+                                            @else
+                                                Henüz oluşturulmadı.
+                                            @endif
+                                        </div>
+                                        <a href="{{ $file['url'] }}" target="_blank" rel="noopener" class="mt-3 inline-flex text-xs font-medium text-primary">
+                                            Dosyayı Aç
+                                        </a>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            @if($settings->seo_files_generated_at)
+                                <div class="rounded-2xl border border-dashed border-border bg-background/70 px-4 py-3 text-sm text-muted-foreground">
+                                    Son üretim: {{ $settings->seo_files_generated_at->format('d.m.Y H:i') }}
+                                </div>
+                            @endif
+
+                            <div class="grid gap-4 lg:grid-cols-2">
+                                <div class="grid gap-2">
+                                    <label class="kt-form-label">Site Base URL</label>
+                                    <input name="seo_base_url" class="kt-input" value="{{ $seoBaseUrl }}" placeholder="https://site.com">
+                                </div>
+                                <div class="grid gap-2">
+                                    <label class="kt-form-label">Sitemap Ek URL'ler</label>
+                                    <textarea name="sitemap_extra_urls" rows="4" class="kt-textarea" placeholder="/projeler&#10;/urunler&#10;https://site.com/ozel-sayfa">{{ old('sitemap_extra_urls', $settings->sitemap_extra_urls) }}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="grid gap-4 lg:grid-cols-2">
+                                <label class="flex items-start gap-3 rounded-2xl border border-border bg-background/70 p-4">
+                                    <input type="hidden" name="sitemap_include_home" value="0">
+                                    <input type="checkbox" name="sitemap_include_home" value="1" class="kt-checkbox mt-1" @checked($sitemapIncludeHome)>
+                                    <span>
+                                        <span class="block font-medium text-foreground">Ana sayfa</span>
+                                        <span class="text-sm text-muted-foreground">Varsayılan ve aktif dil ana sayfaları.</span>
+                                    </span>
+                                </label>
+
+                                <label class="flex items-start gap-3 rounded-2xl border border-border bg-background/70 p-4">
+                                    <input type="hidden" name="sitemap_include_pages" value="0">
+                                    <input type="checkbox" name="sitemap_include_pages" value="1" class="kt-checkbox mt-1" @checked($sitemapIncludePages)>
+                                    <span>
+                                        <span class="block font-medium text-foreground">Yayınlanmış sayfalar</span>
+                                        <span class="text-sm text-muted-foreground">Aktif CMS sayfaları ve çevirileri.</span>
+                                    </span>
+                                </label>
+
+                                <label class="flex items-start gap-3 rounded-2xl border border-border bg-background/70 p-4">
+                                    <input type="hidden" name="sitemap_include_contact" value="0">
+                                    <input type="checkbox" name="sitemap_include_contact" value="1" class="kt-checkbox mt-1" @checked($sitemapIncludeContact)>
+                                    <span>
+                                        <span class="block font-medium text-foreground">İletişim sayfası</span>
+                                        <span class="text-sm text-muted-foreground">/iletisim adresini dahil eder.</span>
+                                    </span>
+                                </label>
+
+                                <label class="flex items-start gap-3 rounded-2xl border border-border bg-background/70 p-4">
+                                    <input type="hidden" name="sitemap_include_member_pages" value="0">
+                                    <input type="checkbox" name="sitemap_include_member_pages" value="1" class="kt-checkbox mt-1" @checked($sitemapIncludeMemberPages)>
+                                    <span>
+                                        <span class="block font-medium text-foreground">Üyelik bilgilendirmesi</span>
+                                        <span class="text-sm text-muted-foreground">/uyelik-bilgilendirmesi adresini dahil eder.</span>
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="grid gap-2">
+                                <label class="kt-form-label">sitemap.xml İçeriği</label>
+                                <textarea name="sitemap_xml_content" rows="12" class="kt-textarea font-mono" placeholder="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;urlset xmlns=&quot;http://www.sitemaps.org/schemas/sitemap/0.9&quot;&gt;">{{ old('sitemap_xml_content', $settings->sitemap_xml_content) }}</textarea>
+                            </div>
+
+                            <div class="grid gap-4 lg:grid-cols-2">
+                                <div class="grid gap-2">
+                                    <label class="kt-form-label">robots.txt İçeriği</label>
+                                    <textarea name="robots_txt_content" rows="8" class="kt-textarea font-mono" placeholder="User-agent: *&#10;Allow: /&#10;&#10;Sitemap: {sitemap_url}">{{ old('robots_txt_content', $settings->robots_txt_content) }}</textarea>
+                                </div>
+                                <div class="grid gap-2">
+                                    <label class="kt-form-label">llms.txt İçeriği</label>
+                                    <textarea name="llms_txt_content" rows="8" class="kt-textarea font-mono" placeholder="# {site_name}&#10;&#10;> Kısa site açıklaması&#10;&#10;## Site&#10;- Home: {site_url}&#10;- Sitemap: {sitemap_url}">{{ old('llms_txt_content', $settings->llms_txt_content) }}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col gap-3 rounded-2xl border border-dashed border-border bg-background/70 p-4 lg:flex-row lg:items-center lg:justify-between">
+                                <div class="text-sm text-muted-foreground">
+                                    Şablonlarda {site_name}, {site_url}, {sitemap_url}, {robots_url}, {generated_at} kullanılabilir.
+                                </div>
+                                <div class="flex flex-col gap-2 sm:flex-row">
+                                    <button type="submit" name="submit_action" value="generate_seo_draft" class="kt-btn kt-btn-light-primary">
+                                        Otomatik İçerik Hazırla
+                                    </button>
+                                    <button type="submit" name="submit_action" value="save_generate_seo" class="kt-btn kt-btn-primary">
+                                        Kaydet ve SEO Dosyalarını Oluştur
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header py-5">
+                            <div>
                                 <h3 class="kt-card-title">Sosyal Ağlar</h3>
                                 <div class="text-sm text-muted-foreground">Footer ve iletişim alanında gösterilecek bağlantılar.</div>
                             </div>
@@ -419,7 +546,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="kt-btn kt-btn-primary">Site Ayarlarını Kaydet</button>
+                    <button type="submit" name="submit_action" value="save" class="kt-btn kt-btn-primary">Site Ayarlarını Kaydet</button>
                 </div>
             </div>
         </form>

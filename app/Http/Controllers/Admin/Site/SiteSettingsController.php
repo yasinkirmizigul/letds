@@ -11,6 +11,7 @@ use App\Models\Site\SiteNavigationItem;
 use App\Models\Site\SitePage;
 use App\Models\Site\SiteSetting;
 use App\Services\Mail\SiteMailConfigurator;
+use App\Services\Site\SeoFileGenerator;
 use App\Services\Site\SiteTranslationSyncService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -25,10 +26,11 @@ class SiteSettingsController extends Controller
         private readonly SiteTranslationSyncService $translationSyncService,
     ) {}
 
-    public function edit(): View
+    public function edit(SeoFileGenerator $seoFileGenerator): View
     {
         return view('admin.pages.site.settings.edit', [
             'settings' => SiteSetting::current()->loadMissing('translations'),
+            'seoFileStatus' => $seoFileGenerator->status(),
             'stats' => [
                 'pages' => SitePage::query()->count(),
                 'sliders' => HomeSlider::query()->count(),
@@ -39,9 +41,12 @@ class SiteSettingsController extends Controller
         ]);
     }
 
-    public function update(Request $request): RedirectResponse
+    public function update(Request $request, SeoFileGenerator $seoFileGenerator): RedirectResponse
     {
+        $isSeoDraft = $request->input('submit_action') === 'generate_seo_draft';
+
         $validated = $request->validate([
+            'submit_action' => ['nullable', 'string', 'in:save,generate_seo_draft,save_generate_seo'],
             'site_name' => ['nullable', 'string', 'max:255'],
             'site_tagline' => ['nullable', 'string', 'max:255'],
             'hero_notice' => ['nullable', 'string', 'max:500'],
@@ -64,13 +69,22 @@ class SiteSettingsController extends Controller
             'social_links.*' => ['nullable', 'string', 'max:255'],
             'ui_lines' => ['nullable', 'array'],
             'ui_lines.*' => ['nullable', 'string', 'max:500'],
+            'seo_base_url' => ['nullable', 'string', 'max:255'],
+            'sitemap_include_home' => ['nullable', 'boolean'],
+            'sitemap_include_pages' => ['nullable', 'boolean'],
+            'sitemap_include_contact' => ['nullable', 'boolean'],
+            'sitemap_include_member_pages' => ['nullable', 'boolean'],
+            'sitemap_extra_urls' => ['nullable', 'string'],
+            'sitemap_xml_content' => ['nullable', 'string'],
+            'robots_txt_content' => ['nullable', 'string'],
+            'llms_txt_content' => ['nullable', 'string'],
             'mail_notifications_enabled' => ['nullable', 'boolean'],
             'notify_contact_messages' => ['nullable', 'boolean'],
             'notify_appointments' => ['nullable', 'boolean'],
-            'mail_from_address' => ['nullable', 'required_if:mail_notifications_enabled,1', 'email', 'max:255'],
+            'mail_from_address' => $isSeoDraft ? ['nullable', 'email', 'max:255'] : ['nullable', 'required_if:mail_notifications_enabled,1', 'email', 'max:255'],
             'mail_from_name' => ['nullable', 'string', 'max:255'],
-            'smtp_host' => ['nullable', 'required_if:mail_notifications_enabled,1', 'string', 'max:255'],
-            'smtp_port' => ['nullable', 'required_if:mail_notifications_enabled,1', 'integer', 'min:1', 'max:65535'],
+            'smtp_host' => $isSeoDraft ? ['nullable', 'string', 'max:255'] : ['nullable', 'required_if:mail_notifications_enabled,1', 'string', 'max:255'],
+            'smtp_port' => $isSeoDraft ? ['nullable', 'integer', 'min:1', 'max:65535'] : ['nullable', 'required_if:mail_notifications_enabled,1', 'integer', 'min:1', 'max:65535'],
             'smtp_scheme' => ['nullable', 'string', 'in:smtp,smtps,smtp_plain'],
             'smtp_username' => ['nullable', 'string', 'max:255'],
             'smtp_password' => ['nullable', 'string', 'max:1000'],
@@ -95,7 +109,7 @@ class SiteSettingsController extends Controller
 
         $settings = SiteSetting::current();
 
-        $settings->update([
+        $settingsPayload = [
             'site_name' => $validated['site_name'] ?? null,
             'site_tagline' => $validated['site_tagline'] ?? null,
             'hero_notice' => $validated['hero_notice'] ?? null,
@@ -116,6 +130,15 @@ class SiteSettingsController extends Controller
             'under_construction_message' => $validated['under_construction_message'] ?? null,
             'social_links' => array_filter($validated['social_links'] ?? [], fn ($value) => filled($value)),
             'ui_lines' => array_filter($validated['ui_lines'] ?? [], fn ($value) => filled($value)),
+            'seo_base_url' => $validated['seo_base_url'] ?? null,
+            'sitemap_include_home' => $request->boolean('sitemap_include_home'),
+            'sitemap_include_pages' => $request->boolean('sitemap_include_pages'),
+            'sitemap_include_contact' => $request->boolean('sitemap_include_contact'),
+            'sitemap_include_member_pages' => $request->boolean('sitemap_include_member_pages'),
+            'sitemap_extra_urls' => $validated['sitemap_extra_urls'] ?? null,
+            'sitemap_xml_content' => $validated['sitemap_xml_content'] ?? null,
+            'robots_txt_content' => $validated['robots_txt_content'] ?? null,
+            'llms_txt_content' => $validated['llms_txt_content'] ?? null,
             'mail_notifications_enabled' => $request->boolean('mail_notifications_enabled'),
             'notify_contact_messages' => $request->boolean('notify_contact_messages'),
             'notify_appointments' => $request->boolean('notify_appointments'),
@@ -126,7 +149,24 @@ class SiteSettingsController extends Controller
             'smtp_scheme' => $validated['smtp_scheme'] ?? 'smtp',
             'smtp_username' => $validated['smtp_username'] ?? null,
             'smtp_timeout' => $validated['smtp_timeout'] ?? null,
-        ]);
+        ];
+
+        if ($isSeoDraft) {
+            $previewSettings = $settings->replicate();
+            $previewSettings->forceFill($settingsPayload);
+            $contents = $seoFileGenerator->automaticContents($previewSettings);
+
+            return redirect()
+                ->route('admin.site.settings.edit')
+                ->withInput(array_replace($request->except('smtp_password'), [
+                    'sitemap_xml_content' => $contents['sitemap_xml_content'],
+                    'robots_txt_content' => $contents['robots_txt_content'],
+                    'llms_txt_content' => $contents['llms_txt_content'],
+                ]))
+                ->with('success', 'Otomatik SEO içerikleri hazırlandı. İçerikleri düzenleyip dosyaları oluşturabilirsiniz.');
+        }
+
+        $settings->update($settingsPayload);
 
         if ($request->boolean('smtp_password_clear')) {
             $settings->forceFill(['smtp_password' => null])->save();
@@ -154,6 +194,24 @@ class SiteSettingsController extends Controller
                 'ui_lines',
             ]
         );
+
+        if (($validated['submit_action'] ?? 'save') === 'save_generate_seo') {
+            try {
+                $result = $seoFileGenerator->generate($settings->refresh());
+            } catch (Throwable $e) {
+                Log::error('SEO dosyaları oluşturulamadı.', [
+                    'message' => $e->getMessage(),
+                ]);
+
+                return redirect()
+                    ->route('admin.site.settings.edit')
+                    ->with('error', 'Site ayarları kaydedildi ancak SEO dosyaları oluşturulamadı. Public klasör yazma iznini kontrol edin.');
+            }
+
+            return redirect()
+                ->route('admin.site.settings.edit')
+                ->with('success', 'Site ayarları güncellendi; sitemap.xml, robots.txt ve llms.txt oluşturuldu. Sitemap URL sayısı: ' . $result['entries']);
+        }
 
         return redirect()
             ->route('admin.site.settings.edit')
