@@ -62,7 +62,7 @@
             @endunless
 
             @if($dashboardSectionVisibility['hero_overview'] ?? false)
-                <section class="dashboard-hero kt-card">
+                <section class="dashboard-hero kt-card" style="order: {{ $dashboardSectionOrderIndex['hero_overview'] ?? 20 }};">
                     <div class="dashboard-hero__orb dashboard-hero__orb--primary"></div>
                     <div class="dashboard-hero__orb dashboard-hero__orb--secondary"></div>
 
@@ -148,7 +148,7 @@
             @endif
 
             @if(($dashboardSectionVisibility['kpi_overview'] ?? false) && $visibleKpis->isNotEmpty())
-                <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+                <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5" style="order: {{ $dashboardSectionOrderIndex['kpi_overview'] ?? 30 }};">
                     @foreach($visibleKpis as $kpi)
                         <article class="dashboard-kpi-card kt-card" style="--dashboard-accent: {{ $kpi['accent'] }};">
                             <div class="kt-card-content p-5">
@@ -169,7 +169,7 @@
             @endif
 
             @if(($dashboardSectionVisibility['module_overview'] ?? false) && $visibleModuleCards->isNotEmpty())
-                <section class="kt-card">
+                <section class="kt-card" style="order: {{ $dashboardSectionOrderIndex['module_overview'] ?? 40 }};">
                     <div class="kt-card-header py-5 flex-wrap gap-4">
                         <div>
                             <h3 class="kt-card-title">Hızlı erişim</h3>
@@ -214,7 +214,7 @@
             @endif
 
             @if(($dashboardSectionVisibility['activity_charts'] ?? false) && ($showMonthlyChart || $showActionChart || $showScheduleChart))
-                <div class="grid gap-5 xl:grid-cols-[1.35fr,.65fr]">
+                <div class="grid gap-5 xl:grid-cols-[1.35fr,.65fr]" style="order: {{ $dashboardSectionOrderIndex['activity_charts'] ?? 50 }};">
                     @if($showMonthlyChart)
                         <section class="kt-card">
                             <div class="kt-card-header py-5 flex-wrap gap-4">
@@ -268,9 +268,9 @@
             @endif
 
             @if(($dashboardSectionVisibility['recent_messages'] ?? false) || ($dashboardSectionVisibility['upcoming_appointments'] ?? false) || ($dashboardSectionVisibility['recent_content'] ?? false))
-                <div class="grid gap-5 xl:grid-cols-3">
+                <div class="grid gap-5 xl:grid-cols-3" style="order: {{ $dashboardFlowOrder }}">
                     @if($dashboardSectionVisibility['recent_messages'] ?? false)
-                        <section class="kt-card">
+                        <section class="kt-card" style="order: {{ $dashboardSectionOrderIndex['recent_messages'] ?? 60 }};">
                             <div class="kt-card-header py-5 flex-wrap gap-4">
                                 <div>
                                     <h3 class="kt-card-title">Son mesajlar</h3>
@@ -306,7 +306,7 @@
                     @endif
 
                     @if($dashboardSectionVisibility['upcoming_appointments'] ?? false)
-                        <section class="kt-card">
+                        <section class="kt-card" style="order: {{ $dashboardSectionOrderIndex['upcoming_appointments'] ?? 70 }};">
                             <div class="kt-card-header py-5 flex-wrap gap-4">
                                 <div>
                                     <h3 class="kt-card-title">{{ $canAppointments ? 'Yaklaşan randevular' : 'Operasyon notu' }}</h3>
@@ -347,7 +347,7 @@
                     @endif
 
                     @if($dashboardSectionVisibility['recent_content'] ?? false)
-                        <section class="kt-card">
+                        <section class="kt-card" style="order: {{ $dashboardSectionOrderIndex['recent_content'] ?? 80 }};">
                             <div class="kt-card-header py-5 flex-wrap gap-4">
                                 <div>
                                     <h3 class="kt-card-title">Son güncellenen içerikler</h3>
@@ -383,7 +383,7 @@
             @endif
 
             @if(($dashboardSectionVisibility['audit_issues'] ?? false) && $canAudit)
-                <section class="kt-card">
+                <section class="kt-card" style="order: {{ $dashboardSectionOrderIndex['audit_issues'] ?? 90 }};">
                     <div class="kt-card-header py-5 flex-wrap gap-4">
                         <div>
                             <h3 class="kt-card-title">Son sistem uyarıları</h3>

@@ -25,6 +25,7 @@ import CategoriesCreate from './categories/create';
 import CategoriesEdit from './categories/edit';
 import CategoriesIndex from './categories/index';
 import DashIndex from './dash/index';
+import DashManage from './dash/manage';
 
 import profileEdit from './profile/edit';
 import profileIndex from './profile/index';
@@ -61,6 +62,7 @@ import SiteSlidersIndex from './site/sliders/index';
 
 export function registerPages() {
     register('dash.index', DashIndex);
+    register('dash.manage', DashManage);
 
     register('blog.create', BlogCreate);
     register('blog.edit', BlogEdit);

@@ -1080,6 +1080,56 @@ thead th.dt-orderable-none .dt-column-order { display:none !important; }
     background: color-mix(in oklab, var(--foreground) 6%, var(--background));
 }
 
+.dashboard-sort-list {
+    display: grid;
+    gap: .75rem;
+    min-height: 3.25rem;
+}
+
+.dashboard-sort-item {
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    background: color-mix(in oklab, var(--foreground) 3%, var(--background));
+    padding: .9rem;
+    cursor: grab;
+    transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease, opacity .15s ease, transform .15s ease;
+}
+
+.dashboard-sort-item--compact {
+    padding: .75rem;
+}
+
+.dashboard-sort-item:hover {
+    border-color: color-mix(in oklab, #3e97ff 24%, var(--border));
+    box-shadow: 0 12px 26px rgb(15 23 42 / 7%);
+}
+
+.dashboard-sort-item.is-dragging {
+    opacity: .52;
+    transform: scale(.985);
+    cursor: grabbing;
+}
+
+.dashboard-sort-handle {
+    flex: 0 0 auto;
+    cursor: grab;
+}
+
+.dashboard-sort-item.is-dragging .dashboard-sort-handle {
+    cursor: grabbing;
+}
+
+.dark .dashboard-sort-item {
+    background: color-mix(in oklab, var(--foreground) 6%, var(--background));
+}
+
+.dark .dashboard-sort-item:hover {
+    box-shadow: 0 16px 32px rgb(0 0 0 / 24%);
+}
+
 @media (max-width: 1024px) {
     .dashboard-hero {
         background:

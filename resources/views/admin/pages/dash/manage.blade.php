@@ -1,7 +1,7 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    <div class="kt-container-fixed max-w-[92%]">
+    <div class="kt-container-fixed max-w-[92%]" data-page="dash.manage">
         @includeIf('admin.partials._flash')
 
         <div class="grid gap-6">
@@ -29,6 +29,118 @@
             <form method="POST" action="{{ route('admin.dashboard.manage.update') }}" class="grid gap-6">
                 @csrf
                 @method('PUT')
+
+                <div class="kt-card overflow-hidden">
+                    <div class="kt-card-header py-5 flex-wrap gap-4">
+                        <div>
+                            <h3 class="kt-card-title">Dashboard sırası</h3>
+                            <div class="text-sm text-muted-foreground">
+                                Ana blokları ve kart gruplarını tutup sürükleyerek dashboard üzerinde istediğin sıraya al.
+                            </div>
+                        </div>
+
+                        <span class="kt-badge kt-badge-sm kt-badge-light-primary">Drag & drop</span>
+                    </div>
+
+                    <div class="kt-card-content p-6">
+                        <div class="grid gap-6 xl:grid-cols-[minmax(0,.95fr),minmax(0,1.05fr)]">
+                            <section class="grid gap-3">
+                                <div>
+                                    <h4 class="text-base font-semibold text-foreground">Ana blok sırası</h4>
+                                    <div class="text-sm text-muted-foreground">
+                                        Dashboarddaki büyük bölümlerin yukarıdan aşağıya sırasını belirler.
+                                    </div>
+                                </div>
+
+                                <div class="dashboard-sort-list" data-dashboard-sort-list>
+                                    @foreach($orderedDashboardSections as $section)
+                                        <div class="dashboard-sort-item" draggable="true" data-dashboard-sort-item>
+                                            <input type="hidden" name="section_order[]" value="{{ $section['key'] }}">
+
+                                            <button type="button" class="dashboard-sort-handle kt-btn kt-btn-sm kt-btn-light kt-btn-icon" title="Sürükle">
+                                                <i class="ki-outline ki-menu"></i>
+                                            </button>
+
+                                            <span class="inline-flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                                                <i class="{{ $section['icon'] }} text-lg"></i>
+                                            </span>
+
+                                            <span class="min-w-0 flex-1">
+                                                <span class="block font-semibold text-foreground">{{ $section['label'] }}</span>
+                                                <span class="mt-1 block text-sm text-muted-foreground">{{ $section['description'] }}</span>
+                                            </span>
+
+                                            <span class="{{ $section['visible'] ? 'kt-badge kt-badge-sm kt-badge-light-success' : 'kt-badge kt-badge-sm kt-badge-light' }}">
+                                                {{ $section['visible'] ? 'Görünür' : 'Gizli' }}
+                                            </span>
+
+                                            <span class="inline-flex shrink-0 gap-1">
+                                                <button type="button" class="kt-btn kt-btn-sm kt-btn-light kt-btn-icon" data-dashboard-move="up" title="Yukarı taşı">
+                                                    <i class="ki-filled ki-arrow-up"></i>
+                                                </button>
+                                                <button type="button" class="kt-btn kt-btn-sm kt-btn-light kt-btn-icon" data-dashboard-move="down" title="Aşağı taşı">
+                                                    <i class="ki-filled ki-arrow-down"></i>
+                                                </button>
+                                            </span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </section>
+
+                            <section class="grid gap-3">
+                                <div>
+                                    <h4 class="text-base font-semibold text-foreground">Kart sırası</h4>
+                                    <div class="text-sm text-muted-foreground">
+                                        KPI ve hızlı erişim kartlarının kendi bölümleri içindeki sırasını düzenler.
+                                    </div>
+                                </div>
+
+                                <div class="grid gap-4">
+                                    @foreach($orderedDashboardSections->whereIn('key', ['kpi_overview', 'module_overview']) as $section)
+                                        @if(!empty($section['children']))
+                                            <div class="rounded-[22px] border border-border bg-background/70 p-4">
+                                                <div class="mb-3 flex items-center justify-between gap-3">
+                                                    <div class="font-semibold text-foreground">{{ $section['label'] }}</div>
+                                                    <span class="kt-badge kt-badge-sm kt-badge-light">{{ count($section['children']) }} kart</span>
+                                                </div>
+
+                                                <div class="dashboard-sort-list dashboard-sort-list--compact" data-dashboard-sort-list>
+                                                    @foreach($section['children'] as $child)
+                                                        <div class="dashboard-sort-item dashboard-sort-item--compact" draggable="true" data-dashboard-sort-item>
+                                                            <input type="hidden" name="section_order[]" value="{{ $child['key'] }}">
+
+                                                            <button type="button" class="dashboard-sort-handle kt-btn kt-btn-sm kt-btn-light kt-btn-icon" title="Sürükle">
+                                                                <i class="ki-outline ki-menu"></i>
+                                                            </button>
+
+                                                            <span class="min-w-0 flex-1">
+                                                                <span class="block font-medium text-foreground">{{ $child['label'] }}</span>
+                                                                <span class="mt-1 block text-xs text-muted-foreground">{{ $child['description'] }}</span>
+                                                            </span>
+
+                                                            <span class="{{ $child['visible'] ? 'kt-badge kt-badge-sm kt-badge-light-success' : 'kt-badge kt-badge-sm kt-badge-light' }}">
+                                                                {{ $child['visible'] ? 'Görünür' : 'Gizli' }}
+                                                            </span>
+
+                                                            <span class="inline-flex shrink-0 gap-1">
+                                                                <button type="button" class="kt-btn kt-btn-sm kt-btn-light kt-btn-icon" data-dashboard-move="up" title="Yukarı taşı">
+                                                                    <i class="ki-filled ki-arrow-up"></i>
+                                                                </button>
+                                                                <button type="button" class="kt-btn kt-btn-sm kt-btn-light kt-btn-icon" data-dashboard-move="down" title="Aşağı taşı">
+                                                                    <i class="ki-filled ki-arrow-down"></i>
+                                                                </button>
+                                                            </span>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="kt-card overflow-hidden">
                     <div class="kt-card-header py-5 flex-wrap gap-4">

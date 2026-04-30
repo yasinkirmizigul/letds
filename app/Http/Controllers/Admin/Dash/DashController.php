@@ -499,6 +499,15 @@ class DashController extends Controller
 
         $dashboardSections = $this->dashboardSectionDefinitions($can);
         $dashboardSectionVisibility = $this->resolveDashboardSectionVisibility($user, $dashboardSections);
+        $dashboardSectionOrder = $this->resolveDashboardSectionOrder($user, $dashboardSections);
+        $dashboardSectionOrderIndex = $this->dashboardSectionOrderIndex($dashboardSectionOrder);
+        $dashboardFlowOrder = min(array_map(
+            fn (string $key) => $dashboardSectionOrderIndex[$key] ?? PHP_INT_MAX,
+            ['recent_messages', 'upcoming_appointments', 'recent_content']
+        ));
+
+        $kpis = $this->sortDashboardItemsByOrder($kpis, $dashboardSectionOrder);
+        $moduleCards = $this->sortDashboardItemsByOrder($moduleCards, $dashboardSectionOrder);
         $hasVisibleDashboardSection = collect($dashboardSectionVisibility)->contains(fn (bool $visible) => $visible === true);
 
         $recentAuditIssues = $can['auditView']
@@ -539,6 +548,8 @@ class DashController extends Controller
             'nowLabel' => $now->format('d M Y, H:i'),
             'dashboardSections' => $dashboardSections,
             'dashboardSectionVisibility' => $dashboardSectionVisibility,
+            'dashboardSectionOrderIndex' => $dashboardSectionOrderIndex,
+            'dashboardFlowOrder' => $dashboardFlowOrder,
             'hasVisibleDashboardSection' => $hasVisibleDashboardSection,
         ]);
     }
@@ -564,31 +575,21 @@ class DashController extends Controller
 
         $dashboardSections = $this->dashboardSectionDefinitions($capabilities);
         $dashboardSectionVisibility = $this->resolveDashboardSectionVisibility($user, $dashboardSections);
+        $dashboardSectionOrder = $this->resolveDashboardSectionOrder($user, $dashboardSections);
+        $dashboardSectionOrderIndex = $this->dashboardSectionOrderIndex($dashboardSectionOrder);
+        $orderedDashboardSections = $this->dashboardSectionsForManagement(
+            $dashboardSections,
+            $dashboardSectionVisibility,
+            $dashboardSectionOrderIndex
+        );
 
-        $groupedSections = collect($dashboardSections)
-            ->filter(fn (array $section) => ($section['available'] ?? false) === true)
-            ->map(function (array $section, string $key) use ($dashboardSectionVisibility) {
-                $section['key'] = $key;
-                $section['visible'] = (bool) ($dashboardSectionVisibility[$key] ?? false);
-                $section['children'] = collect($section['children'] ?? [])
-                    ->filter(fn (array $child) => ($child['available'] ?? false) === true)
-                    ->map(function (array $child, string $childKey) use ($dashboardSectionVisibility) {
-                        $child['key'] = $childKey;
-                        $child['visible'] = (bool) ($dashboardSectionVisibility[$childKey] ?? false);
-
-                        return $child;
-                    })
-                    ->values()
-                    ->all();
-
-                return $section;
-            })
-            ->groupBy('group');
+        $groupedSections = $orderedDashboardSections->groupBy('group');
 
         return view('admin.pages.dash.manage', [
             'pageTitle' => 'Dashboard Yönetimi',
             'pageDescription' => 'Dashboard Yönetimi',
             'dashboardSectionGroups' => $groupedSections,
+            'orderedDashboardSections' => $orderedDashboardSections,
             'dashboardSectionVisibility' => $dashboardSectionVisibility,
             'activeSectionCount' => collect($dashboardSectionVisibility)->filter()->count(),
             'availableSectionCount' => count(DashboardSectionRegistry::availableKeys($dashboardSections)),
@@ -616,11 +617,15 @@ class DashController extends Controller
 
         $dashboardSections = $this->dashboardSectionDefinitions($capabilities);
         $defaults = DashboardSectionRegistry::defaults($dashboardSections);
+        $availableKeys = DashboardSectionRegistry::availableKeys($dashboardSections);
+        $defaultOrder = $availableKeys;
 
         $validated = $request->validate([
             'action' => ['nullable', 'string', 'in:save,reset'],
             'visible_sections' => ['nullable', 'array'],
             'visible_sections.*' => ['string'],
+            'section_order' => ['nullable', 'array'],
+            'section_order.*' => ['string'],
         ]);
 
         if (($validated['action'] ?? 'save') === 'reset') {
@@ -630,8 +635,6 @@ class DashController extends Controller
                 ->route('admin.dashboard.manage')
                 ->with('success', 'Dashboard görünümü varsayılan ayarlara döndürüldü.');
         }
-
-        $availableKeys = DashboardSectionRegistry::availableKeys($dashboardSections);
 
         $selectedKeys = collect($validated['visible_sections'] ?? [])
             ->map(fn ($key) => (string) $key)
@@ -645,18 +648,33 @@ class DashController extends Controller
             $visibleSections[$key] = in_array($key, $selectedKeys, true);
         }
 
-        if ($visibleSections === $defaults) {
+        $submittedOrder = collect($validated['section_order'] ?? [])
+            ->map(fn ($key) => (string) $key)
+            ->filter(fn ($key) => in_array($key, $availableKeys, true))
+            ->unique()
+            ->values();
+
+        $sectionOrder = $submittedOrder
+            ->merge($availableKeys)
+            ->unique()
+            ->values()
+            ->all();
+
+        if ($visibleSections === $defaults && $sectionOrder === $defaultOrder) {
             $user->dashboardPreference()->delete();
         } else {
             $user->dashboardPreference()->updateOrCreate(
                 ['user_id' => $user->id],
-                ['visible_sections' => $visibleSections]
+                [
+                    'visible_sections' => $visibleSections,
+                    'section_order' => $sectionOrder,
+                ]
             );
         }
 
         return redirect()
             ->route('admin.dashboard.manage')
-            ->with('success', 'Dashboard görünürlüğü güncellendi.');
+            ->with('success', 'Dashboard görünürlüğü ve sırası güncellendi.');
     }
 
     private function can(?User $user, string $permission): bool
@@ -742,6 +760,69 @@ class DashController extends Controller
         }
 
         return $visibility;
+    }
+
+    private function resolveDashboardSectionOrder(User $user, array $dashboardSections): array
+    {
+        $availableKeys = DashboardSectionRegistry::availableKeys($dashboardSections);
+        $stored = $user->dashboardPreference?->section_order;
+
+        if (!is_array($stored) || $stored === []) {
+            return $availableKeys;
+        }
+
+        return collect($stored)
+            ->map(fn ($key) => (string) $key)
+            ->filter(fn ($key) => in_array($key, $availableKeys, true))
+            ->unique()
+            ->merge($availableKeys)
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    private function dashboardSectionOrderIndex(array $sectionOrder): array
+    {
+        return collect($sectionOrder)
+            ->values()
+            ->mapWithKeys(fn (string $key, int $index) => [$key => ($index + 1) * 10])
+            ->all();
+    }
+
+    private function sortDashboardItemsByOrder(array $items, array $sectionOrder): array
+    {
+        $orderIndex = array_flip($sectionOrder);
+
+        return collect($items)
+            ->values()
+            ->sortBy(fn (array $item, int $index) => $orderIndex[$item['visibility_key'] ?? ''] ?? (10000 + $index))
+            ->values()
+            ->all();
+    }
+
+    private function dashboardSectionsForManagement(array $dashboardSections, array $visibility, array $orderIndex): Collection
+    {
+        return collect($dashboardSections)
+            ->filter(fn (array $section) => ($section['available'] ?? false) === true)
+            ->map(function (array $section, string $key) use ($visibility, $orderIndex) {
+                $section['key'] = $key;
+                $section['visible'] = (bool) ($visibility[$key] ?? false);
+                $section['children'] = collect($section['children'] ?? [])
+                    ->filter(fn (array $child) => ($child['available'] ?? false) === true)
+                    ->map(function (array $child, string $childKey) use ($visibility) {
+                        $child['key'] = $childKey;
+                        $child['visible'] = (bool) ($visibility[$childKey] ?? false);
+
+                        return $child;
+                    })
+                    ->sortBy(fn (array $child) => $orderIndex[$child['key']] ?? PHP_INT_MAX)
+                    ->values()
+                    ->all();
+
+                return $section;
+            })
+            ->sortBy(fn (array $section) => $orderIndex[$section['key']] ?? PHP_INT_MAX)
+            ->values();
     }
 
     private function monthBuckets(Carbon $now, int $months): array

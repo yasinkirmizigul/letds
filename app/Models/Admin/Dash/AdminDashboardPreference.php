@@ -11,12 +11,14 @@ class AdminDashboardPreference extends Model
     protected $fillable = [
         'user_id',
         'visible_sections',
+        'section_order',
     ];
 
     protected function casts(): array
     {
         return [
             'visible_sections' => 'array',
+            'section_order' => 'array',
         ];
     }
 
