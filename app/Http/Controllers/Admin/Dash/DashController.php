@@ -454,14 +454,31 @@ class DashController extends Controller
                 ->limit(5)
                 ->get()
                 ->map(function (ContactMessage $message) {
+                    $priorityLabel = ContactMessage::priorityLabel($message->priority);
+                    $priorityBadge = ContactMessage::priorityBadgeClass($message->priority);
+
                     return [
+                        'id' => 'message-' . $message->id,
+                        'start' => $message->created_at?->toIso8601String(),
                         'subject' => $message->subject,
+                        'title' => $message->subject,
                         'sender' => $message->sender_full_name ?: 'Bilinmeyen',
                         'time' => $message->created_at?->diffForHumans(),
-                        'priority_label' => ContactMessage::priorityLabel($message->priority),
-                        'priority_badge' => ContactMessage::priorityBadgeClass($message->priority),
+                        'subtitle' => trim(($message->sender_full_name ?: 'Bilinmeyen') . ' | ' . ($message->created_at?->diffForHumans() ?: '-')),
+                        'description' => $message->recipient_display_name,
+                        'priority_label' => $priorityLabel,
+                        'priority_badge' => $priorityBadge,
                         'status_badge' => $message->isRead() ? 'kt-badge kt-badge-sm kt-badge-light-success' : 'kt-badge kt-badge-sm kt-badge-light-warning',
                         'status_label' => $message->isRead() ? 'Okundu' : 'Okunmadı',
+                        'status' => $priorityLabel,
+                        'badgeClass' => $priorityBadge,
+                        'variant' => match ($message->priority) {
+                            ContactMessage::PRIORITY_URGENT => 'danger',
+                            ContactMessage::PRIORITY_HIGH => 'warning',
+                            ContactMessage::PRIORITY_LOW => 'default',
+                            default => 'primary',
+                        },
+                        'icon' => 'ki-filled ki-messages',
                         'url' => route('admin.messages.show', $message),
                     ];
                 })
@@ -479,9 +496,18 @@ class DashController extends Controller
                     $memberName = trim(($appointment->member?->name ?? '') . ' ' . ($appointment->member?->surname ?? ''));
 
                     return [
+                        'id' => 'appointment-' . $appointment->id,
+                        'start' => $appointment->start_at?->toIso8601String(),
+                        'end' => $appointment->end_at?->toIso8601String(),
                         'title' => $memberName !== '' ? $memberName : 'Randevu',
                         'provider' => $user->isSuperAdmin() ? ($appointment->provider?->name ?: '-') : null,
                         'time' => $appointment->start_at?->timezone('Europe/Istanbul')->format('d M H:i'),
+                        'subtitle' => trim(($appointment->start_at?->timezone('Europe/Istanbul')->format('d M H:i') ?: '-') . ($user->isSuperAdmin() ? ' | ' . ($appointment->provider?->name ?: '-') : '')),
+                        'description' => $appointment->end_at?->timezone('Europe/Istanbul')->format('d M H:i'),
+                        'status' => 'Randevu',
+                        'badgeClass' => 'kt-badge kt-badge-sm kt-badge-light-primary',
+                        'variant' => 'success',
+                        'icon' => 'ki-filled ki-calendar-8',
                         'url' => route('admin.appointments.calendar'),
                     ];
                 })
@@ -494,6 +520,14 @@ class DashController extends Controller
             ->values()
             ->map(function (array $item) {
                 $item['updated_label'] = optional($item['updated_at'])->diffForHumans();
+                $item['start'] = optional($item['updated_at'])->toIso8601String();
+                $item['subtitle'] = trim(($item['type'] ?? 'İçerik') . ' | ' . ($item['updated_label'] ?: '-'));
+                $item['description'] = $item['updated_label'];
+                $item['status'] = $item['meta'] ?? null;
+                $item['badgeClass'] = $item['badge'] ?? 'kt-badge kt-badge-sm kt-badge-light';
+                $item['variant'] = 'primary';
+                $item['icon'] = 'ki-filled ki-document';
+
                 return $item;
             });
 
@@ -517,10 +551,18 @@ class DashController extends Controller
                 ->limit(5)
                 ->get()
                 ->map(fn (AuditLog $log) => [
+                    'id' => 'audit-' . $log->id,
+                    'start' => $log->created_at?->toIso8601String(),
                     'status' => (int) $log->status,
                     'route' => $log->route ?: ($log->uri ?: 'request'),
+                    'title' => $log->route ?: ($log->uri ?: 'request'),
                     'method' => strtoupper((string) $log->method),
                     'time' => $log->created_at?->diffForHumans(),
+                    'subtitle' => trim(strtoupper((string) $log->method) . ' | ' . ($log->created_at?->diffForHumans() ?: '-')),
+                    'description' => $log->uri ?: null,
+                    'badgeClass' => 'kt-badge kt-badge-sm ' . ((int) $log->status >= 500 ? 'kt-badge-danger' : 'kt-badge-warning'),
+                    'variant' => (int) $log->status >= 500 ? 'danger' : 'warning',
+                    'icon' => 'ki-filled ki-fingerprint-scanning',
                     'url' => route('admin.audit-logs.show', $log),
                 ])
                 ->values()

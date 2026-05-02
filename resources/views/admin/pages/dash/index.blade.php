@@ -279,23 +279,15 @@
                             </div>
                             <div class="kt-card-content p-5">
                                 @if($recentMessages->isNotEmpty())
-                                    <div class="grid gap-3">
-                                        @foreach($recentMessages as $message)
-                                            <a href="{{ $message['url'] }}" class="dashboard-list-item">
-                                                <div class="min-w-0">
-                                                    <div class="flex flex-wrap items-center gap-2">
-                                                        <span class="{{ $message['priority_badge'] }}">{{ $message['priority_label'] }}</span>
-                                                        <span class="{{ $message['status_badge'] }}">{{ $message['status_label'] }}</span>
-                                                    </div>
-                                                    <div class="mt-2 truncate font-medium text-foreground">{{ $message['subject'] }}</div>
-                                                    <div class="mt-1 text-sm text-muted-foreground">
-                                                        {{ $message['sender'] }} · {{ $message['time'] }}
-                                                    </div>
-                                                </div>
-                                                <i class="ki-filled ki-right text-muted-foreground"></i>
-                                            </a>
-                                        @endforeach
-                                    </div>
+                                    <div
+                                        id="dashboardRecentMessagesTimeline"
+                                        data-history-timeline
+                                        data-history-timeline-compact="true"
+                                        data-history-timeline-height="280px"
+                                        data-history-timeline-empty="Son mesaj kutusu şu an boş görünüyor."
+                                        data-history-timeline-source="#dashboardRecentMessagesTimelineData"
+                                    ></div>
+                                    <script type="application/json" id="dashboardRecentMessagesTimelineData">@json($recentMessages)</script>
                                 @else
                                     <div class="dashboard-empty-state">
                                         Son mesaj kutusu şu an boş görünüyor.
@@ -317,22 +309,15 @@
                             </div>
                             <div class="kt-card-content p-5">
                                 @if($canAppointments && $upcomingAppointments->isNotEmpty())
-                                    <div class="grid gap-3">
-                                        @foreach($upcomingAppointments as $appointment)
-                                            <a href="{{ $appointment['url'] }}" class="dashboard-list-item">
-                                                <div class="min-w-0">
-                                                    <div class="font-medium text-foreground">{{ $appointment['title'] }}</div>
-                                                    <div class="mt-1 text-sm text-muted-foreground">
-                                                        {{ $appointment['time'] }}
-                                                        @if($appointment['provider'])
-                                                            · {{ $appointment['provider'] }}
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                                <i class="ki-filled ki-right text-muted-foreground"></i>
-                                            </a>
-                                        @endforeach
-                                    </div>
+                                    <div
+                                        id="dashboardUpcomingAppointmentsTimeline"
+                                        data-history-timeline
+                                        data-history-timeline-compact="true"
+                                        data-history-timeline-height="280px"
+                                        data-history-timeline-empty="Önümüzdeki günler için planlanmış randevu görünmüyor."
+                                        data-history-timeline-source="#dashboardUpcomingAppointmentsTimelineData"
+                                    ></div>
+                                    <script type="application/json" id="dashboardUpcomingAppointmentsTimelineData">@json($upcomingAppointments)</script>
                                 @elseif($canAppointments)
                                     <div class="dashboard-empty-state">
                                         Önümüzdeki günler için planlanmış randevu görünmüyor.
@@ -356,21 +341,15 @@
                             </div>
                             <div class="kt-card-content p-5">
                                 @if($recentContent->isNotEmpty())
-                                    <div class="grid gap-3">
-                                        @foreach($recentContent as $item)
-                                            <a href="{{ $item['url'] }}" class="dashboard-list-item">
-                                                <div class="min-w-0">
-                                                    <div class="flex flex-wrap items-center gap-2">
-                                                        <span class="kt-badge kt-badge-sm kt-badge-outline">{{ $item['type'] }}</span>
-                                                        <span class="{{ $item['badge'] }}">{{ $item['meta'] }}</span>
-                                                    </div>
-                                                    <div class="mt-2 truncate font-medium text-foreground">{{ $item['title'] }}</div>
-                                                    <div class="mt-1 text-sm text-muted-foreground">{{ $item['updated_label'] }}</div>
-                                                </div>
-                                                <i class="ki-filled ki-right text-muted-foreground"></i>
-                                            </a>
-                                        @endforeach
-                                    </div>
+                                    <div
+                                        id="dashboardRecentContentTimeline"
+                                        data-history-timeline
+                                        data-history-timeline-compact="true"
+                                        data-history-timeline-height="280px"
+                                        data-history-timeline-empty="Görüntülenebilecek yeni bir içerik kaydı bulunmadı."
+                                        data-history-timeline-source="#dashboardRecentContentTimelineData"
+                                    ></div>
+                                    <script type="application/json" id="dashboardRecentContentTimelineData">@json($recentContent)</script>
                                 @else
                                     <div class="dashboard-empty-state">
                                         Görüntülenebilecek yeni bir içerik kaydı bulunmadı.
@@ -397,37 +376,16 @@
                     </div>
                     <div class="kt-card-content p-0">
                         @if($recentAuditIssues->isNotEmpty())
-                            <div class="kt-scrollable-x-auto overflow-y-hidden">
-                                <table class="kt-table table-auto kt-table-border w-full">
-                                    <thead>
-                                    <tr>
-                                        <th class="min-w-[120px]">Status</th>
-                                        <th class="min-w-[120px]">Yöntem</th>
-                                        <th class="min-w-[320px]">Route / URI</th>
-                                        <th class="min-w-[150px]">Zaman</th>
-                                        <th class="w-[90px] text-end">Detay</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach($recentAuditIssues as $issue)
-                                        <tr>
-                                            <td>
-                                                <span class="kt-badge kt-badge-sm {{ $issue['status'] >= 500 ? 'kt-badge-danger' : 'kt-badge-warning' }}">
-                                                    {{ $issue['status'] }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span class="kt-badge kt-badge-sm kt-badge-light">{{ $issue['method'] ?: '-' }}</span>
-                                            </td>
-                                            <td class="font-medium text-foreground">{{ $issue['route'] }}</td>
-                                            <td class="text-muted-foreground">{{ $issue['time'] }}</td>
-                                            <td class="text-end">
-                                                <a href="{{ $issue['url'] }}" class="kt-btn kt-btn-sm kt-btn-light-primary">Aç</a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
-                                </table>
+                            <div class="p-5">
+                                <div
+                                    id="dashboardAuditIssuesTimeline"
+                                    data-history-timeline
+                                    data-history-timeline-compact="true"
+                                    data-history-timeline-height="280px"
+                                    data-history-timeline-empty="Son sistem akışı içinde kritik bir hata kaydı görünmüyor."
+                                    data-history-timeline-source="#dashboardAuditIssuesTimelineData"
+                                ></div>
+                                <script type="application/json" id="dashboardAuditIssuesTimelineData">@json($recentAuditIssues)</script>
                             </div>
                         @else
                             <div class="p-5">

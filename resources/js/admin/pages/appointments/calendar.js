@@ -5,6 +5,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import { getDateInputValue, setDateInputValue } from '@/core/date-input'
 import { get, request } from '@/core/http'
 import { showConfirmDialog, showToastMessage } from '@/core/swal-alert'
+import { destroyHistoryTimeline, renderHistoryTimeline } from '@/admin/helpers/history-timeline'
 
 let calendar = null
 let lastLoadedEvents = []
@@ -561,6 +562,7 @@ function resetDetailPanel(root) {
 
     const historyWrap = qs(root, '#panelHistory')
     if (historyWrap) {
+        destroyHistoryTimeline(historyWrap)
         historyWrap.innerHTML = ''
     }
 }
@@ -806,24 +808,31 @@ function renderHistory(root, items = []) {
     const historyWrap = qs(root, '#panelHistory')
     if (!historyWrap) return
 
-    if (!items.length) {
-        historyWrap.innerHTML = `<div class="text-xs text-muted-foreground">Geçmiş kayıt yok.</div>`
-        return
-    }
+    const timelineItems = (Array.isArray(items) ? items : []).map((item) => {
+        const status = item.is_current ? 'Aktif' : (item.status_label || item.status || 'Randevu')
 
-    historyWrap.innerHTML = items.map((item) => `
-        <div class="rounded-xl border border-border bg-background/70 px-3 py-3">
-            <div class="flex items-center justify-between gap-3">
-                <div class="text-sm font-medium text-foreground">${item.start_at} - ${item.end_at}</div>
-                <div class="text-xs ${item.is_current ? 'text-green-600' : 'text-muted-foreground'}">
-                    ${item.is_current ? 'Aktif' : (item.status_label || item.status)}
-                </div>
-            </div>
-            <div class="mt-1 text-xs text-muted-foreground">
-                ${item.provider_name || '-'} | ${item.member_name || '-'}
-            </div>
-        </div>
-    `).join('')
+        return {
+            id: `appointment-history-${item.id}`,
+            start: item.start || item.start_at_iso,
+            end: item.end || item.end_at_iso,
+            title: status,
+            subtitle: [item.provider_name || '-', item.member_name || '-'].join(' | '),
+            description: `${item.start_at || '-'} - ${item.end_at || '-'}`,
+            date: item.start_at || '-',
+            status,
+            badgeClass: item.is_current
+                ? 'kt-badge kt-badge-sm kt-badge-light-success'
+                : 'kt-badge kt-badge-sm kt-badge-light',
+            variant: item.is_current ? 'success' : 'default',
+            icon: 'ki-filled ki-calendar-8',
+        }
+    })
+
+    renderHistoryTimeline(historyWrap, timelineItems, {
+        compact: true,
+        emptyText: 'Geçmiş kayıt yok.',
+        height: '240px',
+    })
 }
 
 function formatDurationText(totalMinutes) {
@@ -1754,12 +1763,17 @@ export default async function init(ctx) {
         })
     })
 
-    if (typeof ctx?.onDestroy === 'function') {
-        ctx.onDestroy(() => destroy())
+    if (typeof ctx?.cleanup === 'function') {
+        ctx.cleanup(() => destroy())
     }
 }
 
 export function destroy() {
+    const historyWrap = document.querySelector('#panelHistory')
+    if (historyWrap) {
+        destroyHistoryTimeline(historyWrap)
+    }
+
     if (calendar) {
         try { calendar.destroy() } catch (_) {}
         calendar = null

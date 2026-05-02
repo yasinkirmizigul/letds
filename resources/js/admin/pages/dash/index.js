@@ -1,3 +1,5 @@
+import { initHistoryTimelines } from '../../helpers/history-timeline';
+
 function resolveRoot(ctx) {
     if (ctx.root?.matches?.('[data-page="dash.index"]')) {
         return ctx.root;
@@ -299,6 +301,8 @@ export default function init(ctx) {
     const monthlyPayload = parseJson(root.dataset.monthlyChart, { labels: [], series: [] });
     const actionPayload = parseJson(root.dataset.actionChart, { labels: [], series: [], total: 0 });
     const schedulePayload = parseJson(root.dataset.scheduleChart, { labels: [], series: [] });
+
+    initHistoryTimelines(root, ctx);
 
     let charts = [];
     let rerenderFrame = null;

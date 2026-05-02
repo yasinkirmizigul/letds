@@ -63,11 +63,9 @@ class MemberController extends Controller
         $member->load([
             'appointments' => fn ($query) => $query
                 ->with('provider:id,name')
-                ->latest('start_at')
-                ->limit(8),
+                ->latest('start_at'),
             'contactMessages' => fn ($query) => $query
-                ->latest('created_at')
-                ->limit(6),
+                ->latest('created_at'),
         ]);
 
         return view('admin.pages.members.show', [

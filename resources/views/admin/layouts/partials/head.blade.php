@@ -9,6 +9,8 @@
 @stack('vendor_css')
 
 {{-- Theme global CSS --}}
+<link rel="stylesheet" href="{{ asset('assets/plugins/custom/vis-timeline/vis-timeline.bundle.css') }}" />
+<link rel="stylesheet" href="{{ asset('assets/plugins/global/plugins.bundle.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/vendors/apexcharts/apexcharts.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/vendors/keenicons/styles.bundle.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/css/select2.min.css') }}" />

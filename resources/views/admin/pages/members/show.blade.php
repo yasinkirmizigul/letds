@@ -9,6 +9,114 @@
         \App\Models\Appointment\Appointment::STATUS_TRANSFERRED => ['label' => 'Transfer', 'badge' => 'kt-badge kt-badge-sm kt-badge-light'],
         \App\Models\Appointment\Appointment::STATUS_NO_SHOW => ['label' => 'Katılmadı', 'badge' => 'kt-badge kt-badge-sm kt-badge-light-danger'],
     ];
+
+    $appointmentStatusVariants = [
+        \App\Models\Appointment\Appointment::STATUS_BOOKED => 'primary',
+        \App\Models\Appointment\Appointment::STATUS_COMPLETED => 'success',
+        \App\Models\Appointment\Appointment::STATUS_CANCELLED_BY_MEMBER => 'warning',
+        \App\Models\Appointment\Appointment::STATUS_CANCELLED_BY_PROVIDER => 'danger',
+        \App\Models\Appointment\Appointment::STATUS_TRANSFERRED => 'info',
+        \App\Models\Appointment\Appointment::STATUS_NO_SHOW => 'danger',
+    ];
+
+    $memberAppointmentTimelineItems = $member->appointments
+        ->groupBy(fn ($appointment) => $appointment->start_at?->format('Y-m-d H:i') ?: 'appointment-' . $appointment->id)
+        ->map(function ($slotAppointments) use ($appointmentStatusLabels, $appointmentStatusVariants) {
+            $slotAppointments = $slotAppointments->sortBy('id')->values();
+            $appointment = $slotAppointments->first();
+            $appointmentCount = $slotAppointments->count();
+            $statusMeta = $appointmentStatusLabels[$appointment->status] ?? [
+                'label' => $appointment->status,
+                'badge' => 'kt-badge kt-badge-sm kt-badge-light',
+            ];
+            $startLabel = $appointment->start_at?->format('d.m.Y H:i') ?: '-';
+            $endLabel = $slotAppointments
+                ->pluck('end_at')
+                ->filter()
+                ->sort()
+                ->last()
+                ?->format('d.m.Y H:i');
+            $slotDetails = $slotAppointments
+                ->map(function ($slotAppointment) use ($appointmentStatusLabels) {
+                    $slotStatusMeta = $appointmentStatusLabels[$slotAppointment->status] ?? [
+                        'label' => $slotAppointment->status,
+                        'badge' => 'kt-badge kt-badge-sm kt-badge-light',
+                    ];
+
+                    return collect([
+                        '#' . $slotAppointment->id,
+                        $slotAppointment->start_at?->format('H:i') . '-' . $slotAppointment->end_at?->format('H:i'),
+                        $slotStatusMeta['label'],
+                        $slotAppointment->provider?->name ?: 'Atanmamış uzman',
+                    ])->filter()->implode(' | ');
+                })
+                ->implode("\n");
+
+            return [
+                'id' => 'appointment-slot-' . $appointment->id,
+                'start' => $appointment->start_at?->toIso8601String() ?: $appointment->created_at?->toIso8601String(),
+                'end' => $slotAppointments->pluck('end_at')->filter()->sort()->last()?->toIso8601String(),
+                'title' => $appointment->start_at?->format('H:i') ?: $statusMeta['label'],
+                'nodeTitle' => $appointment->start_at?->format('H:i') ?: $statusMeta['label'],
+                'avatarDay' => $appointment->start_at?->format('d') ?: '--',
+                'avatarMonth' => $appointment->start_at?->locale('tr')->translatedFormat('M') ?: '',
+                'subtitle' => $appointment->provider?->name ?: 'Atanmamış uzman',
+                'description' => $appointmentCount > 1 ? $appointmentCount . ' kayıt' : ($endLabel ? 'Bitiş: ' . $endLabel : null),
+                'date' => $startLabel,
+                'status' => $appointmentCount > 1 ? $appointmentCount . ' kayıt' : $statusMeta['label'],
+                'badgeClass' => $statusMeta['badge'],
+                'variant' => $appointmentStatusVariants[$appointment->status] ?? 'default',
+                'icon' => 'ki-filled ki-calendar-8',
+                'count' => $appointmentCount,
+                'tooltip' => collect([
+                    'Tarih: ' . $startLabel,
+                    $endLabel ? 'Bitiş: ' . $endLabel : null,
+                    'Toplam: ' . $appointmentCount . ' kayıt',
+                    $slotDetails,
+                ])->filter()->implode("\n"),
+            ];
+        })
+        ->sortByDesc('start')
+        ->values()
+        ->all();
+
+    $messagePriorityVariants = [
+        \App\Models\ContactMessage::PRIORITY_LOW => 'default',
+        \App\Models\ContactMessage::PRIORITY_NORMAL => 'primary',
+        \App\Models\ContactMessage::PRIORITY_HIGH => 'warning',
+        \App\Models\ContactMessage::PRIORITY_URGENT => 'danger',
+    ];
+
+    $memberMessageTimelineItems = $member->contactMessages
+        ->map(function ($message) use ($messagePriorityVariants) {
+            $createdLabel = $message->created_at?->format('d.m.Y H:i') ?: '-';
+            $priorityLabel = \App\Models\ContactMessage::priorityLabel($message->priority);
+
+            return [
+                'id' => 'message-' . $message->id,
+                'start' => $message->created_at?->toIso8601String(),
+                'title' => $message->subject,
+                'nodeTitle' => $priorityLabel,
+                'avatarDay' => $message->created_at?->format('d') ?: '--',
+                'avatarMonth' => $message->created_at?->locale('tr')->translatedFormat('M') ?: '',
+                'subtitle' => $createdLabel,
+                'description' => $message->sender_full_name ?: 'Bilinmeyen gönderici',
+                'date' => $createdLabel,
+                'status' => $priorityLabel,
+                'badgeClass' => \App\Models\ContactMessage::priorityBadgeClass($message->priority),
+                'variant' => $messagePriorityVariants[$message->priority] ?? 'default',
+                'icon' => 'ki-filled ki-messages',
+                'url' => route('admin.messages.show', $message),
+                'tooltip' => collect([
+                    'Konu: ' . $message->subject,
+                    'Tarih: ' . $createdLabel,
+                    'Gönderen: ' . ($message->sender_full_name ?: 'Bilinmeyen gönderici'),
+                    'Öncelik: ' . $priorityLabel,
+                ])->filter()->implode("\n"),
+            ];
+        })
+        ->values()
+        ->all();
 @endphp
 
 @section('content')
@@ -94,7 +202,7 @@
             @method('DELETE')
         </form>
 
-        <div class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <div class="grid gap-5">
             <div class="kt-card">
                 <div class="kt-card-header py-5">
                     <div>
@@ -135,68 +243,109 @@
                 </div>
             </div>
 
-            <div class="grid gap-5">
-                <div class="kt-card">
-                    <div class="kt-card-header py-5">
-                        <div>
-                            <h3 class="kt-card-title">Son Randevular</h3>
-                            <div class="text-sm text-muted-foreground">
-                                Üyenin en güncel randevu hareketleri.
-                            </div>
+            <div class="kt-card">
+                <div class="kt-card-header py-5">
+                    <div>
+                        <h3 class="kt-card-title">Randevu Geçmişi</h3>
+                        <div class="text-sm text-muted-foreground">
+                            Üyenin tüm randevu hareketleri.
                         </div>
-                    </div>
-                    <div class="kt-card-content grid gap-4 p-6">
-                        @forelse($member->appointments as $appointment)
-                            @php
-                                $statusMeta = $appointmentStatusLabels[$appointment->status] ?? ['label' => $appointment->status, 'badge' => 'kt-badge kt-badge-sm kt-badge-light'];
-                            @endphp
-                            <div class="rounded-2xl app-surface-card px-4 py-4">
-                                <div class="flex flex-wrap items-start justify-between gap-3">
-                                    <div>
-                                        <div class="font-medium text-foreground">{{ optional($appointment->start_at)->format('d.m.Y H:i') ?: '-' }}</div>
-                                        <div class="mt-1 text-sm text-muted-foreground">
-                                            {{ $appointment->provider?->name ?: 'Atanmamış uzman' }}
-                                        </div>
-                                    </div>
-                                    <span class="{{ $statusMeta['badge'] }}">{{ $statusMeta['label'] }}</span>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="rounded-2xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
-                                Henüz randevu kaydı bulunmuyor.
-                            </div>
-                        @endforelse
                     </div>
                 </div>
-
-                <div class="kt-card">
-                    <div class="kt-card-header py-5">
-                        <div>
-                            <h3 class="kt-card-title">Son Mesajlar</h3>
-                            <div class="text-sm text-muted-foreground">
-                                İletişim geçmişinden son kayıtlar.
+                <div class="kt-card-content p-6">
+                    <div
+                        id="memberAppointmentsTimeline"
+                        class="app-history-timeline app-history-timeline--compact"
+                        style="--app-history-timeline-height: 230px"
+                        data-history-timeline
+                        data-history-timeline-compact="true"
+                        data-history-timeline-height="230px"
+                        data-history-timeline-locale="tr"
+                        data-history-timeline-vertical-scroll="false"
+                        data-history-timeline-view="day"
+                        data-history-timeline-views="day,week,month"
+                        data-history-timeline-empty="Henüz randevu kaydı bulunmuyor."
+                        data-history-timeline-source="#memberAppointmentsTimelineData"
+                    >
+                        @if(count($memberAppointmentTimelineItems))
+                            <div class="app-history-fallback">
+                                @foreach($memberAppointmentTimelineItems as $timelineItem)
+                                    <div class="app-history-fallback__row app-history-fallback__row--{{ $timelineItem['variant'] }}">
+                                        <div
+                                            class="app-history-node app-history-node--{{ $timelineItem['variant'] }}"
+                                            title="{{ $timelineItem['tooltip'] }}"
+                                            data-history-tooltip="{{ $timelineItem['tooltip'] }}"
+                                        >
+                                            @if(($timelineItem['count'] ?? 0) > 1)
+                                                <span class="app-history-node__count">{{ $timelineItem['count'] }}</span>
+                                            @endif
+                                            <span class="app-history-node__title">{{ $timelineItem['nodeTitle'] }}</span>
+                                            <span class="app-history-node__avatar" aria-hidden="true">
+                                                <span class="app-history-node__day">{{ $timelineItem['avatarDay'] }}</span>
+                                                <span class="app-history-node__month">{{ $timelineItem['avatarMonth'] }}</span>
+                                                <i class="{{ $timelineItem['icon'] }}"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
+                        @else
+                            <div class="app-history-empty">Henüz randevu kaydı bulunmuyor.</div>
+                        @endif
+                    </div>
+                    <script type="application/json" id="memberAppointmentsTimelineData">@json($memberAppointmentTimelineItems)</script>
+                </div>
+            </div>
+
+            <div class="kt-card">
+                <div class="kt-card-header py-5">
+                    <div>
+                        <h3 class="kt-card-title">İletişim Geçmişi</h3>
+                        <div class="text-sm text-muted-foreground">
+                            Üyenin tüm iletişim kayıtları.
                         </div>
                     </div>
-                    <div class="kt-card-content grid gap-4 p-6">
-                        @forelse($member->contactMessages as $message)
-                            <a href="{{ route('admin.messages.show', $message) }}" class="rounded-2xl app-surface-card px-4 py-4 transition hover:-translate-y-0.5">
-                                <div class="flex flex-wrap items-start justify-between gap-3">
-                                    <div>
-                                        <div class="font-medium text-foreground">{{ $message->subject }}</div>
-                                        <div class="mt-1 text-sm text-muted-foreground">{{ $message->created_at->format('d.m.Y H:i') }}</div>
+                </div>
+                <div class="kt-card-content p-6">
+                    <div
+                        id="memberMessagesTimeline"
+                        class="app-history-timeline app-history-timeline--compact"
+                        style="--app-history-timeline-height: 230px"
+                        data-history-timeline
+                        data-history-timeline-compact="true"
+                        data-history-timeline-height="230px"
+                        data-history-timeline-locale="tr"
+                        data-history-timeline-vertical-scroll="false"
+                        data-history-timeline-view="day"
+                        data-history-timeline-views="day,week,month"
+                        data-history-timeline-empty="Henüz iletişim kaydı bulunmuyor."
+                        data-history-timeline-source="#memberMessagesTimelineData"
+                    >
+                        @if(count($memberMessageTimelineItems))
+                            <div class="app-history-fallback">
+                                @foreach($memberMessageTimelineItems as $timelineItem)
+                                    <div class="app-history-fallback__row app-history-fallback__row--{{ $timelineItem['variant'] }}">
+                                        <a
+                                            href="{{ $timelineItem['url'] }}"
+                                            class="app-history-node app-history-node--{{ $timelineItem['variant'] }}"
+                                            title="{{ $timelineItem['tooltip'] }}"
+                                            data-history-tooltip="{{ $timelineItem['tooltip'] }}"
+                                        >
+                                            <span class="app-history-node__title">{{ $timelineItem['nodeTitle'] }}</span>
+                                            <span class="app-history-node__avatar" aria-hidden="true">
+                                                <span class="app-history-node__day">{{ $timelineItem['avatarDay'] }}</span>
+                                                <span class="app-history-node__month">{{ $timelineItem['avatarMonth'] }}</span>
+                                                <i class="{{ $timelineItem['icon'] }}"></i>
+                                            </span>
+                                        </a>
                                     </div>
-                                    <span class="{{ \App\Models\ContactMessage::priorityBadgeClass($message->priority) }}">
-                                        {{ \App\Models\ContactMessage::priorityLabel($message->priority) }}
-                                    </span>
-                                </div>
-                            </a>
-                        @empty
-                            <div class="rounded-2xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
-                                Henüz iletişim kaydı bulunmuyor.
+                                @endforeach
                             </div>
-                        @endforelse
+                        @else
+                            <div class="app-history-empty">Henüz iletişim kaydı bulunmuyor.</div>
+                        @endif
                     </div>
+                    <script type="application/json" id="memberMessagesTimelineData">@json($memberMessageTimelineItems)</script>
                 </div>
             </div>
         </div>
