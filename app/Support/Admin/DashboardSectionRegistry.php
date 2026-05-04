@@ -36,7 +36,7 @@ class DashboardSectionRegistry
                 ],
             ],
             'kpi_overview' => [
-                'label' => 'KPI kartları',
+                'label' => 'Özet metrik kartları',
                 'description' => 'Özet metrik kartlarını tek bakışta gösterir.',
                 'icon' => 'ki-filled ki-chart-simple',
                 'group' => 'Üst Alan',
@@ -69,7 +69,7 @@ class DashboardSectionRegistry
                     ],
                     'kpi_system_alerts' => [
                         'label' => 'Sistem uyarısı kartı',
-                        'description' => 'Log veya çöp kutusu tabanlı uyarı kartını gösterir.',
+                        'description' => 'Sistem kaydı veya çöp kutusu tabanlı uyarı kartını gösterir.',
                         'default' => true,
                         'available' => true,
                     ],
@@ -144,8 +144,8 @@ class DashboardSectionRegistry
                         'available' => (bool) ($capabilities['trashView'] ?? false),
                     ],
                     'module_audit' => [
-                        'label' => 'Log kartı',
-                        'description' => 'Sistem log özet kartını gösterir.',
+                        'label' => 'Sistem kaydı kartı',
+                        'description' => 'Sistem kayıtları özet kartını gösterir.',
                         'default' => true,
                         'available' => (bool) ($capabilities['auditView'] ?? false),
                     ],
@@ -205,7 +205,7 @@ class DashboardSectionRegistry
             ],
             'audit_issues' => [
                 'label' => 'Sistem uyarıları',
-                'description' => 'Son 4xx ve 5xx log kayıtlarını ayrı panelde gösterir.',
+                'description' => 'Son 4xx ve 5xx sistem kayıtlarını ayrı panelde gösterir.',
                 'icon' => 'ki-filled ki-fingerprint-scanning',
                 'group' => 'Akış Panelleri',
                 'default' => true,

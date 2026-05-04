@@ -21,7 +21,7 @@
                 <div>
                     <h1 class="text-xl font-semibold">Proje Oluştur</h1>
                     <div class="text-sm text-muted-foreground">
-                        Workflow, SEO, kategori ve vitrin yönetimini tek ekrandan kurun.
+                        İş akışı, SEO, kategori ve vitrin yönetimini tek ekrandan kurun.
                     </div>
                 </div>
             </div>

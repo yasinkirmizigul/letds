@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'audit-logs.view' => 'Audit Logs View',
+    'audit-logs.view' => 'Sistem Kayıtlarını Görüntüleme',
 ];

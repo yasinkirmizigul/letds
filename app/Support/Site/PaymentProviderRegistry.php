@@ -65,6 +65,16 @@ class PaymentProviderRegistry
         return (string) (self::definition($provider)['integration_type'] ?? 'payment_gateway');
     }
 
+    public static function integrationTypeLabel(?string $type): string
+    {
+        return match ((string) $type) {
+            'virtual_pos' => 'Sanal POS',
+            'bank_transfer' => 'Havale / EFT',
+            'wallet' => 'Cüzdan',
+            default => 'Ödeme Ağ Geçidi',
+        };
+    }
+
     public static function defaultEnvironment(string $provider): string
     {
         return (string) (self::definition($provider)['default_environment'] ?? 'sandbox');

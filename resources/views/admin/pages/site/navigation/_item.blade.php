@@ -16,11 +16,11 @@
                         {{ $item->is_active ? 'Aktif' : 'Pasif' }}
                     </span>
                     <span class="kt-badge kt-badge-sm kt-badge-light">
-                        {{ $item->link_type === \App\Models\Site\SiteNavigationItem::LINK_TYPE_PAGE ? 'İçerik' : 'Özel URL' }}
+                        {{ $item->link_type === \App\Models\Site\SiteNavigationItem::LINK_TYPE_PAGE ? 'İçerik' : 'Özel Bağlantı' }}
                     </span>
                 </div>
                 <div class="mt-1 text-sm text-muted-foreground">
-                    {{ $item->link_type === \App\Models\Site\SiteNavigationItem::LINK_TYPE_PAGE ? ($item->page?->title ?: 'Sayfa seçilmedi') : ($item->url ?: 'URL tanımlanmadı') }}
+                    {{ $item->link_type === \App\Models\Site\SiteNavigationItem::LINK_TYPE_PAGE ? ($item->page?->title ?: 'Sayfa seçilmedi') : ($item->url ?: 'Bağlantı tanımlanmadı') }}
                 </div>
             </div>
         </div>
@@ -89,7 +89,7 @@
             </div>
 
             <div class="grid gap-2" data-link-field="url">
-                <label class="kt-form-label">Özel URL</label>
+                <label class="kt-form-label">Özel Bağlantı</label>
                 <input name="url" class="kt-input" value="{{ $item->url }}" placeholder="https://ornek.com veya /iletisim">
             </div>
 

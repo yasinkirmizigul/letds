@@ -7,7 +7,7 @@
         <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
             <div>
                 <h1 class="text-xl font-semibold">{{ $pageTitle ?? 'Kategori Düzenle' }}</h1>
-                <div class="text-sm text-muted-foreground">ID: {{ $category->id }} • Slug: {{ $category->slug }}</div>
+                <div class="text-sm text-muted-foreground">ID: {{ $category->id }} • Kısa bağlantı: {{ $category->slug }}</div>
             </div>
             <div class="flex flex-wrap items-center gap-2">
                 <a href="{{ route('admin.categories.index') }}" class="kt-btn kt-btn-light">Geri</a>

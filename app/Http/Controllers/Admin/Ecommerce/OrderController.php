@@ -602,7 +602,7 @@ class OrderController extends Controller
     {
         return [
             'admin' => 'Panel',
-            'website' => 'Web Site',
+            'website' => 'Web Sitesi',
             'marketplace' => 'Pazaryeri',
             'phone' => 'Telefon',
             'whatsapp' => 'WhatsApp',

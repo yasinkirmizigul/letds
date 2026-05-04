@@ -24,7 +24,7 @@
                 </div>
 
                 <div class="flex flex-col gap-1">
-                    <label class="kt-form-label font-normal text-mono">Slug</label>
+                    <label class="kt-form-label font-normal text-mono">Rol Anahtarı</label>
                     <input class="kt-input" name="slug" value="{{ old('slug', $role->slug) }}" required/>
                     @error('slug')
                     <div class="text-xs text-danger mt-1">{{ $message }}</div> @enderror

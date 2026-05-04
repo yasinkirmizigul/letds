@@ -32,7 +32,7 @@
         @include('admin.components.localized-content-tabs', [
             'moduleKey' => 'product',
             'title' => 'Ürün İçerik Dilleri',
-            'description' => 'Varsayılan dil ve ek diller için ürün içeriğini, slug bilgisini ve SEO alanlarını sekmelerden yönetin.',
+            'description' => 'Varsayılan dil ve ek diller için ürün içeriğini, kısa bağlantı bilgisini ve SEO alanlarını sekmelerden yönetin.',
             'urlBase' => url('/products'),
             'defaultValues' => [
                 'title' => old('title', $product->title ?? ''),
@@ -45,7 +45,7 @@
             'storedTranslations' => $storedTranslations,
             'fields' => [
                 ['name' => 'title', 'id' => 'title', 'label' => 'Başlık', 'placeholder' => 'Ürün başlığını yazın', 'slug_source' => true],
-                ['name' => 'slug', 'id' => 'slug', 'type' => 'slug', 'label' => 'Slug ve URL'],
+                ['name' => 'slug', 'id' => 'slug', 'type' => 'slug', 'label' => 'Kısa Bağlantı'],
                 ['name' => 'content', 'id' => 'content_editor', 'type' => 'editor', 'rows' => 10, 'label' => 'Ürün Detayı'],
                 ['name' => 'meta_title', 'label' => 'Meta Başlık'],
                 ['name' => 'meta_description', 'type' => 'textarea', 'rows' => 3, 'label' => 'Meta Açıklama'],
@@ -63,7 +63,7 @@
             <div class="kt-card-content p-6 grid gap-5">
                 <div class="grid gap-5 md:grid-cols-3">
                     <div class="grid gap-2">
-                        <label class="kt-form-label" for="sku">SKU</label>
+                        <label class="kt-form-label" for="sku">Ürün Kodu</label>
                         <input id="sku" name="sku" class="kt-input @error('sku') kt-input-invalid @enderror" value="{{ old('sku', $product->sku ?? '') }}" placeholder="ABC-123">
                         @error('sku')<div class="text-xs text-danger">{{ $message }}</div>@enderror
                     </div>
@@ -125,7 +125,7 @@
                         @error('sort_order')<div class="text-xs text-danger">{{ $message }}</div>@enderror
                     </div>
                     <div class="grid gap-2">
-                        <label class="kt-form-label" for="appointment_id">Randevu ID</label>
+                        <label class="kt-form-label" for="appointment_id">Randevu kaydı</label>
                         <input id="appointment_id" name="appointment_id" type="number" min="1" class="kt-input @error('appointment_id') kt-input-invalid @enderror" value="{{ old('appointment_id', $product->appointment_id ?? '') }}" placeholder="Opsiyonel">
                         @error('appointment_id')<div class="text-xs text-danger">{{ $message }}</div>@enderror
                     </div>
@@ -143,14 +143,14 @@
             <div class="kt-card-header py-5">
                 <div>
                     <h3 class="kt-card-title">Durum ve Vitrin</h3>
-                    <div class="text-sm text-muted-foreground">Workflow, aktiflik ve anasayfa vitrini ayarlarını yönetin.</div>
+                    <div class="text-sm text-muted-foreground">İş akışı, aktiflik ve anasayfa vitrini ayarlarını yönetin.</div>
                 </div>
             </div>
             <div class="kt-card-content p-6 grid gap-4">
                 <div class="rounded-3xl app-surface-card app-surface-card--soft p-4">
                     <div class="grid gap-3">
                         <div class="flex items-center justify-between gap-3">
-                            <div class="font-medium text-foreground">Workflow Durumu</div>
+                            <div class="font-medium text-foreground">İş akışı durumu</div>
                             <span id="product_status_badge" class="{{ $currentStatusMeta['badge'] ?? 'kt-badge kt-badge-sm kt-badge-light' }}">{{ $currentStatusMeta['label'] ?? $currentStatus }}</span>
                         </div>
                         <select id="product_status" name="status" class="kt-select w-full @error('status') kt-input-invalid @enderror" data-kt-select="true" data-kt-select-placeholder="Durum">
@@ -158,7 +158,7 @@
                                 <option value="{{ $key }}" @selected($currentStatus === $key)>{{ $option['label'] }}</option>
                             @endforeach
                         </select>
-                        <div class="text-xs text-muted-foreground" data-product-status-hint>Workflow seçimi ürünün operasyonel aşamasını netleştirir.</div>
+                        <div class="text-xs text-muted-foreground" data-product-status-hint>İş akışı seçimi ürünün operasyonel aşamasını netleştirir.</div>
                         @error('status')<div class="text-xs text-danger">{{ $message }}</div>@enderror
                     </div>
                 </div>

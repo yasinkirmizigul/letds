@@ -25,7 +25,7 @@
                 <span class="admin-quick-search-trigger__icon">
                     <i class="ki-filled ki-magnifier"></i>
                 </span>
-                <span class="admin-quick-search-trigger__label">Panelde ara</span>
+                <span class="admin-quick-search-trigger__label">Hızlı arama</span>
                 <span class="admin-quick-search-trigger__hint">Ctrl K</span>
             </button>
         </div>

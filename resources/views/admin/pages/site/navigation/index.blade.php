@@ -86,7 +86,7 @@
                     </div>
 
                     <div class="grid gap-2 {{ $createLinkType === \App\Models\Site\SiteNavigationItem::LINK_TYPE_CUSTOM ? '' : 'hidden' }}" data-link-field="url">
-                        <label class="kt-form-label">Özel URL</label>
+                        <label class="kt-form-label">Özel Bağlantı</label>
                         <input name="url" class="kt-input @error('url') kt-input-invalid @enderror" value="{{ old('url') }}" placeholder="https://ornek.com veya /iletisim">
                     </div>
 
@@ -158,7 +158,7 @@
                     <div class="kt-card-header py-5">
                         <div>
                             <h3 class="kt-card-title">Alt Menü Ağacı</h3>
-                            <div class="text-sm text-muted-foreground">Footer bağlantılarını ayrı bir akış olarak planla.</div>
+                            <div class="text-sm text-muted-foreground">Alt bölüm bağlantılarını ayrı bir akış olarak planla.</div>
                         </div>
                     </div>
 

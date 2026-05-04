@@ -37,7 +37,7 @@ class AuthController extends Controller
             RateLimiter::hit($this->throttleKey($request), 60);
 
             throw ValidationException::withMessages([
-                'email' => 'E-posta veya sifre hatali.',
+                'email' => 'E-posta veya şifre hatalı.',
             ]);
         }
 
@@ -50,7 +50,7 @@ class AuthController extends Controller
             RateLimiter::hit($this->throttleKey($request), 60);
 
             throw ValidationException::withMessages([
-                'email' => 'E-posta veya sifre hatali.',
+                'email' => 'E-posta veya şifre hatalı.',
             ]);
         }
 

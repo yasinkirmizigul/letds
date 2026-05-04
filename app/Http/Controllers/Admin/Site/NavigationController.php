@@ -206,7 +206,7 @@ class NavigationController extends Controller
 
         if ($linkType === SiteNavigationItem::LINK_TYPE_CUSTOM && !filled($validated['url'] ?? null)) {
             throw ValidationException::withMessages([
-                'url' => 'Özel bağlantı için URL alanı zorunludur.',
+                'url' => 'Özel bağlantı için bağlantı alanı zorunludur.',
             ]);
         }
 

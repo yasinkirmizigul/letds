@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'site_payments.view' => 'Site Payments View',
-    'site_payments.create' => 'Site Payments Create',
-    'site_payments.update' => 'Site Payments Update',
-    'site_payments.delete' => 'Site Payments Delete',
+    'site_payments.view' => 'Ödeme Entegrasyonlarını Görüntüleme',
+    'site_payments.create' => 'Ödeme Entegrasyonu Oluşturma',
+    'site_payments.update' => 'Ödeme Entegrasyonu Güncelleme',
+    'site_payments.delete' => 'Ödeme Entegrasyonu Silme',
 ];

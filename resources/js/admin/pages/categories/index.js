@@ -320,7 +320,7 @@ export default function init(ctx = {}) {
 
             const failed = Array.isArray(json?.failed) ? json.failed.length : 0;
             if (failed > 0) {
-                showToastMessage('warning', `${json.done || 0} kayıt islendi, ${failed} kayıt atlandi.`, { duration: 2600 });
+                showToastMessage('warning', `${json.done || 0} kayıt işlendi, ${failed} kayıt atlandı.`, { duration: 2600 });
             } else {
                 showToastMessage('success', json?.message || successMessage, { duration: 1800 });
             }

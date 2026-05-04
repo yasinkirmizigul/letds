@@ -85,12 +85,7 @@ class PaymentIntegration extends Model
 
     public function integrationTypeLabel(): string
     {
-        return match ((string) $this->integration_type) {
-            'virtual_pos' => 'Sanal POS',
-            'bank_transfer' => 'Havale / EFT',
-            'wallet' => 'Cüzdan / Wallet',
-            default => 'Ödeme Ağ Geçidi',
-        };
+        return PaymentProviderRegistry::integrationTypeLabel((string) $this->integration_type);
     }
 
     public function credentialValue(string $key): ?string

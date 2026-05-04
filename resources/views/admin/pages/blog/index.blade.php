@@ -35,7 +35,7 @@
                     href="{{ route('admin.blog.index') }}"
                     class="kt-btn kt-btn-sm {{ $isTrash ? 'kt-btn-light' : 'kt-btn-primary' }}"
                 >
-                    Aktif Yazilar
+                    Aktif Yazılar
                 </a>
                 <a
                     href="{{ route('admin.blog.trash') }}"
@@ -78,9 +78,9 @@
         <div class="kt-card kt-card-grid min-w-full">
             <div class="kt-card-header py-5 flex-wrap gap-4">
                 <div>
-                    <h3 class="kt-card-title">{{ $isTrash ? 'Silinen Yazilar' : 'Yazı Listesi' }}</h3>
+                    <h3 class="kt-card-title">{{ $isTrash ? 'Silinen Yazılar' : 'Yazı Listesi' }}</h3>
                     <div class="text-sm text-muted-foreground">
-                        Durum, kategori, SEO yeterliligi ve son güncelleme bilgisini tek satirda görebilirsiniz.
+                        Durum, kategori, SEO yeterliliği ve son güncelleme bilgisini tek satırda görebilirsiniz.
                     </div>
                 </div>
 
@@ -89,7 +89,7 @@
                         id="blogSearch"
                         type="text"
                         class="kt-input kt-input-sm w-full md:w-[260px]"
-                        placeholder="Başlık, slug, özet ara..."
+                        placeholder="Başlık, kısa bağlantı, özet ara..."
                         value="{{ $q }}"
                     />
 

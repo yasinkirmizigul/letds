@@ -6,6 +6,9 @@
     $selectedPaymentMethods = old('allowed_payment_methods', $paymentIntegration?->allowed_payment_methods ?? $recommendedMethods);
     $selectedInstallments = collect(old('installment_options', $paymentIntegration?->installment_options ?? [2, 3, 6, 9]))->map(fn ($value) => (int) $value)->all();
     $installmentEnabled = old('installment_enabled', $paymentIntegration?->installment_enabled ?? in_array('installment', $selectedPaymentMethods, true));
+    $providerIntegrationTypeLabel = \App\Support\Site\PaymentProviderRegistry::integrationTypeLabel($providerDefinition['integration_type'] ?? 'payment_gateway');
+    $providerDefaultEnvironment = $providerDefinition['default_environment'] ?? 'sandbox';
+    $providerDefaultEnvironmentLabel = $environmentOptions[$providerDefaultEnvironment] ?? $providerDefaultEnvironment;
 @endphp
 
 <form method="POST" action="{{ $formAction }}" class="grid gap-6">
@@ -27,8 +30,8 @@
                     </div>
 
                     <div class="flex flex-wrap gap-2">
-                        <span class="kt-badge kt-badge-sm kt-badge-light">{{ $providerDefinition['integration_type'] ?? 'payment_gateway' }}</span>
-                        <span class="kt-badge kt-badge-sm kt-badge-light-warning">{{ $providerDefinition['default_environment'] ?? 'sandbox' }}</span>
+                        <span class="kt-badge kt-badge-sm kt-badge-light">{{ $providerIntegrationTypeLabel }}</span>
+                        <span class="kt-badge kt-badge-sm kt-badge-light-warning">{{ $providerDefaultEnvironmentLabel }}</span>
                     </div>
                 </div>
             </div>
@@ -100,7 +103,7 @@
             <div class="kt-card">
                 <div class="kt-card-header py-5">
                     <div>
-                        <h3 class="kt-card-title">Credential ve Kimlik Bilgileri</h3>
+                        <h3 class="kt-card-title">Erişim ve Kimlik Bilgileri</h3>
                         <div class="text-sm text-muted-foreground">Gizli anahtarlar şifreli saklanır ve tekrar görüntülenmez.</div>
                     </div>
                 </div>
@@ -139,7 +142,7 @@
 
                             @if($isSecretField)
                                 <div class="text-xs text-muted-foreground">
-                                    {{ $storedValue ? 'Bu secret alan daha önce kaydedildi. Yeni değer girmezsen mevcut secret korunur.' : 'Bu alan şifreli olarak saklanacaktır.' }}
+                                    {{ $storedValue ? 'Bu gizli alan daha önce kaydedildi. Yeni değer girmezsen mevcut gizli değer korunur.' : 'Bu alan şifreli olarak saklanacaktır.' }}
                                 </div>
                             @endif
 
@@ -215,14 +218,14 @@
             <div class="kt-card">
                 <div class="kt-card-header py-5">
                     <div>
-                        <h3 class="kt-card-title">Dönüş URL ve Güvenlik Sınırları</h3>
-                        <div class="text-sm text-muted-foreground">Canlı ortamda mümkün olduğunca HTTPS URL ve sağlayıcı IP kısıtı kullan.</div>
+                        <h3 class="kt-card-title">Dönüş Bağlantıları ve Güvenlik Sınırları</h3>
+                        <div class="text-sm text-muted-foreground">Canlı ortamda mümkün olduğunca HTTPS bağlantısı ve sağlayıcı IP kısıtı kullan.</div>
                     </div>
                 </div>
 
                 <div class="kt-card-content grid gap-4 p-6 lg:grid-cols-2">
                     <div class="grid gap-2">
-                        <label class="kt-form-label">Başarılı Dönüş URL</label>
+                        <label class="kt-form-label">Başarılı Dönüş Bağlantısı</label>
                         <input name="success_url" type="url" class="kt-input @error('success_url') kt-input-invalid @enderror" value="{{ old('success_url', $paymentIntegration?->success_url) }}" placeholder="https://alanadi.com/odeme/basarili">
                         @error('success_url')
                             <div class="text-xs text-danger">{{ $message }}</div>
@@ -230,7 +233,7 @@
                     </div>
 
                     <div class="grid gap-2">
-                        <label class="kt-form-label">Başarısız / İptal URL</label>
+                        <label class="kt-form-label">Başarısız / İptal Bağlantısı</label>
                         <input name="cancel_url" type="url" class="kt-input @error('cancel_url') kt-input-invalid @enderror" value="{{ old('cancel_url', $paymentIntegration?->cancel_url) }}" placeholder="https://alanadi.com/odeme/iptal">
                         @error('cancel_url')
                             <div class="text-xs text-danger">{{ $message }}</div>
@@ -238,7 +241,7 @@
                     </div>
 
                     <div class="grid gap-2 lg:col-span-2">
-                        <label class="kt-form-label">Webhook IP Beyaz Liste</label>
+                        <label class="kt-form-label">Ödeme Bildirimi İzinli IP Listesi</label>
                         <textarea name="webhook_ip_whitelist" rows="3" class="kt-textarea @error('webhook_ip_whitelist') kt-input-invalid @enderror" placeholder="Örn. 1.2.3.4, 5.6.7.8">{{ old('webhook_ip_whitelist', $paymentIntegration?->webhook_ip_whitelist) }}</textarea>
                         <div class="text-xs text-muted-foreground">Virgül ile ayırarak sağlayıcının izinli IP bloklarını not düşebilirsin.</div>
                         @error('webhook_ip_whitelist')
@@ -262,13 +265,13 @@
                 <div class="text-xs uppercase tracking-[0.24em] text-muted-foreground">Güvenlik Özeti</div>
                 <div class="mt-4 grid gap-3 text-sm text-muted-foreground">
                     <div class="rounded-2xl border border-border bg-background/80 px-4 py-4 text-foreground">
-                        Secret alanlar veritabanında şifreli tutulur ve audit log içinde redakte edilir.
+                        Gizli alanlar veritabanında şifreli tutulur ve sistem kayıtlarında maskelenir.
                     </div>
                     <div class="rounded-2xl border border-border bg-background/80 px-4 py-4 text-foreground">
                         Sağlayıcı tipi oluşturulduktan sonra değiştirilemez; farklı yapı için yeni kayıt açmalısın.
                     </div>
                     <div class="rounded-2xl border border-border bg-background/80 px-4 py-4 text-foreground">
-                        Canlı moda geçmeden önce dönüş URL’lerinin HTTPS olduğundan ve gereksiz yöntemlerin kapalı olduğundan emin ol.
+                        Canlı moda geçmeden önce dönüş bağlantılarının HTTPS olduğundan ve gereksiz yöntemlerin kapalı olduğundan emin ol.
                     </div>
                 </div>
             </div>
@@ -282,7 +285,7 @@
                         <span class="{{ $paymentIntegration->environmentBadgeClass() }}">{{ $paymentIntegration->environmentLabel() }}</span>
                     </div>
                     <div class="mt-4 grid gap-2 text-sm text-muted-foreground">
-                        <div>Son secret rotasyonu: {{ optional($paymentIntegration->credentials_rotated_at)->format('d.m.Y H:i') ?: 'Henüz yok' }}</div>
+                        <div>Son gizli bilgi güncellemesi: {{ optional($paymentIntegration->credentials_rotated_at)->format('d.m.Y H:i') ?: 'Henüz yok' }}</div>
                         <div>Varsayılan kayıt: {{ $paymentIntegration->is_default ? 'Evet' : 'Hayır' }}</div>
                         <div>Aktif durum: {{ $paymentIntegration->is_active ? 'Aktif' : 'Pasif' }}</div>
                     </div>

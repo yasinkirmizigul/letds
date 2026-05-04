@@ -3,7 +3,7 @@
 $menu = [
     [
         'type'  => 'single',
-        'title' => 'Dashboard',
+        'title' => 'Kontrol Paneli',
         'icon'  => 'ki-filled ki-element-11 text-lg',
         'route' => 'admin.dashboard',
         'active'=> ['admin.dashboard'],
@@ -171,7 +171,7 @@ $menu = [
 
     [
         'type'  => 'single',
-        'title' => 'Loglar',
+        'title' => 'Sistem Kayıtları',
         'icon'  => 'ki-filled ki-fingerprint-scanning text-lg',
         'route' => 'admin.audit-logs.index',
         'active'=> ['admin.audit-logs.*'],

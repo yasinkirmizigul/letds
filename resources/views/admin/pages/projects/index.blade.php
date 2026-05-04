@@ -28,7 +28,7 @@
                     {{ $isTrash ? 'Projeler Çöp Kutusu' : 'Proje Yönetimi' }}
                 </h1>
                 <div class="text-sm text-muted-foreground">
-                    {{ $isTrash ? 'Silinen projeleri geri yükleyebilir veya kalıcı olarak silebilirsiniz.' : 'Workflow, SEO, vitrin ve kategori akışlarını tek ekrandan yönetin.' }}
+                    {{ $isTrash ? 'Silinen projeleri geri yükleyebilir veya kalıcı olarak silebilirsiniz.' : 'İş akışı, SEO, vitrin ve kategori akışlarını tek ekrandan yönetin.' }}
                 </div>
             </div>
 
@@ -60,7 +60,7 @@
                 <div class="mt-2 text-3xl font-semibold text-foreground">{{ $stats['all'] ?? 0 }}</div>
             </div>
             <div class="rounded-3xl app-stat-card p-5">
-                <div class="text-sm text-muted-foreground">Public Hazır</div>
+                <div class="text-sm text-muted-foreground">Yayına Hazır</div>
                 <div class="mt-2 text-3xl font-semibold text-success">{{ $stats['public'] ?? 0 }}</div>
             </div>
             <div class="rounded-3xl app-stat-card p-5">
@@ -68,7 +68,7 @@
                 <div class="mt-2 text-3xl font-semibold text-primary">{{ $stats['featured'] ?? 0 }}</div>
             </div>
             <div class="rounded-3xl app-stat-card p-5">
-                <div class="text-sm text-muted-foreground">Workflow Akişi</div>
+                <div class="text-sm text-muted-foreground">İş Akışı</div>
                 <div class="mt-2 text-3xl font-semibold text-warning">{{ $stats['workflow'] ?? 0 }}</div>
             </div>
             <div class="rounded-3xl app-stat-card p-5">
@@ -82,7 +82,7 @@
                 <div>
                     <h3 class="kt-card-title">{{ $isTrash ? 'Silinen Projeler' : 'Proje Listesi' }}</h3>
                     <div class="text-sm text-muted-foreground">
-                        Durum, public görünürlük, vitrin seçimi ve kategori dağılımını tek satırda inceleyin.
+                        Durum, site görünürlüğü, vitrin seçimi ve kategori dağılımını tek satırda inceleyin.
                     </div>
                 </div>
 
@@ -91,7 +91,7 @@
                         id="projectsSearch"
                         type="text"
                         class="kt-input kt-input-sm w-full md:w-[260px]"
-                        placeholder="Başlık, slug, içerik ara..."
+                        placeholder="Başlık, kısa bağlantı, içerik ara..."
                         value="{{ $q }}"
                     />
 
@@ -169,7 +169,7 @@
                                     <input class="kt-checkbox kt-checkbox-sm" id="projects_check_all" type="checkbox">
                                 </th>
                                 <th class="min-w-[360px]">Proje</th>
-                                <th class="min-w-[240px]">Workflow</th>
+                                <th class="min-w-[240px]">İş Akışı</th>
                                 <th class="min-w-[240px]">Görünürlük ve Vitrin</th>
                                 <th class="min-w-[180px]">Son Güncelleme</th>
                                 <th class="w-[64px]"></th>
@@ -265,7 +265,7 @@
                                                 <i class="ki-outline ki-down ml-1"></i>
                                             </button>
                                             <div class="text-xs text-muted-foreground js-public-hint">
-                                                {{ $isPublic ? 'Bu statü site tarafında görünebilir.' : 'Bu statü admin içi workflow aşamasında kalır.' }}
+                                                {{ $isPublic ? 'Bu statü site tarafında görünebilir.' : 'Bu statü panel içi iş akışı aşamasında kalır.' }}
                                             </div>
                                         </div>
                                     </td>

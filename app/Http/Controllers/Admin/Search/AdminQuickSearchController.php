@@ -50,10 +50,10 @@ class AdminQuickSearchController extends Controller
     private function suggestionGroups(User $user): array
     {
         $items = [
-            $this->shortcut($user, 'Dashboard', 'Yönetim merkezi ve özet metrikler', 'admin.dashboard', 'ki-filled ki-element-11', null, ['admin']),
+            $this->shortcut($user, 'Kontrol Paneli', 'Yönetim merkezi ve özet metrikler', 'admin.dashboard', 'ki-filled ki-element-11', null, ['admin']),
             $this->shortcut($user, 'Sipariş Yönetimi', 'E-ticaret siparişleri, ödeme ve kargo akışı', 'admin.ecommerce.orders.index', 'ki-filled ki-basket', 'ecommerce_orders.view'),
             $this->shortcut($user, 'Yeni Sipariş', 'Panelden manuel sipariş oluştur', 'admin.ecommerce.orders.create', 'ki-filled ki-plus', 'ecommerce_orders.create'),
-            $this->shortcut($user, 'Ürün Yönetimi', 'SKU, fiyat, stok ve galeri yönetimi', 'admin.products.index', 'ki-filled ki-handcart', 'products.view'),
+            $this->shortcut($user, 'Ürün Yönetimi', 'Ürün kodu, fiyat, stok ve galeri yönetimi', 'admin.products.index', 'ki-filled ki-handcart', 'products.view'),
             $this->shortcut($user, 'Mesajlar', 'Panel kullanıcılarına gelen iletişim mesajları', 'admin.messages.index', 'ki-filled ki-messages', null, ['admin']),
             $this->shortcut($user, 'Randevu Takvimi', 'Takvim ve randevu operasyonu', 'admin.appointments.calendar', 'ki-filled ki-calendar-8', 'appointments.view'),
             $this->shortcut($user, 'Site Ayarları', 'SMTP, SEO dosyaları ve genel site ayarları', 'admin.site.settings.edit', 'ki-filled ki-setting-2', 'site_settings.view'),
@@ -150,7 +150,7 @@ class AdminQuickSearchController extends Controller
             ->get()
             ->map(fn (Product $product) => [
                 'title' => (string) $product->title,
-                'subtitle' => trim(($product->sku ? 'SKU: ' . $product->sku : 'SKU yok') . ' · ' . ($product->brand ?: 'Marka yok')),
+                'subtitle' => trim(($product->sku ? 'Ürün kodu: ' . $product->sku : 'Ürün kodu yok') . ' · ' . ($product->brand ?: 'Marka yok')),
                 'url' => $this->can($user, 'products.update') ? route('admin.products.edit', $product) : route('admin.products.index', ['q' => $query]),
                 'icon' => 'ki-filled ki-handcart',
                 'badge' => Product::statusLabel($product->status),

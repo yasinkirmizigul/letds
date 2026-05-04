@@ -98,7 +98,7 @@ function buildErrorMessage(json, fallback = 'İşlem başarısız.') {
 
     let message = json.message || json.error?.message || fallback;
     if (json.usage?.summary) {
-        message += `\nKullanim: ${json.usage.summary}`;
+        message += `\nKullanım: ${json.usage.summary}`;
     }
 
     return message;

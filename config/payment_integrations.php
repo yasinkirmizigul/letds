@@ -2,16 +2,16 @@
 
 return [
     'environment_options' => [
-        'sandbox' => 'Test / Sandbox',
-        'live' => 'Canlı / Production',
+        'sandbox' => 'Test Ortamı',
+        'live' => 'Canlı Ortam',
     ],
 
     'payment_method_options' => [
         'card' => 'Kart ile ödeme',
-        '3d_secure' => '3D Secure',
+        '3d_secure' => '3D Güvenli Ödeme',
         'installment' => 'Taksit',
         'link' => 'Ödeme linki',
-        'wallet' => 'Cüzdan / Checkout',
+        'wallet' => 'Cüzdan / Ödeme Ekranı',
         'bank_transfer' => 'Havale / EFT',
     ],
 
@@ -32,21 +32,21 @@ return [
             'fields' => [
                 [
                     'key' => 'api_key',
-                    'label' => 'API Key',
+                    'label' => 'API Anahtarı',
                     'required' => true,
                     'secret' => true,
                     'placeholder' => 'sandbox-... veya live-...',
                 ],
                 [
                     'key' => 'secret_key',
-                    'label' => 'Secret Key',
+                    'label' => 'Gizli Anahtar',
                     'required' => true,
                     'secret' => true,
                     'placeholder' => 'Gizli anahtar',
                 ],
                 [
                     'key' => 'base_url',
-                    'label' => 'API Base URL',
+                    'label' => 'API Temel Adresi',
                     'type' => 'url',
                     'required' => true,
                     'default' => 'https://sandbox-api.iyzipay.com',
@@ -55,25 +55,25 @@ return [
         ],
         'paytr' => [
             'label' => 'PayTR',
-            'description' => 'Sanal POS, iframe ve ödeme linki akışları için sık kullanılan yerel sağlayıcı.',
+            'description' => 'Sanal POS, gömülü ödeme ekranı ve ödeme linki akışları için sık kullanılan yerel sağlayıcı.',
             'integration_type' => 'virtual_pos',
             'default_environment' => 'sandbox',
             'recommended_payment_methods' => ['card', '3d_secure', 'installment', 'link'],
             'fields' => [
                 [
                     'key' => 'merchant_id',
-                    'label' => 'Merchant ID',
+                    'label' => 'Üye İşyeri No',
                     'required' => true,
                 ],
                 [
                     'key' => 'merchant_key',
-                    'label' => 'Merchant Key',
+                    'label' => 'Üye İşyeri Anahtarı',
                     'required' => true,
                     'secret' => true,
                 ],
                 [
                     'key' => 'merchant_salt',
-                    'label' => 'Merchant Salt',
+                    'label' => 'Üye İşyeri Güvenlik Kodu',
                     'required' => true,
                     'secret' => true,
                 ],
@@ -88,17 +88,17 @@ return [
             'fields' => [
                 [
                     'key' => 'client_code',
-                    'label' => 'Client Code',
+                    'label' => 'Müşteri Kodu',
                     'required' => true,
                 ],
                 [
                     'key' => 'client_username',
-                    'label' => 'Client Username',
+                    'label' => 'Müşteri Kullanıcı Adı',
                     'required' => true,
                 ],
                 [
                     'key' => 'client_password',
-                    'label' => 'Client Password',
+                    'label' => 'Müşteri Şifresi',
                     'required' => true,
                     'secret' => true,
                 ],
@@ -112,26 +112,26 @@ return [
         ],
         'sipay' => [
             'label' => 'Sipay',
-            'description' => 'Modern checkout ve tahsilat senaryolarında kullanılan ödeme orkestrasyon altyapısı.',
+            'description' => 'Modern ödeme ekranı ve tahsilat senaryolarında kullanılan ödeme yönetim altyapısı.',
             'integration_type' => 'payment_gateway',
             'default_environment' => 'sandbox',
             'recommended_payment_methods' => ['card', '3d_secure', 'installment', 'link'],
             'fields' => [
                 [
                     'key' => 'merchant_key',
-                    'label' => 'Merchant Key',
+                    'label' => 'Üye İşyeri Anahtarı',
                     'required' => true,
                     'secret' => true,
                 ],
                 [
                     'key' => 'merchant_secret',
-                    'label' => 'Merchant Secret',
+                    'label' => 'Üye İşyeri Gizli Anahtarı',
                     'required' => true,
                     'secret' => true,
                 ],
                 [
                     'key' => 'api_base_url',
-                    'label' => 'API Base URL',
+                    'label' => 'API Temel Adresi',
                     'type' => 'url',
                     'required' => true,
                     'default' => 'https://provisioning.sipay.com.tr/ccpayment/api',
@@ -140,25 +140,25 @@ return [
         ],
         'stripe' => [
             'label' => 'Stripe',
-            'description' => 'Global kart, checkout ve webhook akışları için güçlü bir ödeme platformu.',
+            'description' => 'Global kart, ödeme ekranı ve ödeme bildirimi akışları için güçlü bir ödeme platformu.',
             'integration_type' => 'payment_gateway',
             'default_environment' => 'sandbox',
             'recommended_payment_methods' => ['card', 'wallet', 'link'],
             'fields' => [
                 [
                     'key' => 'publishable_key',
-                    'label' => 'Publishable Key',
+                    'label' => 'Yayınlanabilir Anahtar',
                     'required' => true,
                 ],
                 [
                     'key' => 'secret_key',
-                    'label' => 'Secret Key',
+                    'label' => 'Gizli Anahtar',
                     'required' => true,
                     'secret' => true,
                 ],
                 [
                     'key' => 'webhook_secret',
-                    'label' => 'Webhook Secret',
+                    'label' => 'Ödeme Bildirimi Gizli Anahtarı',
                     'required' => false,
                     'secret' => true,
                 ],
@@ -166,25 +166,25 @@ return [
         ],
         'paypal' => [
             'label' => 'PayPal',
-            'description' => 'Uluslararası ödeme ve wallet ağırlıklı senaryolar için tercih edilen çözüm.',
+            'description' => 'Uluslararası ödeme ve cüzdan ağırlıklı senaryolar için tercih edilen çözüm.',
             'integration_type' => 'wallet',
             'default_environment' => 'sandbox',
             'recommended_payment_methods' => ['wallet', 'link'],
             'fields' => [
                 [
                     'key' => 'client_id',
-                    'label' => 'Client ID',
+                    'label' => 'Müşteri No',
                     'required' => true,
                 ],
                 [
                     'key' => 'client_secret',
-                    'label' => 'Client Secret',
+                    'label' => 'Müşteri Gizli Anahtarı',
                     'required' => true,
                     'secret' => true,
                 ],
                 [
                     'key' => 'api_base_url',
-                    'label' => 'API Base URL',
+                    'label' => 'API Temel Adresi',
                     'type' => 'url',
                     'required' => true,
                     'default' => 'https://api-m.sandbox.paypal.com',

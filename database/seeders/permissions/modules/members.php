@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'members.view',
-    'members.update',
-    'members.delete',
+    'members.view' => 'Üyeleri Görüntüleme',
+    'members.update' => 'Üye Güncelleme',
+    'members.delete' => 'Üye Silme',
 ];

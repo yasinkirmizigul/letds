@@ -8,8 +8,8 @@ function syncPreview(root) {
     const cropZoom = root.querySelector('[name="crop_zoom"]')?.value || 1;
     const overlayStrength = root.querySelector('[name="overlay_strength"]')?.value || 40;
     const badge = root.querySelector('[name="badge"]')?.value?.trim() || 'Rozet Alani';
-    const title = root.querySelector('[name="title"]')?.value?.trim() || 'Slider basligi burada gorunecek';
-    const subtitle = root.querySelector('[name="subtitle"]')?.value?.trim() || 'Alt baslik ve destek metni burada yer alir.';
+    const title = root.querySelector('[name="title"]')?.value?.trim() || 'Slider başlığı burada görünecek';
+    const subtitle = root.querySelector('[name="subtitle"]')?.value?.trim() || 'Alt başlık ve destek metni burada yer alır.';
 
     image.style.objectPosition = `${cropX}% ${cropY}%`;
     image.style.transform = `scale(${cropZoom})`;

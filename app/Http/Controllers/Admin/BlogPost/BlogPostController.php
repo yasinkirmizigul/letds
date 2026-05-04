@@ -386,7 +386,7 @@ class BlogPostController extends Controller
             return response()->json([
                 'ok' => false,
                 'available' => false,
-                'message' => 'Slug boş olamaz.',
+                'message' => 'Kısa bağlantı boş olamaz.',
             ]);
         }
 
@@ -398,7 +398,7 @@ class BlogPostController extends Controller
             'available' => $isAvailable,
             'normalized' => $normalizedSlug,
             'suggested' => $suggested,
-            'message' => $isAvailable ? 'Slug uygun.' : 'Bu slug kullanılıyor. Onerilen slug hazırlandı.',
+            'message' => $isAvailable ? 'Kısa bağlantı uygun.' : 'Bu kısa bağlantı kullanılıyor. Önerilen kısa bağlantı hazırlandı.',
         ]);
     }
 

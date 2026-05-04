@@ -158,11 +158,11 @@ export function initSlugTools(root, signal) {
         const slug = String(slugInput.value || '').trim();
 
         if (!slug) {
-            setSlugHint(hintEl, 'muted', 'Slug girildiğinde uygunlük kontrolü yapılır.');
+            setSlugHint(hintEl, 'muted', 'Kısa bağlantı girildiğinde uygunluk kontrolü yapılır.');
             return;
         }
 
-        setSlugHint(hintEl, 'muted', 'Slug kontrol ediliyor...');
+        setSlugHint(hintEl, 'muted', 'Kısa bağlantı kontrol ediliyor...');
 
         try {
             const query = new URLSearchParams({
@@ -176,7 +176,7 @@ export function initSlugTools(root, signal) {
             });
 
             if (!data?.ok) {
-                setSlugHint(hintEl, 'danger', data?.message || 'Slug kontrol edilemedi.');
+                setSlugHint(hintEl, 'danger', data?.message || 'Kısa bağlantı kontrol edilemedi.');
                 return;
             }
 
@@ -186,14 +186,14 @@ export function initSlugTools(root, signal) {
             }
 
             if (data.available) {
-                setSlugHint(hintEl, 'success', data.message || 'Slug uygun.');
+                setSlugHint(hintEl, 'success', data.message || 'Kısa bağlantı uygun.');
                 return;
             }
 
             const suggested = data.suggested ? ` Öneri: ${data.suggested}` : '';
-            setSlugHint(hintEl, 'warning', `${data.message || 'Slug kullanımda.'}${suggested}`);
+            setSlugHint(hintEl, 'warning', `${data.message || 'Kısa bağlantı kullanımda.'}${suggested}`);
         } catch (error) {
-            setSlugHint(hintEl, 'danger', error?.message || 'Slug kontrolü başarısız oldu.');
+            setSlugHint(hintEl, 'danger', error?.message || 'Kısa bağlantı kontrolü başarısız oldu.');
         }
     }, 320);
 
@@ -261,7 +261,7 @@ export function initSeoPanel(root, signal, getContent) {
 
         if (previewTitle) previewTitle.textContent = resolvedPreviewTitle;
         if (previewDescription) previewDescription.textContent = resolvedPreviewDescription;
-        if (previewSlug) previewSlug.textContent = currentSlug || 'ornek-blog-yazısı';
+        if (previewSlug) previewSlug.textContent = currentSlug || 'ornek-blog-yazisi';
 
         syncRecommendedCount(metaTitleCount, metaTitleLength, 30, 60);
         syncRecommendedCount(metaDescriptionCount, metaDescriptionLength, 100, 160);

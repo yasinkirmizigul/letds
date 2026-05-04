@@ -146,7 +146,7 @@ class MediaController extends Controller
             $status = $exception instanceof ValidationException ? 422 : 500;
             $message = $exception instanceof ValidationException
                 ? (collect($exception->errors())->flatten()->first() ?: 'Gecersiz dosya verisi.')
-                : 'Dosya yuklenirken beklenmeyen bir hata olustu.';
+                : 'Dosya yüklenirken beklenmeyen bir hata oluştu.';
 
             return response()->json([
                 'ok' => false,

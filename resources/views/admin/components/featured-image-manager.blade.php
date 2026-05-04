@@ -49,7 +49,7 @@
 
             <img data-featured-preview
                  src="{{ $hasImage ? $currentUrl : '' }}"
-                 alt="featured preview"
+                 alt="Öne çıkan görsel önizlemesi"
                  class="{{ $hasImage ? '' : 'hidden' }} w-full h-full object-cover">
         </div>
 
@@ -80,7 +80,7 @@
 
         <div class="text-xs text-muted-foreground p-3">
             Dosya yükleyebilir veya kütüphaneden seçim yapabilirsin.
-            Kütüphaneden seçim yapınca dosya seçimi temizlenir; dosya seçince de mediaId temizlenir.
+            Kütüphaneden seçim yapınca dosya seçimi temizlenir; dosya seçince de medya seçimi temizlenir.
         </div>
     </div>
 </div>

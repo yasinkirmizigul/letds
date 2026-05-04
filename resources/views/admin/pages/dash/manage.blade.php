@@ -7,11 +7,11 @@
         <div class="grid gap-6">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                 <div class="grid gap-2">
-                    <span class="kt-badge kt-badge-sm kt-badge-light-primary w-fit">Dashboard Yönetimi</span>
+                    <span class="kt-badge kt-badge-sm kt-badge-light-primary w-fit">Kontrol Paneli Yönetimi</span>
                     <div>
-                        <h1 class="text-xl font-semibold text-foreground lg:text-2xl">Dashboard görünürlüğünü yönet</h1>
+                        <h1 class="text-xl font-semibold text-foreground lg:text-2xl">Kontrol paneli görünürlüğünü yönet</h1>
                         <p class="mt-2 max-w-[78ch] text-sm leading-6 text-muted-foreground">
-                            Şu an kullandığın dashboard bloklarını kullanıcı bazlı olarak açıp kapatabilirsin. Buradaki tercih sadece senin panel görünümünü etkiler.
+                            Şu an kullandığın kontrol paneli bloklarını kullanıcı bazlı olarak açıp kapatabilirsin. Buradaki tercih sadece senin panel görünümünü etkiler.
                         </p>
                     </div>
                 </div>
@@ -21,7 +21,7 @@
                         <span class="font-semibold text-foreground">{{ $activeSectionCount }}</span> / {{ $availableSectionCount }} bileşen görünür
                     </span>
                     <a href="{{ route('admin.dashboard') }}" class="kt-btn kt-btn-light">
-                        Dashboard'a dön
+                        Kontrol paneline dön
                     </a>
                 </div>
             </div>
@@ -33,13 +33,13 @@
                 <div class="kt-card overflow-hidden">
                     <div class="kt-card-header py-5 flex-wrap gap-4">
                         <div>
-                            <h3 class="kt-card-title">Dashboard sırası</h3>
+                            <h3 class="kt-card-title">Kontrol paneli sırası</h3>
                             <div class="text-sm text-muted-foreground">
-                                Ana blokları ve kart gruplarını tutup sürükleyerek dashboard üzerinde istediğin sıraya al.
+                                Ana blokları ve kart gruplarını tutup sürükleyerek kontrol panelinde istediğin sıraya al.
                             </div>
                         </div>
 
-                        <span class="kt-badge kt-badge-sm kt-badge-light-primary">Drag & drop</span>
+                        <span class="kt-badge kt-badge-sm kt-badge-light-primary">Sürükle bırak</span>
                     </div>
 
                     <div class="kt-card-content p-6">
@@ -48,7 +48,7 @@
                                 <div>
                                     <h4 class="text-base font-semibold text-foreground">Ana blok sırası</h4>
                                     <div class="text-sm text-muted-foreground">
-                                        Dashboarddaki büyük bölümlerin yukarıdan aşağıya sırasını belirler.
+                                        Kontrol panelindeki büyük bölümlerin yukarıdan aşağıya sırasını belirler.
                                     </div>
                                 </div>
 
@@ -91,7 +91,7 @@
                                 <div>
                                     <h4 class="text-base font-semibold text-foreground">Kart sırası</h4>
                                     <div class="text-sm text-muted-foreground">
-                                        KPI ve hızlı erişim kartlarının kendi bölümleri içindeki sırasını düzenler.
+                                Özet metrik ve hızlı erişim kartlarının kendi bölümleri içindeki sırasını düzenler.
                                     </div>
                                 </div>
 
@@ -147,7 +147,7 @@
                         <div>
                             <h3 class="kt-card-title">Görünür bloklar</h3>
                             <div class="text-sm text-muted-foreground">
-                                Kapatılan bloklar dashboard ana ekranından gizlenir, istediğin zaman tekrar açabilirsin.
+                                Kapatılan bloklar kontrol paneli ana ekranından gizlenir, istediğin zaman tekrar açabilirsin.
                             </div>
                         </div>
 
@@ -228,7 +228,7 @@
 
                 <div class="flex flex-wrap items-center justify-end gap-3">
                     <a href="{{ route('admin.dashboard') }}" class="kt-btn kt-btn-light">İptal</a>
-                    <button type="submit" class="kt-btn kt-btn-primary">Dashboard ayarlarını kaydet</button>
+                    <button type="submit" class="kt-btn kt-btn-primary">Kontrol paneli ayarlarını kaydet</button>
                 </div>
             </form>
         </div>

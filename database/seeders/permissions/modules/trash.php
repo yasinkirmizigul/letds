@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'trash.view' => 'Trash View',
-    'trash.restore' => 'Trash Restore',
-    'trash.force_delete' => 'Trash Force Delete',
+    'trash.view' => 'Çöp Kutusunu Görüntüleme',
+    'trash.restore' => 'Çöp Kutusundan Geri Yükleme',
+    'trash.force_delete' => 'Kalıcı Silme',
 ];

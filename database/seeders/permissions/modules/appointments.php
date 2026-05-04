@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'appointments.view'   => 'Appointments View',
-    'appointments.create' => 'Appointments Create',
-    'appointments.update' => 'Appointments Update',
-    'appointments.cancel' => 'Appointments Cancel',
+    'appointments.view'   => 'Randevuları Görüntüleme',
+    'appointments.create' => 'Randevu Oluşturma',
+    'appointments.update' => 'Randevu Güncelleme',
+    'appointments.cancel' => 'Randevu İptal Etme',
 ];

@@ -9,7 +9,7 @@
 						</i>
 					</span>
 					<span class="kt-menu-title text-sm text-foreground font-medium kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-						Overview
+						Genel Bakış
 					</span>
 				</a>
 			</div>
@@ -20,7 +20,7 @@
 						</i>
 					</span>
 					<span class="kt-menu-title font-medium text-sm text-foreground kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-						Public Profile
+						Genel Profil
 					</span>
 					<span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
 						<span class="inline-flex kt-menu-item-show:hidden">
@@ -37,7 +37,7 @@
 					<div class="kt-menu-item kt-menu-item-accordion" data-kt-menu-item-toggle="accordion" data-kt-menu-item-trigger="click">
 						<div class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-								Profiles
+								Profiller
 							</span>
 							<span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
 								<span class="inline-flex kt-menu-item-show:hidden">
@@ -54,21 +54,21 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Default
+										Varsayılan
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Creator
+										İçerik Üretici
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Company
+										Firma
 									</span>
 								</a>
 							</div>
@@ -82,7 +82,7 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Blogger
+										Blog Yazarı
 									</span>
 								</a>
 							</div>
@@ -118,28 +118,28 @@
 									<div class="kt-menu-item">
 										<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 											<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-												Gamer
+												Oyuncu
 											</span>
 										</a>
 									</div>
 									<div class="kt-menu-item">
 										<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 											<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-												Feeds
+												Akışlar
 											</span>
 										</a>
 									</div>
 									<div class="kt-menu-item">
 										<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 											<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-												Plain
+												Düz
 											</span>
 										</a>
 									</div>
 									<div class="kt-menu-item">
 										<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 											<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-												Modal
+												Pencere
 											</span>
 										</a>
 									</div>
@@ -150,7 +150,7 @@
 					<div class="kt-menu-item kt-menu-item-accordion" data-kt-menu-item-toggle="accordion" data-kt-menu-item-trigger="click">
 						<div class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-								Projects
+								Projeler
 							</span>
 							<span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
 								<span class="inline-flex kt-menu-item-show:hidden">
@@ -167,14 +167,14 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										3 Columns
+										3 Sütun
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										2 Columns
+										2 Sütun
 									</span>
 								</a>
 							</div>
@@ -183,28 +183,28 @@
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Works
+								Çalışmalar
 							</span>
 						</a>
 					</div>
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Teams
+								Ekipler
 							</span>
 						</a>
 					</div>
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Network
+								Ağ
 							</span>
 						</a>
 					</div>
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Activity
+								Aktivite
 							</span>
 						</a>
 					</div>
@@ -233,21 +233,21 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Campaigns - Card
+										Kampanyalar - Kart
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Campaigns - List
+										Kampanyalar - Liste
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Empty
+										Boş
 									</span>
 								</a>
 							</div>
@@ -262,7 +262,7 @@
 						</i>
 					</span>
 					<span class="kt-menu-title font-medium text-sm text-foreground kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-						My Account
+						Hesabım
 					</span>
 					<span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
 						<span class="inline-flex kt-menu-item-show:hidden">
@@ -279,7 +279,7 @@
 					<div class="kt-menu-item kt-menu-item-accordion" data-kt-menu-item-toggle="accordion" data-kt-menu-item-trigger="click">
 						<div class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-								Account Home
+								Hesap Ana Sayfası
 							</span>
 							<span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
 								<span class="inline-flex kt-menu-item-show:hidden">
@@ -296,49 +296,49 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Get Started
+										Başlangıç
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										User Profile
+										Kullanıcı Profili
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Company Profile
+										Firma Profili
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Settings - With Sidebar
+										Ayarlar - Yan Menüyle
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Settings - Enterprise
+										Ayarlar - Kurumsal
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Settings - Plain
+										Ayarlar - Düz
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Settings - Modal
+										Ayarlar - Pencere
 									</span>
 								</a>
 							</div>
@@ -347,7 +347,7 @@
 					<div class="kt-menu-item kt-menu-item-accordion" data-kt-menu-item-toggle="accordion" data-kt-menu-item-trigger="click">
 						<div class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-								Billing
+								Faturalandırma
 							</span>
 							<span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
 								<span class="inline-flex kt-menu-item-show:hidden">
@@ -364,28 +364,28 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Billing - Basic
+										Faturalandırma - Temel
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Billing - Enterprise
+										Faturalandırma - Kurumsal
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Plans
+										Planlar
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Billing History
+										Fatura Geçmişi
 									</span>
 								</a>
 							</div>
@@ -411,7 +411,7 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Get Started
+										Başlangıç
 									</span>
 								</a>
 							</div>
@@ -425,35 +425,35 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Allowed IP Addresses
+										İzinli IP Adresleri
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Privacy Settings
+										Gizlilik Ayarları
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Device Management
+										Cihaz Yönetimi
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Backup &amp; Recovery
+										Yedekleme ve Kurtarma
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Current Sessions
+										Aktif Oturumlar
 									</span>
 								</a>
 							</div>
@@ -469,7 +469,7 @@
 					<div class="kt-menu-item kt-menu-item-accordion" data-kt-menu-item-toggle="accordion" data-kt-menu-item-trigger="click">
 						<div class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-								Members &amp; Roles
+								Üyeler ve Roller
 							</span>
 							<span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
 								<span class="inline-flex kt-menu-item-show:hidden">
@@ -486,63 +486,63 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Teams Starter
+										Ekip Başlangıcı
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Teams
+										Ekipler
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Team Info
+										Ekip Bilgisi
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Members Starter
+										Üye Başlangıcı
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Team Members
+										Ekip Üyeleri
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Import Members
+										Üyeleri İçe Aktar
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Roles
+										Roller
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Permissions - Toggler
+										Yetkiler - Anahtarlı
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Permissions - Check
+										Yetkiler - Seçimli
 									</span>
 								</a>
 							</div>
@@ -551,21 +551,21 @@
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Integrations
+								Entegrasyonlar
 							</span>
 						</a>
 					</div>
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Notifications
+								Bildirimler
 							</span>
 						</a>
 					</div>
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								API Keys
+								API Anahtarları
 							</span>
 						</a>
 					</div>
@@ -594,21 +594,21 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Appearance
+										Görünüm
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Invite a Friend
+										Arkadaş Davet Et
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Activity
+										Aktivite
 									</span>
 								</a>
 							</div>
@@ -623,7 +623,7 @@
 						</i>
 					</span>
 					<span class="kt-menu-title font-medium text-sm text-foreground kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-						Network
+						Ağ
 					</span>
 					<span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
 						<span class="inline-flex kt-menu-item-show:hidden">
@@ -640,14 +640,14 @@
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Get Started
+								Başlangıç
 							</span>
 						</a>
 					</div>
 					<div class="kt-menu-item kt-menu-item-accordion" data-kt-menu-item-toggle="accordion" data-kt-menu-item-trigger="click">
 						<div class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-								User Cards
+								Kullanıcı Kartları
 							</span>
 							<span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
 								<span class="inline-flex kt-menu-item-show:hidden">
@@ -664,21 +664,21 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Mini Cards
+										Mini Kartlar
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Team Crew
+										Ekip Kadrosu
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Author
+										Yazar
 									</span>
 								</a>
 							</div>
@@ -692,7 +692,7 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Social
+										Sosyal
 									</span>
 								</a>
 							</div>
@@ -701,7 +701,7 @@
 					<div class="kt-menu-item kt-menu-item-accordion" data-kt-menu-item-toggle="accordion" data-kt-menu-item-trigger="click">
 						<div class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-								User Table
+								Kullanıcı Tablosu
 							</span>
 							<span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
 								<span class="inline-flex kt-menu-item-show:hidden">
@@ -718,42 +718,42 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Team Crew
+										Ekip Kadrosu
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										App Roster
+										Uygulama Listesi
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Market Authors
+										Pazar Yazarları
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										SaaS Users
+										SaaS Kullanıcıları
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Store Clients
+										Mağaza Müşterileri
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Visitors
+										Ziyaretçiler
 									</span>
 								</a>
 							</div>
@@ -768,7 +768,7 @@
 						</i>
 					</span>
 					<span class="kt-menu-title font-medium text-sm text-foreground kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-						Authentication
+						Kimlik Doğrulama
 					</span>
 					<span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
 						<span class="inline-flex kt-menu-item-show:hidden">
@@ -785,7 +785,7 @@
 					<div class="kt-menu-item kt-menu-item-accordion" data-kt-menu-item-toggle="accordion" data-kt-menu-item-trigger="click">
 						<div class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-								Classic
+								Klasik
 							</span>
 							<span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
 								<span class="inline-flex kt-menu-item-show:hidden">
@@ -802,35 +802,35 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Sign In
+										Giriş Yap
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Sign Up
+										Kayıt Ol
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										2FA
+										İki Aşamalı Doğrulama
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Check Email
+										E-postayı Kontrol Et
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item kt-menu-item-accordion" data-kt-menu-item-toggle="accordion" data-kt-menu-item-trigger="click">
 								<div class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-										Reset Password
+										Şifre Sıfırlama
 									</span>
 									<span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
 										<span class="inline-flex kt-menu-item-show:hidden">
@@ -847,28 +847,28 @@
 									<div class="kt-menu-item">
 										<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 											<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-												Enter Email
+												E-posta Gir
 											</span>
 										</a>
 									</div>
 									<div class="kt-menu-item">
 										<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 											<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-												Check Email
+												E-postayı Kontrol Et
 											</span>
 										</a>
 									</div>
 									<div class="kt-menu-item">
 										<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 											<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-												Change Password
+												Şifre Değiştir
 											</span>
 										</a>
 									</div>
 									<div class="kt-menu-item">
 										<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 											<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-												Password is Changed
+												Şifre Değiştirildi
 											</span>
 										</a>
 									</div>
@@ -879,7 +879,7 @@
 					<div class="kt-menu-item kt-menu-item-accordion" data-kt-menu-item-toggle="accordion" data-kt-menu-item-trigger="click">
 						<div class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-								Branded
+								Markalı
 							</span>
 							<span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
 								<span class="inline-flex kt-menu-item-show:hidden">
@@ -896,35 +896,35 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Sign In
+										Giriş Yap
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Sign Up
+										Kayıt Ol
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										2FA
+										İki Aşamalı Doğrulama
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Check Email
+										E-postayı Kontrol Et
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item kt-menu-item-accordion" data-kt-menu-item-toggle="accordion" data-kt-menu-item-trigger="click">
 								<div class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-										Reset Password
+										Şifre Sıfırlama
 									</span>
 									<span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
 										<span class="inline-flex kt-menu-item-show:hidden">
@@ -941,28 +941,28 @@
 									<div class="kt-menu-item">
 										<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 											<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-												Enter Email
+												E-posta Gir
 											</span>
 										</a>
 									</div>
 									<div class="kt-menu-item">
 										<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 											<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-												Check Email
+												E-postayı Kontrol Et
 											</span>
 										</a>
 									</div>
 									<div class="kt-menu-item">
 										<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 											<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-												Change Password
+												Şifre Değiştir
 											</span>
 										</a>
 									</div>
 									<div class="kt-menu-item">
 										<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 											<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-												Password is Changed
+												Şifre Değiştirildi
 											</span>
 										</a>
 									</div>
@@ -973,28 +973,28 @@
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Welcome Message
+								Karşılama Mesajı
 							</span>
 						</a>
 					</div>
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Account Deactivated
+								Hesap Pasifleştirildi
 							</span>
 						</a>
 					</div>
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Error 404
+								404 Hatası
 							</span>
 						</a>
 					</div>
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Error 500
+								500 Hatası
 							</span>
 						</a>
 					</div>
@@ -1007,7 +1007,7 @@
 						</i>
 					</span>
 					<span class="kt-menu-title font-medium text-sm text-foreground kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-						Store - Client
+						Mağaza - Müşteri
 					</span>
 					<span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
 						<span class="inline-flex kt-menu-item-show:hidden">
@@ -1024,7 +1024,7 @@
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Home
+								Ana Sayfa
 							</span>
 						</a>
 					</div>
@@ -1045,28 +1045,28 @@
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Product Details
+								Ürün Detayları
 							</span>
 						</a>
 					</div>
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Shopping Cart
+								Sepet
 							</span>
 						</a>
 					</div>
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Wishlist
+								İstek Listesi
 							</span>
 						</a>
 					</div>
 					<div class="kt-menu-item kt-menu-item-accordion" data-kt-menu-item-toggle="accordion" data-kt-menu-item-trigger="click">
 						<div class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-item-here:text-mono kt-menu-item-show:text-mono kt-menu-link-hover:text-mono">
-								Checkout
+								Ödeme
 							</span>
 							<span class="kt-menu-arrow text-muted-foreground kt-menu-item-here:text-foreground kt-menu-item-show:text-foreground kt-menu-link-hover:text-foreground">
 								<span class="inline-flex kt-menu-item-show:hidden">
@@ -1083,14 +1083,14 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Order Summary
+										Sipariş Özeti
 									</span>
 								</a>
 							</div>
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Shipping Info
+										Kargo Bilgisi
 									</span>
 								</a>
 							</div>
@@ -1104,7 +1104,7 @@
 							<div class="kt-menu-item">
 								<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 									<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-										Order Placed
+										Sipariş Oluşturuldu
 									</span>
 								</a>
 							</div>
@@ -1113,14 +1113,14 @@
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								My Orders
+								Siparişlerim
 							</span>
 						</a>
 					</div>
 					<div class="kt-menu-item">
 						<a class="kt-menu-link py-2 px-2.5 rounded-md border border-transparent kt-menu-item-active:border-border kt-menu-item-active:bg-background kt-menu-link-hover:bg-background kt-menu-link-hover:border-border" href="#">
 							<span class="kt-menu-title text-sm text-foreground kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Order Receipt
+								Sipariş Makbuzu
 							</span>
 						</a>
 					</div>
@@ -1146,7 +1146,7 @@
 							</span>
 						</span>
 						<span class="kt-menu-title text-sm text-foreground font-medium">
-							Spaces
+							Alanlar
 						</span>
 					</div>
 					<a class="kt-btn kt-btn-light kt-btn-sm kt-btn-icon kt-btn-icon-sm text-muted-foreground hover:text-foreground me-1.25" href="#">
@@ -1162,7 +1162,7 @@
 								</i>
 							</span>
 							<span class="kt-menu-title text-sm text-secondary-foreground kt-menu-item-active:font-medium kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Metrics Hub
+								Metrik Merkezi
 							</span>
 						</a>
 					</div>
@@ -1173,7 +1173,7 @@
 								</i>
 							</span>
 							<span class="kt-menu-title text-sm text-secondary-foreground kt-menu-item-active:font-medium kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Data Lab
+								Veri Laboratuvarı
 							</span>
 						</a>
 					</div>
@@ -1195,7 +1195,7 @@
 								</i>
 							</span>
 							<span class="kt-menu-title text-sm text-secondary-foreground kt-menu-item-active:font-medium kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								KPI Monitor
+								Özet Metrik İzleme
 							</span>
 						</a>
 					</div>
@@ -1217,7 +1217,7 @@
 							</span>
 						</span>
 						<span class="kt-menu-title text-sm text-foreground font-medium">
-							Favorites
+							Favoriler
 						</span>
 					</div>
 				</div>
@@ -1229,7 +1229,7 @@
 								</i>
 							</span>
 							<span class="kt-menu-title text-sm text-secondary-foreground kt-menu-item-active:font-medium kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Post Date
+							Yayın Tarihi
 							</span>
 						</a>
 					</div>
@@ -1240,7 +1240,7 @@
 								</i>
 							</span>
 							<span class="kt-menu-title text-sm text-secondary-foreground kt-menu-item-active:font-medium kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Creative Licenses
+								Yaratıcı Lisanslar
 							</span>
 						</a>
 					</div>
@@ -1251,7 +1251,7 @@
 								</i>
 							</span>
 							<span class="kt-menu-title text-sm text-secondary-foreground kt-menu-item-active:font-medium kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Open Content
+								Açık İçerik
 							</span>
 						</a>
 					</div>
@@ -1262,7 +1262,7 @@
 								</i>
 							</span>
 							<span class="kt-menu-title text-sm text-secondary-foreground kt-menu-item-active:font-medium kt-menu-item-active:text-mono kt-menu-link-hover:text-mono">
-								Copyright
+								Telif Hakkı
 							</span>
 						</a>
 					</div>

@@ -101,7 +101,7 @@ class SiteNavigationItem extends Model
     {
         return [
             self::LINK_TYPE_PAGE => 'İçerik Sayfası',
-            self::LINK_TYPE_CUSTOM => 'Özel URL',
+            self::LINK_TYPE_CUSTOM => 'Özel Bağlantı',
         ];
     }
 

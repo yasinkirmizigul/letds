@@ -46,7 +46,7 @@
                 <input name="items[{{ $rowIndex }}][product_title]" class="kt-input" value="{{ $item['product_title'] ?? '' }}" data-order-item-title placeholder="Ürün adı veya manuel hizmet">
             </div>
             <div class="grid gap-2">
-                <label class="kt-form-label">SKU</label>
+                <label class="kt-form-label">Ürün Kodu</label>
                 <input name="items[{{ $rowIndex }}][sku]" class="kt-input" value="{{ $item['sku'] ?? '' }}" data-order-item-sku>
             </div>
             <div class="grid gap-2">
@@ -83,7 +83,7 @@
         <details class="group">
             <summary class="cursor-pointer text-sm font-medium text-primary">Satır ek alanları</summary>
             <div class="mt-3 grid gap-2">
-                <label class="kt-form-label">Satır Ek Alanları (JSON)</label>
+                <label class="kt-form-label">Satır Ek Alanları (JSON formatı)</label>
                 <textarea name="items[{{ $rowIndex }}][custom_fields_json]" rows="3" class="kt-textarea font-mono text-xs" placeholder='{"seri_no":"ABC123"}'>{{ $item['custom_fields_json'] ?? '' }}</textarea>
             </div>
         </details>

@@ -71,7 +71,7 @@
                         name="q"
                         value="{{ $search }}"
                         class="kt-input w-full md:w-[260px]"
-                        placeholder="Sipariş, müşteri, SKU, takip no ara"
+                        placeholder="Sipariş, müşteri, ürün kodu, takip no ara"
                     >
 
                     <select name="status" class="kt-select w-full md:w-[190px]" data-kt-select="true">

@@ -20,7 +20,7 @@
                 <div>
                     <h1 class="text-xl font-semibold">Ürün Oluştur</h1>
                     <div class="text-sm text-muted-foreground">
-                        Workflow, fiyat, SEO ve vitrin yönetimini tek ekrandan kurun.
+                        İş akışı, fiyat, SEO ve vitrin yönetimini tek ekrandan kurun.
                     </div>
                 </div>
             </div>

@@ -140,7 +140,7 @@
                                                     name="{{ $fieldName }}"
                                                     class="kt-input flex-1 {{ $hasError ? 'kt-input-invalid' : '' }}"
                                                     value="{{ $value }}"
-                                                    placeholder="{{ $placeholder ?: 'otomatik-olusturulur' }}"
+                                                    placeholder="{{ $placeholder ?: 'otomatik oluşturulur' }}"
                                                     @unless($isDefault) data-locale-slug="true" @endunless
                                                 >
                                                 <button

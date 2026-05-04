@@ -81,7 +81,7 @@ function createStatusPopover() {
     element.style.display = 'none';
     element.className = 'kt-card shadow-lg p-2 w-[280px] transition transform duration-150 ease-out';
     element.innerHTML = `
-        <div class="text-xs text-muted-foreground px-2 py-1">Workflow durumu seç</div>
+        <div class="text-xs text-muted-foreground px-2 py-1">İş akışı durumu seç</div>
         <div class="grid gap-1" data-status-menu></div>
     `;
     document.body.appendChild(element);
@@ -251,7 +251,7 @@ function setPublicState(row, isPublic) {
     if (hint) {
         hint.textContent = isPublic
             ? 'Bu statü site tarafında görünebilir.'
-            : 'Bu statü admin içi workflow aşamasında kalır.';
+            : 'Bu statü panel içi iş akışı aşamasında kalır.';
     }
 }
 

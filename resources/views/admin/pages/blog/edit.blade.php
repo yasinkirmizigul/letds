@@ -20,7 +20,7 @@
                     {{ $blogPost->is_published ? 'Yayında' : 'Taslak' }}
                 </span>
                 <div>
-                    <h1 class="text-xl font-semibold">Blog Yazisini Düzenle</h1>
+                    <h1 class="text-xl font-semibold">Blog Yazısını Düzenle</h1>
                     <div class="text-sm text-muted-foreground">#{{ $blogPost->id }} - {{ $blogPost->title }}</div>
                 </div>
             </div>

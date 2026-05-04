@@ -28,7 +28,7 @@
                     </button>
 
                     <div class="ms-auto text-xs text-muted-foreground px-1">
-                        Çoklu yükleme • Retry • Hata detayı
+                        Çoklu yükleme • Yeniden deneme • Hata detayı
                     </div>
                 </div>
             </div>

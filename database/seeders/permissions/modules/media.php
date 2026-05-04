@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'media.view' => 'Media View',
-    'media.trash' => 'Media Trash',
-    'media.create' => 'Media Create',
-    'media.update' => 'Media Update',
-    'media.delete' => 'Media Delete',
-    'media.restore' => 'Media Restore',
-    'media.force_delete' => 'Media Force Delete',
+    'media.view' => 'Medyaları Görüntüleme',
+    'media.trash' => 'Medya Çöp Kutusu',
+    'media.create' => 'Medya Oluşturma',
+    'media.update' => 'Medya Güncelleme',
+    'media.delete' => 'Medya Silme',
+    'media.restore' => 'Medya Geri Yükleme',
+    'media.force_delete' => 'Medya Kalıcı Silme',
 ];

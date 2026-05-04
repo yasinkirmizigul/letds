@@ -341,7 +341,7 @@ class CategoryController extends Controller
             'done' => count($allowedIds),
             'failed' => array_map(fn ($item) => ['type' => 'category', 'id' => $item['id'], 'reason' => $item['reason']], $blocked),
             'message' => count($blocked) > 0
-                ? 'Bazi kategoriler korunarak atlandi.'
+                ? 'Bazı kategoriler korunarak atlandı.'
                 : 'Seçili kategoriler kalıcı olarak silindi.',
         ]);
     }
@@ -355,7 +355,7 @@ class CategoryController extends Controller
             return response()->json([
                 'ok' => false,
                 'available' => false,
-                'message' => 'Slug boş olamaz.',
+                'message' => 'Kısa bağlantı boş olamaz.',
             ]);
         }
 
@@ -368,7 +368,7 @@ class CategoryController extends Controller
             'available' => !$exists,
             'normalized' => $normalized,
             'suggested' => $suggested,
-            'message' => $exists ? 'Bu slug zaten kullanılıyor.' : 'Slug uygun.',
+            'message' => $exists ? 'Bu kısa bağlantı zaten kullanılıyor.' : 'Kısa bağlantı uygun.',
         ]);
     }
 

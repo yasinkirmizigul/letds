@@ -84,7 +84,7 @@ class Product extends Model
             'order' => 30,
         ],
         self::STATUS_ARCHIVED => [
-            'label' => 'Arsiv',
+            'label' => 'Arşiv',
             'badge' => 'kt-badge kt-badge-sm kt-badge-light-danger',
             'order' => 40,
         ],

@@ -32,7 +32,7 @@
                             Takvim ayarlarını tek merkezden yönetin.
                         </h1>
                         <p class="mt-3 max-w-[72ch] text-sm leading-6 text-muted-foreground lg:text-base">
-                            Haftalık çalışma planını, kişisel kapalı zamanları, global blackout aralıklarını ve seçili
+                            Haftalık çalışma planını, kişisel kapalı zamanları, genel kapalı zaman aralıklarını ve seçili
                             kişinin boş saat kapasitesini aynı panelde izleyip güncelleyebilirsin.
                         </p>
 
@@ -76,7 +76,7 @@
                         </article>
 
                         <article class="rounded-3xl app-stat-card p-5">
-                            <div class="text-sm text-muted-foreground">Global blackout</div>
+                            <div class="text-sm text-muted-foreground">Genel kapalı zaman</div>
                             <div class="mt-2 text-3xl font-semibold text-primary" id="settingsStatBlackouts">
                                 {{ $blackoutCount ?? 0 }}
                             </div>
@@ -154,7 +154,7 @@
                                         </div>
 
                                         <div class="mt-4 rounded-2xl border border-dashed border-border bg-background/70 px-4 py-3 text-sm leading-6 text-muted-foreground" id="settingsCoverageText">
-                                            Kişi seçildiğinde çalışma günleri ve blackout etkisi burada özetlenir.
+                                            Kişi seçildiğinde çalışma günleri ve genel kapalı zaman etkisi burada özetlenir.
                                         </div>
                                     </div>
                                 </div>
@@ -315,7 +315,7 @@
                     <section class="kt-card">
                         <div class="kt-card-header py-5 flex-wrap gap-4">
                             <div>
-                                <h3 class="kt-card-title">Global blackout aralıklari</h3>
+                                <h3 class="kt-card-title">Genel kapalı zaman aralıkları</h3>
                                 <div class="text-sm text-muted-foreground">
                                     Tatil, bakım ya da kurumsal kapama günlerini tüm kişiler için merkezi olarak belirle.
                                 </div>
@@ -384,7 +384,7 @@
 
                             <div class="mt-4 flex flex-wrap items-center gap-2">
                                 <button type="button" class="kt-btn kt-btn-light-danger" id="btnAddBlackout">
-                                    Global blackout ekle
+                                    Genel kapalı zaman ekle
                                 </button>
                                 <button type="button" class="kt-btn kt-btn-light hidden" id="btnCancelBlackoutEdit">
                                     Düzenlemeyi iptal et

@@ -480,7 +480,7 @@ export default function init(ctx) {
 
         const ok = await showConfirmDialog({
             type: 'warning',
-            title: 'Seçili yazilar silinsin mi?',
+            title: 'Seçili yazılar silinsin mi?',
             message: `${ids.length} kayıt çöp kutusuna taşınacak.`,
             confirmButtonText: 'Sil',
         });
@@ -488,7 +488,7 @@ export default function init(ctx) {
 
         try {
             const response = await postJson(root.dataset.bulkDeleteUrl, { ids }, signal);
-            notify('success', response?.message || 'Seçili yazilar silindi.');
+            notify('success', response?.message || 'Seçili yazılar silindi.');
             selectedIds.clear();
             window.location.reload();
         } catch (error) {
@@ -503,7 +503,7 @@ export default function init(ctx) {
 
         const ok = await showConfirmDialog({
             type: 'success',
-            title: 'Seçili yazilar geri yüklensin mi?',
+            title: 'Seçili yazılar geri yüklensin mi?',
             message: `${ids.length} kayıt tekrar aktif listeye alınacak.`,
             confirmButtonText: 'Geri yükle',
         });
@@ -511,7 +511,7 @@ export default function init(ctx) {
 
         try {
             const response = await postJson(root.dataset.bulkRestoreUrl, { ids }, signal);
-            notify('success', response?.message || 'Seçili yazilar geri yüklendi.');
+            notify('success', response?.message || 'Seçili yazılar geri yüklendi.');
             selectedIds.clear();
             window.location.reload();
         } catch (error) {
@@ -526,7 +526,7 @@ export default function init(ctx) {
 
         const ok = await showConfirmDialog({
             type: 'error',
-            title: 'Seçili yazilar kalıcı olarak silinsin mi?',
+            title: 'Seçili yazılar kalıcı olarak silinsin mi?',
             message: `${ids.length} kayıt geri alinamayacak sekilde silinecek.`,
             confirmButtonText: 'Kalıcı sil',
         });
@@ -534,7 +534,7 @@ export default function init(ctx) {
 
         try {
             const response = await postJson(root.dataset.bulkForceDeleteUrl, { ids }, signal);
-            notify('success', response?.message || 'Seçili yazilar kalıcı olarak silindi.');
+            notify('success', response?.message || 'Seçili yazılar kalıcı olarak silindi.');
             selectedIds.clear();
             window.location.reload();
         } catch (error) {

@@ -303,7 +303,7 @@
                 <div class="w-full max-w-2xl rounded-2xl border border-border bg-background text-foreground shadow-2xl">
                     <div class="flex items-center justify-between border-b border-border px-5 py-4">
                         <h3 class="text-base font-semibold text-foreground" id="appointmentModalTitle">
-                            Randevu detayi
+                            Randevu detayı
                         </h3>
                         <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-appointment-modal-close>Kapat</button>
                     </div>
@@ -324,7 +324,7 @@
                         <div>
                             <label class="kt-form-label mb-2">Kişi</label>
                             <select id="appointmentProviderId" class="kt-select">
-                                <option value="">Mevcut kişide kalsin</option>
+                                <option value="">Mevcut kişide kalsın</option>
                                 @foreach($transferProviders as $provider)
                                     <option value="{{ $provider->id }}" data-provider-name="{{ $provider->name }}" data-provider-title="{{ $provider->title }}">
                                         {{ $provider->name }} - {{ $provider->title }}

@@ -29,7 +29,7 @@
         @include('admin.components.localized-content-tabs', [
             'moduleKey' => 'blog',
             'title' => 'Blog İçerik Dilleri',
-            'description' => 'Varsayılan dil ve ek diller için başlık, slug, içerik ve SEO alanlarını sekmelerden yönetin.',
+            'description' => 'Varsayılan dil ve ek diller için başlık, kısa bağlantı, içerik ve SEO alanlarını sekmelerden yönetin.',
             'urlBase' => url('/blog'),
             'defaultValues' => [
                 'title' => old('title', $blogPost->title ?? ''),
@@ -43,7 +43,7 @@
             'storedTranslations' => $storedTranslations,
             'fields' => [
                 ['name' => 'title', 'id' => 'title', 'label' => 'Başlık', 'placeholder' => 'Blog başlığını yazın', 'slug_source' => true],
-                ['name' => 'slug', 'id' => 'slug', 'type' => 'slug', 'label' => 'Slug ve URL'],
+                ['name' => 'slug', 'id' => 'slug', 'type' => 'slug', 'label' => 'Kısa Bağlantı'],
                 ['name' => 'excerpt', 'type' => 'textarea', 'rows' => 4, 'label' => 'Özet', 'placeholder' => 'Liste ve arama sonuçlarında kullanılacak kısa açıklama'],
                 ['name' => 'content', 'id' => 'content_editor', 'type' => 'editor', 'rows' => 10, 'label' => 'İçerik'],
                 ['name' => 'meta_title', 'label' => 'Meta Başlık', 'placeholder' => 'Arama sonucunda görünecek başlık'],

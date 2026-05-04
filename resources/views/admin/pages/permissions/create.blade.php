@@ -24,7 +24,7 @@
                 </div>
 
                 <div class="flex flex-col gap-1">
-                    <label class="kt-form-label font-normal text-mono">Slug (örn: blog.view)</label>
+                    <label class="kt-form-label font-normal text-mono">Yetki Anahtarı (örn: blog.view)</label>
                     <input class="kt-input" name="slug" value="{{ old('slug') }}" placeholder="blog.view" required/>
                     @error('slug')
                     <div class="text-xs text-danger mt-1">{{ $message }}</div> @enderror

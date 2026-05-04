@@ -29,7 +29,7 @@
 
             <div class="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                    <h1 class="text-xl font-semibold">Audit #{{ $row->id }}</h1>
+                    <h1 class="text-xl font-semibold">Sistem Kaydı #{{ $row->id }}</h1>
                     <div class="text-sm text-muted-foreground">{{ $row->created_at }}</div>
                 </div>
                 <a class="kt-btn kt-btn-light" href="{{ route('admin.audit-logs.index') }}">Geri</a>
@@ -44,7 +44,7 @@
                 </div>
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Status</div>
+                        <div class="text-sm text-muted-foreground">Durum</div>
                         <div class="mt-2"><span class="{{ $statusBadge($row->status) }}">{{ $row->status }}</span></div>
                     </div>
                 </div>
@@ -66,8 +66,8 @@
                 <div class="kt-card">
                     <div class="kt-card-content p-5 grid gap-3">
                         <div class="text-sm font-semibold">İstek Özeti</div>
-                        <div class="text-sm">Route: <span class="font-medium">{{ $row->route ?: '-' }}</span></div>
-                        <div class="text-sm">URI: <span class="font-medium break-all">{{ $row->uri ?: '-' }}</span></div>
+                        <div class="text-sm">Rota: <span class="font-medium">{{ $row->route ?: '-' }}</span></div>
+                        <div class="text-sm">Adres: <span class="font-medium break-all">{{ $row->uri ?: '-' }}</span></div>
                         <div class="text-sm">IP: <span class="font-medium">{{ $row->ip ?: '-' }}</span></div>
                     </div>
                 </div>
@@ -77,7 +77,7 @@
                         <div class="text-sm font-semibold">Kullanıcı</div>
                         <div class="text-sm">Ad: <span class="font-medium">{{ $row->user_name ?: '-' }}</span></div>
                         <div class="text-sm">E-posta: <span class="font-medium">{{ $row->user_email ?: '-' }}</span></div>
-                        <div class="text-sm">User agent:</div>
+                        <div class="text-sm">Tarayıcı bilgisi:</div>
                         <div class="text-xs text-muted-foreground break-words">{{ $row->user_agent ?: '-' }}</div>
                     </div>
                 </div>
@@ -86,19 +86,19 @@
             <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm font-semibold mb-3">Query</div>
+                        <div class="text-sm font-semibold mb-3">Sorgu</div>
                         <pre class="text-xs whitespace-pre-wrap overflow-auto">{{ json_encode($row->query ?? [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
                     </div>
                 </div>
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm font-semibold mb-3">Payload</div>
+                        <div class="text-sm font-semibold mb-3">Gönderilen veri</div>
                         <pre class="text-xs whitespace-pre-wrap overflow-auto">{{ json_encode($row->payload ?? [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
                     </div>
                 </div>
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm font-semibold mb-3">Context</div>
+                        <div class="text-sm font-semibold mb-3">Ek bilgi</div>
                         <pre class="text-xs whitespace-pre-wrap overflow-auto">{{ json_encode($row->context ?? [], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
                     </div>
                 </div>

@@ -28,7 +28,7 @@ class ScheduleConflictService
         Carbon $startAt,
         Carbon $endAt,
         ?int $ignoreTimeOffId = null,
-        string $message = 'Seçilen zaman aralığı provider blokajı ile çakışıyor.'
+        string $message = 'Seçilen zaman aralığı hizmet veren kişinin blokajı ile çakışıyor.'
     ): void {
         if ($this->hasTimeOffOverlap($providerId, $startAt, $endAt, $ignoreTimeOffId)) {
             throw ValidationException::withMessages([

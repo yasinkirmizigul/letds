@@ -76,7 +76,7 @@
                             <input id="galleriesSearch"
                                    type="text"
                                    class="kt-input"
-                                   placeholder="Ara (isim / slug)">
+                                   placeholder="Ara (isim / kısa bağlantı)">
                         </div>
                     </div>
 

@@ -56,7 +56,7 @@
                         name="q"
                         value="{{ $search }}"
                         class="kt-input w-full md:w-[260px]"
-                        placeholder="Başlık, slug veya içerik ara"
+                        placeholder="Başlık, bağlantı adresi veya içerik ara"
                     >
 
                     <select name="status" class="kt-select w-full md:w-[200px]" data-kt-select="true">

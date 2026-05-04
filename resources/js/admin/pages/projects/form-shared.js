@@ -148,7 +148,7 @@ export function initStatusFeaturedUI(root, signal) {
         if (visibilityHint) {
             visibilityHint.textContent = isPublic
                 ? 'Bu statü, proje detay sayfasının site tarafında açılmasına izin verir.'
-                : 'Bu statü, projeyi admin içinde tutar; site tarafında yayına çıkmaz.';
+                : 'Bu statü, projeyi panel içinde tutar; site tarafında yayına çıkmaz.';
         }
     };
 
@@ -216,11 +216,11 @@ export function initSlugTools(root, signal) {
         const slug = trimText(slugInput.value);
 
         if (!slug) {
-            setHintState(hintEl, 'muted', 'Slug girildiginde uygunlük kontrolü yapılır.');
+            setHintState(hintEl, 'muted', 'Kısa bağlantı girildiğinde uygunluk kontrolü yapılır.');
             return;
         }
 
-        setHintState(hintEl, 'muted', 'Slug kontrol ediliyor...');
+        setHintState(hintEl, 'muted', 'Kısa bağlantı kontrol ediliyor...');
 
         try {
             const query = new URLSearchParams({
@@ -234,7 +234,7 @@ export function initSlugTools(root, signal) {
             });
 
             if (!data?.ok) {
-                setHintState(hintEl, 'danger', data?.message || 'Slug kontrol edilemedi.');
+                setHintState(hintEl, 'danger', data?.message || 'Kısa bağlantı kontrol edilemedi.');
                 return;
             }
 
@@ -244,14 +244,14 @@ export function initSlugTools(root, signal) {
             }
 
             if (data.available) {
-                setHintState(hintEl, 'success', data.message || 'Slug uygun.');
+                setHintState(hintEl, 'success', data.message || 'Kısa bağlantı uygun.');
                 return;
             }
 
-            const suggested = data.suggested ? ` Oneri: ${data.suggested}` : '';
-            setHintState(hintEl, 'warning', `${data.message || 'Slug kullanimda.'}${suggested}`);
+            const suggested = data.suggested ? ` Öneri: ${data.suggested}` : '';
+            setHintState(hintEl, 'warning', `${data.message || 'Kısa bağlantı kullanımda.'}${suggested}`);
         } catch (error) {
-            setHintState(hintEl, 'danger', error?.message || 'Slug kontrolü başarısız oldu.');
+            setHintState(hintEl, 'danger', error?.message || 'Kısa bağlantı kontrolü başarısız oldu.');
         }
     }, 320);
 
@@ -309,8 +309,8 @@ export function initSeoPanel(root, signal, getContent) {
             || 'Meta açıklama burada görünecek.';
 
         if (titleCount) titleCount.textContent = `${titleLength}/255`;
-        if (metaTitleCount) metaTitleCount.textContent = `${metaTitleLength}/60 onerisi`;
-        if (metaDescriptionCount) metaDescriptionCount.textContent = `${metaDescriptionLength}/160 onerisi`;
+        if (metaTitleCount) metaTitleCount.textContent = `${metaTitleLength}/60 önerisi`;
+        if (metaDescriptionCount) metaDescriptionCount.textContent = `${metaDescriptionLength}/160 önerisi`;
         if (wordCount) wordCount.textContent = `${words} kelime`;
         if (readTime) readTime.textContent = minutes > 0 ? `${minutes} dk` : '0 dk';
         if (previewTitle) previewTitle.textContent = resolvedPreviewTitle;

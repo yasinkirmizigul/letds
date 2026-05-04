@@ -36,7 +36,7 @@
                     </div>
 
                     <div class="grid gap-2">
-                        <label class="text-sm font-medium">Slug (opsiyonel)</label>
+                        <label class="text-sm font-medium">Kısa Bağlantı (opsiyonel)</label>
                         <input type="text"
                                name="slug"
                                class="kt-input"

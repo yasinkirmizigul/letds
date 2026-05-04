@@ -27,7 +27,7 @@
                     {{ $isTrash ? 'Ürünler Çöp Kutusu' : 'Ürün Yönetimi' }}
                 </h1>
                 <div class="text-sm text-muted-foreground">
-                    {{ $isTrash ? 'Silinen ürünleri geri yükleyebilir veya kalıcı olarak silebilirsiniz.' : 'Workflow, fiyat, stok ve vitrin akışlarını tek ekrandan yönetin.' }}
+                    {{ $isTrash ? 'Silinen ürünleri geri yükleyebilir veya kalıcı olarak silebilirsiniz.' : 'İş akışı, fiyat, stok ve vitrin akışlarını tek ekrandan yönetin.' }}
                 </div>
             </div>
 
@@ -84,7 +84,7 @@
                         id="productsSearch"
                         type="text"
                         class="kt-input kt-input-sm w-full md:w-[260px]"
-                        placeholder="Başlık, slug, SKU, barkod ara..."
+                        placeholder="Başlık, kısa bağlantı, ürün kodu, barkod ara..."
                         value="{{ $q }}"
                     />
 
@@ -163,7 +163,7 @@
                                 </th>
                                 <th class="min-w-[360px]">Ürün</th>
                                 <th class="min-w-[220px]">Ticari Durum</th>
-                                <th class="min-w-[220px]">Workflow</th>
+                                <th class="min-w-[220px]">İş Akışı</th>
                                 <th class="min-w-[220px]">Vitrin</th>
                                 <th class="min-w-[180px]">Son Güncelleme</th>
                                 <th class="w-[64px]"></th>
@@ -237,7 +237,7 @@
 
                                                 <div class="flex flex-wrap items-center gap-1">
                                                     @if($product->sku)
-                                                        <span class="kt-badge kt-badge-sm kt-badge-light">SKU: {{ $product->sku }}</span>
+                                                        <span class="kt-badge kt-badge-sm kt-badge-light">Ürün kodu: {{ $product->sku }}</span>
                                                     @endif
                                                     @if($product->brand)
                                                         <span class="kt-badge kt-badge-sm kt-badge-light">{{ $product->brand }}</span>

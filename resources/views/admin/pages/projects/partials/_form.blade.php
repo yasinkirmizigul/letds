@@ -34,7 +34,7 @@
         @include('admin.components.localized-content-tabs', [
             'moduleKey' => 'project',
             'title' => 'Proje İçerik Dilleri',
-            'description' => 'Varsayılan dil ve ek diller için proje içeriğini, slug bilgisini ve SEO alanlarını sekmelerden yönetin.',
+            'description' => 'Varsayılan dil ve ek diller için proje içeriğini, kısa bağlantı bilgisini ve SEO alanlarını sekmelerden yönetin.',
             'urlBase' => url('/projects'),
             'defaultValues' => [
                 'title' => old('title', $project->title ?? ''),
@@ -47,7 +47,7 @@
             'storedTranslations' => $storedTranslations,
             'fields' => [
                 ['name' => 'title', 'id' => 'title', 'label' => 'Başlık', 'placeholder' => 'Proje başlığını yazın', 'slug_source' => true],
-                ['name' => 'slug', 'id' => 'slug', 'type' => 'slug', 'label' => 'Slug ve URL'],
+                ['name' => 'slug', 'id' => 'slug', 'type' => 'slug', 'label' => 'Kısa Bağlantı'],
                 ['name' => 'content', 'id' => 'content_editor', 'type' => 'editor', 'rows' => 10, 'label' => 'Proje Detayı'],
                 ['name' => 'meta_title', 'label' => 'Meta Başlık'],
                 ['name' => 'meta_description', 'type' => 'textarea', 'rows' => 3, 'label' => 'Meta Açıklama'],
@@ -78,7 +78,7 @@
         <div class="kt-card overflow-hidden">
             <div class="kt-card-header py-5">
                 <div>
-                    <h3 class="kt-card-title">Workflow ve Vitrin</h3>
+                    <h3 class="kt-card-title">İş Akışı ve Vitrin</h3>
                     <div class="text-sm text-muted-foreground">Proje akış durumunu, public görünürlüğü ve anasayfa vitrini yönetin.</div>
                 </div>
             </div>
@@ -86,7 +86,7 @@
                 <div class="rounded-3xl app-surface-card app-surface-card--soft p-4">
                     <div class="grid gap-3">
                         <div class="flex items-center justify-between gap-3">
-                            <div class="font-medium text-foreground">Workflow Durumu</div>
+                            <div class="font-medium text-foreground">İş akışı durumu</div>
                             <span id="project_status_badge" data-status-badge class="{{ $currentStatusMeta['badge'] ?? 'kt-badge kt-badge-sm kt-badge-light' }}">
                                 {{ $currentStatusMeta['label'] ?? $currentStatus }}
                             </span>
@@ -102,7 +102,7 @@
                             {{ $initialPublicVisible ? 'Sitede görünebilir' : 'Sitede gizli' }}
                         </span>
                         <div class="text-xs text-muted-foreground" data-project-visibility-hint>
-                            {{ $initialPublicVisible ? 'Bu statü, proje detay sayfasının site tarafında açılmasına izin verir.' : 'Bu statü, projeyi admin içinde tutar; site tarafında yayına çıkmaz.' }}
+                            {{ $initialPublicVisible ? 'Bu statü, proje detay sayfasının site tarafında açılmasına izin verir.' : 'Bu statü, projeyi panel içinde tutar; site tarafında yayına çıkmaz.' }}
                         </div>
                         @error('status')<div class="text-xs text-danger">{{ $message }}</div>@enderror
                     </div>
@@ -166,7 +166,7 @@
             </div>
             <div class="kt-card-content p-6 grid gap-3">
                 <div class="grid gap-2">
-                    <label class="kt-form-label" for="appointment_id">Randevu ID</label>
+                    <label class="kt-form-label" for="appointment_id">Randevu kaydı</label>
                     <input id="appointment_id" name="appointment_id" class="kt-input @error('appointment_id') kt-input-invalid @enderror" value="{{ $currentAppointmentId }}" placeholder="Opsiyonel">
                     @error('appointment_id')<div class="text-xs text-danger">{{ $message }}</div>@enderror
                 </div>

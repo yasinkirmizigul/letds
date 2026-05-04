@@ -71,12 +71,12 @@ class Project extends Model
             'order' => 10,
         ],
         self::STATUS_APPOINTMENT_SCHEDULED => [
-            'label' => 'Randevu Planlandi',
+            'label' => 'Randevu Planlandı',
             'badge' => 'kt-badge kt-badge-sm kt-badge-light-primary',
             'order' => 20,
         ],
         self::STATUS_APPOINTMENT_DONE => [
-            'label' => 'Randevu Tamamlandi',
+            'label' => 'Randevu Tamamlandı',
             'badge' => 'kt-badge kt-badge-sm kt-badge-light-success',
             'order' => 30,
         ],
@@ -111,7 +111,7 @@ class Project extends Model
             'order' => 90,
         ],
         self::STATUS_ARCHIVED => [
-            'label' => 'Arsiv',
+            'label' => 'Arşiv',
             'badge' => 'kt-badge kt-badge-sm kt-badge-light-danger',
             'order' => 100,
         ],

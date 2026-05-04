@@ -28,7 +28,7 @@
                                placeholder="Ara..." />
 
                         <select id="trashType" class="kt-select w-[180px]" data-kt-select="true" data-kt-select-placeholder="Silinen Türü Seç">
-                            <option value="all">Tümu</option>
+                            <option value="all">Tümü</option>
                             <option value="media">Medya</option>
                             <option value="blog">Blog</option>
                             <option value="category">Kategori</option>

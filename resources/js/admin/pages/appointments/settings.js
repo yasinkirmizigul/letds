@@ -342,9 +342,9 @@ function renderProviderSummary(root) {
         if (enabledDays === 0) {
             coverageText.textContent = 'Seçili kişi için hiç açık gün tanimli degil. Randevu alınabilmesi için önce haftalık plan kaydedilmelidir.'
         } else if (state.timeOffs.length > 0) {
-            coverageText.textContent = `${enabledDays} açık gün ve ${state.timeOffs.length} kişisel blokaj kaydı var. Global blackoutlar uygunlük testinde otomatik hesaba katilir.`
+            coverageText.textContent = `${enabledDays} açık gün ve ${state.timeOffs.length} kişisel blokaj kaydı var. Genel kapalı zamanlar uygunluk testinde otomatik hesaba katılır.`
         } else {
-            coverageText.textContent = `${enabledDays} açık gün içeren bir plan aktif. Global blackout dışında kişi bazlı ek kapatma bulunmuyor.`
+            coverageText.textContent = `${enabledDays} açık gün içeren bir plan aktif. Genel kapalı zaman dışında kişi bazlı ek kapatma bulunmuyor.`
         }
     }
 
@@ -405,7 +405,7 @@ function renderBlackouts(root, items = []) {
     if (!items.length) {
         list.innerHTML = `
             <div class="rounded-2xl border border-dashed border-border bg-muted/15 px-4 py-5 text-sm text-muted-foreground">
-                Global blackout tanimli degil.
+                Genel kapalı zaman tanımlı değil.
             </div>
         `
         return
@@ -462,7 +462,7 @@ function renderAvailability(root, items = []) {
     if (!items.length) {
         list.innerHTML = `
             <div class="rounded-2xl border border-dashed border-border bg-muted/15 px-4 py-5 text-sm text-muted-foreground">
-                Uygun slot bulunamadı. Çalışma plani, kişisel blokajlar veya global blackout bu günü kapatiyor olabilir.
+                Uygun zaman bulunamadı. Çalışma planı, kişisel blokajlar veya genel kapalı zaman bu günü kapatıyor olabilir.
             </div>
         `
         return
@@ -529,7 +529,7 @@ function resetBlackoutForm(root) {
     if (label) label.value = ''
     clearDateInputValue(start)
     clearDateInputValue(end)
-    if (button) button.textContent = 'Global blackout ekle'
+    if (button) button.textContent = 'Genel kapalı zaman ekle'
     if (cancel) cancel.classList.add('hidden')
 }
 
@@ -545,7 +545,7 @@ function populateBlackoutForm(root, item) {
     if (label) label.value = item.label || ''
     setDateInputValue(start, item.start_at || '')
     setDateInputValue(end, item.end_at || '')
-    if (button) button.textContent = 'Global blackout güncelle'
+    if (button) button.textContent = 'Genel kapalı zamanı güncelle'
     if (cancel) cancel.classList.remove('hidden')
 }
 
@@ -724,7 +724,7 @@ export default async function init(ctx) {
         }
 
         const isEditing = Boolean(editingId)
-        const idleLabel = isEditing ? 'Global blackout güncelle' : 'Global blackout ekle'
+        const idleLabel = isEditing ? 'Genel kapalı zamanı güncelle' : 'Genel kapalı zaman ekle'
         const busyLabel = isEditing ? 'Güncelleniyor...' : 'Ekleniyor...'
 
         try {
@@ -736,9 +736,9 @@ export default async function init(ctx) {
             }
             resetBlackoutForm(root)
             await loadBlackouts(root)
-            notify('success', isEditing ? 'Global blackout güncellendi.' : 'Global blackout eklendi.')
+            notify('success', isEditing ? 'Genel kapalı zaman güncellendi.' : 'Genel kapalı zaman eklendi.')
         } catch (error) {
-            notify('error', error.message || 'Global blackout kaydedilemedi.')
+            notify('error', error.message || 'Genel kapalı zaman kaydedilemedi.')
         } finally {
             setButtonBusy(btnAddBlackout, false, idleLabel, busyLabel)
         }
@@ -759,7 +759,7 @@ export default async function init(ctx) {
             state.availability = Array.isArray(data) ? data : []
             renderAvailability(root, state.availability)
         } catch (error) {
-            notify('error', error.message || 'Uygunlük hesaplanamadi.')
+            notify('error', error.message || 'Uygunluk hesaplanamadı.')
         } finally {
             setButtonBusy(btnCheckAvailability, false, 'Uygun saatleri getir', 'Hesaplanıyor...')
         }
@@ -829,8 +829,8 @@ export default async function init(ctx) {
             const item = findBlackoutById(id)
             const confirmed = await showConfirmDialog({
                 type: 'warning',
-                title: 'Global blackout silinsin mi?',
-                message: item ? `${item.label} kaydı tüm takvimlerden kaldırılacak.` : 'Seçili blackout kaydı silinecek.',
+                title: 'Genel kapalı zaman silinsin mi?',
+                message: item ? `${item.label} kaydı tüm takvimlerden kaldırılacak.` : 'Seçili kapalı zaman kaydı silinecek.',
                 confirmButtonText: 'Kaydı sil',
                 cancelButtonText: 'Vazgeç',
             })

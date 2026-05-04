@@ -69,7 +69,7 @@
                             id="categoriesSearch"
                             type="text"
                             class="kt-input kt-input-sm w-[240px]"
-                            placeholder="Kategori adı veya slug ara..." />
+                            placeholder="Kategori adı veya kısa bağlantı ara..." />
 
                         <a href="{{ route('admin.categories.index') }}"
                            class="kt-btn kt-btn-sm {{ $isTrash ? 'kt-btn-light' : 'kt-btn-primary' }}">
@@ -142,7 +142,7 @@
                                         <input class="kt-checkbox kt-checkbox-sm" id="categories_check_all_head" type="checkbox">
                                     </th>
                                     <th class="min-w-[260px]">Ad</th>
-                                    <th class="min-w-[220px]">Slug</th>
+                                    <th class="min-w-[220px]">Kısa Bağlantı</th>
                                     <th class="min-w-[220px]">Üst Kategori</th>
                                     <th class="min-w-[220px]">Bağlantılar</th>
                                     <th class="w-[220px]"></th>

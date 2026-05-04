@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'categories.view' => 'Categories View',
-    'categories.trash' => 'Categories Trash',
-    'categories.create' => 'Categories Create',
-    'categories.update' => 'Categories Update',
-    'categories.delete' => 'Categories Delete',
-    'categories.restore' => 'Categories Restore',
-    'categories.force_delete' => 'Categories Force Delete',
+    'categories.view' => 'Kategorileri Görüntüleme',
+    'categories.trash' => 'Kategori Çöp Kutusu',
+    'categories.create' => 'Kategori Oluşturma',
+    'categories.update' => 'Kategori Güncelleme',
+    'categories.delete' => 'Kategori Silme',
+    'categories.restore' => 'Kategori Geri Yükleme',
+    'categories.force_delete' => 'Kategori Kalıcı Silme',
 ];

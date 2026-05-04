@@ -12,7 +12,7 @@
                 <div>
                     <h1 class="text-xl font-semibold">Galeri Düzenle</h1>
                     <div class="text-sm text-muted-foreground">
-                        ID: {{ $gallery->id }} • Slug: {{ $gallery->slug }}
+                        ID: {{ $gallery->id }} • Kısa bağlantı: {{ $gallery->slug }}
                     </div>
                 </div>
 
@@ -48,7 +48,7 @@
                     </div>
 
                     <div class="grid gap-2">
-                        <label class="text-sm font-medium">Slug</label>
+                        <label class="text-sm font-medium">Kısa Bağlantı</label>
                         <input type="text"
                                name="slug"
                                class="kt-input"
@@ -118,7 +118,7 @@
                     </div>
 
                     <div id="galleryItemsList" class="grid gap-3">
-                        {{-- JS basar --}}
+                        {{-- JS yönetir --}}
                     </div>
                 </div>
             </div>

@@ -31,8 +31,8 @@
 
             <div class="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                    <h1 class="text-xl font-semibold">Audit Log</h1>
-                    <div class="text-sm text-muted-foreground">Admin akışlarını, hataları ve sistem kayıtlarini tek ekrandan incele.</div>
+                    <h1 class="text-xl font-semibold">Sistem Kayıtları</h1>
+                    <div class="text-sm text-muted-foreground">Panel akışlarını, hataları ve sistem kayıtlarını tek ekrandan incele.</div>
                 </div>
             </div>
 
@@ -45,13 +45,13 @@
                 </div>
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Kullanıcı istegi</div>
+                        <div class="text-sm text-muted-foreground">Kullanıcı isteği</div>
                         <div class="mt-2 text-2xl font-semibold">{{ number_format((int) ($stats['user'] ?? 0)) }}</div>
                     </div>
                 </div>
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Sistem / CLI</div>
+                        <div class="text-sm text-muted-foreground">Sistem / Komut satırı</div>
                         <div class="mt-2 text-2xl font-semibold">{{ number_format((int) ($stats['system'] ?? 0)) }}</div>
                     </div>
                 </div>
@@ -63,7 +63,7 @@
                 </div>
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Yavas istek</div>
+                        <div class="text-sm text-muted-foreground">Yavaş istek</div>
                         <div class="mt-2 text-2xl font-semibold text-warning">{{ number_format((int) ($stats['slow'] ?? 0)) }}</div>
                     </div>
                 </div>
@@ -77,12 +77,12 @@
                             class="kt-input w-full"
                             name="q"
                             value="{{ $filters['q'] ?? '' }}"
-                            placeholder="Route, uri, kullanıcı veya IP ara..." />
+                            placeholder="Rota, adres, kullanıcı veya IP ara..." />
 
                         <div class="flex items-center gap-2 flex-wrap">
                             <a class="kt-btn kt-btn-sm {{ $mode === 'all' ? 'kt-btn-primary' : 'kt-btn-light' }}"
                                href="{{ request()->fullUrlWithQuery(['mode' => 'all', 'page' => 1]) }}">
-                                Tümu
+                                Tümü
                             </a>
                             <a class="kt-btn kt-btn-sm {{ $mode === 'user' ? 'kt-btn-primary' : 'kt-btn-light' }}"
                                href="{{ request()->fullUrlWithQuery(['mode' => 'user', 'page' => 1]) }}">
@@ -90,7 +90,7 @@
                             </a>
                             <a class="kt-btn kt-btn-sm {{ $mode === 'system' ? 'kt-btn-primary' : 'kt-btn-light' }}"
                                href="{{ request()->fullUrlWithQuery(['mode' => 'system', 'page' => 1]) }}">
-                                System / CLI
+                                Sistem / Komut satırı
                             </a>
                         </div>
 
@@ -108,7 +108,7 @@
                             @endforeach
                         </select>
 
-                        <input class="kt-input w-full" name="status" value="{{ $filters['status'] ?? '' }}" placeholder="Status" />
+                        <input class="kt-input w-full" name="status" value="{{ $filters['status'] ?? '' }}" placeholder="Durum kodu" />
 
                         <select class="kt-select w-full" name="perpage" data-kt-select="true">
                             @foreach([25, 50, 100, 200] as $size)
@@ -117,7 +117,7 @@
                         </select>
 
                         <button class="kt-btn kt-btn-primary" type="submit">Filtrele</button>
-                        <a class="kt-btn kt-btn-light" href="{{ route('admin.audit-logs.index') }}">Sifirla</a>
+                        <a class="kt-btn kt-btn-light" href="{{ route('admin.audit-logs.index') }}">Sıfırla</a>
                     </form>
 
                     @if(request()->query())
@@ -140,10 +140,10 @@
                                 <th>Zaman</th>
                                 <th>Kullanıcı</th>
                                 <th>Yöntem</th>
-                                <th>Status</th>
+                                <th>Durum</th>
                                 <th>İşlem</th>
-                                <th>Route</th>
-                                <th>URI</th>
+                                <th>Rota</th>
+                                <th>Adres</th>
                                 <th>IP</th>
                                 <th>Süre</th>
                             </tr>

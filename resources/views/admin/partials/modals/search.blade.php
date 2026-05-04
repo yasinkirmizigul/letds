@@ -28,7 +28,7 @@
         <div class="kt-modal-body admin-quick-search-modal__body">
             <div class="admin-quick-search-toolbar">
                 <div class="flex items-center gap-2">
-                    <span class="kt-badge kt-badge-sm kt-badge-light-primary">Quick Search</span>
+                    <span class="kt-badge kt-badge-sm kt-badge-light-primary">Hızlı Arama</span>
                     <span class="text-xs text-muted-foreground">En az 2 karakter yaz</span>
                 </div>
                 <div class="hidden items-center gap-1 text-xs text-muted-foreground sm:flex">
@@ -54,7 +54,7 @@
                 <i class="ki-filled ki-magnifier text-primary"></i>
                 <div>
                     <div class="font-semibold text-foreground">Aramaya başlamak için yaz</div>
-                    <div class="text-sm text-muted-foreground">Ürün SKU'su, sipariş numarası, müşteri e-postası, içerik başlığı veya panel sayfası yazabilirsin.</div>
+                    <div class="text-sm text-muted-foreground">Ürün kodu, sipariş numarası, müşteri e-postası, içerik başlığı veya panel sayfası yazabilirsin.</div>
                 </div>
             </div>
         </div>

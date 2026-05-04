@@ -350,7 +350,7 @@ class PaymentIntegrationController extends Controller
 
             if ($url !== '' && !str_starts_with(strtolower($url), 'https://')) {
                 throw ValidationException::withMessages([
-                    $field => 'Canlı ortamda dönüş URL alanları HTTPS ile başlamalıdır.',
+                    $field => 'Canlı ortamda dönüş bağlantıları HTTPS ile başlamalıdır.',
                 ]);
             }
         }
@@ -371,7 +371,7 @@ class PaymentIntegrationController extends Controller
         foreach ($entries as $entry) {
             if (!$this->isValidIpOrCidr((string) $entry)) {
                 throw ValidationException::withMessages([
-                    'webhook_ip_whitelist' => 'Webhook IP beyaz listesi yalnızca geçerli IP veya CIDR blokları içerebilir.',
+                    'webhook_ip_whitelist' => 'Ödeme bildirimi izinli IP listesi yalnızca geçerli IP veya CIDR blokları içerebilir.',
                 ]);
             }
         }

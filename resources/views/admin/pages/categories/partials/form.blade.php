@@ -20,7 +20,7 @@
     @include('admin.components.localized-content-tabs', [
         'moduleKey' => 'category',
         'title' => 'Kategori Dilleri',
-        'description' => 'Varsayılan dil ve ek diller için kategori adı, slug ve açıklama alanlarını sekmelerden yönetin.',
+        'description' => 'Varsayılan dil ve ek diller için kategori adı, kısa bağlantı ve açıklama alanlarını sekmelerden yönetin.',
         'urlBase' => url('/kategori'),
         'defaultValues' => [
             'name' => old('name', $category->name ?? ''),
@@ -30,7 +30,7 @@
         'storedTranslations' => $storedTranslations,
         'fields' => [
             ['name' => 'name', 'id' => 'cat_name', 'label' => 'Kategori Adı', 'placeholder' => 'Kategori adını yazın', 'slug_source' => true],
-            ['name' => 'slug', 'id' => 'cat_slug', 'type' => 'slug', 'label' => 'Slug'],
+            ['name' => 'slug', 'id' => 'cat_slug', 'type' => 'slug', 'label' => 'Kısa Bağlantı'],
             ['name' => 'description', 'type' => 'textarea', 'rows' => 4, 'label' => 'Açıklama'],
         ],
     ])

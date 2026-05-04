@@ -271,7 +271,7 @@
                     </div>
                 </div>
                 <div class="grid gap-2">
-                    <label class="kt-form-label" for="custom_fields_json">Ek Alanlar (JSON)</label>
+                    <label class="kt-form-label" for="custom_fields_json">Ek Alanlar (JSON formatı)</label>
                     <textarea id="custom_fields_json" name="custom_fields_json" rows="5" class="kt-textarea font-mono text-xs @error('custom_fields_json') kt-input-invalid @enderror" placeholder='{"crm_id":"123","teslimat_penceresi":"10:00-14:00"}'>{{ $customFieldsJson }}</textarea>
                     @error('custom_fields_json')<div class="text-xs text-danger">{{ $message }}</div>@enderror
                 </div>
@@ -416,7 +416,7 @@
                     @error('tracking_number')<div class="text-xs text-danger">{{ $message }}</div>@enderror
                 </div>
                 <div class="grid gap-2">
-                    <label class="kt-form-label" for="tracking_url">Takip URL</label>
+                    <label class="kt-form-label" for="tracking_url">Takip Bağlantısı</label>
                     <input id="tracking_url" name="tracking_url" class="kt-input @error('tracking_url') kt-input-invalid @enderror" value="{{ old('tracking_url', $order->tracking_url ?? '') }}">
                     @error('tracking_url')<div class="text-xs text-danger">{{ $message }}</div>@enderror
                 </div>

@@ -2,9 +2,9 @@ import initSlugManager from '@/core/slug-manager';
 import { initTinyEditor } from '../../blog/form-shared';
 
 function syncPreview(root) {
-    const title = root.querySelector('#title')?.value?.trim() || 'Meta baslik burada gorunecek';
+    const title = root.querySelector('#title')?.value?.trim() || 'Meta başlık burada görünecek';
     const slug = root.querySelector('#slug')?.value?.trim() || 'ornek-sayfa';
-    const excerpt = root.querySelector('#excerpt')?.value?.trim() || 'Meta aciklama burada gorunecek.';
+    const excerpt = root.querySelector('#excerpt')?.value?.trim() || 'Meta açıklama burada görünecek.';
     const metaTitle = root.querySelector('input[name="meta_title"]')?.value?.trim();
     const metaDescription = root.querySelector('textarea[name="meta_description"]')?.value?.trim();
 

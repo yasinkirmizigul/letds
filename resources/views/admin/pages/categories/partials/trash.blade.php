@@ -14,7 +14,7 @@
                     <thead>
                     <tr>
                         <th>Ad</th>
-                        <th>Slug</th>
+                        <th>Kısa Bağlantı</th>
                         <th>Üst</th>
                         <th>Silinme Tarihi</th>
                         <th></th>

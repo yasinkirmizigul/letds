@@ -357,7 +357,7 @@ function itemTooltip(item) {
 }
 
 function metronicItemTitle(item) {
-    return String(item.nodeTitle || item.shortTitle || item.status || item.label || item.name || item.title || 'Kayit');
+    return String(item.nodeTitle || item.shortTitle || item.status || item.label || item.name || item.title || 'Kayıt');
 }
 
 function metronicItemContent(item) {

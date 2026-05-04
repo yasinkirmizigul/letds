@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'ecommerce_orders.view' => 'Ecommerce Orders View',
-    'ecommerce_orders.create' => 'Ecommerce Orders Create',
-    'ecommerce_orders.update' => 'Ecommerce Orders Update',
-    'ecommerce_orders.delete' => 'Ecommerce Orders Delete',
-    'ecommerce_orders.payments' => 'Ecommerce Orders Payments',
-    'ecommerce_orders.shipments' => 'Ecommerce Orders Shipments',
+    'ecommerce_orders.view' => 'Siparişleri Görüntüleme',
+    'ecommerce_orders.create' => 'Sipariş Oluşturma',
+    'ecommerce_orders.update' => 'Sipariş Güncelleme',
+    'ecommerce_orders.delete' => 'Sipariş Silme',
+    'ecommerce_orders.payments' => 'Sipariş Ödemelerini Yönetme',
+    'ecommerce_orders.shipments' => 'Sipariş Kargolarını Yönetme',
 ];

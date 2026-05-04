@@ -13,39 +13,39 @@ class PermissionSeeder extends Seeder
         // slug => human name
         $permissions = [
             // Admin
-            'admin.access' => 'Admin Access',
+            'admin.access' => 'Panel Erişimi',
 
             // Users / Roles / Permissions
-            'users.view' => 'Users View',
-            'users.create' => 'Users Create',
-            'users.update' => 'Users Update',
-            'users.delete' => 'Users Delete',
+            'users.view' => 'Kullanıcıları Görüntüleme',
+            'users.create' => 'Kullanıcı Oluşturma',
+            'users.update' => 'Kullanıcı Güncelleme',
+            'users.delete' => 'Kullanıcı Silme',
 
-            'roles.view' => 'Roles View',
-            'roles.create' => 'Roles Create',
-            'roles.update' => 'Roles Update',
-            'roles.delete' => 'Roles Delete',
+            'roles.view' => 'Rolleri Görüntüleme',
+            'roles.create' => 'Rol Oluşturma',
+            'roles.update' => 'Rol Güncelleme',
+            'roles.delete' => 'Rol Silme',
 
-            'permissions.view' => 'Permissions View',
-            'permissions.create' => 'Permissions Create',
-            'permissions.update' => 'Permissions Update',
-            'permissions.delete' => 'Permissions Delete',
+            'permissions.view' => 'Yetkileri Görüntüleme',
+            'permissions.create' => 'Yetki Oluşturma',
+            'permissions.update' => 'Yetki Güncelleme',
+            'permissions.delete' => 'Yetki Silme',
 
             // Projects
-            'projects.view' => 'Projects View',
-            'projects.create' => 'Projects Create',
-            'projects.update' => 'Projects Update',
-            'projects.delete' => 'Projects Delete',
-            'projects.trash' => 'Projects Trash',
-            'projects.restore' => 'Projects Restore',
-            'projects.force_delete' => 'Projects Force Delete',
-            'projects.state_change' => 'Projects State Change',
+            'projects.view' => 'Projeleri Görüntüleme',
+            'projects.create' => 'Proje Oluşturma',
+            'projects.update' => 'Proje Güncelleme',
+            'projects.delete' => 'Proje Silme',
+            'projects.trash' => 'Proje Çöp Kutusu',
+            'projects.restore' => 'Proje Geri Yükleme',
+            'projects.force_delete' => 'Proje Kalıcı Silme',
+            'projects.state_change' => 'Proje Durumu Değiştirme',
         ];
 
         // Optional: extra permissions per module.
         // Supported formats (each module file should return array):
         // 1) ['blog.view', 'blog.create', ...]  -> name auto-generated
-        // 2) ['blog.view' => 'Blog View', ...]  -> explicit names
+        // 2) ['blog.view' => 'Yazıları Görüntüleme', ...]  -> explicit names
         $modulesDir = database_path('seeders/permissions/modules');
         if (is_dir($modulesDir)) {
             foreach (glob($modulesDir . '/*.php') as $f) {

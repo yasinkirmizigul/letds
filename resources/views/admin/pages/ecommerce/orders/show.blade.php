@@ -117,7 +117,7 @@
                                                         <a href="{{ route('admin.products.edit', $item->product) }}" class="kt-badge kt-badge-sm kt-badge-light-primary">Ürün #{{ $item->product_id }}</a>
                                                     @endif
                                                     @if($item->sku)
-                                                        <span class="kt-badge kt-badge-sm kt-badge-light">SKU: {{ $item->sku }}</span>
+                                                        <span class="kt-badge kt-badge-sm kt-badge-light">Ürün kodu: {{ $item->sku }}</span>
                                                     @endif
                                                     @if($item->brand)
                                                         <span class="kt-badge kt-badge-sm kt-badge-light">{{ $item->brand }}</span>
@@ -143,7 +143,7 @@
                         <div class="kt-card-header py-5">
                             <div>
                                 <h3 class="kt-card-title">Ödeme Hareketleri</h3>
-                                <div class="text-sm text-muted-foreground">Gateway, havale veya manuel tahsilat kayıtları.</div>
+                                <div class="text-sm text-muted-foreground">Ödeme sağlayıcı, havale veya manuel tahsilat kayıtları.</div>
                             </div>
                         </div>
                         <div class="kt-card-content p-6 grid gap-4">
@@ -192,7 +192,7 @@
                                         @endforeach
                                     </select>
                                     <div class="grid gap-4 md:grid-cols-2">
-                                        <input name="gateway_transaction_id" class="kt-input" placeholder="Gateway işlem ID">
+                                        <input name="gateway_transaction_id" class="kt-input" placeholder="Sağlayıcı işlem no">
                                         <input name="gateway_reference" class="kt-input" placeholder="Referans">
                                     </div>
                                     <input name="processed_at" class="kt-input" data-app-date-picker="true" data-app-date-mode="datetime" data-initial-value="{{ now()->format('Y-m-d H:i') }}" placeholder="İşlem tarihi">
@@ -246,7 +246,7 @@
                                         <input name="package_count" type="number" min="1" class="kt-input" value="1" placeholder="Paket">
                                     </div>
                                     <input name="tracking_number" class="kt-input" value="{{ $order->tracking_number }}" placeholder="Takip numarası">
-                                    <input name="tracking_url" class="kt-input" value="{{ $order->tracking_url }}" placeholder="Takip URL">
+                                    <input name="tracking_url" class="kt-input" value="{{ $order->tracking_url }}" placeholder="Takip bağlantısı">
                                     <div class="grid gap-4 md:grid-cols-2">
                                         <input name="shipped_at" class="kt-input" data-app-date-picker="true" data-app-date-mode="datetime" data-initial-value="{{ now()->format('Y-m-d H:i') }}" placeholder="Kargo tarihi">
                                         <input name="delivered_at" class="kt-input" data-app-date-picker="true" data-app-date-mode="datetime" placeholder="Teslim tarihi">

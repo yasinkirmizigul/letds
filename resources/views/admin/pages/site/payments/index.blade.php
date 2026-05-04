@@ -43,13 +43,14 @@
 
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             @foreach($providerDefinitions as $providerKey => $definition)
+                @php($integrationTypeLabel = \App\Support\Site\PaymentProviderRegistry::integrationTypeLabel($definition['integration_type'] ?? 'payment_gateway'))
                 <a href="{{ route('admin.site.payments.create', ['provider' => $providerKey]) }}" class="rounded-[28px] app-surface-card p-5 transition hover:-translate-y-0.5">
                     <div class="flex items-start justify-between gap-3">
                         <div>
                             <div class="text-lg font-semibold text-foreground">{{ $definition['label'] ?? $providerKey }}</div>
                             <div class="mt-2 text-sm leading-7 text-muted-foreground">{{ $definition['description'] ?? '' }}</div>
                         </div>
-                        <span class="kt-badge kt-badge-sm kt-badge-light">{{ $definition['integration_type'] ?? 'payment_gateway' }}</span>
+                        <span class="kt-badge kt-badge-sm kt-badge-light">{{ $integrationTypeLabel }}</span>
                     </div>
                     <div class="mt-4 text-xs uppercase tracking-[0.22em] text-primary">Hazır Şablon ile Başlat</div>
                 </a>

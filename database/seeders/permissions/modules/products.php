@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'products.view' => 'Products View',
-    'products.trash' => 'Products Trash',
-    'products.create' => 'Products Create',
-    'products.update' => 'Products Update',
-    'products.delete' => 'Products Delete',
-    'products.restore' => 'Products Restore',
-    'products.force_delete' => 'Products Force Delete',
-    'products.state_change' => 'Products State Change',
+    'products.view' => 'Ürünleri Görüntüleme',
+    'products.trash' => 'Ürün Çöp Kutusu',
+    'products.create' => 'Ürün Oluşturma',
+    'products.update' => 'Ürün Güncelleme',
+    'products.delete' => 'Ürün Silme',
+    'products.restore' => 'Ürün Geri Yükleme',
+    'products.force_delete' => 'Ürün Kalıcı Silme',
+    'products.state_change' => 'Ürün Durumu Değiştirme',
 ];

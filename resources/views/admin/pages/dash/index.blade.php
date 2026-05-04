@@ -30,7 +30,7 @@
         <div class="grid gap-5 lg:gap-7.5">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                    <h1 class="text-xl font-semibold text-foreground">Dashboard</h1>
+                    <h1 class="text-xl font-semibold text-foreground">Kontrol Paneli</h1>
                     <div class="text-sm text-muted-foreground">
                         Panelde hangi blokların görüneceğini buradan yönetebilirsin.
                     </div>
@@ -38,7 +38,7 @@
 
                 <a href="{{ route('admin.dashboard.manage') }}" class="kt-btn kt-btn-light">
                     <i class="ki-filled ki-setting-2"></i>
-                    Dashboard yönetimi
+                    Kontrol paneli yönetimi
                 </a>
             </div>
 
@@ -48,13 +48,13 @@
                         <div class="mx-auto inline-flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">
                             <i class="ki-filled ki-setting-2 text-2xl"></i>
                         </div>
-                        <h2 class="mt-5 text-lg font-semibold text-foreground">Tüm dashboard blokları gizlenmiş durumda</h2>
+                        <h2 class="mt-5 text-lg font-semibold text-foreground">Tüm kontrol paneli blokları gizlenmiş durumda</h2>
                         <p class="mx-auto mt-3 max-w-[60ch] text-sm leading-6 text-muted-foreground">
-                            İstersen dashboard yönetimi ekranından blokları tekrar açabilir veya varsayılan düzene geri dönebilirsin.
+                            Kontrol paneli yönetimi ekranından blokları tekrar açabilir veya varsayılan düzene geri dönebilirsin.
                         </p>
                         <div class="mt-6">
                             <a href="{{ route('admin.dashboard.manage') }}" class="kt-btn kt-btn-primary">
-                                Dashboard bloklarını yönet
+                                Kontrol paneli bloklarını yönet
                             </a>
                         </div>
                     </div>
@@ -371,7 +371,7 @@
                             </div>
                         </div>
                         <a href="{{ route('admin.audit-logs.index') }}" class="kt-btn kt-btn-sm kt-btn-light">
-                            Tüm loglar
+                            Tüm sistem kayıtları
                         </a>
                     </div>
                     <div class="kt-card-content p-0">

@@ -3,13 +3,13 @@
 // Example module permissions.
 // Return either:
 // 1) ['blog.view', 'blog.create', ...] OR
-// 2) ['blog.view' => 'Blog View', ...]
+// 2) ['blog.view' => 'Yazıları Görüntüleme', ...]
 return [
-    'blog.view'   => 'Blog View',
-    'blog.trash' => 'Blog Trash',
-    'blog.create' => 'Blog Create',
-    'blog.update' => 'Blog Update',
-    'blog.delete' => 'Blog Delete',
-    'blog.restore' => 'Blog Restore',
-    'blog.force_delete' => 'Blog Force Delete',
+    'blog.view'   => 'Yazıları Görüntüleme',
+    'blog.trash' => 'Yazı Çöp Kutusu',
+    'blog.create' => 'Yazı Oluşturma',
+    'blog.update' => 'Yazı Güncelleme',
+    'blog.delete' => 'Yazı Silme',
+    'blog.restore' => 'Yazı Geri Yükleme',
+    'blog.force_delete' => 'Yazı Kalıcı Silme',
 ];

@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'galleries.view' => 'Galleries View',
-    'galleries.trash' => 'Galleries Trash',
-    'galleries.create' => 'Galleries Create',
-    'galleries.update' => 'Galleries Update',
-    'galleries.delete' => 'Galleries Delete',
-    'galleries.restore' => 'Galleries Restore',
-    'galleries.force_delete' => 'Galleries Force Delete',
+    'galleries.view' => 'Galerileri Görüntüleme',
+    'galleries.trash' => 'Galeri Çöp Kutusu',
+    'galleries.create' => 'Galeri Oluşturma',
+    'galleries.update' => 'Galeri Güncelleme',
+    'galleries.delete' => 'Galeri Silme',
+    'galleries.restore' => 'Galeri Geri Yükleme',
+    'galleries.force_delete' => 'Galeri Kalıcı Silme',
 ];

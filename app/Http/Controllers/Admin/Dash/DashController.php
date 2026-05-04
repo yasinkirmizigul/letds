@@ -569,8 +569,8 @@ class DashController extends Controller
             : collect();
 
         return view('admin.pages.dash.index', [
-            'pageTitle' => 'Dashboard',
-            'pageDescription' => 'Admin Dashboard',
+            'pageTitle' => 'Kontrol Paneli',
+            'pageDescription' => 'Yönetim merkezi',
             'greeting' => $this->greetingForHour((int) $now->format('H')),
             'heroSummary' => $this->heroSummary($user, $appointmentsToday, $messageStats['unread'], $productStats['lowStock'], $trashTotal),
             'quickActions' => $quickActions,
@@ -628,8 +628,8 @@ class DashController extends Controller
         $groupedSections = $orderedDashboardSections->groupBy('group');
 
         return view('admin.pages.dash.manage', [
-            'pageTitle' => 'Dashboard Yönetimi',
-            'pageDescription' => 'Dashboard Yönetimi',
+            'pageTitle' => 'Kontrol Paneli Yönetimi',
+            'pageDescription' => 'Kontrol paneli yönetimi',
             'dashboardSectionGroups' => $groupedSections,
             'orderedDashboardSections' => $orderedDashboardSections,
             'dashboardSectionVisibility' => $dashboardSectionVisibility,
@@ -675,7 +675,7 @@ class DashController extends Controller
 
             return redirect()
                 ->route('admin.dashboard.manage')
-                ->with('success', 'Dashboard görünümü varsayılan ayarlara döndürüldü.');
+                ->with('success', 'Kontrol paneli görünümü varsayılan ayarlara döndürüldü.');
         }
 
         $selectedKeys = collect($validated['visible_sections'] ?? [])
@@ -716,7 +716,7 @@ class DashController extends Controller
 
         return redirect()
             ->route('admin.dashboard.manage')
-            ->with('success', 'Dashboard görünürlüğü ve sırası güncellendi.');
+            ->with('success', 'Kontrol paneli görünürlüğü ve sırası güncellendi.');
     }
 
     private function can(?User $user, string $permission): bool

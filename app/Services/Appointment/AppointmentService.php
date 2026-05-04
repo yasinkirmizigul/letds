@@ -39,7 +39,7 @@ class AppointmentService
                 $startAt,
                 $endAt,
                 null,
-                'Seçilen zaman aralığı provider blokajı ile çakışıyor. Randevu oluşturulamaz.'
+                'Seçilen zaman aralığı hizmet veren kişinin blokajı ile çakışıyor. Randevu oluşturulamaz.'
             );
 
             $this->availabilityService->assertProviderAvailable(
@@ -87,7 +87,7 @@ class AppointmentService
                 $newStartAt,
                 $newEndAt,
                 null,
-                'Seçilen yeni zaman aralığı provider blokajı ile çakışıyor. Randevu taşınamaz.'
+                'Seçilen yeni zaman aralığı hizmet veren kişinin blokajı ile çakışıyor. Randevu taşınamaz.'
             );
 
             $this->availabilityService->assertProviderAvailable(
@@ -141,7 +141,7 @@ class AppointmentService
                 $startAt,
                 $endAt,
                 null,
-                'Yeni süre provider blokajı ile çakışıyor. Randevu süresi güncellenemez.'
+                'Yeni süre hizmet veren kişinin blokajı ile çakışıyor. Randevu süresi güncellenemez.'
             );
 
             $this->availabilityService->assertProviderAvailable(
@@ -264,7 +264,7 @@ class AppointmentService
                 $newStartAt,
                 $newEndAt,
                 null,
-                'Seçilen yeni zaman aralığı provider blokajı ile çakışıyor. Randevu yeniden planlanamaz.'
+                'Seçilen yeni zaman aralığı hizmet veren kişinin blokajı ile çakışıyor. Randevu yeniden planlanamaz.'
             );
 
             $this->availabilityService->assertProviderAvailable(

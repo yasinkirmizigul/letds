@@ -57,7 +57,7 @@
                                 data-kt-select="true"
                                 data-kt-select-placeholder="Medya Tipi"
                                 data-kt-select-config='{"optionsClass":"kt-scrollable overflow-auto max-h-[250px]"}'>
-                            <option value="">Tümu</option>
+                            <option value="">Tümü</option>
                             <option value="image">Görsel</option>
                             <option value="video">Video</option>
                             <option value="pdf">PDF</option>

@@ -16,7 +16,7 @@
                 <div class="kt-menu-item" data-kt-menu-item-offset="0, 10px" data-kt-menu-item-placement="bottom-start"
                     data-kt-menu-item-toggle="dropdown" data-kt-menu-item-trigger="hover">
                     <button class="kt-menu-toggle font-medium text-mono">
-                        Account
+                        Hesap
                         <span class="kt-menu-arrow">
                             <i class="ki-filled ki-down">
                             </i>
@@ -31,7 +31,7 @@
                                     </i>
                                 </span>
                                 <span class="kt-menu-title">
-                                    Public Profile
+                                    Genel Profil
                                 </span>
                             </a>
                         </div>
@@ -42,7 +42,7 @@
                                     </i>
                                 </span>
                                 <span class="kt-menu-title">
-                                    Account
+                                    Hesap
                                 </span>
                             </a>
                         </div>
@@ -53,7 +53,7 @@
                                     </i>
                                 </span>
                                 <span class="kt-menu-title">
-                                    Network
+                                    Ağ
                                 </span>
                             </a>
                         </div>
@@ -64,7 +64,7 @@
                                     </i>
                                 </span>
                                 <span class="kt-menu-title">
-                                    Authentication
+                                    Kimlik Doğrulama
                                 </span>
                             </a>
                         </div>
@@ -75,7 +75,7 @@
                                     </i>
                                 </span>
                                 <span class="kt-menu-title">
-                                    Store - Client
+                                    Mağaza - Müşteri
                                 </span>
                             </a>
                         </div>
