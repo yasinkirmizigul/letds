@@ -24,6 +24,8 @@ class AdminSeeder extends Seeder
             'roles.view','roles.create','roles.update','roles.delete',
             'permissions.view','permissions.create','permissions.update','permissions.delete',
             'members.view','members.update','members.delete',
+            'ecommerce_orders.view','ecommerce_orders.create','ecommerce_orders.update','ecommerce_orders.delete',
+            'ecommerce_orders.payments','ecommerce_orders.shipments',
             'site_payments.view','site_payments.create','site_payments.update','site_payments.delete',
         ])->pluck('id')->all();
 

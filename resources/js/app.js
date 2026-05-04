@@ -12,6 +12,7 @@ import { initMediaUploadModal } from './core/media-upload-modal';
 import initFeaturedImageManager from '@/core/featured-image-manager';
 import initCreateFormAccordions from '@/core/create-form-accordion';
 import initAjaxForms from '@/core/ajax-forms';
+import initAdminQuickSearch from '@/core/admin-quick-search';
 import './site/auth/member-register';
 
 window.Swal = Swal;
@@ -21,6 +22,7 @@ initMediaPicker();
 initMediaUploadModal();
 initFeaturedImageManager();
 initAjaxForms();
+initAdminQuickSearch();
 // Global: Media modal tab switch (upload/library)
 // Yeni dosya yok, sayfa bağımsız çalışır.
 document.addEventListener('click', (e) => {

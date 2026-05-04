@@ -58,6 +58,7 @@ import SiteSettingsEdit from './site/settings/edit';
 import SiteSlidersCreate from './site/sliders/create';
 import SiteSlidersEdit from './site/sliders/edit';
 import SiteSlidersIndex from './site/sliders/index';
+import EcommerceOrderForm from './ecommerce/orders/form';
 
 
 export function registerPages() {
@@ -121,4 +122,7 @@ export function registerPages() {
     register('site.sliders.index', SiteSlidersIndex);
     register('site.sliders.create', SiteSlidersCreate);
     register('site.sliders.edit', SiteSlidersEdit);
+
+    register('ecommerce.orders.create', EcommerceOrderForm);
+    register('ecommerce.orders.edit', EcommerceOrderForm);
 }

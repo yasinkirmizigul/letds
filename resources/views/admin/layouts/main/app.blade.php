@@ -59,6 +59,7 @@
 
 {{-- Media picker modal (global) --}}
 @include('admin.partials.media._picker-modal')
+@include('admin.partials.modals.search')
 
 {{-- NOT: Bunu uzun vadede Vite'a taşımalısın (resources/js/admin/...) --}}
 @include('admin.layouts.partials.scripts')

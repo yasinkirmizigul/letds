@@ -2,7 +2,7 @@
 <header class="kt-header fixed end-0 start-0 top-0 z-10 flex shrink-0 items-stretch bg-background" data-kt-sticky="true"
     data-kt-sticky-class="border-b border-border" data-kt-sticky-name="header" id="header">
     <!-- Container -->
-    <div class="flex items-stretch justify-end kt-container-fixed lg:gap-2 max-w-[90%]" id="headerContainer">
+    <div class="flex items-center justify-between kt-container-fixed gap-3 max-w-[90%]" id="headerContainer">
         <!-- Mobile Logo -->
         <div class="-ms-1 flex items-center gap-2.5 lg:hidden">
             {{--<a class="shrink-0" href="#">
@@ -15,8 +15,23 @@
                 </button>
             </div>
         </div>
+        <div class="flex min-w-0 flex-1 items-center justify-center px-2 lg:justify-start lg:px-4">
+            <button
+                type="button"
+                class="admin-quick-search-trigger"
+                data-quick-search-open
+                aria-controls="search_modal"
+            >
+                <span class="admin-quick-search-trigger__icon">
+                    <i class="ki-filled ki-magnifier"></i>
+                </span>
+                <span class="admin-quick-search-trigger__label">Panelde ara</span>
+                <span class="admin-quick-search-trigger__hint">Ctrl K</span>
+            </button>
+        </div>
+
         <!-- Topbar -->
-        <div class="flex items-center gap-2.5">
+        <div class="flex shrink-0 items-center gap-2.5">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit"
