@@ -10,12 +10,12 @@ class PermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        // slug => human name
+        // Yetki anahtarı => kullanıcıya görünen ad
         $permissions = [
-            // Admin
+            // Panel
             'admin.access' => 'Panel Erişimi',
 
-            // Users / Roles / Permissions
+            // Kullanıcılar / Roller / Yetkiler
             'users.view' => 'Kullanıcıları Görüntüleme',
             'users.create' => 'Kullanıcı Oluşturma',
             'users.update' => 'Kullanıcı Güncelleme',
@@ -31,7 +31,7 @@ class PermissionSeeder extends Seeder
             'permissions.update' => 'Yetki Güncelleme',
             'permissions.delete' => 'Yetki Silme',
 
-            // Projects
+            // Projeler
             'projects.view' => 'Projeleri Görüntüleme',
             'projects.create' => 'Proje Oluşturma',
             'projects.update' => 'Proje Güncelleme',
@@ -42,10 +42,10 @@ class PermissionSeeder extends Seeder
             'projects.state_change' => 'Proje Durumu Değiştirme',
         ];
 
-        // Optional: extra permissions per module.
-        // Supported formats (each module file should return array):
-        // 1) ['blog.view', 'blog.create', ...]  -> name auto-generated
-        // 2) ['blog.view' => 'Yazıları Görüntüleme', ...]  -> explicit names
+        // İsteğe bağlı: modül bazlı ek yetkiler.
+        // Desteklenen biçimler (her modül dosyası array döndürür):
+        // 1) ['blog.view', 'blog.create', ...]  -> ad otomatik üretilir
+        // 2) ['blog.view' => 'Yazıları Görüntüleme', ...]  -> açık adlar kullanılır
         $modulesDir = database_path('seeders/permissions/modules');
         if (is_dir($modulesDir)) {
             foreach (glob($modulesDir . '/*.php') as $f) {
@@ -57,18 +57,18 @@ class PermissionSeeder extends Seeder
 
                 foreach ($extra as $k => $v) {
                     if (is_int($k)) {
-                        // list of slugs
+                        // Yetki anahtarı listesi
                         $slug = (string) $v;
                         $permissions[$slug] = $permissions[$slug] ?? $this->defaultNameFromSlug($slug);
                     } else {
-                        // slug => name
+                        // Yetki anahtarı => ad
                         $permissions[(string) $k] = (string) $v;
                     }
                 }
             }
         }
 
-        // Upsert (idempotent)
+        // Tekrarlanabilir güncelleme
         foreach ($permissions as $slug => $name) {
             Permission::updateOrCreate(
                 ['slug' => $slug],
@@ -78,13 +78,13 @@ class PermissionSeeder extends Seeder
 
         Rbac::bumpVersion();
 
-        $this->command?->info('PermissionSeeder: permissions upserted (' . count($permissions) . ').');
+        $this->command?->info('PermissionSeeder: yetkiler güncellendi (' . count($permissions) . ').');
     }
 
     private function defaultNameFromSlug(string $slug): string
     {
         $slug = trim($slug);
-        if ($slug === '') return 'Permission';
+        if ($slug === '') return 'Yetki';
 
         $parts = preg_split('/[._-]+/', $slug) ?: [$slug];
         $parts = array_map(fn ($p) => ucfirst(strtolower($p)), $parts);

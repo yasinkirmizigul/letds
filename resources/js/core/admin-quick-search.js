@@ -120,7 +120,7 @@ function initAdminQuickSearch() {
         error?.classList.add('hidden');
 
         if (groups.length === 0 || Number(payload?.total || 0) === 0) {
-            showEmpty('Sonuç bulunamadı', 'Başka bir anahtar kelime, SKU, e-posta veya sipariş numarası deneyin.');
+            showEmpty('Sonuç bulunamadı', 'Başka bir anahtar kelime, ürün kodu, e-posta veya sipariş numarası deneyin.');
             return;
         }
 
