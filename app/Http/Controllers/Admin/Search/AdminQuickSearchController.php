@@ -3,12 +3,17 @@
 namespace App\Http\Controllers\Admin\Search;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin\AdminNotification;
+use App\Models\Admin\Ecommerce\EcommerceCoupon;
+use App\Models\Admin\Ecommerce\EcommerceInvoice;
 use App\Models\Admin\BlogPost\BlogPost;
 use App\Models\Admin\Category;
 use App\Models\Admin\Ecommerce\EcommerceOrder;
+use App\Models\Admin\Ecommerce\PaymentWebhookEvent;
 use App\Models\Admin\Gallery\Gallery;
 use App\Models\Admin\Media\Media;
 use App\Models\Admin\Product\Product;
+use App\Models\Admin\Product\ProductVariant;
 use App\Models\Admin\Project\Project;
 use App\Models\Admin\User\User;
 use App\Models\Appointment\Appointment;
@@ -54,10 +59,15 @@ class AdminQuickSearchController extends Controller
             $this->shortcut($user, 'Sipariş Yönetimi', 'E-ticaret siparişleri, ödeme ve kargo akışı', 'admin.ecommerce.orders.index', 'ki-filled ki-basket', 'ecommerce_orders.view'),
             $this->shortcut($user, 'Yeni Sipariş', 'Panelden manuel sipariş oluştur', 'admin.ecommerce.orders.create', 'ki-filled ki-plus', 'ecommerce_orders.create'),
             $this->shortcut($user, 'Ürün Yönetimi', 'Ürün kodu, fiyat, stok ve galeri yönetimi', 'admin.products.index', 'ki-filled ki-handcart', 'products.view'),
-            $this->shortcut($user, 'Mesajlar', 'Panel kullanıcılarına gelen iletişim mesajları', 'admin.messages.index', 'ki-filled ki-messages', null, ['admin']),
+            $this->shortcut($user, 'Stok ve Varyantlar', 'SKU, varyant ve stok hareket defteri', 'admin.ecommerce.inventory.index', 'ki-filled ki-delivery-3', 'ecommerce_inventory.view'),
+            $this->shortcut($user, 'Kupon ve Kampanyalar', 'İndirim kuponları ve kampanya kuralları', 'admin.ecommerce.coupons.index', 'ki-filled ki-discount', 'ecommerce_coupons.view'),
+            $this->shortcut($user, 'Fatura ve Belgeler', 'Siparişe bağlı fatura ve belge kayıtları', 'admin.ecommerce.invoices.index', 'ki-filled ki-notepad', 'ecommerce_invoices.view'),
+            $this->shortcut($user, 'Mesaj ve Talepler', 'Panel kullanıcılarına gelen iletişim mesajları', 'admin.messages.index', 'ki-filled ki-messages', 'messages.view'),
+            $this->shortcut($user, 'Bildirim Merkezi', 'Mesaj, randevu, stok ve sipariş bildirimleri', 'admin.notifications.index', 'ki-filled ki-notification-status', 'notifications.view'),
             $this->shortcut($user, 'Randevu Takvimi', 'Takvim ve randevu operasyonu', 'admin.appointments.calendar', 'ki-filled ki-calendar-8', 'appointments.view'),
             $this->shortcut($user, 'Site Ayarları', 'SMTP, SEO dosyaları ve genel site ayarları', 'admin.site.settings.edit', 'ki-filled ki-setting-2', 'site_settings.view'),
             $this->shortcut($user, 'Ödeme Entegrasyonları', 'Sanal POS ve ödeme sağlayıcıları', 'admin.site.payments.index', 'ki-filled ki-two-credit-cart', 'site_payments.view'),
+            $this->shortcut($user, 'Webhook Kayıtları', 'Ödeme sağlayıcılarından gelen olay kayıtları', 'admin.ecommerce.webhooks.index', 'ki-filled ki-data', 'ecommerce_webhooks.view'),
         ];
 
         return [[
@@ -79,10 +89,12 @@ class AdminQuickSearchController extends Controller
             $this->productsGroup($user, $query, $limit),
             $this->contentGroup($user, $query, $limit),
             $this->peopleGroup($user, $query, $limit),
+            $this->commerceOperationsGroup($user, $query, $limit),
             $this->commerceSettingsGroup($user, $query, $limit),
             $this->libraryGroup($user, $query, $limit),
             $this->appointmentsGroup($user, $query, $limit),
             $this->messagesGroup($user, $query, $limit),
+            $this->notificationsGroup($user, $query, $limit),
         ];
 
         return array_values(array_filter($groups, fn (?array $group) => $group && count($group['items'] ?? []) > 0));
@@ -267,6 +279,110 @@ class AdminQuickSearchController extends Controller
         return $this->group('people', 'Kişiler', collect($items)->take($limit * 2)->values()->all());
     }
 
+    private function commerceOperationsGroup(User $user, string $query, int $limit): ?array
+    {
+        $items = [];
+
+        if ($this->can($user, 'ecommerce_inventory.view') && $this->hasTable('product_variants')) {
+            $like = $this->like($query);
+            $items = array_merge($items, ProductVariant::query()
+                ->with('product:id,title,sku')
+                ->where(function (Builder $builder) use ($like) {
+                    $builder
+                        ->where('title', 'like', $like)
+                        ->orWhere('sku', 'like', $like)
+                        ->orWhere('barcode', 'like', $like)
+                        ->orWhereHas('product', fn (Builder $productQuery) => $productQuery
+                            ->where('title', 'like', $like)
+                            ->orWhere('sku', 'like', $like));
+                })
+                ->latest('updated_at')
+                ->limit($limit)
+                ->get()
+                ->map(fn (ProductVariant $variant) => [
+                    'title' => ($variant->product?->title ?: 'Ürün') . ' / ' . $variant->title,
+                    'subtitle' => $variant->displaySku() . ' · Stok: ' . (is_null($variant->stock) ? 'Takip edilmiyor' : number_format((float) $variant->stock, 3, ',', '.')),
+                    'url' => route('admin.ecommerce.inventory.index', ['q' => $variant->sku ?: $variant->title]),
+                    'icon' => 'ki-filled ki-delivery-3',
+                    'badge' => 'Varyant',
+                    'badge_class' => 'kt-badge kt-badge-sm kt-badge-light-primary',
+                ])
+                ->all());
+        }
+
+        if ($this->can($user, 'ecommerce_coupons.view') && $this->hasTable('ecommerce_coupons')) {
+            $items = array_merge($items, EcommerceCoupon::query()
+                ->search($query)
+                ->latest('updated_at')
+                ->limit($limit)
+                ->get()
+                ->map(fn (EcommerceCoupon $coupon) => [
+                    'title' => $coupon->code . ' · ' . $coupon->name,
+                    'subtitle' => $coupon->typeLabel() . ' · Kullanım: ' . $coupon->usage_count . ($coupon->usage_limit ? ' / ' . $coupon->usage_limit : ''),
+                    'url' => $this->can($user, 'ecommerce_coupons.update') ? route('admin.ecommerce.coupons.edit', $coupon) : route('admin.ecommerce.coupons.index', ['q' => $query]),
+                    'icon' => 'ki-filled ki-discount',
+                    'badge' => $coupon->statusLabel(),
+                    'badge_class' => $coupon->statusBadgeClass(),
+                ])
+                ->all());
+        }
+
+        if ($this->can($user, 'ecommerce_invoices.view') && $this->hasTable('ecommerce_invoices')) {
+            $like = $this->like($query);
+            $statusOptions = EcommerceInvoice::statusOptions();
+            $items = array_merge($items, EcommerceInvoice::query()
+                ->with('order:id,order_number,customer_name,customer_email')
+                ->where(function (Builder $builder) use ($like) {
+                    $builder
+                        ->where('invoice_number', 'like', $like)
+                        ->orWhereHas('order', fn (Builder $orderQuery) => $orderQuery
+                            ->where('order_number', 'like', $like)
+                            ->orWhere('customer_name', 'like', $like)
+                            ->orWhere('customer_email', 'like', $like));
+                })
+                ->latest('updated_at')
+                ->limit($limit)
+                ->get()
+                ->map(fn (EcommerceInvoice $invoice) => [
+                    'title' => $invoice->invoice_number,
+                    'subtitle' => trim(($invoice->order?->order_number ?: 'Sipariş yok') . ' · ' . ($invoice->order?->customer_name ?: '-') . ' · ' . $invoice->money()),
+                    'url' => route('admin.ecommerce.invoices.index', ['q' => $invoice->invoice_number]),
+                    'icon' => 'ki-filled ki-notepad',
+                    'badge' => $statusOptions[$invoice->status] ?? $invoice->status,
+                    'badge_class' => 'kt-badge kt-badge-sm kt-badge-light-primary',
+                ])
+                ->all());
+        }
+
+        if ($this->can($user, 'ecommerce_webhooks.view') && $this->hasTable('payment_webhook_events')) {
+            $like = $this->like($query);
+            $items = array_merge($items, PaymentWebhookEvent::query()
+                ->where(function (Builder $builder) use ($like) {
+                    $builder
+                        ->where('provider', 'like', $like)
+                        ->orWhere('event_type', 'like', $like)
+                        ->orWhere('event_id', 'like', $like)
+                        ->orWhere('error_message', 'like', $like);
+                })
+                ->latest('received_at')
+                ->limit($limit)
+                ->get()
+                ->map(fn (PaymentWebhookEvent $event) => [
+                    'title' => $event->provider . ' · ' . ($event->event_type ?: 'Webhook'),
+                    'subtitle' => $event->event_id ?: ($event->error_message ?: 'Olay kaydı'),
+                    'url' => route('admin.ecommerce.webhooks.index', ['provider' => $event->provider]),
+                    'icon' => 'ki-filled ki-data',
+                    'badge' => PaymentWebhookEvent::statusOptions()[$event->status] ?? $event->status,
+                    'badge_class' => $event->status === PaymentWebhookEvent::STATUS_FAILED
+                        ? 'kt-badge kt-badge-sm kt-badge-light-danger'
+                        : 'kt-badge kt-badge-sm kt-badge-light',
+                ])
+                ->all());
+        }
+
+        return $this->group('commerce-operations', 'Operasyon Kayıtları', collect($items)->take($limit * 3)->values()->all());
+    }
+
     private function commerceSettingsGroup(User $user, string $query, int $limit): ?array
     {
         $items = [];
@@ -435,6 +551,37 @@ class AdminQuickSearchController extends Controller
             ->all();
 
         return $this->group('messages', 'Mesajlar', $items);
+    }
+
+    private function notificationsGroup(User $user, string $query, int $limit): ?array
+    {
+        if (!$this->can($user, 'notifications.view') || !$this->hasTable('admin_notifications')) {
+            return null;
+        }
+
+        $like = $this->like($query);
+        $items = AdminNotification::query()
+            ->visibleTo($user)
+            ->where(function (Builder $builder) use ($like) {
+                $builder
+                    ->where('title', 'like', $like)
+                    ->orWhere('body', 'like', $like)
+                    ->orWhere('type', 'like', $like);
+            })
+            ->latest()
+            ->limit($limit)
+            ->get()
+            ->map(fn (AdminNotification $notification) => [
+                'title' => (string) $notification->title,
+                'subtitle' => Str::limit(strip_tags((string) $notification->body), 92),
+                'url' => $notification->action_url ?: route('admin.notifications.index'),
+                'icon' => $notification->iconClass(),
+                'badge' => $notification->severityLabel(),
+                'badge_class' => $notification->severityBadgeClass(),
+            ])
+            ->all();
+
+        return $this->group('notifications', 'Bildirimler', $items);
     }
 
     private function shortcut(User $user, string $title, string $subtitle, string $route, string $icon, ?string $permission = null, array $roles = []): ?array

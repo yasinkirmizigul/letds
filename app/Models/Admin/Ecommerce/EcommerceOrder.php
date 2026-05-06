@@ -262,6 +262,11 @@ class EcommerceOrder extends Model
         return $this->hasMany(EcommerceOrderStatusHistory::class, 'order_id')->latest();
     }
 
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(EcommerceInvoice::class, 'order_id')->latest();
+    }
+
     public function createdByHistories(): HasMany
     {
         return $this->hasMany(EcommerceOrderStatusHistory::class, 'order_id')->whereNotNull('user_id');

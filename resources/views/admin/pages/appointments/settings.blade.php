@@ -252,13 +252,7 @@
                                             placeholder="GG.AA.YYYY SS:DD"
                                             data-app-date-picker="true"
                                             data-app-date-mode="datetime"
-                                            data-kt-date-picker="true"
-                                            data-kt-date-picker-input-mode="true"
-                                            data-kt-date-picker-position-to-input="left"
-                                            data-kt-date-picker-selection-time-mode="24"
-                                            data-kt-date-picker-locale="tr-TR"
-                                            data-kt-date-picker-first-weekday="1"
-                                            data-kt-date-picker-date-format="DD.MM.YYYY HH:mm"
+                                            data-app-date-format="DD.MM.YYYY HH:mm"
                                         >
                                     </div>
                                 </div>
@@ -274,13 +268,7 @@
                                             placeholder="GG.AA.YYYY SS:DD"
                                             data-app-date-picker="true"
                                             data-app-date-mode="datetime"
-                                            data-kt-date-picker="true"
-                                            data-kt-date-picker-input-mode="true"
-                                            data-kt-date-picker-position-to-input="left"
-                                            data-kt-date-picker-selection-time-mode="24"
-                                            data-kt-date-picker-locale="tr-TR"
-                                            data-kt-date-picker-first-weekday="1"
-                                            data-kt-date-picker-date-format="DD.MM.YYYY HH:mm"
+                                            data-app-date-format="DD.MM.YYYY HH:mm"
                                         >
                                     </div>
                                 </div>
@@ -347,13 +335,7 @@
                                                 placeholder="GG.AA.YYYY SS:DD"
                                                 data-app-date-picker="true"
                                                 data-app-date-mode="datetime"
-                                                data-kt-date-picker="true"
-                                                data-kt-date-picker-input-mode="true"
-                                                data-kt-date-picker-position-to-input="left"
-                                                data-kt-date-picker-selection-time-mode="24"
-                                                data-kt-date-picker-locale="tr-TR"
-                                                data-kt-date-picker-first-weekday="1"
-                                                data-kt-date-picker-date-format="DD.MM.YYYY HH:mm"
+                                                data-app-date-format="DD.MM.YYYY HH:mm"
                                             >
                                         </div>
                                     </div>
@@ -369,13 +351,7 @@
                                                 placeholder="GG.AA.YYYY SS:DD"
                                                 data-app-date-picker="true"
                                                 data-app-date-mode="datetime"
-                                                data-kt-date-picker="true"
-                                                data-kt-date-picker-input-mode="true"
-                                                data-kt-date-picker-position-to-input="left"
-                                                data-kt-date-picker-selection-time-mode="24"
-                                                data-kt-date-picker-locale="tr-TR"
-                                                data-kt-date-picker-first-weekday="1"
-                                                data-kt-date-picker-date-format="DD.MM.YYYY HH:mm"
+                                                data-app-date-format="DD.MM.YYYY HH:mm"
                                             >
                                         </div>
                                     </div>
@@ -420,12 +396,7 @@
                                             placeholder="GG.AA.YYYY"
                                             data-app-date-picker="true"
                                             data-app-date-mode="date"
-                                            data-kt-date-picker="true"
-                                            data-kt-date-picker-input-mode="true"
-                                            data-kt-date-picker-position-to-input="left"
-                                            data-kt-date-picker-locale="tr-TR"
-                                            data-kt-date-picker-first-weekday="1"
-                                            data-kt-date-picker-date-format="DD.MM.YYYY"
+                                            data-app-date-format="DD.MM.YYYY"
                                         >
                                     </div>
                                 </div>

@@ -6,6 +6,7 @@ use App\Jobs\SendAppointmentUpdatedMailJob;
 use App\Jobs\SendAppointmentAdminNotificationMailJob;
 use App\Models\Admin\User\User;
 use App\Models\Appointment\Appointment;
+use App\Services\Admin\AdminNotificationService;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -64,6 +65,7 @@ class AppointmentService
             return $appointment->fresh(['member', 'provider']);
         });
 
+        app(AdminNotificationService::class)->fromAppointment($appointment, 'created');
         SendAppointmentAdminNotificationMailJob::dispatch($appointment->id, 'created', $actorUserId);
 
         return $appointment;
@@ -120,6 +122,7 @@ class AppointmentService
             return $new->fresh(['member', 'provider', 'parent']);
         });
 
+        app(AdminNotificationService::class)->fromAppointment($new, 'transferred');
         SendAppointmentUpdatedMailJob::dispatch($new->id, 'transferred');
         SendAppointmentAdminNotificationMailJob::dispatch($new->id, 'transferred', $actor->id);
 
@@ -163,6 +166,7 @@ class AppointmentService
             return $appointment->fresh(['member', 'provider']);
         });
 
+        app(AdminNotificationService::class)->fromAppointment($updated, 'resized');
         SendAppointmentUpdatedMailJob::dispatch($updated->id, 'resized');
         SendAppointmentAdminNotificationMailJob::dispatch($updated->id, 'resized', $actor->id);
 
@@ -187,6 +191,7 @@ class AppointmentService
             return $appointment->fresh(['member', 'provider', 'parent', 'children']);
         });
 
+        app(AdminNotificationService::class)->fromAppointment($cancelled, 'cancelled_by_provider');
         SendAppointmentUpdatedMailJob::dispatch($cancelled->id, 'cancelled');
         SendAppointmentAdminNotificationMailJob::dispatch($cancelled->id, 'cancelled_by_provider', $actor->id);
 
@@ -230,6 +235,7 @@ class AppointmentService
             return $appointment->fresh(['member', 'provider', 'parent', 'children']);
         });
 
+        app(AdminNotificationService::class)->fromAppointment($cancelled, 'cancelled_by_member');
         SendAppointmentAdminNotificationMailJob::dispatch($cancelled->id, 'cancelled_by_member');
 
         return $cancelled;
@@ -296,6 +302,7 @@ class AppointmentService
             return $newAppointment->fresh(['member', 'provider', 'parent']);
         });
 
+        app(AdminNotificationService::class)->fromAppointment($newAppointment, 'rescheduled_by_member');
         SendAppointmentAdminNotificationMailJob::dispatch($newAppointment->id, 'rescheduled_by_member');
 
         return $newAppointment;

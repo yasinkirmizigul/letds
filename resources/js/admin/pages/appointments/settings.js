@@ -225,10 +225,16 @@ function renderWorkingHours(root, hours = []) {
                     </div>
                 </td>
                 <td>
-                    <input type="time" class="kt-input kt-time-input w-full" data-kt-time-input="true" data-day-start="${day.value}" value="${escapeHtml(startTime)}">
+                    <div class="kt-input kt-time-input w-full">
+                        <i class="ki-outline ki-time"></i>
+                        <input type="text" class="grow" data-app-time-picker="true" data-app-time-step="5" data-day-start="${day.value}" value="${escapeHtml(startTime)}" aria-label="${escapeHtml(day.label)} başlangıç saati" placeholder="SS:DD" readonly>
+                    </div>
                 </td>
                 <td>
-                    <input type="time" class="kt-input kt-time-input w-full" data-kt-time-input="true" data-day-end="${day.value}" value="${escapeHtml(endTime)}">
+                    <div class="kt-input kt-time-input w-full">
+                        <i class="ki-outline ki-time"></i>
+                        <input type="text" class="grow" data-app-time-picker="true" data-app-time-step="5" data-day-end="${day.value}" value="${escapeHtml(endTime)}" aria-label="${escapeHtml(day.label)} bitiş saati" placeholder="SS:DD" readonly>
+                    </div>
                 </td>
                 <td>
                     <span class="text-sm font-medium text-foreground" data-day-duration="${day.value}">

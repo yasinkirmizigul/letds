@@ -8,4 +8,9 @@ Route::prefix('messages')->as('messages.')->group(function () {
     Route::get('/{contactMessage}', [ContactMessageController::class, 'show'])
         ->whereNumber('contactMessage')
         ->name('show');
+
+    Route::patch('/{contactMessage}/workflow', [ContactMessageController::class, 'updateWorkflow'])
+        ->whereNumber('contactMessage')
+        ->middleware('permission:messages.update')
+        ->name('workflow');
 });

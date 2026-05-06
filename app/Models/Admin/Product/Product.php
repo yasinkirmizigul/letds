@@ -3,6 +3,7 @@
 namespace App\Models\Admin\Product;
 
 use App\Models\Admin\Category;
+use App\Models\Admin\Ecommerce\InventoryMovement;
 use App\Models\Admin\Gallery\Gallery;
 use App\Models\Admin\Media\Media;
 use App\Models\Concerns\HasSiteLocaleTranslations;
@@ -167,6 +168,16 @@ class Product extends Model
     public function translations(): HasMany
     {
         return $this->hasMany(ProductTranslation::class, 'product_id');
+    }
+
+    public function variants(): HasMany
+    {
+        return $this->hasMany(ProductVariant::class)->orderBy('sort_order')->orderBy('title');
+    }
+
+    public function inventoryMovements(): HasMany
+    {
+        return $this->hasMany(InventoryMovement::class);
     }
 
     public function galleries(): MorphToMany

@@ -32,6 +32,7 @@
 
         <!-- Topbar -->
         <div class="flex shrink-0 items-center gap-2.5">
+            @includeIf('admin.partials.topbar-notifications')
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit"

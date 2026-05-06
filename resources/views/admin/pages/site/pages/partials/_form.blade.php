@@ -118,10 +118,7 @@
                         value="{{ $publishedAt }}"
                         data-app-date-picker="true"
                         data-app-date-mode="datetime"
-                        data-kt-date-picker="true"
-                        data-kt-date-picker-input-mode="true"
-                        data-kt-date-picker-locale="tr-TR"
-                        data-kt-date-picker-date-format="DD.MM.YYYY HH:mm"
+                        data-app-date-format="DD.MM.YYYY HH:mm"
                         data-initial-value="{{ $publishedAt }}"
                     >
                     @error('published_at')<div class="text-xs text-danger">{{ $message }}</div>@enderror

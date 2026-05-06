@@ -10,6 +10,7 @@ use App\Models\Admin\Ecommerce\EcommerceShipment;
 use App\Models\Admin\Product\Product;
 use App\Models\Member;
 use App\Models\Site\PaymentIntegration;
+use App\Services\Admin\AdminNotificationService;
 use App\Support\Audit\AuditEvent;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -92,6 +93,8 @@ class OrderController extends Controller
             'order_number' => (string) $order->order_number,
         ]);
 
+        app(AdminNotificationService::class)->fromOrder($order, 'created');
+
         return redirect()
             ->route('admin.ecommerce.orders.show', $order)
             ->with('success', 'Sipariş oluşturuldu.');
@@ -154,6 +157,8 @@ class OrderController extends Controller
             'order_id' => (int) $order->id,
             'order_number' => (string) $order->order_number,
         ]);
+
+        app(AdminNotificationService::class)->fromOrder($order->refresh(), 'updated');
 
         return redirect()
             ->route('admin.ecommerce.orders.show', $order)

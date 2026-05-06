@@ -20,6 +20,13 @@ class ContactMessage extends Model
     public const CONTACT_CHANNEL_EMAIL = 'email';
     public const CONTACT_CHANNEL_PHONE = 'phone';
 
+    public const STATUS_NEW = 'new';
+    public const STATUS_OPEN = 'open';
+    public const STATUS_IN_PROGRESS = 'in_progress';
+    public const STATUS_WAITING = 'waiting';
+    public const STATUS_RESOLVED = 'resolved';
+    public const STATUS_CLOSED = 'closed';
+
     public const PRIORITY_OPTIONS = [
         self::PRIORITY_LOW => [
             'label' => 'Düşük',
@@ -56,6 +63,7 @@ class ContactMessage extends Model
 
     protected $fillable = [
         'recipient_user_id',
+        'assigned_user_id',
         'member_id',
         'recipient_name',
         'sender_type',
@@ -64,10 +72,20 @@ class ContactMessage extends Model
         'sender_email',
         'sender_phone',
         'preferred_channels',
+        'tags',
         'subject',
         'priority',
+        'status',
         'message',
+        'internal_note',
+        'resolution_note',
         'read_at',
+        'due_at',
+        'first_response_at',
+        'resolved_at',
+        'closed_at',
+        'closed_by_user_id',
+        'last_activity_at',
         'ip_address',
         'user_agent',
     ];
@@ -76,8 +94,72 @@ class ContactMessage extends Model
     {
         return [
             'preferred_channels' => 'array',
+            'tags' => 'array',
             'read_at' => 'datetime',
+            'due_at' => 'datetime',
+            'first_response_at' => 'datetime',
+            'resolved_at' => 'datetime',
+            'closed_at' => 'datetime',
+            'last_activity_at' => 'datetime',
         ];
+    }
+
+    public static function statusOptions(): array
+    {
+        return [
+            self::STATUS_NEW => [
+                'label' => 'Yeni',
+                'badge' => 'kt-badge kt-badge-sm kt-badge-light-warning',
+                'order' => 10,
+            ],
+            self::STATUS_OPEN => [
+                'label' => 'Açık',
+                'badge' => 'kt-badge kt-badge-sm kt-badge-light-primary',
+                'order' => 20,
+            ],
+            self::STATUS_IN_PROGRESS => [
+                'label' => 'İşlemde',
+                'badge' => 'kt-badge kt-badge-sm kt-badge-light-info',
+                'order' => 30,
+            ],
+            self::STATUS_WAITING => [
+                'label' => 'Yanıt Bekliyor',
+                'badge' => 'kt-badge kt-badge-sm kt-badge-light-warning',
+                'order' => 40,
+            ],
+            self::STATUS_RESOLVED => [
+                'label' => 'Çözüldü',
+                'badge' => 'kt-badge kt-badge-sm kt-badge-light-success',
+                'order' => 50,
+            ],
+            self::STATUS_CLOSED => [
+                'label' => 'Kapandı',
+                'badge' => 'kt-badge kt-badge-sm kt-badge-light',
+                'order' => 60,
+            ],
+        ];
+    }
+
+    public static function statusOptionsSorted(): array
+    {
+        $options = self::statusOptions();
+        uasort($options, fn ($a, $b) => (int) ($a['order'] ?? 0) <=> (int) ($b['order'] ?? 0));
+
+        return $options;
+    }
+
+    public static function statusLabel(?string $key): string
+    {
+        $key = $key ?: self::STATUS_NEW;
+
+        return self::statusOptions()[$key]['label'] ?? $key;
+    }
+
+    public static function statusBadgeClass(?string $key): string
+    {
+        $key = $key ?: self::STATUS_NEW;
+
+        return self::statusOptions()[$key]['badge'] ?? 'kt-badge kt-badge-sm kt-badge-light';
     }
 
     public static function priorityOptionsSorted(): array
@@ -125,6 +207,16 @@ class ContactMessage extends Model
         return $this->belongsTo(User::class, 'recipient_user_id');
     }
 
+    public function assignedUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_user_id');
+    }
+
+    public function closedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'closed_by_user_id');
+    }
+
     public function member(): BelongsTo
     {
         return $this->belongsTo(Member::class)->withTrashed();
@@ -140,7 +232,11 @@ class ContactMessage extends Model
             return $query;
         }
 
-        return $query->where('recipient_user_id', $user->id);
+        return $query->where(function (Builder $builder) use ($user) {
+            $builder
+                ->where('recipient_user_id', $user->id)
+                ->orWhere('assigned_user_id', $user->id);
+        });
     }
 
     public function isVisibleToUser(?User $user): bool
@@ -153,12 +249,33 @@ class ContactMessage extends Model
             return true;
         }
 
-        return (int) $this->recipient_user_id === (int) $user->id;
+        return (int) $this->recipient_user_id === (int) $user->id
+            || (int) $this->assigned_user_id === (int) $user->id;
     }
 
     public function isRead(): bool
     {
         return $this->read_at !== null;
+    }
+
+    public function isClosed(): bool
+    {
+        return in_array($this->status, [self::STATUS_RESOLVED, self::STATUS_CLOSED], true);
+    }
+
+    public function isOverdue(): bool
+    {
+        return !$this->isClosed() && $this->due_at !== null && $this->due_at->isPast();
+    }
+
+    public function workflowStatusLabel(): string
+    {
+        return self::statusLabel($this->status);
+    }
+
+    public function workflowStatusBadgeClass(): string
+    {
+        return self::statusBadgeClass($this->status);
     }
 
     public function getSenderFullNameAttribute(): string

@@ -15,6 +15,8 @@ export default function init(ctx) {
         const selectedPriority = root.querySelector('#messagesPriorityFilter')?.value || '';
         const selectedRecipient = root.querySelector('#messagesRecipientFilter')?.value || '';
         const selectedRead = root.querySelector('#messagesReadFilter')?.value || '';
+        const selectedStatus = root.querySelector('#messagesStatusFilter')?.value || '';
+        const selectedAssignee = root.querySelector('#messagesAssigneeFilter')?.value || '';
 
         if (selectedPriority && row.dataset.priority !== selectedPriority) {
             return false;
@@ -25,6 +27,14 @@ export default function init(ctx) {
         }
 
         if (selectedRead && row.dataset.read !== selectedRead) {
+            return false;
+        }
+
+        if (selectedStatus && row.dataset.status !== selectedStatus) {
+            return false;
+        }
+
+        if (selectedAssignee && row.dataset.assignedId !== selectedAssignee) {
             return false;
         }
 
@@ -62,7 +72,7 @@ export default function init(ctx) {
 
     const redraw = () => dt?.draw();
 
-    ['#messagesPriorityFilter', '#messagesRecipientFilter', '#messagesReadFilter'].forEach((selector) => {
+    ['#messagesPriorityFilter', '#messagesRecipientFilter', '#messagesReadFilter', '#messagesStatusFilter', '#messagesAssigneeFilter'].forEach((selector) => {
         const element = root.querySelector(selector);
         if (!element) return;
 

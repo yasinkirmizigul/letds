@@ -1,114 +1,71 @@
 <?php
 
-$menu = [
-    [
-        'type'  => 'single',
-        'title' => 'Kontrol Paneli',
-        'icon'  => 'ki-filled ki-element-11 text-lg',
-        'route' => 'admin.dashboard',
-        'active'=> ['admin.dashboard'],
-        'guard' => 'admin', // @admin
-        'style' => 'margin-inline-start: -5px;',
-    ],
+$modulesDir = __DIR__ . '/admin_menu/modules';
+$moduleItems = [];
+$knownModuleFiles = [
+    'ecommerce.php',
+    'messages.php',
+    'notifications.php',
+    'members.php',
+    'site_cms.php',
+];
 
-    [
-        'type'     => 'accordion',
-        'title'    => 'Blog',
-        'icon'     => 'ki-filled ki-book text-lg',
-        'perm'     => 'blog.view',
-        'children' => [
-            [
-                'title'  => 'Yazılar',
-                'route'  => 'admin.blog.index',
-                'active' => ['admin.blog.*'],
-                'perm'   => 'blog.view',
-            ],
-        ],
-        'style' => '',
-    ],
+foreach ($knownModuleFiles as $file) {
+    $path = $modulesDir . '/' . $file;
+    $moduleItems[$file] = is_file($path) ? (require $path) : [];
+}
 
-    [
-        'type'     => 'accordion',
-        'title'    => 'Projeler',
-        'icon'     => 'ki-filled ki-briefcase text-lg',
-        'perm'     => 'projects.view',
-        'children' => [
-            [
-                'title'  => 'Proje Listesi',
-                'route'  => 'admin.projects.index',
-                'active' => ['admin.projects.*'],
-                'perm'   => 'projects.view',
-            ],
-        ],
-        'style' => '',
-    ],
-
-    [
-        'type'     => 'accordion',
-        'title'    => 'Ürünler',
-        'icon'     => 'ki-filled ki-handcart text-lg',
-        'perm'     => 'products.view',
-        'children' => [
-            [
-                'title'  => 'Ürün Listesi',
-                'route'  => 'admin.products.index',
-                'active' => ['admin.products.*'],
-                'perm'   => 'products.view',
-            ],
-        ],
-        'style' => '',
-    ],
-
-    [
-        'type'     => 'accordion',
-        'title'    => 'Medya',
-        'icon'     => 'ki-filled ki-screen text-lg',
-        'perm'     => 'media.view',
-        'children' => [
-            [
-                'title'  => 'Medyalar',
-                'route'  => 'admin.media.index',
-                'active' => ['admin.media.*'],
-                'perm'   => 'media.view',
-            ],
-        ],
-        'style' => '',
-    ],
-
-    [
-        'type'     => 'accordion',
-        'title'    => 'Galeri',
-        'icon'     => 'ki-filled ki-picture text-lg',
-        'perm'     => 'galleries.view',
-        'children' => [
-            [
-                'title'  => 'Galeriler',
-                'route'  => 'admin.galleries.index',
-                'active' => ['admin.galleries.*'],
-                'perm'   => 'galleries.view',
-            ],
-        ],
-        'style' => '',
-    ],
-
-    [
-        'type'     => 'accordion',
-        'title'    => 'Kategori',
-        'icon'     => 'ki-filled ki-document text-lg',
-        'perm'     => 'categories.view',
-        'children' => [
-            [
-                'title'  => 'Kategoriler',
-                'route'  => 'admin.categories.index',
-                'active' => ['admin.categories.*'],
-                'perm'   => 'categories.view',
-            ],
-        ],
-        'style' => '',
-    ],
+$contentMenu = [
     [
         'type' => 'accordion',
-        'title' => 'Randevu İşlemleri',
+        'title' => 'İçerik ve Vitrin',
+        'icon' => 'ki-filled ki-element-11 text-lg',
+        'permAny' => [
+            'blog.view',
+            'projects.view',
+            'categories.view',
+            'galleries.view',
+            'media.view',
+        ],
+        'children' => [
+            [
+                'title' => 'Yazılar',
+                'route' => 'admin.blog.index',
+                'active' => ['admin.blog.*'],
+                'perm' => 'blog.view',
+            ],
+            [
+                'title' => 'Projeler',
+                'route' => 'admin.projects.index',
+                'active' => ['admin.projects.*'],
+                'perm' => 'projects.view',
+            ],
+            [
+                'title' => 'Kategoriler',
+                'route' => 'admin.categories.index',
+                'active' => ['admin.categories.*'],
+                'perm' => 'categories.view',
+            ],
+            [
+                'title' => 'Galeriler',
+                'route' => 'admin.galleries.index',
+                'active' => ['admin.galleries.*'],
+                'perm' => 'galleries.view',
+            ],
+            [
+                'title' => 'Medya Kütüphanesi',
+                'route' => 'admin.media.index',
+                'active' => ['admin.media.*'],
+                'perm' => 'media.view',
+            ],
+        ],
+    ],
+];
+
+$appointmentMenu = [
+    [
+        'type' => 'accordion',
+        'title' => 'Randevu Operasyonu',
         'icon' => 'ki-filled ki-calendar-8 text-lg',
         'permAny' => ['appointments.view', 'appointments.update'],
         'children' => [
@@ -141,71 +98,90 @@ $menu = [
             ],
         ],
     ],
-    [
-        'type'     => 'accordion',
-        'title'    => 'Kullanıcılar',
-        'icon'     => 'ki-filled ki-profile-circle text-lg',
-        'permAny'  => ['users.view', 'roles.view', 'permissions.view'],
-        'children' => [
-            [
-                'title'  => 'Kullanıcı Listesi',
-                'route'  => 'admin.users.index',
-                'active' => ['admin.users.*'],
-                'perm'   => 'users.view',
-            ],
-            [
-                'title'  => 'Roller',
-                'route'  => 'admin.roles.index',
-                'active' => ['admin.roles.*'],
-                'perm'   => 'roles.view',
-            ],
-            [
-                'title'  => 'İzinler',
-                'route'  => 'admin.permissions.index',
-                'active' => ['admin.permissions.*'],
-                'perm'   => 'permissions.view',
-            ],
-        ],
-        'style' => '',
-    ],
-
-    [
-        'type'  => 'single',
-        'title' => 'Sistem Kayıtları',
-        'icon'  => 'ki-filled ki-fingerprint-scanning text-lg',
-        'route' => 'admin.audit-logs.index',
-        'active'=> ['admin.audit-logs.*'],
-        'perm'  => 'audit-logs.view',
-        'style' => 'margin-inline-start: -5px;',
-    ],
-
-    [
-        'type'  => 'single',
-        'title' => 'Silinenler',
-        'icon'  => 'ki-filled ki-trash text-lg',
-        'route' => 'admin.trash.index',
-        'active'=> ['admin.trash.*'],
-        'perm'  => 'trash.view',
-        'style' => 'margin-inline-start: -5px;',
-    ],
-
-    // [ADMIN_MODULE_MENU:START]
-    // Auto-generated module menu items injected here (optional).
-    // [ADMIN_MODULE_MENU:END]
 ];
 
-// --- Auto-load module menu files (asıl kurumsal yöntem)
-$modulesDir = __DIR__ . '/admin_menu/modules';
-if (is_dir($modulesDir)) {
-    $moduleItems = [];
-    foreach (glob($modulesDir.'/*.php') as $f) {
-        $items = require $f;
-        if (is_array($items)) {
-            $moduleItems = array_merge($moduleItems, $items);
-        }
+$userMenu = [
+    [
+        'type' => 'accordion',
+        'title' => 'Kullanıcı ve Yetki',
+        'icon' => 'ki-filled ki-profile-circle text-lg',
+        'permAny' => ['users.view', 'roles.view', 'permissions.view'],
+        'children' => [
+            [
+                'title' => 'Kullanıcı Listesi',
+                'route' => 'admin.users.index',
+                'active' => ['admin.users.*'],
+                'perm' => 'users.view',
+            ],
+            [
+                'title' => 'Roller',
+                'route' => 'admin.roles.index',
+                'active' => ['admin.roles.*'],
+                'perm' => 'roles.view',
+            ],
+            [
+                'title' => 'Yetkiler',
+                'route' => 'admin.permissions.index',
+                'active' => ['admin.permissions.*'],
+                'perm' => 'permissions.view',
+            ],
+        ],
+    ],
+];
+
+$systemMenu = [
+    [
+        'type' => 'single',
+        'title' => 'Sistem Kayıtları',
+        'icon' => 'ki-filled ki-fingerprint-scanning text-lg',
+        'route' => 'admin.audit-logs.index',
+        'active' => ['admin.audit-logs.*'],
+        'perm' => 'audit-logs.view',
+        'style' => 'margin-inline-start: -5px;',
+    ],
+    [
+        'type' => 'single',
+        'title' => 'Silinenler',
+        'icon' => 'ki-filled ki-trash text-lg',
+        'route' => 'admin.trash.index',
+        'active' => ['admin.trash.*'],
+        'perm' => 'trash.view',
+        'style' => 'margin-inline-start: -5px;',
+    ],
+];
+
+$menu = array_merge(
+    [
+        [
+            'type' => 'single',
+            'title' => 'Kontrol Paneli',
+            'icon' => 'ki-filled ki-element-11 text-lg',
+            'route' => 'admin.dashboard',
+            'active' => ['admin.dashboard', 'admin.dashboard.*'],
+            'guard' => 'admin',
+            'style' => 'margin-inline-start: -5px;',
+        ],
+    ],
+    $moduleItems['ecommerce.php'],
+    $moduleItems['messages.php'],
+    $moduleItems['notifications.php'],
+    $appointmentMenu,
+    $moduleItems['members.php'],
+    $contentMenu,
+    $moduleItems['site_cms.php'],
+    $userMenu,
+    $systemMenu
+);
+
+foreach (glob($modulesDir . '/*.php') ?: [] as $path) {
+    if (in_array(basename($path), $knownModuleFiles, true)) {
+        continue;
     }
 
-    $menu = array_merge($menu, $moduleItems);
+    $items = require $path;
+    if (is_array($items)) {
+        $menu = array_merge($menu, $items);
+    }
 }
 
 return $menu;

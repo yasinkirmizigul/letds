@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Mail\AdminContactMessageReceivedMail;
+use App\Models\Admin\User\User;
 use App\Models\ContactMessage;
 use App\Models\Site\SiteSetting;
 use App\Services\Mail\SiteMailConfigurator;
@@ -29,7 +30,7 @@ class SendContactMessageReceivedMailJob implements ShouldQueue
             ->with(['recipient:id,name,email', 'member:id,name,surname,email,phone'])
             ->find($this->contactMessageId);
 
-        if (!$contactMessage?->recipient?->email) {
+        if (!$contactMessage) {
             return;
         }
 
@@ -39,15 +40,32 @@ class SendContactMessageReceivedMailJob implements ShouldQueue
             return;
         }
 
-        try {
-            Mail::to($contactMessage->recipient->email, $contactMessage->recipient->name)
-                ->send(new AdminContactMessageReceivedMail($contactMessage, $settings));
-        } catch (Throwable $e) {
-            Log::error('Panel mesaj bildirimi gönderilemedi.', [
-                'contact_message_id' => $contactMessage->id,
-                'recipient_user_id' => $contactMessage->recipient_user_id,
-                'message' => $e->getMessage(),
-            ]);
+        $recipients = collect();
+
+        if ($contactMessage->recipient?->email) {
+            $recipients->push($contactMessage->recipient);
+        } else {
+            User::query()
+                ->adminAccessible()
+                ->with('roles.permissions')
+                ->get()
+                ->filter(fn (User $user) => $user->canAccess('messages.view') && filled($user->email))
+                ->each(fn (User $user) => $recipients->push($user));
         }
+
+        $recipients
+            ->unique('id')
+            ->each(function (User $recipient) use ($contactMessage, $settings) {
+                try {
+                    Mail::to($recipient->email, $recipient->name)
+                        ->send(new AdminContactMessageReceivedMail($contactMessage, $settings));
+                } catch (Throwable $e) {
+                    Log::error('Panel mesaj bildirimi gönderilemedi.', [
+                        'contact_message_id' => $contactMessage->id,
+                        'recipient_user_id' => $recipient->id,
+                        'message' => $e->getMessage(),
+                    ]);
+                }
+            });
     }
 }

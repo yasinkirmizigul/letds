@@ -7,17 +7,25 @@
         $showHeroFocusList = $dashboardSectionVisibility['hero_focus_list'] ?? false;
         $visibleKpis = collect($kpis)->filter(fn ($kpi) => $dashboardSectionVisibility[$kpi['visibility_key']] ?? true)->values();
         $visibleModuleCards = collect($moduleCards)->filter(fn ($card) => $dashboardSectionVisibility[$card['visibility_key']] ?? true)->values();
+        $visibleHealthCards = collect($healthCards)->filter(fn ($card) => $dashboardSectionVisibility[$card['visibility_key']] ?? true)->values();
+        $visibleRiskGroups = collect($riskGroups)->filter(fn ($group) => !empty($group['items'] ?? []))->values();
         $showMonthlyChart = $dashboardSectionVisibility['chart_monthly_activity'] ?? false;
         $showActionChart = $dashboardSectionVisibility['chart_action_breakdown'] ?? false;
         $showScheduleChart = ($dashboardSectionVisibility['chart_schedule_flow'] ?? false) && $canAppointments;
+        $showOperationsHealth = ($dashboardSectionVisibility['operations_health'] ?? false) && $visibleHealthCards->isNotEmpty();
+        $showCommerceFlow = ($dashboardSectionVisibility['commerce_flow'] ?? false) && $canEcommerce;
+        $showRiskCenter = ($dashboardSectionVisibility['risk_center'] ?? false) && $visibleRiskGroups->isNotEmpty();
         $hasRenderableDashboardSection =
             ($dashboardSectionVisibility['hero_overview'] ?? false)
             || (($dashboardSectionVisibility['kpi_overview'] ?? false) && $visibleKpis->isNotEmpty())
             || (($dashboardSectionVisibility['module_overview'] ?? false) && $visibleModuleCards->isNotEmpty())
+            || $showOperationsHealth
+            || $showCommerceFlow
             || (($dashboardSectionVisibility['activity_charts'] ?? false) && ($showMonthlyChart || $showActionChart || $showScheduleChart))
             || ($dashboardSectionVisibility['recent_messages'] ?? false)
             || ($dashboardSectionVisibility['upcoming_appointments'] ?? false)
             || ($dashboardSectionVisibility['recent_content'] ?? false)
+            || $showRiskCenter
             || (($dashboardSectionVisibility['audit_issues'] ?? false) && $canAudit);
     @endphp
 
@@ -213,6 +221,103 @@
                 </section>
             @endif
 
+            @if($showOperationsHealth)
+                <section class="kt-card" style="order: {{ $dashboardSectionOrderIndex['operations_health'] ?? 45 }};">
+                    <div class="kt-card-header py-5 flex-wrap gap-4">
+                        <div>
+                            <h3 class="kt-card-title">Operasyon sağlığı</h3>
+                            <div class="text-sm text-muted-foreground">
+                                Günlük karar gerektiren sipariş, ödeme, site, içerik ve destek sinyallerini tek bakışta izle.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kt-card-content p-5">
+                        <div class="grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
+                            @foreach($visibleHealthCards as $card)
+                                <article class="dashboard-module-card" style="--dashboard-accent: {{ $card['accent'] }};">
+                                    <div class="dashboard-module-card__head">
+                                        <span class="dashboard-module-card__icon">
+                                            <i class="{{ $card['icon'] }}"></i>
+                                        </span>
+                                        <span class="{{ $card['badge_class'] }}">{{ $card['badge'] }}</span>
+                                    </div>
+
+                                    <div class="mt-5">
+                                        <div class="text-sm text-muted-foreground">{{ $card['title'] }}</div>
+                                        <div class="mt-2 text-2xl font-semibold tracking-tight text-foreground">{{ $card['value'] }}</div>
+                                        <div class="mt-1 text-xs text-muted-foreground">{{ $card['label'] }}</div>
+                                        <p class="mt-4 text-sm leading-6 text-muted-foreground">{{ $card['hint'] }}</p>
+                                    </div>
+
+                                    @if(!empty($card['url']))
+                                        <div class="mt-5">
+                                            <a href="{{ $card['url'] }}" class="kt-btn kt-btn-sm kt-btn-light-primary">
+                                                {{ $card['action_label'] }}
+                                            </a>
+                                        </div>
+                                    @endif
+                                </article>
+                            @endforeach
+                        </div>
+                    </div>
+                </section>
+            @endif
+
+            @if($showCommerceFlow)
+                <section class="kt-card" style="order: {{ $dashboardSectionOrderIndex['commerce_flow'] ?? 48 }};">
+                    <div class="kt-card-header py-5 flex-wrap gap-4">
+                        <div>
+                            <h3 class="kt-card-title">Sipariş akışı</h3>
+                            <div class="text-sm text-muted-foreground">
+                                Ödeme, hazırlık ve iade adımlarını aksiyon kuyruğu olarak takip et.
+                            </div>
+                        </div>
+                        <a href="{{ route('admin.ecommerce.orders.index') }}" class="kt-btn kt-btn-sm kt-btn-light">
+                            Sipariş yönetimi
+                        </a>
+                    </div>
+
+                    <div class="kt-card-content p-5">
+                        <div class="grid gap-5 xl:grid-cols-[.85fr,1.15fr]">
+                            <div class="grid gap-3">
+                                @foreach($commercePipeline as $item)
+                                    <a href="{{ route('admin.ecommerce.orders.index') }}" class="dashboard-list-item">
+                                        <span class="min-w-0">
+                                            <span class="block font-medium text-foreground">{{ $item['label'] }}</span>
+                                            <span class="mt-1 block text-sm text-muted-foreground">Sipariş iş akışında takip edilecek kayıtlar</span>
+                                        </span>
+                                        <span class="{{ $item['badge'] }}">{{ $item['value'] }}</span>
+                                    </a>
+                                @endforeach
+                            </div>
+
+                            <div>
+                                <div class="mb-3 flex items-center justify-between gap-3">
+                                    <div class="font-semibold text-foreground">Son siparişler</div>
+                                    <span class="kt-badge kt-badge-sm kt-badge-light-primary">{{ $orderStats['month_count'] }} / 30 gün</span>
+                                </div>
+
+                                @if($recentOrders->isNotEmpty())
+                                    <div
+                                        id="dashboardRecentOrdersTimeline"
+                                        data-history-timeline
+                                        data-history-timeline-compact="true"
+                                        data-history-timeline-height="320px"
+                                        data-history-timeline-empty="Henüz sipariş kaydı görünmüyor."
+                                        data-history-timeline-source="#dashboardRecentOrdersTimelineData"
+                                    ></div>
+                                    <script type="application/json" id="dashboardRecentOrdersTimelineData">@json($recentOrders)</script>
+                                @else
+                                    <div class="dashboard-empty-state">
+                                        Henüz sipariş kaydı görünmüyor.
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            @endif
+
             @if(($dashboardSectionVisibility['activity_charts'] ?? false) && ($showMonthlyChart || $showActionChart || $showScheduleChart))
                 <div class="grid gap-5 xl:grid-cols-[1.35fr,.65fr]" style="order: {{ $dashboardSectionOrderIndex['activity_charts'] ?? 50 }};">
                     @if($showMonthlyChart)
@@ -359,6 +464,47 @@
                         </section>
                     @endif
                 </div>
+            @endif
+
+            @if($showRiskCenter)
+                <section class="kt-card" style="order: {{ $dashboardSectionOrderIndex['risk_center'] ?? 85 }};">
+                    <div class="kt-card-header py-5 flex-wrap gap-4">
+                        <div>
+                            <h3 class="kt-card-title">Risk merkezi</h3>
+                            <div class="text-sm text-muted-foreground">
+                                Dashboard’un aksiyon önceliklerini modül bazında temiz ve ölçülebilir şekilde izle.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kt-card-content p-5">
+                        <div class="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+                            @foreach($visibleRiskGroups as $group)
+                                <article class="dashboard-module-card" style="--dashboard-accent: {{ $group['accent'] }};">
+                                    <div class="dashboard-module-card__head">
+                                        <span class="dashboard-module-card__icon">
+                                            <i class="{{ $group['icon'] }}"></i>
+                                        </span>
+                                        @if(!empty($group['url']))
+                                            <a href="{{ $group['url'] }}" class="kt-btn kt-btn-sm kt-btn-light">
+                                                Aç
+                                            </a>
+                                        @endif
+                                    </div>
+
+                                    <h4 class="mt-4 text-base font-semibold text-foreground">{{ $group['title'] }}</h4>
+                                    <div class="mt-4 grid gap-3">
+                                        @foreach($group['items'] as $item)
+                                            <div class="flex items-center justify-between gap-3 rounded-2xl border border-border/70 bg-background/70 px-4 py-3">
+                                                <span class="text-sm text-muted-foreground">{{ $item['label'] }}</span>
+                                                <span class="text-sm font-semibold text-foreground">{{ $item['value'] }}</span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </article>
+                            @endforeach
+                        </div>
+                    </div>
+                </section>
             @endif
 
             @if(($dashboardSectionVisibility['audit_issues'] ?? false) && $canAudit)

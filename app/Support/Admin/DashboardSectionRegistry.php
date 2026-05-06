@@ -73,6 +73,24 @@ class DashboardSectionRegistry
                         'default' => true,
                         'available' => true,
                     ],
+                    'kpi_monthly_revenue' => [
+                        'label' => '30 günlük ciro kartı',
+                        'description' => 'E-ticaret siparişlerinden son 30 günlük ciroyu gösterir.',
+                        'default' => true,
+                        'available' => (bool) ($capabilities['ecommerceOrdersView'] ?? false),
+                    ],
+                    'kpi_payment_health' => [
+                        'label' => 'Ödeme uyarısı kartı',
+                        'description' => 'Ödeme entegrasyonu ve ödeme hareketi uyarılarını gösterir.',
+                        'default' => true,
+                        'available' => (bool) ($capabilities['sitePaymentsView'] ?? false),
+                    ],
+                    'kpi_member_health' => [
+                        'label' => 'Üyelik kartı',
+                        'description' => 'Aktif ve yeni üyelik özetini gösterir.',
+                        'default' => true,
+                        'available' => (bool) ($capabilities['membersView'] ?? false),
+                    ],
                 ],
             ],
             'module_overview' => [
@@ -101,11 +119,23 @@ class DashboardSectionRegistry
                         'default' => true,
                         'available' => (bool) ($capabilities['productsView'] ?? false),
                     ],
+                    'module_ecommerce' => [
+                        'label' => 'E-ticaret kartı',
+                        'description' => 'Sipariş ve ciro özet kartını gösterir.',
+                        'default' => true,
+                        'available' => (bool) ($capabilities['ecommerceOrdersView'] ?? false),
+                    ],
                     'module_messages' => [
                         'label' => 'Mesajlar kartı',
                         'description' => 'Mesaj kutusu özet kartını gösterir.',
                         'default' => true,
                         'available' => (bool) ($capabilities['messagesView'] ?? false),
+                    ],
+                    'module_members' => [
+                        'label' => 'Üyelikler kartı',
+                        'description' => 'Üyelik yönetimi özet kartını gösterir.',
+                        'default' => true,
+                        'available' => (bool) ($capabilities['membersView'] ?? false),
                     ],
                     'module_appointments' => [
                         'label' => 'Randevular kartı',
@@ -149,7 +179,96 @@ class DashboardSectionRegistry
                         'default' => true,
                         'available' => (bool) ($capabilities['auditView'] ?? false),
                     ],
+                    'module_site_health' => [
+                        'label' => 'Site sağlığı kartı',
+                        'description' => 'Site ayarları ve yayın hazırlığı özet kartını gösterir.',
+                        'default' => true,
+                        'available' => (bool) ($capabilities['siteSettingsView'] ?? false),
+                    ],
+                    'module_payments' => [
+                        'label' => 'Ödemeler kartı',
+                        'description' => 'Ödeme entegrasyonları özet kartını gösterir.',
+                        'default' => true,
+                        'available' => (bool) ($capabilities['sitePaymentsView'] ?? false),
+                    ],
                 ],
+            ],
+            'operations_health' => [
+                'label' => 'Operasyon sağlığı',
+                'description' => 'Sipariş, ödeme, site, içerik, stok, üyelik ve destek sağlığını tek blokta gösterir.',
+                'icon' => 'ki-filled ki-pulse',
+                'group' => 'Operasyon',
+                'default' => true,
+                'available' => true,
+                'children' => [
+                    'health_ecommerce' => [
+                        'label' => 'E-ticaret sağlığı',
+                        'description' => 'Sipariş ve ciro sağlığı kartını gösterir.',
+                        'default' => true,
+                        'available' => (bool) ($capabilities['ecommerceOrdersView'] ?? false),
+                    ],
+                    'health_payments' => [
+                        'label' => 'Ödeme sağlığı',
+                        'description' => 'Ödeme entegrasyonu ve hareket uyarılarını gösterir.',
+                        'default' => true,
+                        'available' => (bool) ($capabilities['sitePaymentsView'] ?? false),
+                    ],
+                    'health_site' => [
+                        'label' => 'Site hazırlığı',
+                        'description' => 'SEO dosyaları, SMTP ve bakım modu sağlığını gösterir.',
+                        'default' => true,
+                        'available' => (bool) ($capabilities['siteSettingsView'] ?? false),
+                    ],
+                    'health_content' => [
+                        'label' => 'İçerik kalitesi',
+                        'description' => 'SEO, görsel ve taslak içerik risklerini özetler.',
+                        'default' => true,
+                        'available' => (bool) (
+                            ($capabilities['blogView'] ?? false)
+                            || ($capabilities['projectsView'] ?? false)
+                            || ($capabilities['productsView'] ?? false)
+                            || ($capabilities['sitePagesView'] ?? false)
+                        ),
+                    ],
+                    'health_inventory' => [
+                        'label' => 'Stok ve katalog',
+                        'description' => 'Stok, fiyat ve ürün görsel risklerini gösterir.',
+                        'default' => true,
+                        'available' => (bool) ($capabilities['productsView'] ?? false),
+                    ],
+                    'health_support' => [
+                        'label' => 'Mesaj SLA',
+                        'description' => 'Geciken ve öncelikli mesajları gösterir.',
+                        'default' => true,
+                        'available' => (bool) ($capabilities['messagesView'] ?? false),
+                    ],
+                    'health_members' => [
+                        'label' => 'Üyelik sağlığı',
+                        'description' => 'Aktif, yeni ve askıdaki üyelikleri gösterir.',
+                        'default' => true,
+                        'available' => (bool) ($capabilities['membersView'] ?? false),
+                    ],
+                    'health_appointments' => [
+                        'label' => 'Randevu performansı',
+                        'description' => 'Tamamlanan, iptal edilen ve kaçırılan randevuları gösterir.',
+                        'default' => true,
+                        'available' => (bool) ($capabilities['appointmentsView'] ?? false),
+                    ],
+                    'health_translations' => [
+                        'label' => 'Çeviri kapsamı',
+                        'description' => 'Aktif diller için eksik çeviri durumunu gösterir.',
+                        'default' => true,
+                        'available' => (bool) ($capabilities['siteLanguagesView'] ?? false),
+                    ],
+                ],
+            ],
+            'commerce_flow' => [
+                'label' => 'Sipariş akışı',
+                'description' => 'Sipariş işlem kuyruğu ve son siparişleri gösterir.',
+                'icon' => 'ki-filled ki-basket',
+                'group' => 'Operasyon',
+                'default' => true,
+                'available' => (bool) ($capabilities['ecommerceOrdersView'] ?? false),
             ],
             'activity_charts' => [
                 'label' => 'Analiz ve grafikler',
@@ -161,7 +280,7 @@ class DashboardSectionRegistry
                 'children' => [
                     'chart_monthly_activity' => [
                         'label' => 'Aylık aktivite grafiği',
-                        'description' => 'Son 6 ay üretim ve talep hızını gösterir.',
+                        'description' => 'Son 6 ay üretim, talep, sipariş ve üyelik hızını gösterir.',
                         'default' => true,
                         'available' => true,
                     ],
@@ -199,6 +318,14 @@ class DashboardSectionRegistry
                 'label' => 'Son güncellenen içerikler',
                 'description' => 'Son düzenlenen içerikleri açıp yarım kalan işi devam ettirmeni sağlar.',
                 'icon' => 'ki-filled ki-notepad-edit',
+                'group' => 'Akış Panelleri',
+                'default' => true,
+                'available' => true,
+            ],
+            'risk_center' => [
+                'label' => 'Risk merkezi',
+                'description' => 'Ödeme, site, içerik, stok, mesaj ve çeviri risklerini aksiyon listesi olarak gösterir.',
+                'icon' => 'ki-filled ki-notification-status',
                 'group' => 'Akış Panelleri',
                 'default' => true,
                 'available' => true,

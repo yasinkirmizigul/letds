@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Console\Commands\MakeAdminModule;
+use App\Models\Admin\AdminNotification;
 use App\Models\Site\SiteNavigationItem;
 use App\Models\Site\SiteSetting;
 use App\Support\Site\NavigationTree;
@@ -10,6 +11,7 @@ use App\Support\Site\SiteLocalization;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,6 +26,33 @@ class AppServiceProvider extends ServiceProvider
             if (auth()->check() && (request()->is('admin') || request()->is('admin/*'))) {
                 auth()->user()->loadMissing('roles.permissions', 'avatarMedia');
             }
+        });
+
+        View::composer('admin.layouts.main.header', function ($view) {
+            $user = auth()->user();
+            $notificationsReady = false;
+            $preview = collect();
+            $unread = 0;
+
+            try {
+                $notificationsReady = $user
+                    && Schema::hasTable('admin_notifications')
+                    && ($user->canAccess('notifications.view') || $user->isSuperAdmin());
+
+                if ($notificationsReady) {
+                    $query = AdminNotification::query()->visibleTo($user)->active();
+                    $unread = (clone $query)->unread()->count();
+                    $preview = $query->latest()->limit(5)->get();
+                }
+            } catch (\Throwable) {
+                $notificationsReady = false;
+            }
+
+            $view->with([
+                'adminNotificationsReady' => $notificationsReady,
+                'adminNotificationPreview' => $preview,
+                'adminUnreadNotificationCount' => $unread,
+            ]);
         });
 
         View::composer('site.*', function ($view) {

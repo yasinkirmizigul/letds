@@ -8,6 +8,7 @@ use App\Jobs\SendContactMessageReceivedMailJob;
 use App\Models\Admin\User\User;
 use App\Models\ContactMessage;
 use App\Models\Member;
+use App\Services\Admin\AdminNotificationService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
@@ -82,6 +83,7 @@ class ContactMessageController extends Controller
 
         $contactMessage = ContactMessage::create($payload);
 
+        app(AdminNotificationService::class)->fromContactMessage($contactMessage);
         SendContactMessageReceivedMailJob::dispatch($contactMessage->id);
 
         return redirect()

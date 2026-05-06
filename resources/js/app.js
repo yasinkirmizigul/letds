@@ -13,6 +13,7 @@ import initFeaturedImageManager from '@/core/featured-image-manager';
 import initCreateFormAccordions from '@/core/create-form-accordion';
 import initAjaxForms from '@/core/ajax-forms';
 import initAdminQuickSearch from '@/core/admin-quick-search';
+import { initMetronicPickers } from '@/core/metronic-pickers';
 import './site/auth/member-register';
 
 window.Swal = Swal;
@@ -89,6 +90,7 @@ domReady(async () => {
     try {
         initCreateFormAccordions(document);
         initDateInputValues(document);
+        initMetronicPickers(document);
         await AppInit();
     } finally {
         document.documentElement.classList.remove('js-loading');
