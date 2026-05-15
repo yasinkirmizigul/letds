@@ -5,6 +5,7 @@ namespace App\Models\Admin\User;
 use App\Models\Admin\Dash\AdminDashboardPreference;
 use App\Models\Admin\Media\Media;
 use App\Models\ContactMessage;
+use App\Notifications\AdminResetPasswordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -281,5 +282,10 @@ class User extends Authenticatable
         ];
 
         return (int) round((count(array_filter($checks)) / count($checks)) * 100);
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new AdminResetPasswordNotification((string) $token));
     }
 }

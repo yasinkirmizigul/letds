@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Notifications;
+
+use App\Services\Mail\SiteMailConfigurator;
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
+
+class AdminResetPasswordNotification extends Notification
+{
+    use Queueable;
+
+    public function __construct(
+        private readonly string $token
+    ) {
+    }
+
+    public function via(object $notifiable): array
+    {
+        return ['mail'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        app(SiteMailConfigurator::class)->apply();
+
+        $url = route('password.reset', [
+            'token' => $this->token,
+            'email' => $notifiable->getEmailForPasswordReset(),
+        ]);
+
+        return (new MailMessage)
+            ->subject('Yönetim Paneli Şifre Yenileme Bağlantısı')
+            ->greeting('Merhaba,')
+            ->line('Yönetim paneli hesabınız için bir şifre yenileme talebi aldık.')
+            ->action('Şifremi Yenile', $url)
+            ->line('Bu bağlantı 60 dakika boyunca geçerlidir.')
+            ->line('Bu isteği siz yapmadıysanız bu e-postayı yok sayabilirsiniz.');
+    }
+}

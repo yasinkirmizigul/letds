@@ -67,7 +67,7 @@
                         </label>
 
                         {{-- Şimdilik route yoksa # bırak --}}
-                        <a class="text-sm kt-link shrink-0" href="#">
+                        <a class="text-sm kt-link shrink-0" href="{{ route('password.request') }}">
                             Şifremi Unuttum
                         </a>
                     </div>
@@ -75,7 +75,7 @@
                     <div class="kt-input @error('password') border-danger @enderror" data-kt-toggle-password="true">
                         <input
                             name="password"
-                            placeholder="Enter Password"
+                            placeholder="Şifrenizi girin"
                             type="password"
                             value=""
                             autocomplete="current-password"
@@ -110,7 +110,7 @@
                         @checked(old('remember'))
                     />
                     <span class="kt-checkbox-label">
-                        Beni Hatırla!
+                        Beni Hatırla
                     </span>
                 </label>
 
