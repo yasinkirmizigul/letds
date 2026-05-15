@@ -1,4 +1,5 @@
 import { request } from '@/core/http';
+import { loadScriptOnce } from '@/core/load-script-once';
 import initSlugManager from '@/core/slug-manager';
 
 function getTheme() {
@@ -360,21 +361,6 @@ function csrfToken() {
     return meta ? meta.getAttribute('content') : '';
 }
 
-function loadScriptÖnce(src) {
-    if (!src) return Promise.reject(new Error('TinyMCE kaynagi eksik.'));
-    if (document.querySelector(`script[data-önce="${src}"]`)) return Promise.resolve();
-
-    return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = src;
-        script.async = true;
-        script.dataset.önce = src;
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error(`Yüklenemedi: ${src}`));
-        document.head.appendChild(script);
-    });
-}
-
 function safeTinyRemove(selector) {
     try {
         window.tinymce?.remove?.(selector);
@@ -487,7 +473,7 @@ export async function initTinyEditor(ctx, onContentChange, selector = '#content_
         return;
     }
 
-    await loadScriptÖnce(tinymceSrc);
+    await loadScriptOnce(tinymceSrc, { errorMessage: 'TinyMCE yüklenemedi' });
 
     const boot = () => initTiny({
         selector,

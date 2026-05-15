@@ -1,6 +1,7 @@
 import { get, post } from '@/core/http';
 import { clearDateInputValue, getDateInputValue, setDateInputValue, todayMachineDate } from '@/core/date-input';
 import { showConfirmDialog, showToastMessage } from '@/core/swal-alert';
+import { initMetronicPickers } from '@/core/metronic-pickers';
 
 let providerId = null;
 let selectedSlot = null;
@@ -13,6 +14,8 @@ let isCancelling = false;
 let isRescheduleMode = false;
 
 document.addEventListener('DOMContentLoaded', () => {
+    initMetronicPickers(document);
+
     const providerEl = document.getElementById('provider');
     const dateEl = document.getElementById('date');
     const cancelBtn = document.getElementById('cancelBtn');

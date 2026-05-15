@@ -114,16 +114,9 @@ class ModuleGenerator
         $this->writeFromStub("{$stubsRoot}/js/edit.stub", "{$jsBase}/edit.js", $context, $force);
         $this->writeFromStub("{$stubsRoot}/js/trash.stub", "{$jsBase}/trash.js", $context, $force);
 
-        // Patching: routes only (menu auto-load already handled by config/admin_menu.php)
+        // Patching: route/menu module auto-loaders are already handled centrally.
         if ($patch) {
-            $routesWeb = $cfg['patching']['routes_web_file'] ?? base_path('routes/web.php');
-            $routesMarker = $cfg['patching']['routes_marker'] ?? '// [ADMIN_MODULE_ROUTES]';
-
-            $includeLine = "require __DIR__ . '/admin/modules/{$context['route_module_file']}.php';";
-
-            [$ok, $msg] = $this->patcher->patchAfterMarker($routesWeb, $routesMarker, $includeLine);
-            $notes[] = $msg;
-
+            $notes[] = 'Route modules auto-load already active via routes/admin/index.php → routes/admin/modules/*.php';
             $notes[] = 'Menu auto-load already active via config/admin_menu.php → admin_menu/modules/*.php';
         } else {
             $notes[] = 'Patching disabled (--no-patch).';

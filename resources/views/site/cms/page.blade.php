@@ -100,5 +100,8 @@
         @endif
     </div>
 
-    @vite('resources/js/site/cms.js')
 @endsection
+
+@push('site_js')
+    @vite('resources/js/site/cms.js')
+@endpush

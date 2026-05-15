@@ -307,4 +307,6 @@
     </div>
 @endsection
 
-@vite('resources/js/site/contact-messages/create.js')
+@push('site_js')
+    @vite('resources/js/site/contact-messages/create.js')
+@endpush

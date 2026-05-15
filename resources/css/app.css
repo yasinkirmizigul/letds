@@ -1154,10 +1154,6 @@ table.kt-table thead th .dt-column-title {
     100% { transform: translateY(0);    opacity: 1; }
 }
 
-/* JS gelene kadar enhanced blok gizli */
-html.js-loading [data-js-hide-until-ready] { visibility: hidden; }
-html.js-ready   [data-js-hide-until-ready] { visibility: visible; }
-
 /* ===== App Loading State (single source of truth) ===== */
 html.js-loading { overflow: hidden; }
 

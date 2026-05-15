@@ -27,12 +27,10 @@ function createCtx(root, page) {
         },
 
         async destroyAll() {
-            // Abort first: listeners added with { signal } are released automatically
             try {
                 ac.abort();
             } catch (_) {}
 
-            // Then run manual cleanups (LIFO)
             for (let i = cleanups.length - 1; i >= 0; i--) {
                 try {
                     await cleanups[i]();
@@ -45,22 +43,7 @@ function createCtx(root, page) {
     };
 }
 
-export async function AppInit() {
-    const root = getPageRoot();
-
-    if (!root) {
-        console.warn('[AppInit] No [data-page] found. Skipping page boot.');
-        return createCtx(document.body, null);
-    }
-
-    const page = getPageName(root);
-    if (!page) {
-        console.warn('[AppInit] Empty data-page. Skipping page boot.');
-        return createCtx(root, null);
-    }
-
-    const ctx = createCtx(root, page);
-
+function initKtUi() {
     try {
         window.KTComponents?.init?.();
     } catch (e) {
@@ -78,8 +61,24 @@ export async function AppInit() {
     } catch (e) {
         console.warn('[KTUI] KTDrawer init failed:', e);
     }
+}
 
-    // ✅ burada
+export async function AppInit() {
+    initKtUi();
+
+    const root = getPageRoot();
+
+    if (!root) {
+        return createCtx(document.body, null);
+    }
+
+    const page = getPageName(root);
+    if (!page) {
+        return createCtx(root, null);
+    }
+
+    const ctx = createCtx(root, page);
+
     try {
         enhance(root);
     } catch (e) {

@@ -6,9 +6,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ ($pageTitle ?? null) ? $pageTitle . ' | ' . ($siteSettings->localized('site_name') ?: config('app.name')) : ($siteSettings->localized('site_name') ?: config('app.name')) }}</title>
 
+    @stack('site_vendor_css')
     <script defer src="{{ asset('assets/js/core.bundle.js') }}"></script>
     <script defer src="{{ asset('assets/vendors/ktui/ktui.min.js') }}"></script>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/site/app.js'])
+    @stack('site_css')
 </head>
 <body class="min-h-screen bg-background text-foreground">
 @php
@@ -174,5 +176,7 @@
         </div>
     </footer>
 </div>
+@stack('site_vendor_js')
+@stack('site_js')
 </body>
 </html>

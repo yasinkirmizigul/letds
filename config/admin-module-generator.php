@@ -92,8 +92,8 @@ return [
     | If markers do NOT exist, generator will NOT touch those files.
     */
     'patching' => [
-        'routes_web_file' => base_path('routes/web.php'),
-        'routes_marker'   => '// [ADMIN_MODULE_ROUTES]',
+        'routes_admin_file' => base_path('routes/admin/index.php'),
+        'routes_marker'     => '// [ADMIN_MODULE_ROUTES:START]',
         'menu_file'       => base_path('config/admin_menu.php'),
         'menu_marker'     => '// [ADMIN_MODULE_MENU]',
     ],

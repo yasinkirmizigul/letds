@@ -14,7 +14,7 @@ class AdminModuleInstallCommand extends Command
         {--controller= : full controller class, e.g. App\\Http\\Controllers\\Admin\\ProductController}
         {--model= : full model class, e.g. App\\Models\\Product}
         {--policy= : full policy class, e.g. App\\Policies\\ProductPolicy}
-        {--routeFile= : module route file path, e.g. routes/admin/products.php}
+        {--routeFile= : module route file path, e.g. routes/admin/modules/products.php}
         {--menuIcon=ki-outline ki-basket : keenicon class}
         {--permPrefix=admin : permission prefix}
         {--permKey= : permission key, default = slug}
@@ -30,7 +30,7 @@ class AdminModuleInstallCommand extends Command
         $controller = (string) ($this->option('controller') ?: '');
         $model      = (string) ($this->option('model') ?: '');
         $policy     = (string) ($this->option('policy') ?: '');
-        $routeFile  = (string) ($this->option('routeFile') ?: "routes/admin/{$slug}.php");
+        $routeFile  = (string) ($this->option('routeFile') ?: "routes/admin/modules/{$slug}.php");
 
         $menuIcon   = (string) $this->option('menuIcon');
         $permPrefix = (string) $this->option('permPrefix');
@@ -39,9 +39,10 @@ class AdminModuleInstallCommand extends Command
 
         $dry = (bool) $this->option('dry');
 
-        // 1) routes/admin.php include
-        $routesAdminPath = base_path('routes/admin.php');
+        // 1) routes/admin/index.php include. routes/admin/modules/*.php is auto-loaded.
+        $routesAdminPath = base_path('routes/admin/index.php');
         $routesPayload = "require base_path('{$routeFile}'); // {$slug}";
+        $routeIsAutoLoaded = str_starts_with(str_replace('\\', '/', $routeFile), 'routes/admin/modules/');
 
         // 2) admin_menu item
         $menuPath = config_path('admin_menu.php');
@@ -56,14 +57,20 @@ class AdminModuleInstallCommand extends Command
         $permPayload = $this->permissionsPayload($slug, $title, $permPrefix, $permKey);
 
         if ($dry) {
-            $this->line("[DRY] routes/admin.php +={$routesPayload}");
+            $this->line($routeIsAutoLoaded
+                ? "[DRY] {$routeFile} routes/admin/index.php üzerinden otomatik yüklenecek."
+                : "[DRY] routes/admin/index.php +={$routesPayload}");
             $this->line("[DRY] config/admin_menu.php +=" . trim($menuPayload));
             $this->line("[DRY] AuthServiceProvider +=" . trim($policyPayload));
             if (file_exists($permConfigPath)) $this->line("[DRY] config/admin_permissions.php +=" . trim($permPayload));
             return self::SUCCESS;
         }
 
-        $installer->injectIntoFile($routesAdminPath, '// [ADMIN_MODULE_ROUTES:START]', '// [ADMIN_MODULE_ROUTES:END]', $routesPayload);
+        if ($routeIsAutoLoaded) {
+            $this->line("Route dosyası routes/admin/modules altında olduğu için otomatik yüklenecek: {$routeFile}");
+        } else {
+            $installer->injectIntoFile($routesAdminPath, '// [ADMIN_MODULE_ROUTES:START]', '// [ADMIN_MODULE_ROUTES:END]', $routesPayload);
+        }
 
         $installer->injectIntoFile($menuPath, '// [ADMIN_MODULE_MENU:START]', '// [ADMIN_MODULE_MENU:END]', $menuPayload);
 

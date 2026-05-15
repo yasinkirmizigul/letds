@@ -49,7 +49,7 @@ class MakeAdminModule extends Command
 
         // 3) Safe patches
         if (! (bool) $this->option('no-patch')) {
-            $this->patchWebRoutesAdminModulesLoader();
+            $this->patchAdminRoutesModulesLoader();
             $this->patchAdminPagesRegistry($slugPlural);
         }
 
@@ -207,9 +207,9 @@ PHP;
      | Patches
      |-----------------------------------------------------------------*/
 
-    private function patchWebRoutesAdminModulesLoader(): void
+    private function patchAdminRoutesModulesLoader(): void
     {
-        $path = base_path('routes/web.php');
+        $path = base_path('routes/admin/index.php');
         if (!file_exists($path)) {
             return;
         }
@@ -225,9 +225,9 @@ PHP;
 
         $loader = <<<PHP
 // [ADMIN_MODULE_ROUTES:START]
-\$__adminModuleDir = __DIR__ . '/admin/modules';
+\$__adminModuleDir = __DIR__ . '/modules';
 if (is_dir(\$__adminModuleDir)) {
-    foreach (glob(\$__adminModuleDir . '/*.php') as \$__f) {
+    foreach (glob(\$__adminModuleDir . '/*.php') ?: [] as \$__f) {
         require \$__f;
     }
 }

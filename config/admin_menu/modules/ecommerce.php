@@ -3,7 +3,7 @@
 return [
     [
         'type' => 'accordion',
-        'title' => 'E-Ticaret',
+        'title' => 'Satış ve Katalog',
         'icon' => 'ki-filled ki-basket text-lg',
         'permAny' => [
             'ecommerce_orders.view',
@@ -16,16 +16,16 @@ return [
         ],
         'children' => [
             [
-                'title' => 'Sipariş Yönetimi',
-                'route' => 'admin.ecommerce.orders.index',
-                'active' => ['admin.ecommerce.orders.*'],
-                'perm' => 'ecommerce_orders.view',
-            ],
-            [
                 'title' => 'Ürün Kataloğu',
                 'route' => 'admin.products.index',
                 'active' => ['admin.products.*'],
                 'perm' => 'products.view',
+            ],
+            [
+                'title' => 'Siparişler',
+                'route' => 'admin.ecommerce.orders.index',
+                'active' => ['admin.ecommerce.orders.*'],
+                'perm' => 'ecommerce_orders.view',
             ],
             [
                 'title' => 'Stok ve Varyantlar',

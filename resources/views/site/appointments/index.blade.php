@@ -1,5 +1,13 @@
 @extends('site.layouts.main.app')
 
+@push('site_vendor_css')
+    <link rel="stylesheet" href="{{ asset('assets/plugins/global/plugins.bundle.css') }}">
+@endpush
+
+@push('site_vendor_js')
+    <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
+@endpush
+
 @section('content')
     <div class="mx-auto grid max-w-5xl gap-5 px-4 py-6 lg:px-8 lg:py-8">
         <section class="app-shell-surface rounded-[24px] p-5 lg:p-6">
@@ -94,4 +102,6 @@
     </div>
 @endsection
 
-@vite('resources/js/site/appointments/index.js')
+@push('site_js')
+    @vite('resources/js/site/appointments/index.js')
+@endpush

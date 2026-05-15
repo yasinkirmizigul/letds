@@ -60,6 +60,7 @@ import SiteSlidersEdit from './site/sliders/edit';
 import SiteSlidersIndex from './site/sliders/index';
 import EcommerceOrderForm from './ecommerce/orders/form';
 
+const NoopPage = async () => {};
 
 export function registerPages() {
     register('dash.index', DashIndex);
@@ -125,4 +126,14 @@ export function registerPages() {
 
     register('ecommerce.orders.create', EcommerceOrderForm);
     register('ecommerce.orders.edit', EcommerceOrderForm);
+
+    [
+        'audit.index',
+        'categories.trash',
+        'ecommerce.orders.index',
+        'ecommerce.orders.show',
+        'site.payments.index',
+        'site.payments.create',
+        'site.payments.edit',
+    ].forEach((page) => register(page, NoopPage));
 }
