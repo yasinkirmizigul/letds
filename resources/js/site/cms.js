@@ -42,7 +42,10 @@ function initHeroSlider() {
 
     const render = () => {
         slides.forEach((slide, slideIndex) => {
-            slide.classList.toggle('hidden', slideIndex !== index);
+            const active = slideIndex === index;
+            slide.classList.toggle('opacity-0', !active);
+            slide.classList.toggle('pointer-events-none', !active);
+            slide.ariaHidden = active ? 'false' : 'true';
         });
 
         indicators.forEach((indicator, indicatorIndex) => {
@@ -77,6 +80,9 @@ function initHeroSlider() {
             start();
         });
     });
+
+    root.addEventListener('mouseenter', () => window.clearInterval(timer));
+    root.addEventListener('mouseleave', () => start());
 
     render();
     start();

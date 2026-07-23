@@ -415,6 +415,16 @@ body.site-shell [data-reveal].is-revealed {
     }
 }
 
+body.site-shell [data-home-slide] {
+    transition: opacity 0.6s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.site-shell [data-home-slide] {
+        transition: none;
+    }
+}
+
 body.site-shell [x-cloak] {
     display: none !important;
 }
