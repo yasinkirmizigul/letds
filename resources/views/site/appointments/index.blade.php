@@ -56,25 +56,13 @@
                         <span class="text-sm font-semibold text-foreground">Kişi</span>
                     </div>
 
-                    <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr),auto] lg:items-end">
-                        <div>
-                            <label class="kt-form-label mb-2">Kişi</label>
-                            <select id="provider" class="kt-select w-full">
-                                @foreach($providers as $p)
-                                    <option value="{{ $p->id }}">{{ $p->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="flex items-center justify-between gap-2">
-                            <button type="button" id="prevMonthBtn" class="kt-btn kt-btn-outline" aria-label="Önceki ay">
-                                <i class="ki-outline ki-left"></i>
-                            </button>
-                            <div id="calendarTitle" class="px-3 text-sm font-semibold text-foreground"></div>
-                            <button type="button" id="nextMonthBtn" class="kt-btn kt-btn-outline" aria-label="Sonraki ay">
-                                <i class="ki-outline ki-right"></i>
-                            </button>
-                        </div>
+                    <div>
+                        <label class="kt-form-label mb-2">Kişi</label>
+                        <select id="provider" class="kt-select w-full">
+                            @foreach($providers as $p)
+                                <option value="{{ $p->id }}">{{ $p->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
 
@@ -84,6 +72,15 @@
                         <span class="text-sm font-semibold text-foreground">Gün</span>
                     </div>
 
+                    <div class="mb-3 flex items-center justify-between gap-2">
+                        <button type="button" id="prevMonthBtn" class="kt-btn kt-btn-outline" aria-label="Önceki ay">
+                            <i class="ki-outline ki-left"></i>
+                        </button>
+                        <div id="calendarTitle" class="px-3 text-sm font-semibold text-foreground"></div>
+                        <button type="button" id="nextMonthBtn" class="kt-btn kt-btn-outline" aria-label="Sonraki ay">
+                            <i class="ki-outline ki-right"></i>
+                        </button>
+                    </div>
                     <div id="calendar"></div>
                 </div>
 
