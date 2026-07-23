@@ -12,7 +12,7 @@
     @vite(['resources/css/app.css', 'resources/js/site/app.js'])
     @stack('site_css')
 </head>
-<body class="min-h-screen bg-background text-foreground">
+<body class="site-shell min-h-screen bg-background text-foreground">
 @php
     $siteMember = auth('member')->user();
     $hasActiveMemberSession = $siteMember && $siteMember->is_active && !$siteMember->trashed();
