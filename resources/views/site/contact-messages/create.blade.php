@@ -16,20 +16,16 @@
         data-success-message="{{ session('ok', '') }}"
     >
         <div class="grid gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.75fr)]">
-            <div class="kt-card">
-                <div class="kt-card-header border-b border-border/60 py-5">
-                    <div class="flex flex-col gap-2">
-                        <span class="text-xs font-semibold uppercase tracking-[0.24em] text-primary">İletişim Formu</span>
-                        <div>
-                            <h1 class="text-2xl font-semibold text-foreground">Doğru kişiye doğrudan mesaj gönder</h1>
-                            <p class="text-sm text-muted-foreground">
-                                Mesajın seçtiğin kullanıcıya admin panel üzerinden düşer. Aciliyet durumunu da belirterek daha net bir yönlendirme yapabilirsin.
-                            </p>
-                        </div>
-                    </div>
+            <div class="rounded-3xl border border-border bg-background">
+                <div class="border-b border-border px-6 py-6">
+                    <span class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">İletişim Formu</span>
+                    <h1 class="mt-3 font-display text-3xl font-semibold text-foreground md:text-4xl">Doğru kişiye doğrudan mesaj gönder</h1>
+                    <p class="mt-2 text-sm text-muted-foreground">
+                        Mesajın seçtiğin kullanıcıya admin panel üzerinden düşer. Aciliyet durumunu da belirterek daha net bir yönlendirme yapabilirsin.
+                    </p>
                 </div>
 
-                <div class="kt-card-content p-6">
+                <div class="p-6">
                     @if(session('ok'))
                         <div class="kt-alert kt-alert-success mb-5">
                             <div class="kt-alert-text">{{ session('ok') }}</div>
@@ -68,12 +64,12 @@
                                     @endforeach
                                 </select>
                                 @error('recipient_user_id')
-                                    <div class="mt-2 text-sm text-danger">{{ $message }}</div>
+                                    <div class="mt-1.5 text-xs text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
                             @if($isMember)
-                                <div class="md:col-span-2 rounded-2xl app-surface-card app-surface-card--success p-4">
+                                <div class="md:col-span-2 rounded-2xl border border-border bg-muted/40 p-4">
                                     <div class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
                                         <div>
                                             <div class="text-sm font-semibold text-foreground">Üye bilgilerin otomatik kullanılacak</div>
@@ -85,11 +81,11 @@
                                     </div>
 
                                     <div class="mt-4 grid gap-3 sm:grid-cols-2">
-                                        <div class="rounded-xl app-surface-card app-surface-card--soft px-4 py-3">
+                                        <div class="rounded-xl border border-border bg-muted/40 px-4 py-3">
                                             <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">Ad Soyad</div>
                                             <div class="mt-1 font-medium text-foreground">{{ $member->full_name }}</div>
                                         </div>
-                                        <div class="rounded-xl app-surface-card app-surface-card--soft px-4 py-3">
+                                        <div class="rounded-xl border border-border bg-muted/40 px-4 py-3">
                                             <div class="text-xs uppercase tracking-[0.16em] text-muted-foreground">İletişim</div>
                                             <div class="mt-1 font-medium text-foreground">{{ $member->email }}</div>
                                             <div class="text-sm text-muted-foreground">{{ $member->phone ?: 'Telefon bilgisi yok' }}</div>
@@ -97,7 +93,7 @@
                                     </div>
                                 </div>
                             @else
-                                <div class="md:col-span-2 rounded-2xl app-surface-card app-surface-card--soft p-4">
+                                <div class="md:col-span-2 rounded-2xl border border-border bg-muted/40 p-4">
                                     <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
                                         <div>
                                             <div class="text-sm font-semibold text-foreground">Gönderen bilgileri</div>
@@ -119,7 +115,7 @@
                                                 placeholder="Adınızı yazın"
                                             >
                                             @error('name')
-                                                <div class="mt-2 text-sm text-danger">{{ $message }}</div>
+                                                <div class="mt-1.5 text-xs text-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
 
@@ -133,7 +129,7 @@
                                                 placeholder="Soyadınızı yazın"
                                             >
                                             @error('surname')
-                                                <div class="mt-2 text-sm text-danger">{{ $message }}</div>
+                                                <div class="mt-1.5 text-xs text-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
 
@@ -141,7 +137,7 @@
                                             <label class="kt-form-label mb-3">Size hangi kanaldan dönüş yapılsın?</label>
                                             <div class="grid gap-3 sm:grid-cols-2">
                                                 @foreach($contactChannelOptions as $channelKey => $channelOption)
-                                                    <label class="flex items-start gap-3 rounded-2xl app-surface-card app-surface-card--interactive px-4 py-4">
+                                                    <label class="flex items-start gap-3 rounded-2xl border border-border bg-muted/40 px-4 py-4">
                                                         <input
                                                             type="checkbox"
                                                             name="contact_channels[]"
@@ -160,7 +156,7 @@
                                                 @endforeach
                                             </div>
                                             @error('contact_channels')
-                                                <div class="mt-2 text-sm text-danger">{{ $message }}</div>
+                                                <div class="mt-1.5 text-xs text-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
 
@@ -174,7 +170,7 @@
                                                 placeholder="ornek@mail.com"
                                             >
                                             @error('email')
-                                                <div class="mt-2 text-sm text-danger">{{ $message }}</div>
+                                                <div class="mt-1.5 text-xs text-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
 
@@ -188,7 +184,7 @@
                                                 placeholder="05xx xxx xx xx"
                                             >
                                             @error('phone')
-                                                <div class="mt-2 text-sm text-danger">{{ $message }}</div>
+                                                <div class="mt-1.5 text-xs text-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
@@ -205,7 +201,7 @@
                                     placeholder="Mesaj başlığını yazın"
                                 >
                                 @error('subject')
-                                    <div class="mt-2 text-sm text-danger">{{ $message }}</div>
+                                    <div class="mt-1.5 text-xs text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
@@ -227,7 +223,7 @@
                                     @endforeach
                                 </select>
                                 @error('priority')
-                                    <div class="mt-2 text-sm text-danger">{{ $message }}</div>
+                                    <div class="mt-1.5 text-xs text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
@@ -240,7 +236,7 @@
                                     placeholder="İhtiyacınızı, beklentinizi ya da yaşadığınız durumu detaylıca yazın"
                                 >{{ old('message') }}</textarea>
                                 @error('message')
-                                    <div class="mt-2 text-sm text-danger">{{ $message }}</div>
+                                    <div class="mt-1.5 text-xs text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -258,13 +254,13 @@
             </div>
 
             <div class="grid gap-6">
-                <div class="kt-card">
-                    <div class="kt-card-header py-5">
-                        <h3 class="kt-card-title">Öncelik Rehberi</h3>
+                <div class="rounded-3xl border border-border bg-background">
+                    <div class="border-b border-border px-5 py-5">
+                        <h3 class="text-lg font-semibold text-foreground">Öncelik Rehberi</h3>
                     </div>
-                    <div class="kt-card-content p-5 grid gap-4">
+                    <div class="grid gap-4 p-5">
                         @foreach($priorityOptions as $priorityOption)
-                            <div class="rounded-2xl app-surface-card app-surface-card--soft p-4">
+                            <div class="rounded-2xl border border-border bg-muted/40 p-4">
                                 <span class="{{ $priorityOption['badge'] }}">{{ $priorityOption['label'] }}</span>
                                 <p class="mt-3 text-sm text-muted-foreground">
                                     @switch($loop->index)
@@ -286,18 +282,18 @@
                     </div>
                 </div>
 
-                <div class="kt-card">
-                    <div class="kt-card-header py-5">
-                        <h3 class="kt-card-title">Sistem Notları</h3>
+                <div class="rounded-3xl border border-border bg-background">
+                    <div class="border-b border-border px-5 py-5">
+                        <h3 class="text-lg font-semibold text-foreground">Sistem Notları</h3>
                     </div>
-                    <div class="kt-card-content p-5 grid gap-4 text-sm text-muted-foreground">
-                        <div class="rounded-2xl app-surface-card px-4 py-4">
+                    <div class="grid gap-4 p-5 text-sm text-muted-foreground">
+                        <div class="rounded-2xl border border-border bg-muted/40 px-4 py-4">
                             Mesajı hangi kullanıcıya yönlendirdiğin admin panelde net şekilde görünür.
                         </div>
-                        <div class="rounded-2xl app-surface-card px-4 py-4">
+                        <div class="rounded-2xl border border-border bg-muted/40 px-4 py-4">
                             Süper admin tüm mesajları görebilir; diğer kullanıcılar sadece kendilerine gönderilen kayıtları görür.
                         </div>
-                        <div class="rounded-2xl app-surface-card px-4 py-4">
+                        <div class="rounded-2xl border border-border bg-muted/40 px-4 py-4">
                             İstersen ileride kullanıcı listesinde “bu kişiye mesaj gönder” butonu ekleyebiliriz; bu sayfa buna hazır.
                         </div>
                     </div>
