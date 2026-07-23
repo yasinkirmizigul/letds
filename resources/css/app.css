@@ -415,6 +415,10 @@ body.site-shell [data-reveal].is-revealed {
     }
 }
 
+body.site-shell [x-cloak] {
+    display: none !important;
+}
+
 /* =========================
    BASE
    ========================= */

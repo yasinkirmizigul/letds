@@ -1,5 +1,9 @@
 import '../bootstrap';
 import './auth/member-register';
+import Alpine from 'alpinejs';
+
+window.Alpine = Alpine;
+Alpine.start();
 
 function initKtComponents() {
     try {
