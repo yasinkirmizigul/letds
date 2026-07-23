@@ -425,6 +425,36 @@ body.site-shell [data-home-slide] {
     }
 }
 
+body.site-shell .app-calendar-day {
+    aspect-ratio: 1 / 1;
+    border-radius: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+body.site-shell .app-calendar-day.is-available { border: 1px solid var(--border); background: var(--background); }
+body.site-shell .app-calendar-day.is-available:hover { border-color: var(--primary); background: color-mix(in oklab, var(--primary) 6%, var(--background)); }
+body.site-shell .app-calendar-day.is-disabled { opacity: 0.35; background: transparent; }
+body.site-shell .app-calendar-day.is-selected { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
+body.site-shell .app-calendar-day.is-selected .text-muted-foreground { color: color-mix(in oklab, var(--primary-foreground) 75%, transparent); }
+body.site-shell .app-slot-button {
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+body.site-shell .app-slot-button:hover { border-color: var(--primary); color: var(--primary); }
+body.site-shell .app-slot-button.is-selected { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
+
+body.site-shell .app-skeleton {
+    background: color-mix(in oklab, var(--foreground) 6%, var(--background));
+    animation: site-skeleton-pulse 1.4s ease-in-out infinite;
+}
+@keyframes site-skeleton-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+@media (prefers-reduced-motion: reduce) { body.site-shell .app-skeleton { animation: none; } }
+
 body.site-shell [x-cloak] {
     display: none !important;
 }
