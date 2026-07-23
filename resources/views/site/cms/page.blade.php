@@ -2,53 +2,42 @@
 
 @section('content')
     <div class="mx-auto max-w-7xl px-4 py-8">
-        <section class="overflow-hidden rounded-[36px] border border-border bg-white/85 shadow-sm">
-            <div class="grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_420px]">
-                <div class="p-6 lg:p-10">
-                    @if($page->localized('hero_kicker'))
-                        <div class="inline-flex rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-primary">
-                            {{ $page->localized('hero_kicker') }}
-                        </div>
-                    @endif
-
-                    <div class="mt-5 flex items-start gap-4">
-                        <div class="inline-flex size-14 items-center justify-center rounded-3xl bg-primary/10 text-xl text-primary">
-                            <i class="{{ $page->icon_class ?: 'ki-filled ki-abstract-26' }}"></i>
-                        </div>
-                        <div>
-                            <h1 class="text-4xl font-semibold text-foreground">{{ $page->localized('title') }}</h1>
-                            @if($page->localized('excerpt'))
-                                <p class="mt-4 max-w-3xl text-base leading-8 text-muted-foreground">{{ $page->localized('excerpt') }}</p>
-                            @endif
-                        </div>
-                    </div>
+        <div class="max-w-3xl">
+            @if($page->localized('hero_kicker'))
+                <div class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+                    {{ $page->localized('hero_kicker') }}
                 </div>
+            @endif
 
-                <div class="relative min-h-[280px] border-l border-border bg-slate-100">
-                    @if($page->featuredUrl())
-                        <img src="{{ $page->featuredUrl() }}" alt="" class="absolute inset-0 h-full w-full object-cover">
-                    @endif
-                </div>
+            <h1 class="mt-3 font-display text-3xl font-semibold text-foreground md:text-4xl">{{ $page->localized('title') }}</h1>
+
+            @if($page->localized('excerpt'))
+                <p class="mt-4 max-w-2xl text-base leading-8 text-muted-foreground">{{ $page->localized('excerpt') }}</p>
+            @endif
+        </div>
+
+        @if($page->featuredUrl())
+            <div class="mt-8 aspect-[21/9] overflow-hidden rounded-3xl">
+                <img src="{{ $page->featuredUrl() }}" alt="" class="h-full w-full object-cover">
             </div>
-        </section>
+        @endif
 
         <section class="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
-            <article class="rounded-[32px] border border-border bg-white/85 p-6 leading-8 text-foreground shadow-sm lg:p-10">
+            <article class="rounded-3xl border border-border bg-background p-6 leading-8 text-foreground lg:p-10">
                 {!! \App\Support\Security\HtmlSanitizer::sanitize($page->localized('content')) !!}
             </article>
 
             <aside class="grid gap-5 self-start lg:sticky lg:top-24">
-                <div class="rounded-[28px] border border-border bg-white/85 p-5 shadow-sm">
-                    <div class="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">{{ $siteSettings->uiLine('page_summary_label') }}</div>
+                <div class="rounded-2xl border border-border bg-background p-5">
+                    <div class="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{{ $siteSettings->uiLine('page_summary_label') }}</div>
                     <div class="mt-4 grid gap-2 text-sm text-muted-foreground">
                         <div>{{ $siteSettings->uiLine('page_reading_time_label') }}: {{ $page->readingTimeMinutes() }} dk</div>
-                        <div>{{ $siteSettings->uiLine('page_seo_score_label') }}: %{{ $page->seoCompletenessScore() }}</div>
                         <div>{{ $siteSettings->uiLine('page_link_label') }}: /{{ $page->slugForLocale($siteCurrentLocale) }}</div>
                     </div>
                 </div>
 
-                <div class="rounded-[28px] border border-border bg-white/85 p-5 shadow-sm">
-                    <div class="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">{{ $siteSettings->uiLine('page_quick_actions_label') }}</div>
+                <div class="rounded-2xl border border-border bg-background p-5">
+                    <div class="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{{ $siteSettings->uiLine('page_quick_actions_label') }}</div>
                     <div class="mt-4 flex flex-col gap-3">
                         <a href="{{ route('site.contact-messages.create', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary w-full">{{ $siteSettings->uiLine('page_send_message_label') }}</a>
                         <a href="{{ auth('member')->check() ? route('member.appointments.index', ['site_locale' => $siteCurrentLocale]) : route('member.login', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full">
@@ -60,39 +49,37 @@
         </section>
 
         @if($page->show_counters && $page->counters->isNotEmpty())
-            <section class="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                @foreach($page->counters as $counter)
-                    <div class="rounded-[28px] border border-border bg-white/85 p-6 shadow-sm">
-                        <div class="inline-flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                            <i class="{{ $counter->icon_class ?: 'ki-filled ki-chart-simple' }}"></i>
+            <section class="mt-16" data-reveal>
+                <div class="grid gap-y-10 border-y border-border py-10 sm:grid-cols-2 xl:grid-cols-4">
+                    @foreach($page->counters as $counter)
+                        <div class="px-2 sm:px-6 {{ $loop->first ? '' : 'sm:border-l sm:border-border' }}">
+                            <div class="font-display text-5xl font-medium tracking-tight text-foreground">
+                                {{ $counter->localized('prefix') }}<span data-countup-value="{{ $counter->value }}">0</span>{{ $counter->localized('suffix') }}
+                            </div>
+                            <div class="mt-3 text-sm font-medium text-foreground">{{ $counter->localized('label') }}</div>
+                            @if($counter->localized('description'))
+                                <div class="mt-1 text-sm leading-6 text-muted-foreground">{{ $counter->localized('description') }}</div>
+                            @endif
                         </div>
-                        <div class="mt-5 text-4xl font-semibold text-foreground">
-                            {{ $counter->localized('prefix') }}
-                            <span data-countup-value="{{ $counter->value }}">0</span>
-                            {{ $counter->localized('suffix') }}
-                        </div>
-                        <div class="mt-3 text-base font-medium text-foreground">{{ $counter->localized('label') }}</div>
-                        @if($counter->localized('description'))
-                            <div class="mt-2 text-sm leading-6 text-muted-foreground">{{ $counter->localized('description') }}</div>
-                        @endif
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
             </section>
         @endif
 
         @if($page->show_faqs && $page->faqs->isNotEmpty())
-            <section class="mt-12">
+            <section class="mt-14" data-reveal>
                 <div class="mb-6">
-                    <div class="text-xs font-semibold uppercase tracking-[0.28em] text-primary">SSS</div>
-                    <h2 class="mt-2 text-3xl font-semibold text-foreground">{{ $siteSettings->uiLine('page_faq_heading') }}</h2>
+                    <div class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">SSS</div>
+                    <h2 class="mt-3 font-display text-3xl font-semibold text-foreground">{{ $siteSettings->uiLine('page_faq_heading') }}</h2>
                 </div>
-                <div class="grid gap-4">
+                <div class="divide-y divide-border border-y border-border">
                     @foreach($page->faqs as $faq)
-                        <details class="rounded-[28px] border border-border bg-white/85 p-5 shadow-sm">
-                            <summary class="cursor-pointer list-none text-base font-semibold text-foreground">
+                        <details class="group py-5">
+                            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold text-foreground">
                                 {{ $faq->localized('question') }}
+                                <span class="text-xl font-light text-muted-foreground transition-transform duration-300 group-open:rotate-45">+</span>
                             </summary>
-                            <div class="mt-4 text-sm leading-7 text-muted-foreground">{!! nl2br(e($faq->localized('answer'))) !!}</div>
+                            <div class="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">{!! nl2br(e($faq->localized('answer'))) !!}</div>
                         </details>
                     @endforeach
                 </div>
