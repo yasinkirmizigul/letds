@@ -154,7 +154,7 @@ async function renderCalendar() {
 
     isMonthLoading = true;
     updateCalendarTitle();
-    container.innerHTML = `<div class="text-sm text-muted-foreground">Takvim yükleniyor...</div>`;
+    container.innerHTML = `<div class="grid grid-cols-7 gap-2">${calendarSkeletonCells()}</div>`;
 
     try {
         const year = currentMonth.getFullYear();
@@ -163,7 +163,14 @@ async function renderCalendar() {
         const map = await get(`/member/appointments/days?provider_id=${encodeURIComponent(providerId)}&month=${monthStr}`, { ignoreGlobalError: true });
         const todayStr = todayDateString();
 
+        // Hafta günü başlıkları site diline göre üretilir (1 Ocak 2024 = Pazartesi, Pzt-Paz sırası)
+        const weekdayLocale = document.documentElement.lang || 'tr';
+        const weekdayFormatter = new Intl.DateTimeFormat(weekdayLocale, { weekday: 'short' });
+        const weekdays = Array.from({ length: 7 }, (_, i) => weekdayFormatter.format(new Date(2024, 0, 1 + i)));
         let html = `<div class="grid grid-cols-7 gap-2">`;
+        html += weekdays
+            .map((d) => `<div class="pb-1 text-center text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">${d}</div>`)
+            .join('');
         const firstDay = new Date(year, month, 1).getDay() || 7;
         const totalDays = new Date(year, month + 1, 0).getDate();
 
@@ -205,7 +212,7 @@ async function renderCalendar() {
 
         highlightSelectedDate();
     } catch (error) {
-        container.innerHTML = `<div class="text-sm text-red-600">Takvim yüklenemedi.</div>`;
+        container.innerHTML = `<div class="text-sm text-danger">Takvim yüklenemedi.</div>`;
         showAppointmentAlert('error', 'Takvim yüklenemedi', 'Lütfen daha sonra tekrar deneyin.');
     } finally {
         isMonthLoading = false;
@@ -234,7 +241,7 @@ async function loadSlots() {
 
     isDayLoading = true;
     selectedSlot = null;
-    container.innerHTML = `<div class="text-sm text-muted-foreground">Saatler yükleniyor...</div>`;
+    container.innerHTML = slotSkeletonCells();
     empty?.classList.add('hidden');
 
     try {
@@ -250,7 +257,7 @@ async function loadSlots() {
             container.appendChild(createSlotElement(slot));
         });
     } catch (error) {
-        container.innerHTML = `<div class="text-sm text-red-600">Saatler yüklenemedi.</div>`;
+        container.innerHTML = `<div class="text-sm text-danger">Saatler yüklenemedi.</div>`;
         showAppointmentAlert('error', 'Saatler yüklenemedi', 'Lütfen daha sonra tekrar deneyin.');
     } finally {
         isDayLoading = false;
@@ -419,4 +426,16 @@ function formatTime(dateStr) {
         hour: '2-digit',
         minute: '2-digit'
     });
+}
+
+function calendarSkeletonCells() {
+    return Array.from({ length: 35 })
+        .map(() => '<div class="app-skeleton aspect-square rounded-xl"></div>')
+        .join('');
+}
+
+function slotSkeletonCells() {
+    return Array.from({ length: 6 })
+        .map(() => '<div class="app-skeleton h-9 w-full rounded-full"></div>')
+        .join('');
 }

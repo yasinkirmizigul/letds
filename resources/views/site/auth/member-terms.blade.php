@@ -7,14 +7,14 @@
 @endphp
 
 @section('content')
-    <div class="mx-auto max-w-5xl px-4 py-10">
-        <section class="overflow-hidden rounded-[36px] border border-border bg-white/95 shadow-sm">
-            <div class="border-b border-border bg-gradient-to-r from-primary/10 via-white to-white px-8 py-8">
-                <div class="inline-flex rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-primary">
+    <div class="mx-auto max-w-xl px-4 py-10">
+        <section class="overflow-hidden rounded-3xl border border-border bg-background shadow-sm">
+            <div class="border-b border-border px-8 py-8">
+                <div class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
                     Üyelik Bilgilendirmesi
                 </div>
-                <h1 class="mt-5 text-4xl font-semibold leading-tight text-foreground">{{ $membershipTermsTitle }}</h1>
-                <p class="mt-4 max-w-3xl text-sm leading-8 text-muted-foreground">{{ $membershipTermsSummary }}</p>
+                <h1 class="mt-5 font-display text-3xl font-semibold leading-tight text-foreground md:text-4xl">{{ $membershipTermsTitle }}</h1>
+                <p class="mt-4 text-sm leading-8 text-muted-foreground">{{ $membershipTermsSummary }}</p>
             </div>
 
             <div class="px-8 py-8">

@@ -10,39 +10,45 @@
 @section('content')
     <div class="mx-auto max-w-7xl px-4 py-10">
         <div class="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_560px]">
-            <section class="overflow-hidden rounded-[36px] border border-border bg-white/90 shadow-sm">
+            <section class="overflow-hidden rounded-3xl border border-border bg-background shadow-sm">
                 <div class="grid gap-8 p-8 lg:p-10">
                     <div>
-                        <div class="inline-flex rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-primary">
+                        <div class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
                             Üye Kaydı
                         </div>
-                        <h1 class="mt-5 text-4xl font-semibold leading-tight text-foreground">Sitenize güçlü bir üyelik başlangıcı kazandırın.</h1>
+                        <h1 class="mt-5 font-display text-3xl font-semibold leading-tight text-foreground md:text-4xl">Sitenize güçlü bir üyelik başlangıcı kazandırın.</h1>
                         <p class="mt-5 max-w-3xl text-sm leading-8 text-muted-foreground">
                             Bu form ile üyeleriniz temel bilgilerini, iletişim bilgilerini ve gerekli dosyalarını iletebilir. Kayıt tamamlandığında hesap oluşturulur ve yönetim panelinden tüm süreçleri takip edebilirsiniz.
                         </p>
                     </div>
 
-                    <div class="grid gap-4 md:grid-cols-3">
-                        <div class="rounded-[28px] border border-border bg-muted/20 p-5">
-                            <div class="text-xs uppercase tracking-[0.24em] text-muted-foreground">1. Adım</div>
-                            <div class="mt-3 text-lg font-semibold text-foreground">Bilgileri Gir</div>
+                    <div class="grid gap-6 border-t border-border pt-6 md:grid-cols-3">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="inline-flex size-6 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">1</span>
+                                <span class="text-sm font-semibold text-foreground">Bilgileri Gir</span>
+                            </div>
                             <div class="mt-2 text-sm leading-7 text-muted-foreground">Ad, soyad, e-posta ve telefon bilgilerinizle hesabınızı oluşturun.</div>
                         </div>
-                        <div class="rounded-[28px] border border-border bg-muted/20 p-5">
-                            <div class="text-xs uppercase tracking-[0.24em] text-muted-foreground">2. Adım</div>
-                            <div class="mt-3 text-lg font-semibold text-foreground">Bilgi Metnini Oku</div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="inline-flex size-6 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">2</span>
+                                <span class="text-sm font-semibold text-foreground">Bilgi Metnini Oku</span>
+                            </div>
                             <div class="mt-2 text-sm leading-7 text-muted-foreground">Üyelik bilgilendirmesini okuyup onayladıktan sonra kayıt tamamlanır.</div>
                         </div>
-                        <div class="rounded-[28px] border border-border bg-muted/20 p-5">
-                            <div class="text-xs uppercase tracking-[0.24em] text-muted-foreground">3. Adım</div>
-                            <div class="mt-3 text-lg font-semibold text-foreground">Panele Geç</div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="inline-flex size-6 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">3</span>
+                                <span class="text-sm font-semibold text-foreground">Panele Geç</span>
+                            </div>
                             <div class="mt-2 text-sm leading-7 text-muted-foreground">Kaydınız tamamlandığında üye paneline yönlendirilirsiniz.</div>
                         </div>
                     </div>
 
-                    <div class="rounded-[28px] border border-border bg-gradient-to-br from-primary/10 via-white to-white p-6">
-                        <div class="text-xs font-semibold uppercase tracking-[0.24em] text-primary">Üyelik Bilgilendirmesi</div>
-                        <div class="mt-3 text-2xl font-semibold text-foreground">{{ $membershipTermsTitle }}</div>
+                    <div class="rounded-2xl border border-border bg-muted/20 p-6">
+                        <div class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Üyelik Bilgilendirmesi</div>
+                        <div class="mt-3 font-display text-2xl font-semibold text-foreground">{{ $membershipTermsTitle }}</div>
                         <div class="mt-3 text-sm leading-7 text-muted-foreground">{{ $membershipTermsSummary }}</div>
                         <div class="mt-5 flex flex-wrap gap-3">
                             <button type="button" class="kt-btn kt-btn-primary" data-membership-terms-open>Metni Oku</button>
@@ -55,11 +61,11 @@
                 </div>
             </section>
 
-            <section class="rounded-[36px] border border-border bg-slate-950 p-6 text-white shadow-[0_24px_80px_rgba(15,23,42,0.18)] lg:p-8">
+            <section class="rounded-3xl border border-border bg-foreground p-6 text-background shadow-sm lg:p-8">
                 <div class="mb-6">
-                    <div class="text-xs font-semibold uppercase tracking-[0.28em] text-white/60">Kayıt Formu</div>
-                    <h2 class="mt-2 text-3xl font-semibold">Yeni Üyelik Oluştur</h2>
-                    <p class="mt-3 text-sm leading-7 text-white/70">
+                    <div class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Kayıt Formu</div>
+                    <h2 class="mt-2 font-display text-3xl font-semibold">Yeni Üyelik Oluştur</h2>
+                    <p class="mt-3 text-sm leading-7 text-background/70">
                         Tüm alanları eksiksiz doldurun. Belge alanı isteğe bağlıdır; yüklediğiniz dosya yönetim panelinden görüntülenebilir.
                     </p>
                 </div>
@@ -69,7 +75,7 @@
 
                     <div class="grid gap-4 md:grid-cols-2">
                         <div class="grid gap-2">
-                            <label class="text-sm font-medium text-white" for="member_register_name">Ad</label>
+                            <label class="text-sm font-medium text-background" for="member_register_name">Ad</label>
                             <input
                                 id="member_register_name"
                                 type="text"
@@ -80,12 +86,12 @@
                                 required
                             >
                             @error('name')
-                                <div class="text-xs text-danger">{{ $message }}</div>
+                                <div class="mt-1.5 text-xs text-danger">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="grid gap-2">
-                            <label class="text-sm font-medium text-white" for="member_register_surname">Soyad</label>
+                            <label class="text-sm font-medium text-background" for="member_register_surname">Soyad</label>
                             <input
                                 id="member_register_surname"
                                 type="text"
@@ -96,13 +102,13 @@
                                 required
                             >
                             @error('surname')
-                                <div class="text-xs text-danger">{{ $message }}</div>
+                                <div class="mt-1.5 text-xs text-danger">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
 
                     <div class="grid gap-2">
-                        <label class="text-sm font-medium text-white" for="member_register_email">E-posta</label>
+                        <label class="text-sm font-medium text-background" for="member_register_email">E-posta</label>
                         <input
                             id="member_register_email"
                             type="email"
@@ -114,12 +120,12 @@
                             required
                         >
                         @error('email')
-                            <div class="text-xs text-danger">{{ $message }}</div>
+                            <div class="mt-1.5 text-xs text-danger">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="grid gap-2">
-                        <label class="text-sm font-medium text-white" for="member_register_phone">Telefon</label>
+                        <label class="text-sm font-medium text-background" for="member_register_phone">Telefon</label>
                         <input
                             id="member_register_phone"
                             type="text"
@@ -129,13 +135,13 @@
                             placeholder="+90 5xx xxx xx xx"
                         >
                         @error('phone')
-                            <div class="text-xs text-danger">{{ $message }}</div>
+                            <div class="mt-1.5 text-xs text-danger">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="grid gap-4 md:grid-cols-2">
                         <div class="grid gap-2">
-                            <label class="text-sm font-medium text-white" for="member_register_password">Şifre</label>
+                            <label class="text-sm font-medium text-background" for="member_register_password">Şifre</label>
                             <input
                                 id="member_register_password"
                                 type="password"
@@ -146,12 +152,12 @@
                                 required
                             >
                             @error('password')
-                                <div class="text-xs text-danger">{{ $message }}</div>
+                                <div class="mt-1.5 text-xs text-danger">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="grid gap-2">
-                            <label class="text-sm font-medium text-white" for="member_register_password_confirmation">Şifre Tekrar</label>
+                            <label class="text-sm font-medium text-background" for="member_register_password_confirmation">Şifre Tekrar</label>
                             <input
                                 id="member_register_password_confirmation"
                                 type="password"
@@ -165,7 +171,7 @@
                     </div>
 
                     <div class="grid gap-2">
-                        <label class="text-sm font-medium text-white" for="member_register_filepath">Belge / Dosya</label>
+                        <label class="text-sm font-medium text-background" for="member_register_filepath">Belge / Dosya</label>
                         <input
                             id="member_register_filepath"
                             type="file"
@@ -173,26 +179,26 @@
                             class="kt-input @error('filepath') kt-input-invalid @enderror"
                             accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx"
                         >
-                        <div class="text-xs text-white/60">Desteklenen türler: PDF, JPG, PNG, WEBP, DOC, DOCX. En fazla 12 MB.</div>
+                        <div class="text-xs text-background/60">Desteklenen türler: PDF, JPG, PNG, WEBP, DOC, DOCX. En fazla 12 MB.</div>
                         @error('filepath')
-                            <div class="text-xs text-danger">{{ $message }}</div>
+                            <div class="mt-1.5 text-xs text-danger">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <input type="hidden" name="membership_terms_read" value="{{ $hasReadTerms ? 1 : 0 }}" data-membership-terms-read-input>
 
-                    <div class="rounded-3xl border border-white/10 bg-white/10 p-5">
+                    <div class="rounded-2xl border border-background/15 p-5">
                         <div class="flex flex-wrap items-start justify-between gap-3">
                             <div>
-                                <div class="text-sm font-semibold text-white">Üyelik bilgilendirmesi onayı</div>
-                                <div class="mt-2 text-sm leading-7 text-white/70">
+                                <div class="text-sm font-semibold text-background">Üyelik bilgilendirmesi onayı</div>
+                                <div class="mt-2 text-sm leading-7 text-background/70">
                                     Kayıt işleminden önce bilgilendirme metnini okuyup onaylamanız gerekir.
                                 </div>
                             </div>
                             <button type="button" class="kt-btn kt-btn-light" data-membership-terms-open>Metni Aç</button>
                         </div>
 
-                        <label class="mt-4 flex items-start gap-3 rounded-2xl border border-white/10 bg-black/10 px-4 py-4 text-sm text-white/80">
+                        <label class="mt-4 flex items-start gap-3 rounded-2xl border border-background/15 px-4 py-4 text-sm text-background/80">
                             <input
                                 type="checkbox"
                                 name="membership_terms_accepted"
@@ -204,34 +210,34 @@
                             >
                             <span>
                                 Üyelik bilgilendirme metnini okudum ve kabul ediyorum.
-                                <span class="mt-2 block text-xs text-white/60">Kutu, metin okunmadan aktif hale gelmez.</span>
+                                <span class="mt-2 block text-xs text-background/60">Kutu, metin okunmadan aktif hale gelmez.</span>
                             </span>
                         </label>
                         @error('membership_terms_read')
-                            <div class="mt-2 text-xs text-danger">{{ $message }}</div>
+                            <div class="mt-1.5 text-xs text-danger">{{ $message }}</div>
                         @enderror
                         @error('membership_terms_accepted')
-                            <div class="mt-2 text-xs text-danger">{{ $message }}</div>
+                            <div class="mt-1.5 text-xs text-danger">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <button type="submit" class="kt-btn kt-btn-primary w-full">Üyeliği Oluştur</button>
                 </form>
 
-                <div class="mt-6 rounded-[28px] border border-white/10 bg-white/10 p-5 text-sm leading-7 text-white/70">
+                <div class="mt-6 rounded-2xl border border-background/15 p-5 text-sm leading-7 text-background/70">
                     Zaten hesabınız varsa doğrudan giriş yapabilirsiniz.
-                    <a href="{{ route('member.login', ['site_locale' => $siteCurrentLocale]) }}" class="ml-2 font-medium text-white underline underline-offset-4">Üye girişine git</a>
+                    <a href="{{ route('member.login', ['site_locale' => $siteCurrentLocale]) }}" class="ml-2 font-medium text-background underline underline-offset-4">Üye girişine git</a>
                 </div>
             </section>
         </div>
     </div>
 
-    <div class="fixed inset-0 z-[120] hidden bg-slate-950/60 px-4 py-6" data-membership-terms-modal>
-        <div class="mx-auto flex h-full max-w-4xl flex-col overflow-hidden rounded-[32px] border border-border bg-white shadow-2xl">
+    <div class="fixed inset-0 z-[120] hidden bg-foreground/60 px-4 py-6" data-membership-terms-modal>
+        <div class="mx-auto flex h-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-border bg-background shadow-2xl">
             <div class="flex items-start justify-between gap-4 border-b border-border px-6 py-5">
                 <div>
-                    <div class="text-xs font-semibold uppercase tracking-[0.24em] text-primary">Üyelik Bilgilendirmesi</div>
-                    <h3 class="mt-2 text-2xl font-semibold text-foreground">{{ $membershipTermsTitle }}</h3>
+                    <div class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Üyelik Bilgilendirmesi</div>
+                    <h3 class="mt-2 font-display text-2xl font-semibold text-foreground">{{ $membershipTermsTitle }}</h3>
                     <div class="mt-2 text-sm text-muted-foreground">{{ $membershipTermsSummary }}</div>
                 </div>
                 <button type="button" class="kt-btn kt-btn-light" data-membership-terms-close>Kapat</button>
