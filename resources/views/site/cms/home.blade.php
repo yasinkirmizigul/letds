@@ -148,7 +148,7 @@
                 </div>
                 <div class="mt-6 flex flex-wrap gap-3">
                     <a href="{{ route('site.contact-messages.create', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary">{{ $siteSettings->uiLine('home_contact_primary_cta_label') }}</a>
-                    <a href="{{ auth('member')->check() ? route('member.appointments.index', ['site_locale' => $siteCurrentLocale]) : route('member.login', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light">
+                    <a href="{{ auth('member')->check() ? route('member.appointments.index', ['site_locale' => $siteCurrentLocale]) : route('member.login', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn border border-background/30 text-background transition-colors hover:bg-background/10">
                         {{ auth('member')->check() ? $siteSettings->uiLine('nav_member_panel_label') : $siteSettings->uiLine('nav_member_login_label') }}
                     </a>
                 </div>

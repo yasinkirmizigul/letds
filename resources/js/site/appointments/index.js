@@ -163,7 +163,10 @@ async function renderCalendar() {
         const map = await get(`/member/appointments/days?provider_id=${encodeURIComponent(providerId)}&month=${monthStr}`, { ignoreGlobalError: true });
         const todayStr = todayDateString();
 
-        const weekdays = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+        // Hafta günü başlıkları site diline göre üretilir (1 Ocak 2024 = Pazartesi, Pzt-Paz sırası)
+        const weekdayLocale = document.documentElement.lang || 'tr';
+        const weekdayFormatter = new Intl.DateTimeFormat(weekdayLocale, { weekday: 'short' });
+        const weekdays = Array.from({ length: 7 }, (_, i) => weekdayFormatter.format(new Date(2024, 0, 1 + i)));
         let html = `<div class="grid grid-cols-7 gap-2">`;
         html += weekdays
             .map((d) => `<div class="pb-1 text-center text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">${d}</div>`)
