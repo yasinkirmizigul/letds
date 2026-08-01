@@ -8,3 +8,4 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 Schedule::command('trash:purge')->dailyAt('03:30');
+Schedule::command('service-reviews:sync')->dailyAt('02:45')->withoutOverlapping();

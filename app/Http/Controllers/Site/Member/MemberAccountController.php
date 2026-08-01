@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Site\Member;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment\Appointment;
 use App\Models\Member;
+use App\Models\Review\ServiceReview;
+use App\Services\Review\ServiceReviewAssignmentService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,14 +16,18 @@ use Illuminate\Support\Str;
 
 class MemberAccountController extends Controller
 {
-    public function show(Request $request): View
+    public function show(Request $request, ServiceReviewAssignmentService $assignmentService): View
     {
         /** @var Member $member */
         $member = $request->user('member');
+        $assignmentService->syncCompletedServices($member->id);
 
         $member->loadCount([
             'appointments',
             'contactMessages',
+            'serviceReviews',
+            'serviceReviews as pending_service_reviews_count' => fn ($query) => $query
+                ->where('status', ServiceReview::STATUS_PENDING),
             'appointments as active_appointments_count' => fn ($query) => $query
                 ->where('status', Appointment::STATUS_BOOKED)
                 ->where('end_at', '>=', now()),
@@ -34,6 +40,12 @@ class MemberAccountController extends Controller
                 ->where('status', Appointment::STATUS_BOOKED)
                 ->where('end_at', '>=', now())
                 ->exists(),
+            'pendingReviews' => $member->serviceReviews()
+                ->pending()
+                ->with('provider:id,name,title')
+                ->latest('service_completed_at')
+                ->limit(3)
+                ->get(),
         ]);
     }
 

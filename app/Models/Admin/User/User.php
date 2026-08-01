@@ -5,6 +5,7 @@ namespace App\Models\Admin\User;
 use App\Models\Admin\Dash\AdminDashboardPreference;
 use App\Models\Admin\Media\Media;
 use App\Models\ContactMessage;
+use App\Models\Review\ServiceReview;
 use App\Notifications\AdminResetPasswordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -226,6 +227,11 @@ class User extends Authenticatable
         return $this->hasOne(AdminDashboardPreference::class);
     }
 
+    public function receivedServiceReviews(): HasMany
+    {
+        return $this->hasMany(ServiceReview::class, 'provider_user_id');
+    }
+
     public function avatarUrl(): string
     {
         // 1) media bağlıysa onu kullan
@@ -242,7 +248,7 @@ class User extends Authenticatable
         }
 
         // 3) default
-        return asset('assets/media/blank.png');
+        return asset('assets/admin/media/blank.png');
     }
 
     public function skillTags(): array

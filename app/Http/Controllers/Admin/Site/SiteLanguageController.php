@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Site\HomeSliderTranslation;
 use App\Models\Site\SiteCounterTranslation;
 use App\Models\Site\SiteFaqTranslation;
+use App\Models\Site\SiteHomepageConfigTranslation;
 use App\Models\Site\SiteLanguage;
 use App\Models\Site\SiteNavigationItemTranslation;
 use App\Models\Site\SitePageTranslation;
@@ -90,7 +91,7 @@ class SiteLanguageController extends Controller
         }
 
         $siteLanguage->forceFill([
-            'is_active' => !$siteLanguage->is_active,
+            'is_active' => ! $siteLanguage->is_active,
         ])->save();
 
         return redirect()
@@ -130,6 +131,7 @@ class SiteLanguageController extends Controller
             SiteNavigationItemTranslation::query()->where('locale', $locale)->delete();
             SiteSettingTranslation::query()->where('locale', $locale)->delete();
             HomeSliderTranslation::query()->where('locale', $locale)->delete();
+            SiteHomepageConfigTranslation::query()->where('locale', $locale)->delete();
 
             $siteLanguage->delete();
         });
@@ -171,12 +173,12 @@ class SiteLanguageController extends Controller
     {
         $code = trim($code);
 
-        if (!str_contains($code, '-')) {
+        if (! str_contains($code, '-')) {
             return strtolower($code);
         }
 
         [$language, $region] = array_pad(explode('-', $code, 2), 2, null);
 
-        return strtolower((string) $language) . '-' . strtoupper((string) $region);
+        return strtolower((string) $language).'-'.strtoupper((string) $region);
     }
 }

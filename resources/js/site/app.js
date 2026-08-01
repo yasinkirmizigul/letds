@@ -1,5 +1,6 @@
 import '../bootstrap';
 import './auth/member-register';
+import { initReviewStars } from './reviews';
 import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;
@@ -44,5 +45,6 @@ function domReady(fn) {
 domReady(() => {
     initKtComponents();
     initReveals();
+    initReviewStars();
     document.documentElement.classList.add('site-js-ready');
 });

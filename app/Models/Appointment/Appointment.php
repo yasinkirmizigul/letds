@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use App\Models\Appointment\AppointmentSlot;
+use App\Models\Review\ServiceReview;
 use App\Models\Concerns\HasLocalDateTimes;
 class Appointment extends Model
 {
@@ -101,6 +103,11 @@ class Appointment extends Model
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by_user_id');
+    }
+
+    public function serviceReview(): MorphOne
+    {
+        return $this->morphOne(ServiceReview::class, 'reviewable');
     }
 
     public function isActiveBooking(): bool

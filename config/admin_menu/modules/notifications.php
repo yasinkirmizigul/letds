@@ -2,6 +2,7 @@
 
 return [
     [
+        'key' => 'notifications',
         'type' => 'single',
         'title' => 'Bildirim Merkezi',
         'icon' => 'ki-filled ki-notification-status text-lg',

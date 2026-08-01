@@ -19,7 +19,7 @@
                     </div>
                 </div>
 
-                <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
                     <div class="rounded-3xl border border-border bg-background p-5">
                         <div class="text-sm text-muted-foreground">Toplam Randevu</div>
                         <div class="mt-2 text-3xl font-semibold">{{ $member->appointments_count }}</div>
@@ -33,10 +33,27 @@
                         <div class="mt-2 text-3xl font-semibold text-success">{{ $member->contact_messages_count }}</div>
                     </div>
                     <div class="rounded-3xl border border-border bg-background p-5">
+                        <div class="text-sm text-muted-foreground">Bekleyen Değerlendirme</div>
+                        <div class="mt-2 text-3xl font-semibold text-warning">{{ $member->pending_service_reviews_count }}</div>
+                    </div>
+                    <div class="rounded-3xl border border-border bg-background p-5">
                         <div class="text-sm text-muted-foreground">Son Giriş</div>
                         <div class="mt-2 text-lg font-semibold">{{ optional($member->last_login_at)->format('d.m.Y H:i') ?: 'Henüz giriş yok' }}</div>
                     </div>
                 </div>
+
+                @if($pendingReviews->isNotEmpty())
+                    <section class="border border-warning/30 bg-warning/10 p-6">
+                        <div class="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+                            <div>
+                                <div class="text-xs font-semibold uppercase text-warning">Görüşünüzü Bekliyoruz</div>
+                                <h2 class="mt-3 text-lg font-semibold text-foreground">{{ $pendingReviews->count() }} hizmet değerlendirilmeyi bekliyor</h2>
+                                <p class="mt-2 text-sm leading-7 text-muted-foreground">Kısa anketi yanıtlayarak aldığınız hizmeti 1–5 yıldız arasında puanlayabilirsiniz.</p>
+                            </div>
+                            <a href="{{ route('member.reviews.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary shrink-0">Değerlendirmeleri Aç</a>
+                        </div>
+                    </section>
+                @endif
 
                 <div class="grid gap-6 xl:grid-cols-2">
                     <div class="rounded-3xl border border-border bg-background p-6">
@@ -100,6 +117,7 @@
                     <div class="mt-4 grid gap-3 text-sm text-muted-foreground">
                         <a href="{{ route('member.password.request', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full">Şifremi Yenile</a>
                         <a href="{{ route('member.appointments.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full">Randevu Paneline Git</a>
+                        <a href="{{ route('member.reviews.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full">Değerlendirmelerim</a>
                     </div>
                 </div>
 

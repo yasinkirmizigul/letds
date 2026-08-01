@@ -2,6 +2,7 @@
 
 return [
     [
+        'key' => 'members',
         'type' => 'single',
         'title' => 'Üyelikler',
         'icon' => 'ki-filled ki-users text-lg',

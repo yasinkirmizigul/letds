@@ -16,6 +16,7 @@ use App\Models\Admin\User\User;
 use App\Models\Appointment\Appointment;
 use App\Models\ContactMessage;
 use App\Models\Member;
+use App\Models\Review\ServiceReview;
 use App\Models\Site\PaymentIntegration;
 use App\Models\Site\SiteLanguage;
 use App\Models\Site\SitePage;
@@ -59,6 +60,7 @@ class DashController extends Controller
             'ecommerceOrdersView' => $this->can($user, 'ecommerce_orders.view'),
             'ecommerceOrdersCreate' => $this->can($user, 'ecommerce_orders.create'),
             'membersView' => $this->can($user, 'members.view'),
+            'serviceReviewsView' => $this->can($user, 'service_reviews.view'),
             'sitePaymentsView' => $this->can($user, 'site_payments.view'),
             'siteSettingsView' => $this->can($user, 'site_settings.view'),
             'siteLanguagesView' => $this->can($user, 'site_languages.view'),
@@ -78,6 +80,19 @@ class DashController extends Controller
             'public' => $can['projectsView'] ? Project::query()->publicVisible()->count() : 0,
             'featured' => $can['projectsView'] ? Project::query()->featured()->count() : 0,
             'active' => $can['projectsView'] ? Project::query()->where('status', Project::STATUS_ACTIVE)->count() : 0,
+        ];
+
+        $serviceReviewQuery = ServiceReview::query();
+        if (!$user->isAdmin() && $user->hasRole('provider')) {
+            $serviceReviewQuery->where('provider_user_id', $user->id);
+        }
+
+        $serviceReviewStats = [
+            'completed' => $can['serviceReviewsView'] ? (clone $serviceReviewQuery)->completed()->count() : 0,
+            'pending' => $can['serviceReviewsView'] ? (clone $serviceReviewQuery)->pending()->count() : 0,
+            'average' => $can['serviceReviewsView']
+                ? round((float) (clone $serviceReviewQuery)->completed()->avg('overall_rating'), 2)
+                : 0,
         ];
 
         $productStats = [
@@ -451,6 +466,17 @@ class DashController extends Controller
                 'accent' => '#14b8a6',
                 'visibility_key' => 'module_members',
             ] : null,
+            $can['serviceReviewsView'] ? [
+                'title' => 'Değerlendirmeler',
+                'value' => $serviceReviewStats['completed'],
+                'hint' => number_format($serviceReviewStats['average'], 2, ',', '.') . " / 5 ortalama, {$serviceReviewStats['pending']} yanıt bekliyor",
+                'route' => route('admin.service-reviews.index'),
+                'action_label' => 'Raporu aç',
+                'action_url' => route('admin.service-reviews.index'),
+                'icon' => 'ki-filled ki-star',
+                'accent' => '#f59e0b',
+                'visibility_key' => 'module_service_reviews',
+            ] : null,
             $can['appointmentsView'] ? [
                 'title' => 'Randevular',
                 'value' => $appointmentsWeek,
@@ -821,6 +847,7 @@ class DashController extends Controller
             'trashView' => $this->can($user, 'trash.view'),
             'ecommerceOrdersView' => $this->can($user, 'ecommerce_orders.view'),
             'membersView' => $this->can($user, 'members.view'),
+            'serviceReviewsView' => $this->can($user, 'service_reviews.view'),
             'sitePaymentsView' => $this->can($user, 'site_payments.view'),
             'siteSettingsView' => $this->can($user, 'site_settings.view'),
             'siteLanguagesView' => $this->can($user, 'site_languages.view'),
@@ -869,6 +896,7 @@ class DashController extends Controller
             'trashView' => $this->can($user, 'trash.view'),
             'ecommerceOrdersView' => $this->can($user, 'ecommerce_orders.view'),
             'membersView' => $this->can($user, 'members.view'),
+            'serviceReviewsView' => $this->can($user, 'service_reviews.view'),
             'sitePaymentsView' => $this->can($user, 'site_payments.view'),
             'siteSettingsView' => $this->can($user, 'site_settings.view'),
             'siteLanguagesView' => $this->can($user, 'site_languages.view'),

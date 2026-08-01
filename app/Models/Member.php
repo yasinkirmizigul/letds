@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\ContactMessage;
+use App\Models\Review\ServiceReview;
 use App\Notifications\MemberResetPasswordNotification;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -219,5 +220,10 @@ class Member extends Authenticatable
     public function contactMessages(): HasMany
     {
         return $this->hasMany(ContactMessage::class);
+    }
+
+    public function serviceReviews(): HasMany
+    {
+        return $this->hasMany(ServiceReview::class);
     }
 }

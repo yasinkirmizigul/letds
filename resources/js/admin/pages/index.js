@@ -58,13 +58,20 @@ import SiteSettingsEdit from './site/settings/edit';
 import SiteSlidersCreate from './site/sliders/create';
 import SiteSlidersEdit from './site/sliders/edit';
 import SiteSlidersIndex from './site/sliders/index';
+import SiteHomepageEdit from './site/homepage/edit';
 import EcommerceOrderForm from './ecommerce/orders/form';
+import MenuVisibilityEdit from './menu-visibility/edit';
+import ServiceReviewsIndex from './service-reviews/index';
+import ServiceReviewQuestions from './service-reviews/questions';
 
 const NoopPage = async () => {};
 
 export function registerPages() {
     register('dash.index', DashIndex);
     register('dash.manage', DashManage);
+    register('menu-visibility.edit', MenuVisibilityEdit);
+    register('service-reviews.index', ServiceReviewsIndex);
+    register('service-reviews.questions', ServiceReviewQuestions);
 
     register('blog.create', BlogCreate);
     register('blog.edit', BlogEdit);
@@ -123,6 +130,7 @@ export function registerPages() {
     register('site.sliders.index', SiteSlidersIndex);
     register('site.sliders.create', SiteSlidersCreate);
     register('site.sliders.edit', SiteSlidersEdit);
+    register('site.homepage.edit', SiteHomepageEdit);
 
     register('ecommerce.orders.create', EcommerceOrderForm);
     register('ecommerce.orders.edit', EcommerceOrderForm);
@@ -132,6 +140,7 @@ export function registerPages() {
         'categories.trash',
         'ecommerce.orders.index',
         'ecommerce.orders.show',
+        'service-reviews.show',
         'site.payments.index',
         'site.payments.create',
         'site.payments.edit',

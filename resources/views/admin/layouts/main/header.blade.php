@@ -6,7 +6,7 @@
         <!-- Mobile Logo -->
         <div class="-ms-1 flex items-center gap-2.5 lg:hidden">
             {{--<a class="shrink-0" href="#">
-                <img class="max-h-[25px] w-full" src="assets/media/app/mini-logo.svg" />
+                <img class="max-h-[25px] w-full" src="{{ asset('assets/admin/media/app/mini-logo.svg') }}" />
             </a>--}}
             <div class="flex items-center">
                 <button class="kt-btn kt-btn-icon kt-btn-light" data-kt-drawer-toggle="#sidebar">

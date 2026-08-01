@@ -484,6 +484,20 @@ class AppointmentCalendarController extends Controller
         ]);
     }
 
+    public function complete(Appointment $appointment)
+    {
+        /** @var User $actor */
+        $actor = request()->user();
+        $this->assertCanAccessAppointment($actor, $appointment);
+
+        $completed = $this->appointmentService->completeByProvider($appointment, $actor);
+
+        return response()->json([
+            'message' => 'Randevu tamamlandı ve değerlendirme daveti oluşturuldu.',
+            'data' => $completed,
+        ]);
+    }
+
     protected function providerOptionsQuery(User $actor)
     {
         return User::query()

@@ -7,7 +7,7 @@
 
     $email = $u?->email ?? '';
 
-    $avatarUrl = $u ? $u->avatarUrl() : asset('assets/media/avatars/300-2.png');
+    $avatarUrl = $u ? $u->avatarUrl() : asset('assets/admin/media/avatars/300-2.png');
 
     // roles eager-load varsa N+1 olmaz (AppServiceProvider admin tarafında loadMissing yapıyor)
     $badgeText = $u ? $u->badgeLabel() : 'Guest';

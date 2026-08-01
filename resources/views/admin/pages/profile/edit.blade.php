@@ -3,7 +3,7 @@
 @section('content')
     @php
         $u = $user ?? auth()->user();
-        $blankAvatarUrl = $blankAvatarUrl ?? asset('assets/media/blank.png');
+        $blankAvatarUrl = $blankAvatarUrl ?? asset('assets/admin/media/blank.png');
         $avatarUrl = $u && method_exists($u, 'avatarUrl') ? $u->avatarUrl() : $blankAvatarUrl;
         $skillsText = old('skills_text', implode(', ', method_exists($u, 'skillTags') ? $u->skillTags() : []));
         $roles = $u->roles ?? collect();

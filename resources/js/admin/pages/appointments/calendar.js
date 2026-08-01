@@ -28,6 +28,7 @@ let appointmentModalState = {
     blocks: 1,
     memberName: '',
     statusLabel: '',
+    status: '',
     notesInternal: '',
     cancelReason: '',
 }
@@ -115,6 +116,7 @@ function openAppointmentModal(root, data) {
         blocks: Number(data.blocks || 1),
         memberName: data.member_name || '',
         statusLabel: data.status_label || data.status || '',
+        status: data.status || '',
         notesInternal: data.notes_internal || '',
         cancelReason: data.cancel_reason || '',
     }
@@ -126,6 +128,7 @@ function openAppointmentModal(root, data) {
     const blocks = qs(root, '#appointmentBlocks')
     const notes = qs(root, '#appointmentNotesInternal')
     const cancel = qs(root, '#appointmentCancelReason')
+    const completeButton = qs(root, '#btnAppointmentComplete')
 
     if (member) member.value = appointmentModalState.memberName
     if (status) status.value = appointmentModalState.statusLabel
@@ -140,6 +143,7 @@ function openAppointmentModal(root, data) {
     if (blocks) blocks.value = String(appointmentModalState.blocks)
     if (notes) notes.value = appointmentModalState.notesInternal
     if (cancel) cancel.value = appointmentModalState.cancelReason
+    if (completeButton) completeButton.classList.toggle('hidden', appointmentModalState.status !== 'booked')
 
     modal.classList.remove('hidden')
     document.body.classList.add('overflow-hidden')
@@ -156,6 +160,7 @@ function closeAppointmentModal(root) {
         blocks: 1,
         memberName: '',
         statusLabel: '',
+        status: '',
         notesInternal: '',
         cancelReason: '',
     }
@@ -1160,6 +1165,7 @@ export default async function init(ctx) {
     const appointmentModal = qs(root, '#appointmentModal')
     const btnAppointmentSave = qs(root, '#btnAppointmentSave')
     const btnAppointmentCancel = qs(root, '#btnAppointmentCancel')
+    const btnAppointmentComplete = qs(root, '#btnAppointmentComplete')
     const appointmentProviderId = qs(root, '#appointmentProviderId')
     const appointmentStartAt = qs(root, '#appointmentStartAt')
     const appointmentBlocks = qs(root, '#appointmentBlocks')
@@ -1650,6 +1656,34 @@ export default async function init(ctx) {
                 notifySuccess('Randevu iptal edildi.')
             } catch (e) {
                 notifyError(e.message || 'Randevu iptal edilemedi.')
+            }
+        })
+    }
+
+    if (btnAppointmentComplete) {
+        btnAppointmentComplete.addEventListener('click', async () => {
+            if (!appointmentModalState.entityId) {
+                notifyError('Randevu kaydı bulunamadı.')
+                return
+            }
+
+            const ok = await showConfirmDialog({
+                type: 'success',
+                title: 'Randevu tamamlandı mı?',
+                message: 'Randevu kapanacak ve üyeye değerlendirme daveti açılacak.',
+                confirmButtonText: 'Tamamlandı olarak işaretle',
+                cancelButtonText: 'Vazgeç',
+            })
+            if (!ok) return
+
+            try {
+                await postJson(`/admin/appointments/${appointmentModalState.entityId}/complete`, {})
+                closeAppointmentModal(root)
+                resetDetailPanel(root)
+                calendar?.refetchEvents()
+                notifySuccess('Randevu tamamlandı. Değerlendirme daveti oluşturuldu.')
+            } catch (e) {
+                notifyError(e.message || 'Randevu tamamlanamadı.')
             }
         })
     }

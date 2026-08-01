@@ -83,7 +83,7 @@ class HtmlSanitizer
         $previous = libxml_use_internal_errors(true);
 
         $document = new DOMDocument('1.0', 'UTF-8');
-        $wrapped = '<!DOCTYPE html><html><body><div id="__sanitizer_root__">' . $html . '</div></body></html>';
+        $wrapped = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body><div id="__sanitizer_root__">'.$html.'</div></body></html>';
         $document->loadHTML($wrapped, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
         $root = self::findRootElement($document);
@@ -115,6 +115,7 @@ class HtmlSanitizer
 
             if ($child instanceof DOMComment) {
                 $node->removeChild($child);
+
                 continue;
             }
 
@@ -122,8 +123,9 @@ class HtmlSanitizer
                 continue;
             }
 
-            if (!$child instanceof DOMElement) {
+            if (! $child instanceof DOMElement) {
                 $node->removeChild($child);
+
                 continue;
             }
 
@@ -131,11 +133,13 @@ class HtmlSanitizer
 
             if (in_array($tag, self::DROP_WITH_CONTENT, true)) {
                 $node->removeChild($child);
+
                 continue;
             }
 
-            if (!in_array($tag, self::ALLOWED_TAGS, true)) {
+            if (! in_array($tag, self::ALLOWED_TAGS, true)) {
                 self::unwrapNode($child);
+
                 continue;
             }
 
@@ -161,31 +165,36 @@ class HtmlSanitizer
             $name = strtolower($attribute->nodeName);
             $value = trim((string) $attribute->nodeValue);
 
-            if (str_starts_with($name, 'on') || !in_array($name, $allowed, true)) {
+            if (str_starts_with($name, 'on') || ! in_array($name, $allowed, true)) {
                 $element->removeAttributeNode($attribute);
+
                 continue;
             }
 
-            if ($name === 'href' && !self::isSafeUrl($value, true)) {
+            if ($name === 'href' && ! self::isSafeUrl($value, true)) {
                 $element->removeAttribute('href');
+
                 continue;
             }
 
-            if ($name === 'src' && !self::isSafeUrl($value, false)) {
+            if ($name === 'src' && ! self::isSafeUrl($value, false)) {
                 $element->removeAttribute('src');
+
                 continue;
             }
 
-            if (in_array($name, ['width', 'height', 'colspan', 'rowspan'], true) && !preg_match('/^\d{1,4}$/', $value)) {
+            if (in_array($name, ['width', 'height', 'colspan', 'rowspan'], true) && ! preg_match('/^\d{1,4}$/', $value)) {
                 $element->removeAttribute($name);
+
                 continue;
             }
 
             if ($name === 'target') {
                 $target = strtolower($value);
 
-                if (!in_array($target, ['_blank', '_self'], true)) {
+                if (! in_array($target, ['_blank', '_self'], true)) {
                     $element->removeAttribute('target');
+
                     continue;
                 }
 
@@ -248,7 +257,7 @@ class HtmlSanitizer
     {
         $body = $document->getElementsByTagName('body')->item(0);
 
-        if (!$body instanceof DOMElement) {
+        if (! $body instanceof DOMElement) {
             return null;
         }
 

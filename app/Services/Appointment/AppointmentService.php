@@ -198,6 +198,30 @@ class AppointmentService
         return $cancelled;
     }
 
+    public function completeByProvider(Appointment $appointment, User $actor): Appointment
+    {
+        $this->authorizeManage($appointment, $actor);
+        $this->assertCanTransition($appointment, Appointment::STATUS_COMPLETED);
+
+        if ($appointment->start_at->copy()->seconds(0)->isFuture()) {
+            throw ValidationException::withMessages([
+                'status' => 'Başlamamış bir randevu tamamlandı olarak işaretlenemez.',
+            ]);
+        }
+
+        $completed = DB::transaction(function () use ($appointment) {
+            $appointment->update([
+                'status' => Appointment::STATUS_COMPLETED,
+            ]);
+
+            return $appointment->fresh(['member', 'provider', 'parent', 'children']);
+        });
+
+        app(AdminNotificationService::class)->fromAppointment($completed, 'completed');
+
+        return $completed;
+    }
+
     public function getActiveForMember(int $memberId): ?Appointment
     {
         return Appointment::query()

@@ -5,6 +5,7 @@ namespace App\Services\Site;
 use App\Models\Site\HomeSlider;
 use App\Models\Site\SiteCounter;
 use App\Models\Site\SiteFaq;
+use App\Models\Site\SiteHomepageConfig;
 use App\Models\Site\SiteLanguage;
 use App\Models\Site\SiteNavigationItem;
 use App\Models\Site\SitePage;
@@ -67,6 +68,11 @@ class SiteDefaultLocalePromotionService
             'model' => HomeSlider::class,
             'relation' => 'translations',
             'fields' => ['badge', 'title', 'subtitle', 'body', 'cta_label', 'cta_url'],
+        ],
+        [
+            'model' => SiteHomepageConfig::class,
+            'relation' => 'translations',
+            'fields' => ['content'],
         ],
     ];
 
@@ -207,7 +213,7 @@ class SiteDefaultLocalePromotionService
                 })
                 ->exists()
         ) {
-            $candidate = $base . '-' . $suffix;
+            $candidate = $base.'-'.$suffix;
             $suffix++;
         }
 
@@ -231,7 +237,7 @@ class SiteDefaultLocalePromotionService
                 })
                 ->exists()
         ) {
-            $candidate = $base . '-' . $suffix;
+            $candidate = $base.'-'.$suffix;
             $suffix++;
         }
 

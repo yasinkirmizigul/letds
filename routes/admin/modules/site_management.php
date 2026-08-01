@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\Site\ContentPageController;
 use App\Http\Controllers\Admin\Site\FaqController;
+use App\Http\Controllers\Admin\Site\HomepageConfigurationController;
 use App\Http\Controllers\Admin\Site\HomeSliderController;
 use App\Http\Controllers\Admin\Site\NavigationController;
 use App\Http\Controllers\Admin\Site\PaymentIntegrationController;
@@ -11,6 +12,14 @@ use App\Http\Controllers\Admin\Site\SiteSettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('site')->as('site.')->group(function () {
+    Route::get('/homepage', [HomepageConfigurationController::class, 'edit'])
+        ->middleware('permission:site_homepage.view')
+        ->name('homepage.edit');
+
+    Route::put('/homepage', [HomepageConfigurationController::class, 'update'])
+        ->middleware('permission:site_homepage.update')
+        ->name('homepage.update');
+
     Route::prefix('languages')->as('languages.')->group(function () {
         Route::get('/', [SiteLanguageController::class, 'index'])
             ->middleware('permission:site_languages.view')

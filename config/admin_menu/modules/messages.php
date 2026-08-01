@@ -2,6 +2,7 @@
 
 return [
     [
+        'key' => 'messages',
         'type' => 'single',
         'title' => 'Mesajlar',
         'icon' => 'ki-filled ki-messages text-lg',

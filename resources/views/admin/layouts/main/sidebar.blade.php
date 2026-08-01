@@ -48,12 +48,27 @@
                  data-kt-menu-accordion-expand-all="false"
                  id="sidebar_menu">
                 @php
-                    $menu = config('admin_menu', []);
+                    $menu = app(\App\Support\Admin\AdminMenuVisibility::class)->visibleMenu();
                 @endphp
 
                 @foreach($menu as $item)
                     @include('admin.layouts.main.sidebar._sidebar_item', ['item' => $item])
                 @endforeach
+
+                @if($u?->isSuperAdmin())
+                    <div class="my-2 border-t border-border"></div>
+                    @include('admin.layouts.main.sidebar._sidebar_item', [
+                        'item' => [
+                            'key' => 'menu_visibility',
+                            'type' => 'single',
+                            'title' => 'Menü Yönetimi',
+                            'icon' => 'ki-filled ki-setting-4 text-lg',
+                            'route' => 'admin.menu-visibility.edit',
+                            'active' => ['admin.menu-visibility.*'],
+                            'style' => 'margin-inline-start: -5px;',
+                        ],
+                    ])
+                @endif
 
             </div>
         </div>

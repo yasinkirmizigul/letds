@@ -4,7 +4,7 @@
     @php
         $u = $profileUser ?? $user ?? auth()->user();
         $canEditProfile = (bool) ($canEditProfile ?? auth()->id() === $u?->id);
-        $avatarUrl = $u && method_exists($u, 'avatarUrl') ? $u->avatarUrl() : asset('assets/media/blank.png');
+        $avatarUrl = $u && method_exists($u, 'avatarUrl') ? $u->avatarUrl() : asset('assets/admin/media/blank.png');
         $fullName = $u->name ?: 'Kullanıcı';
         $title = $u->title ?: 'Unvan bilgisi eklenmemiş';
         $email = $u->email ?: '—';
@@ -21,8 +21,8 @@
     @endphp
 
     <style>
-        .hero-bg { background-image: url('{{ asset('assets/media/images/2600x1200/bg-1.png') }}'); }
-        .dark .hero-bg { background-image: url('{{ asset('assets/media/images/2600x1200/bg-1-dark.png') }}'); }
+        .hero-bg { background-image: url('{{ asset('assets/admin/media/images/2600x1200/bg-1.png') }}'); }
+        .dark .hero-bg { background-image: url('{{ asset('assets/admin/media/images/2600x1200/bg-1-dark.png') }}'); }
     </style>
 
     <div class="bg-center bg-cover bg-no-repeat hero-bg">
@@ -224,8 +224,8 @@
                                     </div>
                                 </div>
 
-                                <img alt="Profil illüstrasyonu" class="dark:hidden max-h-[150px]" src="{{ asset('assets/media/illustrations/1.svg') }}">
-                                <img alt="Profil illüstrasyonu" class="light:hidden max-h-[150px]" src="{{ asset('assets/media/illustrations/1-dark.svg') }}">
+                                <img alt="Profil illüstrasyonu" class="dark:hidden max-h-[150px]" src="{{ asset('assets/admin/media/illustrations/1.svg') }}">
+                                <img alt="Profil illüstrasyonu" class="light:hidden max-h-[150px]" src="{{ asset('assets/admin/media/illustrations/1-dark.svg') }}">
                             </div>
                         </div>
                     </div>

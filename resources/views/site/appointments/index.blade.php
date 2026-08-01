@@ -1,11 +1,11 @@
 @extends('site.layouts.main.app')
 
 @push('site_vendor_css')
-    <link rel="stylesheet" href="{{ asset('assets/plugins/global/plugins.bundle.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/site/plugins/global/plugins.bundle.css') }}">
 @endpush
 
 @push('site_vendor_js')
-    <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
+    <script src="{{ asset('assets/site/plugins/global/plugins.bundle.js') }}"></script>
 @endpush
 
 @section('content')

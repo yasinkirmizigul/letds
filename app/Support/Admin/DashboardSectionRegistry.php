@@ -137,6 +137,12 @@ class DashboardSectionRegistry
                         'default' => true,
                         'available' => (bool) ($capabilities['membersView'] ?? false),
                     ],
+                    'module_service_reviews' => [
+                        'label' => 'Değerlendirmeler kartı',
+                        'description' => 'Yıldız puanı, ortalama ve bekleyen değerlendirme özetini gösterir.',
+                        'default' => true,
+                        'available' => (bool) ($capabilities['serviceReviewsView'] ?? false),
+                    ],
                     'module_appointments' => [
                         'label' => 'Randevular kartı',
                         'description' => 'Randevu planlama özet kartını gösterir.',

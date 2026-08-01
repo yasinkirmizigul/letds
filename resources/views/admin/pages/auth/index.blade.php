@@ -4,11 +4,11 @@
     <!-- Page -->
     <style>
         .page-bg {
-            background-image: url('assets/media/images/2600x1200/bg-10.png');
+            background-image: url('{{ asset('assets/admin/media/images/2600x1200/bg-10.png') }}');
         }
 
         .dark .page-bg {
-            background-image: url('assets/media/images/2600x1200/bg-10-dark.png');
+            background-image: url('{{ asset('assets/admin/media/images/2600x1200/bg-10-dark.png') }}');
         }
     </style>
     <div class="flex items-center justify-center grow bg-center bg-no-repeat page-bg">

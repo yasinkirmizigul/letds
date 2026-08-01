@@ -2,13 +2,14 @@
 
 namespace App\Models\Admin\Ecommerce;
 
-use App\Models\Admin\User\User;
 use App\Models\Member;
+use App\Models\Review\ServiceReview;
 use App\Models\Site\PaymentIntegration;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
@@ -17,28 +18,47 @@ class EcommerceOrder extends Model
     use SoftDeletes;
 
     public const STATUS_DRAFT = 'draft';
+
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_CONFIRMED = 'confirmed';
+
     public const STATUS_PROCESSING = 'processing';
+
     public const STATUS_SHIPPED = 'shipped';
+
     public const STATUS_COMPLETED = 'completed';
+
     public const STATUS_CANCELLED = 'cancelled';
+
     public const STATUS_REFUNDED = 'refunded';
 
     public const PAYMENT_UNPAID = 'unpaid';
+
     public const PAYMENT_AWAITING = 'awaiting';
+
     public const PAYMENT_AUTHORIZED = 'authorized';
+
     public const PAYMENT_PARTIAL = 'partial';
+
     public const PAYMENT_PAID = 'paid';
+
     public const PAYMENT_PARTIALLY_REFUNDED = 'partially_refunded';
+
     public const PAYMENT_REFUNDED = 'refunded';
+
     public const PAYMENT_FAILED = 'failed';
 
     public const FULFILLMENT_UNFULFILLED = 'unfulfilled';
+
     public const FULFILLMENT_PREPARING = 'preparing';
+
     public const FULFILLMENT_PARTIAL = 'partial';
+
     public const FULFILLMENT_FULFILLED = 'fulfilled';
+
     public const FULFILLMENT_RETURNED = 'returned';
+
     public const FULFILLMENT_CANCELLED = 'cancelled';
 
     protected $fillable = [
@@ -104,7 +124,7 @@ class EcommerceOrder extends Model
     protected static function booted(): void
     {
         static::creating(function (EcommerceOrder $order) {
-            if (!filled($order->order_number)) {
+            if (! filled($order->order_number)) {
                 $order->order_number = self::generateOrderNumber();
             }
         });
@@ -113,7 +133,7 @@ class EcommerceOrder extends Model
     public static function generateOrderNumber(): string
     {
         do {
-            $candidate = 'EC' . now()->format('ymd') . '-' . Str::upper(Str::random(6));
+            $candidate = 'EC'.now()->format('ymd').'-'.Str::upper(Str::random(6));
         } while (self::query()->where('order_number', $candidate)->exists());
 
         return $candidate;
@@ -229,7 +249,7 @@ class EcommerceOrder extends Model
 
     public function money(?float $amount = null): string
     {
-        return number_format((float) ($amount ?? $this->grand_total), 2, ',', '.') . ' ' . ($this->currency ?: 'TRY');
+        return number_format((float) ($amount ?? $this->grand_total), 2, ',', '.').' '.($this->currency ?: 'TRY');
     }
 
     public function member(): BelongsTo
@@ -270,5 +290,10 @@ class EcommerceOrder extends Model
     public function createdByHistories(): HasMany
     {
         return $this->hasMany(EcommerceOrderStatusHistory::class, 'order_id')->whereNotNull('user_id');
+    }
+
+    public function serviceReview(): MorphOne
+    {
+        return $this->morphOne(ServiceReview::class, 'reviewable');
     }
 }

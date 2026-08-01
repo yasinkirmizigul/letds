@@ -29,6 +29,10 @@ Route::prefix('appointments')->as('appointments.')->group(function () {
         ->middleware('permission:appointments.cancel')
         ->name('cancel');
 
+    Route::post('/{appointment}/complete', [AppointmentCalendarController::class, 'complete'])
+        ->middleware('permission:appointments.update')
+        ->name('complete');
+
     Route::get('/{appointment}/history', [AppointmentCalendarController::class, 'history'])
         ->middleware('permission:appointments.view')
         ->name('history');

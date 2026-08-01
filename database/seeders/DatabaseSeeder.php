@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             SuperAdminSeeder::class,
             AdminSeeder::class,
+            ServiceReviewPermissionSeeder::class,
+            HomepageConfigPermissionSeeder::class,
         ]);
     }
 }

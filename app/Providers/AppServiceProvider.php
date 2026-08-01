@@ -3,9 +3,15 @@
 namespace App\Providers;
 
 use App\Console\Commands\MakeAdminModule;
+use App\Console\Commands\SyncServiceReviews;
 use App\Models\Admin\AdminNotification;
+use App\Models\Admin\Ecommerce\EcommerceOrder;
+use App\Models\Appointment\Appointment;
+use App\Models\Review\ServiceReview;
 use App\Models\Site\SiteNavigationItem;
 use App\Models\Site\SiteSetting;
+use App\Observers\AppointmentObserver;
+use App\Observers\EcommerceOrderObserver;
 use App\Support\Site\NavigationTree;
 use App\Support\Site\SiteLocalization;
 use Illuminate\Pagination\Paginator;
@@ -21,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Appointment::observe(AppointmentObserver::class);
+        EcommerceOrder::observe(EcommerceOrderObserver::class);
+
         // SADECE admin tarafında eager-load (public site şişmesin)
         View::composer('*', function () {
             if (auth()->check() && (request()->is('admin') || request()->is('admin/*'))) {
@@ -57,6 +66,19 @@ class AppServiceProvider extends ServiceProvider
 
         View::composer('site.*', function ($view) {
             $settings = SiteSetting::current()->loadMissing('translations');
+            $pendingReviewCount = 0;
+
+            try {
+                $member = auth('member')->user();
+                if ($member && Schema::hasTable('service_reviews')) {
+                    $pendingReviewCount = ServiceReview::query()
+                        ->where('member_id', $member->id)
+                        ->pending()
+                        ->count();
+                }
+            } catch (\Throwable) {
+                $pendingReviewCount = 0;
+            }
 
             $view->with([
                 'siteSettings' => $settings,
@@ -65,6 +87,7 @@ class AppServiceProvider extends ServiceProvider
                 'siteLanguages' => SiteLocalization::languages(),
                 'siteCurrentLocale' => SiteLocalization::currentLocale(),
                 'siteCurrentLanguage' => SiteLocalization::currentLanguage(),
+                'memberPendingReviewCount' => $pendingReviewCount,
             ]);
         });
 
@@ -114,6 +137,7 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 MakeAdminModule::class,
+                SyncServiceReviews::class,
             ]);
         }
         Gate::before(function ($user, $ability) {

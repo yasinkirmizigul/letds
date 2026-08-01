@@ -29,6 +29,9 @@ return [
     'site_settings.view' => 'Site Ayarlarını Görüntüleme',
     'site_settings.update' => 'Site Ayarlarını Güncelleme',
 
+    'site_homepage.view' => 'Ana Sayfa Ayarlarını Görüntüleme',
+    'site_homepage.update' => 'Ana Sayfa Ayarlarını Güncelleme',
+
     'home_sliders.view' => 'Ana Sayfa Sliderlarını Görüntüleme',
     'home_sliders.create' => 'Ana Sayfa Sliderı Oluşturma',
     'home_sliders.update' => 'Ana Sayfa Sliderı Güncelleme',

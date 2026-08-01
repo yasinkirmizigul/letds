@@ -38,7 +38,7 @@ class ProfileController extends Controller
         return view('admin.pages.profile.edit', [
             'pageTitle' => 'Profil Düzenle',
             'user' => $user,
-            'blankAvatarUrl' => asset('assets/media/blank.png'),
+            'blankAvatarUrl' => asset('assets/admin/media/blank.png'),
         ]);
     }
 

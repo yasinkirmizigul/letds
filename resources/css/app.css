@@ -766,6 +766,146 @@ textarea.kt-input:disabled,
     background: color-mix(in oklab, var(--foreground) 5%, var(--background));
 }
 
+/* Homepage manager: stronger form affordances without changing other admin screens. */
+[data-page="site.homepage.edit"] .homepage-admin-mode-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .375rem;
+    padding: .375rem;
+    border: 1px solid color-mix(in oklab, var(--foreground) 20%, var(--border));
+    border-radius: .5rem;
+    background: color-mix(in oklab, var(--background) 92%, var(--foreground) 8%);
+    box-shadow: inset 0 1px 2px rgb(15 23 42 / 7%);
+}
+
+[data-page="site.homepage.edit"] .homepage-admin-mode-tab {
+    display: flex;
+    min-width: 0;
+    min-height: 3.25rem;
+    align-items: center;
+    justify-content: center;
+    gap: .625rem;
+    padding: .75rem 1rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: .375rem;
+    background: transparent;
+    color: var(--muted-foreground);
+    font-size: .875rem;
+    font-weight: 600;
+    line-height: 1.25;
+    text-align: center;
+    transition: color .16s ease, background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+
+[data-page="site.homepage.edit"] .homepage-admin-mode-tab:hover {
+    border-color: color-mix(in oklab, var(--primary) 28%, var(--border));
+    background: color-mix(in oklab, var(--primary) 8%, var(--background));
+    color: var(--primary);
+}
+
+[data-page="site.homepage.edit"] .homepage-admin-mode-tab.is-active {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: var(--primary-foreground);
+    box-shadow: 0 .25rem .75rem color-mix(in oklab, var(--primary) 24%, transparent);
+}
+
+[data-page="site.homepage.edit"] .homepage-admin-mode-tab:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 .2rem color-mix(in oklab, var(--primary) 22%, transparent);
+}
+
+[data-page="site.homepage.edit"] .homepage-admin-mode-tab__icon {
+    display: grid;
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 1.75rem;
+    place-items: center;
+    border-radius: 50%;
+    background: color-mix(in oklab, currentColor 10%, transparent);
+    font-size: 1rem;
+}
+
+@media (max-width: 520px) {
+    [data-page="site.homepage.edit"] .homepage-admin-mode-tab {
+        flex-direction: column;
+        gap: .375rem;
+        padding-inline: .5rem;
+        overflow-wrap: anywhere;
+    }
+}
+
+[data-page="site.homepage.edit"] :is(.kt-input, .kt-textarea, .kt-select) {
+    border-width: 1px;
+    border-color: color-mix(in oklab, var(--foreground) 24%, var(--border));
+    background: color-mix(in oklab, var(--background) 95%, var(--foreground) 5%);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 4%), 0 1px 3px rgb(15 23 42 / 7%);
+}
+
+.dark [data-page="site.homepage.edit"] :is(.kt-input, .kt-textarea, .kt-select) {
+    border-color: color-mix(in oklab, var(--foreground) 30%, var(--border));
+    background: color-mix(in oklab, var(--background) 91%, var(--foreground) 9%);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 5%), 0 1px 3px rgb(0 0 0 / 26%);
+}
+
+[data-page="site.homepage.edit"] :is(.kt-input, .kt-textarea, .kt-select):hover {
+    border-color: color-mix(in oklab, var(--foreground) 40%, var(--border));
+}
+
+[data-page="site.homepage.edit"] :is(.kt-input, .kt-textarea, .kt-select):focus,
+[data-page="site.homepage.edit"] :is(.kt-input, .kt-textarea, .kt-select):focus-visible,
+[data-page="site.homepage.edit"] :is(.kt-input, .kt-textarea, .kt-select):focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 .2rem color-mix(in oklab, var(--primary) 18%, transparent);
+    outline: none;
+}
+
+[data-page="site.homepage.edit"] .homepage-setting-toggle,
+[data-page="site.homepage.edit"] .homepage-color-control,
+[data-page="site.homepage.edit"] .homepage-logo-picker {
+    border-radius: .5rem;
+    border-color: color-mix(in oklab, var(--foreground) 24%, var(--border));
+    background: color-mix(in oklab, var(--background) 95%, var(--foreground) 5%) !important;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 4%), 0 1px 3px rgb(15 23 42 / 7%);
+    transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+
+.dark [data-page="site.homepage.edit"] .homepage-setting-toggle,
+.dark [data-page="site.homepage.edit"] .homepage-color-control,
+.dark [data-page="site.homepage.edit"] .homepage-logo-picker {
+    border-color: color-mix(in oklab, var(--foreground) 30%, var(--border));
+    background: color-mix(in oklab, var(--background) 91%, var(--foreground) 9%) !important;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 5%), 0 1px 3px rgb(0 0 0 / 26%);
+}
+
+[data-page="site.homepage.edit"] .homepage-setting-toggle:hover,
+[data-page="site.homepage.edit"] .homepage-color-control:hover,
+[data-page="site.homepage.edit"] .homepage-logo-picker:hover {
+    border-color: color-mix(in oklab, var(--foreground) 40%, var(--border));
+}
+
+[data-page="site.homepage.edit"] .homepage-setting-toggle:has(.kt-checkbox:focus-visible),
+[data-page="site.homepage.edit"] .homepage-color-control:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 .2rem color-mix(in oklab, var(--primary) 18%, transparent);
+}
+
+[data-page="site.homepage.edit"] .kt-checkbox {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-width: 2px;
+    border-color: color-mix(in oklab, var(--foreground) 38%, var(--border));
+    background-color: color-mix(in oklab, var(--background) 92%, var(--foreground) 8%);
+    box-shadow: inset 0 1px 2px rgb(15 23 42 / 10%);
+}
+
+[data-page="site.homepage.edit"] .kt-checkbox:checked {
+    border-color: var(--primary);
+    background-color: var(--primary);
+    box-shadow: 0 0 0 .16rem color-mix(in oklab, var(--primary) 14%, transparent);
+}
+
 input[type="date"].kt-input,
 input[type="datetime-local"].kt-input,
 input[type="time"].kt-input,

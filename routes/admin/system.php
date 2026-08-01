@@ -1,8 +1,18 @@
 <?php
 
 use App\Http\Controllers\Admin\AuditLog\AuditLogController;
+use App\Http\Controllers\Admin\Menu\AdminMenuVisibilityController;
 use App\Http\Controllers\Admin\TrashController;
 use Illuminate\Support\Facades\Route;
+
+Route::middleware('superadmin')
+    ->prefix('menu-visibility')
+    ->as('menu-visibility.')
+    ->group(function () {
+        Route::get('/', [AdminMenuVisibilityController::class, 'edit'])->name('edit');
+        Route::put('/', [AdminMenuVisibilityController::class, 'update'])->name('update');
+        Route::delete('/', [AdminMenuVisibilityController::class, 'reset'])->name('reset');
+    });
 
 Route::prefix('trash')->as('trash.')->group(function () {
     Route::get('/', [TrashController::class, 'index'])

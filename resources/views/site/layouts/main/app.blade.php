@@ -7,10 +7,11 @@
     {{-- JS erken işareti: reveal animasyonlarının gizli başlangıç durumu yalnızca JS çalışırken uygulanır (script yüklenmezse içerik görünür kalır) --}}
     <script>document.documentElement.classList.add('site-js');</script>
     <title>{{ ($pageTitle ?? null) ? $pageTitle . ' | ' . ($siteSettings->localized('site_name') ?: config('app.name')) : ($siteSettings->localized('site_name') ?: config('app.name')) }}</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('assets/site/images/favicon.svg') }}">
 
     @stack('site_vendor_css')
-    <script defer src="{{ asset('assets/js/core.bundle.js') }}"></script>
-    <script defer src="{{ asset('assets/vendors/ktui/ktui.min.js') }}"></script>
+    <script defer src="{{ asset('assets/site/js/core.bundle.js') }}"></script>
+    <script defer src="{{ asset('assets/site/vendors/ktui/ktui.min.js') }}"></script>
     @vite(['resources/css/app.css', 'resources/js/site/app.js'])
     @stack('site_css')
 </head>
@@ -102,6 +103,12 @@
                         <a href="{{ route('member.account.show', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light">
                             {{ $siteSettings->uiLine('nav_member_account_label') }}
                         </a>
+                        <a href="{{ route('member.reviews.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light">
+                            Değerlendirmeler
+                            @if(($memberPendingReviewCount ?? 0) > 0)
+                                <span class="kt-badge kt-badge-sm kt-badge-primary ms-1">{{ $memberPendingReviewCount }}</span>
+                            @endif
+                        </a>
                         <a href="{{ route('member.appointments.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary">
                             {{ $siteSettings->uiLine('nav_member_panel_label') }}
                         </a>
@@ -155,6 +162,9 @@
                 @if($hasActiveMemberSession)
                     <a href="{{ route('member.account.show', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full justify-center">
                         {{ $siteSettings->uiLine('nav_member_account_label') }}
+                    </a>
+                    <a href="{{ route('member.reviews.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full justify-center">
+                        Değerlendirmelerim{{ ($memberPendingReviewCount ?? 0) > 0 ? ' (' . $memberPendingReviewCount . ')' : '' }}
                     </a>
                     <a href="{{ route('member.appointments.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary w-full justify-center">
                         {{ $siteSettings->uiLine('nav_member_panel_label') }}

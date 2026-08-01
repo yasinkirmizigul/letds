@@ -4,6 +4,7 @@ $routeFiles = [
     'member/auth.php',
     'member/appointments.php',
     'member/account.php',
+    'member/reviews.php',
     'content.php',
 ];
 

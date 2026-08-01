@@ -83,6 +83,7 @@ class AdminNotificationService
             'cancelled_by_provider' => 'Randevu panelden iptal edildi',
             'cancelled_by_member' => 'Üye randevuyu iptal etti',
             'rescheduled_by_member' => 'Üye randevuyu yeniden planladı',
+            'completed' => 'Randevu tamamlandı',
         ];
 
         $payload = [

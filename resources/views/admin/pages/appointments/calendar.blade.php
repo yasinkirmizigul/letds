@@ -374,9 +374,15 @@
                     </div>
 
                     <div class="flex items-center justify-between gap-3 border-t border-border px-5 py-4">
-                        <button type="button" class="kt-btn kt-btn-danger" id="btnAppointmentCancel">
-                            Randevuyu iptal et
-                        </button>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" class="kt-btn kt-btn-danger" id="btnAppointmentCancel">
+                                Randevuyu iptal et
+                            </button>
+                            <button type="button" class="kt-btn kt-btn-success" id="btnAppointmentComplete">
+                                <i class="ki-filled ki-check-circle"></i>
+                                Tamamlandı
+                            </button>
+                        </div>
 
                         <div class="flex items-center gap-2">
                             <button type="button" class="kt-btn kt-btn-light" data-appointment-modal-close>Vazgeç</button>

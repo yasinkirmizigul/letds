@@ -5,9 +5,9 @@
         class="kt-container-fixed max-w-[96%]"
         data-page="site.pages.edit"
         data-upload-url="{{ route('admin.tinymce.upload') }}"
-        data-tinymce-src="{{ asset('assets/vendors/tinymce/tinymce.min.js') }}"
-        data-tinymce-base="{{ asset('assets/vendors/tinymce') }}"
-        data-tinymce-lang-url="{{ asset('assets/vendors/tinymce/langs/tr.js') }}"
+        data-tinymce-src="{{ asset('assets/admin/vendors/tinymce/tinymce.min.js') }}"
+        data-tinymce-base="{{ asset('assets/admin/vendors/tinymce') }}"
+        data-tinymce-lang-url="{{ asset('assets/admin/vendors/tinymce/langs/tr.js') }}"
     >
         @includeIf('admin.partials._flash')
 

@@ -21,26 +21,28 @@ class AdminSeeder extends Seeder
         // Admin -> auth management + membership operations
         $adminPerms = Permission::whereIn('slug', [
             'admin.access',
-            'roles.view','roles.create','roles.update','roles.delete',
-            'permissions.view','permissions.create','permissions.update','permissions.delete',
-            'messages.view','messages.update',
-            'notifications.view','notifications.update',
-            'members.view','members.update','members.delete',
-            'ecommerce_orders.view','ecommerce_orders.create','ecommerce_orders.update','ecommerce_orders.delete',
-            'ecommerce_orders.payments','ecommerce_orders.shipments',
-            'ecommerce_inventory.view','ecommerce_inventory.update',
-            'ecommerce_coupons.view','ecommerce_coupons.create','ecommerce_coupons.update','ecommerce_coupons.delete',
-            'ecommerce_invoices.view','ecommerce_invoices.create','ecommerce_invoices.update',
-            'ecommerce_webhooks.view','ecommerce_webhooks.update',
-            'site_payments.view','site_payments.create','site_payments.update','site_payments.delete',
+            'roles.view', 'roles.create', 'roles.update', 'roles.delete',
+            'permissions.view', 'permissions.create', 'permissions.update', 'permissions.delete',
+            'messages.view', 'messages.update',
+            'notifications.view', 'notifications.update',
+            'members.view', 'members.update', 'members.delete',
+            'service_reviews.view', 'service_reviews.questions',
+            'site_homepage.view', 'site_homepage.update',
+            'ecommerce_orders.view', 'ecommerce_orders.create', 'ecommerce_orders.update', 'ecommerce_orders.delete',
+            'ecommerce_orders.payments', 'ecommerce_orders.shipments',
+            'ecommerce_inventory.view', 'ecommerce_inventory.update',
+            'ecommerce_coupons.view', 'ecommerce_coupons.create', 'ecommerce_coupons.update', 'ecommerce_coupons.delete',
+            'ecommerce_invoices.view', 'ecommerce_invoices.create', 'ecommerce_invoices.update',
+            'ecommerce_webhooks.view', 'ecommerce_webhooks.update',
+            'site_payments.view', 'site_payments.create', 'site_payments.update', 'site_payments.delete',
         ])->pluck('id')->all();
 
         $admin->permissions()->sync($adminPerms);
 
         if ($this->shouldCreateUsers()) {
             $email = env('SEED_ADMIN_EMAIL', 'admin2@admin.com');
-            $name  = env('SEED_ADMIN_NAME', 'Admin');
-            $pass  = env('SEED_ADMIN_PASS', '123456');
+            $name = env('SEED_ADMIN_NAME', 'Admin');
+            $pass = env('SEED_ADMIN_PASS', '123456');
 
             $user = User::updateOrCreate(
                 ['email' => $email],
@@ -63,7 +65,7 @@ class AdminSeeder extends Seeder
 
     private function shouldCreateUsers(): bool
     {
-        $default = !app()->environment('production');
+        $default = ! app()->environment('production');
 
         return filter_var(env('SEED_CREATE_USERS', $default), FILTER_VALIDATE_BOOL);
     }
