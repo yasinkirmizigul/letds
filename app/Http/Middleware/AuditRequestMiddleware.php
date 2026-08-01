@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\Admin\AuditLog\AuditLog;
 use Closure;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -84,6 +85,14 @@ class AuditRequestMiddleware
             return '[redacted]';
         }
 
+        if ($value instanceof UploadedFile) {
+            return [
+                'name' => $this->sanitizePayload($value->getClientOriginalName(), null, $depth + 1),
+                'mime_type' => $value->getClientMimeType(),
+                'size' => $value->getSize(),
+            ];
+        }
+
         if (is_array($value)) {
             $sanitized = [];
             $count = 0;
@@ -109,6 +118,10 @@ class AuditRequestMiddleware
             }
 
             return $value;
+        }
+
+        if (is_object($value) || is_resource($value)) {
+            return '[unsupported]';
         }
 
         return $value;

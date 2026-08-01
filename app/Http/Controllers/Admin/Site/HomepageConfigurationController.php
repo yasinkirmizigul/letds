@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Site;
 
 use App\Http\Controllers\Controller;
+use App\Services\Admin\Media\MediaService;
 use App\Services\Site\HomepageConfigurationService;
 use App\Support\Audit\AuditEvent;
 use Illuminate\Contracts\View\View;
@@ -54,6 +55,9 @@ class HomepageConfigurationController extends Controller
             ->filter(fn (array $group) => blank($group['mode'] ?? null))
             ->values()
             ->all();
+        $mediaPreviews = collect(['header_logo_media_id', 'background_media_id'])
+            ->mapWithKeys(fn (string $key) => [$key => $configurationService->mediaAsset($settings, $key)])
+            ->all();
 
         return view('admin.pages.site.homepage.edit', [
             'schema' => $schema,
@@ -65,15 +69,22 @@ class HomepageConfigurationController extends Controller
             'sharedLocalizedFields' => $sharedLocalizedFields,
             'modeSettingGroups' => $modeSettingGroups,
             'sharedSettingGroups' => $sharedSettingGroups,
-            'headerLogo' => $configurationService->headerLogo($settings),
+            'mediaPreviews' => $mediaPreviews,
         ]);
     }
 
     public function update(
         Request $request,
-        HomepageConfigurationService $configurationService
+        HomepageConfigurationService $configurationService,
+        MediaService $mediaService,
     ): RedirectResponse {
-        $validator = Validator::make($request->all(), $configurationService->validationRules());
+        $validator = Validator::make($request->all(), array_merge(
+            $configurationService->validationRules(),
+            [
+                'background_image' => ['nullable', 'file', 'max:12288', 'mimes:jpg,jpeg,png,webp'],
+                'clear_background_image' => ['nullable', 'boolean'],
+            ]
+        ));
 
         $validator->after(function ($validator) use ($request, $configurationService): void {
             foreach ($configurationService->unsafeLinks($request->all()) as $key) {
@@ -84,7 +95,19 @@ class HomepageConfigurationController extends Controller
             }
         });
 
-        $configuration = $configurationService->persist($validator->validate());
+        $validated = $validator->validate();
+
+        if ($request->hasFile('background_image')) {
+            $media = $mediaService->store($request->file('background_image'), [
+                'title' => 'Ana sayfa arka planı',
+                'alt' => 'Ana sayfa arka planı',
+            ]);
+            $validated['settings']['background_media_id'] = $media->id;
+        } elseif ($request->boolean('clear_background_image')) {
+            $validated['settings']['background_media_id'] = null;
+        }
+
+        $configuration = $configurationService->persist($validated);
 
         AuditEvent::log('site.homepage.update', [
             'site_homepage_config_id' => $configuration->id,

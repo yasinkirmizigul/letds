@@ -327,6 +327,38 @@ return [
             ],
         ],
         [
+            'key' => 'background',
+            'title' => 'Arka Plan Fotoğrafı',
+            'description' => 'Ana sayfa fotoğrafı, parlaklık ve panel renklerinden oluşan overlay ayarları.',
+            'fields' => [
+                [
+                    'key' => 'background_media_id',
+                    'label' => 'Arka Plan Görseli',
+                    'type' => 'media',
+                    'default' => null,
+                    'wrapper_class' => 'sm:col-span-2',
+                    'preview' => 'background',
+                    'allow_upload' => true,
+                    'upload_name' => 'background_image',
+                    'clear_flag_name' => 'clear_background_image',
+                ],
+                ['key' => 'background_brightness', 'label' => 'Fotoğraf Parlaklığı', 'type' => 'range', 'default' => 100, 'min' => 20, 'max' => 120, 'step' => 5, 'unit' => '%'],
+                ['key' => 'background_overlay_enabled', 'label' => 'Panel renklerini overlay olarak uygula', 'type' => 'boolean', 'default' => true],
+                ['key' => 'background_overlay_opacity', 'label' => 'Overlay Yoğunluğu', 'type' => 'range', 'default' => 65, 'min' => 0, 'max' => 100, 'step' => 5, 'unit' => '%'],
+                [
+                    'key' => 'background_position',
+                    'label' => 'Fotoğraf Konumu',
+                    'type' => 'select',
+                    'default' => 'center',
+                    'options' => [
+                        'center' => 'Orta',
+                        'top' => 'Üst',
+                        'bottom' => 'Alt',
+                    ],
+                ],
+            ],
+        ],
+        [
             'key' => 'header',
             'title' => 'Üst Menü ve Logo',
             'description' => 'İki sekmenin ortasında kullanılacak logo ve ortak üst menü renkleri.',

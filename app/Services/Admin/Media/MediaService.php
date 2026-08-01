@@ -11,6 +11,10 @@ use Intervention\Image\Drivers\Gd\Driver;
 
 class MediaService
 {
+    private const FULL_MAX_DIMENSION = 2560;
+    private const OPTIMIZED_MAX_DIMENSION = 1920;
+    private const THUMB_SIZE = 400;
+
     protected ImageManager $image;
 
     public function __construct()
@@ -30,48 +34,85 @@ class MediaService
         return str_starts_with((string) ($file->getMimeType() ?: $file->getClientMimeType()), 'image/');
     }
 
+    private function convertsOriginalToWebp(UploadedFile $file): bool
+    {
+        return in_array(
+            strtolower((string) ($file->getMimeType() ?: $file->getClientMimeType())),
+            ['image/jpeg', 'image/png', 'image/webp'],
+            true
+        );
+    }
+
     public function store(UploadedFile $file, array $attrs = []): Media
     {
         $uuid = (string) Str::uuid();
         $disk = $attrs['disk'] ?? 'public';
         $dir  = $this->resolveDirectory($attrs['dir'] ?? null);
 
-        $extOriginal = strtolower($file->getClientOriginalExtension() ?: 'bin');
-
-        // ORIGINAL
-        $originalName = "{$uuid}.{$extOriginal}";
-        $originalPath = "{$dir}/{$originalName}";
-
-        Storage::disk($disk)->putFileAs($dir, $file, $originalName);
-
-        $variants = [
-            'original' => $originalPath,
-        ];
-
+        $mimeType = (string) ($file->getMimeType() ?: $file->getClientMimeType());
+        $storedSize = (int) $file->getSize();
+        $variants = [];
         $width = null;
         $height = null;
+        $originalPath = '';
 
-        // IMAGE VARIANTS
         if ($this->isImage($file)) {
             $img = $this->image->read($file->getRealPath());
             $width  = $img->width();
             $height = $img->height();
 
-            // optimized (max 1920)
-            $optimized = clone $img;
-            $optimized->scaleDown(width: 1920);
+            if ($this->convertsOriginalToWebp($file)) {
+                $full = clone $img;
+                $full->scaleDown(width: self::FULL_MAX_DIMENSION, height: self::FULL_MAX_DIMENSION);
+                $fullWebp = (string) $full->toWebp(85);
+                $originalPath = "{$dir}/{$uuid}.webp";
+                Storage::disk($disk)->put($originalPath, $fullWebp);
 
-            $optimizedPath = "{$dir}/{$uuid}.webp";
-            Storage::disk($disk)->put($optimizedPath, (string) $optimized->toWebp(80));
-            $variants['optimized'] = $optimizedPath;
+                $mimeType = 'image/webp';
+                $storedSize = strlen($fullWebp);
+                $variants['original'] = $originalPath;
 
-            // thumb (400x400)
+                if ($width > self::OPTIMIZED_MAX_DIMENSION || $height > self::OPTIMIZED_MAX_DIMENSION) {
+                    $optimized = clone $img;
+                    $optimized->scaleDown(
+                        width: self::OPTIMIZED_MAX_DIMENSION,
+                        height: self::OPTIMIZED_MAX_DIMENSION
+                    );
+                    $optimizedPath = "{$dir}/{$uuid}_optimized.webp";
+                    Storage::disk($disk)->put($optimizedPath, (string) $optimized->toWebp(80));
+                    $variants['optimized'] = $optimizedPath;
+                } else {
+                    $variants['optimized'] = $originalPath;
+                }
+            } else {
+                $extOriginal = strtolower($file->getClientOriginalExtension() ?: 'bin');
+                $originalName = "{$uuid}.{$extOriginal}";
+                $originalPath = "{$dir}/{$originalName}";
+                Storage::disk($disk)->putFileAs($dir, $file, $originalName);
+                $variants['original'] = $originalPath;
+
+                $optimized = clone $img;
+                $optimized->scaleDown(
+                    width: self::OPTIMIZED_MAX_DIMENSION,
+                    height: self::OPTIMIZED_MAX_DIMENSION
+                );
+                $optimizedPath = "{$dir}/{$uuid}_optimized.webp";
+                Storage::disk($disk)->put($optimizedPath, (string) $optimized->toWebp(80));
+                $variants['optimized'] = $optimizedPath;
+            }
+
             $thumb = clone $img;
-            $thumb->cover(400, 400);
+            $thumb->cover(self::THUMB_SIZE, self::THUMB_SIZE);
 
             $thumbPath = "{$dir}/{$uuid}_thumb.webp";
             Storage::disk($disk)->put($thumbPath, (string) $thumb->toWebp(75));
             $variants['thumb'] = $thumbPath;
+        } else {
+            $extOriginal = strtolower($file->getClientOriginalExtension() ?: 'bin');
+            $originalName = "{$uuid}.{$extOriginal}";
+            $originalPath = "{$dir}/{$originalName}";
+            Storage::disk($disk)->putFileAs($dir, $file, $originalName);
+            $variants['original'] = $originalPath;
         }
 
         return Media::create([
@@ -80,8 +121,8 @@ class MediaService
             'path'          => $originalPath,
             'variants'      => $variants,
             'original_name' => $this->sanitizeOriginalName($file->getClientOriginalName()),
-            'mime_type'     => $file->getMimeType() ?: $file->getClientMimeType(),
-            'size'          => $file->getSize(),
+            'mime_type'     => $mimeType,
+            'size'          => $storedSize,
             'width'         => $width,
             'height'        => $height,
             'title'         => $attrs['title'] ?? null,

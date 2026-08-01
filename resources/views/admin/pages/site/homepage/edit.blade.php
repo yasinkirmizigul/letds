@@ -31,7 +31,7 @@
             </a>
         </div>
 
-        <form method="POST" action="{{ route('admin.site.homepage.update') }}" class="grid gap-6" data-native-submit="true">
+        <form method="POST" action="{{ route('admin.site.homepage.update') }}" enctype="multipart/form-data" class="grid gap-6" data-native-submit="true">
             @csrf
             @method('PUT')
 
@@ -89,7 +89,7 @@
                         @include('admin.pages.site.homepage.partials._setting-groups', [
                             'groups' => $modeSettingGroups[$key] ?? [],
                             'settingValues' => $settingValues,
-                            'headerLogo' => $headerLogo,
+                            'mediaPreviews' => $mediaPreviews,
                         ])
                     </div>
                 </div>
@@ -109,7 +109,7 @@
                 @include('admin.pages.site.homepage.partials._setting-groups', [
                     'groups' => $sharedSettingGroups,
                     'settingValues' => $settingValues,
-                    'headerLogo' => $headerLogo,
+                    'mediaPreviews' => $mediaPreviews,
                 ])
             </div>
 

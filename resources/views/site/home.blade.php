@@ -19,8 +19,15 @@
     $leftMode = $modeList[0] ?? $activeMode;
     $rightMode = $modeList[1] ?? $activeMode;
     $headerLogo = $homepage['headerLogo'] ?? null;
+    $backgroundImage = $homepage['backgroundImage'] ?? null;
     $homepageTitle = $homepageContent['browser_title'] ?: $siteName;
     $homepageStyle = collect(array_replace($activeMode['styles'] ?? [], [
+        '--home-background-image' => $backgroundImage ? 'url("' . $backgroundImage['url'] . '")' : 'none',
+        '--home-background-brightness' => (float) $homepageSettings['background_brightness'] . '%',
+        '--home-background-overlay-opacity' => $homepageSettings['background_overlay_enabled']
+            ? (float) $homepageSettings['background_overlay_opacity'] / 100
+            : 0,
+        '--home-background-position' => $homepageSettings['background_position'],
         '--home-logo' => $homepageSettings['logo_color'],
         '--home-sticky-header-bg' => $homepageSettings['sticky_header_background'],
         '--home-sticky-logo' => $homepageSettings['sticky_logo_color'],

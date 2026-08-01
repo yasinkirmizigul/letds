@@ -1,4 +1,8 @@
 :root {
+  --home-background-image: none;
+  --home-background-brightness: 100%;
+  --home-background-overlay-opacity: 0;
+  --home-background-position: center;
   --home-before-bg: #ffffff;
   --home-after-bg: #ec6367;
   --home-before-text: #445963;
@@ -259,10 +263,51 @@ body.site-home-index {
 .wrapper-before {
   position: relative;
   height: 100%;
+  isolation: isolate;
 }
 
 .wrapper-after {
   width: 100vw;
+}
+
+.wrapper-after::before,
+.wrapper-after::after,
+.wrapper-before::before,
+.wrapper-before::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+}
+
+.wrapper-after::before,
+.wrapper-before::before {
+  z-index: 0;
+  background-image: var(--home-background-image);
+  background-repeat: no-repeat;
+  background-position: var(--home-background-position);
+  background-size: cover;
+  filter: brightness(var(--home-background-brightness));
+}
+
+.wrapper-after::after,
+.wrapper-before::after {
+  z-index: 1;
+  opacity: var(--home-background-overlay-opacity);
+  transition: background-color 0.36s ease, opacity 0.25s ease;
+}
+
+.wrapper-after::after {
+  background-color: var(--home-after-bg);
+}
+
+.wrapper-before::after {
+  background-color: var(--home-before-bg);
+}
+
+.wrapper-after > *,
+.wrapper-before > * {
+  z-index: 2;
 }
 
 .img-bird-wrapper {

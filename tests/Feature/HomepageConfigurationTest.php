@@ -2,11 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\Admin\Media\Media;
 use App\Models\Admin\User\Role;
 use App\Models\Admin\User\User;
 use App\Models\Site\SiteLanguage;
 use App\Services\Site\HomepageConfigurationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class HomepageConfigurationTest extends TestCase
@@ -79,6 +82,8 @@ class HomepageConfigurationTest extends TestCase
 
     public function test_superadmin_can_open_and_update_the_custom_homepage_manager(): void
     {
+        Storage::fake('public');
+
         $role = Role::query()->create([
             'name' => 'Super Admin',
             'slug' => 'superadmin',
@@ -115,8 +120,12 @@ class HomepageConfigurationTest extends TestCase
             'consultation_cta_url' => '/danismanlik',
             'settings' => array_replace($service->settingDefaults(), [
                 'cursor_symbol_mode' => 'moving',
+                'background_brightness' => 80,
+                'background_overlay_opacity' => 45,
+                'background_position' => 'top',
             ]),
             'translations' => [],
+            'background_image' => UploadedFile::fake()->image('homepage-background.jpg', 1200, 800),
         ]);
 
         $this->actingAs($user)
@@ -129,6 +138,17 @@ class HomepageConfigurationTest extends TestCase
             $service->current()->fresh()->content['hero_title']
         );
         $this->assertSame('moving', $service->current()->fresh()->settings['cursor_symbol_mode']);
+        $this->assertSame(80, $service->current()->fresh()->settings['background_brightness']);
+        $this->assertSame(45, $service->current()->fresh()->settings['background_overlay_opacity']);
+        $this->assertSame('top', $service->current()->fresh()->settings['background_position']);
+
+        $backgroundMedia = Media::query()->findOrFail(
+            $service->current()->fresh()->settings['background_media_id']
+        );
+
+        $this->assertSame('image/webp', $backgroundMedia->mime_type);
+        Storage::disk('public')->assertExists($backgroundMedia->path);
+        $this->assertStringEndsWith('.webp', $backgroundMedia->path);
         $this->assertSame(
             'Danışmanlık sekmesi güncellendi',
             $service->resolved('tr')['modes']['consultation']['hero_title']
@@ -140,6 +160,10 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('Analiz Merkezi')
             ->assertSee('Uzman Danışmanlık')
             ->assertSee('Danışmanlık sekmesi güncellendi')
-            ->assertSee('/danismanlik', false);
+            ->assertSee('/danismanlik', false)
+            ->assertSee($backgroundMedia->url(), false)
+            ->assertSee('--home-background-brightness:80%', false)
+            ->assertSee('--home-background-overlay-opacity:0.45', false)
+            ->assertSee('--home-background-position:top', false);
     }
 }

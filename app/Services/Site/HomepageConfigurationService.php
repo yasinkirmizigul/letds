@@ -108,6 +108,12 @@ class HomepageConfigurationService
                 'boolean' => ['required', 'boolean'],
                 'color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
                 'select' => ['required', 'string', Rule::in(array_keys($field['options'] ?? []))],
+                'range' => [
+                    'required',
+                    'numeric',
+                    'min:'.(float) ($field['min'] ?? 0),
+                    'max:'.(float) ($field['max'] ?? 100),
+                ],
                 'media' => [
                     'nullable',
                     'integer',
@@ -183,8 +189,9 @@ class HomepageConfigurationService
 
         $modes = $this->resolvedModes($content, $settings);
         $headerLogo = $this->headerLogo($settings);
+        $backgroundImage = $this->mediaAsset($settings, 'background_media_id');
 
-        return compact('content', 'settings', 'tooltips', 'modes', 'headerLogo');
+        return compact('content', 'settings', 'tooltips', 'modes', 'headerLogo', 'backgroundImage');
     }
 
     public function safeLink(?string $value, string $fallback): string
@@ -245,7 +252,12 @@ class HomepageConfigurationService
 
     public function headerLogo(array $settings): ?array
     {
-        $mediaId = (int) ($settings['header_logo_media_id'] ?? 0);
+        return $this->mediaAsset($settings, 'header_logo_media_id');
+    }
+
+    public function mediaAsset(array $settings, string $key): ?array
+    {
+        $mediaId = (int) ($settings[$key] ?? 0);
 
         if ($mediaId < 1) {
             return null;
@@ -301,6 +313,7 @@ class HomepageConfigurationService
                 'boolean' => (bool) $value,
                 'color' => strtolower(trim((string) $value)),
                 'media' => filled($value) ? (int) $value : null,
+                'range' => (float) $value,
                 default => is_string($value) ? trim($value) : $value,
             };
         }
@@ -326,6 +339,13 @@ class HomepageConfigurationService
 
             if (($field['type'] ?? null) === 'select' && ! array_key_exists((string) ($settings[$key] ?? ''), $field['options'] ?? [])) {
                 $settings[$key] = $defaults[$key] ?? null;
+            }
+
+            if (($field['type'] ?? null) === 'range') {
+                $min = (float) ($field['min'] ?? 0);
+                $max = (float) ($field['max'] ?? 100);
+                $value = is_numeric($settings[$key] ?? null) ? (float) $settings[$key] : (float) ($defaults[$key] ?? $min);
+                $settings[$key] = min($max, max($min, $value));
             }
         }
 

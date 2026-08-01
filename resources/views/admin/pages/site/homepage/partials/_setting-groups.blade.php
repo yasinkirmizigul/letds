@@ -66,11 +66,40 @@
                         </select>
                         @error($errorKey)<div class="text-xs text-danger">{{ $message }}</div>@enderror
                     </div>
+                @elseif(($field['type'] ?? 'text') === 'range')
+                    <div class="{{ $wrapperClass }} grid gap-2" data-homepage-range-field="true">
+                        <div class="flex items-center justify-between gap-3">
+                            <label class="kt-form-label mb-0" for="homepage_{{ $key }}">{{ $field['label'] }}</label>
+                            <output class="kt-badge kt-badge-sm kt-badge-light-primary" for="homepage_{{ $key }}" data-homepage-range-output="true">
+                                {{ (float) $value }}{{ $field['unit'] ?? '' }}
+                            </output>
+                        </div>
+                        <input
+                            id="homepage_{{ $key }}"
+                            type="range"
+                            name="settings[{{ $key }}]"
+                            value="{{ $value }}"
+                            min="{{ $field['min'] ?? 0 }}"
+                            max="{{ $field['max'] ?? 100 }}"
+                            step="{{ $field['step'] ?? 1 }}"
+                            class="homepage-range-input"
+                            data-homepage-range-input="true"
+                            data-homepage-range-unit="{{ $field['unit'] ?? '' }}"
+                        >
+                        <div class="flex justify-between text-xs text-muted-foreground">
+                            <span>{{ $field['min'] ?? 0 }}{{ $field['unit'] ?? '' }}</span>
+                            <span>{{ $field['max'] ?? 100 }}{{ $field['unit'] ?? '' }}</span>
+                        </div>
+                        @error($errorKey)<div class="text-xs text-danger">{{ $message }}</div>@enderror
+                    </div>
                 @elseif(($field['type'] ?? 'text') === 'media')
                     @php
-                        $previewUrl = $key === 'header_logo_media_id' ? data_get($headerLogo, 'url') : null;
+                        $previewUrl = data_get($mediaPreviews, $key . '.url');
+                        $isBackground = ($field['preview'] ?? null) === 'background';
+                        $uploadName = $field['upload_name'] ?? null;
+                        $clearFlagName = $field['clear_flag_name'] ?? null;
                     @endphp
-                    <div class="{{ $wrapperClass }} grid gap-3" data-homepage-media-field="true">
+                    <div class="{{ $wrapperClass }} grid gap-3" data-homepage-media-field="true" data-homepage-media-kind="{{ $isBackground ? 'background' : 'logo' }}">
                         <label class="kt-form-label">{{ $field['label'] }}</label>
                         <input
                             id="homepage_{{ $key }}"
@@ -79,23 +108,50 @@
                             value="{{ $value }}"
                             data-homepage-media-input="true"
                         >
+                        @if($clearFlagName)
+                            <input type="hidden" name="{{ $clearFlagName }}" value="0" data-homepage-media-clear-flag="true">
+                        @endif
 
-                        <div class="homepage-logo-picker grid gap-4 border bg-background p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
-                            <div class="flex min-h-24 items-center justify-center overflow-hidden rounded-lg border border-dashed border-border bg-muted/20 p-4">
+                        <div class="homepage-logo-picker {{ $isBackground ? 'homepage-background-picker' : '' }} grid gap-4 border bg-background p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+                            <div
+                                class="{{ $isBackground ? 'homepage-background-preview aspect-[16/7]' : 'flex min-h-24 items-center justify-center p-4' }} relative overflow-hidden rounded-lg border border-dashed border-border bg-muted/20"
+                                @if($isBackground)
+                                    data-homepage-background-preview="true"
+                                    style="--homepage-preview-after: {{ data_get($settingValues, 'after_background_color', '#ec6367') }}; --homepage-preview-before: {{ data_get($settingValues, 'before_background_color', '#ffffff') }}; --homepage-preview-opacity: {{ data_get($settingValues, 'background_overlay_enabled', true) ? ((float) data_get($settingValues, 'background_overlay_opacity', 65) / 100) : 0 }}; --homepage-preview-brightness: {{ (float) data_get($settingValues, 'background_brightness', 100) }}%; --homepage-preview-position: {{ data_get($settingValues, 'background_position', 'center') }}"
+                                @endif
+                            >
                                 <div class="{{ $previewUrl ? 'hidden' : '' }} text-center text-sm text-muted-foreground" data-homepage-media-placeholder="true">
                                     <i class="ki-outline ki-picture mb-2 block text-2xl"></i>
-                                    Henüz logo seçilmedi
+                                    {{ $isBackground ? 'Henüz arka plan seçilmedi' : 'Henüz logo seçilmedi' }}
                                 </div>
                                 <img
                                     id="homepage_{{ $key }}_preview"
                                     src="{{ $previewUrl ?: '' }}"
-                                    alt="Seçili logo önizlemesi"
-                                    class="{{ $previewUrl ? '' : 'hidden' }} max-h-16 max-w-full object-contain"
+                                    alt="{{ $isBackground ? 'Arka plan önizlemesi' : 'Seçili logo önizlemesi' }}"
+                                    class="{{ $previewUrl ? '' : 'hidden' }} {{ $isBackground ? 'absolute inset-0 h-full w-full object-cover' : 'max-h-16 max-w-full object-contain' }}"
                                     data-homepage-media-preview="true"
                                 >
+                                @if($isBackground)
+                                    <span class="homepage-background-preview__overlay homepage-background-preview__overlay--after" aria-hidden="true"></span>
+                                    <span class="homepage-background-preview__overlay homepage-background-preview__overlay--before" aria-hidden="true"></span>
+                                    <span class="homepage-background-preview__divider" aria-hidden="true"></span>
+                                @endif
                             </div>
 
-                            <div class="flex flex-wrap gap-2 sm:flex-col">
+                            <div class="flex flex-wrap gap-2 sm:flex-col" @if($isBackground) data-homepage-background-actions="true" @endif>
+                                @if(($field['allow_upload'] ?? false) && $uploadName)
+                                    <label class="kt-btn kt-btn-primary cursor-pointer">
+                                        <i class="ki-outline ki-cloud-add"></i>
+                                        Fotoğraf Yükle
+                                        <input
+                                            type="file"
+                                            name="{{ $uploadName }}"
+                                            accept="image/jpeg,image/png,image/webp"
+                                            class="hidden"
+                                            data-homepage-media-file="true"
+                                        >
+                                    </label>
+                                @endif
                                 <button
                                     type="button"
                                     class="kt-btn kt-btn-light"
@@ -113,7 +169,12 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="text-xs text-muted-foreground">Şeffaf zeminli yatay veya kare logo kullanılması önerilir.</div>
+                        <div class="text-xs text-muted-foreground">
+                            {{ $isBackground ? 'JPG, PNG veya WebP yükleyebilirsiniz. Yeni yüklemeler WebP olarak saklanır.' : 'Şeffaf zeminli yatay veya kare logo kullanılması önerilir.' }}
+                        </div>
+                        @if($uploadName)
+                            @error($uploadName)<div class="text-xs text-danger">{{ $message }}</div>@enderror
+                        @endif
                         @error($errorKey)<div class="text-xs text-danger">{{ $message }}</div>@enderror
                     </div>
                 @endif
