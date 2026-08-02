@@ -172,6 +172,8 @@
       after.style.width = `${x}px`;
       handle.style.left = `${x}px`;
       root.style.setProperty('--home-split-position', `${ratio * 100}%`);
+      root.style.setProperty('--home-split-left-distance', `${Math.ceil(x) + 4}px`);
+      root.style.setProperty('--home-split-right-distance', `${Math.ceil(rect.width - x) + 4}px`);
       handle.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
 
       const splitX = rect.left + x;

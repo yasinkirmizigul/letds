@@ -258,6 +258,8 @@ body.site-home-index {
 
 .home-before-after {
   --home-split-position: 50%;
+  --home-split-left-distance: 50vw;
+  --home-split-right-distance: 50vw;
   position: relative;
   z-index: 1;
   width: 100%;
@@ -712,11 +714,11 @@ body.home-leaving .home-drag-handle::after {
 }
 
 body.home-leaving .home-drag-handle::before {
-  transform: translate3d(-51vw, 0, 0);
+  transform: translate3d(calc(0px - var(--home-split-left-distance)), 0, 0);
 }
 
 body.home-leaving .home-drag-handle::after {
-  transform: translate3d(51vw, 0, 0);
+  transform: translate3d(var(--home-split-right-distance), 0, 0);
 }
 
 body.home-leaving .icon-drag {
