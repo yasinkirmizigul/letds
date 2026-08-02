@@ -8,6 +8,52 @@
     callback();
   };
 
+  function initBackgroundReadyState() {
+    const root = document.documentElement;
+    const backgroundUrl = document.body.dataset.homeBackgroundUrl;
+
+    if (!root.classList.contains('home-background-loading') || !backgroundUrl) return;
+
+    const image = new Image();
+    let decodeStarted = false;
+    let revealed = false;
+
+    const reveal = () => {
+      if (revealed) return;
+
+      revealed = true;
+      window.clearTimeout(fallbackTimer);
+      root.classList.remove('home-background-loading');
+      root.classList.add('home-background-ready');
+    };
+
+    const revealAfterDecode = () => {
+      if (decodeStarted) return;
+
+      decodeStarted = true;
+
+      if (typeof image.decode !== 'function') {
+        reveal();
+        return;
+      }
+
+      image.decode().catch(() => {}).then(reveal);
+    };
+
+    const fallbackTimer = window.setTimeout(reveal, 10000);
+
+    image.addEventListener('load', revealAfterDecode, { once: true });
+    image.addEventListener('error', reveal, { once: true });
+    image.decoding = 'async';
+    image.fetchPriority = 'high';
+    image.src = backgroundUrl;
+
+    if (image.complete) {
+      if (image.naturalWidth > 0) revealAfterDecode();
+      else reveal();
+    }
+  }
+
   function initViewportAnimations() {
     const items = [...document.querySelectorAll('.et-in-viewport-check')];
     if (!items.length) return;
@@ -489,6 +535,7 @@
   }
 
   ready(() => {
+    initBackgroundReadyState();
     initViewportAnimations();
     initTooltips();
     initStickyHeader();

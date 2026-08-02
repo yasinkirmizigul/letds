@@ -25,6 +25,7 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('--home-stat-before:#ec6367', false)
             ->assertSee('--home-analysis-tab-after-text:#ffffff', false)
             ->assertSee('--home-hero-after-text:#ffffff', false)
+            ->assertSee('assets/site/home/css/home.css?v=', false)
             ->assertSee('data-stat-symbols="true"', false)
             ->assertSee('data-stat-symbol-mode="idle"', false)
             ->assertSee('data-home-mode="analysis"', false)
@@ -176,6 +177,12 @@ class HomepageConfigurationTest extends TestCase
 
         $this->get('/')
             ->assertOk()
+            ->assertSee('class="home-background-loading"', false)
+            ->assertSee(
+                '<link rel="preload" as="image" href="'.$backgroundMedia->url().'" fetchpriority="high">',
+                false
+            )
+            ->assertSee('data-home-background-url="'.$backgroundMedia->url().'"', false)
             ->assertSee('data-stat-symbol-mode="moving"', false)
             ->assertSee('Analiz Merkezi')
             ->assertSee('Uzman Danışmanlık')

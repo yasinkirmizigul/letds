@@ -1,16 +1,16 @@
 # Graph Report - letds  (2026-08-02)
 
 ## Corpus Check
-- 559 files · ~211,043 words
+- 559 files · ~211,113 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3069 nodes · 6897 edges · 366 communities (228 shown, 138 thin omitted)
+- 3069 nodes · 6897 edges · 369 communities (228 shown, 141 thin omitted)
 - Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 468 edges (avg confidence: 0.79)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `18fcd24c`
+- Built from commit: `01404670`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -145,7 +145,7 @@
 - 2025_12_27_133537_create_gallery_items_table.php
 - 2025_12_27_133604_create_galleryables_table.php
 - Illuminate\Database\Eloquent\Relations\MorphToMany
-- 2026_02_15_000001_create_products_table.php
+- ServiceReviewItem
 - 2026_02_15_000002_create_category_product_table.php
 - 2026_03_27_202618_create_members_table.php
 - SiteLanguage
@@ -165,6 +165,7 @@
 - 2026_04_28_000005_create_payment_integrations_table.php
 - 2026_04_29_000001_add_mail_notification_settings_to_site_settings_table.php
 - ServiceReviewAssignmentService.php
+- .boot
 - 2026_04_30_000002_add_seo_file_settings_to_site_settings_table.php
 - 2026_04_30_000003_add_sitemap_xml_content_to_site_settings_table.php
 - ScheduleConflictService
@@ -227,7 +228,7 @@
 - Plan 004: Randevu deneyimini yeniden tasarla — adımlı akış hissi, takvim/slot durum stilleri, hafta günü başlıkları
 - ServiceReviewController
 - graphify reference: extra exports and benchmark
-- .storeShipment
+- EcommerceShipment
 - .show
 - Illuminate\Database\Eloquent\Relations\MorphOne
 - site/app.js
@@ -236,6 +237,7 @@
 - Seeding notes (safe defaults)
 - Illuminate\Database\Eloquent\Relations\HasMany
 - Implementation Plans
+- 0001_01_01_000006_create_role_user_table.php
 - graphify reference: add a URL and watch a folder
 - graphify reference: commit hook and native CLAUDE.md integration
 - graphify reference: incremental update and cluster-only
@@ -281,7 +283,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (366 total, 138 thin omitted)
+## Communities (369 total, 141 thin omitted)
 
 ### Community 0 - "Illuminate\Http\RedirectResponse"
 Cohesion: 0.05
@@ -356,8 +358,8 @@ Cohesion: 0.11
 Nodes (11): AuditLogController, AdminMiddleware, AjaxRedirectResponseMiddleware, AuditRequestMiddleware, EnsureActiveMemberSession, PermissionMiddleware, SiteLocaleMiddleware, SuperAdminMiddleware (+3 more)
 
 ### Community 23 - "Appointment"
-Cohesion: 0.16
-Nodes (5): SendAppointmentAdminNotificationMailJob, Appointment, self, AppointmentService, Carbon
+Cohesion: 0.17
+Nodes (4): Appointment, self, AppointmentService, Carbon
 
 ### Community 24 - "products/form-shared.js"
 Cohesion: 0.20
@@ -372,8 +374,8 @@ Cohesion: 0.18
 Nodes (21): bindActiveAppointmentActions(), calendarSkeletonCells(), cancelAppointment(), confirmBooking(), confirmReschedule(), createSlotElement(), currentMonth, formatTime() (+13 more)
 
 ### Community 30 - "Illuminate\Bus\Queueable"
-Cohesion: 0.21
-Nodes (11): SendAppointmentUpdatedMailJob, SendContactMessageReceivedMailJob, AdminContactMessageReceivedMail, AppointmentUpdatedMail, SiteMailTestMail, Illuminate\Bus\Queueable, Illuminate\Contracts\Queue\ShouldQueue, Illuminate\Foundation\Bus\Dispatchable (+3 more)
+Cohesion: 0.18
+Nodes (12): SendAppointmentAdminNotificationMailJob, SendAppointmentUpdatedMailJob, SendContactMessageReceivedMailJob, AdminContactMessageReceivedMail, AppointmentUpdatedMail, SiteMailTestMail, Illuminate\Bus\Queueable, Illuminate\Contracts\Queue\ShouldQueue (+4 more)
 
 ### Community 31 - "Category"
 Cohesion: 0.16
@@ -456,7 +458,7 @@ Cohesion: 0.45
 Nodes (11): cleanupObjectUrl(), emitFeaturedChange(), ensureGlobalListeners(), ensureHostInited(), getHost(), handleClearClick(), handleFileChange(), handleMediaPick() (+3 more)
 
 ### Community 67 - "AdminResetPasswordNotification.php"
-Cohesion: 0.23
+Cohesion: 0.24
 Nodes (4): AdminResetPasswordNotification, MemberResetPasswordNotification, Illuminate\Notifications\Messages\MailMessage, Illuminate\Notifications\Notification
 
 ### Community 68 - "admin/app.js"
@@ -631,10 +633,6 @@ Nodes (3): media(), mediaIn(), Illuminate\Database\Eloquent\Relations\MorphToMan
 Cohesion: 0.12
 Nodes (3): SiteLanguageController, SiteLanguage, SiteLocalization
 
-### Community 147 - "AppointmentController"
-Cohesion: 0.11
-Nodes (3): AppointmentController, AppServiceProvider, Illuminate\Support\ServiceProvider
-
 ### Community 151 - "ServiceReviewAssignmentService.php"
 Cohesion: 0.36
 Nodes (3): AppointmentObserver, EcommerceOrderObserver, Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit
@@ -686,7 +684,7 @@ Nodes (3): closeModal(), init(), openModal()
 ## Knowledge Gaps
 - **328 isolated node(s):** `$schema`, `name`, `type`, `description`, `laravel` (+323 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **138 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **141 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_

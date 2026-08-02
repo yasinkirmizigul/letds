@@ -1,58 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 103.55 104.68">
+<svg id="Layer_2" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 103.55 104.68">
+  <!-- Generator: Adobe Illustrator 30.6.0, SVG Export Plug-In . SVG Version: 2.1.4 Build 109)  -->
   <defs>
     <style>
-      .cls-1 {
-        fill: #345170;
-      }
-
-      .cls-2 {
+      .st0 {
         stroke: #345170;
       }
 
-      .cls-2, .cls-3, .cls-4, .cls-5, .cls-6, .cls-7 {
+      .st0, .st1, .st2, .st3, .st4, .st5 {
         fill: none;
         stroke-miterlimit: 10;
       }
 
-      .cls-3 {
-        stroke: #4687c7;
-      }
-
-      .cls-4 {
-        stroke: #a8b9bf;
-      }
-
-      .cls-5 {
+      .st1 {
         stroke: #ef3851;
       }
 
-      .cls-6 {
+      .st2 {
+        stroke: #fcb515;
+      }
+
+      .st3 {
+        stroke: #a8b9bf;
+      }
+
+      .st4 {
         stroke: #1a3d59;
       }
 
-      .cls-7 {
-        stroke: #fcb515;
+      .st6 {
+        display: none;
+      }
+
+      .st5 {
+        stroke: #4687c7;
+      }
+
+      .st7 {
+        fill: #345170;
+      }
+
+      .st8 {
+        fill: #089bff;
       }
     </style>
   </defs>
-  <g id="Layer_1-2" data-name="Layer 1">
+  <g id="Layer_1-2">
     <g>
-      <path class="cls-6" d="M63,87.77c-2.76-.35-6.87-.78-11.08-.78s-8.11.38-11.06.74l-.31-13.05h22.45v13.1Z"/>
-      <path class="cls-6" d="M12.1.5h79.35c6.4,0,11.6,5.2,11.6,11.6v50.97c0,6.4-5.2,11.6-11.6,11.6H12.1c-6.4,0-11.6-5.2-11.6-11.6V12.1C.5,5.7,5.7.5,12.1.5Z"/>
-      <rect class="cls-6" x="7.53" y="7.53" width="88.5" height="60.12" rx="10.26" ry="10.26"/>
-      <rect class="cls-1" x="16.06" y="14.13" width="1.64" height="46.91"/>
-      <rect class="cls-1" x="12.57" y="61.04" width="8.61" height="1.42"/>
-      <rect class="cls-1" x="12.57" y="14.13" width="8.61" height="1.42"/>
-      <path class="cls-6" d="M93.37,104.18v-6.07h0c-25.75-14.82-57.44-14.82-83.18,0h0v6.07h83.18Z"/>
-      <rect class="cls-7" x="24.34" y="44.13" width="5.84" height="18.33"/>
-      <rect class="cls-2" x="34.34" y="36.32" width="5.84" height="26.14"/>
-      <rect class="cls-4" x="44.33" y="28.32" width="5.84" height="34.14"/>
-      <rect class="cls-3" x="54.33" y="32.71" width="5.84" height="29.75"/>
-      <rect class="cls-5" x="64.33" y="22.17" width="5.84" height="40.29"/>
+      <path class="st4" d="M63,87.77c-2.76-.35-6.87-.78-11.08-.78s-8.11.38-11.06.74l-.31-13.05h22.45v13.1h0Z"/>
+      <path class="st4" d="M13.7.5h76.16c7.29,0,13.2,5.91,13.2,13.2v47.78c0,7.29-5.91,13.2-13.2,13.2H13.7c-7.29,0-13.2-5.91-13.2-13.2V13.7C.5,6.41,6.41.5,13.7.5Z"/>
+      <rect class="st4" x="8.56" y="8.23" width="86.42" height="58.24" rx="6.22" ry="6.22"/>
+      <rect class="st7" x="16.06" y="14.13" width="1.64" height="46.91"/>
+      <rect class="st7" x="12.57" y="61.04" width="8.61" height="1.42"/>
+      <rect class="st7" x="12.57" y="14.13" width="8.61" height="1.42"/>
+      <path class="st4" d="M93.37,104.18v-6.07h0c-25.75-14.82-57.44-14.82-83.18,0h0v6.07h83.18Z"/>
+      <rect class="st2" x="24.34" y="44.13" width="5.84" height="18.33"/>
+      <rect class="st0" x="34.34" y="36.32" width="5.84" height="26.14"/>
+      <rect class="st3" x="44.33" y="28.32" width="5.84" height="34.14"/>
+      <rect class="st5" x="54.33" y="32.71" width="5.84" height="29.75"/>
+      <rect class="st1" x="64.33" y="22.17" width="5.84" height="40.29"/>
       <g>
-        <circle class="cls-2" cx="84.4" cy="37.59" r="6.82"/>
-        <path class="cls-4" d="M84.4,37.59v-6.82c-1.88,0-3.59.76-4.82,2l4.82,4.82Z"/>
+        <circle class="st0" cx="84.4" cy="37.59" r="6.82"/>
+        <path class="st3" d="M84.4,37.59v-6.82c-1.88,0-3.59.76-4.82,2l4.82,4.82Z"/>
+      </g>
+      <g class="st6">
+        <path class="st8" d="M89.19,8.64c2.96,0,5.36,2.45,5.36,5.45v46.49c0,3.01-2.4,5.45-5.36,5.45H14.33c-2.96,0-5.36-2.45-5.36-5.45V14.1c0-3.01,2.4-5.45,5.36-5.45h74.86M89.19-.36H14.33C6.4-.36-.03,6.11-.03,14.1v46.49c0,7.98,6.43,14.45,14.36,14.45h74.86c7.93,0,14.36-6.47,14.36-14.45V14.1c0-7.98-6.43-14.45-14.36-14.45h0Z"/>
       </g>
     </g>
   </g>

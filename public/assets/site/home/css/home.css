@@ -41,6 +41,19 @@ body {
   min-height: 100%;
 }
 
+html.home-background-loading {
+  background-color: var(--home-background-loading-color, #ec6367);
+}
+
+html.home-background-loading body.site-home-index {
+  opacity: 0;
+  animation: home-loading-fallback-reveal 0s linear 10s forwards;
+}
+
+html.home-background-ready body.site-home-index {
+  animation: home-background-reveal 0.18s ease-out both;
+}
+
 body.site-home-index {
   overflow: hidden;
   color: #404040;
@@ -48,6 +61,15 @@ body.site-home-index {
   font-family: "proxima-nova", "Inter", "Segoe UI", Arial, sans-serif;
   font-size: 14px;
   line-height: 1.7;
+}
+
+@keyframes home-background-reveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes home-loading-fallback-reveal {
+  to { opacity: 1; }
 }
 
 .home-stat-particles {

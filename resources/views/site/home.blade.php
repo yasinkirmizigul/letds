@@ -20,7 +20,12 @@
     $rightMode = $modeList[1] ?? $activeMode;
     $headerLogo = $homepage['headerLogo'] ?? null;
     $backgroundImage = $homepage['backgroundImage'] ?? null;
+    $backgroundLoadingColor = $activeMode['styles']['--home-after-bg'] ?? '#ec6367';
     $homepageTitle = $homepageContent['browser_title'] ?: $siteName;
+    $homeCssPath = 'assets/site/home/css/home.css';
+    $homeJsPath = 'assets/site/home/js/home.js';
+    $homeCssUrl = asset($homeCssPath) . '?v=' . filemtime(public_path($homeCssPath));
+    $homeJsUrl = asset($homeJsPath) . '?v=' . filemtime(public_path($homeJsPath));
     $homepageStyle = collect(array_replace($activeMode['styles'] ?? [], [
         '--home-background-image' => $backgroundImage ? 'url("' . $backgroundImage['url'] . '")' : 'none',
         '--home-background-brightness' => (float) $homepageSettings['background_brightness'] . '%',
@@ -39,7 +44,11 @@
 @endphp
 
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', $locale) }}" dir="{{ $isRtl ? 'rtl' : 'ltr' }}">
+<html
+    lang="{{ str_replace('_', '-', $locale) }}"
+    dir="{{ $isRtl ? 'rtl' : 'ltr' }}"
+    @if($backgroundImage) class="home-background-loading" style="--home-background-loading-color: {{ $backgroundLoadingColor }}" @endif
+>
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -47,7 +56,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $homepageTitle }}</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('assets/site/images/favicon.svg') }}">
-    <link rel="stylesheet" href="{{ asset('assets/site/home/css/home.css') }}">
+    @if($backgroundImage)
+        <link rel="preload" as="image" href="{{ $backgroundImage['url'] }}" fetchpriority="high">
+    @endif
+    <link rel="stylesheet" href="{{ $homeCssUrl }}">
+    @if($backgroundImage)
+        <noscript><style>html.home-background-loading body.site-home-index { opacity: 1 !important; }</style></noscript>
+    @endif
 </head>
 <body
     class="site-home-index"
@@ -55,6 +70,7 @@
     data-stat-symbols="{{ $homepageSettings['cursor_symbols_enabled'] ? 'true' : 'false' }}"
     data-stat-symbol-mode="{{ $homepageSettings['cursor_symbol_mode'] }}"
     data-home-mode="{{ $activeMode['key'] }}"
+    data-home-background-url="{{ $backgroundImage['url'] ?? '' }}"
 >
     <header id="header-wrapper" class="site-home-header">
         <div class="home-container">
@@ -203,6 +219,6 @@
         </section>
     </main>
 
-    <script defer src="{{ asset('assets/site/home/js/home.js') }}"></script>
+    <script defer src="{{ $homeJsUrl }}"></script>
 </body>
 </html>

@@ -2345,8 +2345,8 @@
     "semantic_hash": "98ddcd1f1ad1048f4eeafe4f003fd129"
   },
   "resources/views/site/home.blade.php": {
-    "mtime": 1785653119.8509564,
-    "ast_hash": "2c553111484068bb398be7c4d660ed2b",
+    "mtime": 1785696103.4404683,
+    "ast_hash": "a9ac396f3121943c9bb6b245ee71d5c0",
     "semantic_hash": ""
   },
   "resources/views/site/layouts/main/app.blade.php": {
@@ -2775,8 +2775,8 @@
     "semantic_hash": ""
   },
   "tests/Feature/HomepageConfigurationTest.php": {
-    "mtime": 1785653310.5866308,
-    "ast_hash": "ff8514e2bb507b3c505784852f36b59d",
+    "mtime": 1785696103.6193187,
+    "ast_hash": "19129e4569816004b86edc3b08dbe4a9",
     "semantic_hash": ""
   },
   "resources/views/admin/pages/site/homepage/partials/_setting-groups.blade.php": {

@@ -2287,8 +2287,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "app_http_controllers_admin_ecommerce_ordercontroller_ordercontroller_create",
-      "community": 138,
-      "community_name": "EcommerceOrderTransaction",
+      "community": 88,
+      "community_name": "OrderController",
       "norm_label": ".create()"
     },
     {
@@ -2364,8 +2364,8 @@
       "source_location": "L232",
       "_origin": "ast",
       "id": "app_http_controllers_admin_ecommerce_ordercontroller_ordercontroller_storeshipment",
-      "community": 332,
-      "community_name": ".storeShipment",
+      "community": 88,
+      "community_name": "OrderController",
       "norm_label": ".storeshipment()"
     },
     {
@@ -2420,7 +2420,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_ecommerce_ordercontroller_ordercontroller_applyshipmentstate",
       "community": 332,
-      "community_name": ".storeShipment",
+      "community_name": "EcommerceShipment",
       "norm_label": ".applyshipmentstate()"
     },
     {
@@ -7974,8 +7974,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "app_jobs_sendappointmentadminnotificationmailjob_sendappointmentadminnotificationmailjob",
-      "community": 23,
-      "community_name": "Appointment",
+      "community": 30,
+      "community_name": "Illuminate\\Bus\\Queueable",
       "norm_label": "sendappointmentadminnotificationmailjob"
     },
     {
@@ -7985,8 +7985,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "app_jobs_sendappointmentadminnotificationmailjob_sendappointmentadminnotificationmailjob_construct",
-      "community": 23,
-      "community_name": "Appointment",
+      "community": 30,
+      "community_name": "Illuminate\\Bus\\Queueable",
       "norm_label": ".__construct()"
     },
     {
@@ -8249,8 +8249,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "app_mail_appointmentupdatedmail_appointmentupdatedmail_construct",
-      "community": 23,
-      "community_name": "Appointment",
+      "community": 30,
+      "community_name": "Illuminate\\Bus\\Queueable",
       "norm_label": ".__construct()"
     },
     {
@@ -8293,8 +8293,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "app_mail_sitemailtestmail_sitemailtestmail_construct",
-      "community": 47,
-      "community_name": "SiteSetting",
+      "community": 30,
+      "community_name": "Illuminate\\Bus\\Queueable",
       "norm_label": ".__construct()"
     },
     {
@@ -9625,7 +9625,7 @@
       "_origin": "ast",
       "id": "app_models_admin_ecommerce_ecommerceshipment_ecommerceshipment",
       "community": 332,
-      "community_name": ".storeShipment",
+      "community_name": "EcommerceShipment",
       "norm_label": "ecommerceshipment"
     },
     {
@@ -9636,7 +9636,7 @@
       "_origin": "ast",
       "id": "app_models_admin_ecommerce_ecommerceshipment_ecommerceshipment_statusoptions",
       "community": 332,
-      "community_name": ".storeShipment",
+      "community_name": "EcommerceShipment",
       "norm_label": ".statusoptions()"
     },
     {
@@ -9647,7 +9647,7 @@
       "_origin": "ast",
       "id": "app_models_admin_ecommerce_ecommerceshipment_ecommerceshipment_statusbadgeclass",
       "community": 332,
-      "community_name": ".storeShipment",
+      "community_name": "EcommerceShipment",
       "norm_label": ".statusbadgeclass()"
     },
     {
@@ -9658,7 +9658,7 @@
       "_origin": "ast",
       "id": "app_models_admin_ecommerce_ecommerceshipment_ecommerceshipment_order",
       "community": 332,
-      "community_name": ".storeShipment",
+      "community_name": "EcommerceShipment",
       "norm_label": ".order()"
     },
     {
@@ -11428,8 +11428,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_concerns_haslocaldatetimes",
-      "community": 147,
-      "community_name": "AppointmentController",
+      "community": 335,
+      "community_name": "HasLocalDateTimes.php",
       "norm_label": "haslocaldatetimes.php"
     },
     {
@@ -11439,8 +11439,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "app_models_concerns_haslocaldatetimes_aslocaldatetime",
-      "community": 147,
-      "community_name": "AppointmentController",
+      "community": 335,
+      "community_name": "HasLocalDateTimes.php",
       "norm_label": "aslocaldatetime()"
     },
     {
@@ -11450,8 +11450,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "app_models_concerns_haslocaldatetimes_aslocalformatted",
-      "community": 147,
-      "community_name": "AppointmentController",
+      "community": 335,
+      "community_name": "HasLocalDateTimes.php",
       "norm_label": "aslocalformatted()"
     },
     {
@@ -12220,8 +12220,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "app_models_review_servicereviewitem_servicereviewitem",
-      "community": 330,
-      "community_name": "ServiceReviewController",
+      "community": 131,
+      "community_name": "ServiceReviewItem",
       "norm_label": "servicereviewitem"
     },
     {
@@ -12231,8 +12231,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "app_models_review_servicereviewitem_servicereviewitem_casts",
-      "community": 330,
-      "community_name": "ServiceReviewController",
+      "community": 131,
+      "community_name": "ServiceReviewItem",
       "norm_label": ".casts()"
     },
     {
@@ -12242,8 +12242,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "app_models_review_servicereviewitem_servicereviewitem_review",
-      "community": 330,
-      "community_name": "ServiceReviewController",
+      "community": 131,
+      "community_name": "ServiceReviewItem",
       "norm_label": ".review()"
     },
     {
@@ -12253,8 +12253,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "app_models_review_servicereviewitem_servicereviewitem_question",
-      "community": 330,
-      "community_name": "ServiceReviewController",
+      "community": 131,
+      "community_name": "ServiceReviewItem",
       "norm_label": ".question()"
     },
     {
@@ -12264,8 +12264,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "app_models_review_servicereviewitem_servicereviewitem_answervalue",
-      "community": 330,
-      "community_name": "ServiceReviewController",
+      "community": 131,
+      "community_name": "ServiceReviewItem",
       "norm_label": ".answervalue()"
     },
     {
@@ -12275,8 +12275,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "app_models_review_servicereviewitem_servicereviewitem_questiontypelabel",
-      "community": 330,
-      "community_name": "ServiceReviewController",
+      "community": 131,
+      "community_name": "ServiceReviewItem",
       "norm_label": ".questiontypelabel()"
     },
     {
@@ -13760,8 +13760,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "app_providers_appserviceprovider_appserviceprovider",
-      "community": 147,
-      "community_name": "AppointmentController",
+      "community": 152,
+      "community_name": ".boot",
       "norm_label": "appserviceprovider"
     },
     {
@@ -13771,8 +13771,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "app_providers_appserviceprovider_appserviceprovider_register",
-      "community": 147,
-      "community_name": "AppointmentController",
+      "community": 152,
+      "community_name": ".boot",
       "norm_label": ".register()"
     },
     {
@@ -13782,8 +13782,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "app_providers_appserviceprovider_appserviceprovider_boot",
-      "community": 147,
-      "community_name": "AppointmentController",
+      "community": 152,
+      "community_name": ".boot",
       "norm_label": ".boot()"
     },
     {
@@ -14475,8 +14475,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_services_mail_sitemailconfigurator",
-      "community": 67,
-      "community_name": "AdminResetPasswordNotification.php",
+      "community": 47,
+      "community_name": "SiteSetting",
       "norm_label": "sitemailconfigurator.php"
     },
     {
@@ -18017,8 +18017,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "database_migrations_0001_01_01_000006_create_role_user_table",
-      "community": 117,
-      "community_name": ".schema",
+      "community": 342,
+      "community_name": "0001_01_01_000006_create_role_user_table.php",
       "norm_label": "0001_01_01_000006_create_role_user_table.php"
     },
     {
@@ -18028,8 +18028,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "database_migrations_0001_01_01_000006_create_role_user_table_up",
-      "community": 117,
-      "community_name": ".schema",
+      "community": 342,
+      "community_name": "0001_01_01_000006_create_role_user_table.php",
       "norm_label": "up()"
     },
     {
@@ -18039,8 +18039,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "database_migrations_0001_01_01_000006_create_role_user_table_down",
-      "community": 117,
-      "community_name": ".schema",
+      "community": 342,
+      "community_name": "0001_01_01_000006_create_role_user_table.php",
       "norm_label": "down()"
     },
     {
@@ -18347,8 +18347,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "database_migrations_2026_02_15_000001_create_products_table",
-      "community": 131,
-      "community_name": "2026_02_15_000001_create_products_table.php",
+      "community": 117,
+      "community_name": ".schema",
       "norm_label": "2026_02_15_000001_create_products_table.php"
     },
     {
@@ -18358,8 +18358,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "database_migrations_2026_02_15_000001_create_products_table_up",
-      "community": 131,
-      "community_name": "2026_02_15_000001_create_products_table.php",
+      "community": 117,
+      "community_name": ".schema",
       "norm_label": "up()"
     },
     {
@@ -18369,8 +18369,8 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "database_migrations_2026_02_15_000001_create_products_table_down",
-      "community": 131,
-      "community_name": "2026_02_15_000001_create_products_table.php",
+      "community": 117,
+      "community_name": ".schema",
       "norm_label": "down()"
     },
     {
@@ -30906,7 +30906,7 @@
       "label": ".test_configuration_resolves_translations_and_sanitizes_tooltip_html()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L39",
+      "source_location": "L40",
       "_origin": "ast",
       "id": "tests_feature_homepageconfigurationtest_homepageconfigurationtest_test_configuration_resolves_translations_and_sanitizes_tooltip_html",
       "community": 49,
@@ -30917,7 +30917,7 @@
       "label": ".test_superadmin_can_open_and_update_the_custom_homepage_manager()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L85",
+      "source_location": "L86",
       "_origin": "ast",
       "id": "tests_feature_homepageconfigurationtest_homepageconfigurationtest_test_superadmin_can_open_and_update_the_custom_homepage_manager",
       "community": 49,
@@ -33659,8 +33659,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "illuminate_support_serviceprovider",
-      "community": 147,
-      "community_name": "AppointmentController",
+      "community": 152,
+      "community_name": ".boot",
       "norm_label": "illuminate\\support\\serviceprovider"
     },
     {
@@ -72862,7 +72862,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L165",
+      "source_location": "L166",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_feature_homepageconfigurationtest_homepageconfigurationtest_test_superadmin_can_open_and_update_the_custom_homepage_manager",
@@ -74741,7 +74741,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L89",
+      "source_location": "L90",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_feature_homepageconfigurationtest_homepageconfigurationtest_test_superadmin_can_open_and_update_the_custom_homepage_manager",
@@ -75491,7 +75491,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L93",
+      "source_location": "L94",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_feature_homepageconfigurationtest_homepageconfigurationtest_test_superadmin_can_open_and_update_the_custom_homepage_manager",
@@ -80751,7 +80751,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L41",
+      "source_location": "L42",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_feature_homepageconfigurationtest_homepageconfigurationtest_test_configuration_resolves_translations_and_sanitizes_tooltip_html",
@@ -111577,7 +111577,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L39",
+      "source_location": "L40",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_feature_homepageconfigurationtest_homepageconfigurationtest",
@@ -111599,7 +111599,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L85",
+      "source_location": "L86",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_feature_homepageconfigurationtest_homepageconfigurationtest",
@@ -113887,5 +113887,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "18fcd24cbe3b598f97dac724c1c9e633a10a1661"
+  "built_at_commit": "01404670ef5386a921aa907c2a66adf498f34005"
 }
