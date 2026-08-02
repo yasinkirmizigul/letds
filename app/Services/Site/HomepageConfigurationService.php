@@ -17,6 +17,8 @@ class HomepageConfigurationService
         '--home-after-bg' => 'after_background_color',
         '--home-before-text' => 'before_text_color',
         '--home-after-text' => 'after_text_color',
+        '--home-hero-before-text' => 'hero_before_text_color',
+        '--home-hero-after-text' => 'hero_after_text_color',
         '--home-before-highlight' => 'before_highlight_color',
         '--home-after-highlight' => 'after_highlight_color',
         '--home-before-hotspot' => 'before_hotspot_color',
@@ -56,9 +58,17 @@ class HomepageConfigurationService
 
     public function settingFields(): array
     {
-        return collect($this->settingGroups())
+        $groupFields = collect($this->settingGroups())
             ->flatMap(fn (array $group) => $group['fields'] ?? [])
+            ->values();
+        $contentColorFields = collect($this->contentFields())
+            ->flatMap(fn (array $field) => $field['colors'] ?? [])
+            ->map(fn (array $field) => array_replace(['type' => 'color'], $field));
+
+        return $groupFields
+            ->concat($contentColorFields)
             ->filter(fn (array $field) => filled($field['key'] ?? null))
+            ->unique('key')
             ->values()
             ->all();
     }
@@ -181,6 +191,8 @@ class HomepageConfigurationService
                 'key' => "pos-item-{$index}",
                 'title' => (string) ($content["tooltip_{$index}_title"] ?? ''),
                 'highlighted_title' => (string) ($content["tooltip_{$index}_highlighted_title"] ?? ''),
+                'title_color' => (string) ($settings["tooltip_{$index}_title_color"] ?? '#ffffff'),
+                'highlighted_title_color' => (string) ($settings["tooltip_{$index}_highlighted_title_color"] ?? '#445963'),
                 'aria_label' => trim(strip_tags((string) ($content["tooltip_{$index}_title"] ?? ''))),
                 'position' => $index,
             ])

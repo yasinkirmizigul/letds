@@ -28,6 +28,10 @@
             ? (float) $homepageSettings['background_overlay_opacity'] / 100
             : 0,
         '--home-background-position' => $homepageSettings['background_position'],
+        '--home-analysis-tab-after-text' => $homepageSettings['analysis_tab_after_text_color'],
+        '--home-analysis-tab-before-text' => $homepageSettings['analysis_tab_before_text_color'],
+        '--home-consultation-tab-after-text' => $homepageSettings['consultation_tab_after_text_color'],
+        '--home-consultation-tab-before-text' => $homepageSettings['consultation_tab_before_text_color'],
         '--home-logo' => $homepageSettings['logo_color'],
         '--home-sticky-header-bg' => $homepageSettings['sticky_header_background'],
         '--home-sticky-logo' => $homepageSettings['sticky_logo_color'],
@@ -137,7 +141,7 @@
                                             <div class="img-position">
                                                 <img src="{{ asset('assets/site/home/images/tooltip-dot.png') }}" alt="">
                                             </div>
-                                            <h2>{!! \App\Support\Security\HtmlSanitizer::sanitize($item['title']) !!}</h2>
+                                            <h2 style="--home-tooltip-text: {{ $item['title_color'] }}">{!! \App\Support\Security\HtmlSanitizer::sanitize($item['title']) !!}</h2>
                                         </div>
                                     </li>
                                 @endforeach
@@ -183,7 +187,7 @@
                                             <div class="img-position">
                                                 <img src="{{ asset('assets/site/home/images/tooltip-dot.png') }}" alt="">
                                             </div>
-                                            <h2>{!! \App\Support\Security\HtmlSanitizer::sanitize($item['highlighted_title']) !!}</h2>
+                                            <h2 style="--home-tooltip-text: {{ $item['highlighted_title_color'] }}">{!! \App\Support\Security\HtmlSanitizer::sanitize($item['highlighted_title']) !!}</h2>
                                         </div>
                                     </li>
                                 @endforeach

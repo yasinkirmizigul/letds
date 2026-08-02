@@ -171,6 +171,7 @@
 
       after.style.width = `${x}px`;
       handle.style.left = `${x}px`;
+      root.style.setProperty('--home-split-position', `${ratio * 100}%`);
       handle.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
 
       const splitX = rect.left + x;
@@ -248,6 +249,64 @@
 
     window.addEventListener('resize', moveToRatio);
     moveToRatio();
+  }
+
+  function initPageExitTransition() {
+    const body = document.body;
+    const links = [...document.querySelectorAll('[data-home-cta]')];
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!links.length || reduceMotion) return;
+
+    let leaving = false;
+
+    links.forEach((link) => {
+      link.addEventListener('click', (event) => {
+        if (
+          event.defaultPrevented
+          || event.button !== 0
+          || event.metaKey
+          || event.ctrlKey
+          || event.shiftKey
+          || event.altKey
+          || link.target === '_blank'
+          || link.hasAttribute('download')
+        ) {
+          return;
+        }
+
+        const href = link.getAttribute('href');
+        if (!href || href.startsWith('#')) return;
+
+        let destination;
+
+        try {
+          destination = new URL(link.href, window.location.href);
+        } catch {
+          return;
+        }
+
+        if (!['http:', 'https:'].includes(destination.protocol) || destination.href === window.location.href) {
+          return;
+        }
+
+        event.preventDefault();
+        if (leaving) return;
+
+        leaving = true;
+        body.classList.remove('home-mode-changing');
+        body.classList.add('home-leaving');
+        window.dispatchEvent(new CustomEvent('home:leaving'));
+
+        window.setTimeout(() => {
+          window.location.assign(destination.href);
+        }, 560);
+      });
+    });
+
+    window.addEventListener('pageshow', () => {
+      leaving = false;
+      body.classList.remove('home-leaving');
+    });
   }
 
   function initStatParticles() {
@@ -423,6 +482,7 @@
     window.addEventListener('pointermove', handlePointerMove, { passive: true });
     window.addEventListener('blur', stopIdleEmission);
     window.addEventListener('home:modechange', clearParticles);
+    window.addEventListener('home:leaving', clearParticles);
     document.documentElement.addEventListener('pointerleave', stopIdleEmission);
   }
 
@@ -432,6 +492,7 @@
     initStickyHeader();
     initHomeModes();
     initBeforeAfter();
+    initPageExitTransition();
     initStatParticles();
   });
 })();

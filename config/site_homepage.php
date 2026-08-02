@@ -52,6 +52,10 @@ return [
             'default' => 'İstatistiksel Analiz',
             'rules' => ['required', 'string', 'max:80'],
             'mode' => 'analysis',
+            'colors' => [
+                ['key' => 'analysis_tab_after_text_color', 'label' => 'Renkli panel', 'default' => '#ffffff'],
+                ['key' => 'analysis_tab_before_text_color', 'label' => 'Açık panel', 'default' => '#445963'],
+            ],
         ],
         [
             'key' => 'hero_title',
@@ -62,6 +66,10 @@ return [
             'rules' => ['required', 'string', 'max:500'],
             'wrapper_class' => 'grid gap-2 lg:col-span-2',
             'mode' => 'analysis',
+            'colors' => [
+                ['key' => 'hero_after_text_color', 'label' => 'Renkli panel', 'default' => '#ffffff'],
+                ['key' => 'hero_before_text_color', 'label' => 'Açık panel', 'default' => '#445963'],
+            ],
         ],
         [
             'key' => 'cta_label',
@@ -70,6 +78,10 @@ return [
             'default' => 'VIEW THEMES',
             'rules' => ['required', 'string', 'max:120'],
             'mode' => 'analysis',
+            'colors' => [
+                ['key' => 'cta_after_text_color', 'label' => 'Renkli panel', 'default' => '#ffffff'],
+                ['key' => 'cta_before_text_color', 'label' => 'Açık panel', 'default' => '#eb5155'],
+            ],
         ],
         [
             'key' => 'cta_url',
@@ -94,6 +106,10 @@ return [
             'default' => 'İstatistiksel Danışma',
             'rules' => ['required', 'string', 'max:80'],
             'mode' => 'consultation',
+            'colors' => [
+                ['key' => 'consultation_tab_after_text_color', 'label' => 'Renkli panel', 'default' => '#ffffff'],
+                ['key' => 'consultation_tab_before_text_color', 'label' => 'Açık panel', 'default' => '#293f4b'],
+            ],
         ],
         [
             'key' => 'consultation_hero_title',
@@ -104,6 +120,10 @@ return [
             'rules' => ['required', 'string', 'max:500'],
             'wrapper_class' => 'grid gap-2 lg:col-span-2',
             'mode' => 'consultation',
+            'colors' => [
+                ['key' => 'consultation_hero_after_text_color', 'label' => 'Renkli panel', 'default' => '#ffffff'],
+                ['key' => 'consultation_hero_before_text_color', 'label' => 'Açık panel', 'default' => '#293f4b'],
+            ],
         ],
         [
             'key' => 'consultation_cta_label',
@@ -112,6 +132,10 @@ return [
             'default' => 'DANIŞMANLIK ALIN',
             'rules' => ['required', 'string', 'max:120'],
             'mode' => 'consultation',
+            'colors' => [
+                ['key' => 'consultation_cta_after_text_color', 'label' => 'Renkli panel', 'default' => '#ffffff'],
+                ['key' => 'consultation_cta_before_text_color', 'label' => 'Açık panel', 'default' => '#006ae6'],
+            ],
         ],
         [
             'key' => 'consultation_cta_url',
@@ -136,6 +160,9 @@ return [
             'default' => 'We make sleek and modern designs for your business.',
             'rules' => ['required', 'string', 'max:700'],
             'sanitize' => 'html',
+            'colors' => [
+                ['key' => 'tooltip_1_title_color', 'label' => 'Metin rengi', 'default' => '#ffffff'],
+            ],
         ],
         [
             'key' => 'tooltip_1_highlighted_title',
@@ -145,6 +172,9 @@ return [
             'default' => 'We make <span class="color-main">sleek and modern</span> designs for your business.',
             'rules' => ['required', 'string', 'max:700'],
             'sanitize' => 'html',
+            'colors' => [
+                ['key' => 'tooltip_1_highlighted_title_color', 'label' => 'Metin rengi', 'default' => '#445963'],
+            ],
         ],
 
         [
@@ -160,6 +190,9 @@ return [
             'default' => 'Our creations embrace <br>the simplicity to look extraordinary.',
             'rules' => ['required', 'string', 'max:700'],
             'sanitize' => 'html',
+            'colors' => [
+                ['key' => 'tooltip_2_title_color', 'label' => 'Metin rengi', 'default' => '#ffffff'],
+            ],
         ],
         [
             'key' => 'tooltip_2_highlighted_title',
@@ -169,6 +202,9 @@ return [
             'default' => 'Our creations embrace <br>the <span class="color-main">simplicity</span> to look extraordinary.',
             'rules' => ['required', 'string', 'max:700'],
             'sanitize' => 'html',
+            'colors' => [
+                ['key' => 'tooltip_2_highlighted_title_color', 'label' => 'Metin rengi', 'default' => '#445963'],
+            ],
         ],
 
         [
@@ -184,6 +220,9 @@ return [
             'default' => 'Platforms are built from a solid engine & best experiments.',
             'rules' => ['required', 'string', 'max:700'],
             'sanitize' => 'html',
+            'colors' => [
+                ['key' => 'tooltip_3_title_color', 'label' => 'Metin rengi', 'default' => '#ffffff'],
+            ],
         ],
         [
             'key' => 'tooltip_3_highlighted_title',
@@ -193,6 +232,9 @@ return [
             'default' => 'Platforms are built from a <span class="color-main">solid engine</span> & best experiments.',
             'rules' => ['required', 'string', 'max:700'],
             'sanitize' => 'html',
+            'colors' => [
+                ['key' => 'tooltip_3_highlighted_title_color', 'label' => 'Metin rengi', 'default' => '#445963'],
+            ],
         ],
 
         [
@@ -208,6 +250,9 @@ return [
             'default' => 'EngineThemes are easy to setup and customize to match your needs.',
             'rules' => ['required', 'string', 'max:700'],
             'sanitize' => 'html',
+            'colors' => [
+                ['key' => 'tooltip_4_title_color', 'label' => 'Metin rengi', 'default' => '#ffffff'],
+            ],
         ],
         [
             'key' => 'tooltip_4_highlighted_title',
@@ -217,6 +262,9 @@ return [
             'default' => 'EngineThemes are <span class="color-main">easy to setup</span> and customize to match your needs.',
             'rules' => ['required', 'string', 'max:700'],
             'sanitize' => 'html',
+            'colors' => [
+                ['key' => 'tooltip_4_highlighted_title_color', 'label' => 'Metin rengi', 'default' => '#445963'],
+            ],
         ],
     ],
 
@@ -277,8 +325,6 @@ return [
             'description' => 'Butonun iki paneldeki normal ve üzerine gelme renkleri.',
             'mode' => 'analysis',
             'fields' => [
-                ['key' => 'cta_before_text_color', 'label' => 'Açık Panel Buton Metni', 'type' => 'color', 'default' => '#eb5155'],
-                ['key' => 'cta_after_text_color', 'label' => 'Renkli Panel Buton Metni', 'type' => 'color', 'default' => '#ffffff'],
                 ['key' => 'cta_before_hover_background', 'label' => 'Açık Panel Hover Zemini', 'type' => 'color', 'default' => '#eb5155'],
                 ['key' => 'cta_before_hover_text', 'label' => 'Açık Panel Hover Metni', 'type' => 'color', 'default' => '#ffffff'],
                 ['key' => 'cta_after_hover_background', 'label' => 'Renkli Panel Hover Zemini', 'type' => 'color', 'default' => '#ffffff'],
@@ -318,8 +364,6 @@ return [
             'description' => 'Danışma butonunun iki paneldeki normal ve hover renkleri.',
             'mode' => 'consultation',
             'fields' => [
-                ['key' => 'consultation_cta_before_text_color', 'label' => 'Açık Panel Buton Metni', 'type' => 'color', 'default' => '#006ae6'],
-                ['key' => 'consultation_cta_after_text_color', 'label' => 'Renkli Panel Buton Metni', 'type' => 'color', 'default' => '#ffffff'],
                 ['key' => 'consultation_cta_before_hover_background', 'label' => 'Açık Panel Hover Zemini', 'type' => 'color', 'default' => '#006ae6'],
                 ['key' => 'consultation_cta_before_hover_text', 'label' => 'Açık Panel Hover Metni', 'type' => 'color', 'default' => '#ffffff'],
                 ['key' => 'consultation_cta_after_hover_background', 'label' => 'Renkli Panel Hover Zemini', 'type' => 'color', 'default' => '#ffffff'],

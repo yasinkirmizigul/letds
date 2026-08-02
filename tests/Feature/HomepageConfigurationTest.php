@@ -23,6 +23,8 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('The combination of great design and diligent app development.')
             ->assertSee('--home-before-bg:#ffffff', false)
             ->assertSee('--home-stat-before:#ec6367', false)
+            ->assertSee('--home-analysis-tab-after-text:#ffffff', false)
+            ->assertSee('--home-hero-after-text:#ffffff', false)
             ->assertSee('data-stat-symbols="true"', false)
             ->assertSee('data-stat-symbol-mode="idle"', false)
             ->assertSee('data-home-mode="analysis"', false)
@@ -106,6 +108,9 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('İstatistiksel Analiz İçeriği')
             ->assertSee('İstatistiksel Danışma İçeriği')
             ->assertSee('data-homepage-admin-mode-label-key="analysis_tab_label"', false)
+            ->assertSee('name="settings[analysis_tab_after_text_color]"', false)
+            ->assertSee('name="settings[hero_after_text_color]"', false)
+            ->assertSee('name="settings[tooltip_1_title_color]"', false)
             ->assertSee('Sembol çalışma biçimi')
             ->assertSee('Panel Renkleri');
 
@@ -123,6 +128,10 @@ class HomepageConfigurationTest extends TestCase
                 'background_brightness' => 80,
                 'background_overlay_opacity' => 45,
                 'background_position' => 'top',
+                'analysis_tab_after_text_color' => '#112233',
+                'hero_after_text_color' => '#223344',
+                'consultation_hero_before_text_color' => '#445566',
+                'tooltip_1_title_color' => '#334455',
             ]),
             'translations' => [],
             'background_image' => UploadedFile::fake()->image('homepage-background.jpg', 1200, 800),
@@ -141,6 +150,17 @@ class HomepageConfigurationTest extends TestCase
         $this->assertSame(80, $service->current()->fresh()->settings['background_brightness']);
         $this->assertSame(45, $service->current()->fresh()->settings['background_overlay_opacity']);
         $this->assertSame('top', $service->current()->fresh()->settings['background_position']);
+        $this->assertSame('#112233', $service->current()->fresh()->settings['analysis_tab_after_text_color']);
+        $this->assertSame('#223344', $service->current()->fresh()->settings['hero_after_text_color']);
+        $this->assertSame(
+            '#223344',
+            $service->resolved('tr')['modes']['analysis']['styles']['--home-hero-after-text']
+        );
+        $this->assertSame(
+            '#445566',
+            $service->resolved('tr')['modes']['consultation']['styles']['--home-hero-before-text']
+        );
+        $this->assertSame('#334455', $service->resolved('tr')['tooltips'][0]['title_color']);
 
         $backgroundMedia = Media::query()->findOrFail(
             $service->current()->fresh()->settings['background_media_id']
@@ -164,6 +184,9 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee($backgroundMedia->url(), false)
             ->assertSee('--home-background-brightness:80%', false)
             ->assertSee('--home-background-overlay-opacity:0.45', false)
-            ->assertSee('--home-background-position:top', false);
+            ->assertSee('--home-background-position:top', false)
+            ->assertSee('--home-analysis-tab-after-text:#112233', false)
+            ->assertSee('--home-hero-after-text:#223344', false)
+            ->assertSee('--home-tooltip-text: #334455', false);
     }
 }

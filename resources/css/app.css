@@ -834,6 +834,67 @@ textarea.kt-input:disabled,
     accent-color: var(--primary);
 }
 
+[data-page="site.homepage.edit"] .homepage-content-input-with-colors {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: .65rem;
+}
+
+[data-page="site.homepage.edit"] .homepage-content-input-with-colors > .kt-input,
+[data-page="site.homepage.edit"] .homepage-content-input-with-colors > .kt-textarea {
+    width: 100%;
+    min-width: 0;
+}
+
+[data-page="site.homepage.edit"] .homepage-inline-text-colors {
+    display: flex;
+    align-items: flex-start;
+    gap: .4rem;
+}
+
+[data-page="site.homepage.edit"] .homepage-inline-text-color {
+    display: grid;
+    min-width: 3.5rem;
+    cursor: pointer;
+    place-items: center;
+    gap: .25rem;
+    color: var(--muted-foreground);
+    font-size: .625rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+[data-page="site.homepage.edit"] .homepage-inline-text-color > span {
+    max-width: 4rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+[data-page="site.homepage.edit"] .homepage-inline-text-color input[type="color"] {
+    width: 2.75rem;
+    height: 2.25rem;
+    padding: .2rem;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    border-radius: .45rem;
+    background: var(--background);
+}
+
+[data-page="site.homepage.edit"] .homepage-inline-text-color input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+[data-page="site.homepage.edit"] .homepage-inline-text-color input[type="color"]::-webkit-color-swatch {
+    border: 0;
+    border-radius: .25rem;
+}
+
+[data-page="site.homepage.edit"] .homepage-inline-text-color input[type="color"].is-invalid {
+    border-color: var(--destructive);
+}
+
 [data-page="site.homepage.edit"] .homepage-background-preview {
     width: 100%;
     min-width: 0;
@@ -898,6 +959,14 @@ textarea.kt-input:disabled,
 }
 
 @media (max-width: 520px) {
+    [data-page="site.homepage.edit"] .homepage-content-input-with-colors {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    [data-page="site.homepage.edit"] .homepage-inline-text-colors {
+        justify-content: flex-start;
+    }
+
     [data-page="site.homepage.edit"] .homepage-admin-mode-tab {
         flex-direction: column;
         gap: .375rem;

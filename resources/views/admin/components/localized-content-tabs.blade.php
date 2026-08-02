@@ -11,6 +11,7 @@
         : collect();
     $defaultValues = $defaultValues ?? [];
     $storedTranslations = $storedTranslations ?? [];
+    $settingValues = $settingValues ?? [];
     $fields = $fields ?? [];
     $sectionAccordions = (bool) ($sectionAccordions ?? false);
     $urlBase = rtrim((string) ($urlBase ?? url('/')), '/');
@@ -125,6 +126,8 @@
                                         $id = $isDefault ? $idBase : $moduleKey . '_' . $idBase . '_' . $language->code;
                                         $hasError = $viewErrors->has($errorKey);
                                         $errorMessage = $viewErrors->first($errorKey);
+                                        $colorFields = $isDefault ? ($field['colors'] ?? []) : [];
+                                        $hasColorFields = count($colorFields) > 0;
                                     @endphp
 
                                     @if($type === 'slug')
@@ -173,14 +176,21 @@
                                     @elseif($type === 'textarea' || $type === 'editor')
                                         <div class="{{ $wrapperClass }}">
                                             <label class="kt-form-label" for="{{ $id }}">{{ $label }}</label>
-                                            <textarea
-                                                id="{{ $id }}"
-                                                name="{{ $fieldName }}"
-                                                rows="{{ $rows }}"
-                                                class="kt-textarea {{ $hasError ? 'kt-input-invalid' : '' }}"
-                                                placeholder="{{ $placeholder }}"
-                                                @if($type === 'editor') data-localized-content-editor="true" @endif
-                                            >{{ $value }}</textarea>
+                                            <div class="{{ $hasColorFields ? 'homepage-content-input-with-colors' : '' }}">
+                                                <textarea
+                                                    id="{{ $id }}"
+                                                    name="{{ $fieldName }}"
+                                                    rows="{{ $rows }}"
+                                                    class="kt-textarea {{ $hasError ? 'kt-input-invalid' : '' }}"
+                                                    placeholder="{{ $placeholder }}"
+                                                    @if($type === 'editor') data-localized-content-editor="true" @endif
+                                                >{{ $value }}</textarea>
+                                                @includeWhen($hasColorFields, 'admin.components.inline-text-colors', [
+                                                    'colorFields' => $colorFields,
+                                                    'settingValues' => $settingValues,
+                                                    'fieldLabel' => $label,
+                                                ])
+                                            </div>
                                             @if($hasError)
                                                 <div class="text-xs text-danger">{{ $errorMessage }}</div>
                                             @endif
@@ -188,15 +198,22 @@
                                     @else
                                         <div class="{{ $wrapperClass }}">
                                             <label class="kt-form-label" for="{{ $id }}">{{ $label }}</label>
-                                            <input
-                                                id="{{ $id }}"
-                                                name="{{ $fieldName }}"
-                                                type="{{ $inputType }}"
-                                                class="kt-input {{ $hasError ? 'kt-input-invalid' : '' }}"
-                                                value="{{ $value }}"
-                                                placeholder="{{ $placeholder }}"
-                                                @unless($isDefault) @if(($field['slug_source'] ?? false) === true) data-locale-title="true" @endif @endunless
-                                            >
+                                            <div class="{{ $hasColorFields ? 'homepage-content-input-with-colors' : '' }}">
+                                                <input
+                                                    id="{{ $id }}"
+                                                    name="{{ $fieldName }}"
+                                                    type="{{ $inputType }}"
+                                                    class="kt-input {{ $hasError ? 'kt-input-invalid' : '' }}"
+                                                    value="{{ $value }}"
+                                                    placeholder="{{ $placeholder }}"
+                                                    @unless($isDefault) @if(($field['slug_source'] ?? false) === true) data-locale-title="true" @endif @endunless
+                                                >
+                                                @includeWhen($hasColorFields, 'admin.components.inline-text-colors', [
+                                                    'colorFields' => $colorFields,
+                                                    'settingValues' => $settingValues,
+                                                    'fieldLabel' => $label,
+                                                ])
+                                            </div>
                                             @if($hasError)
                                                 <div class="text-xs text-danger">{{ $errorMessage }}</div>
                                             @endif

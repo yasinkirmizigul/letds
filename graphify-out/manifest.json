@@ -1745,9 +1745,9 @@
     "semantic_hash": "5a243369792ceccb8d7e3f0afad8fbfd"
   },
   "resources/views/admin/components/localized-content-tabs.blade.php": {
-    "mtime": 1778263356.6697211,
-    "ast_hash": "6cdf33d840bbda89dca0080f98b9aa1a",
-    "semantic_hash": "6cdf33d840bbda89dca0080f98b9aa1a"
+    "mtime": 1785653053.6612415,
+    "ast_hash": "f25d58b1aaa33f861b0b69f516616c0c",
+    "semantic_hash": ""
   },
   "resources/views/admin/layouts/auth/base.blade.php": {
     "mtime": 1766071873.302881,
@@ -2345,8 +2345,8 @@
     "semantic_hash": "98ddcd1f1ad1048f4eeafe4f003fd129"
   },
   "resources/views/site/home.blade.php": {
-    "mtime": 1785624216.072216,
-    "ast_hash": "1c8fadb861694e6ac189b2744de0e0bf",
+    "mtime": 1785653119.8509564,
+    "ast_hash": "2c553111484068bb398be7c4d660ed2b",
     "semantic_hash": ""
   },
   "resources/views/site/layouts/main/app.blade.php": {
@@ -2745,13 +2745,13 @@
     "semantic_hash": ""
   },
   "app/Services/Site/HomepageConfigurationService.php": {
-    "mtime": 1785624049.7519171,
-    "ast_hash": "f911f61b821d50d8a0b6cebd5ed59033",
+    "mtime": 1785653007.4794283,
+    "ast_hash": "46bde2a1e49af2d2585e7bb42754a41c",
     "semantic_hash": ""
   },
   "config/site_homepage.php": {
-    "mtime": 1785624033.8642797,
-    "ast_hash": "07b148a3bcd009a59455d751e056f476",
+    "mtime": 1785652985.7589996,
+    "ast_hash": "305effb148f21aa87eac514bfde9d395",
     "semantic_hash": ""
   },
   "database/migrations/2026_08_01_000002_create_site_homepage_configs_table.php": {
@@ -2770,13 +2770,13 @@
     "semantic_hash": ""
   },
   "resources/views/admin/pages/site/homepage/edit.blade.php": {
-    "mtime": 1785624081.7757578,
-    "ast_hash": "4f096c6257e6b6a8e65665c2a07932c0",
+    "mtime": 1785653053.4806664,
+    "ast_hash": "b3620d8652a50cb9c0c40785fb8f9762",
     "semantic_hash": ""
   },
   "tests/Feature/HomepageConfigurationTest.php": {
-    "mtime": 1785624462.4359684,
-    "ast_hash": "8084617245f7fa1890f3b69ea02082d4",
+    "mtime": 1785653310.5866308,
+    "ast_hash": "ff8514e2bb507b3c505784852f36b59d",
     "semantic_hash": ""
   },
   "resources/views/admin/pages/site/homepage/partials/_setting-groups.blade.php": {
@@ -2792,6 +2792,11 @@
   "tests/Feature/MediaServiceWebpTest.php": {
     "mtime": 1785623999.6100054,
     "ast_hash": "407aa174721b89d54f3d6f55c8495c25",
+    "semantic_hash": ""
+  },
+  "resources/views/admin/components/inline-text-colors.blade.php": {
+    "mtime": 1785653053.838296,
+    "ast_hash": "4eebe13760bcc9a064c382aaea1a33c3",
     "semantic_hash": ""
   }
 }

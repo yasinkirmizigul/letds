@@ -81,6 +81,7 @@
                         'description' => 'Bu sekmenin üst menü etiketi, ana mesajı ve buton bilgileri.',
                         'defaultValues' => $defaultValues,
                         'storedTranslations' => $translationValues,
+                        'settingValues' => $settingValues,
                         'fields' => $modeLocalizedFields[$key] ?? [],
                         'contentGridClass' => 'grid gap-5 lg:grid-cols-2',
                     ])
@@ -101,6 +102,7 @@
                 'description' => 'Tarayıcı başlığı ve iki sekmede ortak kullanılan bilgi noktaları.',
                 'defaultValues' => $defaultValues,
                 'storedTranslations' => $translationValues,
+                'settingValues' => $settingValues,
                 'fields' => $sharedLocalizedFields,
                 'contentGridClass' => 'grid gap-5 lg:grid-cols-2',
             ])
