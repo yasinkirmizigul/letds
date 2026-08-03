@@ -2350,8 +2350,8 @@
     "semantic_hash": ""
   },
   "resources/views/site/layouts/main/app.blade.php": {
-    "mtime": 1785738151.2963789,
-    "ast_hash": "eb506a2947e55cb8c2df59be10dc2cf1",
+    "mtime": 1785744700.1290839,
+    "ast_hash": "e2aa2a58e84e21b553944678cbf2b86e",
     "semantic_hash": ""
   },
   "routes/admin/access.php": {

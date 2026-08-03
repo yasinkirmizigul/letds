@@ -2519,7 +2519,7 @@ thead th.dt-orderable-none .dt-column-order { display:none !important; }
     box-shadow: none !important;
     font-size: .98rem;
     min-height: 2.5rem;
-    padding-inline: 0 !important;
+    padding-inline: .375rem 0 !important;
 }
 
 .admin-quick-search-spinner {
