@@ -6,20 +6,22 @@ use App\Models\Admin\Media\Media;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class MediaService
 {
     private const FULL_MAX_DIMENSION = 2560;
+
     private const OPTIMIZED_MAX_DIMENSION = 1920;
+
     private const THUMB_SIZE = 400;
 
     protected ImageManager $image;
 
     public function __construct()
     {
-        $this->image = new ImageManager(new Driver());
+        $this->image = ImageManager::usingDriver(Driver::class);
     }
 
     private function resolveDirectory(?string $forcedDir = null): string
@@ -47,7 +49,7 @@ class MediaService
     {
         $uuid = (string) Str::uuid();
         $disk = $attrs['disk'] ?? 'public';
-        $dir  = $this->resolveDirectory($attrs['dir'] ?? null);
+        $dir = $this->resolveDirectory($attrs['dir'] ?? null);
 
         $mimeType = (string) ($file->getMimeType() ?: $file->getClientMimeType());
         $storedSize = (int) $file->getSize();
@@ -57,14 +59,14 @@ class MediaService
         $originalPath = '';
 
         if ($this->isImage($file)) {
-            $img = $this->image->read($file->getRealPath());
-            $width  = $img->width();
+            $img = $this->image->decode($file->getRealPath());
+            $width = $img->width();
             $height = $img->height();
 
             if ($this->convertsOriginalToWebp($file)) {
                 $full = clone $img;
                 $full->scaleDown(width: self::FULL_MAX_DIMENSION, height: self::FULL_MAX_DIMENSION);
-                $fullWebp = (string) $full->toWebp(85);
+                $fullWebp = (string) $full->encodeUsingFileExtension('webp', quality: 85);
                 $originalPath = "{$dir}/{$uuid}.webp";
                 Storage::disk($disk)->put($originalPath, $fullWebp);
 
@@ -79,7 +81,10 @@ class MediaService
                         height: self::OPTIMIZED_MAX_DIMENSION
                     );
                     $optimizedPath = "{$dir}/{$uuid}_optimized.webp";
-                    Storage::disk($disk)->put($optimizedPath, (string) $optimized->toWebp(80));
+                    Storage::disk($disk)->put(
+                        $optimizedPath,
+                        (string) $optimized->encodeUsingFileExtension('webp', quality: 80)
+                    );
                     $variants['optimized'] = $optimizedPath;
                 } else {
                     $variants['optimized'] = $originalPath;
@@ -97,7 +102,10 @@ class MediaService
                     height: self::OPTIMIZED_MAX_DIMENSION
                 );
                 $optimizedPath = "{$dir}/{$uuid}_optimized.webp";
-                Storage::disk($disk)->put($optimizedPath, (string) $optimized->toWebp(80));
+                Storage::disk($disk)->put(
+                    $optimizedPath,
+                    (string) $optimized->encodeUsingFileExtension('webp', quality: 80)
+                );
                 $variants['optimized'] = $optimizedPath;
             }
 
@@ -105,7 +113,10 @@ class MediaService
             $thumb->cover(self::THUMB_SIZE, self::THUMB_SIZE);
 
             $thumbPath = "{$dir}/{$uuid}_thumb.webp";
-            Storage::disk($disk)->put($thumbPath, (string) $thumb->toWebp(75));
+            Storage::disk($disk)->put(
+                $thumbPath,
+                (string) $thumb->encodeUsingFileExtension('webp', quality: 75)
+            );
             $variants['thumb'] = $thumbPath;
         } else {
             $extOriginal = strtolower($file->getClientOriginalExtension() ?: 'bin');
@@ -116,18 +127,18 @@ class MediaService
         }
 
         return Media::create([
-            'uuid'          => $uuid,
-            'disk'          => $disk,
-            'path'          => $originalPath,
-            'variants'      => $variants,
+            'uuid' => $uuid,
+            'disk' => $disk,
+            'path' => $originalPath,
+            'variants' => $variants,
             'original_name' => $this->sanitizeOriginalName($file->getClientOriginalName()),
-            'mime_type'     => $mimeType,
-            'size'          => $storedSize,
-            'width'         => $width,
-            'height'        => $height,
-            'title'         => $attrs['title'] ?? null,
-            'alt'           => $attrs['alt'] ?? null,
-            'meta'          => $attrs['meta'] ?? null,
+            'mime_type' => $mimeType,
+            'size' => $storedSize,
+            'width' => $width,
+            'height' => $height,
+            'title' => $attrs['title'] ?? null,
+            'alt' => $attrs['alt'] ?? null,
+            'meta' => $attrs['meta'] ?? null,
         ]);
     }
 

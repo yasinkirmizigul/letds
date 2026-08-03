@@ -118,8 +118,7 @@
                             <button type="submit" class="kt-btn kt-btn-light">{{ $siteSettings->uiLine('nav_logout_label') }}</button>
                         </form>
                     @else
-                        <a href="{{ route('member.re
-gister', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light">
+                        <a href="{{ route('member.register', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light">
                             {{ $siteSettings->uiLine('nav_member_register_label') }}
                         </a>
                         <a href="{{ route('member.login', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary">
