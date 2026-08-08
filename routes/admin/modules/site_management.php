@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\Site\ContentPageController;
 use App\Http\Controllers\Admin\Site\FaqController;
 use App\Http\Controllers\Admin\Site\HomepageConfigurationController;
+use App\Http\Controllers\Admin\Site\HomepageSectionController;
 use App\Http\Controllers\Admin\Site\HomeSliderController;
 use App\Http\Controllers\Admin\Site\NavigationController;
 use App\Http\Controllers\Admin\Site\PaymentIntegrationController;
@@ -19,6 +20,44 @@ Route::prefix('site')->as('site.')->group(function () {
     Route::put('/homepage', [HomepageConfigurationController::class, 'update'])
         ->middleware('permission:site_homepage.update')
         ->name('homepage.update');
+
+    Route::prefix('homepage/sections')->as('homepage-sections.')->group(function () {
+        Route::get('/', [HomepageSectionController::class, 'index'])
+            ->middleware('permission:site_homepage.view')
+            ->name('index');
+
+        Route::post('/', [HomepageSectionController::class, 'store'])
+            ->middleware('permission:site_homepage.update')
+            ->name('store');
+
+        Route::patch('/reorder', [HomepageSectionController::class, 'reorder'])
+            ->middleware('permission:site_homepage.update')
+            ->name('reorder');
+
+        Route::put('/{homepageSection}', [HomepageSectionController::class, 'update'])
+            ->middleware('permission:site_homepage.update')
+            ->name('update');
+
+        Route::delete('/{homepageSection}', [HomepageSectionController::class, 'destroy'])
+            ->middleware('permission:site_homepage.update')
+            ->name('destroy');
+
+        Route::post('/{homepageSection}/items', [HomepageSectionController::class, 'storeItem'])
+            ->middleware('permission:site_homepage.update')
+            ->name('items.store');
+
+        Route::patch('/{homepageSection}/items/reorder', [HomepageSectionController::class, 'reorderItems'])
+            ->middleware('permission:site_homepage.update')
+            ->name('items.reorder');
+
+        Route::put('/{homepageSection}/items/{homepageSectionItem}', [HomepageSectionController::class, 'updateItem'])
+            ->middleware('permission:site_homepage.update')
+            ->name('items.update');
+
+        Route::delete('/{homepageSection}/items/{homepageSectionItem}', [HomepageSectionController::class, 'destroyItem'])
+            ->middleware('permission:site_homepage.update')
+            ->name('items.destroy');
+    });
 
     Route::prefix('languages')->as('languages.')->group(function () {
         Route::get('/', [SiteLanguageController::class, 'index'])

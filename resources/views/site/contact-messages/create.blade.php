@@ -10,16 +10,16 @@
 
 @section('content')
     <div
-        class="mx-auto max-w-6xl py-6"
+        class="site-page !py-8"
         id="contact-message-page"
         data-is-member="{{ $isMember ? 1 : 0 }}"
         data-success-message="{{ session('ok', '') }}"
     >
         <div class="grid gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.75fr)]">
-            <div class="rounded-3xl border border-border bg-background">
+            <div class="rounded-3xl border border-border bg-background shadow-sm">
                 <div class="border-b border-border px-6 py-6">
-                    <span class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">İletişim Formu</span>
-                    <h1 class="mt-3 font-display text-3xl font-semibold text-foreground md:text-4xl">Doğru kişiye doğrudan mesaj gönder</h1>
+                    <span class="site-eyebrow">İletişim Formu</span>
+                    <h1 class="mt-5 font-display text-3xl font-semibold text-foreground md:text-4xl">Doğru kişiye doğrudan mesaj gönder</h1>
                     <p class="mt-2 text-sm text-muted-foreground">
                         Mesajın seçtiğin kullanıcıya admin panel üzerinden düşer. Aciliyet durumunu da belirterek daha net bir yönlendirme yapabilirsin.
                     </p>

@@ -5,6 +5,7 @@ namespace App\Models\Site;
 use App\Models\Concerns\HasSiteLocaleTranslations;
 use App\Support\Site\NavigationTree;
 use App\Support\Site\SiteLocalization;
+use App\Support\Site\SiteNavigationRoutes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,12 +17,17 @@ class SiteNavigationItem extends Model
     use HasSiteLocaleTranslations;
 
     public const LOCATION_PRIMARY = 'primary';
+
     public const LOCATION_FOOTER = 'footer';
 
     public const LINK_TYPE_PAGE = 'page';
+
     public const LINK_TYPE_CUSTOM = 'custom';
 
+    public const LINK_TYPE_ROUTE = 'route';
+
     public const TARGET_SELF = '_self';
+
     public const TARGET_BLANK = '_blank';
 
     protected $fillable = [
@@ -32,6 +38,7 @@ class SiteNavigationItem extends Model
         'icon_class',
         'link_type',
         'url',
+        'route_name',
         'target',
         'is_active',
         'sort_order',
@@ -82,11 +89,45 @@ class SiteNavigationItem extends Model
     {
         $locale = $locale ?: SiteLocalization::currentLocale();
 
+        if ($this->link_type === self::LINK_TYPE_ROUTE && SiteNavigationRoutes::isSupported($this->route_name)) {
+            return SiteNavigationRoutes::resolve($this->route_name, $locale);
+        }
+
         if ($this->link_type === self::LINK_TYPE_PAGE && $this->page?->slug) {
             return $this->page->publicUrl($locale);
         }
 
         return $this->url ?: '#';
+    }
+
+    public function hasValidDestination(): bool
+    {
+        return match ($this->link_type) {
+            self::LINK_TYPE_ROUTE => SiteNavigationRoutes::isSupported($this->route_name),
+            self::LINK_TYPE_PAGE => $this->page?->isPublished() ?? false,
+            self::LINK_TYPE_CUSTOM => filled($this->url),
+            default => false,
+        };
+    }
+
+    public function isCurrent(?string $locale = null): bool
+    {
+        if (! $this->hasValidDestination()) {
+            return false;
+        }
+
+        $resolved = parse_url($this->resolvedUrl($locale));
+        $requestHost = request()->getHost();
+        $resolvedHost = $resolved['host'] ?? null;
+
+        if ($resolvedHost && ! hash_equals($requestHost, $resolvedHost)) {
+            return false;
+        }
+
+        $resolvedPath = '/'.trim((string) ($resolved['path'] ?? '/'), '/');
+        $requestPath = '/'.trim(request()->path(), '/');
+
+        return hash_equals($requestPath, $resolvedPath);
     }
 
     public static function locationOptions(): array
@@ -102,7 +143,13 @@ class SiteNavigationItem extends Model
         return [
             self::LINK_TYPE_PAGE => 'İçerik Sayfası',
             self::LINK_TYPE_CUSTOM => 'Özel Bağlantı',
+            self::LINK_TYPE_ROUTE => 'Sistem Sayfası',
         ];
+    }
+
+    public static function routeOptions(): array
+    {
+        return SiteNavigationRoutes::options();
     }
 
     public static function targetOptions(): array

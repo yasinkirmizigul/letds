@@ -76,6 +76,17 @@ class BlogPost extends Model
         return $query->where('is_published', true);
     }
 
+    public function scopePubliclyVisible(Builder $query): Builder
+    {
+        return $query
+            ->published()
+            ->where(function (Builder $builder): void {
+                $builder
+                    ->whereNull('published_at')
+                    ->orWhere('published_at', '<=', now());
+            });
+    }
+
     public function scopeDraft(Builder $query): Builder
     {
         return $query->where('is_published', false);
@@ -171,7 +182,7 @@ class BlogPost extends Model
     public function featuredImageUrl(): ?string
     {
         return $this->featured_image_path
-            ? asset('storage/' . $this->featured_image_path)
+            ? asset('storage/'.$this->featured_image_path)
             : null;
     }
 
@@ -185,7 +196,7 @@ class BlogPost extends Model
 
     public function contentWordCount(): int
     {
-        $content = strip_tags((string) $this->content);
+        $content = strip_tags((string) $this->localizedValue('content'));
         preg_match_all('/[\pL\pN]+/u', $content, $matches);
 
         return count($matches[0] ?? []);

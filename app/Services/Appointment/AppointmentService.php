@@ -2,11 +2,12 @@
 
 namespace App\Services\Appointment;
 
-use App\Jobs\SendAppointmentUpdatedMailJob;
 use App\Jobs\SendAppointmentAdminNotificationMailJob;
+use App\Jobs\SendAppointmentUpdatedMailJob;
 use App\Models\Admin\User\User;
 use App\Models\Appointment\Appointment;
 use App\Services\Admin\AdminNotificationService;
+use App\Services\Project\MemberProjectWorkflowService;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -19,8 +20,7 @@ class AppointmentService
     public function __construct(
         protected AvailabilityService $availabilityService,
         protected ScheduleConflictService $scheduleConflictService
-    ) {
-    }
+    ) {}
 
     public function create(array $data, ?int $actorUserId = null): Appointment
     {
@@ -214,7 +214,10 @@ class AppointmentService
                 'status' => Appointment::STATUS_COMPLETED,
             ]);
 
-            return $appointment->fresh(['member', 'provider', 'parent', 'children']);
+            $completed = $appointment->fresh(['member', 'provider', 'parent', 'children']);
+            app(MemberProjectWorkflowService::class)->ensureForCompletedAppointment($completed);
+
+            return $completed;
         });
 
         app(AdminNotificationService::class)->fromAppointment($completed, 'completed');
@@ -338,7 +341,7 @@ class AppointmentService
             return;
         }
 
-        if (!$actor->hasRole('provider') || (int) $appointment->provider_id !== (int) $actor->id) {
+        if (! $actor->hasRole('provider') || (int) $appointment->provider_id !== (int) $actor->id) {
             throw ValidationException::withMessages([
                 'auth' => 'Yetkisiz işlem.',
             ]);
@@ -418,7 +421,7 @@ class AppointmentService
 
         $current = $appointment->status;
 
-        if (!in_array($toStatus, $allowed[$current] ?? [], true)) {
+        if (! in_array($toStatus, $allowed[$current] ?? [], true)) {
             throw ValidationException::withMessages([
                 'status' => 'Geçersiz durum geçişi.',
             ]);

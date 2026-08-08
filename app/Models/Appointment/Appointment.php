@@ -2,25 +2,33 @@
 
 namespace App\Models\Appointment;
 
+use App\Models\Admin\Project\Project;
 use App\Models\Admin\User\User;
+use App\Models\Concerns\HasLocalDateTimes;
 use App\Models\Member;
+use App\Models\Review\ServiceReview;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use App\Models\Appointment\AppointmentSlot;
-use App\Models\Review\ServiceReview;
-use App\Models\Concerns\HasLocalDateTimes;
+
 class Appointment extends Model
 {
     use HasFactory, HasLocalDateTimes;
 
     public const STATUS_BOOKED = 'booked';
+
     public const STATUS_CANCELLED_BY_PROVIDER = 'cancelled_by_provider';
+
     public const STATUS_CANCELLED_BY_MEMBER = 'cancelled_by_member';
+
     public const STATUS_COMPLETED = 'completed';
+
     public const STATUS_NO_SHOW = 'no_show';
+
     public const STATUS_TRANSFERRED = 'transferred';
 
     protected $fillable = [
@@ -47,6 +55,7 @@ class Appointment extends Model
             'blocks' => 'integer',
         ];
     }
+
     public function root(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');
@@ -110,10 +119,15 @@ class Appointment extends Model
         return $this->morphOne(ServiceReview::class, 'reviewable');
     }
 
+    public function project(): HasOne
+    {
+        return $this->hasOne(Project::class);
+    }
+
     public function isActiveBooking(): bool
     {
         return $this->status === self::STATUS_BOOKED
             && $this->end_at
-            && $this->end_at->gte(\Carbon\Carbon::now('UTC'));
+            && $this->end_at->gte(Carbon::now('UTC'));
     }
 }

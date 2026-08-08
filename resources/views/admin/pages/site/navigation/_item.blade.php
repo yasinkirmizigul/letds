@@ -16,19 +16,25 @@
                         {{ $item->is_active ? 'Aktif' : 'Pasif' }}
                     </span>
                     <span class="kt-badge kt-badge-sm kt-badge-light">
-                        {{ $item->link_type === \App\Models\Site\SiteNavigationItem::LINK_TYPE_PAGE ? 'İçerik' : 'Özel Bağlantı' }}
+                        {{ $linkTypeOptions[$item->link_type] ?? 'Bağlantı' }}
                     </span>
                 </div>
                 <div class="mt-1 text-sm text-muted-foreground">
-                    {{ $item->link_type === \App\Models\Site\SiteNavigationItem::LINK_TYPE_PAGE ? ($item->page?->title ?: 'Sayfa seçilmedi') : ($item->url ?: 'Bağlantı tanımlanmadı') }}
+                    @if($item->link_type === \App\Models\Site\SiteNavigationItem::LINK_TYPE_PAGE)
+                        {{ $item->page?->title ?: 'Sayfa seçilmedi' }}
+                    @elseif($item->link_type === \App\Models\Site\SiteNavigationItem::LINK_TYPE_ROUTE)
+                        {{ $routeOptions[$item->route_name] ?? 'Sistem sayfası seçilmedi' }}
+                    @else
+                        {{ $item->url ?: 'Bağlantı tanımlanmadı' }}
+                    @endif
                 </div>
             </div>
         </div>
 
-        <form method="POST" action="{{ route('admin.site.navigation.destroy', $item) }}">
+        <form method="POST" action="{{ route('admin.site.navigation.destroy', $item) }}" data-confirm="delete-navigation">
             @csrf
             @method('DELETE')
-            <button type="submit" class="kt-btn kt-btn-sm kt-btn-danger" onclick="return confirm('Bu menü öğesi silinsin mi?')">
+            <button type="submit" class="kt-btn kt-btn-sm kt-btn-danger">
                 Sil
             </button>
         </form>
@@ -93,6 +99,17 @@
                 <input name="url" class="kt-input" value="{{ $item->url }}" placeholder="https://ornek.com veya /iletisim">
             </div>
 
+            <div class="grid gap-2" data-link-field="route">
+                <label class="kt-form-label">Sistem Sayfası</label>
+                <select name="route_name" class="kt-select" data-kt-select="true">
+                    <option value="">Sayfa seç</option>
+                    @foreach($routeOptions as $value => $label)
+                        <option value="{{ $value }}" @selected($item->route_name === $value)>{{ $label }}</option>
+                    @endforeach
+                </select>
+                <div class="text-xs text-muted-foreground">Dil öneki ve gerçek site adresi otomatik oluşturulur.</div>
+            </div>
+
             @include('admin.components.localized-content-tabs', [
                 'moduleKey' => 'site_navigation_' . $item->id,
                 'title' => 'Menü Başlığı Dil Sekmeleri',
@@ -125,6 +142,7 @@
                     'item' => $child,
                     'pages' => $pages,
                     'linkTypeOptions' => $linkTypeOptions,
+                    'routeOptions' => $routeOptions,
                     'targetOptions' => $targetOptions,
                     'isChild' => true,
                 ])

@@ -5,10 +5,15 @@ namespace App\Models\Admin\Project;
 use App\Models\Admin\Category;
 use App\Models\Admin\Gallery\Gallery;
 use App\Models\Admin\Media\Media;
+use App\Models\Appointment\Appointment;
 use App\Models\Concerns\HasSiteLocaleTranslations;
+use App\Models\Member;
+use App\Models\Review\ServiceReview;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
@@ -32,6 +37,7 @@ class Project extends Model
         'is_featured',
         'featured_at',
         'appointment_id',
+        'member_id',
     ];
 
     protected $casts = [
@@ -40,16 +46,33 @@ class Project extends Model
         'deleted_at' => 'datetime',
     ];
 
+    protected static function booted(): void
+    {
+        static::forceDeleting(function (self $project): void {
+            $project->files()->withTrashed()->get()->each->forceDelete();
+        });
+    }
+
     public const STATUS_DRAFT = 'draft';
+
     public const STATUS_ACTIVE = 'active';
+
     public const STATUS_ARCHIVED = 'archived';
+
     public const STATUS_APPOINTMENT_PENDING = 'appointment_pending';
+
     public const STATUS_APPOINTMENT_SCHEDULED = 'appointment_scheduled';
+
     public const STATUS_APPOINTMENT_DONE = 'appointment_done';
+
     public const STATUS_DEV_PENDING = 'dev_pending';
+
     public const STATUS_DEV_IN_PROGRESS = 'dev_in_progress';
+
     public const STATUS_DELIVERED = 'delivered';
+
     public const STATUS_APPROVED = 'approved';
+
     public const STATUS_CLOSED = 'closed';
 
     public const PUBLIC_STATUSES = [
@@ -57,6 +80,13 @@ class Project extends Model
         self::STATUS_DELIVERED,
         self::STATUS_APPROVED,
         self::STATUS_CLOSED,
+    ];
+
+    public const MEMBER_UPLOAD_STATUSES = [
+        self::STATUS_APPOINTMENT_DONE,
+        self::STATUS_DEV_PENDING,
+        self::STATUS_DEV_IN_PROGRESS,
+        self::STATUS_DELIVERED,
     ];
 
     public const STATUS_OPTIONS = [
@@ -144,7 +174,7 @@ class Project extends Model
 
     public function scopeInStatus(Builder $query, ?string $status): Builder
     {
-        if (!$status || $status === 'all') {
+        if (! $status || $status === 'all') {
             return $query;
         }
 
@@ -199,6 +229,55 @@ class Project extends Model
         )
             ->withTimestamps()
             ->withTrashed();
+    }
+
+    public function member(): BelongsTo
+    {
+        return $this->belongsTo(Member::class)->withTrashed();
+    }
+
+    public function appointment(): BelongsTo
+    {
+        return $this->belongsTo(Appointment::class);
+    }
+
+    public function files(): HasMany
+    {
+        return $this->hasMany(ProjectFile::class)->latest('id');
+    }
+
+    public function serviceReview(): MorphOne
+    {
+        return $this->morphOne(ServiceReview::class, 'reviewable');
+    }
+
+    public function allowsMemberUploads(): bool
+    {
+        return in_array((string) $this->status, self::MEMBER_UPLOAD_STATUSES, true);
+    }
+
+    public function memberWorkflowSteps(): array
+    {
+        $keys = [
+            self::STATUS_APPOINTMENT_DONE,
+            self::STATUS_DEV_PENDING,
+            self::STATUS_DEV_IN_PROGRESS,
+            self::STATUS_DELIVERED,
+            self::STATUS_APPROVED,
+            self::STATUS_CLOSED,
+        ];
+        $currentOrder = (int) (self::STATUS_OPTIONS[$this->status]['order'] ?? 0);
+
+        return collect($keys)->map(function (string $key) use ($currentOrder): array {
+            $meta = self::STATUS_OPTIONS[$key];
+
+            return [
+                'key' => $key,
+                'label' => $meta['label'],
+                'is_current' => $key === $this->status,
+                'is_complete' => (int) $meta['order'] < $currentOrder,
+            ];
+        })->all();
     }
 
     public function translations(): HasMany
@@ -264,7 +343,7 @@ class Project extends Model
     public function featuredImageUrl(): ?string
     {
         return $this->featured_image_path
-            ? asset('storage/' . $this->featured_image_path)
+            ? asset('storage/'.$this->featured_image_path)
             : null;
     }
 

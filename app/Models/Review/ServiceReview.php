@@ -20,6 +20,8 @@ class ServiceReview extends Model
 
     public const SERVICE_ORDER = 'order';
 
+    public const SERVICE_PROJECT = 'project';
+
     protected $fillable = [
         'member_id',
         'provider_user_id',
@@ -100,6 +102,7 @@ class ServiceReview extends Model
         return match ($this->service_type) {
             self::SERVICE_APPOINTMENT => 'Randevu',
             self::SERVICE_ORDER => 'Sipariş',
+            self::SERVICE_PROJECT => 'Proje',
             default => 'Hizmet',
         };
     }

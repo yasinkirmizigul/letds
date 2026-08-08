@@ -2,6 +2,8 @@
 
 @section('content')
     <div class="mx-auto max-w-5xl px-4 py-10 lg:px-6">
+        @include('site.partials.member-nav')
+
         <div class="flex flex-col gap-5 border-b border-border pb-8 md:flex-row md:items-end md:justify-between">
             <div>
                 <div class="flex flex-wrap items-center gap-2">
@@ -114,7 +116,9 @@
                 @foreach($review->items as $item)
                     <section class="border border-border bg-background p-6">
                         <div class="text-sm font-semibold text-foreground">{{ $item->question_text }}</div>
-                        @php($answer = $item->answerValue())
+                        @php
+                            $answer = $item->answerValue();
+                        @endphp
                         <div class="mt-3 text-base text-primary">
                             @if($item->question_type === 'yes_no')
                                 {{ $answer === 'yes' ? 'Evet' : ($answer === 'no' ? 'Hayır' : 'Yanıt yok') }}

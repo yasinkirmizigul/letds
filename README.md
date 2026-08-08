@@ -108,6 +108,25 @@ This integration includes 10 complete demo layouts, each showcasing different UI
 
 ## Getting Started
 
+### Share a temporary online demo
+
+On Windows, the project can be shared through a free, password-protected Cloudflare Quick Tunnel:
+
+```powershell
+winget install --id Cloudflare.cloudflared --exact
+.\scripts\share-demo.cmd
+```
+
+The command builds the frontend, starts Laravel locally, and prints a temporary
+`https://...trycloudflare.com` URL with generated demo credentials. Keep the terminal open while
+the presentation is active and press `Ctrl+C` to close both the public tunnel and local server.
+The script waits until Cloudflare publishes the quick-tunnel DNS record before showing the URL.
+If Windows still reports `DNS_PROBE_FINISHED_NXDOMAIN`, enable Cloudflare (`1.1.1.1`) under the
+browser's **Secure DNS** setting; this means the local/ISP DNS cache is behind the public record.
+
+Use `-SkipBuild`, `-Port 8080`, or `-Password your-password` when needed. Quick Tunnel URLs change
+after each restart and are intended for demonstrations, not production hosting.
+
 ### Prerequisites
 - PHP 8.2 or higher
 - Composer

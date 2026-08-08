@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class MemberAccountController extends Controller
 {
@@ -26,6 +28,7 @@ class MemberAccountController extends Controller
             'appointments',
             'contactMessages',
             'serviceReviews',
+            'projects',
             'serviceReviews as pending_service_reviews_count' => fn ($query) => $query
                 ->where('status', ServiceReview::STATUS_PENDING),
             'appointments as active_appointments_count' => fn ($query) => $query
@@ -46,7 +49,70 @@ class MemberAccountController extends Controller
                 ->latest('service_completed_at')
                 ->limit(3)
                 ->get(),
+            'latestProjects' => $member->projects()
+                ->withCount('files')
+                ->latest('updated_at')
+                ->limit(3)
+                ->get(),
         ]);
+    }
+
+    public function edit(Request $request): View
+    {
+        return view('site.account.edit', [
+            'pageTitle' => 'Profil Bilgilerimi Düzenle',
+            'member' => $request->user('member'),
+        ]);
+    }
+
+    public function update(Request $request): RedirectResponse
+    {
+        /** @var Member $member */
+        $member = $request->user('member');
+        $emailChanged = mb_strtolower(trim((string) $request->input('email')))
+            !== mb_strtolower((string) $member->email);
+        $passwordChanged = filled($request->input('password'));
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:120'],
+            'surname' => ['required', 'string', 'max:120'],
+            'email' => [
+                'required',
+                'email:rfc',
+                'max:190',
+                Rule::unique('members', 'email')->ignore($member->id),
+            ],
+            'phone' => ['nullable', 'string', 'max:40'],
+            'current_password' => [
+                Rule::requiredIf($emailChanged || $passwordChanged),
+                'nullable',
+                'current_password:member',
+            ],
+            'password' => ['nullable', 'confirmed', Password::defaults()],
+        ]);
+
+        DB::transaction(function () use ($member, $validated, $emailChanged): void {
+            $data = [
+                'name' => trim($validated['name']),
+                'surname' => trim($validated['surname']),
+                'email' => mb_strtolower(trim($validated['email'])),
+                'phone' => filled($validated['phone'] ?? null) ? trim($validated['phone']) : null,
+            ];
+
+            if ($emailChanged) {
+                $data['email_verified_at'] = null;
+            }
+
+            if (filled($validated['password'] ?? null)) {
+                $data['password'] = $validated['password'];
+            }
+
+            $member->update($data);
+        });
+
+        return redirect()
+            ->route('member.account.show')
+            ->with('success', 'Profil bilgileriniz güncellendi.');
     }
 
     public function terminate(Request $request): RedirectResponse

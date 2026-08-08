@@ -43,6 +43,13 @@ $contentMenu = [
                 'perm' => 'site_homepage.view',
             ],
             [
+                'key' => 'content.homepage-sections',
+                'title' => 'Ana Sayfa Bölümleri',
+                'route' => 'admin.site.homepage-sections.index',
+                'active' => ['admin.site.homepage-sections.*'],
+                'perm' => 'site_homepage.view',
+            ],
+            [
                 'key' => 'content.sliders',
                 'title' => 'Ana Sayfa Slider',
                 'route' => 'admin.site.sliders.index',

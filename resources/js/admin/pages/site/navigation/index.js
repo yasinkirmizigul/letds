@@ -1,6 +1,6 @@
 import Sortable from 'sortablejs';
 import { request } from '@/core/http';
-import { showToastMessage } from '@/core/swal-alert';
+import { showConfirmDialog, showToastMessage } from '@/core/swal-alert';
 
 function toggleLinkFields(scope) {
     const select = scope.querySelector('[data-link-type-select="true"], [data-link-type-select]');
@@ -13,6 +13,9 @@ function toggleLinkFields(scope) {
         });
         scope.querySelectorAll('[data-link-field="url"]').forEach((field) => {
             field.classList.toggle('hidden', value !== 'custom');
+        });
+        scope.querySelectorAll('[data-link-field="route"]').forEach((field) => {
+            field.classList.toggle('hidden', value !== 'route');
         });
     };
 
@@ -42,6 +45,26 @@ export default function init(ctx) {
     if (!treeUrl) return;
 
     root.querySelectorAll('form, details').forEach((scope) => toggleLinkFields(scope));
+
+    root.addEventListener('submit', async (event) => {
+        const form = event.target.closest('form[data-confirm="delete-navigation"]');
+        if (!form || form.dataset.confirmed === 'true') return;
+
+        event.preventDefault();
+
+        const confirmed = await showConfirmDialog({
+            type: 'warning',
+            title: 'Menü öğesi silinsin mi?',
+            message: 'Bu öğe ve bağlı alt menü ilişkisi kaldırılacak.',
+            confirmButtonText: 'Evet, sil',
+            cancelButtonText: 'Vazgeç',
+        });
+
+        if (confirmed) {
+            form.dataset.confirmed = 'true';
+            form.requestSubmit();
+        }
+    }, ctx.signal ? { signal: ctx.signal } : undefined);
 
     const syncAllTrees = async () => {
         const rootLists = [...root.querySelectorAll('.js-navigation-list[data-root-list="true"]')];

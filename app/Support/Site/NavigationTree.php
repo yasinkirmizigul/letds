@@ -3,7 +3,6 @@
 namespace App\Support\Site;
 
 use App\Models\Site\SiteNavigationItem;
-use App\Support\Site\SiteLocalization;
 use Illuminate\Support\Collection;
 
 class NavigationTree
@@ -27,19 +26,15 @@ class NavigationTree
     {
         $filtered = $items
             ->filter(function (SiteNavigationItem $item) use ($activeOnly) {
-                if (!$activeOnly) {
+                if (! $activeOnly) {
                     return true;
                 }
 
-                if (!$item->is_active) {
+                if (! $item->is_active) {
                     return false;
                 }
 
-                if ($item->link_type === SiteNavigationItem::LINK_TYPE_PAGE) {
-                    return $item->page?->isPublished() ?? false;
-                }
-
-                return filled($item->url);
+                return $item->hasValidDestination();
             })
             ->values();
 

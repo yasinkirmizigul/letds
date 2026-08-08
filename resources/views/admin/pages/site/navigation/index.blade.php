@@ -90,6 +90,17 @@
                         <input name="url" class="kt-input @error('url') kt-input-invalid @enderror" value="{{ old('url') }}" placeholder="https://ornek.com veya /iletisim">
                     </div>
 
+                    <div class="grid gap-2 {{ $createLinkType === \App\Models\Site\SiteNavigationItem::LINK_TYPE_ROUTE ? '' : 'hidden' }}" data-link-field="route">
+                        <label class="kt-form-label">Sistem Sayfası</label>
+                        <select name="route_name" class="kt-select @error('route_name') kt-input-invalid @enderror" data-kt-select="true">
+                            <option value="">Sayfa seç</option>
+                            @foreach($routeOptions as $value => $label)
+                                <option value="{{ $value }}" @selected(old('route_name') === $value)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                        <div class="text-xs text-muted-foreground">Dil öneki ve gerçek site adresi otomatik oluşturulur.</div>
+                    </div>
+
                     <div class="grid gap-2">
                         <label class="kt-form-label">İkon</label>
                         <input name="icon_class" class="kt-input @error('icon_class') kt-input-invalid @enderror" value="{{ old('icon_class', 'ki-filled ki-arrow-right') }}">
@@ -146,6 +157,7 @@
                                     'item' => $item,
                                     'pages' => $pages,
                                     'linkTypeOptions' => $linkTypeOptions,
+                                    'routeOptions' => $routeOptions,
                                     'targetOptions' => $targetOptions,
                                     'isChild' => false,
                                 ])
@@ -169,6 +181,7 @@
                                     'item' => $item,
                                     'pages' => $pages,
                                     'linkTypeOptions' => $linkTypeOptions,
+                                    'routeOptions' => $routeOptions,
                                     'targetOptions' => $targetOptions,
                                     'isChild' => false,
                                 ])

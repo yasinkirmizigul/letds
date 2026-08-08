@@ -1,4 +1,5 @@
 import { request } from '@/core/http';
+import { showConfirmDialog } from '@/core/swal-alert';
 import Sortable from 'sortablejs';
 import { initMediaUploadModal } from '@/core/media-upload-modal';
 
@@ -37,6 +38,19 @@ export default function init(ctx) {
 
     const galleryId = pageRoot.dataset.galleryId;
     if (!galleryId) return;
+
+    const deleteForm = pageRoot.querySelector('[data-gallery-delete-form]');
+    deleteForm?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const confirmed = await showConfirmDialog({
+            type: 'warning',
+            title: 'Galeri silinsin mi?',
+            message: 'Galeri çöp kutusuna taşınacak; site bağlantısı erişime kapanacak.',
+            confirmButtonText: 'Galeri sil',
+        });
+
+        if (confirmed) deleteForm.submit();
+    }, { signal });
 
     const listEl = pageRoot.querySelector('#galleryItemsList');
     const emptyEl = pageRoot.querySelector('#galleryItemsEmpty');

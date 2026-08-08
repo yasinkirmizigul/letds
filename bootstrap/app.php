@@ -3,6 +3,7 @@
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\AjaxRedirectResponseMiddleware;
 use App\Http\Middleware\AuditRequestMiddleware;
+use App\Http\Middleware\DemoAccessMiddleware;
 use App\Http\Middleware\EnsureActiveMemberSession;
 use App\Http\Middleware\PermissionMiddleware;
 use App\Http\Middleware\SiteLocaleMiddleware;
@@ -29,6 +30,8 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->trustProxies(at: ['127.0.0.1', '::1']);
+
         $middleware->redirectGuestsTo(function (Request $request) {
             if ($request->is('member/*') || $request->is('randevu-al')) {
                 return route('member.login');
@@ -45,15 +48,16 @@ return Application::configure(basePath: dirname(__DIR__))
             return route('admin.dashboard');
         });
 
-        $middleware->web(append: [
-            AjaxRedirectResponseMiddleware::class,
-        ]);
+        $middleware->web(
+            prepend: [DemoAccessMiddleware::class],
+            append: [AjaxRedirectResponseMiddleware::class],
+        );
 
         $middleware->alias([
             'permission' => PermissionMiddleware::class,
             'superadmin' => SuperAdminMiddleware::class,
-            'admin'      => AdminMiddleware::class,
-            'audit'      => AuditRequestMiddleware::class,
+            'admin' => AdminMiddleware::class,
+            'audit' => AuditRequestMiddleware::class,
             'site.locale' => SiteLocaleMiddleware::class,
             'member.active' => EnsureActiveMemberSession::class,
         ]);

@@ -18,6 +18,6 @@ class AdminMenuVisibilityAccessTest extends TestCase
         $registry = app(AdminMenuRegistry::class);
 
         $this->assertCount(7, $registry->all());
-        $this->assertCount(38, $registry->availableKeys());
+        $this->assertCount(39, $registry->availableKeys());
     }
 }

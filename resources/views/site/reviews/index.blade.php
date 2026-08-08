@@ -2,6 +2,8 @@
 
 @section('content')
     <div class="mx-auto max-w-7xl px-4 py-10 lg:px-6">
+        @include('site.partials.member-nav')
+
         <div class="flex flex-col gap-5 border-b border-border pb-8 md:flex-row md:items-end md:justify-between">
             <div>
                 <div class="text-xs font-semibold uppercase text-primary">Hizmet Deneyimi</div>

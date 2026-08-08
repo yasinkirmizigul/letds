@@ -36,6 +36,7 @@ class HomepageConfigurationService
 
     public function __construct(
         private readonly SiteTranslationSyncService $translationSyncService,
+        private readonly HomepageSectionService $homepageSectionService,
     ) {}
 
     public function schema(): array
@@ -202,8 +203,9 @@ class HomepageConfigurationService
         $modes = $this->resolvedModes($content, $settings);
         $headerLogo = $this->headerLogo($settings);
         $backgroundImage = $this->mediaAsset($settings, 'background_media_id');
+        $sections = $this->homepageSectionService->resolved($locale);
 
-        return compact('content', 'settings', 'tooltips', 'modes', 'headerLogo', 'backgroundImage');
+        return compact('content', 'settings', 'tooltips', 'modes', 'headerLogo', 'backgroundImage', 'sections');
     }
 
     public function safeLink(?string $value, string $fallback): string

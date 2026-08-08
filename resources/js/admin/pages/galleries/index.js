@@ -118,6 +118,9 @@ export default function init(ctx = {}) {
                         ${gallery.description ? `<div class="text-sm">${escapeHtml(gallery.description)}</div>` : ''}
 
                         <div class="flex flex-wrap gap-2">
+                            <span class="kt-badge ${gallery.is_public ? 'kt-badge-light-success' : 'kt-badge-light'}">
+                                ${gallery.is_public ? 'Sitede yayında' : 'Sitede gizli'}
+                            </span>
                             <span class="kt-badge kt-badge-light">Öge: ${Number(gallery.items_count || 0)}</span>
                             <span class="kt-badge ${Number(gallery.attached_count || 0) > 0 ? 'kt-badge-light-primary' : 'kt-badge-light'}">
                                 Bağlı içerik: ${Number(gallery.attached_count || 0)}

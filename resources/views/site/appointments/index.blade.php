@@ -10,6 +10,8 @@
 
 @section('content')
     <div class="mx-auto grid max-w-5xl gap-5 px-4 py-6 lg:px-8 lg:py-8">
+        @include('site.partials.member-nav')
+
         <div>
             <div class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Randevu</div>
             <h1 class="mt-3 font-display text-3xl font-semibold tracking-tight lg:text-4xl">

@@ -6,26 +6,36 @@ use App\Models\Site\SiteLanguage;
 use App\Models\Site\SitePage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Route;
 
 class SiteLocalization
 {
     public static function languages(bool $activeOnly = true): Collection
     {
-        $query = SiteLanguage::query()->ordered();
+        $cacheKey = 'site.languages.all';
+        $languages = app()->bound('request')
+            ? request()->attributes->get($cacheKey)
+            : null;
 
-        if ($activeOnly) {
-            $query->active();
+        if (! $languages instanceof Collection) {
+            $languages = SiteLanguage::query()->ordered()->get();
+
+            if (app()->bound('request')) {
+                request()->attributes->set($cacheKey, $languages);
+            }
         }
 
-        return $query->get();
+        return $activeOnly
+            ? $languages->where('is_active', true)->values()
+            : $languages;
     }
 
     public static function defaultLanguage(): SiteLanguage
     {
-        return SiteLanguage::query()
-            ->where('is_default', true)
-            ->first()
-            ?? SiteLanguage::query()->ordered()->firstOrFail();
+        $languages = self::languages(false);
+
+        return $languages->firstWhere('is_default', true)
+            ?? $languages->firstOrFail();
     }
 
     public static function defaultLocale(): string
@@ -76,6 +86,21 @@ class SiteLocalization
         }
 
         return route('site.home.localized', ['locale' => $locale]);
+    }
+
+    public static function localizedRoute(string $name, array $parameters = [], ?string $locale = null): string
+    {
+        $locale = trim((string) ($locale ?: self::currentLocale()));
+
+        if ($locale !== '' && ! self::isDefault($locale)) {
+            $localizedName = str_replace('site.', 'site.localized.', $name);
+
+            if (Route::has($localizedName)) {
+                return route($localizedName, ['locale' => $locale, ...$parameters]);
+            }
+        }
+
+        return route($name, $parameters);
     }
 
     public static function switchUrl(Request $request, string $targetLocale, ?SitePage $page = null): string

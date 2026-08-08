@@ -3,6 +3,7 @@
 namespace App\Services\Review;
 
 use App\Models\Admin\Ecommerce\EcommerceOrder;
+use App\Models\Admin\Project\Project;
 use App\Models\Appointment\Appointment;
 use App\Models\Review\ServiceReview;
 use App\Models\Review\ServiceReviewQuestion;
@@ -111,6 +112,52 @@ class ServiceReviewAssignmentService
         return $review;
     }
 
+    public function assignForProject(Project $project): ?ServiceReview
+    {
+        $completedStatuses = [
+            Project::STATUS_DELIVERED,
+            Project::STATUS_APPROVED,
+            Project::STATUS_CLOSED,
+        ];
+
+        if (! $this->isReady() || ! $project->member_id || ! in_array($project->status, $completedStatuses, true)) {
+            return null;
+        }
+
+        $project->loadMissing('appointment:id,provider_id');
+        $review = ServiceReview::query()->firstOrCreate(
+            [
+                'reviewable_type' => $project->getMorphClass(),
+                'reviewable_id' => $project->getKey(),
+            ],
+            [
+                'member_id' => $project->member_id,
+                'provider_user_id' => $project->appointment?->provider_id,
+                'service_type' => ServiceReview::SERVICE_PROJECT,
+                'service_title' => $project->title,
+                'service_reference' => 'Proje #'.$project->id,
+                'status' => ServiceReview::STATUS_PENDING,
+                'service_completed_at' => $project->updated_at ?? now(),
+                'invited_at' => now(),
+            ]
+        );
+
+        if ($review->isPending()) {
+            $review->fill([
+                'member_id' => $project->member_id,
+                'provider_user_id' => $project->appointment?->provider_id ?: $review->provider_user_id,
+                'service_title' => $project->title,
+                'service_completed_at' => $project->updated_at ?? now(),
+            ]);
+
+            if ($review->isDirty()) {
+                $review->save();
+            }
+        }
+
+        return $review;
+    }
+
     public function syncCompletedServices(?int $memberId = null): int
     {
         if (! $this->isReady()) {
@@ -140,6 +187,23 @@ class ServiceReviewAssignmentService
             ->chunkById(200, function ($orders) use (&$created): void {
                 foreach ($orders as $order) {
                     $review = $this->assignForOrder($order);
+                    $created += $review?->wasRecentlyCreated ? 1 : 0;
+                }
+            });
+
+        Project::query()
+            ->whereNotNull('member_id')
+            ->whereIn('status', [
+                Project::STATUS_DELIVERED,
+                Project::STATUS_APPROVED,
+                Project::STATUS_CLOSED,
+            ])
+            ->when($memberId, fn ($query) => $query->where('member_id', $memberId))
+            ->with('appointment:id,provider_id')
+            ->orderBy('id')
+            ->chunkById(200, function ($projects) use (&$created): void {
+                foreach ($projects as $project) {
+                    $review = $this->assignForProject($project);
                     $created += $review?->wasRecentlyCreated ? 1 : 0;
                 }
             });

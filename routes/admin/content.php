@@ -158,6 +158,10 @@ Route::prefix('projects')->as('projects.')->group(function () {
         ->middleware('permission:projects.update')
         ->name('edit');
 
+    Route::get('/{project}/files/{projectFile}', [ProjectController::class, 'downloadFile'])
+        ->middleware('permission:projects.view')
+        ->name('files.download');
+
     Route::put('/{project}', [ProjectController::class, 'update'])
         ->middleware('permission:projects.update')
         ->name('update');

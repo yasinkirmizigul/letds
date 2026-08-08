@@ -17,7 +17,7 @@ class ProjectStoreRequest extends FormRequest
     {
         $categoryIds = $this->input('category_ids', []);
 
-        if (!is_array($categoryIds)) {
+        if (! is_array($categoryIds)) {
             $categoryIds = [$categoryIds];
         }
 
@@ -27,15 +27,15 @@ class ProjectStoreRequest extends FormRequest
             return $value > 0 ? $value : null;
         }, $categoryIds))));
 
-        if (!$this->has('status') || !$this->input('status')) {
+        if (! $this->has('status') || ! $this->input('status')) {
             $this->merge(['status' => Project::STATUS_APPOINTMENT_PENDING]);
         }
 
-        if (!$this->has('is_featured')) {
+        if (! $this->has('is_featured')) {
             $this->merge(['is_featured' => 0]);
         }
 
-        if (!$this->has('clear_featured_image')) {
+        if (! $this->has('clear_featured_image')) {
             $this->merge(['clear_featured_image' => 0]);
         }
 
@@ -62,7 +62,14 @@ class ProjectStoreRequest extends FormRequest
             'meta_keywords' => ['nullable', 'string', 'max:500'],
             'status' => ['required', 'string', Rule::in(array_keys(Project::STATUS_OPTIONS))],
             'is_featured' => ['nullable', 'boolean'],
-            'appointment_id' => ['nullable', 'integer', 'min:1'],
+            'appointment_id' => ['nullable', 'integer', Rule::exists('appointments', 'id')],
+            'member_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('members', 'id')
+                    ->where('is_active', true)
+                    ->whereNull('deleted_at'),
+            ],
             'featured_media_id' => ['nullable', 'integer', 'exists:media,id'],
             'featured_image' => ['nullable', 'file', 'max:5120', 'mimes:jpg,jpeg,png,webp,gif'],
             'clear_featured_image' => ['nullable', 'boolean'],

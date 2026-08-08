@@ -7,10 +7,13 @@ use App\Http\Requests\Admin\Project\ProjectStoreRequest;
 use App\Http\Requests\Admin\Project\ProjectUpdateRequest;
 use App\Models\Admin\Category;
 use App\Models\Admin\Project\Project;
+use App\Models\Admin\Project\ProjectFile;
 use App\Models\Admin\Project\ProjectTranslation;
+use App\Models\Member;
 use App\Services\Content\LocalizedContentTranslationService;
-use App\Support\Security\HtmlSanitizer;
+use App\Services\Review\ServiceReviewAssignmentService;
 use App\Support\Audit\AuditEvent;
+use App\Support\Security\HtmlSanitizer;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -19,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ProjectController extends Controller
 {
@@ -33,6 +37,7 @@ class ProjectController extends Controller
 
     public function __construct(
         private readonly LocalizedContentTranslationService $translationService,
+        private readonly ServiceReviewAssignmentService $reviewAssignmentService,
     ) {}
 
     public function index(Request $request): View
@@ -61,10 +66,11 @@ class ProjectController extends Controller
                 'categories:id,name',
                 'featuredMedia',
                 'translations',
+                'member:id,name,surname,email',
             ])
             ->search($q)
             ->inStatus($status)
-            ->when(!empty($selectedCategoryIds), function ($builder) use ($selectedCategoryIds) {
+            ->when(! empty($selectedCategoryIds), function ($builder) use ($selectedCategoryIds) {
                 $builder->whereHas('categories', function ($categoryQuery) use ($selectedCategoryIds) {
                     $categoryQuery->whereIn('categories.id', $selectedCategoryIds);
                 });
@@ -128,7 +134,7 @@ class ProjectController extends Controller
             ->with(['categories:id,name', 'featuredMedia', 'translations'])
             ->search($q)
             ->inStatus($status)
-            ->when(!empty($selectedCategoryIds), function ($builder) use ($selectedCategoryIds) {
+            ->when(! empty($selectedCategoryIds), function ($builder) use ($selectedCategoryIds) {
                 $builder->whereHas('categories', function ($categoryQuery) use ($selectedCategoryIds) {
                     $categoryQuery->whereIn('categories.id', $selectedCategoryIds);
                 });
@@ -160,6 +166,7 @@ class ProjectController extends Controller
             'statusOptions' => Project::statusOptionsSorted(),
             'publicStatuses' => Project::PUBLIC_STATUSES,
             'pageTitle' => 'Proje Ekle',
+            'memberOptions' => $this->memberOptions(),
         ]);
     }
 
@@ -198,6 +205,9 @@ class ProjectController extends Controller
             'categories:id,name,parent_id',
             'featuredMedia',
             'translations',
+            'member:id,name,surname,email',
+            'appointment.provider:id,name,title',
+            'files.member:id,name,surname',
         ]);
 
         $categories = Category::query()
@@ -216,6 +226,7 @@ class ProjectController extends Controller
             'statusOptions' => Project::statusOptionsSorted(),
             'publicStatuses' => Project::PUBLIC_STATUSES,
             'pageTitle' => 'Proje Düzenle',
+            'memberOptions' => $this->memberOptions(),
         ]);
     }
 
@@ -249,6 +260,8 @@ class ProjectController extends Controller
                 'to' => (string) $validated['status'],
             ]);
         }
+
+        $this->reviewAssignmentService->assignForProject($project->fresh());
 
         return redirect()
             ->route('admin.projects.edit', $project)
@@ -331,7 +344,7 @@ class ProjectController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => $count . ' proje çöp kutusuna taşındı.',
+            'message' => $count.' proje çöp kutusuna taşındı.',
             'data' => ['deleted' => $count],
         ]);
     }
@@ -348,7 +361,7 @@ class ProjectController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => $count . ' proje geri yüklendi.',
+            'message' => $count.' proje geri yüklendi.',
             'data' => ['restored' => $count],
         ]);
     }
@@ -380,7 +393,7 @@ class ProjectController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => $projects->count() . ' proje kalıcı olarak silindi.',
+            'message' => $projects->count().' proje kalıcı olarak silindi.',
             'data' => ['force_deleted' => $projects->count()],
         ]);
     }
@@ -414,7 +427,7 @@ class ProjectController extends Controller
     public function updateStatus(Request $request, Project $project): JsonResponse
     {
         $payload = $request->validate([
-            'status' => ['required', 'string', 'in:' . implode(',', array_keys(Project::STATUS_OPTIONS))],
+            'status' => ['required', 'string', 'in:'.implode(',', array_keys(Project::STATUS_OPTIONS))],
         ]);
 
         $from = (string) ($project->status ?? Project::STATUS_DRAFT);
@@ -429,6 +442,8 @@ class ProjectController extends Controller
                 'from' => $from,
                 'to' => $to,
             ]);
+
+            $this->reviewAssignmentService->assignForProject($project->fresh());
         }
 
         return response()->json([
@@ -500,6 +515,7 @@ class ProjectController extends Controller
             'is_featured' => (bool) ($validated['is_featured'] ?? false),
             'featured_at' => $this->resolveFeaturedAt((bool) ($validated['is_featured'] ?? false), $project),
             'appointment_id' => $validated['appointment_id'] ?? null,
+            'member_id' => $validated['member_id'] ?? null,
         ];
 
         if ($data['is_featured']) {
@@ -554,7 +570,7 @@ class ProjectController extends Controller
             return;
         }
 
-        if ($clearFeaturedImage && !$featuredMediaId) {
+        if ($clearFeaturedImage && ! $featuredMediaId) {
             $this->deleteLegacyFeaturedImage($project);
             $this->syncFeaturedMedia($project, null);
 
@@ -566,7 +582,7 @@ class ProjectController extends Controller
 
     private function deleteLegacyFeaturedImage(Project $project): void
     {
-        if (!$project->featured_image_path) {
+        if (! $project->featured_image_path) {
             return;
         }
 
@@ -582,7 +598,7 @@ class ProjectController extends Controller
             ->where('collection', 'featured')
             ->delete();
 
-        if (!$mediaId) {
+        if (! $mediaId) {
             AuditEvent::log('projects.featured.detach', [
                 'project_id' => (int) $project->id,
             ]);
@@ -606,9 +622,17 @@ class ProjectController extends Controller
         ]);
     }
 
+    public function downloadFile(Project $project, ProjectFile $projectFile): StreamedResponse
+    {
+        abort_unless((int) $projectFile->project_id === (int) $project->id, 404);
+        abort_unless(Storage::disk($projectFile->disk)->exists($projectFile->path), 404);
+
+        return Storage::disk($projectFile->disk)->download($projectFile->path, $projectFile->original_name);
+    }
+
     private function resolveFeaturedAt(bool $isFeatured, ?Project $project = null)
     {
-        if (!$isFeatured) {
+        if (! $isFeatured) {
             return null;
         }
 
@@ -636,7 +660,7 @@ class ProjectController extends Controller
     {
         $ids = $request->input('ids', []);
 
-        if (!is_array($ids) || count($ids) === 0) {
+        if (! is_array($ids) || count($ids) === 0) {
             throw ValidationException::withMessages([
                 'ids' => 'Seçili kayıt yok.',
             ]);
@@ -660,7 +684,7 @@ class ProjectController extends Controller
                 ->where('slug', $candidate)
                 ->exists()
         ) {
-            $candidate = $base . '-' . $suffix;
+            $candidate = $base.'-'.$suffix;
             $suffix++;
         }
 
@@ -692,7 +716,7 @@ class ProjectController extends Controller
             foreach ($byParent[$parentId] ?? [] as $category) {
                 $options[] = [
                     'id' => (int) $category->id,
-                    'label' => str_repeat('-- ', $depth) . $category->name,
+                    'label' => str_repeat('-- ', $depth).$category->name,
                 ];
 
                 $walk((int) $category->id, $depth + 1);
@@ -702,5 +726,14 @@ class ProjectController extends Controller
         $walk(0, 0);
 
         return $options;
+    }
+
+    private function memberOptions()
+    {
+        return Member::query()
+            ->active()
+            ->orderBy('name')
+            ->orderBy('surname')
+            ->get(['id', 'name', 'surname', 'email']);
     }
 }

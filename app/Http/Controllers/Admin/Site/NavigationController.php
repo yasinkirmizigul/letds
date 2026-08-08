@@ -31,6 +31,7 @@ class NavigationController extends Controller
             'footerTree' => SiteNavigationItem::treeForLocation(SiteNavigationItem::LOCATION_FOOTER),
             'locationOptions' => SiteNavigationItem::locationOptions(),
             'linkTypeOptions' => SiteNavigationItem::linkTypeOptions(),
+            'routeOptions' => SiteNavigationItem::routeOptions(),
             'targetOptions' => SiteNavigationItem::targetOptions(),
             'stats' => [
                 'all' => SiteNavigationItem::query()->count(),
@@ -90,7 +91,7 @@ class NavigationController extends Controller
         ]);
 
         $location = (string) $payload['location'];
-        if (!array_key_exists($location, SiteNavigationItem::locationOptions())) {
+        if (! array_key_exists($location, SiteNavigationItem::locationOptions())) {
             throw ValidationException::withMessages([
                 'location' => 'Geçersiz menü bölgesi seçildi.',
             ]);
@@ -131,10 +132,10 @@ class NavigationController extends Controller
     public function toggleActive(Request $request, SiteNavigationItem $siteNavigationItem): JsonResponse|RedirectResponse
     {
         $siteNavigationItem->forceFill([
-            'is_active' => !$siteNavigationItem->is_active,
+            'is_active' => ! $siteNavigationItem->is_active,
         ])->save();
 
-        if (!$request->expectsJson() && !$request->ajax()) {
+        if (! $request->expectsJson() && ! $request->ajax()) {
             return back()->with(
                 'success',
                 $siteNavigationItem->is_active ? 'Menü öğesi aktifleştirildi.' : 'Menü öğesi pasifleştirildi.'
@@ -171,6 +172,7 @@ class NavigationController extends Controller
             'icon_class' => ['nullable', 'string', 'max:255'],
             'link_type' => ['required', 'string'],
             'url' => ['nullable', 'string', 'max:500'],
+            'route_name' => ['nullable', 'string', 'max:120'],
             'target' => ['required', 'string'],
             'is_active' => ['nullable', 'boolean'],
             'translations' => ['nullable', 'array'],
@@ -178,21 +180,21 @@ class NavigationController extends Controller
         ]);
 
         $location = (string) $validated['location'];
-        if (!array_key_exists($location, SiteNavigationItem::locationOptions())) {
+        if (! array_key_exists($location, SiteNavigationItem::locationOptions())) {
             throw ValidationException::withMessages([
                 'location' => 'Geçersiz menü bölgesi seçildi.',
             ]);
         }
 
         $linkType = (string) $validated['link_type'];
-        if (!array_key_exists($linkType, SiteNavigationItem::linkTypeOptions())) {
+        if (! array_key_exists($linkType, SiteNavigationItem::linkTypeOptions())) {
             throw ValidationException::withMessages([
                 'link_type' => 'Geçersiz bağlantı türü seçildi.',
             ]);
         }
 
         $target = (string) $validated['target'];
-        if (!array_key_exists($target, SiteNavigationItem::targetOptions())) {
+        if (! array_key_exists($target, SiteNavigationItem::targetOptions())) {
             throw ValidationException::withMessages([
                 'target' => 'Geçersiz açılış hedefi seçildi.',
             ]);
@@ -204,13 +206,20 @@ class NavigationController extends Controller
             ]);
         }
 
-        if ($linkType === SiteNavigationItem::LINK_TYPE_CUSTOM && !filled($validated['url'] ?? null)) {
+        if ($linkType === SiteNavigationItem::LINK_TYPE_CUSTOM && ! filled($validated['url'] ?? null)) {
             throw ValidationException::withMessages([
                 'url' => 'Özel bağlantı için bağlantı alanı zorunludur.',
             ]);
         }
 
-        if (!empty($validated['parent_id'])) {
+        if ($linkType === SiteNavigationItem::LINK_TYPE_ROUTE
+            && ! array_key_exists((string) ($validated['route_name'] ?? ''), SiteNavigationItem::routeOptions())) {
+            throw ValidationException::withMessages([
+                'route_name' => 'Geçerli bir sistem sayfası seçmelisin.',
+            ]);
+        }
+
+        if (! empty($validated['parent_id'])) {
             $parent = SiteNavigationItem::query()->whereKey((int) $validated['parent_id'])->firstOrFail();
 
             if ($parent->location !== $location) {
@@ -242,6 +251,9 @@ class NavigationController extends Controller
             'icon_class' => $validated['icon_class'] ?? null,
             'link_type' => $linkType,
             'url' => $linkType === SiteNavigationItem::LINK_TYPE_CUSTOM ? ($validated['url'] ?? null) : null,
+            'route_name' => $linkType === SiteNavigationItem::LINK_TYPE_ROUTE
+                ? ($validated['route_name'] ?? null)
+                : null,
             'target' => $target,
             'is_active' => $request->boolean('is_active'),
             'translations' => is_array($validated['translations'] ?? null) ? $validated['translations'] : [],

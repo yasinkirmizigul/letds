@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
-use App\Models\ContactMessage;
+use App\Models\Admin\Project\Project;
+use App\Models\Admin\Project\ProjectFile;
+use App\Models\Appointment\Appointment;
 use App\Models\Review\ServiceReview;
 use App\Notifications\MemberResetPasswordNotification;
 use Illuminate\Database\Eloquent\Builder;
@@ -95,7 +97,7 @@ class Member extends Authenticatable
 
     public function getFullNameAttribute(): string
     {
-        return trim(($this->name ?? '') . ' ' . ($this->surname ?? ''));
+        return trim(($this->name ?? '').' '.($this->surname ?? ''));
     }
 
     public function documentDisk(): string
@@ -118,7 +120,7 @@ class Member extends Authenticatable
 
     public function documentName(): ?string
     {
-        if (!$this->hasDocument()) {
+        if (! $this->hasDocument()) {
             return null;
         }
 
@@ -154,7 +156,7 @@ class Member extends Authenticatable
             $unitIndex++;
         }
 
-        return number_format($value, $unitIndex === 0 ? 0 : 1, ',', '.') . ' ' . $units[$unitIndex];
+        return number_format($value, $unitIndex === 0 ? 0 : 1, ',', '.').' '.$units[$unitIndex];
     }
 
     public function documentIsImage(): bool
@@ -174,7 +176,7 @@ class Member extends Authenticatable
 
     public function isSuspended(): bool
     {
-        return !$this->is_active;
+        return ! $this->is_active;
     }
 
     public function hasAcceptedMembershipTerms(): bool
@@ -214,7 +216,7 @@ class Member extends Authenticatable
 
     public function appointments(): HasMany
     {
-        return $this->hasMany(\App\Models\Appointment\Appointment::class);
+        return $this->hasMany(Appointment::class);
     }
 
     public function contactMessages(): HasMany
@@ -225,5 +227,15 @@ class Member extends Authenticatable
     public function serviceReviews(): HasMany
     {
         return $this->hasMany(ServiceReview::class);
+    }
+
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class);
+    }
+
+    public function projectFiles(): HasMany
+    {
+        return $this->hasMany(ProjectFile::class);
     }
 }

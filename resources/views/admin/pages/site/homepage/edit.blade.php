@@ -19,16 +19,22 @@
                 </div>
             </div>
 
-            <a
-                href="{{ route('site.home') }}"
-                target="_blank"
-                rel="noopener"
-                class="kt-btn kt-btn-light"
-                title="Ana sayfayı aç"
-            >
-                <i class="ki-filled ki-eye text-base"></i>
-                Siteyi Gör
-            </a>
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="{{ route('admin.site.homepage-sections.index') }}" class="kt-btn kt-btn-light-primary">
+                    <i class="ki-filled ki-grid text-base"></i>
+                    İçerik Bölümleri
+                </a>
+                <a
+                    href="{{ route('site.home') }}"
+                    target="_blank"
+                    rel="noopener"
+                    class="kt-btn kt-btn-light"
+                    title="Ana sayfayı aç"
+                >
+                    <i class="ki-filled ki-eye text-base"></i>
+                    Siteyi Gör
+                </a>
+            </div>
         </div>
 
         <form method="POST" action="{{ route('admin.site.homepage.update') }}" enctype="multipart/form-data" class="grid gap-6" data-native-submit="true">

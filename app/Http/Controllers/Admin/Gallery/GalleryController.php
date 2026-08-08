@@ -65,6 +65,7 @@ class GalleryController extends Controller
                 'name' => $gallery->name,
                 'slug' => $gallery->slug,
                 'description' => $gallery->description,
+                'is_public' => (bool) $gallery->is_public,
                 'items_count' => (int) ($gallery->items_count ?? 0),
                 'attached_count' => (int) ($gallery->attached_count ?? 0),
                 'deleted_at' => $gallery->deleted_at?->toDateTimeString(),
@@ -90,15 +91,22 @@ class GalleryController extends Controller
 
     public function store(Request $request)
     {
+        $request->merge([
+            'slug' => Str::slug($request->input('slug') ?: $request->input('name')),
+        ]);
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:180'],
-            'slug' => ['nullable', 'string', 'max:220', 'unique:galleries,slug'],
+            'slug' => ['required', 'string', 'max:220', 'unique:galleries,slug'],
             'description' => ['nullable', 'string'],
+            'is_public' => ['nullable', 'boolean'],
         ]);
 
         $data['slug'] = $data['slug'] ? Str::slug($data['slug']) : Str::slug($data['name']);
         $data['created_by'] = auth()->id();
         $data['updated_by'] = auth()->id();
+        $data['is_public'] = (bool) ($data['is_public'] ?? false);
+        $data['published_at'] = $data['is_public'] ? now() : null;
 
         $gallery = Gallery::create($data);
 
@@ -119,14 +127,23 @@ class GalleryController extends Controller
 
     public function update(Request $request, Gallery $gallery)
     {
+        $request->merge([
+            'slug' => Str::slug($request->input('slug') ?: $request->input('name')),
+        ]);
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:180'],
-            'slug' => ['nullable', 'string', 'max:220', 'unique:galleries,slug,' . $gallery->id],
+            'slug' => ['required', 'string', 'max:220', 'unique:galleries,slug,'.$gallery->id],
             'description' => ['nullable', 'string'],
+            'is_public' => ['nullable', 'boolean'],
         ]);
 
         $data['slug'] = $data['slug'] ? Str::slug($data['slug']) : Str::slug($data['name']);
         $data['updated_by'] = auth()->id();
+        $data['is_public'] = (bool) ($data['is_public'] ?? false);
+        $data['published_at'] = $data['is_public']
+            ? ($gallery->published_at ?? now())
+            : null;
 
         $gallery->update($data);
 
@@ -182,7 +199,9 @@ class GalleryController extends Controller
     public function bulkDestroy(Request $request): JsonResponse
     {
         $ids = array_values(array_filter((array) $request->input('ids', [])));
-        if (!$ids) return response()->json(['ok' => true]);
+        if (! $ids) {
+            return response()->json(['ok' => true]);
+        }
 
         Gallery::whereIn('id', $ids)->delete();
 
@@ -194,7 +213,9 @@ class GalleryController extends Controller
     public function bulkRestore(Request $request): JsonResponse
     {
         $ids = array_values(array_filter((array) $request->input('ids', [])));
-        if (!$ids) return response()->json(['ok' => true]);
+        if (! $ids) {
+            return response()->json(['ok' => true]);
+        }
 
         Gallery::onlyTrashed()->whereIn('id', $ids)->restore();
 
@@ -206,7 +227,9 @@ class GalleryController extends Controller
     public function bulkForceDestroy(Request $request): JsonResponse
     {
         $ids = array_values(array_filter((array) $request->input('ids', [])));
-        if (!$ids) return response()->json(['ok' => true]);
+        if (! $ids) {
+            return response()->json(['ok' => true]);
+        }
 
         $blocked = DB::table('galleryables')
             ->whereIn('gallery_id', $ids)

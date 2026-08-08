@@ -6,7 +6,10 @@ use App\Models\Admin\Media\Media;
 use App\Models\Admin\User\Role;
 use App\Models\Admin\User\User;
 use App\Models\Site\SiteLanguage;
+use App\Models\Site\SiteHomepageSection;
+use App\Models\Site\SiteHomepageSectionItem;
 use App\Services\Site\HomepageConfigurationService;
+use App\Services\Site\HomepageSectionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -32,6 +35,9 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('İstatistiksel Analiz')
             ->assertSee('İstatistiksel Danışma')
             ->assertSee('data-home-mode-tab="consultation"', false)
+            ->assertSee('Müşteri Memnuniyeti')
+            ->assertSee('data-surface="tint"', false)
+            ->assertSee('--home-feature-columns: 3', false)
             ->assertSee('VIEW THEMES');
 
         $this->assertDatabaseCount('site_homepage_configs', 1);
@@ -195,5 +201,172 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('--home-analysis-tab-after-text:#112233', false)
             ->assertSee('--home-hero-after-text:#223344', false)
             ->assertSee('--home-tooltip-text: #334455', false);
+    }
+
+    public function test_superadmin_can_manage_multilingual_homepage_sections_and_cards(): void
+    {
+        SiteLanguage::query()->updateOrCreate(
+            ['code' => 'en'],
+            [
+                'name' => 'English',
+                'native_name' => 'English',
+                'is_active' => true,
+                'is_default' => false,
+                'is_rtl' => false,
+                'sort_order' => 2,
+            ]
+        );
+
+        $role = Role::query()->create([
+            'name' => 'Super Admin',
+            'slug' => 'superadmin',
+        ]);
+        $user = User::query()->create([
+            'name' => 'Homepage Sections Admin',
+            'email' => 'homepage-sections@example.test',
+            'password' => 'password',
+            'is_active' => true,
+        ]);
+        $user->roles()->attach($role);
+
+        $this->actingAs($user)
+            ->get(route('admin.site.homepage-sections.index'))
+            ->assertOk()
+            ->assertSee('Ana Sayfa Bölümleri')
+            ->assertSee('Müşteri Memnuniyeti')
+            ->assertSee('data-confirm-delete="section"', false)
+            ->assertSee('data-homepage-item-sortable', false);
+
+        $this->actingAs($user)
+            ->post(route('admin.site.homepage-sections.store'), [
+                'eyebrow' => 'Çalışma İlkelerimiz',
+                'title' => 'Her adımda yanınızdayız.',
+                'description' => 'Projeyi birlikte ve görünür biçimde ilerletiriz.',
+                'settings' => [
+                    'columns' => 4,
+                    'alignment' => 'center',
+                    'surface' => 'dark',
+                    'accent_color' => '#12ABCD',
+                ],
+                'is_active' => 1,
+                'translations' => [
+                    'en' => [
+                        'eyebrow' => 'How we work',
+                        'title' => 'We are with you at every step.',
+                        'description' => 'We move the project forward together.',
+                    ],
+                ],
+            ])
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $section = SiteHomepageSection::query()
+            ->where('title', 'Her adımda yanınızdayız.')
+            ->firstOrFail();
+
+        $this->assertSame(4, $section->settings['columns']);
+        $this->assertSame('#12abcd', $section->settings['accent_color']);
+        $this->assertDatabaseHas('site_homepage_section_translations', [
+            'site_homepage_section_id' => $section->id,
+            'locale' => 'en',
+            'title' => 'We are with you at every step.',
+        ]);
+
+        $this->actingAs($user)
+            ->post(route('admin.site.homepage-sections.items.store', $section), [
+                'title' => 'Hızlı Teslim',
+                'description' => 'Net takvim ve düzenli bilgilendirme ile ilerleriz.',
+                'icon' => 'clock',
+                'link_label' => 'Süreci İncele',
+                'link_url' => '/projeler',
+                'is_active' => 1,
+                'translations' => [
+                    'en' => [
+                        'title' => 'On-time delivery',
+                        'description' => 'We work with a clear timeline.',
+                        'link_label' => 'Explore the process',
+                    ],
+                ],
+            ])
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $item = $section->items()->where('title', 'Hızlı Teslim')->firstOrFail();
+        $this->assertDatabaseHas('site_homepage_section_item_translations', [
+            'site_homepage_section_item_id' => $item->id,
+            'locale' => 'en',
+            'title' => 'On-time delivery',
+        ]);
+
+        $resolved = app(HomepageSectionService::class)->resolved('en');
+        $resolvedSection = collect($resolved)->firstWhere('id', $section->id);
+
+        $this->assertSame('We are with you at every step.', $resolvedSection['title']);
+        $this->assertSame('On-time delivery', $resolvedSection['items'][0]['title']);
+        $this->assertSame('/projeler', $resolvedSection['items'][0]['link_url']);
+        $this->assertSame('dark', $resolvedSection['surface']);
+    }
+
+    public function test_homepage_section_manager_rejects_unsafe_links_and_keeps_reordering_scoped(): void
+    {
+        $role = Role::query()->create([
+            'name' => 'Super Admin',
+            'slug' => 'superadmin',
+        ]);
+        $user = User::query()->create([
+            'name' => 'Homepage Security Admin',
+            'email' => 'homepage-security@example.test',
+            'password' => 'password',
+            'is_active' => true,
+        ]);
+        $user->roles()->attach($role);
+
+        $sections = SiteHomepageSection::query()->orderBy('id')->get();
+        $firstSection = $sections->firstOrFail();
+        $secondSection = SiteHomepageSection::query()->create([
+            'type' => 'features',
+            'title' => 'İkinci bölüm',
+            'settings' => [
+                'columns' => 3,
+                'alignment' => 'left',
+                'surface' => 'light',
+                'accent_color' => '#123456',
+            ],
+            'is_active' => true,
+            'sort_order' => 2,
+        ]);
+        $foreignItem = $secondSection->items()->create([
+            'title' => 'Başka bölüm kartı',
+            'description' => 'Bu kart diğer bölüme aittir.',
+            'icon' => 'shield',
+            'is_active' => true,
+            'sort_order' => 1,
+        ]);
+
+        $this->actingAs($user)
+            ->from(route('admin.site.homepage-sections.index'))
+            ->post(route('admin.site.homepage-sections.items.store', $firstSection), [
+                'title' => 'Güvensiz kart',
+                'description' => 'Bu kayıt oluşturulmamalıdır.',
+                'icon' => 'sparkles',
+                'link_label' => 'Tıkla',
+                'link_url' => 'javascript:alert(1)',
+                'is_active' => 1,
+            ])
+            ->assertRedirect(route('admin.site.homepage-sections.index'))
+            ->assertSessionHasErrors('link_url');
+
+        $this->assertDatabaseMissing('site_homepage_section_items', ['title' => 'Güvensiz kart']);
+
+        $firstItem = $firstSection->items()->firstOrFail();
+
+        $this->actingAs($user)
+            ->patchJson(route('admin.site.homepage-sections.items.reorder', $firstSection), [
+                'ids' => [$firstItem->id, $foreignItem->id],
+            ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('ids');
+
+        $this->assertSame(1, $foreignItem->fresh()->sort_order);
     }
 }

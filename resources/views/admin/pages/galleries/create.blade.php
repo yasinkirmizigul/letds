@@ -56,6 +56,16 @@
                         @enderror
                     </div>
 
+                    <label class="flex items-start justify-between gap-4 rounded-2xl border border-border bg-muted/30 p-4">
+                        <span>
+                            <span class="block text-sm font-semibold text-foreground">Site galerisinde yayınla</span>
+                            <span class="mt-1 block text-xs leading-5 text-muted-foreground">Açıldığında bu galeri ve içindeki görseller herkese açık galeri sayfasında görünür.</span>
+                        </span>
+                        <input type="hidden" name="is_public" value="0">
+                        <input type="checkbox" name="is_public" value="1" class="kt-switch" @checked(old('is_public'))>
+                    </label>
+                    @error('is_public')<div class="text-sm text-destructive">{{ $message }}</div>@enderror
+
                     <div class="flex items-center justify-end gap-2">
                         <button type="submit" class="kt-btn kt-btn-primary">
                             <i class="ki-outline ki-check"></i> Kaydet

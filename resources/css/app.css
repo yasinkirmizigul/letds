@@ -377,22 +377,600 @@
    SITE THEME — rafine OKLCH katmanı (yalnızca herkese açık site)
    ========================= */
 body.site-shell {
-    --background: oklch(0.99 0.004 255);
-    --foreground: oklch(0.22 0.035 262);
-    --border: oklch(0.905 0.012 252);
-    --muted: oklch(0.962 0.008 250);
-    --muted-foreground: oklch(0.50 0.03 258);
-    --accent: oklch(0.955 0.02 255);
-    --accent-foreground: oklch(0.30 0.05 260);
-    /* --primary bilinçli olarak override EDİLMEZ: marka mavisi (--bs-primary, #006AE6)
-       hem Tailwind primary utility'lerinde hem .kt-btn-primary'de birebir aynı kalsın diye. */
-
+    --site-coral: #ec6367;
+    --site-coral-deep: #d84d54;
+    --site-ink: #445963;
+    --site-paper: #f6f3ed;
+    --site-mist: #e8efee;
+    --background: #fffdfa;
+    --foreground: #263a43;
+    --border: #dce4e2;
+    --muted: #f0f3f1;
+    --muted-foreground: #687b82;
+    --accent: #e8efee;
+    --accent-foreground: #314a54;
+    --primary: var(--site-coral);
+    --primary-foreground: #ffffff;
+    --bs-primary: var(--site-coral);
+    --bs-primary-active: var(--site-coral-deep);
+    --bs-primary-light: #fff0ef;
+    --bs-primary-rgb: 236, 99, 103;
+    --color-primary: var(--site-coral);
+    --kt-primary: var(--site-coral);
+    --ring: var(--site-coral);
     font-family: 'Schibsted Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
     font-optical-sizing: auto;
+    background:
+        radial-gradient(circle at 8% 4%, rgb(236 99 103 / 10%), transparent 27rem),
+        radial-gradient(circle at 92% 16%, rgb(68 89 99 / 10%), transparent 32rem),
+        var(--site-paper);
+    color: var(--foreground);
 }
 
 body.site-shell .font-display {
     font-family: 'Besley Variable', Georgia, serif;
+}
+
+.dark body.site-shell,
+[data-kt-theme-mode="dark"] body.site-shell {
+    --site-paper: #172329;
+    --site-mist: #223239;
+    --background: #1b292f;
+    --foreground: #eef4f2;
+    --border: #35474e;
+    --muted: #23343b;
+    --muted-foreground: #a7b8bc;
+    --accent: #293c43;
+    --accent-foreground: #f5f8f7;
+    --bs-primary-light: #422b30;
+    background:
+        radial-gradient(circle at 8% 4%, rgb(236 99 103 / 14%), transparent 27rem),
+        radial-gradient(circle at 92% 16%, rgb(137 163 169 / 11%), transparent 32rem),
+        var(--site-paper);
+}
+
+body.site-shell .site-header {
+    border-color: color-mix(in oklab, var(--border) 82%, transparent);
+    background: color-mix(in oklab, var(--background) 88%, transparent) !important;
+    box-shadow: 0 0.75rem 2.5rem rgb(38 58 67 / 5%);
+}
+
+body.site-shell .site-brand-mark {
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0.55rem 1.5rem rgb(216 77 84 / 24%);
+    transform: rotate(-3deg);
+}
+
+body.site-shell .site-brand-mark::after {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(145deg, rgb(255 255 255 / 28%), transparent 52%);
+    content: '';
+}
+
+body.site-shell .site-page {
+    width: min(100% - 2rem, 80rem);
+    margin-inline: auto;
+    padding-block: clamp(2rem, 5vw, 5rem);
+}
+
+body.site-shell .site-page-narrow {
+    width: min(100% - 2rem, 62rem);
+}
+
+body.site-shell .site-page-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: grid;
+    gap: 1.25rem;
+    padding: clamp(2rem, 5vw, 4.5rem);
+    border: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
+    border-radius: clamp(1.75rem, 4vw, 3.5rem);
+    background:
+        linear-gradient(128deg, color-mix(in oklab, var(--background) 94%, transparent), color-mix(in oklab, var(--site-mist) 74%, transparent)),
+        var(--background);
+    box-shadow: 0 2rem 5rem rgb(38 58 67 / 8%);
+}
+
+body.site-shell .site-page-hero::before {
+    position: absolute;
+    z-index: -1;
+    top: -7rem;
+    right: -5rem;
+    width: 19rem;
+    height: 19rem;
+    border: 2.5rem solid color-mix(in oklab, var(--primary) 13%, transparent);
+    border-radius: 42% 58% 63% 37%;
+    content: '';
+    transform: rotate(18deg);
+}
+
+body.site-shell .site-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: fit-content;
+    color: var(--primary);
+    font-size: 0.72rem;
+    font-weight: 750;
+    letter-spacing: 0.17em;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+body.site-shell .site-eyebrow::before {
+    width: 1.75rem;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+    content: '';
+}
+
+body.site-shell .site-title {
+    max-width: 15ch;
+    margin: 0;
+    color: var(--foreground);
+    font-family: 'Besley Variable', Georgia, serif;
+    font-size: clamp(2.25rem, 6vw, 5.25rem);
+    font-weight: 620;
+    letter-spacing: -0.045em;
+    line-height: 0.99;
+}
+
+body.site-shell .site-lead {
+    max-width: 45rem;
+    margin: 0;
+    color: var(--muted-foreground);
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    line-height: 1.75;
+}
+
+body.site-shell .site-section-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+body.site-shell .site-section-title {
+    margin: 0;
+    color: var(--foreground);
+    font-family: 'Besley Variable', Georgia, serif;
+    font-size: clamp(1.7rem, 3vw, 2.55rem);
+    font-weight: 620;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+}
+
+body.site-shell .site-filter-panel {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.25rem;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 1.35rem;
+    background: color-mix(in oklab, var(--background) 94%, transparent);
+    box-shadow: 0 1rem 3rem rgb(38 58 67 / 6%);
+}
+
+body.site-shell .site-search {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    align-items: center;
+}
+
+body.site-shell .site-search svg {
+    position: absolute;
+    z-index: 1;
+    left: 1rem;
+    width: 1.1rem;
+    color: var(--muted-foreground);
+    pointer-events: none;
+}
+
+body.site-shell .site-search input {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.72rem 2.8rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    outline: 0;
+    background: var(--background);
+    color: var(--foreground);
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+body.site-shell .site-search input:focus {
+    border-color: color-mix(in oklab, var(--primary) 72%, var(--border));
+    box-shadow: 0 0 0 0.25rem color-mix(in oklab, var(--primary) 15%, transparent);
+}
+
+body.site-shell .site-search input::placeholder {
+    color: color-mix(in oklab, var(--muted-foreground) 78%, transparent);
+}
+
+body.site-shell .site-filter-chips {
+    display: flex;
+    min-width: 0;
+    gap: 0.55rem;
+    overflow-x: auto;
+    padding-bottom: 0.15rem;
+    scrollbar-width: none;
+}
+
+body.site-shell .site-filter-chips::-webkit-scrollbar,
+body.site-shell .site-member-nav::-webkit-scrollbar {
+    display: none;
+}
+
+body.site-shell .site-chip {
+    display: inline-flex;
+    min-height: 2.35rem;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.5rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--background);
+    color: var(--muted-foreground);
+    font-size: 0.82rem;
+    font-weight: 650;
+    transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+
+body.site-shell .site-chip:hover,
+body.site-shell .site-chip.is-active {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+body.site-shell .site-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1rem, 2.5vw, 1.75rem);
+}
+
+body.site-shell .site-card {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    background: color-mix(in oklab, var(--background) 96%, transparent);
+    box-shadow: 0 1rem 3rem rgb(38 58 67 / 6%);
+    transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+body.site-shell .site-card:hover {
+    border-color: color-mix(in oklab, var(--primary) 42%, var(--border));
+    box-shadow: 0 1.5rem 3.5rem rgb(38 58 67 / 12%);
+    transform: translateY(-0.35rem);
+}
+
+body.site-shell .site-card-media {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    background: linear-gradient(145deg, color-mix(in oklab, var(--site-mist) 88%, var(--background)), var(--background));
+}
+
+body.site-shell .site-card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body.site-shell .site-card:hover .site-card-media img {
+    transform: scale(1.045);
+}
+
+body.site-shell .site-card-placeholder {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: color-mix(in oklab, var(--site-ink) 58%, var(--background));
+}
+
+body.site-shell .site-card-placeholder span {
+    font-family: 'Besley Variable', Georgia, serif;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+}
+
+body.site-shell .site-card-body {
+    display: grid;
+    flex: 1;
+    gap: 0.85rem;
+    padding: 1.25rem;
+}
+
+body.site-shell .site-card-title {
+    margin: 0;
+    color: var(--foreground);
+    font-family: 'Besley Variable', Georgia, serif;
+    font-size: 1.25rem;
+    font-weight: 620;
+    letter-spacing: -0.025em;
+    line-height: 1.25;
+}
+
+body.site-shell .site-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 0.9rem;
+    color: var(--muted-foreground);
+    font-size: 0.78rem;
+}
+
+body.site-shell .site-featured {
+    display: grid;
+    overflow: hidden;
+    grid-template-columns: minmax(0, 1.25fr) minmax(18rem, 0.75fr);
+    border: 1px solid var(--border);
+    border-radius: clamp(1.75rem, 4vw, 3.25rem);
+    background: var(--site-ink);
+    color: #fff;
+    box-shadow: 0 2rem 5rem rgb(38 58 67 / 16%);
+}
+
+body.site-shell .site-featured-media {
+    min-height: 26rem;
+    background: linear-gradient(145deg, #5f7680, #344950);
+}
+
+body.site-shell .site-featured-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+body.site-shell .site-featured-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(2rem, 5vw, 4rem);
+}
+
+body.site-shell .site-prose {
+    color: color-mix(in oklab, var(--foreground) 88%, var(--muted-foreground));
+    font-size: 1.05rem;
+    line-height: 1.85;
+}
+
+body.site-shell .site-prose > * + * {
+    margin-top: 1.35em;
+}
+
+body.site-shell .site-prose :is(h2, h3, h4) {
+    margin-top: 1.8em;
+    color: var(--foreground);
+    font-family: 'Besley Variable', Georgia, serif;
+    font-weight: 620;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+}
+
+body.site-shell .site-prose h2 { font-size: clamp(1.65rem, 3vw, 2.2rem); }
+body.site-shell .site-prose h3 { font-size: clamp(1.35rem, 2.5vw, 1.7rem); }
+body.site-shell .site-prose a { color: var(--primary); text-decoration: underline; text-underline-offset: 0.2em; }
+body.site-shell .site-prose :is(ul, ol) { padding-left: 1.35rem; }
+body.site-shell .site-prose ul { list-style: disc; }
+body.site-shell .site-prose ol { list-style: decimal; }
+body.site-shell .site-prose blockquote {
+    padding: 0.4rem 0 0.4rem 1.25rem;
+    border-left: 0.22rem solid var(--primary);
+    color: var(--muted-foreground);
+    font-family: 'Besley Variable', Georgia, serif;
+    font-size: 1.2rem;
+}
+body.site-shell .site-prose img { max-width: 100%; border-radius: 1.25rem; }
+
+body.site-shell .site-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-auto-flow: dense;
+    gap: 0.75rem;
+}
+
+body.site-shell .site-gallery-item {
+    overflow: hidden;
+    grid-column: span 4;
+    border: 0;
+    border-radius: 1.15rem;
+    background: var(--muted);
+    cursor: zoom-in;
+}
+
+body.site-shell .site-gallery-item:nth-child(7n + 1) { grid-column: span 8; grid-row: span 2; }
+body.site-shell .site-gallery-item:nth-child(7n + 4) { grid-column: span 5; }
+body.site-shell .site-gallery-item img { width: 100%; height: 100%; min-height: 15rem; object-fit: cover; transition: transform 500ms ease; }
+body.site-shell .site-gallery-item:hover img { transform: scale(1.04); }
+
+body.site-shell .site-lightbox {
+    width: min(94vw, 74rem);
+    max-width: none;
+    padding: 0;
+    border: 0;
+    border-radius: 1.5rem;
+    background: #142229;
+    color: #fff;
+    box-shadow: 0 2rem 7rem rgb(0 0 0 / 45%);
+}
+
+body.site-shell .site-lightbox::backdrop {
+    background: rgb(8 16 20 / 82%);
+    backdrop-filter: blur(0.4rem);
+}
+
+body.site-shell .site-lightbox img {
+    display: block;
+    width: 100%;
+    max-height: 78vh;
+    object-fit: contain;
+}
+
+body.site-shell .site-member-nav {
+    display: flex;
+    gap: 0.35rem;
+    overflow-x: auto;
+    padding: 0.35rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--background) 88%, transparent);
+    scrollbar-width: none;
+}
+
+body.site-shell .site-member-nav a {
+    display: inline-flex;
+    min-height: 2.6rem;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 1rem;
+    border-radius: 999px;
+    color: var(--muted-foreground);
+    font-size: 0.82rem;
+    font-weight: 650;
+}
+
+body.site-shell .site-member-nav a:hover,
+body.site-shell .site-member-nav a.is-active {
+    background: var(--foreground);
+    color: var(--background);
+}
+
+body.site-shell .site-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.9rem;
+}
+
+body.site-shell .site-stat {
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 1.25rem;
+    background: color-mix(in oklab, var(--background) 95%, transparent);
+}
+
+body.site-shell .site-stat strong {
+    display: block;
+    margin-top: 0.45rem;
+    color: var(--foreground);
+    font-family: 'Besley Variable', Georgia, serif;
+    font-size: 2rem;
+    line-height: 1;
+}
+
+body.site-shell .site-workflow {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0.5rem;
+}
+
+body.site-shell .site-workflow-step {
+    position: relative;
+    display: grid;
+    gap: 0.55rem;
+    color: var(--muted-foreground);
+    font-size: 0.73rem;
+    font-weight: 650;
+}
+
+body.site-shell .site-workflow-step::before {
+    width: 100%;
+    height: 0.35rem;
+    border-radius: 999px;
+    background: var(--border);
+    content: '';
+}
+
+body.site-shell .site-workflow-step.is-complete::before { background: var(--site-ink); }
+body.site-shell .site-workflow-step.is-current { color: var(--primary); }
+body.site-shell .site-workflow-step.is-current::before { background: var(--primary); box-shadow: 0 0 0 0.25rem color-mix(in oklab, var(--primary) 14%, transparent); }
+
+body.site-shell .site-file-drop {
+    display: grid;
+    place-items: center;
+    min-height: 12rem;
+    padding: 1.5rem;
+    border: 1.5px dashed color-mix(in oklab, var(--primary) 48%, var(--border));
+    border-radius: 1.35rem;
+    background: color-mix(in oklab, var(--primary) 5%, var(--background));
+    text-align: center;
+    cursor: pointer;
+}
+
+body.site-shell .site-file-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    background: var(--background);
+}
+
+body.site-shell .site-file-icon {
+    display: grid;
+    width: 2.65rem;
+    height: 2.65rem;
+    place-items: center;
+    border-radius: 0.8rem;
+    background: color-mix(in oklab, var(--primary) 10%, var(--background));
+    color: var(--primary);
+    font-size: 0.72rem;
+    font-weight: 750;
+}
+
+body.site-shell .site-empty {
+    display: grid;
+    min-height: 18rem;
+    place-items: center;
+    padding: 2.5rem 1.5rem;
+    border: 1px dashed var(--border);
+    border-radius: 1.5rem;
+    background: color-mix(in oklab, var(--background) 82%, transparent);
+    text-align: center;
+}
+
+body.site-shell .site-loading {
+    opacity: 0.52;
+    pointer-events: none;
+}
+
+@media (max-width: 64rem) {
+    body.site-shell .site-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    body.site-shell .site-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    body.site-shell .site-featured { grid-template-columns: 1fr; }
+    body.site-shell .site-featured-media { min-height: 20rem; }
+    body.site-shell .site-gallery-item,
+    body.site-shell .site-gallery-item:nth-child(7n + 1),
+    body.site-shell .site-gallery-item:nth-child(7n + 4) { grid-column: span 6; grid-row: auto; }
+}
+
+@media (max-width: 42rem) {
+    body.site-shell .site-page { width: min(100% - 1.25rem, 80rem); padding-block: 1.75rem 3rem; }
+    body.site-shell .site-page-hero { padding: 1.6rem; border-radius: 1.65rem; }
+    body.site-shell .site-card-grid,
+    body.site-shell .site-stat-grid { grid-template-columns: 1fr; }
+    body.site-shell .site-section-heading { align-items: start; flex-direction: column; }
+    body.site-shell .site-featured { border-radius: 1.65rem; }
+    body.site-shell .site-featured-media { min-height: 16rem; }
+    body.site-shell .site-gallery-item,
+    body.site-shell .site-gallery-item:nth-child(7n + 1),
+    body.site-shell .site-gallery-item:nth-child(7n + 4) { grid-column: 1 / -1; }
+    body.site-shell .site-workflow { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem 0.45rem; }
 }
 
 .site-js body.site-shell [data-reveal] {

@@ -6,6 +6,7 @@
     $homepageSettings = $homepage['settings'] ?? [];
     $homepageTooltipItems = $homepage['tooltips'] ?? [];
     $homepageModes = $homepage['modes'] ?? [];
+    $homepageSections = $homepage['sections'] ?? [];
     $activeMode = collect($homepageModes)->first() ?? [
         'key' => 'analysis',
         'label' => 'İstatistiksel Analiz',
@@ -217,6 +218,12 @@
                 <span class="icon-drag" aria-hidden="true"></span>
             </button>
         </section>
+
+        @foreach($homepageSections as $section)
+            @if(($section['type'] ?? null) === 'features')
+                @include('site.home-sections.features', ['section' => $section])
+            @endif
+        @endforeach
     </main>
 
     <script defer src="{{ $homeJsUrl }}"></script>

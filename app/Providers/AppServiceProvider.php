@@ -65,6 +65,16 @@ class AppServiceProvider extends ServiceProvider
         });
 
         View::composer('site.*', function ($view) {
+            $request = request();
+            $cacheKey = 'site.shared_view_data';
+            $viewData = $request->attributes->get($cacheKey);
+
+            if (is_array($viewData)) {
+                $view->with($viewData);
+
+                return;
+            }
+
             $settings = SiteSetting::current()->loadMissing('translations');
             $pendingReviewCount = 0;
 
@@ -80,7 +90,7 @@ class AppServiceProvider extends ServiceProvider
                 $pendingReviewCount = 0;
             }
 
-            $view->with([
+            $viewData = [
                 'siteSettings' => $settings,
                 'sitePrimaryNavigation' => NavigationTree::forLocation(SiteNavigationItem::LOCATION_PRIMARY, true),
                 'siteFooterNavigation' => NavigationTree::forLocation(SiteNavigationItem::LOCATION_FOOTER, true),
@@ -88,7 +98,10 @@ class AppServiceProvider extends ServiceProvider
                 'siteCurrentLocale' => SiteLocalization::currentLocale(),
                 'siteCurrentLanguage' => SiteLocalization::currentLanguage(),
                 'memberPendingReviewCount' => $pendingReviewCount,
-            ]);
+            ];
+
+            $request->attributes->set($cacheKey, $viewData);
+            $view->with($viewData);
         });
 
         View::composer([
@@ -110,13 +123,16 @@ class AppServiceProvider extends ServiceProvider
 
         Blade::if('perm', function (string $slug) {
             $u = auth()->user();
+
             return $u && $u->is_active && $u->canAccess($slug);
         });
 
         // FIX: hem @permAny('a','b') hem @permAny(['a','b']) çalışsın
         Blade::if('permAny', function (...$slugs) {
             $u = auth()->user();
-            if (!$u || !$u->is_active) return false;
+            if (! $u || ! $u->is_active) {
+                return false;
+            }
 
             if (count($slugs) === 1 && is_array($slugs[0])) {
                 $slugs = $slugs[0];
@@ -124,13 +140,17 @@ class AppServiceProvider extends ServiceProvider
 
             foreach ($slugs as $slug) {
                 $slug = trim((string) $slug);
-                if ($slug !== '' && $u->canAccess($slug)) return true;
+                if ($slug !== '' && $u->canAccess($slug)) {
+                    return true;
+                }
             }
+
             return false;
         });
 
         Blade::if('admin', function () {
             $u = auth()->user();
+
             return $u && $u->canAccessAdmin();
         });
 

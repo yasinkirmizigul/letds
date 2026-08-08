@@ -4,6 +4,7 @@
     $currentStatus = old('status', $project->status ?? \App\Models\Admin\Project\Project::STATUS_APPOINTMENT_PENDING);
     $currentFeatured = (bool) old('is_featured', (bool) ($project->is_featured ?? false));
     $currentAppointmentId = old('appointment_id', $project->appointment_id ?? '');
+    $currentMemberId = old('member_id', $project->member_id ?? '');
     $selectedCategoryIds = old('category_ids', $selectedCategoryIds ?? []);
     $featuredMediaId = old('featured_media_id', $featuredMediaId ?? null);
     $currentFeaturedUrl = $project?->featuredMediaUrl() ?? $project?->featured_image_url;
@@ -166,6 +167,20 @@
             </div>
             <div class="kt-card-content p-6 grid gap-3">
                 <div class="grid gap-2">
+                    <label class="kt-form-label" for="member_id">Proje üyesi</label>
+                    <select id="member_id" name="member_id" class="kt-select w-full @error('member_id') kt-input-invalid @enderror" data-kt-select="true" data-kt-select-placeholder="Üye seçin">
+                        <option value="">Üye seçilmedi</option>
+                        @foreach($memberOptions ?? [] as $memberOption)
+                            <option value="{{ $memberOption->id }}" @selected((int) $currentMemberId === (int) $memberOption->id)>
+                                {{ $memberOption->full_name }} - {{ $memberOption->email }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <div class="text-xs text-muted-foreground">Üye seçildiğinde proje, ilgili kişinin site hesabındaki “Projelerim” alanında görünür.</div>
+                    @error('member_id')<div class="text-xs text-danger">{{ $message }}</div>@enderror
+                </div>
+
+                <div class="grid gap-2">
                     <label class="kt-form-label" for="appointment_id">Randevu kaydı</label>
                     <input id="appointment_id" name="appointment_id" class="kt-input @error('appointment_id') kt-input-invalid @enderror" value="{{ $currentAppointmentId }}" placeholder="Opsiyonel">
                     @error('appointment_id')<div class="text-xs text-danger">{{ $message }}</div>@enderror
@@ -181,5 +196,28 @@
                 @endif
             </div>
         </div>
+
+        @if($isEdit && $project->files->isNotEmpty())
+            <div class="kt-card overflow-hidden">
+                <div class="kt-card-header py-5">
+                    <div>
+                        <h3 class="kt-card-title">Üye Dosyaları</h3>
+                        <div class="text-sm text-muted-foreground">Üyenin proje çalışma alanından güvenli olarak yüklediği dosyalar.</div>
+                    </div>
+                    <span class="kt-badge kt-badge-sm kt-badge-light-primary">{{ $project->files->count() }} dosya</span>
+                </div>
+                <div class="kt-card-content p-6 grid gap-3">
+                    @foreach($project->files as $file)
+                        <a href="{{ route('admin.projects.files.download', ['project' => $project, 'projectFile' => $file]) }}" class="flex items-center justify-between gap-3 rounded-2xl border border-border px-4 py-3 hover:border-primary/40 hover:bg-primary/5">
+                            <span class="min-w-0">
+                                <span class="block truncate text-sm font-semibold text-foreground">{{ $file->original_name }}</span>
+                                <span class="mt-1 block text-xs text-muted-foreground">{{ $file->member?->full_name ?: 'Üye' }} · {{ $file->sizeLabel() }} · {{ $file->created_at->format('d.m.Y H:i') }}</span>
+                            </span>
+                            <span class="kt-btn kt-btn-sm kt-btn-light shrink-0">İndir</span>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        @endif
     </div>
 </div>

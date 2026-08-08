@@ -7,8 +7,17 @@
     {{-- JS erken işareti: reveal animasyonlarının gizli başlangıç durumu yalnızca JS çalışırken uygulanır (script yüklenmezse içerik görünür kalır) --}}
     <script>document.documentElement.classList.add('site-js');</script>
     <title>{{ ($pageTitle ?? null) ? $pageTitle . ' | ' . ($siteSettings->localized('site_name') ?: config('app.name')) : ($siteSettings->localized('site_name') ?: config('app.name')) }}</title>
+    @if(filled($metaDescription ?? null))
+        <meta name="description" content="{{ $metaDescription }}">
+        <meta property="og:description" content="{{ $metaDescription }}">
+    @endif
+    <meta property="og:title" content="{{ ($pageTitle ?? null) ?: ($siteSettings->localized('site_name') ?: config('app.name')) }}">
+    <meta property="og:type" content="{{ $openGraphType ?? 'website' }}">
+    <meta property="og:url" content="{{ $canonicalUrl ?? request()->url() }}">
+    <link rel="canonical" href="{{ $canonicalUrl ?? request()->url() }}">
     <link rel="icon" type="image/svg+xml" href="{{ asset('assets/site/images/favicon.svg') }}">
 
+    @stack('site_meta')
     @stack('site_vendor_css')
     <script defer src="{{ asset('assets/site/js/core.bundle.js') }}"></script>
     <script defer src="{{ asset('assets/site/vendors/ktui/ktui.min.js') }}"></script>
@@ -19,6 +28,7 @@
 @php
     $siteMember = auth('member')->user();
     $hasActiveMemberSession = $siteMember && $siteMember->is_active && !$siteMember->trashed();
+    $hasFooterNavigation = $siteFooterNavigation->isNotEmpty();
 @endphp
 <div class="min-h-screen">
     @if($siteSettings->under_construction_enabled)
@@ -36,10 +46,10 @@
 
     <a href="#site-main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 kt-btn kt-btn-primary">İçeriğe atla</a>
 
-    <header class="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-xl" x-data="{ mobileOpen: false }">
+    <header class="site-header sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-xl" x-data="{ mobileOpen: false }">
         <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-4 lg:h-[72px] lg:px-6">
             <a href="{{ \App\Support\Site\SiteLocalization::homeUrl($siteCurrentLocale) }}" class="flex items-center gap-3">
-                <span class="inline-flex size-10 items-center justify-center rounded-2xl bg-primary text-sm font-semibold text-white lg:size-12">
+                <span class="site-brand-mark inline-flex size-10 items-center justify-center rounded-2xl bg-primary text-sm font-semibold text-white lg:size-12">
                     {{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($siteSettings->localized('site_name') ?: config('app.name'), 0, 2)) }}
                 </span>
                 <span class="grid">
@@ -48,33 +58,9 @@
                 </span>
             </a>
 
-            <nav class="hidden items-center gap-1 lg:flex">
-                <a href="{{ \App\Support\Site\SiteLocalization::homeUrl($siteCurrentLocale) }}" class="relative px-3 py-2 text-sm font-medium transition-colors {{ request()->routeIs('site.home', 'site.home.localized') ? "text-primary after:absolute after:inset-x-3 after:-bottom-px after:h-0.5 after:rounded-full after:bg-primary after:content-['']" : 'text-muted-foreground hover:text-foreground' }}">
-                    {{ $siteSettings->uiLine('nav_home_label') }}
-                </a>
-
+            <nav class="hidden items-center gap-1 xl:flex" aria-label="Ana menü" data-site-primary-navigation>
                 @foreach($sitePrimaryNavigation as $navItem)
-                    @if($navItem->children->isNotEmpty())
-                        <div x-data="{ open: false }" @click.outside="open = false" class="relative">
-                            <button type="button" @click="open = !open" :aria-expanded="open" aria-haspopup="true" class="relative px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                                {{ $navItem->localized('title') }}
-                            </button>
-                            <div x-show="open" x-cloak x-transition.origin.top class="absolute left-0 top-full z-50 mt-2 min-w-[220px] rounded-2xl border border-border bg-background p-2 shadow-lg">
-                                <a href="{{ $navItem->resolvedUrl($siteCurrentLocale) }}" target="{{ $navItem->target }}" class="block rounded-xl px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/50">
-                                    {{ $navItem->localized('title') }}
-                                </a>
-                                @foreach($navItem->children as $childItem)
-                                    <a href="{{ $childItem->resolvedUrl($siteCurrentLocale) }}" target="{{ $childItem->target }}" class="block rounded-xl px-3 py-2 text-sm text-muted-foreground hover:bg-muted/50 hover:text-foreground">
-                                        {{ $childItem->localized('title') }}
-                                    </a>
-                                @endforeach
-                            </div>
-                        </div>
-                    @else
-                        <a href="{{ $navItem->resolvedUrl($siteCurrentLocale) }}" target="{{ $navItem->target }}" class="relative px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                            {{ $navItem->localized('title') }}
-                        </a>
-                    @endif
+                    @include('site.partials.navigation.desktop-item', ['navItem' => $navItem])
                 @endforeach
             </nav>
 
@@ -94,16 +80,15 @@
                     </div>
                 @endif
 
-                <div class="hidden items-center gap-2 lg:flex">
-                    <a href="{{ route('site.contact-messages.create', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light">
-                        {{ $siteSettings->uiLine('nav_contact_label') }}
-                    </a>
-
+                <div class="hidden items-center gap-2 xl:flex">
                     @if($hasActiveMemberSession)
                         <a href="{{ route('member.account.show', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light">
                             {{ $siteSettings->uiLine('nav_member_account_label') }}
                         </a>
-                        <a href="{{ route('member.reviews.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light">
+                        <a href="{{ route('member.projects.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light">
+                            Projelerim
+                        </a>
+                        <a href="{{ route('member.reviews.index', ['site_locale' => $siteCurrentLocale]) }}" class="hidden kt-btn kt-btn-light 2xl:inline-flex">
                             Değerlendirmeler
                             @if(($memberPendingReviewCount ?? 0) > 0)
                                 <span class="kt-badge kt-badge-sm kt-badge-primary ms-1">{{ $memberPendingReviewCount }}</span>
@@ -127,41 +112,29 @@
                     @endif
                 </div>
 
-                <button type="button" class="relative inline-flex size-10 items-center justify-center rounded-xl text-foreground hover:bg-muted/60 lg:hidden" @click="mobileOpen = !mobileOpen" :aria-expanded="mobileOpen" aria-controls="site-mobile-nav" aria-label="Menü">
+                <button type="button" class="relative inline-flex size-10 items-center justify-center rounded-xl text-foreground hover:bg-muted/60 xl:hidden" @click="mobileOpen = !mobileOpen" :aria-expanded="mobileOpen" aria-controls="site-mobile-nav" aria-label="Menü">
                     <span class="absolute block h-0.5 w-5 rounded-full bg-current transition-transform duration-200" :class="mobileOpen ? '-rotate-45' : '-translate-y-1.5'"></span>
                     <span class="absolute block h-0.5 w-5 rounded-full bg-current transition-all duration-200" :class="mobileOpen ? 'opacity-0' : 'translate-y-1.5'"></span>
                 </button>
             </div>
         </div>
 
-        <div id="site-mobile-nav" x-show="mobileOpen" x-cloak @click.outside="mobileOpen = false" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2" class="border-t border-border bg-background px-4 py-4 lg:hidden">
-            <nav class="grid gap-1">
-                <a href="{{ \App\Support\Site\SiteLocalization::homeUrl($siteCurrentLocale) }}" class="rounded-xl px-3 py-2 text-sm font-medium {{ request()->routeIs('site.home', 'site.home.localized') ? 'text-primary' : 'text-foreground hover:bg-muted/60' }}">
-                    {{ $siteSettings->uiLine('nav_home_label') }}
-                </a>
-
+        <div id="site-mobile-nav" x-show="mobileOpen" x-cloak @click.outside="mobileOpen = false" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2" class="border-t border-border bg-background px-4 py-4 xl:hidden">
+            <nav class="grid gap-1" aria-label="Mobil ana menü" data-site-mobile-navigation>
                 @foreach($sitePrimaryNavigation as $navItem)
-                    <a href="{{ $navItem->resolvedUrl($siteCurrentLocale) }}" target="{{ $navItem->target }}" class="rounded-xl px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/60">
-                        {{ $navItem->localized('title') }}
-                    </a>
-                    @foreach($navItem->children as $childItem)
-                        <a href="{{ $childItem->resolvedUrl($siteCurrentLocale) }}" target="{{ $childItem->target }}" class="rounded-xl px-3 py-2 pl-6 text-sm text-muted-foreground hover:bg-muted/60 hover:text-foreground">
-                            {{ $childItem->localized('title') }}
-                        </a>
-                    @endforeach
+                    @include('site.partials.navigation.mobile-item', ['navItem' => $navItem])
                 @endforeach
             </nav>
 
             <div class="my-4 border-t border-border"></div>
 
             <div class="grid gap-2">
-                <a href="{{ route('site.contact-messages.create', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full justify-center">
-                    {{ $siteSettings->uiLine('nav_contact_label') }}
-                </a>
-
                 @if($hasActiveMemberSession)
                     <a href="{{ route('member.account.show', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full justify-center">
                         {{ $siteSettings->uiLine('nav_member_account_label') }}
+                    </a>
+                    <a href="{{ route('member.projects.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full justify-center">
+                        Projelerim
                     </a>
                     <a href="{{ route('member.reviews.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full justify-center">
                         Değerlendirmelerim{{ ($memberPendingReviewCount ?? 0) > 0 ? ' (' . $memberPendingReviewCount . ')' : '' }}
@@ -191,7 +164,7 @@
     </main>
 
     <footer class="border-t border-border bg-muted/40">
-        <div class="mx-auto grid max-w-7xl gap-10 px-4 py-14 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)] lg:px-6">
+        <div class="mx-auto grid max-w-7xl gap-10 px-4 py-14 {{ $hasFooterNavigation ? 'lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)]' : 'lg:grid-cols-2' }} lg:px-6">
             <div class="grid gap-4">
                 <div class="font-display text-2xl text-foreground">{{ $siteSettings->localized('site_name') ?: config('app.name') }}</div>
                 <div class="max-w-sm text-sm leading-7 text-muted-foreground">
@@ -210,23 +183,16 @@
                 </div>
             </div>
 
-            <div class="grid gap-3">
-                <div class="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{{ $siteSettings->uiLine('footer_navigation_label') }}</div>
-                <div class="grid gap-2">
-                    @forelse($siteFooterNavigation as $navItem)
-                        <a href="{{ $navItem->resolvedUrl($siteCurrentLocale) }}" target="{{ $navItem->target }}" class="text-sm text-muted-foreground hover:text-foreground">
-                            {{ $navItem->localized('title') }}
-                        </a>
-                        @foreach($navItem->children as $childItem)
-                            <a href="{{ $childItem->resolvedUrl($siteCurrentLocale) }}" target="{{ $childItem->target }}" class="pl-4 text-sm text-muted-foreground hover:text-foreground">
-                                {{ $childItem->localized('title') }}
-                            </a>
+            @if($hasFooterNavigation)
+                <div class="grid gap-3" data-site-footer-navigation>
+                    <div class="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{{ $siteSettings->uiLine('footer_navigation_label') }}</div>
+                    <div class="grid gap-2">
+                        @foreach($siteFooterNavigation as $navItem)
+                            @include('site.partials.navigation.footer-item', ['navItem' => $navItem])
                         @endforeach
-                    @empty
-                        <div class="text-sm text-muted-foreground">Alt menü öğesi henüz tanımlanmadı.</div>
-                    @endforelse
+                    </div>
                 </div>
-            </div>
+            @endif
 
             <div class="grid gap-3">
                 <div class="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{{ $siteSettings->uiLine('footer_social_label') }}</div>

@@ -59,6 +59,7 @@ import SiteSlidersCreate from './site/sliders/create';
 import SiteSlidersEdit from './site/sliders/edit';
 import SiteSlidersIndex from './site/sliders/index';
 import SiteHomepageEdit from './site/homepage/edit';
+import SiteHomepageSectionsIndex from './site/homepage-sections/index';
 import EcommerceOrderForm from './ecommerce/orders/form';
 import MenuVisibilityEdit from './menu-visibility/edit';
 import ServiceReviewsIndex from './service-reviews/index';
@@ -131,6 +132,7 @@ export function registerPages() {
     register('site.sliders.create', SiteSlidersCreate);
     register('site.sliders.edit', SiteSlidersEdit);
     register('site.homepage.edit', SiteHomepageEdit);
+    register('site.homepage-sections.index', SiteHomepageSectionsIndex);
 
     register('ecommerce.orders.create', EcommerceOrderForm);
     register('ecommerce.orders.edit', EcommerceOrderForm);
