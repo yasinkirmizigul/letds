@@ -13,6 +13,7 @@ import initFeaturedImageManager from '@/core/featured-image-manager';
 import initCreateFormAccordions from '@/core/create-form-accordion';
 import initAjaxForms from '@/core/ajax-forms';
 import initAdminQuickSearch from '@/core/admin-quick-search';
+import initAdminSidebar from '@/core/admin-sidebar';
 import { initMetronicPickers } from '@/core/metronic-pickers';
 
 window.Swal = Swal;
@@ -35,6 +36,7 @@ initMediaUploadModal();
 initFeaturedImageManager();
 initAjaxForms();
 initAdminQuickSearch();
+initAdminSidebar();
 
 document.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-media-tab]');

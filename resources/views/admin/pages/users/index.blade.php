@@ -6,7 +6,7 @@
         $canViewUserProfiles = (bool) ($authUser?->isSuperAdmin());
     @endphp
 
-    <div class="kt-container-fixed max-w-[90%]"
+    <div class="kt-container-fixed"
          data-page="users.index"
          data-current-user-id="{{ auth()->id() }}">
 
@@ -58,17 +58,17 @@
                         <input
                             id="usersSearch"
                             type="text"
-                            class="kt-input kt-input-sm w-[240px]"
+                            class="kt-input kt-input-sm w-full sm:w-[240px]"
                             placeholder="Ad, e-posta veya rol ara..." />
 
-                        <select id="usersRoleFilter" class="kt-select kt-select-sm w-[180px]" data-kt-select="true">
+                        <select id="usersRoleFilter" class="kt-select kt-select-sm w-full sm:w-[180px]" data-kt-select="true">
                             <option value="all">Tüm roller</option>
                             @foreach($roles as $role)
                                 <option value="{{ $role->slug }}">{{ $role->name }}</option>
                             @endforeach
                         </select>
 
-                        <select id="usersStatusFilter" class="kt-select kt-select-sm w-[160px]" data-kt-select="true">
+                        <select id="usersStatusFilter" class="kt-select kt-select-sm w-full sm:w-[160px]" data-kt-select="true">
                             <option value="all">Tüm durumlar</option>
                             <option value="active">Aktif</option>
                             <option value="inactive">Pasif</option>

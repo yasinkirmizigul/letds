@@ -24,10 +24,10 @@
 
                     <div class="flex flex-wrap items-center gap-3">
                         <input id="trashSearch"
-                               class="kt-input w-[260px]"
+                               class="kt-input w-full sm:w-[260px]"
                                placeholder="Ara..." />
 
-                        <select id="trashType" class="kt-select w-[180px]" data-kt-select="true" data-kt-select-placeholder="Silinen Türü Seç">
+                        <select id="trashType" class="kt-select w-full sm:w-[180px]" data-kt-select="true" data-kt-select-placeholder="Silinen Türü Seç">
                             <option value="all">Tümü</option>
                             <option value="media">Medya</option>
                             <option value="blog">Blog</option>

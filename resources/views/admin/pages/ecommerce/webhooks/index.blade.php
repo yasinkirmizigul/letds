@@ -64,7 +64,7 @@
                             </div>
 
                             @perm('ecommerce_webhooks.update')
-                                <form method="POST" action="{{ route('admin.ecommerce.webhooks.status', $event) }}" class="grid gap-2 min-w-[260px]" data-native-submit="true">
+                                <form method="POST" action="{{ route('admin.ecommerce.webhooks.status', $event) }}" class="grid min-w-0 gap-2 sm:min-w-[260px]" data-native-submit="true">
                                     @csrf
                                     @method('PATCH')
                                     <select name="status" class="kt-select">

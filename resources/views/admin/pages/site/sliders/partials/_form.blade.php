@@ -146,7 +146,7 @@
         ])
 
         <div class="rounded-[28px] app-surface-card overflow-hidden" data-slider-preview-card="true">
-            <div class="relative h-[420px]">
+            <div class="relative h-[300px] sm:h-[360px] lg:h-[420px]">
                 <div class="absolute inset-0 bg-slate-950/40" data-slider-preview-overlay="true"></div>
                 <img
                     src="{{ $imageUrl }}"

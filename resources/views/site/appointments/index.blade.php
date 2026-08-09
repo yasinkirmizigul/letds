@@ -92,7 +92,7 @@
                         <span class="text-sm font-semibold text-foreground">Saat</span>
                     </div>
 
-                    <div class="grid gap-3 lg:grid-cols-[minmax(0,320px),1fr] lg:items-start">
+                    <div class="grid gap-3 lg:grid-cols-[minmax(0,320px)_1fr] lg:items-start">
                         <div>
                             <label class="kt-form-label mb-2">Seçili tarih</label>
                             <div class="kt-input w-full">

@@ -202,7 +202,7 @@
             <div class="rounded-3xl app-stat-card p-5"><div class="text-sm text-muted-foreground">SEO Dosyası</div><div class="mt-2 text-3xl font-semibold text-info">{{ $seoFilesReadyCount }}/3</div></div>
         </div>
 
-        <form method="POST" action="{{ route('admin.site.settings.update') }}" class="grid gap-6" data-native-submit="true">
+        <form method="POST" action="{{ route('admin.site.settings.update') }}" enctype="multipart/form-data" class="grid gap-6" data-native-submit="true">
             @csrf
             @method('PUT')
 
@@ -490,6 +490,62 @@
                 </div>
 
                 <div class="grid gap-6 self-start xl:sticky xl:top-6" data-site-settings-card-stack="true">
+                    @if(auth()->user()?->isSuperAdmin())
+                        @php
+                            $adminLoginLogo = $settings->adminLoginLogo;
+                        @endphp
+                        <div class="kt-card" data-admin-login-branding>
+                            <div class="kt-card-header py-5">
+                                <div>
+                                    <h3 class="kt-card-title">Yönetim Giriş Markası</h3>
+                                    <div class="text-sm text-muted-foreground">Dashboard giriş ekranında gösterilecek logoyu yalnızca Super Admin yönetebilir.</div>
+                                </div>
+                                <span class="kt-badge kt-badge-light-primary">Super Admin</span>
+                            </div>
+
+                            <div class="kt-card-content grid gap-4 p-6">
+                                <div class="grid min-h-32 place-items-center overflow-hidden rounded-3xl border border-dashed border-border bg-[linear-gradient(135deg,var(--background),color-mix(in_oklab,var(--primary)_8%,var(--background)))] p-5">
+                                    <img
+                                        src="{{ $adminLoginLogo?->url() ?? '' }}"
+                                        alt="Yönetim giriş logosu önizlemesi"
+                                        class="{{ $adminLoginLogo ? '' : 'hidden' }} max-h-20 max-w-full object-contain"
+                                        data-admin-login-logo-preview
+                                    >
+                                    <div class="{{ $adminLoginLogo ? 'hidden' : '' }} text-center" data-admin-login-logo-placeholder>
+                                        <span class="mx-auto grid size-12 place-items-center rounded-2xl bg-primary-light text-primary">
+                                            <i class="ki-filled ki-picture text-2xl"></i>
+                                        </span>
+                                        <div class="mt-3 text-sm font-medium text-foreground">Henüz özel logo seçilmedi</div>
+                                        <div class="mt-1 text-xs text-muted-foreground">Site adı tipografik marka olarak gösterilir.</div>
+                                    </div>
+                                </div>
+
+                                <div class="grid gap-2">
+                                    <label for="admin_login_logo" class="kt-form-label">Logo Dosyası</label>
+                                    <input
+                                        id="admin_login_logo"
+                                        name="admin_login_logo"
+                                        type="file"
+                                        accept="image/png,image/jpeg,image/webp"
+                                        class="kt-input h-auto py-2"
+                                        data-admin-login-logo-input
+                                    >
+                                    <div class="text-xs leading-5 text-muted-foreground">Şeffaf PNG önerilir. JPG, PNG veya WebP; en fazla 4 MB.</div>
+                                    @error('admin_login_logo')
+                                        <div class="text-xs text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <input type="hidden" name="clear_admin_login_logo" value="0" data-admin-login-logo-clear-flag>
+
+                                <button type="button" class="kt-btn kt-btn-light-danger w-full {{ $adminLoginLogo ? '' : 'hidden' }}" data-admin-login-logo-clear>
+                                    <i class="ki-filled ki-trash"></i>
+                                    Logoyu Kaldır
+                                </button>
+                            </div>
+                        </div>
+                    @endif
+
                     <div class="kt-card">
                         <div class="kt-card-header py-5">
                             <div>

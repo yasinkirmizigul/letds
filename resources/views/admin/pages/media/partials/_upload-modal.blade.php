@@ -1,5 +1,5 @@
 <div class="kt-modal kt-modal-center" id="mediaUploadModal" data-kt-modal="true" data-media-bulk-delete-url="{{ route('admin.media.bulkDestroy') }}">
-    <div class="kt-modal-content max-w-[60%]" style="max-height: 97vh">
+    <div class="kt-modal-content admin-media-modal w-[calc(100vw-1rem)] max-w-6xl sm:w-[calc(100vw-2rem)]">
         <div class="kt-modal-header">
             <h3 class="kt-modal-title">Medya</h3>
             <button class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost" data-kt-modal-dismiss="true">
@@ -7,7 +7,7 @@
             </button>
         </div>
 
-        <div class="kt-modal-body overflow-hidden p-7">
+        <div class="kt-modal-body min-h-0 overflow-y-auto p-4 sm:p-7">
             {{-- Tabs --}}
             <div class="border-b border-b-border px-6 py-4">
                 <div class="flex items-center gap-2">

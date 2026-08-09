@@ -2,9 +2,11 @@
 
 namespace App\Models\Site;
 
+use App\Models\Admin\Media\Media;
 use App\Models\Concerns\HasSiteLocaleTranslations;
 use App\Support\Site\SiteLocalization;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SiteSetting extends Model
@@ -14,6 +16,7 @@ class SiteSetting extends Model
     protected $fillable = [
         'site_name',
         'site_tagline',
+        'admin_login_logo_media_id',
         'hero_notice',
         'contact_email',
         'contact_phone',
@@ -101,6 +104,11 @@ class SiteSetting extends Model
         return $this->hasMany(SiteSettingTranslation::class)->orderBy('locale');
     }
 
+    public function adminLoginLogo(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'admin_login_logo_media_id');
+    }
+
     public function localized(string $field, ?string $locale = null, mixed $fallback = null): mixed
     {
         return $this->localizedValue($field, $locale, $fallback);
@@ -112,7 +120,7 @@ class SiteSetting extends Model
         $fallbacks = config('site_ui_labels', []);
         $default = (string) ($fallbacks[$key]['default'] ?? $key);
 
-        if (!SiteLocalization::isDefault($locale)) {
+        if (! SiteLocalization::isDefault($locale)) {
             $translation = $this->translationFor($locale);
             $translated = is_array($translation?->ui_lines) ? ($translation->ui_lines[$key] ?? null) : null;
 

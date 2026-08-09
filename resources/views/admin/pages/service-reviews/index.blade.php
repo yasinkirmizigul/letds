@@ -122,7 +122,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div class="grid gap-2">
                         <label class="kt-form-label">Başlangıç</label>
                         <input type="date" name="date_from" value="{{ $filters['date_from'] }}" class="kt-input">

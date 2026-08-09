@@ -5,7 +5,7 @@
         @includeIf('admin.partials._flash')
 
         <section class="app-shell-surface rounded-[28px] p-6 lg:p-7">
-            <div class="grid gap-6 xl:grid-cols-[1.12fr,.88fr] xl:items-start">
+            <div class="grid gap-6 xl:grid-cols-[1.12fr_.88fr] xl:items-start">
                 <div>
                     <div class="dashboard-kicker">Randevu takvimi</div>
                     <h1 class="mt-4 text-2xl font-semibold tracking-tight text-foreground lg:text-3xl">
@@ -31,8 +31,8 @@
                         </span>
                     </div>
 
-                    <div class="mt-6 grid gap-4 lg:grid-cols-[minmax(0,320px),1fr] lg:items-end">
-                        <div class="flex flex-col gap-2 min-w-[280px]">
+                    <div class="mt-6 grid gap-4 lg:grid-cols-[minmax(0,320px)_1fr] lg:items-end">
+                        <div class="flex min-w-0 flex-col gap-2 sm:min-w-[280px]">
                             <label class="kt-form-label mb-1 text-foreground">Kişi</label>
                             <select
                                 id="providerSelect"
@@ -124,8 +124,8 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-12 gap-6 items-start">
-            <div class="col-span-12 2xl:col-span-8">
+        <div class="grid grid-cols-1 gap-6 items-start lg:grid-cols-12">
+            <div class="lg:col-span-12 2xl:col-span-8">
                 <div class="kt-card appointment-calendar-shell border border-border bg-background shadow-sm app-surface-card rounded-2xl">
                     <div class="kt-card-header py-5 flex-wrap gap-4">
                         <div>
@@ -137,12 +137,12 @@
                         <span class="kt-badge kt-badge-sm kt-badge-light" id="calendarSurfaceHint">Takvim hazırlanıyor</span>
                     </div>
                     <div class="kt-card-body p-0">
-                        <div id="appointmentsCalendar" class="min-h-[720px]"></div>
+                    <div id="appointmentsCalendar" class="min-h-[520px] lg:min-h-[720px]"></div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-span-12 2xl:col-span-4">
+            <div class="lg:col-span-12 2xl:col-span-4">
                 <div class="grid gap-6">
                     <div class="kt-card app-surface-card rounded-2xl">
                         <div class="kt-card-header border-b border-border px-5 py-4">
@@ -171,7 +171,7 @@
                                     <div class="mt-2 text-xs text-muted-foreground" id="pProvider">-</div>
                                 </div>
 
-                                <div class="grid grid-cols-2 gap-4">
+                                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                     <div class="space-y-1">
                                         <div class="text-xs text-muted-foreground">Zaman</div>
                                         <div class="text-sm font-medium leading-6 text-foreground" id="pWhen">-</div>
@@ -243,11 +243,11 @@
             </div>
         </div>
 
-        <div id="blockModal" class="hidden fixed inset-0 z-[9999]">
+        <div id="blockModal" class="hidden fixed inset-0 z-[9999]" data-admin-dialog>
             <div class="absolute inset-0 bg-black/70" data-block-modal-close></div>
 
-            <div class="absolute inset-0 flex items-center justify-center p-4">
-                <div class="w-full max-w-lg rounded-2xl border border-border bg-background text-foreground shadow-2xl">
+            <div class="absolute inset-0 flex items-center justify-center p-2 sm:p-4">
+                <div class="flex max-h-[calc(100dvh-1rem)] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-border bg-background text-foreground shadow-2xl" data-admin-dialog-panel>
                     <div class="flex items-center justify-between border-b border-border px-5 py-4">
                         <h3 class="text-base font-semibold text-foreground" id="blockModalTitle">
                             Takvim blokajı
@@ -255,7 +255,7 @@
                         <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-block-modal-close>Kapat</button>
                     </div>
 
-                    <div class="p-5 flex flex-col gap-4">
+                    <div class="flex min-h-0 flex-col gap-4 overflow-y-auto p-4 sm:p-5" data-admin-dialog-body>
                         <input type="hidden" id="blockEntityId">
                         <input type="hidden" id="blockStartAt">
                         <input type="hidden" id="blockEndAt">
@@ -286,7 +286,7 @@
                         </div>
                     </div>
 
-                    <div class="flex justify-end gap-2 border-t border-border px-5 py-4">
+                    <div class="flex flex-wrap justify-end gap-2 border-t border-border px-4 py-3 sm:px-5 sm:py-4" data-admin-dialog-footer>
                         <button type="button" class="kt-btn kt-btn-light" data-block-modal-close>Vazgeç</button>
                         <button type="button" class="kt-btn kt-btn-primary" id="btnSaveBlock">
                             <span class="btn-text">Kaydet</span>
@@ -296,11 +296,11 @@
             </div>
         </div>
 
-        <div id="appointmentModal" class="hidden fixed inset-0 z-[9998]">
+        <div id="appointmentModal" class="hidden fixed inset-0 z-[9998]" data-admin-dialog>
             <div class="absolute inset-0 bg-black/70" data-appointment-modal-close></div>
 
-            <div class="absolute inset-0 flex items-center justify-center p-4">
-                <div class="w-full max-w-2xl rounded-2xl border border-border bg-background text-foreground shadow-2xl">
+            <div class="absolute inset-0 flex items-center justify-center p-2 sm:p-4">
+                <div class="flex max-h-[calc(100dvh-1rem)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-border bg-background text-foreground shadow-2xl" data-admin-dialog-panel>
                     <div class="flex items-center justify-between border-b border-border px-5 py-4">
                         <h3 class="text-base font-semibold text-foreground" id="appointmentModalTitle">
                             Randevu detayı
@@ -308,7 +308,7 @@
                         <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-appointment-modal-close>Kapat</button>
                     </div>
 
-                    <div class="grid grid-cols-1 gap-4 p-5 lg:grid-cols-2">
+                    <div class="grid min-h-0 grid-cols-1 gap-4 overflow-y-auto p-4 sm:p-5 lg:grid-cols-2" data-admin-dialog-body>
                         <input type="hidden" id="appointmentEntityId">
 
                         <div>
@@ -373,7 +373,7 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-between gap-3 border-t border-border px-5 py-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-t border-border px-4 py-3 sm:px-5 sm:py-4" data-admin-dialog-footer>
                         <div class="flex flex-wrap items-center gap-2">
                             <button type="button" class="kt-btn kt-btn-danger" id="btnAppointmentCancel">
                                 Randevuyu iptal et

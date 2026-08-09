@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Site\SiteSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -12,8 +13,12 @@ class AuthController extends Controller
 {
     public function showLogin()
     {
+        $siteSettings = SiteSetting::current()->loadMissing('adminLoginLogo');
+
         return view('admin.pages.auth.index', [
             'pageTitle' => 'Giris Yap',
+            'siteSettings' => $siteSettings,
+            'adminLoginLogo' => $siteSettings->adminLoginLogo,
         ]);
     }
 
@@ -30,7 +35,7 @@ class AuthController extends Controller
         $email = Str::lower(trim((string) $validated['email']));
         $remember = (bool) ($validated['remember'] ?? false);
 
-        if (!auth()->attempt(
+        if (! auth()->attempt(
             ['email' => $email, 'password' => $validated['password']],
             $remember
         )) {
@@ -43,7 +48,7 @@ class AuthController extends Controller
 
         $user = auth()->user();
 
-        if (!$user || !method_exists($user, 'canAccessBackoffice') || !$user->canAccessBackoffice()) {
+        if (! $user || ! method_exists($user, 'canAccessBackoffice') || ! $user->canAccessBackoffice()) {
             auth()->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
@@ -74,7 +79,7 @@ class AuthController extends Controller
     {
         $key = $this->throttleKey($request);
 
-        if (!RateLimiter::tooManyAttempts($key, 5)) {
+        if (! RateLimiter::tooManyAttempts($key, 5)) {
             return;
         }
 
@@ -89,6 +94,6 @@ class AuthController extends Controller
     {
         $email = Str::lower(trim((string) $request->input('email', '')));
 
-        return 'admin-login:' . sha1($email . '|' . $request->ip());
+        return 'admin-login:'.sha1($email.'|'.$request->ip());
     }
 }

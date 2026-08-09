@@ -125,16 +125,13 @@ function makeNativeChart(element, draw) {
 
 function chartShell() {
     return htmlElement('div', {
-        class: 'd-flex flex-column gap-4 w-100 h-100',
-        style: {
-            minHeight: 'inherit',
-        },
+        class: 'dashboard-chart-shell',
     });
 }
 
 function legend(items) {
     const container = htmlElement('div', {
-        class: 'd-flex flex-wrap align-items-center gap-3',
+        class: 'dashboard-chart-legend',
     });
 
     items.forEach((item) => {
@@ -149,7 +146,7 @@ function legend(items) {
             },
         });
         const label = htmlElement('span', {
-            class: 'd-inline-flex align-items-center gap-2 fs-8 fw-semibold',
+            class: 'dashboard-chart-legend__item',
             style: {
                 color: cssVar('--muted-foreground', '#6b7280'),
             },
@@ -164,12 +161,18 @@ function legend(items) {
 
 function emptyState(height = 240) {
     return htmlElement('div', {
-        class: 'd-flex align-items-center justify-content-center rounded-3 border border-dashed',
+        class: 'dashboard-chart-empty',
         style: {
             minHeight: `${height}px`,
             color: cssVar('--muted-foreground', '#6b7280'),
         },
     }, 'Veri bulunamadı');
+}
+
+function chartWidth(element, fallback, minimum = 320) {
+    const measuredWidth = Math.floor(element.getBoundingClientRect().width || element.clientWidth || fallback);
+
+    return Math.max(minimum, measuredWidth);
 }
 
 function normalizeSeries(series) {
@@ -261,14 +264,21 @@ function createMonthlyChart(element, payload) {
         }
 
         const shell = chartShell();
-        const dimensions = { width: 720, height: 320, left: 54, right: 28, top: 24, bottom: 42 };
+        const dimensions = {
+            width: chartWidth(target, 720, 560),
+            height: 320,
+            left: 54,
+            right: 28,
+            top: 24,
+            bottom: 42,
+        };
         const maxValue = Math.max(1, ...series.flatMap((item) => item.data));
         const svg = svgElement('svg', {
             viewBox: `0 0 ${dimensions.width} ${dimensions.height}`,
             role: 'img',
             'aria-label': 'Aylık aktivite grafiği',
             preserveAspectRatio: 'xMidYMid meet',
-            style: 'width:100%;height:100%;min-height:285px;display:block;',
+            style: 'width:100%;height:320px;display:block;',
         });
         const muted = cssVar('--muted-foreground', '#6b7280');
         const labelInterval = Math.max(1, Math.ceil(labels.length / 8));
@@ -386,14 +396,15 @@ function createActionChart(element, payload) {
         const foreground = cssVar('--foreground', '#111827');
         const muted = cssVar('--muted-foreground', '#6b7280');
         const track = isDarkMode() ? 'rgba(255,255,255,.08)' : 'rgba(15,23,42,.08)';
+        const width = chartWidth(target, 320);
         const svg = svgElement('svg', {
-            viewBox: '0 0 320 240',
+            viewBox: `0 0 ${width} 240`,
             role: 'img',
             'aria-label': 'Odak işleri dağılımı',
             preserveAspectRatio: 'xMidYMid meet',
-            style: 'width:100%;height:220px;display:block;',
+            style: 'width:100%;height:240px;display:block;',
         });
-        const cx = 160;
+        const cx = width / 2;
         const cy = 108;
         const radius = 76;
         const strokeWidth = 22;
@@ -480,14 +491,21 @@ function createScheduleChart(element, payload) {
         }
 
         const shell = chartShell();
-        const dimensions = { width: 640, height: 220, left: 44, right: 22, top: 18, bottom: 38 };
+        const dimensions = {
+            width: chartWidth(target, 640, 480),
+            height: 220,
+            left: 44,
+            right: 22,
+            top: 18,
+            bottom: 38,
+        };
         const maxValue = Math.max(1, ...values);
         const svg = svgElement('svg', {
             viewBox: `0 0 ${dimensions.width} ${dimensions.height}`,
             role: 'img',
             'aria-label': 'Randevu yoğunluğu grafiği',
             preserveAspectRatio: 'xMidYMid meet',
-            style: 'width:100%;height:100%;min-height:200px;display:block;',
+            style: 'width:100%;height:220px;display:block;',
         });
         const muted = cssVar('--muted-foreground', '#6b7280');
         const primary = cssVar('--color-primary', '#3e97ff');
@@ -580,8 +598,21 @@ export default function init(ctx) {
         attributeFilter: ['class', 'data-kt-theme-mode'],
     });
 
+    let observedWidth = Math.round(root.getBoundingClientRect().width);
+    const resizeObserver = typeof ResizeObserver === 'function'
+        ? new ResizeObserver((entries) => {
+            const nextWidth = Math.round(entries[0]?.contentRect?.width || 0);
+            if (!nextWidth || Math.abs(nextWidth - observedWidth) < 2) return;
+
+            observedWidth = nextWidth;
+            scheduleRender();
+        })
+        : null;
+    resizeObserver?.observe(root);
+
     ctx.cleanup(() => {
         observer.disconnect();
+        resizeObserver?.disconnect();
 
         if (rerenderFrame) {
             cancelAnimationFrame(rerenderFrame);

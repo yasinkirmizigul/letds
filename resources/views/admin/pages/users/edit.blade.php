@@ -1,16 +1,16 @@
 @extends('admin.layouts.main.app')
 
 @section('content')
-    <div class="px-4 lg:px-6" data-page="users.edit">
+    <div data-page="users.edit">
         @include('admin.partials._flash')
 
-        <div class="flex items-center justify-between mb-4">
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
             <h1 class="text-lg font-semibold">Kullanıcı Düzenle</h1>
             <a class="kt-btn kt-btn-light" href="{{ route('admin.users.index') }}">Geri</a>
         </div>
 
         <div class="kt-card max-w-2xl">
-            <form class="kt-card-content flex flex-col gap-5 p-8" method="POST"
+            <form class="kt-card-content flex flex-col gap-5 p-4 sm:p-6 lg:p-8" method="POST"
                   action="{{ route('admin.users.update', $user) }}">
                 @csrf @method('PUT')
 
@@ -44,7 +44,7 @@
                 @php $selected = old('roles', $user->roles->pluck('id')->all()); @endphp
                 <div class="flex flex-col gap-2">
                     <div class="kt-form-label font-normal text-mono">Roller</div>
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         @foreach($roles as $role)
                             <label class="kt-label">
                                 <input class="kt-checkbox kt-checkbox-sm" type="checkbox" name="roles[]"
@@ -55,7 +55,7 @@
                     </div>
                 </div>
 
-                <div class="flex gap-2">
+                <div class="flex flex-wrap gap-2">
                     <button class="kt-btn kt-btn-primary" type="submit">Güncelle</button>
                     <a class="kt-btn kt-btn-light" href="{{ route('admin.users.index') }}">İptal</a>
                 </div>

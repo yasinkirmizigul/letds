@@ -7,7 +7,7 @@
     @stack('admin_css')
 </head>
 
-<body class="antialiased flex h-full text-base text-foreground bg-background dash_app kt-sidebar-fixed kt-header-fixed">
+<body class="antialiased flex h-full min-w-0 overflow-x-clip text-base text-foreground bg-background dash_app kt-sidebar-fixed kt-header-fixed">
 <div id="app-lock" class="app-lock" aria-hidden="true">
     <div class="app-lock__panel kt-card">
         <div class="flex items-center gap-3">
@@ -26,16 +26,16 @@
 {{-- Tema modu init --}}
 @include('admin.partials.theme-toggle')
 
-<div class="flex grow">
+<div class="flex min-w-0 w-full grow">
     @include('admin.layouts.main.sidebar')
 
-    <div class="kt-wrapper flex grow flex-col">
+    <div class="kt-wrapper flex min-w-0 w-full grow flex-col">
         @include('admin.layouts.main.header')
 
-        <main class="grow pt-5" id="content" role="content">
+        <main class="min-w-0 grow pt-4 sm:pt-5" id="content" role="content">
             @hasSection('page_title')
-                <div class="px-6 mb-4 flex items-center justify-between">
-                    <div>
+                <div class="admin-page-titlebar mb-4 flex flex-col gap-3 px-3 sm:flex-row sm:items-center sm:justify-between sm:px-4 lg:px-6">
+                    <div class="min-w-0">
                         <h1 class="text-lg font-semibold">@yield('page_title')</h1>
                         @hasSection('page_desc')
                             <div class="text-sm opacity-70 mt-1">@yield('page_desc')</div>
@@ -43,12 +43,12 @@
                     </div>
 
                     @hasSection('page_actions')
-                        <div>@yield('page_actions')</div>
+                        <div class="admin-page-actions">@yield('page_actions')</div>
                     @endif
                 </div>
             @endif
 
-            <div class="px-6">
+            <div class="admin-content-shell px-3 sm:px-4 lg:px-6">
                 @yield('content')
             </div>
         </main>

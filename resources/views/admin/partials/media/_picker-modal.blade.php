@@ -3,7 +3,7 @@
      id="mediaPickerModal"
      data-kt-modal="true">
 
-    <div class="kt-modal-content max-w-[60%]" style="max-height: 97vh">
+    <div class="kt-modal-content admin-media-modal w-[calc(100vw-1rem)] max-w-6xl sm:w-[calc(100vw-2rem)]">
         <div class="kt-modal-header">
             <h3 class="kt-modal-title">Medya Seç</h3>
 
@@ -12,12 +12,12 @@
             </button>
         </div>
 
-        <div class="kt-modal-body overflow-hidden p-7">
+        <div class="kt-modal-body min-h-0 overflow-y-auto p-4 sm:p-7">
             <div class="grid gap-4">
 
                 <div class="flex flex-col md:flex-row md:items-center gap-3">
                     <div class="grow">
-                        <div class="flex flex-row kt-input-icon">
+                        <div class="kt-input-icon flex flex-row">
                             <i class="items-center ki-magnifier ki-outline me-2"></i>
                             <input
                                 id="mediaPickerSearch"

@@ -51,7 +51,7 @@
                     </div>
 
                     <div class="flex items-center gap-2 ms-auto flex-wrap">
-                        <input id="mediaSearch" class="kt-input w-[220px]" placeholder="Ara..." />
+                        <input id="mediaSearch" class="kt-input w-full sm:w-[220px]" placeholder="Ara..." />
 
                         <select id="mediaType" class="kt-select"
                                 data-kt-select="true"
@@ -63,7 +63,7 @@
                             <option value="pdf">PDF</option>
                         </select>
 
-                        <select id="mediaPerPage" class="kt-select w-[96px]" data-kt-select="true">
+                        <select id="mediaPerPage" class="kt-select w-full sm:w-[96px]" data-kt-select="true">
                             <option value="12">12</option>
                             <option value="24" selected>24</option>
                             <option value="48">48</option>

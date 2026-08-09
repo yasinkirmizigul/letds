@@ -68,7 +68,7 @@
                         <input
                             id="categoriesSearch"
                             type="text"
-                            class="kt-input kt-input-sm w-[240px]"
+                            class="kt-input kt-input-sm w-full sm:w-[240px]"
                             placeholder="Kategori adı veya kısa bağlantı ara..." />
 
                         <a href="{{ route('admin.categories.index') }}"

@@ -43,7 +43,7 @@
                     </div>
 
                     <div class="kt-card-content p-6">
-                        <div class="grid gap-6 xl:grid-cols-[minmax(0,.95fr),minmax(0,1.05fr)]">
+                        <div class="grid gap-6 xl:grid-cols-[minmax(0,.95fr)_minmax(0,1.05fr)]">
                             <section class="grid gap-3">
                                 <div>
                                     <h4 class="text-base font-semibold text-foreground">Ana blok sırası</h4>

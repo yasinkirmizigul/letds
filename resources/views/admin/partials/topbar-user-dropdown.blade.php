@@ -28,61 +28,67 @@
              src="{{ $avatarUrl }}" />
     </div>
 
-    <div class="kt-dropdown-menu w-[250px]" data-kt-dropdown-menu="true">
-        <div class="flex items-center justify-between gap-1.5 px-2.5 py-1.5">
-            <div class="flex items-center gap-2">
-                <img alt="{{ $displayName }}"
-                     class="size-9 shrink-0 rounded-full border-2 border-green-500"
-                     src="{{ $avatarUrl }}" />
-                <div class="flex flex-col gap-1.5">
-                    <span class="text-sm font-semibold leading-none text-foreground">
-                        {{ $displayName }}
-                    </span>
-                    @if($email)
-                        <a class="hover:text-primary text-xs font-medium leading-none text-secondary-foreground"
-                           href="mailto:{{ $email }}">
-                            {{ $email }}
-                        </a>
-                    @endif
-                </div>
+    <div class="kt-dropdown-menu admin-user-menu w-[290px] max-w-[calc(100vw-1rem)]" data-kt-dropdown-menu="true" data-admin-user-menu>
+        <div class="admin-user-menu__identity">
+            <img alt="{{ $displayName }}"
+                 class="admin-user-menu__avatar"
+                 src="{{ $avatarUrl }}" />
+            <div class="admin-user-menu__identity-copy">
+                <strong>{{ $displayName }}</strong>
+                @if($email)
+                    <a href="mailto:{{ $email }}">{{ $email }}</a>
+                @endif
             </div>
 
-            <span class="kt-badge kt-badge-sm kt-badge-primary kt-badge-outline">
+            <span class="kt-badge kt-badge-sm kt-badge-primary kt-badge-outline admin-user-menu__badge">
                 {{ $badgeText }}
             </span>
         </div>
 
-        <ul class="kt-dropdown-menu-sub">
-            <li><div class="kt-dropdown-menu-separator"></div></li>
-
-            <li>
-                <a class="kt-dropdown-menu-link" href="{{ route('admin.profile.index') }}">
-                    <i class="ki-filled ki-profile-circle"></i>
-                    Profilim
-                </a>
-            </li>
-
-            <li><div class="kt-dropdown-menu-separator"></div></li>
-        </ul>
-
-        <div class="mb-2.5 flex flex-col gap-3.5 px-2.5 pt-1.5">
-            <div class="flex items-center justify-between gap-2">
-                <span class="flex items-center gap-2">
-                    <i class="ki-filled ki-moon text-base text-muted-foreground"></i>
-                    <span class="text-2sm font-medium">Koyu Mod</span>
+        <div class="admin-user-menu__actions">
+            <a class="admin-user-menu__row" href="{{ route('admin.profile.index') }}">
+                <span class="admin-user-menu__icon"><i class="ki-filled ki-profile-circle"></i></span>
+                <span class="admin-user-menu__copy">
+                    <strong>Profilim</strong>
+                    <small>Hesap bilgilerini yönet</small>
                 </span>
-                <input class="kt-switch"
+                <i class="ki-filled ki-right admin-user-menu__chevron"></i>
+            </a>
+
+            <label class="admin-user-menu__row admin-user-theme-control" for="admin_user_theme_switch" data-admin-user-theme-control>
+                <span class="admin-user-theme-control__content admin-user-theme-control__light">
+                    <span class="admin-user-menu__icon admin-user-theme-control__icon"><i class="ki-filled ki-moon"></i></span>
+                    <span class="admin-user-menu__copy">
+                        <strong>Koyu moda geç</strong>
+                        <small>Göz yormayan koyu görünüm</small>
+                    </span>
+                </span>
+                <span class="admin-user-theme-control__content admin-user-theme-control__dark">
+                    <span class="admin-user-menu__icon admin-user-theme-control__icon"><i class="ki-filled ki-sun"></i></span>
+                    <span class="admin-user-menu__copy">
+                        <strong>Açık moda geç</strong>
+                        <small>Aydınlık panel görünümü</small>
+                    </span>
+                </span>
+                <input id="admin_user_theme_switch"
+                       class="kt-switch admin-user-theme-switch"
                        data-kt-theme-switch-state="dark"
                        data-kt-theme-switch-toggle="true"
-                       name="check"
+                       name="theme_mode"
                        type="checkbox"
+                       aria-label="Açık ve koyu tema arasında geçiş yap"
                        value="1" />
-            </div>
+            </label>
 
-            <form method="POST" action="{{ route('logout') }}">
+            <form method="POST" action="{{ route('logout') }}" class="admin-user-menu__form">
                 @csrf
-                <button type="submit" class="kt-btn kt-btn-outline w-full justify-center">
-                    Çıkış
+                <button type="submit" class="admin-user-menu__row admin-user-menu__logout">
+                    <span class="admin-user-menu__icon"><i class="ki-filled ki-exit-right"></i></span>
+                    <span class="admin-user-menu__copy">
+                        <strong>Güvenli çıkış</strong>
+                        <small>Oturumu sonlandır</small>
+                    </span>
+                    <i class="ki-filled ki-right admin-user-menu__chevron"></i>
                 </button>
             </form>
         </div>

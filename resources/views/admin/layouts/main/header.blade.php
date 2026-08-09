@@ -2,9 +2,9 @@
 <header class="kt-header fixed end-0 start-0 top-0 z-10 flex shrink-0 items-stretch bg-background" data-kt-sticky="true"
     data-kt-sticky-class="border-b border-border" data-kt-sticky-name="header" id="header">
     <!-- Container -->
-    <div class="flex items-center justify-between kt-container-fixed gap-3 max-w-[90%]" id="headerContainer">
+    <div class="admin-header-container kt-container-fixed flex w-full max-w-none items-center justify-between gap-2 px-3 sm:gap-3 sm:px-4 lg:px-6" id="headerContainer">
         <!-- Mobile Logo -->
-        <div class="-ms-1 flex items-center gap-2.5 lg:hidden">
+        <div class="-ms-1 flex shrink-0 items-center gap-2.5 lg:hidden">
             {{--<a class="shrink-0" href="#">
                 <img class="max-h-[25px] w-full" src="{{ asset('assets/admin/media/app/mini-logo.svg') }}" />
             </a>--}}
@@ -15,7 +15,7 @@
                 </button>
             </div>
         </div>
-        <div class="flex min-w-0 flex-1 items-center justify-center px-2 lg:justify-start lg:px-4">
+        <div class="flex min-w-0 flex-1 items-center justify-center px-1 sm:px-2 lg:justify-start lg:px-4">
             <button
                 type="button"
                 class="admin-quick-search-trigger"
@@ -31,7 +31,7 @@
         </div>
 
         <!-- Topbar -->
-        <div class="flex shrink-0 items-center gap-2.5">
+        <div class="admin-topbar flex shrink-0 items-center gap-1 sm:gap-2.5">
             @includeIf('admin.partials.topbar-notifications')
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

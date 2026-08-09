@@ -7,7 +7,8 @@
                 <h3 class="kt-card-title">Silinen Kategoriler</h3>
             </div>
 
-            <div class="kt-card-body">
+            <div class="kt-card-content p-0">
+                <div class="kt-scrollable-x-auto overflow-y-hidden">
                 <table id="categories_trash_table"
                        class="kt-table w-full"
                        data-ajax="{{ route('admin.categories.trash.list') }}">
@@ -21,6 +22,7 @@
                     </tr>
                     </thead>
                 </table>
+                </div>
             </div>
         </div>
     </div>

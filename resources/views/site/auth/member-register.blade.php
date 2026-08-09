@@ -232,22 +232,22 @@
         </div>
     </div>
 
-    <div class="fixed inset-0 z-[120] hidden bg-foreground/60 px-4 py-6" data-membership-terms-modal>
-        <div class="mx-auto flex h-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-border bg-background shadow-2xl">
-            <div class="flex items-start justify-between gap-4 border-b border-border px-6 py-5">
+    <div class="fixed inset-0 z-[120] hidden bg-foreground/60 p-2 sm:px-4 sm:py-6" data-membership-terms-modal>
+        <div class="mx-auto flex h-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-2xl sm:rounded-3xl">
+            <div class="flex items-start justify-between gap-3 border-b border-border px-4 py-4 sm:gap-4 sm:px-6 sm:py-5">
                 <div>
                     <div class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Üyelik Bilgilendirmesi</div>
-                    <h3 class="mt-2 font-display text-2xl font-semibold text-foreground">{{ $membershipTermsTitle }}</h3>
+                    <h3 class="mt-2 font-display text-xl font-semibold text-foreground sm:text-2xl">{{ $membershipTermsTitle }}</h3>
                     <div class="mt-2 text-sm text-muted-foreground">{{ $membershipTermsSummary }}</div>
                 </div>
                 <button type="button" class="kt-btn kt-btn-light" data-membership-terms-close>Kapat</button>
             </div>
 
-            <div class="flex-1 overflow-y-auto px-6 py-6 text-sm leading-8 text-muted-foreground" data-membership-terms-scrollable>
+            <div class="min-h-0 flex-1 overflow-y-auto px-4 py-5 text-sm leading-7 text-muted-foreground sm:px-6 sm:py-6 sm:leading-8" data-membership-terms-scrollable>
                 {!! nl2br(e($membershipTermsContent)) !!}
             </div>
 
-            <div class="flex flex-wrap items-center justify-between gap-3 border-t border-border px-6 py-5">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-t border-border px-4 py-4 sm:px-6 sm:py-5">
                 <div class="text-sm text-muted-foreground" data-membership-terms-modal-status>
                     Metnin sonuna ulaştığınızda kabul kutusu aktifleşir.
                 </div>

@@ -29,6 +29,9 @@
             class="kt-btn kt-btn-outline kt-btn-icon absolute start-full top-2/4 size-[30px] -translate-x-2/4 -translate-y-2/4 rtl:translate-x-2/4"
             data-kt-toggle="body"
             data-kt-toggle-class="kt-sidebar-collapse"
+            aria-controls="sidebar"
+            aria-label="Yan menüyü daralt veya genişlet"
+            title="Yan menüyü daralt veya genişlet"
             id="sidebar_toggle">
             <i class="ki-filled ki-black-left-line kt-toggle-active:rotate-180 rtl:translate rtl:kt-toggle-active:rotate-0 transition-all duration-300 rtl:rotate-180"></i>
         </button>

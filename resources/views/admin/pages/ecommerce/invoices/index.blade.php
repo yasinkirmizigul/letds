@@ -62,7 +62,7 @@
                                     <form method="POST" action="{{ route('admin.ecommerce.invoices.status', $invoice) }}" class="flex items-center gap-2" data-native-submit="true">
                                         @csrf
                                         @method('PATCH')
-                                        <select name="status" class="kt-select w-[140px]">
+                                        <select name="status" class="kt-select w-full sm:w-[140px]">
                                             @foreach($statusOptions as $statusKey => $statusLabel)
                                                 <option value="{{ $statusKey }}" @selected($invoice->status === $statusKey)>{{ $statusLabel }}</option>
                                             @endforeach

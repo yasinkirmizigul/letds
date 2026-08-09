@@ -25,7 +25,7 @@
             </section>
         @else
             <section class="app-shell-surface rounded-[28px] p-6 lg:p-7">
-                <div class="grid gap-6 xl:grid-cols-[1.15fr,.85fr] xl:items-start">
+                <div class="grid gap-6 xl:grid-cols-[1.15fr_.85fr] xl:items-start">
                     <div>
                         <div class="dashboard-kicker">Randevu operasyonu</div>
                         <h1 class="mt-4 text-2xl font-semibold tracking-tight text-foreground lg:text-3xl">
@@ -86,7 +86,7 @@
                 </div>
             </section>
 
-            <div class="grid gap-5 2xl:grid-cols-[1.15fr,.85fr]">
+            <div class="grid gap-5 2xl:grid-cols-[1.15fr_.85fr]">
                 <div class="grid gap-5" data-appointment-settings-stack="true">
                     <section class="kt-card" data-form-accordion-skip="true">
                         <div class="kt-card-header py-5 flex-wrap gap-4">
@@ -111,7 +111,7 @@
                         </div>
 
                         <div class="kt-card-content p-5">
-                            <div class="grid gap-4 xl:grid-cols-[minmax(0,300px),1fr] xl:items-start">
+                            <div class="grid gap-4 xl:grid-cols-[minmax(0,300px)_1fr] xl:items-start">
                                 <div class="space-y-3">
                                     <label class="kt-form-label">Kişi seçimi</label>
                                     <select id="settingsProviderSelect" class="kt-select w-full" data-kt-select="true" data-kt-select-placeholder="Kişi seç">
@@ -383,7 +383,7 @@
                         </div>
 
                         <div class="kt-card-content p-5">
-                            <div class="grid gap-3 md:grid-cols-[1fr,170px,auto] md:items-end">
+                            <div class="grid gap-3 md:grid-cols-[1fr_170px_auto] md:items-end">
                                 <div>
                                     <label class="kt-form-label mb-2">Tarih</label>
                                     <div class="kt-input w-full">

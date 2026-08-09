@@ -10,6 +10,7 @@ use App\Models\Site\SiteFaq;
 use App\Models\Site\SiteNavigationItem;
 use App\Models\Site\SitePage;
 use App\Models\Site\SiteSetting;
+use App\Services\Admin\Media\MediaService;
 use App\Services\Mail\SiteMailConfigurator;
 use App\Services\Site\SeoFileGenerator;
 use App\Services\Site\SiteTranslationSyncService;
@@ -29,7 +30,7 @@ class SiteSettingsController extends Controller
     public function edit(SeoFileGenerator $seoFileGenerator): View
     {
         return view('admin.pages.site.settings.edit', [
-            'settings' => SiteSetting::current()->loadMissing('translations'),
+            'settings' => SiteSetting::current()->loadMissing(['translations', 'adminLoginLogo']),
             'seoFileStatus' => $seoFileGenerator->status(),
             'stats' => [
                 'pages' => SitePage::query()->count(),
@@ -41,14 +42,19 @@ class SiteSettingsController extends Controller
         ]);
     }
 
-    public function update(Request $request, SeoFileGenerator $seoFileGenerator): RedirectResponse
-    {
+    public function update(
+        Request $request,
+        SeoFileGenerator $seoFileGenerator,
+        MediaService $mediaService,
+    ): RedirectResponse {
         $isSeoDraft = $request->input('submit_action') === 'generate_seo_draft';
 
         $validated = $request->validate([
             'submit_action' => ['nullable', 'string', 'in:save,generate_seo_draft,save_generate_seo'],
             'site_name' => ['nullable', 'string', 'max:255'],
             'site_tagline' => ['nullable', 'string', 'max:255'],
+            'admin_login_logo' => ['nullable', 'file', 'max:4096', 'mimes:jpg,jpeg,png,webp'],
+            'clear_admin_login_logo' => ['nullable', 'boolean'],
             'hero_notice' => ['nullable', 'string', 'max:500'],
             'contact_email' => ['nullable', 'email', 'max:255'],
             'contact_phone' => ['nullable', 'string', 'max:80'],
@@ -108,6 +114,12 @@ class SiteSettingsController extends Controller
         ]);
 
         $settings = SiteSetting::current();
+        $brandingChangeRequested = $request->hasFile('admin_login_logo')
+            || $request->boolean('clear_admin_login_logo');
+
+        if ($brandingChangeRequested && ! $request->user()?->isSuperAdmin()) {
+            abort(403, 'Yönetim giriş logosunu yalnızca Super Admin değiştirebilir.');
+        }
 
         $settingsPayload = [
             'site_name' => $validated['site_name'] ?? null,
@@ -166,6 +178,17 @@ class SiteSettingsController extends Controller
                 ->with('success', 'Otomatik SEO içerikleri hazırlandı. İçerikleri düzenleyip dosyaları oluşturabilirsiniz.');
         }
 
+        if ($request->hasFile('admin_login_logo')) {
+            $logo = $mediaService->store($request->file('admin_login_logo'), [
+                'dir' => 'admin/login-branding',
+                'title' => 'Yönetim paneli giriş logosu',
+                'alt' => trim((string) (($validated['site_name'] ?? $settings->site_name) ?: config('app.name'))),
+            ]);
+            $settingsPayload['admin_login_logo_media_id'] = $logo->id;
+        } elseif ($request->boolean('clear_admin_login_logo')) {
+            $settingsPayload['admin_login_logo_media_id'] = null;
+        }
+
         $settings->update($settingsPayload);
 
         if ($request->boolean('smtp_password_clear')) {
@@ -210,7 +233,7 @@ class SiteSettingsController extends Controller
 
             return redirect()
                 ->route('admin.site.settings.edit')
-                ->with('success', 'Site ayarları güncellendi; sitemap.xml, robots.txt ve llms.txt oluşturuldu. Sitemap URL sayısı: ' . $result['entries']);
+                ->with('success', 'Site ayarları güncellendi; sitemap.xml, robots.txt ve llms.txt oluşturuldu. Sitemap URL sayısı: '.$result['entries']);
         }
 
         return redirect()
@@ -226,7 +249,7 @@ class SiteSettingsController extends Controller
 
         $settings = SiteSetting::current();
 
-        if (!$mailConfigurator->apply($settings)) {
+        if (! $mailConfigurator->apply($settings)) {
             return back()
                 ->withInput()
                 ->with('error', 'Test e-postası için SMTP host, port ve gönderen adresini kaydedin.');

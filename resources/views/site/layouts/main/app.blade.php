@@ -47,13 +47,13 @@
     <a href="#site-main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 kt-btn kt-btn-primary">İçeriğe atla</a>
 
     <header class="site-header sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-xl" x-data="{ mobileOpen: false }">
-        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-4 lg:h-[72px] lg:px-6">
-            <a href="{{ \App\Support\Site\SiteLocalization::homeUrl($siteCurrentLocale) }}" class="flex items-center gap-3">
-                <span class="site-brand-mark inline-flex size-10 items-center justify-center rounded-2xl bg-primary text-sm font-semibold text-white lg:size-12">
+        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-3 sm:gap-4 sm:px-4 lg:h-[72px] lg:px-6">
+            <a href="{{ \App\Support\Site\SiteLocalization::homeUrl($siteCurrentLocale) }}" class="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3 xl:flex-none">
+                <span class="site-brand-mark inline-flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary text-sm font-semibold text-white lg:size-12">
                     {{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($siteSettings->localized('site_name') ?: config('app.name'), 0, 2)) }}
                 </span>
-                <span class="grid">
-                    <span class="text-base font-semibold text-foreground">{{ $siteSettings->localized('site_name') ?: config('app.name') }}</span>
+                <span class="grid min-w-0">
+                    <span class="truncate text-sm font-semibold text-foreground sm:text-base">{{ $siteSettings->localized('site_name') ?: config('app.name') }}</span>
                     <span class="hidden text-sm text-muted-foreground lg:block">{{ $siteSettings->localized('site_tagline') ?: 'Dijital vitrin ve içerik yönetimi' }}</span>
                 </span>
             </a>
@@ -64,10 +64,10 @@
                 @endforeach
             </nav>
 
-            <div class="flex items-center gap-2">
+            <div class="flex shrink-0 items-center gap-1.5 sm:gap-2">
                 @if($siteLanguages->count() > 1)
                     <div x-data="{ open: false }" @click.outside="open = false" class="relative">
-                        <button type="button" @click="open = !open" :aria-expanded="open" aria-haspopup="true" class="kt-btn kt-btn-light">
+                        <button type="button" @click="open = !open" :aria-expanded="open" aria-haspopup="true" class="site-language-trigger kt-btn kt-btn-light">
                             {{ $siteCurrentLanguage?->native_name ?: strtoupper($siteCurrentLocale) }}
                         </button>
                         <div x-show="open" x-cloak x-transition.origin.top class="absolute right-0 top-full z-50 mt-2 min-w-[180px] rounded-2xl border border-border bg-background p-2 shadow-lg">
@@ -119,7 +119,7 @@
             </div>
         </div>
 
-        <div id="site-mobile-nav" x-show="mobileOpen" x-cloak @click.outside="mobileOpen = false" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2" class="border-t border-border bg-background px-4 py-4 xl:hidden">
+        <div id="site-mobile-nav" x-show="mobileOpen" x-cloak @click.outside="mobileOpen = false" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2" class="site-mobile-nav border-t border-border bg-background px-3 py-4 sm:px-4 xl:hidden">
             <nav class="grid gap-1" aria-label="Mobil ana menü" data-site-mobile-navigation>
                 @foreach($sitePrimaryNavigation as $navItem)
                     @include('site.partials.navigation.mobile-item', ['navItem' => $navItem])
@@ -172,7 +172,7 @@
                 </div>
                 <div class="grid gap-2 text-sm text-muted-foreground">
                     @if($siteSettings->contact_email)
-                        <a href="mailto:{{ $siteSettings->contact_email }}" class="hover:text-foreground">{{ $siteSettings->contact_email }}</a>
+                        <a href="mailto:{{ $siteSettings->contact_email }}" class="break-all hover:text-foreground">{{ $siteSettings->contact_email }}</a>
                     @endif
                     @if($siteSettings->contact_phone)
                         <a href="tel:{{ $siteSettings->contact_phone }}" class="hover:text-foreground">{{ $siteSettings->contact_phone }}</a>

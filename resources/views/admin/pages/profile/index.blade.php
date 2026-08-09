@@ -112,6 +112,7 @@
                             <h3 class="kt-card-title">Hakkında</h3>
                         </div>
                         <div class="kt-card-content pt-4 pb-3">
+                            <div class="kt-scrollable-x-auto overflow-y-hidden">
                             <table class="kt-table table-auto kt-table-border w-full">
                                 <tbody>
                                 <tr>
@@ -154,6 +155,7 @@
                                 </tr>
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
 
@@ -203,7 +205,7 @@
                 </div>
             </div>
 
-            <div class="col-span-2">
+            <div class="xl:col-span-2">
                 <div class="flex flex-col gap-5 lg:gap-7.5">
                     <div class="kt-card">
                         <div class="kt-card-content px-7 py-6 lg:px-10 lg:py-7.5">

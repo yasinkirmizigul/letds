@@ -142,4 +142,42 @@ export default function init(ctx = {}) {
 
     wrapTopLevelCards(page);
     wrapLocalizedSections(page);
+
+    const branding = page.querySelector('[data-admin-login-branding]');
+    const input = branding?.querySelector('[data-admin-login-logo-input]');
+    const preview = branding?.querySelector('[data-admin-login-logo-preview]');
+    const placeholder = branding?.querySelector('[data-admin-login-logo-placeholder]');
+    const clearButton = branding?.querySelector('[data-admin-login-logo-clear]');
+    const clearFlag = branding?.querySelector('[data-admin-login-logo-clear-flag]');
+    let objectUrl = null;
+
+    const syncPreview = (hasImage) => {
+        preview?.classList.toggle('hidden', !hasImage);
+        placeholder?.classList.toggle('hidden', hasImage);
+        clearButton?.classList.toggle('hidden', !hasImage);
+    };
+
+    input?.addEventListener('change', () => {
+        const file = input.files?.[0];
+        if (!file || !preview) return;
+
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+        objectUrl = URL.createObjectURL(file);
+        preview.src = objectUrl;
+        if (clearFlag) clearFlag.value = '0';
+        syncPreview(true);
+    }, { signal: ctx.signal });
+
+    clearButton?.addEventListener('click', () => {
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+        objectUrl = null;
+        if (input) input.value = '';
+        if (preview) preview.src = '';
+        if (clearFlag) clearFlag.value = '1';
+        syncPreview(false);
+    }, { signal: ctx.signal });
+
+    ctx.cleanup?.(() => {
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+    });
 }

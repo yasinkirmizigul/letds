@@ -7,7 +7,7 @@
     @include('admin.layouts.partials.head')
     @stack('app_css')
 </head>
-<body class="antialiased flex h-full text-base text-foreground bg-background app kt-sidebar-fixed kt-header-fixed">
+<body class="admin-auth-body antialiased flex min-h-full text-base text-foreground bg-background app">
 {{-- Tema modu init --}}
 @include('admin.partials.theme-toggle')
 {{-- Page layout --}}

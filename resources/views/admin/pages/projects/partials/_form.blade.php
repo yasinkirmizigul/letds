@@ -187,7 +187,7 @@
                 </div>
 
                 @if($isEdit)
-                    <div class="grid grid-cols-2 gap-3 text-sm">
+                    <div class="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
                         <div class="rounded-2xl app-surface-card px-4 py-3">Kayıt No: #{{ $project->id }}</div>
                         <div class="rounded-2xl app-surface-card px-4 py-3">Öne çıkma: {{ $project->featured_at?->format('d.m.Y H:i') ?: 'Yok' }}</div>
                         <div class="rounded-2xl app-surface-card px-4 py-3">Oluşturulma: {{ $project->created_at?->format('d.m.Y H:i') ?: '-' }}</div>

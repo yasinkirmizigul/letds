@@ -12,6 +12,7 @@
         $showMonthlyChart = $dashboardSectionVisibility['chart_monthly_activity'] ?? false;
         $showActionChart = $dashboardSectionVisibility['chart_action_breakdown'] ?? false;
         $showScheduleChart = ($dashboardSectionVisibility['chart_schedule_flow'] ?? false) && $canAppointments;
+        $showSecondaryCharts = $showActionChart || $showScheduleChart;
         $showOperationsHealth = ($dashboardSectionVisibility['operations_health'] ?? false) && $visibleHealthCards->isNotEmpty();
         $showCommerceFlow = ($dashboardSectionVisibility['commerce_flow'] ?? false) && $canEcommerce;
         $showRiskCenter = ($dashboardSectionVisibility['risk_center'] ?? false) && $visibleRiskGroups->isNotEmpty();
@@ -75,7 +76,7 @@
                     <div class="dashboard-hero__orb dashboard-hero__orb--secondary"></div>
 
                     <div class="kt-card-content p-6 lg:p-8">
-                        <div class="grid gap-6 {{ $showHeroFocusList ? 'xl:grid-cols-[1.25fr,.75fr]' : '' }} xl:items-start">
+                        <div class="grid gap-6 {{ $showHeroFocusList ? 'xl:grid-cols-[1.25fr_.75fr]' : '' }} xl:items-start">
                             <div class="relative z-[1]">
                                 <div class="dashboard-kicker">Yönetim merkezi</div>
                                 <h2 class="mt-3 text-2xl font-semibold tracking-tight text-foreground lg:text-3xl">
@@ -278,7 +279,7 @@
                     </div>
 
                     <div class="kt-card-content p-5">
-                        <div class="grid gap-5 xl:grid-cols-[.85fr,1.15fr]">
+                        <div class="grid gap-5 xl:grid-cols-[.85fr_1.15fr]">
                             <div class="grid gap-3">
                                 @foreach($commercePipeline as $item)
                                     <a href="{{ route('admin.ecommerce.orders.index') }}" class="dashboard-list-item">
@@ -319,7 +320,7 @@
             @endif
 
             @if(($dashboardSectionVisibility['activity_charts'] ?? false) && ($showMonthlyChart || $showActionChart || $showScheduleChart))
-                <div class="grid gap-5 xl:grid-cols-[1.35fr,.65fr]" style="order: {{ $dashboardSectionOrderIndex['activity_charts'] ?? 50 }};">
+                <div class="grid gap-5 {{ $showMonthlyChart && $showSecondaryCharts ? 'xl:grid-cols-[1.35fr_.65fr]' : '' }}" style="order: {{ $dashboardSectionOrderIndex['activity_charts'] ?? 50 }};">
                     @if($showMonthlyChart)
                         <section class="kt-card">
                             <div class="kt-card-header py-5 flex-wrap gap-4">
@@ -336,7 +337,8 @@
                         </section>
                     @endif
 
-                    <div class="grid gap-5">
+                    @if($showSecondaryCharts)
+                        <div class="grid gap-5">
                         @if($showActionChart)
                             <section class="kt-card">
                                 <div class="kt-card-header py-5 flex-wrap gap-4">
@@ -368,7 +370,8 @@
                                 </div>
                             </section>
                         @endif
-                    </div>
+                        </div>
+                    @endif
                 </div>
             @endif
 

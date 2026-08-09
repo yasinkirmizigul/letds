@@ -47,7 +47,7 @@
                         <div class="text-sm text-muted-foreground">Ürün bazında varyant ekleyin ve stok seviyelerini izleyin.</div>
                     </div>
                     <form method="GET" class="flex items-center gap-2">
-                        <input name="q" value="{{ $search }}" class="kt-input w-[260px]" placeholder="Ürün, SKU veya marka ara">
+                        <input name="q" value="{{ $search }}" class="kt-input w-full sm:w-[260px]" placeholder="Ürün, SKU veya marka ara">
                         <button class="kt-btn kt-btn-light" type="submit">Ara</button>
                     </form>
                 </div>
@@ -74,13 +74,13 @@
                                     @csrf
                                     <input type="hidden" name="target_type" value="product">
                                     <input type="hidden" name="target_id" value="{{ $product->id }}">
-                                    <select name="type" class="kt-select w-[140px]">
+                                    <select name="type" class="kt-select w-full sm:w-[140px]">
                                         @foreach($movementTypeOptions as $typeKey => $typeLabel)
                                             <option value="{{ $typeKey }}">{{ $typeLabel }}</option>
                                         @endforeach
                                     </select>
-                                    <input name="quantity" type="number" step="0.001" min="0.001" class="kt-input w-[110px]" placeholder="Adet">
-                                    <input name="reason" class="kt-input w-[160px]" placeholder="Neden">
+                                    <input name="quantity" type="number" step="0.001" min="0.001" class="kt-input w-full sm:w-[110px]" placeholder="Adet">
+                                    <input name="reason" class="kt-input w-full sm:w-[160px]" placeholder="Neden">
                                     <button class="kt-btn kt-btn-primary" type="submit">Hareket</button>
                                 </form>
                             </div>
@@ -99,12 +99,12 @@
                                                 @csrf
                                                 <input type="hidden" name="target_type" value="variant">
                                                 <input type="hidden" name="target_id" value="{{ $variant->id }}">
-                                                <select name="type" class="kt-select w-[130px]">
+                                                <select name="type" class="kt-select w-full sm:w-[130px]">
                                                     @foreach($movementTypeOptions as $typeKey => $typeLabel)
                                                         <option value="{{ $typeKey }}">{{ $typeLabel }}</option>
                                                     @endforeach
                                                 </select>
-                                                <input name="quantity" type="number" step="0.001" min="0.001" class="kt-input w-[110px]" placeholder="Adet">
+                                                <input name="quantity" type="number" step="0.001" min="0.001" class="kt-input w-full sm:w-[110px]" placeholder="Adet">
                                                 <button class="kt-btn kt-btn-sm kt-btn-light-primary" type="submit">İşle</button>
                                             </form>
                                         </div>
