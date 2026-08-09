@@ -18076,6 +18076,22 @@
       "_origin": "ast"
     },
     {
+      "id": "package_allowscripts",
+      "label": "allowScripts",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L31",
+      "_origin": "ast"
+    },
+    {
+      "id": "package_allowscripts_core_js_pure",
+      "label": "core-js-pure",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L32",
+      "_origin": "ast"
+    },
+    {
       "id": "public_index",
       "label": "index.php",
       "file_type": "code",
@@ -80631,6 +80647,24 @@
       "source_location": "L29",
       "weight": 1.0,
       "context": "import"
+    },
+    {
+      "source": "package",
+      "target": "package_allowscripts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "package_allowscripts",
+      "target": "package_allowscripts_core_js_pure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L32",
+      "weight": 1.0
     },
     {
       "source": "public_index",

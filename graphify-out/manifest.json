@@ -835,8 +835,8 @@
     "semantic_hash": "d18593472c5e35d8ab5add4240fc95f6"
   },
   "composer.json": {
-    "mtime": 1785743596.6661437,
-    "ast_hash": "b362c4d1601fd0d492551a795ab3efbb",
+    "mtime": 1786294631.4235513,
+    "ast_hash": "7faecfc8f81dca99bd709091dc2cad7f",
     "semantic_hash": ""
   },
   "config/admin-module-generator.php": {
@@ -1280,8 +1280,8 @@
     "semantic_hash": "4573a4f40545d372cd5b0aaee2dec1cf"
   },
   "package.json": {
-    "mtime": 1785743596.6671479,
-    "ast_hash": "6c9088bfb576d57e3aceb0512eca032d",
+    "mtime": 1786295233.0823703,
+    "ast_hash": "d2e7b9becf7be12d6cfef35dd3f09dbf",
     "semantic_hash": ""
   },
   "public/index.php": {
