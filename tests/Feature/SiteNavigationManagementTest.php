@@ -27,6 +27,11 @@ class SiteNavigationManagementTest extends TestCase
             'title' => 'İletişim',
             'route_name' => 'site.contact-messages.create',
         ]);
+        $this->assertDatabaseHas('site_navigation_items', [
+            'location' => SiteNavigationItem::LOCATION_PRIMARY,
+            'title' => 'Sıkça Sorulan Sorular',
+            'route_name' => 'site.faqs.index',
+        ]);
     }
 
     public function test_public_header_mobile_menu_and_footer_use_only_panel_items(): void
@@ -109,7 +114,8 @@ class SiteNavigationManagementTest extends TestCase
             ->get(route('admin.site.navigation.index'))
             ->assertOk()
             ->assertSee('Sistem Sayfası')
-            ->assertSee('site.blog.index', false);
+            ->assertSee('site.blog.index', false)
+            ->assertSee('site.faqs.index', false);
 
         $this->actingAs($user)
             ->post(route('admin.site.navigation.store'), [

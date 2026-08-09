@@ -224,6 +224,8 @@
                 @include('site.home-sections.features', ['section' => $section])
             @endif
         @endforeach
+
+        @include('site.home-sections.about-faq')
     </main>
 
     <script defer src="{{ $homeJsUrl }}"></script>

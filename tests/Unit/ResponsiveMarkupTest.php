@@ -77,6 +77,24 @@ class ResponsiveMarkupTest extends TestCase
         }
     }
 
+    public function test_grid_cards_and_accordions_keep_their_natural_height(): void
+    {
+        $css = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
+        $homeCss = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'home.css');
+
+        $this->assertStringContainsString(
+            '.grid > :is(.kt-card, .app-surface-card, details)',
+            $css,
+            'Grid cards and accordions must opt in to equal-height stretching.'
+        );
+        $this->assertStringContainsString('block-size: fit-content;', $css);
+        $this->assertMatchesRegularExpression(
+            '/\.home-discovery-layout\s*\{[^}]*align-items:\s*start;/s',
+            $homeCss,
+            'The homepage About and FAQ panels must keep independent heights.'
+        );
+    }
+
     private function frontendSourceFiles(): array
     {
         $files = [];

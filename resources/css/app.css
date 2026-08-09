@@ -4515,6 +4515,19 @@ body.dash_app .kt-wrapper {
     min-width: 0;
 }
 
+/* Grid siblings keep their own content height unless equal height is explicitly requested. */
+:where(body.dash_app, body.site-shell) .grid > :is(.kt-card, .app-surface-card, details),
+.form-section-accordion {
+    align-self: start;
+    block-size: fit-content;
+    min-height: 0;
+}
+
+:where(body.dash_app, body.site-shell) .grid[data-equal-height="true"] > :is(.kt-card, .app-surface-card, details) {
+    align-self: stretch;
+    block-size: auto;
+}
+
 .admin-content-shell :is(input, select, textarea) {
     max-width: 100%;
 }

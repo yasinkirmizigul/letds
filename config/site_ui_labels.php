@@ -91,6 +91,12 @@ return [
         'placeholder' => 'Yönetim panelinden eklediğin global SSS kayıtları burada otomatik olarak görünür.',
         'default' => 'Yönetim panelinden eklediğin global SSS kayıtları burada otomatik olarak görünür.',
     ],
+    'home_faq_cta_label' => [
+        'group' => 'home',
+        'label' => 'Tüm SSS butonu',
+        'placeholder' => 'Tüm Soruları İncele',
+        'default' => 'Tüm Soruları İncele',
+    ],
     'home_contact_kicker' => [
         'group' => 'home',
         'label' => 'İletişim kicker',
@@ -150,5 +156,53 @@ return [
         'label' => 'Sayfa SSS başlığı',
         'placeholder' => 'Sayfa ile ilgili hızlı cevaplar',
         'default' => 'Sayfa ile ilgili hızlı cevaplar',
+    ],
+    'faq_page_kicker' => [
+        'group' => 'faq',
+        'label' => 'SSS sayfası üst başlığı',
+        'placeholder' => 'Bilgi Merkezi',
+        'default' => 'Bilgi Merkezi',
+    ],
+    'faq_page_heading' => [
+        'group' => 'faq',
+        'label' => 'SSS sayfası başlığı',
+        'placeholder' => 'Merak ettiklerinize net cevaplar',
+        'default' => 'Merak ettiklerinize net cevaplar',
+    ],
+    'faq_page_description' => [
+        'group' => 'faq',
+        'label' => 'SSS sayfası açıklaması',
+        'placeholder' => 'Hizmetler, çalışma süreci ve proje adımları hakkında sık sorulan soruları tek yerde inceleyin.',
+        'default' => 'Hizmetler, çalışma süreci ve proje adımları hakkında sık sorulan soruları tek yerde inceleyin.',
+    ],
+    'faq_search_placeholder' => [
+        'group' => 'faq',
+        'label' => 'SSS arama alanı',
+        'placeholder' => 'Sorularda ve yanıtlarda ara...',
+        'default' => 'Sorularda ve yanıtlarda ara...',
+    ],
+    'faq_all_groups_label' => [
+        'group' => 'faq',
+        'label' => 'Tüm SSS grupları etiketi',
+        'placeholder' => 'Tüm Konular',
+        'default' => 'Tüm Konular',
+    ],
+    'faq_empty_heading' => [
+        'group' => 'faq',
+        'label' => 'Boş SSS sonucu başlığı',
+        'placeholder' => 'Aramanızla eşleşen bir yanıt bulunamadı',
+        'default' => 'Aramanızla eşleşen bir yanıt bulunamadı',
+    ],
+    'faq_empty_description' => [
+        'group' => 'faq',
+        'label' => 'Boş SSS sonucu açıklaması',
+        'placeholder' => 'Başka bir anahtar kelime deneyebilir veya bize doğrudan ulaşabilirsiniz.',
+        'default' => 'Başka bir anahtar kelime deneyebilir veya bize doğrudan ulaşabilirsiniz.',
+    ],
+    'faq_contact_cta_label' => [
+        'group' => 'faq',
+        'label' => 'SSS iletişim butonu',
+        'placeholder' => 'Sorunuzu Bize İletin',
+        'default' => 'Sorunuzu Bize İletin',
     ],
 ];

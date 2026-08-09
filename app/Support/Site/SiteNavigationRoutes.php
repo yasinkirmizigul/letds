@@ -14,12 +14,15 @@ class SiteNavigationRoutes
 
     public const CONTACT = 'site.contact-messages.create';
 
+    public const FAQS = 'site.faqs.index';
+
     public static function options(): array
     {
         return [
             self::HOME => 'Ana Sayfa',
             self::BLOG => 'Blog',
             self::GALLERIES => 'Galeri',
+            self::FAQS => 'Sıkça Sorulan Sorular',
             self::CONTACT => 'İletişim',
         ];
     }
@@ -39,7 +42,7 @@ class SiteNavigationRoutes
 
         return match ($routeName) {
             self::HOME => SiteLocalization::homeUrl($locale),
-            self::BLOG, self::GALLERIES => SiteLocalization::localizedRoute(
+            self::BLOG, self::GALLERIES, self::FAQS => SiteLocalization::localizedRoute(
                 $routeName,
                 locale: $locale,
             ),

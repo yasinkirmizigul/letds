@@ -113,6 +113,10 @@ class SiteLocalization
             return self::homeUrl($targetLocale);
         }
 
+        if ($request->routeIs('site.faqs.index', 'site.localized.faqs.index')) {
+            return self::localizedRoute('site.faqs.index', locale: $targetLocale);
+        }
+
         return $request->fullUrlWithQuery([
             'site_locale' => $targetLocale,
         ]);
