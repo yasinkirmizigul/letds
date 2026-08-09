@@ -5,6 +5,18 @@
   --home-background-position: center;
   --home-before-bg: #ffffff;
   --home-after-bg: #ec6367;
+  --home-before-pattern-color: #445963;
+  --home-after-pattern-color: #ffffff;
+  --home-before-pattern-image: none;
+  --home-after-pattern-image: none;
+  --home-before-pattern-opacity: 0;
+  --home-after-pattern-opacity: 0;
+  --home-before-pattern-size: 28px;
+  --home-after-pattern-size: 28px;
+  --home-before-pattern-blur: 0;
+  --home-after-pattern-blur: 0;
+  --home-before-pattern-blend: soft-light;
+  --home-after-pattern-blend: soft-light;
   --home-before-text: #445963;
   --home-after-text: #ffffff;
   --home-hero-before-text: #445963;
@@ -363,7 +375,33 @@ body.site-home-index {
 
 .wrapper-after > *,
 .wrapper-before > * {
+  z-index: 3;
+}
+
+.wrapper-after > .home-surface-pattern,
+.wrapper-before > .home-surface-pattern {
+  position: absolute;
   z-index: 2;
+  inset: -3%;
+  pointer-events: none;
+  background-repeat: repeat;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+.wrapper-after > .home-surface-pattern {
+  opacity: var(--home-after-pattern-opacity);
+  background-image: var(--home-after-pattern-image);
+  background-size: var(--home-after-pattern-size) var(--home-after-pattern-size);
+  filter: blur(var(--home-after-pattern-blur));
+  mix-blend-mode: var(--home-after-pattern-blend);
+}
+
+.wrapper-before > .home-surface-pattern {
+  opacity: var(--home-before-pattern-opacity);
+  background-image: var(--home-before-pattern-image);
+  background-size: var(--home-before-pattern-size) var(--home-before-pattern-size);
+  filter: blur(var(--home-before-pattern-blur));
+  mix-blend-mode: var(--home-before-pattern-blend);
 }
 
 .img-bird-wrapper {

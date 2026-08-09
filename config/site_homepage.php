@@ -1,5 +1,52 @@
 <?php
 
+$surfacePatterns = [
+    'none' => ['label' => 'Desensiz', 'description' => 'Sadece zemin rengi veya fotoğraf görünür.'],
+    'carbon' => ['label' => 'Carbon Fiber', 'description' => 'Katmanlı ve teknik örgü dokusu.'],
+    'micro-grid' => ['label' => 'Mikro Grid', 'description' => 'İnce, modern kare çizgiler.'],
+    'pixel-grid' => ['label' => 'Piksel Kareler', 'description' => 'Küçük karelerden oluşan yumuşak mozaik.'],
+    'dots' => ['label' => 'Nokta Matrisi', 'description' => 'Minimal ve dengeli nokta dokusu.'],
+    'diagonal' => ['label' => 'Diyagonal', 'description' => 'İnce çapraz çizgiler.'],
+    'blueprint' => ['label' => 'Blueprint', 'description' => 'Teknik çizim hissi veren çift grid.'],
+    'rings' => ['label' => 'Halkalar', 'description' => 'Yumuşak topografik halka ritmi.'],
+    'grain' => ['label' => 'Film Greni', 'description' => 'Fotoğraflara doğal yüzey hissi katar.'],
+];
+
+$surfaceBlendModes = [
+    'soft-light' => 'Yumuşak ışık (Önerilen)',
+    'overlay' => 'Overlay / Kontrast',
+    'normal' => 'Normal',
+    'multiply' => 'Çarpma / Koyulaştır',
+    'screen' => 'Ekran / Aydınlat',
+];
+
+$surfaceField = static function (
+    string $prefix,
+    string $side,
+    string $label,
+    string $defaultBackground,
+    string $defaultPatternColor,
+) use ($surfacePatterns, $surfaceBlendModes): array {
+    $keyPrefix = $prefix.$side;
+
+    return [
+        'key' => $keyPrefix.'_surface',
+        'label' => $label,
+        'description' => 'Renk, desen ve fotoğraf üstü doku davranışını birlikte yönetin.',
+        'type' => 'surface',
+        'side' => $side,
+        'fields' => [
+            ['key' => $keyPrefix.'_background_color', 'label' => 'Zemin Rengi', 'type' => 'color', 'role' => 'background', 'default' => $defaultBackground],
+            ['key' => $keyPrefix.'_pattern_color', 'label' => 'Desen Rengi', 'type' => 'color', 'role' => 'pattern-color', 'default' => $defaultPatternColor],
+            ['key' => $keyPrefix.'_pattern', 'label' => 'Desen', 'type' => 'select', 'role' => 'pattern', 'default' => 'none', 'options' => $surfacePatterns],
+            ['key' => $keyPrefix.'_pattern_opacity', 'label' => 'Desen Yoğunluğu', 'type' => 'range', 'role' => 'opacity', 'default' => 18, 'min' => 0, 'max' => 70, 'step' => 1, 'unit' => '%'],
+            ['key' => $keyPrefix.'_pattern_scale', 'label' => 'Desen Ölçeği', 'type' => 'range', 'role' => 'scale', 'default' => 28, 'min' => 8, 'max' => 96, 'step' => 2, 'unit' => 'px'],
+            ['key' => $keyPrefix.'_pattern_blur', 'label' => 'Yumuşaklık', 'type' => 'range', 'role' => 'blur', 'default' => 0, 'min' => 0, 'max' => 4, 'step' => 0.25, 'unit' => 'px'],
+            ['key' => $keyPrefix.'_pattern_blend', 'label' => 'Fotoğraf Karışımı', 'type' => 'select', 'role' => 'blend', 'default' => 'soft-light', 'options' => $surfaceBlendModes],
+        ],
+    ];
+};
+
 return [
     'key' => 'concept-home',
     'title' => 'Ana Sayfa Yönetimi',
@@ -295,11 +342,13 @@ return [
         [
             'key' => 'panels',
             'title' => 'Panel Renkleri',
-            'description' => 'İki ana panelin zemin, metin ve vurgu renkleri.',
+            'description' => 'İki ana panelin renk, desen, doku ve fotoğraf karışımı ayarları.',
             'mode' => 'analysis',
+            'wrapper_class' => 'xl:col-span-2',
+            'content_class' => 'lg:grid-cols-2',
             'fields' => [
-                ['key' => 'before_background_color', 'label' => 'Açık Panel Zemini', 'type' => 'color', 'default' => '#ffffff'],
-                ['key' => 'after_background_color', 'label' => 'Renkli Panel Zemini', 'type' => 'color', 'default' => '#ec6367'],
+                $surfaceField('', 'before', 'Açık Panel Yüzeyi', '#ffffff', '#445963'),
+                $surfaceField('', 'after', 'Renkli Panel Yüzeyi', '#ec6367', '#ffffff'),
                 ['key' => 'before_text_color', 'label' => 'Açık Panel Metni', 'type' => 'color', 'default' => '#445963'],
                 ['key' => 'after_text_color', 'label' => 'Renkli Panel Metni', 'type' => 'color', 'default' => '#ffffff'],
                 ['key' => 'before_highlight_color', 'label' => 'Açık Panel Vurgusu', 'type' => 'color', 'default' => '#ec6367'],
@@ -334,11 +383,13 @@ return [
         [
             'key' => 'consultation_panels',
             'title' => 'Panel Renkleri',
-            'description' => 'Danışma görünümünün zemin, metin ve vurgu renkleri.',
+            'description' => 'Danışma görünümünün renk, desen, doku ve fotoğraf karışımı ayarları.',
             'mode' => 'consultation',
+            'wrapper_class' => 'xl:col-span-2',
+            'content_class' => 'lg:grid-cols-2',
             'fields' => [
-                ['key' => 'consultation_before_background_color', 'label' => 'Açık Panel Zemini', 'type' => 'color', 'default' => '#f7fafc'],
-                ['key' => 'consultation_after_background_color', 'label' => 'Renkli Panel Zemini', 'type' => 'color', 'default' => '#176b87'],
+                $surfaceField('consultation_', 'before', 'Açık Panel Yüzeyi', '#f7fafc', '#293f4b'),
+                $surfaceField('consultation_', 'after', 'Renkli Panel Yüzeyi', '#176b87', '#ffffff'),
                 ['key' => 'consultation_before_text_color', 'label' => 'Açık Panel Metni', 'type' => 'color', 'default' => '#293f4b'],
                 ['key' => 'consultation_after_text_color', 'label' => 'Renkli Panel Metni', 'type' => 'color', 'default' => '#ffffff'],
                 ['key' => 'consultation_before_highlight_color', 'label' => 'Açık Panel Vurgusu', 'type' => 'color', 'default' => '#006ae6'],

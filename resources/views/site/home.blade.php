@@ -124,6 +124,7 @@
         <section id="before-after" class="home-before-after" aria-label="Before and after presentation">
             <div class="view view-after" data-after-view>
                 <div class="wrapper-after">
+                    <span class="home-surface-pattern" aria-hidden="true"></span>
                     <div class="img-bird-wrapper et-in-viewport-check" et-anim="floating_special" et-anim-duration="3500" et-anim-delay="0" et-anim-easing="ease">
                         <img src="{{ asset('assets/site/home/images/concept-before.svg') }}" alt="">
                         @foreach($homepageTooltipItems as $item)
@@ -170,6 +171,7 @@
 
             <div class="view view-before">
                 <div class="wrapper-before">
+                    <span class="home-surface-pattern" aria-hidden="true"></span>
                     <div class="img-bird-wrapper et-in-viewport-check" et-anim="floating_special" et-anim-duration="3500" et-anim-delay="0" et-anim-easing="ease">
                         <img src="{{ asset('assets/site/home/images/concept-after.svg') }}" alt="">
                         @foreach($homepageTooltipItems as $item)

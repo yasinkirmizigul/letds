@@ -15,6 +15,8 @@ class HomepageConfigurationService
     private const MODE_STYLE_SETTINGS = [
         '--home-before-bg' => 'before_background_color',
         '--home-after-bg' => 'after_background_color',
+        '--home-before-pattern-color' => 'before_pattern_color',
+        '--home-after-pattern-color' => 'after_pattern_color',
         '--home-before-text' => 'before_text_color',
         '--home-after-text' => 'after_text_color',
         '--home-hero-before-text' => 'hero_before_text_color',
@@ -32,6 +34,18 @@ class HomepageConfigurationService
         '--home-cta-before-hover-text' => 'cta_before_hover_text',
         '--home-cta-after-hover-bg' => 'cta_after_hover_background',
         '--home-cta-after-hover-text' => 'cta_after_hover_text',
+    ];
+
+    private const SURFACE_PATTERN_STYLES = [
+        'none' => 'none',
+        'carbon' => 'repeating-linear-gradient(135deg, color-mix(in srgb, {color} 42%, transparent) 0 2px, transparent 2px 7px), repeating-linear-gradient(45deg, color-mix(in srgb, {color} 22%, transparent) 0 1px, transparent 1px 6px)',
+        'micro-grid' => 'linear-gradient(color-mix(in srgb, {color} 44%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, {color} 44%, transparent) 1px, transparent 1px)',
+        'pixel-grid' => 'conic-gradient(from 90deg at 1px 1px, transparent 25%, color-mix(in srgb, {color} 34%, transparent) 0 50%, transparent 0 75%, color-mix(in srgb, {color} 34%, transparent) 0)',
+        'dots' => 'radial-gradient(circle, color-mix(in srgb, {color} 62%, transparent) 1px, transparent 1.5px)',
+        'diagonal' => 'repeating-linear-gradient(135deg, transparent 0 8px, color-mix(in srgb, {color} 44%, transparent) 8px 9px)',
+        'blueprint' => 'linear-gradient(color-mix(in srgb, {color} 52%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, {color} 52%, transparent) 1px, transparent 1px), repeating-linear-gradient(0deg, transparent 0 24%, color-mix(in srgb, {color} 20%, transparent) 25%), repeating-linear-gradient(90deg, transparent 0 24%, color-mix(in srgb, {color} 20%, transparent) 25%)',
+        'rings' => 'repeating-radial-gradient(circle at center, transparent 0 18%, color-mix(in srgb, {color} 42%, transparent) 19% 21%, transparent 22% 40%)',
+        'grain' => 'radial-gradient(circle at 20% 30%, color-mix(in srgb, {color} 54%, transparent) 0 .7px, transparent 1px), radial-gradient(circle at 72% 64%, color-mix(in srgb, {color} 38%, transparent) 0 .6px, transparent .95px), radial-gradient(circle at 44% 82%, color-mix(in srgb, {color} 28%, transparent) 0 .5px, transparent .9px)',
     ];
 
     public function __construct(
@@ -60,7 +74,7 @@ class HomepageConfigurationService
     public function settingFields(): array
     {
         $groupFields = collect($this->settingGroups())
-            ->flatMap(fn (array $group) => $group['fields'] ?? [])
+            ->flatMap(fn (array $group) => $this->expandSettingFields($group['fields'] ?? []))
             ->values();
         $contentColorFields = collect($this->contentFields())
             ->flatMap(fn (array $field) => $field['colors'] ?? [])
@@ -376,6 +390,7 @@ class HomepageConfigurationService
                         $property => (string) ($settings[$prefix.$settingKey] ?? ''),
                     ])
                     ->all();
+                $styles = array_replace($styles, $this->resolvedSurfaceStyles($settings, $prefix));
 
                 return [$key => [
                     'key' => $key,
@@ -390,6 +405,45 @@ class HomepageConfigurationService
                 ]];
             })
             ->all();
+    }
+
+    private function resolvedSurfaceStyles(array $settings, string $prefix): array
+    {
+        $styles = [];
+
+        foreach (['before', 'after'] as $side) {
+            $keyPrefix = $prefix.$side;
+            $pattern = (string) ($settings[$keyPrefix.'_pattern'] ?? 'none');
+            $patternTemplate = self::SURFACE_PATTERN_STYLES[$pattern] ?? self::SURFACE_PATTERN_STYLES['none'];
+            $patternColorProperty = "--home-{$side}-pattern-color";
+
+            $styles["--home-{$side}-pattern-image"] = str_replace('{color}', "var({$patternColorProperty})", $patternTemplate);
+            $styles["--home-{$side}-pattern-opacity"] = $this->cssNumber((float) ($settings[$keyPrefix.'_pattern_opacity'] ?? 0) / 100);
+            $styles["--home-{$side}-pattern-size"] = $this->cssNumber((float) ($settings[$keyPrefix.'_pattern_scale'] ?? 28)).'px';
+            $styles["--home-{$side}-pattern-blur"] = $this->cssNumber((float) ($settings[$keyPrefix.'_pattern_blur'] ?? 0)).'px';
+            $styles["--home-{$side}-pattern-blend"] = (string) ($settings[$keyPrefix.'_pattern_blend'] ?? 'soft-light');
+        }
+
+        return $styles;
+    }
+
+    private function expandSettingFields(array $fields): array
+    {
+        return collect($fields)
+            ->flatMap(function (array $field): array {
+                $nested = $field['fields'] ?? [];
+
+                return is_array($nested) && $nested !== []
+                    ? $this->expandSettingFields($nested)
+                    : [$field];
+            })
+            ->values()
+            ->all();
+    }
+
+    private function cssNumber(float $value): string
+    {
+        return rtrim(rtrim(number_format($value, 3, '.', ''), '0'), '.');
     }
 
     private function optionalRules(array $rules): array

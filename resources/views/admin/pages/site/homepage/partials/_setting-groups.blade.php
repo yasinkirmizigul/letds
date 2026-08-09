@@ -1,5 +1,5 @@
 @foreach($groups as $group)
-    <section class="kt-card">
+    <section class="kt-card {{ $group['wrapper_class'] ?? '' }}">
         <div class="kt-card-header py-5">
             <div>
                 <h2 class="kt-card-title">{{ $group['title'] }}</h2>
@@ -7,7 +7,7 @@
             </div>
         </div>
 
-        <div class="kt-card-content grid gap-4 p-6 sm:grid-cols-2">
+        <div class="kt-card-content grid gap-4 p-4 sm:p-6 {{ $group['content_class'] ?? 'sm:grid-cols-2' }}">
             @foreach($group['fields'] as $field)
                 @php
                     $key = $field['key'];
@@ -16,7 +16,12 @@
                     $wrapperClass = $field['wrapper_class'] ?? '';
                 @endphp
 
-                @if(($field['type'] ?? 'text') === 'boolean')
+                @if(($field['type'] ?? 'text') === 'surface')
+                    @include('admin.pages.site.homepage.partials._surface-editor', [
+                        'field' => $field,
+                        'settingValues' => $settingValues,
+                    ])
+                @elseif(($field['type'] ?? 'text') === 'boolean')
                     <label class="homepage-setting-toggle {{ $wrapperClass }} flex min-h-20 items-center gap-3 border bg-background px-4 py-3">
                         <input type="hidden" name="settings[{{ $key }}]" value="0">
                         <input
@@ -134,6 +139,8 @@
                                 @if($isBackground)
                                     <span class="homepage-background-preview__overlay homepage-background-preview__overlay--after" aria-hidden="true"></span>
                                     <span class="homepage-background-preview__overlay homepage-background-preview__overlay--before" aria-hidden="true"></span>
+                                    <span class="homepage-background-preview__pattern homepage-background-preview__pattern--after" data-homepage-background-pattern="after" data-homepage-pattern="none" aria-hidden="true"></span>
+                                    <span class="homepage-background-preview__pattern homepage-background-preview__pattern--before" data-homepage-background-pattern="before" data-homepage-pattern="none" aria-hidden="true"></span>
                                     <span class="homepage-background-preview__divider" aria-hidden="true"></span>
                                 @endif
                             </div>

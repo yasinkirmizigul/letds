@@ -1,3 +1,34 @@
+const SURFACE_PATTERNS = new Set([
+    'none',
+    'carbon',
+    'micro-grid',
+    'pixel-grid',
+    'dots',
+    'diagonal',
+    'blueprint',
+    'rings',
+    'grain',
+]);
+
+const SURFACE_BLEND_MODES = new Set(['soft-light', 'overlay', 'normal', 'multiply', 'screen']);
+
+function safePattern(value) {
+    return SURFACE_PATTERNS.has(value) ? value : 'none';
+}
+
+function safeBlend(value) {
+    return SURFACE_BLEND_MODES.has(value) ? value : 'soft-light';
+}
+
+function safeColor(value, fallback = '#ffffff') {
+    return /^#[0-9a-f]{6}$/i.test(value || '') ? value : fallback;
+}
+
+function numericValue(input, fallback) {
+    const value = Number(input?.value);
+    return Number.isFinite(value) ? value : fallback;
+}
+
 function bindColorField(field, signal) {
     const picker = field.querySelector('[data-homepage-color-picker]');
     const input = field.querySelector('[data-homepage-color-value]');
@@ -15,6 +46,23 @@ function bindColorField(field, signal) {
             picker.value = value;
         }
     }, { signal });
+}
+
+function syncSurfaceEditors(root) {
+    root.querySelectorAll('[data-homepage-surface-editor]').forEach((editor) => {
+        const input = (role) => editor.querySelector(`[data-homepage-surface-role="${role}"]${role === 'pattern' ? ':checked' : ''}`);
+        const pattern = safePattern(input('pattern')?.value || 'none');
+        const patternLayer = editor.querySelector('[data-homepage-surface-pattern]');
+
+        editor.style.setProperty('--homepage-surface-color', safeColor(input('background')?.value, '#263238'));
+        editor.style.setProperty('--homepage-pattern-ink', safeColor(input('pattern-color')?.value));
+        editor.style.setProperty('--homepage-pattern-opacity', String(numericValue(input('opacity'), 0) / 100));
+        editor.style.setProperty('--homepage-pattern-size', `${numericValue(input('scale'), 28)}px`);
+        editor.style.setProperty('--homepage-pattern-blur', `${numericValue(input('blur'), 0)}px`);
+        editor.style.setProperty('--homepage-pattern-blend', safeBlend(input('blend')?.value));
+
+        if (patternLayer) patternLayer.dataset.homepagePattern = pattern;
+    });
 }
 
 function bindRangeField(field, signal) {
@@ -76,7 +124,8 @@ function syncBackgroundPreview(root) {
     const preview = root.querySelector('[data-homepage-background-preview]');
     if (!preview) return;
 
-    const setting = (key) => root.querySelector(`[name="settings[${key}]"]`);
+    const setting = (key) => root.querySelector(`[name="settings[${key}]"]:checked`)
+        || root.querySelector(`[name="settings[${key}]"]`);
     const activeMode = root.querySelector('[data-homepage-admin-mode-tab].is-active')?.dataset.homepageAdminModeTab || 'analysis';
     const modeSetting = (key) => setting(activeMode === 'analysis' ? key : `${activeMode}_${key}`) || setting(key);
     const brightness = Number(setting('background_brightness')?.value || 100);
@@ -91,6 +140,18 @@ function syncBackgroundPreview(root) {
     preview.style.setProperty('--homepage-preview-position', position);
     preview.style.setProperty('--homepage-preview-after', afterColor);
     preview.style.setProperty('--homepage-preview-before', beforeColor);
+
+    ['before', 'after'].forEach((side) => {
+        const patternLayer = preview.querySelector(`[data-homepage-background-pattern="${side}"]`);
+        if (!patternLayer) return;
+
+        patternLayer.dataset.homepagePattern = safePattern(modeSetting(`${side}_pattern`)?.value || 'none');
+        patternLayer.style.setProperty('--homepage-pattern-ink', safeColor(modeSetting(`${side}_pattern_color`)?.value));
+        patternLayer.style.setProperty('--homepage-pattern-opacity', String(numericValue(modeSetting(`${side}_pattern_opacity`), 0) / 100));
+        patternLayer.style.setProperty('--homepage-pattern-size', `${numericValue(modeSetting(`${side}_pattern_scale`), 28)}px`);
+        patternLayer.style.setProperty('--homepage-pattern-blur', `${numericValue(modeSetting(`${side}_pattern_blur`), 0)}px`);
+        patternLayer.style.setProperty('--homepage-pattern-blend', safeBlend(modeSetting(`${side}_pattern_blend`)?.value));
+    });
 }
 
 export async function init(ctx = {}) {
@@ -102,13 +163,18 @@ export async function init(ctx = {}) {
     root.querySelectorAll('[data-homepage-range-field]').forEach((field) => bindRangeField(field, signal));
     root.querySelectorAll('[data-homepage-media-field]').forEach(syncMediaField);
     bindModeLabels(root, signal);
+    syncSurfaceEditors(root);
     syncBackgroundPreview(root);
 
-    root.addEventListener('input', () => syncBackgroundPreview(root), { signal });
+    root.addEventListener('input', () => {
+        syncSurfaceEditors(root);
+        syncBackgroundPreview(root);
+    }, { signal });
 
     root.addEventListener('change', (event) => {
         const fileInput = event.target.closest('[data-homepage-media-file]');
         if (!fileInput) {
+            syncSurfaceEditors(root);
             syncBackgroundPreview(root);
             return;
         }

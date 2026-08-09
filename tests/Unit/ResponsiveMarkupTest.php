@@ -95,6 +95,24 @@ class ResponsiveMarkupTest extends TestCase
         );
     }
 
+    public function test_badges_and_surface_controls_keep_text_inside_their_backgrounds(): void
+    {
+        $css = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
+        $surfaceEditor = file_get_contents(
+            $this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'pages'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'homepage'.DIRECTORY_SEPARATOR.'partials'.DIRECTORY_SEPARATOR.'_surface-editor.blade.php'
+        );
+
+        $this->assertMatchesRegularExpression(
+            '/\.kt-badge\s*\{[^}]*width:\s*fit-content;[^}]*max-width:\s*100%;[^}]*height:\s*auto;[^}]*flex:\s*0 0 auto;[^}]*overflow-wrap:\s*anywhere;[^}]*white-space:\s*normal;/s',
+            $css,
+            'Badges must contain long or wrapped labels without shrinking their background.'
+        );
+        $this->assertStringContainsString('container: homepage-surface / inline-size;', $css);
+        $this->assertStringContainsString('@container homepage-surface (min-width: 30rem)', $css);
+        $this->assertStringContainsString('homepage-surface-editor__range-grid', $surfaceEditor);
+        $this->assertStringNotContainsString('sm:grid-cols-3', $surfaceEditor);
+    }
+
     private function frontendSourceFiles(): array
     {
         $files = [];

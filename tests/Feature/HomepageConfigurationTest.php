@@ -5,14 +5,14 @@ namespace Tests\Feature;
 use App\Models\Admin\Media\Media;
 use App\Models\Admin\User\Role;
 use App\Models\Admin\User\User;
-use App\Models\Site\SiteLanguage;
 use App\Models\Site\SiteHomepageSection;
-use App\Models\Site\SiteHomepageSectionItem;
+use App\Models\Site\SiteLanguage;
 use App\Services\Site\HomepageConfigurationService;
 use App\Services\Site\HomepageSectionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
 
 class HomepageConfigurationTest extends TestCase
@@ -25,6 +25,8 @@ class HomepageConfigurationTest extends TestCase
             ->assertOk()
             ->assertSee('The combination of great design and diligent app development.')
             ->assertSee('--home-before-bg:#ffffff', false)
+            ->assertSee('--home-before-pattern-image:none', false)
+            ->assertSee('--home-before-pattern-opacity:0.18', false)
             ->assertSee('--home-stat-before:#ec6367', false)
             ->assertSee('--home-analysis-tab-after-text:#ffffff', false)
             ->assertSee('--home-hero-after-text:#ffffff', false)
@@ -32,6 +34,7 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('data-stat-symbols="true"', false)
             ->assertSee('data-stat-symbol-mode="idle"', false)
             ->assertSee('data-home-mode="analysis"', false)
+            ->assertSee('class="home-surface-pattern"', false)
             ->assertSee('İstatistiksel Analiz')
             ->assertSee('İstatistiksel Danışma')
             ->assertSee('data-home-mode-tab="consultation"', false)
@@ -118,6 +121,10 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('name="settings[analysis_tab_after_text_color]"', false)
             ->assertSee('name="settings[hero_after_text_color]"', false)
             ->assertSee('name="settings[tooltip_1_title_color]"', false)
+            ->assertSee('name="settings[before_pattern]"', false)
+            ->assertSee('data-homepage-pattern="carbon"', false)
+            ->assertSee('Carbon Fiber')
+            ->assertSee('Piksel Kareler')
             ->assertSee('Sembol çalışma biçimi')
             ->assertSee('Panel Renkleri');
 
@@ -139,6 +146,13 @@ class HomepageConfigurationTest extends TestCase
                 'hero_after_text_color' => '#223344',
                 'consultation_hero_before_text_color' => '#445566',
                 'tooltip_1_title_color' => '#334455',
+                'before_pattern' => 'carbon',
+                'before_pattern_color' => '#556677',
+                'before_pattern_opacity' => 34,
+                'before_pattern_scale' => 22,
+                'before_pattern_blur' => 0.75,
+                'before_pattern_blend' => 'overlay',
+                'consultation_after_pattern' => 'micro-grid',
             ]),
             'translations' => [],
             'background_image' => UploadedFile::fake()->image('homepage-background.jpg', 1200, 800),
@@ -159,6 +173,32 @@ class HomepageConfigurationTest extends TestCase
         $this->assertSame('top', $service->current()->fresh()->settings['background_position']);
         $this->assertSame('#112233', $service->current()->fresh()->settings['analysis_tab_after_text_color']);
         $this->assertSame('#223344', $service->current()->fresh()->settings['hero_after_text_color']);
+        $this->assertSame('carbon', $service->current()->fresh()->settings['before_pattern']);
+        $this->assertSame(34, $service->current()->fresh()->settings['before_pattern_opacity']);
+        $this->assertSame(
+            '0.34',
+            $service->resolved('tr')['modes']['analysis']['styles']['--home-before-pattern-opacity']
+        );
+        $this->assertSame(
+            '22px',
+            $service->resolved('tr')['modes']['analysis']['styles']['--home-before-pattern-size']
+        );
+        $this->assertSame(
+            '0.75px',
+            $service->resolved('tr')['modes']['analysis']['styles']['--home-before-pattern-blur']
+        );
+        $this->assertSame(
+            'overlay',
+            $service->resolved('tr')['modes']['analysis']['styles']['--home-before-pattern-blend']
+        );
+        $this->assertStringStartsWith(
+            'repeating-linear-gradient(',
+            $service->resolved('tr')['modes']['analysis']['styles']['--home-before-pattern-image']
+        );
+        $this->assertStringStartsWith(
+            'linear-gradient(',
+            $service->resolved('tr')['modes']['consultation']['styles']['--home-after-pattern-image']
+        );
         $this->assertSame(
             '#223344',
             $service->resolved('tr')['modes']['analysis']['styles']['--home-hero-after-text']
@@ -200,7 +240,36 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('--home-background-position:top', false)
             ->assertSee('--home-analysis-tab-after-text:#112233', false)
             ->assertSee('--home-hero-after-text:#223344', false)
+            ->assertSee('--home-before-pattern-opacity:0.34', false)
+            ->assertSee('--home-before-pattern-size:22px', false)
+            ->assertSee('--home-before-pattern-blur:0.75px', false)
+            ->assertSee('--home-before-pattern-blend:overlay', false)
+            ->assertSee('--home-before-pattern-image:repeating-linear-gradient(', false)
             ->assertSee('--home-tooltip-text: #334455', false);
+    }
+
+    public function test_homepage_surface_patterns_are_allowlisted_and_bounded(): void
+    {
+        $service = app(HomepageConfigurationService::class);
+        $payload = array_replace($service->contentDefaults(), [
+            'settings' => array_replace($service->settingDefaults(), [
+                'before_pattern' => 'url-javascript',
+                'before_pattern_opacity' => 90,
+                'before_pattern_scale' => 2,
+                'before_pattern_blur' => 12,
+                'before_pattern_blend' => 'difference',
+            ]),
+            'translations' => [],
+        ]);
+
+        $validator = Validator::make($payload, $service->validationRules());
+
+        $this->assertTrue($validator->fails());
+        $this->assertArrayHasKey('settings.before_pattern', $validator->errors()->toArray());
+        $this->assertArrayHasKey('settings.before_pattern_opacity', $validator->errors()->toArray());
+        $this->assertArrayHasKey('settings.before_pattern_scale', $validator->errors()->toArray());
+        $this->assertArrayHasKey('settings.before_pattern_blur', $validator->errors()->toArray());
+        $this->assertArrayHasKey('settings.before_pattern_blend', $validator->errors()->toArray());
     }
 
     public function test_superadmin_can_manage_multilingual_homepage_sections_and_cards(): void
