@@ -1895,8 +1895,8 @@
     "semantic_hash": ""
   },
   "resources/views/admin/pages/dash/index.blade.php": {
-    "mtime": 1786280437.3974905,
-    "ast_hash": "e8ac3c8ed00b86295711027e7cc5b72c",
+    "mtime": 1786282741.8524127,
+    "ast_hash": "d98f3d278f49b9604213a9b125ec0f58",
     "semantic_hash": ""
   },
   "resources/views/admin/pages/dash/manage.blade.php": {

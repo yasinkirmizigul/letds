@@ -4503,6 +4503,14 @@ body.dash_app .kt-wrapper {
     width: 100%;
 }
 
+/* Percentage max-width utilities must never narrow admin page roots. */
+.admin-content-shell .kt-container-fixed {
+    width: 100% !important;
+    max-width: none !important;
+    margin-inline: 0 !important;
+    padding-inline: 0 !important;
+}
+
 .admin-content-shell .grid > * {
     min-width: 0;
 }

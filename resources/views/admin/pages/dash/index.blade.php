@@ -30,7 +30,7 @@
             || (($dashboardSectionVisibility['audit_issues'] ?? false) && $canAudit);
     @endphp
 
-    <div class="kt-container-fixed max-w-[90%] dashboard-shell"
+    <div class="kt-container-fixed dashboard-shell"
          data-page="dash.index"
          data-monthly-chart='@json($monthlyActivity)'
          data-action-chart='@json($actionChart)'
