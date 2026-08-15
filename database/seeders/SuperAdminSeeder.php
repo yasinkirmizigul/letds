@@ -15,7 +15,7 @@ class SuperAdminSeeder extends Seeder
     {
         $super = Role::updateOrCreate(
             ['slug' => 'superadmin'],
-            ['name' => 'Super Admin']
+            ['name' => 'Super Admin', 'priority' => 1000]
         );
 
         // Always keep SuperAdmin as "all permissions"
@@ -26,7 +26,7 @@ class SuperAdminSeeder extends Seeder
             $name  = env('SEED_SUPERADMIN_NAME', 'Super Admin');
             $pass  = env('SEED_SUPERADMIN_PASS', '123456');
 
-            $user = User::updateOrCreate(
+            $user = User::firstOrCreate(
                 ['email' => $email],
                 [
                     'name' => $name,

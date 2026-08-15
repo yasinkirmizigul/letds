@@ -94,6 +94,37 @@ class User extends Authenticatable
         return $this->roles()->whereIn('slug', ['admin', 'superadmin'])->exists();
     }
 
+    /**
+     * Global operational data is available to the panel owner roles, not only developers.
+     */
+    public function hasGlobalOperationalScope(): bool
+    {
+        return $this->isAdmin();
+    }
+
+    public function canManageUser(User $target): bool
+    {
+        if (! $this->exists || ! $target->exists || $this->is($target) || $target->isSuperAdmin()) {
+            return false;
+        }
+
+        return $this->topRolePriority() > $target->topRolePriority();
+    }
+
+    public function canManageRole(Role $role): bool
+    {
+        if ($role->slug === 'superadmin') {
+            return false;
+        }
+
+        return $this->topRolePriority() > (int) $role->priority;
+    }
+
+    public function canAssignRole(Role $role): bool
+    {
+        return $this->canManageRole($role);
+    }
+
     public function scopeAdminAccessible($query)
     {
         return $query

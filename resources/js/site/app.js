@@ -2,9 +2,11 @@ import '../bootstrap';
 import './auth/member-register';
 import { initReviewStars } from './reviews';
 import Alpine from 'alpinejs';
+import { initGlobalBlockUi } from '@/core/block-ui';
 
 window.Alpine = Alpine;
 Alpine.start();
+initGlobalBlockUi();
 
 function initKtComponents() {
     try {

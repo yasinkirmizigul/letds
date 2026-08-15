@@ -9,7 +9,7 @@ class Role extends Model
     protected $casts = [
         'priority' => 'integer',
     ];
-    protected $fillable = ['name', 'slug'];
+    protected $fillable = ['name', 'slug', 'priority'];
 
     public function permissions()
     {

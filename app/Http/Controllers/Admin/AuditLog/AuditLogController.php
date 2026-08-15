@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Admin\AuditLog;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\AuditLog\AuditLog;
+use App\Support\Audit\AuditEvent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AuditLogController extends Controller
 {
@@ -63,6 +66,19 @@ class AuditLogController extends Controller
         return view('admin.pages.audit-logs.show', [
             'row' => $auditLog,
         ]);
+    }
+
+    public function clear(): RedirectResponse
+    {
+        $deletedCount = DB::transaction(fn (): int => AuditLog::query()->delete());
+
+        AuditEvent::log('audit-logs.clear', [
+            'deleted_count' => $deletedCount,
+        ]);
+
+        return redirect()
+            ->route('admin.audit-logs.index')
+            ->with('success', number_format($deletedCount).' eski log kaydı temizlendi. Güvenlik için bu işlemin kaydı tutuldu.');
     }
 
     private function modeCount(string $mode): int

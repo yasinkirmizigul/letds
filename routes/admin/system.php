@@ -45,6 +45,10 @@ Route::prefix('audit-logs')->as('audit-logs.')->group(function () {
         ->middleware('permission:audit-logs.view')
         ->name('index');
 
+    Route::delete('/', [AuditLogController::class, 'clear'])
+        ->middleware('permission:audit-logs.clear')
+        ->name('clear');
+
     Route::get('/{auditLog}', [AuditLogController::class, 'show'])
         ->middleware('permission:audit-logs.view')
         ->name('show');

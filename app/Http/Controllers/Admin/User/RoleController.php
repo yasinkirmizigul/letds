@@ -7,6 +7,7 @@ use App\Models\Admin\User\Permission;
 use App\Models\Admin\User\Role;
 use App\Support\Rbac;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class RoleController extends Controller
 {
@@ -36,8 +37,10 @@ class RoleController extends Controller
         ], compact('permissions'));
     }
 
-    public function edit(Role $role)
+    public function edit(Request $request, Role $role)
     {
+        abort_unless($request->user()?->canManageRole($role), 403);
+
         $role->load('permissions:id');
 
         $permissions = Permission::orderBy('slug')->get()
@@ -50,10 +53,12 @@ class RoleController extends Controller
 
     public function store(Request $request)
     {
+        $maximumPriority = max(0, $request->user()->topRolePriority() - 1);
+
         $validated = $request->validate([
             'name' => ['required','string','max:255'],
-            'slug' => ['required','string','max:255','unique:roles,slug'],
-            'priority' => ['nullable','integer','min:0','max:100000'],
+            'slug' => ['required','string','max:255','unique:roles,slug', Rule::notIn(['admin', 'superadmin'])],
+            'priority' => ['nullable','integer','min:0','max:'.$maximumPriority],
             'permissions' => ['array'],
             'permissions.*' => ['integer','exists:permissions,id'],
         ]);
@@ -76,18 +81,20 @@ class RoleController extends Controller
         $myP = $u?->topRolePriority() ?? 0;
         $targetP = (int)($role->priority ?? 0);
 
-        if ($role->slug === 'superadmin') {
-            return back()->withErrors(['error' => 'Superadmin rolü düzenlenemez.']);
+        abort_unless($u?->canManageRole($role), 403);
+
+        $slugRules = ['required', 'string', 'max:255', Rule::unique('roles', 'slug')->ignore($role->id)];
+        $priorityRules = ['nullable', 'integer', 'min:0', 'max:'.max(0, $myP - 1)];
+
+        if ($role->slug === 'admin') {
+            $slugRules[] = Rule::in(['admin']);
+            $priorityRules[] = Rule::in([$targetP]);
         }
 
-        // Kendinden yüksek/eşit rolü düzenleyemez (yetki olsa bile)
-        if ($myP <= $targetP) {
-            return back()->withErrors(['error' => 'Kendinle aynı veya daha yüksek öncelikli rolü düzenleyemezsin.']);
-        }
         $validated = $request->validate([
             'name' => ['required','string','max:255'],
-            'slug' => ['required','string','max:255',"unique:roles,slug,{$role->id}"],
-            'priority' => ['nullable','integer','min:0','max:100000'],
+            'slug' => $slugRules,
+            'priority' => $priorityRules,
             'permissions' => ['array'],
             'permissions.*' => ['integer','exists:permissions,id'],
         ]);
@@ -104,18 +111,12 @@ class RoleController extends Controller
         return redirect()->route('admin.roles.index')->with('ok', 'Rol güncellendi.');
     }
 
-    public function destroy(Role $role)
+    public function destroy(Request $request, Role $role)
     {
-        if ($role->slug === 'superadmin') {
-            return back()->withErrors(['error' => 'Superadmin rolü silinemez.']);
-        }
-        $u = auth()->user();
-        $myP = $u?->topRolePriority() ?? 0;
-        $targetP = (int)($role->priority ?? 0);
+        abort_unless($request->user()?->canManageRole($role), 403);
 
-        // Kendinden yüksek ya da eşit priority rolü silemez
-        if ($myP <= $targetP) {
-            return back()->withErrors(['error' => 'Kendinle aynı veya daha yüksek öncelikli rolü silemezsin.']);
+        if ($role->slug === 'admin') {
+            return back()->withErrors(['error' => 'Admin sistem rolü silinemez.']);
         }
 
         $role->permissions()->detach();

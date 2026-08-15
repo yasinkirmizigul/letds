@@ -27,6 +27,8 @@
 
 @section('content')
     <div class="kt-container-fixed max-w-[90%]" data-page="audit.index">
+        @include('admin.partials._flash')
+
         <div class="grid gap-5 lg:gap-7.5">
 
             <div class="flex items-center justify-between flex-wrap gap-3">
@@ -34,6 +36,17 @@
                     <h1 class="text-xl font-semibold">Sistem Kayıtları</h1>
                     <div class="text-sm text-muted-foreground">Panel akışlarını, hataları ve sistem kayıtlarını tek ekrandan incele.</div>
                 </div>
+
+                @perm('audit-logs.clear')
+                    <form method="POST" action="{{ route('admin.audit-logs.clear') }}" data-confirm="clear-audit-logs">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="kt-btn kt-btn-destructive" @disabled(((int) ($stats['total'] ?? 0)) === 0)>
+                            <i class="ki-filled ki-trash"></i>
+                            Logları Temizle
+                        </button>
+                    </form>
+                @endperm
             </div>
 
             <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">

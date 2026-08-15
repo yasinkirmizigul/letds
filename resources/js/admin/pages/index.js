@@ -64,6 +64,7 @@ import EcommerceOrderForm from './ecommerce/orders/form';
 import MenuVisibilityEdit from './menu-visibility/edit';
 import ServiceReviewsIndex from './service-reviews/index';
 import ServiceReviewQuestions from './service-reviews/questions';
+import AuditLogsIndex from './audit-logs/index';
 
 const NoopPage = async () => {};
 
@@ -73,6 +74,7 @@ export function registerPages() {
     register('menu-visibility.edit', MenuVisibilityEdit);
     register('service-reviews.index', ServiceReviewsIndex);
     register('service-reviews.questions', ServiceReviewQuestions);
+    register('audit.index', AuditLogsIndex);
 
     register('blog.create', BlogCreate);
     register('blog.edit', BlogEdit);
@@ -138,7 +140,6 @@ export function registerPages() {
     register('ecommerce.orders.edit', EcommerceOrderForm);
 
     [
-        'audit.index',
         'categories.trash',
         'ecommerce.orders.index',
         'ecommerce.orders.show',

@@ -31,7 +31,8 @@ class ContactMessageController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
-        $recipientOptions = $user->isSuperAdmin()
+        $canViewAllMessages = $user->hasGlobalOperationalScope();
+        $recipientOptions = $canViewAllMessages
             ? User::query()
                 ->adminAccessible()
                 ->orderBy('name')
@@ -61,7 +62,7 @@ class ContactMessageController extends Controller
                 ], true))->count(),
                 'guest' => $messages->where('sender_type', ContactMessage::SENDER_TYPE_GUEST)->count(),
             ],
-            'isSuperAdmin' => $user->isSuperAdmin(),
+            'canViewAllMessages' => $canViewAllMessages,
         ]);
     }
 

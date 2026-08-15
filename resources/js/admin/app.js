@@ -15,6 +15,7 @@ import initAjaxForms from '@/core/ajax-forms';
 import initAdminQuickSearch from '@/core/admin-quick-search';
 import initAdminSidebar from '@/core/admin-sidebar';
 import { initMetronicPickers } from '@/core/metronic-pickers';
+import { initGlobalBlockUi } from '@/core/block-ui';
 
 window.Swal = Swal;
 window.swal = Swal;
@@ -35,6 +36,7 @@ initMediaPicker();
 initMediaUploadModal();
 initFeaturedImageManager();
 initAjaxForms();
+initGlobalBlockUi();
 initAdminQuickSearch();
 initAdminSidebar();
 

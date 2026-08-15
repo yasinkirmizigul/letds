@@ -43,9 +43,9 @@ class UserController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        $roles = Role::orderBy('name')->get();
+        $roles = $this->assignableRoles($request->user());
 
         return view('admin.pages.users.create', [
             'pageTitle' => 'Kullanıcı Ekle',
@@ -54,13 +54,15 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        $assignableRoleIds = $this->assignableRoles($request->user())->pluck('id')->all();
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:190'],
             'email' => ['required', 'email', 'max:190', 'unique:users,email'],
             'password' => ['required', 'string', 'min:6'],
             'is_active' => ['nullable', 'boolean'],
             'roles' => ['nullable', 'array'],
-            'roles.*' => ['integer', 'exists:roles,id'],
+            'roles.*' => ['integer', Rule::in($assignableRoleIds)],
         ]);
 
         $user = User::create([
@@ -76,9 +78,11 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('ok', 'Kullanıcı oluşturuldu.');
     }
 
-    public function edit(User $user)
+    public function edit(Request $request, User $user)
     {
-        $roles = Role::orderBy('name')->get();
+        abort_unless($request->user()?->canManageUser($user), 403);
+
+        $roles = $this->assignableRoles($request->user());
         $user->load('roles');
 
         return view('admin.pages.users.edit', [
@@ -88,13 +92,17 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
+        abort_unless($request->user()?->canManageUser($user), 403);
+
+        $assignableRoleIds = $this->assignableRoles($request->user())->pluck('id')->all();
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:190'],
             'email' => ['required', 'email', 'max:190', Rule::unique('users', 'email')->ignore($user->id)],
             'password' => ['nullable', 'string', 'min:6'],
             'is_active' => ['nullable', 'boolean'],
             'roles' => ['nullable', 'array'],
-            'roles.*' => ['integer', 'exists:roles,id'],
+            'roles.*' => ['integer', Rule::in($assignableRoleIds)],
         ]);
 
         $user->name = $validated['name'];
@@ -112,16 +120,25 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('ok', 'Kullanıcı güncellendi.');
     }
 
-    public function destroy(User $user)
+    public function destroy(Request $request, User $user)
     {
-        if (auth()->id() === $user->id) {
-            return back()->withErrors(['error' => 'Kendi hesabini silemezsin.']);
-        }
+        abort_unless($request->user()?->canManageUser($user), 403);
 
         $user->roles()->detach();
         $user->delete();
         Rbac::bumpVersion();
 
         return redirect()->route('admin.users.index')->with('ok', 'Kullanıcı silindi.');
+    }
+
+    private function assignableRoles(User $actor)
+    {
+        return Role::query()
+            ->select(['id', 'name', 'slug', 'priority'])
+            ->orderByDesc('priority')
+            ->orderBy('name')
+            ->get()
+            ->filter(fn (Role $role) => $actor->canAssignRole($role))
+            ->values();
     }
 }

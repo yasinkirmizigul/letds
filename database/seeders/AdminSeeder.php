@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Admin\User\Permission;
 use App\Models\Admin\User\Role;
 use App\Models\Admin\User\User;
+use App\Support\Admin\AdminRoleProfile;
 use App\Support\Rbac;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -15,27 +16,15 @@ class AdminSeeder extends Seeder
     {
         $admin = Role::updateOrCreate(
             ['slug' => 'admin'],
-            ['name' => 'Admin']
+            ['name' => 'Admin', 'priority' => 900]
         );
 
-        // Admin -> auth management + membership operations
-        $adminPerms = Permission::whereIn('slug', [
-            'admin.access',
-            'roles.view', 'roles.create', 'roles.update', 'roles.delete',
-            'permissions.view', 'permissions.create', 'permissions.update', 'permissions.delete',
-            'messages.view', 'messages.update',
-            'notifications.view', 'notifications.update',
-            'members.view', 'members.update', 'members.delete',
-            'service_reviews.view', 'service_reviews.questions',
-            'site_homepage.view', 'site_homepage.update',
-            'ecommerce_orders.view', 'ecommerce_orders.create', 'ecommerce_orders.update', 'ecommerce_orders.delete',
-            'ecommerce_orders.payments', 'ecommerce_orders.shipments',
-            'ecommerce_inventory.view', 'ecommerce_inventory.update',
-            'ecommerce_coupons.view', 'ecommerce_coupons.create', 'ecommerce_coupons.update', 'ecommerce_coupons.delete',
-            'ecommerce_invoices.view', 'ecommerce_invoices.create', 'ecommerce_invoices.update',
-            'ecommerce_webhooks.view', 'ecommerce_webhooks.update',
-            'site_payments.view', 'site_payments.create', 'site_payments.update', 'site_payments.delete',
-        ])->pluck('id')->all();
+        // Admin is the operational owner; developer and irreversible actions stay with Super Admin.
+        $adminPerms = Permission::query()
+            ->get(['id', 'slug'])
+            ->filter(fn (Permission $permission) => AdminRoleProfile::allows($permission->slug))
+            ->pluck('id')
+            ->all();
 
         $admin->permissions()->sync($adminPerms);
 
@@ -44,7 +33,7 @@ class AdminSeeder extends Seeder
             $name = env('SEED_ADMIN_NAME', 'Admin');
             $pass = env('SEED_ADMIN_PASS', '123456');
 
-            $user = User::updateOrCreate(
+            $user = User::firstOrCreate(
                 ['email' => $email],
                 [
                     'name' => $name,
@@ -60,7 +49,7 @@ class AdminSeeder extends Seeder
 
         Rbac::bumpVersion();
 
-        $this->command?->info('AdminSeeder: role synced (auth management perms).');
+        $this->command?->info('AdminSeeder: operational role synced ('.count($adminPerms).' permissions).');
     }
 
     private function shouldCreateUsers(): bool

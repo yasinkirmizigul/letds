@@ -84,7 +84,7 @@
                         @endforeach
                     </select>
 
-                    @if($isSuperAdmin)
+                    @if($canViewAllMessages)
                         <select id="messagesRecipientFilter" class="kt-select w-full md:w-[200px]" data-kt-select="true">
                             <option value="">Tüm alıcılar</option>
                             @foreach($recipientOptions as $recipientOption)

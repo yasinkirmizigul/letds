@@ -441,7 +441,10 @@
     const symbols = ['∑', '%', 'π', 'σ', '±', '√', '∞', '↗'];
     const particles = [];
     const handle = document.getElementById('dragme');
-    const mode = body.dataset.statSymbolMode === 'moving' ? 'moving' : 'idle';
+    const configuredMode = body.dataset.statSymbolMode;
+    const mode = ['idle', 'moving', 'both'].includes(configuredMode) ? configuredMode : 'idle';
+    const emitsWhileMoving = mode === 'moving' || mode === 'both';
+    const emitsWhileIdle = mode === 'idle' || mode === 'both';
     let frameId = 0;
     let idleTimer = 0;
     let burstTimer = 0;
@@ -554,12 +557,13 @@
       context.clearRect(0, 0, viewportWidth, viewportHeight);
     };
 
-    const stopIdleEmission = () => {
+    const stopIdleEmission = (clear = true) => {
       window.clearTimeout(idleTimer);
       window.clearInterval(burstTimer);
       idleTimer = 0;
       burstTimer = 0;
-      clearParticles();
+
+      if (clear) clearParticles();
     };
 
     const startIdleEmission = () => {
@@ -573,22 +577,22 @@
       pointerX = event.clientX;
       pointerY = event.clientY;
 
-      if (mode === 'moving') {
-        const now = performance.now();
-        const distance = Math.hypot(pointerX - lastMovingX, pointerY - lastMovingY);
-
-        if (now - lastMovingEmitAt < 68 || distance < 8) return;
-
-        lastMovingEmitAt = now;
-        lastMovingX = pointerX;
-        lastMovingY = pointerY;
-        emit(pointerX, pointerY);
-
-        return;
+      if (emitsWhileIdle) {
+        stopIdleEmission(mode === 'idle');
+        idleTimer = window.setTimeout(startIdleEmission, 220);
       }
 
-      stopIdleEmission();
-      idleTimer = window.setTimeout(startIdleEmission, 220);
+      if (!emitsWhileMoving) return;
+
+      const now = performance.now();
+      const distance = Math.hypot(pointerX - lastMovingX, pointerY - lastMovingY);
+
+      if (now - lastMovingEmitAt < 68 || distance < 8) return;
+
+      lastMovingEmitAt = now;
+      lastMovingX = pointerX;
+      lastMovingY = pointerY;
+      emit(pointerX, pointerY);
     };
 
     resize();

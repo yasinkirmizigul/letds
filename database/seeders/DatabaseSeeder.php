@@ -14,10 +14,10 @@ class DatabaseSeeder extends Seeder
         // Order matters: permissions first, then roles/users.
         $this->call([
             PermissionSeeder::class,
-            SuperAdminSeeder::class,
-            AdminSeeder::class,
             ServiceReviewPermissionSeeder::class,
             HomepageConfigPermissionSeeder::class,
+            SuperAdminSeeder::class,
+            AdminSeeder::class,
         ]);
     }
 }

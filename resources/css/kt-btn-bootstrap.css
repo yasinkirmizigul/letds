@@ -39,7 +39,9 @@
     padding: var(--kt-btn-pad-y) var(--kt-btn-pad-x);
     border-radius: var(--kt-btn-radius);
     font-weight: var(--kt-btn-font);
-    line-height: 1.1;
+    line-height: 1;
+    text-align: center;
+    vertical-align: middle;
     border: 1px solid transparent;
     background: transparent;
     color: var(--kt-text);

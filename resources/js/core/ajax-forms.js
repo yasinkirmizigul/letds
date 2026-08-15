@@ -1,5 +1,6 @@
 import { request } from '@/core/http';
 import { showToastMessage } from '@/core/swal-alert';
+import { showBlockUi } from '@/core/block-ui';
 
 const SKIP_ACTION_PATTERNS = [
     /\/login(?:$|\?)/,
@@ -143,6 +144,11 @@ function shouldFollowRedirect(form, payload) {
 }
 
 function followRedirect(url) {
+    showBlockUi({
+        title: 'Sayfa hazırlanıyor',
+        message: 'İşlemin sonucu ekrana aktarılıyor. Lütfen bekleyin.',
+    });
+
     window.setTimeout(() => {
         if (isSameLocation(url)) {
             window.location.reload();

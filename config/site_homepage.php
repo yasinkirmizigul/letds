@@ -346,6 +346,7 @@ return [
                     'options' => [
                         'idle' => 'İmleç durduğunda',
                         'moving' => 'İmleç hareket ederken',
+                        'both' => 'İkisi birlikte',
                     ],
                 ],
                 ['key' => 'tooltip_1_enabled', 'label' => 'Bilgi noktası 1', 'type' => 'boolean', 'default' => true],

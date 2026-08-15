@@ -26,7 +26,7 @@ class ProfileController extends Controller
     {
         $viewer = $request->user();
 
-        abort_unless($viewer && ($viewer->is($user) || $viewer->isSuperAdmin()), 403);
+        abort_unless($viewer && ($viewer->is($user) || $viewer->canManageUser($user)), 403);
 
         return $this->renderProfile($user, $viewer->is($user));
     }

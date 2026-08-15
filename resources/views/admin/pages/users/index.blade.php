@@ -3,7 +3,6 @@
 @section('content')
     @php
         $authUser = auth()->user();
-        $canViewUserProfiles = (bool) ($authUser?->isSuperAdmin());
     @endphp
 
     <div class="kt-container-fixed"
@@ -113,6 +112,8 @@
                                         $roleNames = $user->roles->pluck('name')->filter()->values();
                                         $topRole = $user->roles->sortByDesc('priority')->first();
                                         $isCurrentUser = auth()->id() === $user->id;
+                                        $canManageUser = (bool) ($authUser?->canManageUser($user));
+                                        $canViewUserProfile = $isCurrentUser || $canManageUser;
                                     @endphp
                                     <tr
                                         data-row-id="{{ $user->id }}"
@@ -170,7 +171,7 @@
 
                                         <td>
                                             <div class="flex items-center gap-2">
-                                                @if($canViewUserProfiles)
+                                                @if($canViewUserProfile)
                                                     <a href="{{ $isCurrentUser ? route('admin.profile.index') : route('admin.users.profile', $user) }}"
                                                        class="kt-btn kt-btn-sm kt-btn-icon kt-btn-light"
                                                        title="Profili görüntüle">
@@ -178,23 +179,23 @@
                                                     </a>
                                                 @endif
 
-                                                @perm('users.update')
+                                                @if($canManageUser && $authUser?->canAccess('users.update'))
                                                     <a href="{{ route('admin.users.edit', $user) }}"
                                                        class="kt-btn kt-btn-sm kt-btn-icon kt-btn-warning"
                                                        title="Kullanıcı hesabını düzenle">
                                                         <i class="ki-filled ki-notepad-edit"></i>
                                                     </a>
-                                                @endperm
+                                                @endif
                                             </div>
                                         </td>
 
                                         <td>
-                                            @perm('users.delete')
-                                                @if($isCurrentUser)
+                                            @if($authUser?->canAccess('users.delete'))
+                                                @if(! $canManageUser)
                                                     <button type="button"
                                                             class="kt-btn kt-btn-sm kt-btn-light"
                                                             disabled
-                                                            title="Kendi hesabını silemezsin">
+                                                            title="Eşit veya daha yüksek yetkili hesaplar korunur">
                                                         Korumalı
                                                     </button>
                                                 @else
@@ -208,7 +209,7 @@
                                                         </button>
                                                     </form>
                                                 @endif
-                                            @endperm
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

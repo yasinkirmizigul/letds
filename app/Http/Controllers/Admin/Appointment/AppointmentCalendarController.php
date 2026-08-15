@@ -35,8 +35,8 @@ class AppointmentCalendarController extends Controller
 
         return view('admin.pages.appointments.calendar', [
             'pageTitle' => 'Randevular',
-            'selectedProviderId' => $actor->isSuperAdmin() ? null : (int) $actor->id,
-            'canSelectProvider' => $actor->isSuperAdmin(),
+            'selectedProviderId' => $actor->hasGlobalOperationalScope() ? null : (int) $actor->id,
+            'canSelectProvider' => $actor->hasGlobalOperationalScope(),
         ], compact('providers', 'transferProviders'));
     }
 
@@ -505,7 +505,7 @@ class AppointmentCalendarController extends Controller
             ->whereHas('roles', function ($q) {
                 $q->whereIn('slug', ['provider', 'admin', 'superadmin']);
             })
-            ->when(!$actor->isSuperAdmin(), function ($query) use ($actor) {
+            ->when(!$actor->hasGlobalOperationalScope(), function ($query) use ($actor) {
                 $query->whereKey($actor->id);
             });
     }
@@ -517,12 +517,11 @@ class AppointmentCalendarController extends Controller
             ->whereHas('roles', function ($q) {
                 $q->whereIn('slug', ['provider', 'admin', 'superadmin']);
             })
-            ->when(!$actor->isSuperAdmin(), function ($query) use ($actor) {
-                $query
-                    ->whereKeyNot($actor->id)
-                    ->whereDoesntHave('roles', function ($roleQuery) {
-                        $roleQuery->where('slug', 'superadmin');
-                    });
+            ->whereDoesntHave('roles', function ($roleQuery) {
+                $roleQuery->where('slug', 'superadmin');
+            })
+            ->when(!$actor->hasGlobalOperationalScope(), function ($query) use ($actor) {
+                $query->whereKeyNot($actor->id);
             });
     }
 
@@ -531,7 +530,7 @@ class AppointmentCalendarController extends Controller
         /** @var User $actor */
         $actor = $request->user();
 
-        if (!$actor->isSuperAdmin()) {
+        if (!$actor->hasGlobalOperationalScope()) {
             return (int) $actor->id;
         }
 
@@ -542,7 +541,7 @@ class AppointmentCalendarController extends Controller
 
     protected function assertCanAccessProvider(User $actor, int $providerId): void
     {
-        if ($actor->isSuperAdmin()) {
+        if ($actor->hasGlobalOperationalScope()) {
             return;
         }
 
@@ -574,7 +573,7 @@ class AppointmentCalendarController extends Controller
         }
 
         throw ValidationException::withMessages([
-            'new_provider_id' => $actor->isSuperAdmin()
+            'new_provider_id' => $actor->hasGlobalOperationalScope()
                 ? 'Seçilen kişiye aktarım yapilamiyor.'
                 : 'Randevu sadece kendiniz dışındaki ve süper admin olmayan birine aktarılabilir.',
         ]);

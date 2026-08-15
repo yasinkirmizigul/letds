@@ -151,6 +151,7 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('Carbon Fiber')
             ->assertSee('Piksel Kareler')
             ->assertSee('Sembol çalışma biçimi')
+            ->assertSee('İkisi birlikte')
             ->assertSee('Sol Panel Yüzeyi')
             ->assertSee('Sağ Panel Yüzeyi')
             ->assertSee('Bilgisayar Paleti')
@@ -294,6 +295,28 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('--home-before-pattern-blend:overlay', false)
             ->assertSee('--home-before-pattern-image:repeating-linear-gradient(', false)
             ->assertSee('--home-tooltip-text: #334455', false);
+    }
+
+    public function test_cursor_symbols_can_run_while_moving_and_idle_together(): void
+    {
+        $service = app(HomepageConfigurationService::class);
+        $payload = array_replace($service->contentDefaults(), [
+            'settings' => array_replace($service->settingDefaults(), [
+                'cursor_symbol_mode' => 'both',
+            ]),
+            'translations' => [],
+        ]);
+
+        $validator = Validator::make($payload, $service->validationRules());
+
+        $this->assertFalse($validator->fails());
+
+        $service->persist($validator->validated());
+
+        $this->assertSame('both', $service->current()->fresh()->settings['cursor_symbol_mode']);
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('data-stat-symbol-mode="both"', false);
     }
 
     public function test_homepage_surface_patterns_are_allowlisted_and_bounded(): void

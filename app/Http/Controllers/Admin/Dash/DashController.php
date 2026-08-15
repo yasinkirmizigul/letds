@@ -153,7 +153,7 @@ class DashController extends Controller
         ];
 
         $appointmentsQuery = Appointment::query()->where('status', Appointment::STATUS_BOOKED);
-        if (!$user->isSuperAdmin()) {
+        if (!$user->hasGlobalOperationalScope()) {
             $appointmentsQuery->where('provider_id', $user->id);
         }
 
@@ -694,9 +694,9 @@ class DashController extends Controller
                         'start' => $appointment->start_at?->toIso8601String(),
                         'end' => $appointment->end_at?->toIso8601String(),
                         'title' => $memberName !== '' ? $memberName : 'Randevu',
-                        'provider' => $user->isSuperAdmin() ? ($appointment->provider?->name ?: '-') : null,
+                        'provider' => $user->hasGlobalOperationalScope() ? ($appointment->provider?->name ?: '-') : null,
                         'time' => $appointment->start_at?->timezone('Europe/Istanbul')->format('d M H:i'),
-                        'subtitle' => trim(($appointment->start_at?->timezone('Europe/Istanbul')->format('d M H:i') ?: '-') . ($user->isSuperAdmin() ? ' | ' . ($appointment->provider?->name ?: '-') : '')),
+                        'subtitle' => trim(($appointment->start_at?->timezone('Europe/Istanbul')->format('d M H:i') ?: '-') . ($user->hasGlobalOperationalScope() ? ' | ' . ($appointment->provider?->name ?: '-') : '')),
                         'description' => $appointment->end_at?->timezone('Europe/Istanbul')->format('d M H:i'),
                         'status' => 'Randevu',
                         'badgeClass' => 'kt-badge kt-badge-sm kt-badge-light-primary',
@@ -1381,7 +1381,7 @@ class DashController extends Controller
         }
 
         $query = Appointment::query();
-        if (!$user->isSuperAdmin()) {
+        if (!$user->hasGlobalOperationalScope()) {
             $query->where('provider_id', $user->id);
         }
 

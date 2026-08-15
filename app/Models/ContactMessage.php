@@ -228,7 +228,7 @@ class ContactMessage extends Model
             return $query->whereRaw('1 = 0');
         }
 
-        if ($user->isSuperAdmin()) {
+        if ($user->hasGlobalOperationalScope()) {
             return $query;
         }
 
@@ -245,7 +245,7 @@ class ContactMessage extends Model
             return false;
         }
 
-        if ($user->isSuperAdmin()) {
+        if ($user->hasGlobalOperationalScope()) {
             return true;
         }
 

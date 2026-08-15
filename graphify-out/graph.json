@@ -352,7 +352,7 @@
       "label": ".resolveProviderId()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L529",
+      "source_location": "L528",
       "_origin": "ast"
     },
     {
@@ -360,7 +360,7 @@
       "label": ".assertCanAccessProvider()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L543",
+      "source_location": "L542",
       "_origin": "ast"
     },
     {
@@ -368,7 +368,7 @@
       "label": ".assertCanAccessAppointment()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L552",
+      "source_location": "L551",
       "_origin": "ast"
     },
     {
@@ -376,7 +376,7 @@
       "label": ".assertCanAccessTimeOff()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L557",
+      "source_location": "L556",
       "_origin": "ast"
     },
     {
@@ -384,7 +384,7 @@
       "label": ".assertCanTransferToProvider()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L562",
+      "source_location": "L561",
       "_origin": "ast"
     },
     {
@@ -392,7 +392,7 @@
       "label": ".appointmentEventColor()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L583",
+      "source_location": "L582",
       "_origin": "ast"
     },
     {
@@ -400,7 +400,7 @@
       "label": ".blockEventColor()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L631",
+      "source_location": "L630",
       "_origin": "ast"
     },
     {
@@ -408,7 +408,7 @@
       "label": ".showBlock()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L661",
+      "source_location": "L660",
       "_origin": "ast"
     },
     {
@@ -416,7 +416,7 @@
       "label": ".show()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L677",
+      "source_location": "L676",
       "_origin": "ast"
     },
     {
@@ -600,7 +600,7 @@
       "label": "AuditLogController",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L10",
+      "source_location": "L13",
       "_origin": "ast"
     },
     {
@@ -608,7 +608,7 @@
       "label": ".index()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L12",
+      "source_location": "L15",
       "_origin": "ast"
     },
     {
@@ -624,7 +624,23 @@
       "label": ".show()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L61",
+      "source_location": "L64",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_http_controllers_admin_auditlog_auditlogcontroller_auditlogcontroller_clear",
+      "label": ".clear()",
+      "file_type": "code",
+      "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
+      "source_location": "L71",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_http_controllers_admin_auditlog_auditlogcontroller_php_redirectresponse",
+      "label": "RedirectResponse",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
       "_origin": "ast"
     },
     {
@@ -632,7 +648,7 @@
       "label": ".modeCount()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L68",
+      "source_location": "L84",
       "_origin": "ast"
     },
     {
@@ -640,7 +656,7 @@
       "label": ".applyModeFilter()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L76",
+      "source_location": "L92",
       "_origin": "ast"
     },
     {
@@ -656,7 +672,7 @@
       "label": ".applyFilters()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L98",
+      "source_location": "L114",
       "_origin": "ast"
     },
     {
@@ -3056,7 +3072,7 @@
       "label": ".show()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L68",
+      "source_location": "L69",
       "_origin": "ast"
     },
     {
@@ -3064,7 +3080,7 @@
       "label": ".updateWorkflow()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L101",
+      "source_location": "L102",
       "_origin": "ast"
     },
     {
@@ -3096,7 +3112,7 @@
       "label": ".normalizeTags()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L170",
+      "source_location": "L171",
       "_origin": "ast"
     },
     {
@@ -3104,7 +3120,7 @@
       "label": ".respond()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L181",
+      "source_location": "L182",
       "_origin": "ast"
     },
     {
@@ -5888,7 +5904,7 @@
       "label": "RoleController",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L11",
+      "source_location": "L12",
       "_origin": "ast"
     },
     {
@@ -5896,7 +5912,7 @@
       "label": ".index()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L13",
+      "source_location": "L14",
       "_origin": "ast"
     },
     {
@@ -5904,7 +5920,7 @@
       "label": ".create()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L29",
+      "source_location": "L30",
       "_origin": "ast"
     },
     {
@@ -5912,15 +5928,7 @@
       "label": ".edit()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L39",
-      "_origin": "ast"
-    },
-    {
-      "id": "app_http_controllers_admin_user_rolecontroller_rolecontroller_store",
-      "label": ".store()",
-      "file_type": "code",
-      "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L51",
+      "source_location": "L40",
       "_origin": "ast"
     },
     {
@@ -5932,11 +5940,19 @@
       "_origin": "ast"
     },
     {
+      "id": "app_http_controllers_admin_user_rolecontroller_rolecontroller_store",
+      "label": ".store()",
+      "file_type": "code",
+      "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
+      "source_location": "L54",
+      "_origin": "ast"
+    },
+    {
       "id": "app_http_controllers_admin_user_rolecontroller_rolecontroller_update",
       "label": ".update()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L73",
+      "source_location": "L78",
       "_origin": "ast"
     },
     {
@@ -5944,7 +5960,7 @@
       "label": ".destroy()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L107",
+      "source_location": "L114",
       "_origin": "ast"
     },
     {
@@ -5980,14 +5996,6 @@
       "_origin": "ast"
     },
     {
-      "id": "app_http_controllers_admin_user_usercontroller_usercontroller_store",
-      "label": ".store()",
-      "file_type": "code",
-      "source_file": "app/Http/Controllers/Admin/User/UserController.php",
-      "source_location": "L55",
-      "_origin": "ast"
-    },
-    {
       "id": "app_http_controllers_admin_user_usercontroller_php_request",
       "label": "Request",
       "file_type": "code",
@@ -5996,11 +6004,19 @@
       "_origin": "ast"
     },
     {
+      "id": "app_http_controllers_admin_user_usercontroller_usercontroller_store",
+      "label": ".store()",
+      "file_type": "code",
+      "source_file": "app/Http/Controllers/Admin/User/UserController.php",
+      "source_location": "L55",
+      "_origin": "ast"
+    },
+    {
       "id": "app_http_controllers_admin_user_usercontroller_usercontroller_edit",
       "label": ".edit()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/User/UserController.php",
-      "source_location": "L79",
+      "source_location": "L81",
       "_origin": "ast"
     },
     {
@@ -6008,7 +6024,7 @@
       "label": ".update()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/User/UserController.php",
-      "source_location": "L89",
+      "source_location": "L93",
       "_origin": "ast"
     },
     {
@@ -6016,7 +6032,15 @@
       "label": ".destroy()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/User/UserController.php",
-      "source_location": "L115",
+      "source_location": "L123",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_http_controllers_admin_user_usercontroller_usercontroller_assignableroles",
+      "label": ".assignableRoles()",
+      "file_type": "code",
+      "source_file": "app/Http/Controllers/Admin/User/UserController.php",
+      "source_location": "L134",
       "_origin": "ast"
     },
     {
@@ -10332,11 +10356,43 @@
       "_origin": "ast"
     },
     {
+      "id": "app_models_admin_user_user_user_hasglobaloperationalscope",
+      "label": ".hasGlobalOperationalScope()",
+      "file_type": "code",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L100",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_models_admin_user_user_user_canmanageuser",
+      "label": ".canManageUser()",
+      "file_type": "code",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L105",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_models_admin_user_user_user_canmanagerole",
+      "label": ".canManageRole()",
+      "file_type": "code",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L114",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_models_admin_user_user_user_canassignrole",
+      "label": ".canAssignRole()",
+      "file_type": "code",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L123",
+      "_origin": "ast"
+    },
+    {
       "id": "app_models_admin_user_user_user_scopeadminaccessible",
       "label": ".scopeAdminAccessible()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L97",
+      "source_location": "L128",
       "_origin": "ast"
     },
     {
@@ -10344,7 +10400,7 @@
       "label": ".permissionSlugsCached()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L107",
+      "source_location": "L138",
       "_origin": "ast"
     },
     {
@@ -10352,7 +10408,7 @@
       "label": ".hasPermission()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L127",
+      "source_location": "L158",
       "_origin": "ast"
     },
     {
@@ -10360,7 +10416,7 @@
       "label": ".hasAnyPermission()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L148",
+      "source_location": "L179",
       "_origin": "ast"
     },
     {
@@ -10368,7 +10424,7 @@
       "label": ".canAccessAdmin()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L161",
+      "source_location": "L192",
       "_origin": "ast"
     },
     {
@@ -10376,7 +10432,7 @@
       "label": ".canAccessBackoffice()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L166",
+      "source_location": "L197",
       "_origin": "ast"
     },
     {
@@ -10384,7 +10440,7 @@
       "label": ".canAccess()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L182",
+      "source_location": "L213",
       "_origin": "ast"
     },
     {
@@ -10392,7 +10448,7 @@
       "label": ".badgeLabel()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L186",
+      "source_location": "L217",
       "_origin": "ast"
     },
     {
@@ -10400,7 +10456,7 @@
       "label": ".topRole()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L199",
+      "source_location": "L230",
       "_origin": "ast"
     },
     {
@@ -10408,7 +10464,7 @@
       "label": ".topRolePriority()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L206",
+      "source_location": "L237",
       "_origin": "ast"
     },
     {
@@ -10416,7 +10472,7 @@
       "label": ".avatarMedia()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L215",
+      "source_location": "L246",
       "_origin": "ast"
     },
     {
@@ -10424,7 +10480,7 @@
       "label": ".receivedContactMessages()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L220",
+      "source_location": "L251",
       "_origin": "ast"
     },
     {
@@ -10440,7 +10496,7 @@
       "label": ".dashboardPreference()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L225",
+      "source_location": "L256",
       "_origin": "ast"
     },
     {
@@ -10456,7 +10512,7 @@
       "label": ".receivedServiceReviews()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L230",
+      "source_location": "L261",
       "_origin": "ast"
     },
     {
@@ -10464,7 +10520,7 @@
       "label": ".avatarUrl()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L235",
+      "source_location": "L266",
       "_origin": "ast"
     },
     {
@@ -10472,7 +10528,7 @@
       "label": ".skillTags()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L254",
+      "source_location": "L285",
       "_origin": "ast"
     },
     {
@@ -10480,7 +10536,7 @@
       "label": ".profileCompletionPercentage()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L275",
+      "source_location": "L306",
       "_origin": "ast"
     },
     {
@@ -10488,7 +10544,7 @@
       "label": ".sendPasswordResetNotification()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L293",
+      "source_location": "L324",
       "_origin": "ast"
     },
     {
@@ -14900,6 +14956,30 @@
       "_origin": "ast"
     },
     {
+      "id": "app_support_admin_adminroleprofile",
+      "label": "AdminRoleProfile.php",
+      "file_type": "code",
+      "source_file": "app/Support/Admin/AdminRoleProfile.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_support_admin_adminroleprofile_adminroleprofile",
+      "label": "AdminRoleProfile",
+      "file_type": "code",
+      "source_file": "app/Support/Admin/AdminRoleProfile.php",
+      "source_location": "L5",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_support_admin_adminroleprofile_adminroleprofile_allows",
+      "label": ".allows()",
+      "file_type": "code",
+      "source_file": "app/Support/Admin/AdminRoleProfile.php",
+      "source_location": "L41",
+      "_origin": "ast"
+    },
+    {
       "id": "app_support_admin_dashboardsectionregistry",
       "label": "DashboardSectionRegistry.php",
       "file_type": "code",
@@ -17576,7 +17656,7 @@
       "label": "AdminSeeder",
       "file_type": "code",
       "source_file": "database/seeders/AdminSeeder.php",
-      "source_location": "L12",
+      "source_location": "L13",
       "_origin": "ast"
     },
     {
@@ -17592,7 +17672,7 @@
       "label": ".run()",
       "file_type": "code",
       "source_file": "database/seeders/AdminSeeder.php",
-      "source_location": "L14",
+      "source_location": "L15",
       "_origin": "ast"
     },
     {
@@ -17600,7 +17680,7 @@
       "label": ".shouldCreateUsers()",
       "file_type": "code",
       "source_file": "database/seeders/AdminSeeder.php",
-      "source_location": "L66",
+      "source_location": "L55",
       "_origin": "ast"
     },
     {
@@ -18144,7 +18224,7 @@
       "label": "markReady()",
       "file_type": "code",
       "source_file": "resources/js/admin/app.js",
-      "source_location": "L22",
+      "source_location": "L23",
       "_origin": "ast"
     },
     {
@@ -18152,7 +18232,7 @@
       "label": "loaderFallback",
       "file_type": "code",
       "source_file": "resources/js/admin/app.js",
-      "source_location": "L32",
+      "source_location": "L33",
       "_origin": "ast"
     },
     {
@@ -18160,7 +18240,7 @@
       "label": "domReady()",
       "file_type": "code",
       "source_file": "resources/js/admin/app.js",
-      "source_location": "L87",
+      "source_location": "L89",
       "_origin": "ast"
     },
     {
@@ -19500,6 +19580,22 @@
       "_origin": "ast"
     },
     {
+      "id": "resources_js_admin_pages_audit_logs_index",
+      "label": "index.js",
+      "file_type": "code",
+      "source_file": "resources/js/admin/pages/audit-logs/index.js",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_admin_pages_audit_logs_index_init",
+      "label": "init()",
+      "file_type": "code",
+      "source_file": "resources/js/admin/pages/audit-logs/index.js",
+      "source_location": "L3",
+      "_origin": "ast"
+    },
+    {
       "id": "resources_js_admin_pages_blog_create",
       "label": "create.js",
       "file_type": "code",
@@ -20464,7 +20560,7 @@
       "label": "NoopPage()",
       "file_type": "code",
       "source_file": "resources/js/admin/pages/index.js",
-      "source_location": "L68",
+      "source_location": "L69",
       "_origin": "ast"
     },
     {
@@ -20472,7 +20568,7 @@
       "label": "registerPages()",
       "file_type": "code",
       "source_file": "resources/js/admin/pages/index.js",
-      "source_location": "L70",
+      "source_location": "L71",
       "_origin": "ast"
     },
     {
@@ -22384,7 +22480,7 @@
       "label": "SKIP_ACTION_PATTERNS",
       "file_type": "code",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L4",
+      "source_location": "L5",
       "_origin": "ast"
     },
     {
@@ -22392,7 +22488,7 @@
       "label": "effectiveMethod()",
       "file_type": "code",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L11",
+      "source_location": "L12",
       "_origin": "ast"
     },
     {
@@ -22400,7 +22496,7 @@
       "label": "formMethod()",
       "file_type": "code",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L18",
+      "source_location": "L19",
       "_origin": "ast"
     },
     {
@@ -22408,7 +22504,7 @@
       "label": "formAction()",
       "file_type": "code",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L22",
+      "source_location": "L23",
       "_origin": "ast"
     },
     {
@@ -22416,7 +22512,7 @@
       "label": "shouldEnhance()",
       "file_type": "code",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L28",
+      "source_location": "L29",
       "_origin": "ast"
     },
     {
@@ -22424,7 +22520,7 @@
       "label": "formDataWithSubmitter()",
       "file_type": "code",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L44",
+      "source_location": "L45",
       "_origin": "ast"
     },
     {
@@ -22432,7 +22528,7 @@
       "label": "fieldNameCandidates()",
       "file_type": "code",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L58",
+      "source_location": "L59",
       "_origin": "ast"
     },
     {
@@ -22440,7 +22536,7 @@
       "label": "queryField()",
       "file_type": "code",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L69",
+      "source_location": "L70",
       "_origin": "ast"
     },
     {
@@ -22448,7 +22544,7 @@
       "label": "fieldWrapper()",
       "file_type": "code",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L85",
+      "source_location": "L86",
       "_origin": "ast"
     },
     {
@@ -22456,7 +22552,7 @@
       "label": "clearErrors()",
       "file_type": "code",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L90",
+      "source_location": "L91",
       "_origin": "ast"
     },
     {
@@ -22464,7 +22560,7 @@
       "label": "showFieldError()",
       "file_type": "code",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L97",
+      "source_location": "L98",
       "_origin": "ast"
     },
     {
@@ -22472,7 +22568,7 @@
       "label": "disableSubmitter()",
       "file_type": "code",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L116",
+      "source_location": "L117",
       "_origin": "ast"
     },
     {
@@ -22480,7 +22576,7 @@
       "label": "isSameLocation()",
       "file_type": "code",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L124",
+      "source_location": "L125",
       "_origin": "ast"
     },
     {
@@ -22488,7 +22584,7 @@
       "label": "shouldFollowRedirect()",
       "file_type": "code",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L134",
+      "source_location": "L135",
       "_origin": "ast"
     },
     {
@@ -22496,7 +22592,7 @@
       "label": "followRedirect()",
       "file_type": "code",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L145",
+      "source_location": "L146",
       "_origin": "ast"
     },
     {
@@ -22504,7 +22600,7 @@
       "label": "firstValidationMessage()",
       "file_type": "code",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L156",
+      "source_location": "L162",
       "_origin": "ast"
     },
     {
@@ -22512,7 +22608,7 @@
       "label": "submitForm()",
       "file_type": "code",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L163",
+      "source_location": "L169",
       "_origin": "ast"
     },
     {
@@ -22520,7 +22616,7 @@
       "label": "initAjaxForms()",
       "file_type": "code",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L217",
+      "source_location": "L223",
       "_origin": "ast"
     },
     {
@@ -22569,6 +22665,126 @@
       "file_type": "code",
       "source_file": "resources/js/core/app-init.js",
       "source_location": "L66",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_block_ui",
+      "label": "block-ui.js",
+      "file_type": "code",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_block_ui_blocking_methods",
+      "label": "BLOCKING_METHODS",
+      "file_type": "code",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_block_ui_activeoperations",
+      "label": "activeOperations",
+      "file_type": "code",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L3",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_block_ui_operationcopy",
+      "label": "operationCopy()",
+      "file_type": "code",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L10",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_block_ui_ensureoverlay",
+      "label": "ensureOverlay()",
+      "file_type": "code",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L24",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_block_ui_renderlatestoperation",
+      "label": "renderLatestOperation()",
+      "file_type": "code",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L49",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_block_ui_showblockui",
+      "label": "showBlockUi()",
+      "file_type": "code",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L57",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_block_ui_hideblockui",
+      "label": "hideBlockUi()",
+      "file_type": "code",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L82",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_block_ui_effectiveformmethod",
+      "label": "effectiveFormMethod()",
+      "file_type": "code",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L106",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_block_ui_shouldblockform",
+      "label": "shouldBlockForm()",
+      "file_type": "code",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L111",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_block_ui_blockform",
+      "label": "blockForm()",
+      "file_type": "code",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L121",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_block_ui_installforminterceptor",
+      "label": "installFormInterceptor()",
+      "file_type": "code",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L132",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_block_ui_installfetchinterceptor",
+      "label": "installFetchInterceptor()",
+      "file_type": "code",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L149",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_block_ui_installxhrinterceptor",
+      "label": "installXhrInterceptor()",
+      "file_type": "code",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L167",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_block_ui_initglobalblockui",
+      "label": "initGlobalBlockUi()",
+      "file_type": "code",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L197",
       "_origin": "ast"
     },
     {
@@ -23544,7 +23760,7 @@
       "label": "initKtComponents()",
       "file_type": "code",
       "source_file": "resources/js/site/app.js",
-      "source_location": "L9",
+      "source_location": "L11",
       "_origin": "ast"
     },
     {
@@ -23552,7 +23768,7 @@
       "label": "initReveals()",
       "file_type": "code",
       "source_file": "resources/js/site/app.js",
-      "source_location": "L17",
+      "source_location": "L19",
       "_origin": "ast"
     },
     {
@@ -23560,7 +23776,7 @@
       "label": "domReady()",
       "file_type": "code",
       "source_file": "resources/js/site/app.js",
-      "source_location": "L37",
+      "source_location": "L39",
       "_origin": "ast"
     },
     {
@@ -24238,6 +24454,14 @@
     {
       "id": "resources_views_admin_pages_audit_logs_index_blade",
       "label": "index.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/admin/pages/audit-logs/index.blade.php",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_views_admin_pages_audit_logs_index_blade_php_admin_partials_flash",
+      "label": "admin.partials._flash",
       "file_type": "code",
       "source_file": "resources/views/admin/pages/audit-logs/index.blade.php",
       "source_location": null,
@@ -26484,6 +26708,54 @@
       "_origin": "ast"
     },
     {
+      "id": "tests_feature_adminroleprofiletest",
+      "label": "AdminRoleProfileTest.php",
+      "file_type": "code",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "tests_feature_adminroleprofiletest_adminroleprofiletest",
+      "label": "AdminRoleProfileTest",
+      "file_type": "code",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L17",
+      "_origin": "ast"
+    },
+    {
+      "id": "tests_feature_adminroleprofiletest_adminroleprofiletest_test_admin_has_full_panel_permissions_while_global_menu_management_stays_with_superadmin",
+      "label": ".test_admin_has_full_panel_permissions_while_global_menu_management_stays_with_superadmin()",
+      "file_type": "code",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L21",
+      "_origin": "ast"
+    },
+    {
+      "id": "tests_feature_adminroleprofiletest_adminroleprofiletest_test_role_hierarchy_protects_admin_and_superadmin_accounts",
+      "label": ".test_role_hierarchy_protects_admin_and_superadmin_accounts()",
+      "file_type": "code",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L94",
+      "_origin": "ast"
+    },
+    {
+      "id": "tests_feature_adminroleprofiletest_adminroleprofiletest_test_admin_and_superadmin_can_clear_audit_logs",
+      "label": ".test_admin_and_superadmin_can_clear_audit_logs()",
+      "file_type": "code",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L134",
+      "_origin": "ast"
+    },
+    {
+      "id": "tests_feature_adminroleprofiletest_adminroleprofiletest_test_admin_has_global_operational_visibility_without_developer_permissions",
+      "label": ".test_admin_has_global_operational_visibility_without_developer_permissions()",
+      "file_type": "code",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L167",
+      "_origin": "ast"
+    },
+    {
       "id": "tests_feature_demoaccesstest",
       "label": "DemoAccessTest.php",
       "file_type": "code",
@@ -26588,11 +26860,19 @@
       "_origin": "ast"
     },
     {
+      "id": "tests_feature_homepageconfigurationtest_homepageconfigurationtest_test_cursor_symbols_can_run_while_moving_and_idle_together",
+      "label": ".test_cursor_symbols_can_run_while_moving_and_idle_together()",
+      "file_type": "code",
+      "source_file": "tests/Feature/HomepageConfigurationTest.php",
+      "source_location": "L300",
+      "_origin": "ast"
+    },
+    {
       "id": "tests_feature_homepageconfigurationtest_homepageconfigurationtest_test_homepage_surface_patterns_are_allowlisted_and_bounded",
       "label": ".test_homepage_surface_patterns_are_allowlisted_and_bounded()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L299",
+      "source_location": "L322",
       "_origin": "ast"
     },
     {
@@ -26600,7 +26880,7 @@
       "label": ".test_superadmin_can_manage_multilingual_homepage_sections_and_cards()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L323",
+      "source_location": "L346",
       "_origin": "ast"
     },
     {
@@ -26608,7 +26888,7 @@
       "label": ".test_homepage_section_manager_rejects_unsafe_links_and_keeps_reordering_scoped()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L427",
+      "source_location": "L450",
       "_origin": "ast"
     },
     {
@@ -27820,11 +28100,19 @@
       "_origin": "ast"
     },
     {
+      "id": "database_seeders_readme_seeding_built_in_role_profiles",
+      "label": "Built-in role profiles",
+      "file_type": "document",
+      "source_file": "database/seeders/README_SEEDING.md",
+      "source_location": "L8",
+      "_origin": "ast"
+    },
+    {
       "id": "database_seeders_readme_seeding_control_demo_user_creation",
       "label": "Control demo user creation",
       "file_type": "document",
       "source_file": "database/seeders/README_SEEDING.md",
-      "source_location": "L7",
+      "source_location": "L14",
       "_origin": "ast"
     },
     {
@@ -27832,7 +28120,7 @@
       "label": "Customize credentials",
       "file_type": "document",
       "source_file": "database/seeders/README_SEEDING.md",
-      "source_location": "L16",
+      "source_location": "L23",
       "_origin": "ast"
     },
     {
@@ -27840,7 +28128,7 @@
       "label": "Add module permissions",
       "file_type": "document",
       "source_file": "database/seeders/README_SEEDING.md",
-      "source_location": "L25",
+      "source_location": "L32",
       "_origin": "ast"
     },
     {
@@ -29610,7 +29898,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L529",
+      "source_location": "L528",
       "weight": 1.0
     },
     {
@@ -29619,7 +29907,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L529",
+      "source_location": "L528",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -29629,7 +29917,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L543",
+      "source_location": "L542",
       "weight": 1.0
     },
     {
@@ -29638,7 +29926,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L543",
+      "source_location": "L542",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -29648,7 +29936,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L552",
+      "source_location": "L551",
       "weight": 1.0
     },
     {
@@ -29657,7 +29945,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L552",
+      "source_location": "L551",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -29667,7 +29955,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L552",
+      "source_location": "L551",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -29677,7 +29965,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L557",
+      "source_location": "L556",
       "weight": 1.0
     },
     {
@@ -29686,7 +29974,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L557",
+      "source_location": "L556",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -29696,7 +29984,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L557",
+      "source_location": "L556",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -29706,7 +29994,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L562",
+      "source_location": "L561",
       "weight": 1.0
     },
     {
@@ -29715,7 +30003,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L562",
+      "source_location": "L561",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -29725,7 +30013,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L583",
+      "source_location": "L582",
       "weight": 1.0
     },
     {
@@ -29734,7 +30022,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L631",
+      "source_location": "L630",
       "weight": 1.0
     },
     {
@@ -29743,7 +30031,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L661",
+      "source_location": "L660",
       "weight": 1.0
     },
     {
@@ -29752,7 +30040,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L661",
+      "source_location": "L660",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -29762,7 +30050,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L677",
+      "source_location": "L676",
       "weight": 1.0
     },
     {
@@ -29771,7 +30059,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L677",
+      "source_location": "L676",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -30062,7 +30350,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L554",
+      "source_location": "L553",
       "weight": 1.0
     },
     {
@@ -30072,7 +30360,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L559",
+      "source_location": "L558",
       "weight": 1.0
     },
     {
@@ -30082,7 +30370,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L568",
+      "source_location": "L567",
       "weight": 1.0
     },
     {
@@ -30092,7 +30380,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L586",
+      "source_location": "L585",
       "weight": 1.0
     },
     {
@@ -30102,7 +30390,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L665",
+      "source_location": "L664",
       "weight": 1.0
     },
     {
@@ -30112,7 +30400,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L681",
+      "source_location": "L680",
       "weight": 1.0
     },
     {
@@ -30122,7 +30410,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php",
-      "source_location": "L706",
+      "source_location": "L705",
       "weight": 1.0
     },
     {
@@ -30779,7 +31067,7 @@
     },
     {
       "source": "app_http_controllers_admin_auditlog_auditlogcontroller",
-      "target": "app_http_controllers_admin_auditlog_auditlogcontroller_php_builder",
+      "target": "auditevent",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -30789,7 +31077,7 @@
     },
     {
       "source": "app_http_controllers_admin_auditlog_auditlogcontroller",
-      "target": "app_http_controllers_admin_auditlog_auditlogcontroller_php_request",
+      "target": "app_http_controllers_admin_auditlog_auditlogcontroller_php_builder",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -30799,11 +31087,41 @@
     },
     {
       "source": "app_http_controllers_admin_auditlog_auditlogcontroller",
+      "target": "app_http_controllers_admin_auditlog_auditlogcontroller_php_redirectresponse",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_auditlog_auditlogcontroller",
+      "target": "app_http_controllers_admin_auditlog_auditlogcontroller_php_request",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_auditlog_auditlogcontroller",
+      "target": "db",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_auditlog_auditlogcontroller",
       "target": "app_http_controllers_admin_auditlog_auditlogcontroller_auditlogcontroller",
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L10",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -30812,7 +31130,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L10",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -30821,7 +31139,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L12",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -30830,7 +31148,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L12",
+      "source_location": "L15",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -30840,7 +31158,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L61",
+      "source_location": "L64",
       "weight": 1.0
     },
     {
@@ -30849,9 +31167,28 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L61",
+      "source_location": "L64",
       "weight": 1.0,
       "context": "parameter_type"
+    },
+    {
+      "source": "app_http_controllers_admin_auditlog_auditlogcontroller_auditlogcontroller",
+      "target": "app_http_controllers_admin_auditlog_auditlogcontroller_auditlogcontroller_clear",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_auditlog_auditlogcontroller_auditlogcontroller_clear",
+      "target": "app_http_controllers_admin_auditlog_auditlogcontroller_php_redirectresponse",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
+      "source_location": "L71",
+      "weight": 1.0,
+      "context": "return_type"
     },
     {
       "source": "app_http_controllers_admin_auditlog_auditlogcontroller_auditlogcontroller",
@@ -30859,7 +31196,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L68",
+      "source_location": "L84",
       "weight": 1.0
     },
     {
@@ -30868,7 +31205,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L76",
+      "source_location": "L92",
       "weight": 1.0
     },
     {
@@ -30877,7 +31214,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L76",
+      "source_location": "L92",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -30887,7 +31224,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L98",
+      "source_location": "L114",
       "weight": 1.0
     },
     {
@@ -30896,33 +31233,13 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L98",
+      "source_location": "L114",
       "weight": 1.0,
       "context": "parameter_type"
     },
     {
       "source": "app_http_controllers_admin_auditlog_auditlogcontroller_auditlogcontroller_index",
       "target": "app_models_admin_auditlog_auditlog_auditlog",
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L21",
-      "weight": 1.0
-    },
-    {
-      "source": "app_http_controllers_admin_auditlog_auditlogcontroller_auditlogcontroller_index",
-      "target": "app_http_controllers_admin_auditlog_auditlogcontroller_auditlogcontroller_applymodefilter",
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L23",
-      "weight": 1.0
-    },
-    {
-      "source": "app_http_controllers_admin_auditlog_auditlogcontroller_auditlogcontroller_index",
-      "target": "app_http_controllers_admin_auditlog_auditlogcontroller_auditlogcontroller_applyfilters",
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -30932,12 +31249,42 @@
     },
     {
       "source": "app_http_controllers_admin_auditlog_auditlogcontroller_auditlogcontroller_index",
+      "target": "app_http_controllers_admin_auditlog_auditlogcontroller_auditlogcontroller_applymodefilter",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_auditlog_auditlogcontroller_auditlogcontroller_index",
+      "target": "app_http_controllers_admin_auditlog_auditlogcontroller_auditlogcontroller_applyfilters",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_auditlog_auditlogcontroller_auditlogcontroller_index",
       "target": "app_http_controllers_admin_auditlog_auditlogcontroller_auditlogcontroller_modecount",
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L37",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_auditlog_auditlogcontroller_auditlogcontroller_clear",
+      "target": "app_models_admin_auditlog_auditlog_auditlog",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
+      "source_location": "L73",
       "weight": 1.0
     },
     {
@@ -30947,7 +31294,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L70",
+      "source_location": "L86",
       "weight": 1.0
     },
     {
@@ -30957,7 +31304,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
-      "source_location": "L71",
+      "source_location": "L87",
       "weight": 1.0
     },
     {
@@ -40702,7 +41049,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L68",
+      "source_location": "L69",
       "weight": 1.0
     },
     {
@@ -40711,7 +41058,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L68",
+      "source_location": "L69",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -40721,7 +41068,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L68",
+      "source_location": "L69",
       "weight": 1.0,
       "context": "return_type"
     },
@@ -40731,7 +41078,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L101",
+      "source_location": "L102",
       "weight": 1.0
     },
     {
@@ -40740,7 +41087,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L101",
+      "source_location": "L102",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -40750,7 +41097,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L101",
+      "source_location": "L102",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -40760,7 +41107,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L101",
+      "source_location": "L102",
       "weight": 1.0,
       "context": "return_type"
     },
@@ -40770,7 +41117,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L101",
+      "source_location": "L102",
       "weight": 1.0,
       "context": "return_type"
     },
@@ -40780,7 +41127,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L170",
+      "source_location": "L171",
       "weight": 1.0
     },
     {
@@ -40789,7 +41136,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L181",
+      "source_location": "L182",
       "weight": 1.0
     },
     {
@@ -40798,7 +41145,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L181",
+      "source_location": "L182",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -40808,7 +41155,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L181",
+      "source_location": "L182",
       "weight": 1.0,
       "context": "return_type"
     },
@@ -40818,7 +41165,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L181",
+      "source_location": "L182",
       "weight": 1.0,
       "context": "return_type"
     },
@@ -40839,7 +41186,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L59",
+      "source_location": "L60",
       "weight": 1.0
     },
     {
@@ -40849,7 +41196,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L93",
+      "source_location": "L94",
       "weight": 1.0
     },
     {
@@ -40859,7 +41206,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L110",
+      "source_location": "L111",
       "weight": 1.0
     },
     {
@@ -40869,7 +41216,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L123",
+      "source_location": "L124",
       "weight": 1.0
     },
     {
@@ -40879,7 +41226,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L132",
+      "source_location": "L133",
       "weight": 1.0
     },
     {
@@ -40889,7 +41236,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L167",
+      "source_location": "L168",
       "weight": 1.0
     },
     {
@@ -52903,11 +53250,21 @@
     },
     {
       "source": "app_http_controllers_admin_user_rolecontroller",
+      "target": "rule",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_user_rolecontroller",
       "target": "app_http_controllers_admin_user_rolecontroller_rolecontroller",
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -52916,7 +53273,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -52925,7 +53282,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L13",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -52934,7 +53291,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -52943,8 +53300,18 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L39",
+      "source_location": "L40",
       "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_user_rolecontroller_rolecontroller_edit",
+      "target": "app_http_controllers_admin_user_rolecontroller_php_request",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
+      "source_location": "L40",
+      "weight": 1.0,
+      "context": "parameter_type"
     },
     {
       "source": "app_http_controllers_admin_user_rolecontroller_rolecontroller_edit",
@@ -52952,7 +53319,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L39",
+      "source_location": "L40",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -52962,7 +53329,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L51",
+      "source_location": "L54",
       "weight": 1.0
     },
     {
@@ -52971,7 +53338,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L51",
+      "source_location": "L54",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -52981,7 +53348,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L73",
+      "source_location": "L78",
       "weight": 1.0
     },
     {
@@ -52990,7 +53357,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L73",
+      "source_location": "L78",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -53000,7 +53367,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L73",
+      "source_location": "L78",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -53010,8 +53377,18 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L107",
+      "source_location": "L114",
       "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_user_rolecontroller_rolecontroller_destroy",
+      "target": "app_http_controllers_admin_user_rolecontroller_php_request",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
+      "source_location": "L114",
+      "weight": 1.0,
+      "context": "parameter_type"
     },
     {
       "source": "app_http_controllers_admin_user_rolecontroller_rolecontroller_destroy",
@@ -53019,7 +53396,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L107",
+      "source_location": "L114",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -53030,7 +53407,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -53040,7 +53417,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L61",
+      "source_location": "L66",
       "weight": 1.0
     },
     {
@@ -53055,7 +53432,7 @@
     },
     {
       "source": "app_http_controllers_admin_user_usercontroller",
-      "target": "app_models_admin_user_role_role",
+      "target": "role",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -53140,6 +53517,16 @@
       "weight": 1.0
     },
     {
+      "source": "app_http_controllers_admin_user_usercontroller_usercontroller_create",
+      "target": "app_http_controllers_admin_user_usercontroller_php_request",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/User/UserController.php",
+      "source_location": "L46",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
       "source": "app_http_controllers_admin_user_usercontroller_usercontroller",
       "target": "app_http_controllers_admin_user_usercontroller_usercontroller_store",
       "relation": "method",
@@ -53164,8 +53551,18 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/UserController.php",
-      "source_location": "L79",
+      "source_location": "L81",
       "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_user_usercontroller_usercontroller_edit",
+      "target": "app_http_controllers_admin_user_usercontroller_php_request",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/User/UserController.php",
+      "source_location": "L81",
+      "weight": 1.0,
+      "context": "parameter_type"
     },
     {
       "source": "app_http_controllers_admin_user_usercontroller_usercontroller_edit",
@@ -53173,7 +53570,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/UserController.php",
-      "source_location": "L79",
+      "source_location": "L81",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -53183,7 +53580,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/UserController.php",
-      "source_location": "L89",
+      "source_location": "L93",
       "weight": 1.0
     },
     {
@@ -53192,7 +53589,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/UserController.php",
-      "source_location": "L89",
+      "source_location": "L93",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -53202,7 +53599,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/UserController.php",
-      "source_location": "L89",
+      "source_location": "L93",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -53212,8 +53609,18 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/UserController.php",
-      "source_location": "L115",
+      "source_location": "L123",
       "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_user_usercontroller_usercontroller_destroy",
+      "target": "app_http_controllers_admin_user_usercontroller_php_request",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/User/UserController.php",
+      "source_location": "L123",
+      "weight": 1.0,
+      "context": "parameter_type"
     },
     {
       "source": "app_http_controllers_admin_user_usercontroller_usercontroller_destroy",
@@ -53221,7 +53628,26 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/UserController.php",
-      "source_location": "L115",
+      "source_location": "L123",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_http_controllers_admin_user_usercontroller_usercontroller",
+      "target": "app_http_controllers_admin_user_usercontroller_usercontroller_assignableroles",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/User/UserController.php",
+      "source_location": "L134",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_user_usercontroller_usercontroller_assignableroles",
+      "target": "app_models_admin_user_user_user",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/User/UserController.php",
+      "source_location": "L134",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -53236,13 +53662,53 @@
       "weight": 1.0
     },
     {
+      "source": "app_http_controllers_admin_user_usercontroller_usercontroller_create",
+      "target": "app_http_controllers_admin_user_usercontroller_usercontroller_assignableroles",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/User/UserController.php",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_user_usercontroller_usercontroller_store",
+      "target": "app_http_controllers_admin_user_usercontroller_usercontroller_assignableroles",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/User/UserController.php",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
       "source": "app_http_controllers_admin_user_usercontroller_usercontroller_store",
       "target": "app_models_admin_user_user_user",
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/User/UserController.php",
-      "source_location": "L66",
+      "source_location": "L68",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_user_usercontroller_usercontroller_edit",
+      "target": "app_http_controllers_admin_user_usercontroller_usercontroller_assignableroles",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/User/UserController.php",
+      "source_location": "L85",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_user_usercontroller_usercontroller_update",
+      "target": "app_http_controllers_admin_user_usercontroller_usercontroller_assignableroles",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/User/UserController.php",
+      "source_location": "L97",
       "weight": 1.0
     },
     {
@@ -63603,11 +64069,77 @@
     },
     {
       "source": "app_models_admin_user_user_user",
+      "target": "app_models_admin_user_user_user_hasglobaloperationalscope",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L100",
+      "weight": 1.0
+    },
+    {
+      "source": "app_models_admin_user_user_user",
+      "target": "app_models_admin_user_user_user_canmanageuser",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L105",
+      "weight": 1.0
+    },
+    {
+      "source": "app_models_admin_user_user_user_canmanageuser",
+      "target": "app_models_admin_user_user_user",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L105",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_models_admin_user_user_user",
+      "target": "app_models_admin_user_user_user_canmanagerole",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L114",
+      "weight": 1.0
+    },
+    {
+      "source": "app_models_admin_user_user_user_canmanagerole",
+      "target": "app_models_admin_user_role_role",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L114",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_models_admin_user_user_user",
+      "target": "app_models_admin_user_user_user_canassignrole",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L123",
+      "weight": 1.0
+    },
+    {
+      "source": "app_models_admin_user_user_user_canassignrole",
+      "target": "app_models_admin_user_role_role",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L123",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_models_admin_user_user_user",
       "target": "app_models_admin_user_user_user_scopeadminaccessible",
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L97",
+      "source_location": "L128",
       "weight": 1.0
     },
     {
@@ -63616,7 +64148,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L107",
+      "source_location": "L138",
       "weight": 1.0
     },
     {
@@ -63625,7 +64157,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L127",
+      "source_location": "L158",
       "weight": 1.0
     },
     {
@@ -63634,7 +64166,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L148",
+      "source_location": "L179",
       "weight": 1.0
     },
     {
@@ -63643,7 +64175,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L161",
+      "source_location": "L192",
       "weight": 1.0
     },
     {
@@ -63652,7 +64184,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L166",
+      "source_location": "L197",
       "weight": 1.0
     },
     {
@@ -63661,7 +64193,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L182",
+      "source_location": "L213",
       "weight": 1.0
     },
     {
@@ -63670,7 +64202,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L186",
+      "source_location": "L217",
       "weight": 1.0
     },
     {
@@ -63679,7 +64211,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L199",
+      "source_location": "L230",
       "weight": 1.0
     },
     {
@@ -63688,7 +64220,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L206",
+      "source_location": "L237",
       "weight": 1.0
     },
     {
@@ -63697,7 +64229,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L215",
+      "source_location": "L246",
       "weight": 1.0
     },
     {
@@ -63706,7 +64238,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L220",
+      "source_location": "L251",
       "weight": 1.0
     },
     {
@@ -63715,7 +64247,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L220",
+      "source_location": "L251",
       "weight": 1.0,
       "context": "return_type"
     },
@@ -63725,7 +64257,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L225",
+      "source_location": "L256",
       "weight": 1.0
     },
     {
@@ -63734,7 +64266,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L225",
+      "source_location": "L256",
       "weight": 1.0,
       "context": "return_type"
     },
@@ -63744,7 +64276,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L230",
+      "source_location": "L261",
       "weight": 1.0
     },
     {
@@ -63753,7 +64285,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L230",
+      "source_location": "L261",
       "weight": 1.0,
       "context": "return_type"
     },
@@ -63763,7 +64295,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L235",
+      "source_location": "L266",
       "weight": 1.0
     },
     {
@@ -63772,7 +64304,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L254",
+      "source_location": "L285",
       "weight": 1.0
     },
     {
@@ -63781,7 +64313,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L275",
+      "source_location": "L306",
       "weight": 1.0
     },
     {
@@ -63790,7 +64322,17 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L293",
+      "source_location": "L324",
+      "weight": 1.0
+    },
+    {
+      "source": "app_models_admin_user_user_user_roles",
+      "target": "app_models_admin_user_role_role",
+      "relation": "references_constant",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L57",
       "weight": 1.0
     },
     {
@@ -63824,13 +64366,63 @@
       "weight": 1.0
     },
     {
+      "source": "app_models_admin_user_user_user_hasglobaloperationalscope",
+      "target": "app_models_admin_user_user_user_isadmin",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "app_models_admin_user_user_user_canmanageuser",
+      "target": "app_models_admin_user_user_user_issuperadmin",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "app_models_admin_user_user_user_canmanageuser",
+      "target": "app_models_admin_user_user_user_toprolepriority",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L111",
+      "weight": 1.0
+    },
+    {
+      "source": "app_models_admin_user_user_user_canmanagerole",
+      "target": "app_models_admin_user_user_user_toprolepriority",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L120",
+      "weight": 1.0
+    },
+    {
+      "source": "app_models_admin_user_user_user_canassignrole",
+      "target": "app_models_admin_user_user_user_canmanagerole",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L125",
+      "weight": 1.0
+    },
+    {
       "source": "app_models_admin_user_user_user_permissionslugscached",
       "target": "app_models_admin_user_user_user_roles",
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L113",
+      "source_location": "L144",
       "weight": 1.0
     },
     {
@@ -63840,7 +64432,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L139",
+      "source_location": "L170",
       "weight": 1.0
     },
     {
@@ -63850,7 +64442,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L151",
+      "source_location": "L182",
       "weight": 1.0
     },
     {
@@ -63860,7 +64452,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L163",
+      "source_location": "L194",
       "weight": 1.0
     },
     {
@@ -63870,7 +64462,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L172",
+      "source_location": "L203",
       "weight": 1.0
     },
     {
@@ -63880,7 +64472,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L172",
+      "source_location": "L203",
       "weight": 1.0
     },
     {
@@ -63890,7 +64482,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L176",
+      "source_location": "L207",
       "weight": 1.0
     },
     {
@@ -63900,7 +64492,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L184",
+      "source_location": "L215",
       "weight": 1.0
     },
     {
@@ -63910,7 +64502,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L184",
+      "source_location": "L215",
       "weight": 1.0
     },
     {
@@ -63920,7 +64512,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L188",
+      "source_location": "L219",
       "weight": 1.0
     },
     {
@@ -63930,7 +64522,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L192",
+      "source_location": "L223",
       "weight": 1.0
     },
     {
@@ -63940,7 +64532,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L196",
+      "source_location": "L227",
       "weight": 1.0
     },
     {
@@ -63950,7 +64542,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L204",
+      "source_location": "L235",
       "weight": 1.0
     },
     {
@@ -63960,7 +64552,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L211",
+      "source_location": "L242",
       "weight": 1.0
     },
     {
@@ -63970,7 +64562,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L239",
+      "source_location": "L270",
       "weight": 1.0
     },
     {
@@ -63980,7 +64572,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L285",
+      "source_location": "L316",
       "weight": 1.0
     },
     {
@@ -75443,6 +76035,24 @@
       "weight": 1.0
     },
     {
+      "source": "app_support_admin_adminroleprofile",
+      "target": "app_support_admin_adminroleprofile_adminroleprofile",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Support/Admin/AdminRoleProfile.php",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "app_support_admin_adminroleprofile_adminroleprofile",
+      "target": "app_support_admin_adminroleprofile_adminroleprofile_allows",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Support/Admin/AdminRoleProfile.php",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
       "source": "app_support_admin_dashboardsectionregistry",
       "target": "app_support_admin_dashboardsectionregistry_dashboardsectionregistry",
       "relation": "contains",
@@ -80084,7 +80694,7 @@
     },
     {
       "source": "database_seeders_adminseeder",
-      "target": "app_models_admin_user_role_role",
+      "target": "role",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -80104,7 +80714,7 @@
     },
     {
       "source": "database_seeders_adminseeder",
-      "target": "rbac",
+      "target": "adminroleprofile",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -80114,7 +80724,7 @@
     },
     {
       "source": "database_seeders_adminseeder",
-      "target": "seeder",
+      "target": "rbac",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -80124,7 +80734,7 @@
     },
     {
       "source": "database_seeders_adminseeder",
-      "target": "hash",
+      "target": "seeder",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -80134,11 +80744,21 @@
     },
     {
       "source": "database_seeders_adminseeder",
+      "target": "hash",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "database/seeders/AdminSeeder.php",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "database_seeders_adminseeder",
       "target": "database_seeders_adminseeder_adminseeder",
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "database/seeders/AdminSeeder.php",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -80147,7 +80767,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "database/seeders/AdminSeeder.php",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -80156,7 +80776,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "database/seeders/AdminSeeder.php",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -80165,7 +80785,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "database/seeders/AdminSeeder.php",
-      "source_location": "L66",
+      "source_location": "L55",
       "weight": 1.0
     },
     {
@@ -80175,7 +80795,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "database/seeders/AdminSeeder.php",
-      "source_location": "L42",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
@@ -80264,7 +80884,7 @@
     },
     {
       "source": "database_seeders_homepageconfigpermissionseeder",
-      "target": "app_models_admin_user_role_role",
+      "target": "role",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -80407,7 +81027,7 @@
     },
     {
       "source": "database_seeders_servicereviewpermissionseeder",
-      "target": "app_models_admin_user_role_role",
+      "target": "role",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -80474,7 +81094,7 @@
     },
     {
       "source": "database_seeders_superadminseeder",
-      "target": "app_models_admin_user_role_role",
+      "target": "role",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -81232,11 +81852,21 @@
     },
     {
       "source": "resources_js_admin_app",
+      "target": "ref_core_block_ui",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/admin/app.js",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_admin_app",
       "target": "resources_js_admin_app_markready",
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/app.js",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -81245,7 +81875,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/app.js",
-      "source_location": "L32",
+      "source_location": "L33",
       "weight": 1.0
     },
     {
@@ -81254,7 +81884,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/app.js",
-      "source_location": "L87",
+      "source_location": "L89",
       "weight": 1.0
     },
     {
@@ -85365,6 +85995,25 @@
       "weight": 1.0
     },
     {
+      "source": "resources_js_admin_pages_audit_logs_index",
+      "target": "ref_core_swal_alert",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/admin/pages/audit-logs/index.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_admin_pages_audit_logs_index",
+      "target": "resources_js_admin_pages_audit_logs_index_init",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/admin/pages/audit-logs/index.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
       "source": "resources_js_admin_pages_blog_create",
       "target": "resources_js_admin_pages_blog_form_shared",
       "relation": "imports_from",
@@ -88511,11 +89160,21 @@
     },
     {
       "source": "resources_js_admin_pages_index",
+      "target": "resources_js_admin_pages_audit_logs_index",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/admin/pages/index.js",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_admin_pages_index",
       "target": "resources_js_admin_pages_index_nooppage",
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/index.js",
-      "source_location": "L68",
+      "source_location": "L69",
       "weight": 1.0
     },
     {
@@ -88524,7 +89183,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/index.js",
-      "source_location": "L70",
+      "source_location": "L71",
       "weight": 1.0
     },
     {
@@ -88534,7 +89193,7 @@
       "context": "argument",
       "confidence": "INFERRED",
       "source_file": "resources/js/admin/pages/index.js",
-      "source_location": "L149",
+      "source_location": "L150",
       "weight": 1.0
     },
     {
@@ -92584,11 +93243,21 @@
     },
     {
       "source": "resources_js_core_ajax_forms",
+      "target": "ref_core_block_ui",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/ajax-forms.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_ajax_forms",
       "target": "resources_js_core_ajax_forms_skip_action_patterns",
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -92597,7 +93266,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -92606,7 +93275,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -92615,7 +93284,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -92624,7 +93293,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L28",
+      "source_location": "L29",
       "weight": 1.0
     },
     {
@@ -92633,7 +93302,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L44",
+      "source_location": "L45",
       "weight": 1.0
     },
     {
@@ -92642,7 +93311,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L58",
+      "source_location": "L59",
       "weight": 1.0
     },
     {
@@ -92651,7 +93320,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L69",
+      "source_location": "L70",
       "weight": 1.0
     },
     {
@@ -92660,7 +93329,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L85",
+      "source_location": "L86",
       "weight": 1.0
     },
     {
@@ -92669,7 +93338,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L90",
+      "source_location": "L91",
       "weight": 1.0
     },
     {
@@ -92678,7 +93347,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L97",
+      "source_location": "L98",
       "weight": 1.0
     },
     {
@@ -92687,7 +93356,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L116",
+      "source_location": "L117",
       "weight": 1.0
     },
     {
@@ -92696,7 +93365,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L124",
+      "source_location": "L125",
       "weight": 1.0
     },
     {
@@ -92705,7 +93374,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L134",
+      "source_location": "L135",
       "weight": 1.0
     },
     {
@@ -92714,7 +93383,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L145",
+      "source_location": "L146",
       "weight": 1.0
     },
     {
@@ -92723,7 +93392,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L156",
+      "source_location": "L162",
       "weight": 1.0
     },
     {
@@ -92732,7 +93401,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L163",
+      "source_location": "L169",
       "weight": 1.0
     },
     {
@@ -92741,7 +93410,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L217",
+      "source_location": "L223",
       "weight": 1.0
     },
     {
@@ -92751,7 +93420,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L35",
+      "source_location": "L36",
       "weight": 1.0
     },
     {
@@ -92761,7 +93430,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L38",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -92771,7 +93440,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L70",
+      "source_location": "L71",
       "weight": 1.0
     },
     {
@@ -92781,7 +93450,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L98",
+      "source_location": "L99",
       "weight": 1.0
     },
     {
@@ -92791,7 +93460,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L104",
+      "source_location": "L105",
       "weight": 1.0
     },
     {
@@ -92801,7 +93470,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L138",
+      "source_location": "L139",
       "weight": 1.0
     },
     {
@@ -92811,7 +93480,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L142",
+      "source_location": "L143",
       "weight": 1.0
     },
     {
@@ -92821,7 +93490,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L147",
+      "source_location": "L153",
       "weight": 1.0
     },
     {
@@ -92831,7 +93500,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L166",
+      "source_location": "L172",
       "weight": 1.0
     },
     {
@@ -92841,7 +93510,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L167",
+      "source_location": "L173",
       "weight": 1.0
     },
     {
@@ -92851,7 +93520,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L170",
+      "source_location": "L176",
       "weight": 1.0
     },
     {
@@ -92861,7 +93530,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L171",
+      "source_location": "L177",
       "weight": 1.0
     },
     {
@@ -92871,7 +93540,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L172",
+      "source_location": "L178",
       "weight": 1.0
     },
     {
@@ -92881,7 +93550,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L189",
+      "source_location": "L195",
       "weight": 1.0
     },
     {
@@ -92891,7 +93560,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L190",
+      "source_location": "L196",
       "weight": 1.0
     },
     {
@@ -92901,7 +93570,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L199",
+      "source_location": "L205",
       "weight": 1.0
     },
     {
@@ -92911,7 +93580,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L202",
+      "source_location": "L208",
       "weight": 1.0
     },
     {
@@ -92921,7 +93590,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L207",
+      "source_location": "L213",
       "weight": 1.0
     },
     {
@@ -92931,7 +93600,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L220",
+      "source_location": "L226",
       "weight": 1.0
     },
     {
@@ -92941,7 +93610,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L224",
+      "source_location": "L230",
       "weight": 1.0
     },
     {
@@ -93067,6 +93736,332 @@
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/app-init.js",
       "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui",
+      "target": "resources_js_core_block_ui_blocking_methods",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui",
+      "target": "resources_js_core_block_ui_activeoperations",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui",
+      "target": "resources_js_core_block_ui_operationcopy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui",
+      "target": "resources_js_core_block_ui_ensureoverlay",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui",
+      "target": "resources_js_core_block_ui_renderlatestoperation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui",
+      "target": "resources_js_core_block_ui_showblockui",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui",
+      "target": "resources_js_core_block_ui_hideblockui",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L82",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui",
+      "target": "resources_js_core_block_ui_effectiveformmethod",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L106",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui",
+      "target": "resources_js_core_block_ui_shouldblockform",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L111",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui",
+      "target": "resources_js_core_block_ui_blockform",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L121",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui",
+      "target": "resources_js_core_block_ui_installforminterceptor",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L132",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui",
+      "target": "resources_js_core_block_ui_installfetchinterceptor",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L149",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui",
+      "target": "resources_js_core_block_ui_installxhrinterceptor",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L167",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui",
+      "target": "resources_js_core_block_ui_initglobalblockui",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L197",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_renderlatestoperation",
+      "target": "resources_js_core_block_ui_operationcopy",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_renderlatestoperation",
+      "target": "resources_js_core_block_ui_ensureoverlay",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_showblockui",
+      "target": "resources_js_core_block_ui_operationcopy",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_showblockui",
+      "target": "resources_js_core_block_ui_renderlatestoperation",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L68",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_showblockui",
+      "target": "resources_js_core_block_ui_ensureoverlay",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_hideblockui",
+      "target": "resources_js_core_block_ui_renderlatestoperation",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L85",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_hideblockui",
+      "target": "resources_js_core_block_ui_ensureoverlay",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_shouldblockform",
+      "target": "resources_js_core_block_ui_effectiveformmethod",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L118",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_blockform",
+      "target": "resources_js_core_block_ui_shouldblockform",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L122",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_blockform",
+      "target": "resources_js_core_block_ui_showblockui",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L125",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_blockform",
+      "target": "resources_js_core_block_ui_effectiveformmethod",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L126",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_installforminterceptor",
+      "target": "resources_js_core_block_ui_blockform",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L138",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_installfetchinterceptor",
+      "target": "resources_js_core_block_ui_showblockui",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L157",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_installfetchinterceptor",
+      "target": "resources_js_core_block_ui_hideblockui",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L162",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_installxhrinterceptor",
+      "target": "resources_js_core_block_ui_showblockui",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L182",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_installxhrinterceptor",
+      "target": "resources_js_core_block_ui_hideblockui",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L185",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_initglobalblockui",
+      "target": "resources_js_core_block_ui_installforminterceptor",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L201",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_initglobalblockui",
+      "target": "resources_js_core_block_ui_installfetchinterceptor",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L202",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_initglobalblockui",
+      "target": "resources_js_core_block_ui_installxhrinterceptor",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L203",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_initglobalblockui",
+      "target": "resources_js_core_block_ui_hideblockui",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L207",
       "weight": 1.0
     },
     {
@@ -95036,11 +96031,21 @@
     },
     {
       "source": "resources_js_site_app",
+      "target": "ref_core_block_ui",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/site/app.js",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_site_app",
       "target": "resources_js_site_app_initktcomponents",
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/site/app.js",
-      "source_location": "L9",
+      "source_location": "L11",
       "weight": 1.0
     },
     {
@@ -95049,7 +96054,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/site/app.js",
-      "source_location": "L17",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -95058,7 +96063,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/site/app.js",
-      "source_location": "L37",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -95993,6 +96998,16 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/views/admin/layouts/main/sidebar/_sidebar_item_inner.blade.php",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "resources_views_admin_pages_audit_logs_index_blade",
+      "target": "resources_views_admin_pages_audit_logs_index_blade_php_admin_partials_flash",
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/admin/pages/audit-logs/index.blade.php",
       "source_location": null,
       "weight": 1.0
     },
@@ -97866,7 +98881,7 @@
     },
     {
       "source": "tests_feature_adminloginbrandingtest",
-      "target": "app_models_admin_user_role_role",
+      "target": "role",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -98113,6 +99128,179 @@
       "weight": 1.0
     },
     {
+      "source": "tests_feature_adminroleprofiletest",
+      "target": "app_models_admin_user_permission_permission",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest",
+      "target": "role",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest",
+      "target": "user",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest",
+      "target": "app_models_admin_auditlog_auditlog_auditlog",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest",
+      "target": "contactmessage",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest",
+      "target": "adminroleprofile",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest",
+      "target": "adminseeder",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest",
+      "target": "permissionseeder",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest",
+      "target": "superadminseeder",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest",
+      "target": "refreshdatabase",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest",
+      "target": "tests_testcase_testcase",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest",
+      "target": "tests_feature_adminroleprofiletest_adminroleprofiletest",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest_adminroleprofiletest",
+      "target": "tests_testcase_testcase",
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest_adminroleprofiletest",
+      "target": "refreshdatabase",
+      "relation": "mixes_in",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest_adminroleprofiletest",
+      "target": "tests_feature_adminroleprofiletest_adminroleprofiletest_test_admin_has_full_panel_permissions_while_global_menu_management_stays_with_superadmin",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest_adminroleprofiletest",
+      "target": "tests_feature_adminroleprofiletest_adminroleprofiletest_test_role_hierarchy_protects_admin_and_superadmin_accounts",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L94",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest_adminroleprofiletest",
+      "target": "tests_feature_adminroleprofiletest_adminroleprofiletest_test_admin_and_superadmin_can_clear_audit_logs",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L134",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest_adminroleprofiletest",
+      "target": "tests_feature_adminroleprofiletest_adminroleprofiletest_test_admin_has_global_operational_visibility_without_developer_permissions",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L167",
+      "weight": 1.0
+    },
+    {
       "source": "tests_feature_demoaccesstest",
       "target": "demoaccessmiddleware",
       "relation": "imports",
@@ -98317,7 +99505,7 @@
     },
     {
       "source": "tests_feature_homepageconfigurationtest",
-      "target": "app_models_admin_user_role_role",
+      "target": "role",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -98481,11 +99669,20 @@
     },
     {
       "source": "tests_feature_homepageconfigurationtest_homepageconfigurationtest",
+      "target": "tests_feature_homepageconfigurationtest_homepageconfigurationtest_test_cursor_symbols_can_run_while_moving_and_idle_together",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/HomepageConfigurationTest.php",
+      "source_location": "L300",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_homepageconfigurationtest_homepageconfigurationtest",
       "target": "tests_feature_homepageconfigurationtest_homepageconfigurationtest_test_homepage_surface_patterns_are_allowlisted_and_bounded",
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L299",
+      "source_location": "L322",
       "weight": 1.0
     },
     {
@@ -98494,7 +99691,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L323",
+      "source_location": "L346",
       "weight": 1.0
     },
     {
@@ -98503,7 +99700,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L427",
+      "source_location": "L450",
       "weight": 1.0
     },
     {
@@ -98910,7 +100107,7 @@
     },
     {
       "source": "tests_feature_sitenavigationmanagementtest",
-      "target": "app_models_admin_user_role_role",
+      "target": "role",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -99083,7 +100280,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "app_models_admin_user_role_role",
+      "target": "role",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -100537,11 +101734,20 @@
     },
     {
       "source": "database_seeders_readme_seeding_seeding_notes_safe_defaults",
+      "target": "database_seeders_readme_seeding_built_in_role_profiles",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database/seeders/README_SEEDING.md",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "database_seeders_readme_seeding_seeding_notes_safe_defaults",
       "target": "database_seeders_readme_seeding_control_demo_user_creation",
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "database/seeders/README_SEEDING.md",
-      "source_location": "L7",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -100550,7 +101756,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "database/seeders/README_SEEDING.md",
-      "source_location": "L16",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -100559,7 +101765,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "database/seeders/README_SEEDING.md",
-      "source_location": "L25",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -101865,6 +103071,16 @@
       "weight": 1.0
     },
     {
+      "source": "resources_js_admin_pages_index",
+      "target": "resources_js_admin_pages_audit_logs_index_init",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/admin/pages/index.js",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
       "source": "resources_js_admin_pages_roles_create",
       "target": "resources_js_admin_pages_roles_permissions_form_initpermissionsform",
       "relation": "imports",
@@ -101999,6 +103215,17 @@
       "confidence_score": 1.0,
       "source_file": "app/Http/Controllers/Admin/Appointment/AppointmentSettingsController.php",
       "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_auditlog_auditlogcontroller_auditlogcontroller_clear",
+      "target": "app_support_audit_auditevent_auditevent",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Http/Controllers/Admin/AuditLog/AuditLogController.php",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -103285,7 +104512,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L35",
+      "source_location": "L36",
       "weight": 1.0
     },
     {
@@ -103296,7 +104523,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L85",
+      "source_location": "L86",
       "weight": 1.0
     },
     {
@@ -103307,7 +104534,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L94",
+      "source_location": "L95",
       "weight": 1.0
     },
     {
@@ -103318,7 +104545,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L126",
+      "source_location": "L127",
       "weight": 1.0
     },
     {
@@ -103329,7 +104556,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L154",
+      "source_location": "L155",
       "weight": 1.0
     },
     {
@@ -103340,7 +104567,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Http/Controllers/Admin/Message/ContactMessageController.php",
-      "source_location": "L187",
+      "source_location": "L188",
       "weight": 1.0
     },
     {
@@ -104693,7 +105920,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -104704,7 +105931,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L43",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -104715,7 +105942,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L69",
+      "source_location": "L74",
       "weight": 1.0
     },
     {
@@ -104726,7 +105953,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L103",
+      "source_location": "L110",
       "weight": 1.0
     },
     {
@@ -104737,7 +105964,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Http/Controllers/Admin/User/RoleController.php",
-      "source_location": "L125",
+      "source_location": "L126",
       "weight": 1.0
     },
     {
@@ -104745,21 +105972,10 @@
       "target": "app_models_admin_user_role_role",
       "relation": "calls",
       "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "app/Http/Controllers/Admin/User/UserController.php",
       "source_location": "L24",
-      "weight": 1.0
-    },
-    {
-      "source": "app_http_controllers_admin_user_usercontroller_usercontroller_create",
-      "target": "app_models_admin_user_role_role",
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "app/Http/Controllers/Admin/User/UserController.php",
-      "source_location": "L48",
       "weight": 1.0
     },
     {
@@ -104770,18 +105986,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Http/Controllers/Admin/User/UserController.php",
-      "source_location": "L74",
-      "weight": 1.0
-    },
-    {
-      "source": "app_http_controllers_admin_user_usercontroller_usercontroller_edit",
-      "target": "app_models_admin_user_role_role",
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "app/Http/Controllers/Admin/User/UserController.php",
-      "source_location": "L81",
+      "source_location": "L76",
       "weight": 1.0
     },
     {
@@ -104792,7 +105997,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Http/Controllers/Admin/User/UserController.php",
-      "source_location": "L110",
+      "source_location": "L118",
       "weight": 1.0
     },
     {
@@ -104803,7 +106008,18 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Http/Controllers/Admin/User/UserController.php",
-      "source_location": "L123",
+      "source_location": "L129",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_user_usercontroller_usercontroller_assignableroles",
+      "target": "app_models_admin_user_role_role",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Http/Controllers/Admin/User/UserController.php",
+      "source_location": "L136",
       "weight": 1.0
     },
     {
@@ -105562,7 +106778,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L112",
+      "source_location": "L143",
       "weight": 1.0
     },
     {
@@ -108034,10 +109250,10 @@
       "target": "app_models_admin_user_role_role",
       "relation": "calls",
       "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "database/seeders/AdminSeeder.php",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -108048,7 +109264,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "database/seeders/AdminSeeder.php",
-      "source_location": "L22",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "database_seeders_adminseeder_adminseeder_run",
+      "target": "app_support_admin_adminroleprofile_adminroleprofile",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "database/seeders/AdminSeeder.php",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -108059,7 +109286,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "database/seeders/AdminSeeder.php",
-      "source_location": "L47",
+      "source_location": "L36",
       "weight": 1.0
     },
     {
@@ -108070,7 +109297,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "database/seeders/AdminSeeder.php",
-      "source_location": "L61",
+      "source_location": "L50",
       "weight": 1.0
     },
     {
@@ -108089,8 +109316,8 @@
       "target": "app_models_admin_user_role_role",
       "relation": "calls",
       "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "database/seeders/HomepageConfigPermissionSeeder.php",
       "source_location": "L29",
       "weight": 1.0
@@ -108144,8 +109371,8 @@
       "target": "app_models_admin_user_role_role",
       "relation": "calls",
       "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "database/seeders/ServiceReviewPermissionSeeder.php",
       "source_location": "L29",
       "weight": 1.0
@@ -108166,8 +109393,8 @@
       "target": "app_models_admin_user_role_role",
       "relation": "calls",
       "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "database/seeders/SuperAdminSeeder.php",
       "source_location": "L16",
       "weight": 1.0
@@ -108477,7 +109704,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/admin/pages/index.js",
-      "source_location": "L71",
+      "source_location": "L72",
       "weight": 1.0
     },
     {
@@ -108994,7 +110221,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L198",
+      "source_location": "L204",
       "weight": 1.0
     },
     {
@@ -109123,8 +110350,8 @@
       "target": "app_models_admin_user_role_role",
       "relation": "calls",
       "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "tests/Feature/AdminLoginBrandingTest.php",
       "source_location": "L95",
       "weight": 1.0
@@ -109156,10 +110383,131 @@
       "target": "app_models_admin_user_role_role",
       "relation": "calls",
       "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "tests/Feature/AdminLoginBrandingTest.php",
       "source_location": "L132",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest_adminroleprofiletest_test_admin_has_full_panel_permissions_while_global_menu_management_stays_with_superadmin",
+      "target": "app_models_admin_user_role_role",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest_adminroleprofiletest_test_admin_has_full_panel_permissions_while_global_menu_management_stays_with_superadmin",
+      "target": "app_support_admin_adminroleprofile_adminroleprofile",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest_adminroleprofiletest_test_admin_has_full_panel_permissions_while_global_menu_management_stays_with_superadmin",
+      "target": "app_models_admin_user_permission_permission",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest_adminroleprofiletest_test_admin_has_full_panel_permissions_while_global_menu_management_stays_with_superadmin",
+      "target": "app_models_admin_user_user_user",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L58",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest_adminroleprofiletest_test_role_hierarchy_protects_admin_and_superadmin_accounts",
+      "target": "app_models_admin_user_role_role",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L100",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest_adminroleprofiletest_test_role_hierarchy_protects_admin_and_superadmin_accounts",
+      "target": "app_models_admin_user_user_user",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L103",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest_adminroleprofiletest_test_admin_and_superadmin_can_clear_audit_logs",
+      "target": "app_models_admin_user_user_user",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L140",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest_adminroleprofiletest_test_admin_and_superadmin_can_clear_audit_logs",
+      "target": "app_models_admin_auditlog_auditlog_auditlog",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L142",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest_adminroleprofiletest_test_admin_has_global_operational_visibility_without_developer_permissions",
+      "target": "app_models_admin_user_role_role",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L169",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest_adminroleprofiletest_test_admin_has_global_operational_visibility_without_developer_permissions",
+      "target": "app_models_admin_user_user_user",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L171",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_adminroleprofiletest_adminroleprofiletest_test_admin_has_global_operational_visibility_without_developer_permissions",
+      "target": "app_models_contactmessage_contactmessage",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminRoleProfileTest.php",
+      "source_location": "L194",
       "weight": 1.0
     },
     {
@@ -109211,8 +110559,8 @@
       "target": "app_models_admin_user_role_role",
       "relation": "calls",
       "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
       "source_location": "L124",
       "weight": 1.0
@@ -109236,7 +110584,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L257",
+      "source_location": "L258",
       "weight": 1.0
     },
     {
@@ -109247,7 +110595,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L325",
+      "source_location": "L348",
       "weight": 1.0
     },
     {
@@ -109255,10 +110603,10 @@
       "target": "app_models_admin_user_role_role",
       "relation": "calls",
       "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L337",
+      "source_location": "L360",
       "weight": 1.0
     },
     {
@@ -109269,7 +110617,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L341",
+      "source_location": "L364",
       "weight": 1.0
     },
     {
@@ -109280,7 +110628,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L380",
+      "source_location": "L403",
       "weight": 1.0
     },
     {
@@ -109288,10 +110636,10 @@
       "target": "app_models_admin_user_role_role",
       "relation": "calls",
       "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L429",
+      "source_location": "L452",
       "weight": 1.0
     },
     {
@@ -109302,7 +110650,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L433",
+      "source_location": "L456",
       "weight": 1.0
     },
     {
@@ -109313,7 +110661,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L441",
+      "source_location": "L464",
       "weight": 1.0
     },
     {
@@ -109530,8 +110878,8 @@
       "target": "app_models_admin_user_role_role",
       "relation": "calls",
       "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "tests/Feature/SiteNavigationManagementTest.php",
       "source_location": "L101",
       "weight": 1.0
@@ -109552,8 +110900,8 @@
       "target": "app_models_admin_user_role_role",
       "relation": "calls",
       "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
       "source_location": "L43",
       "weight": 1.0
@@ -109775,7 +111123,40 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/core/ajax-forms.js",
-      "source_location": "L41",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_shouldblockform",
+      "target": "resources_js_core_block_ui_blocking_methods",
+      "relation": "references",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L118",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_installfetchinterceptor",
+      "target": "resources_js_core_block_ui_blocking_methods",
+      "relation": "references",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L156",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_block_ui_installxhrinterceptor",
+      "target": "resources_js_core_block_ui_blocking_methods",
+      "relation": "references",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/js/core/block-ui.js",
+      "source_location": "L181",
       "weight": 1.0
     },
     {

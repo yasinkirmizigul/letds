@@ -3406,13 +3406,112 @@ span.flatpickr-weekday,
 }
 
 .swal2-kt-button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     min-width: 8.5rem !important;
+    min-height: 2.75rem !important;
     border: 0 !important;
     border-radius: .875rem !important;
-    padding: .8rem 1.4rem !important;
+    padding: .1rem 1.4rem .2rem !important;
     font-size: .95rem !important;
     font-weight: 600 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    vertical-align: middle !important;
     box-shadow: none !important;
+}
+
+/* =========================
+   Global Processing BlockUI
+   ========================= */
+
+.app-block-ui[hidden] {
+    display: none !important;
+}
+
+.app-block-ui {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    display: grid;
+    place-items: center;
+    padding: 1.25rem;
+    background: color-mix(in oklab, #0f172a 56%, transparent);
+    backdrop-filter: blur(7px);
+    opacity: 0;
+    transition: opacity 180ms ease;
+}
+
+.app-block-ui.is-visible {
+    opacity: 1;
+}
+
+.app-block-ui__panel {
+    display: flex;
+    width: min(25rem, calc(100vw - 2rem));
+    align-items: center;
+    gap: 1rem;
+    padding: 1.15rem 1.25rem;
+    border: 1px solid color-mix(in oklab, var(--primary) 28%, var(--border));
+    border-radius: 1.1rem;
+    background: color-mix(in oklab, var(--background) 94%, transparent);
+    box-shadow: 0 24px 70px rgba(15, 23, 42, .3);
+    color: var(--foreground);
+    transform: translateY(.4rem) scale(.98);
+    transition: transform 180ms ease;
+}
+
+.app-block-ui.is-visible .app-block-ui__panel {
+    transform: translateY(0) scale(1);
+}
+
+.app-block-ui__spinner {
+    width: 2.6rem;
+    height: 2.6rem;
+    flex: 0 0 auto;
+    border: 3px solid color-mix(in oklab, var(--primary) 18%, var(--border));
+    border-top-color: var(--primary);
+    border-radius: 999px;
+    animation: app-block-ui-spin .72s linear infinite;
+}
+
+.app-block-ui__content {
+    display: grid;
+    min-width: 0;
+    gap: .28rem;
+}
+
+.app-block-ui__title,
+.app-block-ui__message {
+    display: block;
+}
+
+.app-block-ui__title {
+    font-size: 1rem;
+    line-height: 1.35;
+    font-weight: 700;
+}
+
+.app-block-ui__message {
+    color: var(--muted-foreground);
+    font-size: .82rem;
+    line-height: 1.5;
+}
+
+@keyframes app-block-ui-spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .app-block-ui,
+    .app-block-ui__panel {
+        transition: none;
+    }
+
+    .app-block-ui__spinner {
+        animation-duration: 1.4s;
+    }
 }
 
 .swal2-kt-cancel {
