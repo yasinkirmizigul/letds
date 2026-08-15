@@ -4816,7 +4816,7 @@
       "label": ".update()",
       "file_type": "code",
       "source_file": "app/Http/Controllers/Admin/Site/HomepageConfigurationController.php",
-      "source_location": "L76",
+      "source_location": "L77",
       "_origin": "ast"
     },
     {
@@ -13936,7 +13936,7 @@
       "label": ".__construct()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L51",
+      "source_location": "L57",
       "_origin": "ast"
     },
     {
@@ -13944,7 +13944,7 @@
       "label": ".schema()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L56",
+      "source_location": "L62",
       "_origin": "ast"
     },
     {
@@ -13952,7 +13952,7 @@
       "label": ".contentFields()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L61",
+      "source_location": "L67",
       "_origin": "ast"
     },
     {
@@ -13960,7 +13960,7 @@
       "label": ".settingGroups()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L69",
+      "source_location": "L75",
       "_origin": "ast"
     },
     {
@@ -13968,7 +13968,7 @@
       "label": ".settingFields()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L74",
+      "source_location": "L80",
       "_origin": "ast"
     },
     {
@@ -13976,7 +13976,7 @@
       "label": ".contentDefaults()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L91",
+      "source_location": "L97",
       "_origin": "ast"
     },
     {
@@ -13984,7 +13984,15 @@
       "label": ".settingDefaults()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L98",
+      "source_location": "L104",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_site_homepageconfigurationservice_homepageconfigurationservice_defaultbackgrounds",
+      "label": ".defaultBackgrounds()",
+      "file_type": "code",
+      "source_file": "app/Services/Site/HomepageConfigurationService.php",
+      "source_location": "L111",
       "_origin": "ast"
     },
     {
@@ -13992,7 +14000,7 @@
       "label": ".current()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L105",
+      "source_location": "L130",
       "_origin": "ast"
     },
     {
@@ -14000,7 +14008,7 @@
       "label": ".validationRules()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L116",
+      "source_location": "L141",
       "_origin": "ast"
     },
     {
@@ -14008,7 +14016,7 @@
       "label": ".persist()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L156",
+      "source_location": "L181",
       "_origin": "ast"
     },
     {
@@ -14016,7 +14024,7 @@
       "label": ".resolved()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L185",
+      "source_location": "L210",
       "_origin": "ast"
     },
     {
@@ -14024,7 +14032,7 @@
       "label": ".safeLink()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L225",
+      "source_location": "L251",
       "_origin": "ast"
     },
     {
@@ -14032,7 +14040,7 @@
       "label": ".hasSafeLinks()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L242",
+      "source_location": "L268",
       "_origin": "ast"
     },
     {
@@ -14040,7 +14048,7 @@
       "label": ".unsafeLinks()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L247",
+      "source_location": "L273",
       "_origin": "ast"
     },
     {
@@ -14048,7 +14056,7 @@
       "label": ".headerLogo()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L281",
+      "source_location": "L307",
       "_origin": "ast"
     },
     {
@@ -14056,7 +14064,7 @@
       "label": ".mediaAsset()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L286",
+      "source_location": "L312",
       "_origin": "ast"
     },
     {
@@ -14064,7 +14072,7 @@
       "label": ".normalizeContent()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L309",
+      "source_location": "L335",
       "_origin": "ast"
     },
     {
@@ -14072,7 +14080,7 @@
       "label": ".normalizeSettings()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L328",
+      "source_location": "L354",
       "_origin": "ast"
     },
     {
@@ -14080,7 +14088,7 @@
       "label": ".resolvedSettings()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L352",
+      "source_location": "L378",
       "_origin": "ast"
     },
     {
@@ -14088,7 +14096,7 @@
       "label": ".resolvedModes()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L383",
+      "source_location": "L409",
       "_origin": "ast"
     },
     {
@@ -14096,7 +14104,7 @@
       "label": ".resolvedSurfaceStyles()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L410",
+      "source_location": "L436",
       "_origin": "ast"
     },
     {
@@ -14104,7 +14112,7 @@
       "label": ".expandSettingFields()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L430",
+      "source_location": "L456",
       "_origin": "ast"
     },
     {
@@ -14112,7 +14120,7 @@
       "label": ".cssNumber()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L444",
+      "source_location": "L470",
       "_origin": "ast"
     },
     {
@@ -14120,7 +14128,7 @@
       "label": ".optionalRules()",
       "file_type": "code",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L449",
+      "source_location": "L475",
       "_origin": "ast"
     },
     {
@@ -21684,11 +21692,19 @@
       "_origin": "ast"
     },
     {
+      "id": "resources_js_admin_pages_site_homepage_edit_computer_color_settings",
+      "label": "COMPUTER_COLOR_SETTINGS",
+      "file_type": "code",
+      "source_file": "resources/js/admin/pages/site/homepage/edit.js",
+      "source_location": "L15",
+      "_origin": "ast"
+    },
+    {
       "id": "resources_js_admin_pages_site_homepage_edit_safepattern",
       "label": "safePattern()",
       "file_type": "code",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L15",
+      "source_location": "L24",
       "_origin": "ast"
     },
     {
@@ -21696,7 +21712,7 @@
       "label": "safeBlend()",
       "file_type": "code",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L19",
+      "source_location": "L28",
       "_origin": "ast"
     },
     {
@@ -21704,7 +21720,7 @@
       "label": "safeColor()",
       "file_type": "code",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L23",
+      "source_location": "L32",
       "_origin": "ast"
     },
     {
@@ -21712,7 +21728,7 @@
       "label": "numericValue()",
       "file_type": "code",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L27",
+      "source_location": "L36",
       "_origin": "ast"
     },
     {
@@ -21720,7 +21736,7 @@
       "label": "bindColorField()",
       "file_type": "code",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L32",
+      "source_location": "L41",
       "_origin": "ast"
     },
     {
@@ -21728,7 +21744,7 @@
       "label": "syncSurfaceEditors()",
       "file_type": "code",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L51",
+      "source_location": "L60",
       "_origin": "ast"
     },
     {
@@ -21736,7 +21752,7 @@
       "label": "bindRangeField()",
       "file_type": "code",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L68",
+      "source_location": "L77",
       "_origin": "ast"
     },
     {
@@ -21744,7 +21760,7 @@
       "label": "activateMode()",
       "file_type": "code",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L81",
+      "source_location": "L90",
       "_origin": "ast"
     },
     {
@@ -21752,7 +21768,7 @@
       "label": "bindModeLabels()",
       "file_type": "code",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L96",
+      "source_location": "L105",
       "_origin": "ast"
     },
     {
@@ -21760,7 +21776,7 @@
       "label": "syncMediaField()",
       "file_type": "code",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L112",
+      "source_location": "L121",
       "_origin": "ast"
     },
     {
@@ -21768,7 +21784,15 @@
       "label": "syncBackgroundPreview()",
       "file_type": "code",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L123",
+      "source_location": "L136",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_admin_pages_site_homepage_edit_synccomputerpreviews",
+      "label": "syncComputerPreviews()",
+      "file_type": "code",
+      "source_file": "resources/js/admin/pages/site/homepage/edit.js",
+      "source_location": "L170",
       "_origin": "ast"
     },
     {
@@ -21776,7 +21800,7 @@
       "label": "init()",
       "file_type": "code",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L157",
+      "source_location": "L181",
       "_origin": "ast"
     },
     {
@@ -25140,8 +25164,32 @@
       "_origin": "ast"
     },
     {
+      "id": "resources_views_admin_pages_site_homepage_partials_computer_preview_blade",
+      "label": "_computer-preview.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/admin/pages/site/homepage/partials/_computer-preview.blade.php",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_views_admin_pages_site_homepage_partials_computer_preview_blade_php_site_partials_home_hero_computer",
+      "label": "site.partials.home-hero-computer",
+      "file_type": "code",
+      "source_file": "resources/views/admin/pages/site/homepage/partials/_computer-preview.blade.php",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
       "id": "resources_views_admin_pages_site_homepage_partials_setting_groups_blade",
       "label": "_setting-groups.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/admin/pages/site/homepage/partials/_setting-groups.blade.php",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
+      "id": "admin_pages_site_homepage_partials_computer_preview",
+      "label": "admin.pages.site.homepage.partials._computer-preview",
       "file_type": "code",
       "source_file": "resources/views/admin/pages/site/homepage/partials/_setting-groups.blade.php",
       "source_location": null,
@@ -25860,6 +25908,14 @@
       "_origin": "ast"
     },
     {
+      "id": "resources_views_site_home_blade_php_site_partials_home_hero_computer",
+      "label": "site.partials.home-hero-computer",
+      "file_type": "code",
+      "source_file": "resources/views/site/home.blade.php",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
       "id": "site_home_sections_features",
       "label": "site.home-sections.features",
       "file_type": "code",
@@ -25952,6 +26008,14 @@
       "label": "site.partials.member-nav",
       "file_type": "code",
       "source_file": "resources/views/site/member-projects/show.blade.php",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_views_site_partials_home_hero_computer_blade",
+      "label": "home-hero-computer.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/site/partials/home-hero-computer.blade.php",
       "source_location": null,
       "_origin": "ast"
     },
@@ -26512,7 +26576,7 @@
       "label": ".test_configuration_resolves_translations_and_sanitizes_tooltip_html()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L55",
+      "source_location": "L74",
       "_origin": "ast"
     },
     {
@@ -26520,7 +26584,7 @@
       "label": ".test_superadmin_can_open_and_update_the_custom_homepage_manager()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L101",
+      "source_location": "L120",
       "_origin": "ast"
     },
     {
@@ -26528,7 +26592,7 @@
       "label": ".test_homepage_surface_patterns_are_allowlisted_and_bounded()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L259",
+      "source_location": "L299",
       "_origin": "ast"
     },
     {
@@ -26536,7 +26600,7 @@
       "label": ".test_superadmin_can_manage_multilingual_homepage_sections_and_cards()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L283",
+      "source_location": "L323",
       "_origin": "ast"
     },
     {
@@ -26544,7 +26608,7 @@
       "label": ".test_homepage_section_manager_rejects_unsafe_links_and_keeps_reordering_scoped()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L387",
+      "source_location": "L427",
       "_origin": "ast"
     },
     {
@@ -26952,7 +27016,7 @@
       "label": ".frontendSourceFiles()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L142",
+      "source_location": "L150",
       "_origin": "ast"
     },
     {
@@ -26960,7 +27024,7 @@
       "label": ".hasTopLevelComma()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L162",
+      "source_location": "L170",
       "_origin": "ast"
     },
     {
@@ -26968,7 +27032,7 @@
       "label": ".relativePath()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L179",
+      "source_location": "L187",
       "_origin": "ast"
     },
     {
@@ -26976,7 +27040,7 @@
       "label": ".projectRoot()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L184",
+      "source_location": "L192",
       "_origin": "ast"
     },
     {
@@ -48538,7 +48602,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Site/HomepageConfigurationController.php",
-      "source_location": "L76",
+      "source_location": "L77",
       "weight": 1.0
     },
     {
@@ -48547,7 +48611,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Site/HomepageConfigurationController.php",
-      "source_location": "L76",
+      "source_location": "L77",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -48557,7 +48621,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Site/HomepageConfigurationController.php",
-      "source_location": "L76",
+      "source_location": "L77",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -48567,7 +48631,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Site/HomepageConfigurationController.php",
-      "source_location": "L76",
+      "source_location": "L77",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -48577,7 +48641,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Http/Controllers/Admin/Site/HomepageConfigurationController.php",
-      "source_location": "L76",
+      "source_location": "L77",
       "weight": 1.0,
       "context": "return_type"
     },
@@ -72729,7 +72793,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L51",
+      "source_location": "L57",
       "weight": 1.0
     },
     {
@@ -72738,7 +72802,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L51",
+      "source_location": "L57",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -72748,7 +72812,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L51",
+      "source_location": "L57",
       "weight": 1.0,
       "context": "field"
     },
@@ -72758,7 +72822,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L51",
+      "source_location": "L57",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -72768,7 +72832,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L51",
+      "source_location": "L57",
       "weight": 1.0,
       "context": "field"
     },
@@ -72778,7 +72842,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L56",
+      "source_location": "L62",
       "weight": 1.0
     },
     {
@@ -72787,7 +72851,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L61",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -72796,7 +72860,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L69",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -72805,7 +72869,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L74",
+      "source_location": "L80",
       "weight": 1.0
     },
     {
@@ -72814,7 +72878,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L91",
+      "source_location": "L97",
       "weight": 1.0
     },
     {
@@ -72823,7 +72887,16 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L98",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_site_homepageconfigurationservice_homepageconfigurationservice",
+      "target": "app_services_site_homepageconfigurationservice_homepageconfigurationservice_defaultbackgrounds",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Site/HomepageConfigurationService.php",
+      "source_location": "L111",
       "weight": 1.0
     },
     {
@@ -72832,7 +72905,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L105",
+      "source_location": "L130",
       "weight": 1.0
     },
     {
@@ -72841,7 +72914,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L105",
+      "source_location": "L130",
       "weight": 1.0,
       "context": "return_type"
     },
@@ -72851,7 +72924,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L116",
+      "source_location": "L141",
       "weight": 1.0
     },
     {
@@ -72860,7 +72933,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L156",
+      "source_location": "L181",
       "weight": 1.0
     },
     {
@@ -72869,7 +72942,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L156",
+      "source_location": "L181",
       "weight": 1.0,
       "context": "return_type"
     },
@@ -72879,7 +72952,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L185",
+      "source_location": "L210",
       "weight": 1.0
     },
     {
@@ -72888,7 +72961,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L225",
+      "source_location": "L251",
       "weight": 1.0
     },
     {
@@ -72897,7 +72970,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L242",
+      "source_location": "L268",
       "weight": 1.0
     },
     {
@@ -72906,7 +72979,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L247",
+      "source_location": "L273",
       "weight": 1.0
     },
     {
@@ -72915,7 +72988,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L281",
+      "source_location": "L307",
       "weight": 1.0
     },
     {
@@ -72924,7 +72997,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L286",
+      "source_location": "L312",
       "weight": 1.0
     },
     {
@@ -72933,7 +73006,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L309",
+      "source_location": "L335",
       "weight": 1.0
     },
     {
@@ -72942,7 +73015,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L328",
+      "source_location": "L354",
       "weight": 1.0
     },
     {
@@ -72951,7 +73024,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L352",
+      "source_location": "L378",
       "weight": 1.0
     },
     {
@@ -72960,7 +73033,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L383",
+      "source_location": "L409",
       "weight": 1.0
     },
     {
@@ -72969,7 +73042,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L410",
+      "source_location": "L436",
       "weight": 1.0
     },
     {
@@ -72978,7 +73051,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L430",
+      "source_location": "L456",
       "weight": 1.0
     },
     {
@@ -72987,7 +73060,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L444",
+      "source_location": "L470",
       "weight": 1.0
     },
     {
@@ -72996,7 +73069,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L449",
+      "source_location": "L475",
       "weight": 1.0
     },
     {
@@ -73006,7 +73079,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L63",
+      "source_location": "L69",
       "weight": 1.0
     },
     {
@@ -73016,7 +73089,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L71",
+      "source_location": "L77",
       "weight": 1.0
     },
     {
@@ -73026,7 +73099,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L76",
+      "source_location": "L82",
       "weight": 1.0
     },
     {
@@ -73036,7 +73109,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L77",
+      "source_location": "L83",
       "weight": 1.0
     },
     {
@@ -73046,7 +73119,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L79",
+      "source_location": "L85",
       "weight": 1.0
     },
     {
@@ -73056,7 +73129,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L93",
+      "source_location": "L99",
       "weight": 1.0
     },
     {
@@ -73066,7 +73139,17 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L100",
+      "source_location": "L106",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_site_homepageconfigurationservice_homepageconfigurationservice_defaultbackgrounds",
+      "target": "app_services_site_homepageconfigurationservice_homepageconfigurationservice_schema",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Site/HomepageConfigurationService.php",
+      "source_location": "L113",
       "weight": 1.0
     },
     {
@@ -73076,7 +73159,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L107",
+      "source_location": "L132",
       "weight": 1.0
     },
     {
@@ -73086,7 +73169,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L108",
+      "source_location": "L133",
       "weight": 1.0
     },
     {
@@ -73096,7 +73179,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L110",
+      "source_location": "L135",
       "weight": 1.0
     },
     {
@@ -73106,7 +73189,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L111",
+      "source_location": "L136",
       "weight": 1.0
     },
     {
@@ -73116,7 +73199,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L123",
+      "source_location": "L148",
       "weight": 1.0
     },
     {
@@ -73126,7 +73209,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L127",
+      "source_location": "L152",
       "weight": 1.0
     },
     {
@@ -73136,7 +73219,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L130",
+      "source_location": "L155",
       "weight": 1.0
     },
     {
@@ -73146,7 +73229,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L159",
+      "source_location": "L184",
       "weight": 1.0
     },
     {
@@ -73156,7 +73239,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L160",
+      "source_location": "L185",
       "weight": 1.0
     },
     {
@@ -73166,7 +73249,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L160",
+      "source_location": "L185",
       "weight": 1.0
     },
     {
@@ -73176,7 +73259,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L161",
+      "source_location": "L186",
       "weight": 1.0
     },
     {
@@ -73186,7 +73269,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L165",
+      "source_location": "L190",
       "weight": 1.0
     },
     {
@@ -73196,7 +73279,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L187",
+      "source_location": "L212",
       "weight": 1.0
     },
     {
@@ -73206,7 +73289,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L188",
+      "source_location": "L213",
       "weight": 1.0
     },
     {
@@ -73216,7 +73299,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L189",
+      "source_location": "L214",
       "weight": 1.0
     },
     {
@@ -73226,7 +73309,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L217",
+      "source_location": "L242",
       "weight": 1.0
     },
     {
@@ -73236,7 +73319,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L218",
+      "source_location": "L243",
       "weight": 1.0
     },
     {
@@ -73246,7 +73329,17 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L219",
+      "source_location": "L244",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_site_homepageconfigurationservice_homepageconfigurationservice_resolved",
+      "target": "app_services_site_homepageconfigurationservice_homepageconfigurationservice_defaultbackgrounds",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Site/HomepageConfigurationService.php",
+      "source_location": "L245",
       "weight": 1.0
     },
     {
@@ -73256,7 +73349,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L244",
+      "source_location": "L270",
       "weight": 1.0
     },
     {
@@ -73266,7 +73359,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L249",
+      "source_location": "L275",
       "weight": 1.0
     },
     {
@@ -73276,7 +73369,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L259",
+      "source_location": "L285",
       "weight": 1.0
     },
     {
@@ -73286,7 +73379,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L283",
+      "source_location": "L309",
       "weight": 1.0
     },
     {
@@ -73296,7 +73389,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L311",
+      "source_location": "L337",
       "weight": 1.0
     },
     {
@@ -73306,7 +73399,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L330",
+      "source_location": "L356",
       "weight": 1.0
     },
     {
@@ -73316,7 +73409,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L354",
+      "source_location": "L380",
       "weight": 1.0
     },
     {
@@ -73326,7 +73419,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L357",
+      "source_location": "L383",
       "weight": 1.0
     },
     {
@@ -73336,7 +73429,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L385",
+      "source_location": "L411",
       "weight": 1.0
     },
     {
@@ -73346,7 +73439,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L393",
+      "source_location": "L419",
       "weight": 1.0
     },
     {
@@ -73356,7 +73449,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L421",
+      "source_location": "L447",
       "weight": 1.0
     },
     {
@@ -91097,7 +91190,7 @@
     },
     {
       "source": "resources_js_admin_pages_site_homepage_edit",
-      "target": "resources_js_admin_pages_site_homepage_edit_safepattern",
+      "target": "resources_js_admin_pages_site_homepage_edit_computer_color_settings",
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
@@ -91106,11 +91199,20 @@
     },
     {
       "source": "resources_js_admin_pages_site_homepage_edit",
+      "target": "resources_js_admin_pages_site_homepage_edit_safepattern",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/admin/pages/site/homepage/edit.js",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_admin_pages_site_homepage_edit",
       "target": "resources_js_admin_pages_site_homepage_edit_safeblend",
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L19",
+      "source_location": "L28",
       "weight": 1.0
     },
     {
@@ -91119,7 +91221,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L23",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -91128,7 +91230,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L27",
+      "source_location": "L36",
       "weight": 1.0
     },
     {
@@ -91137,7 +91239,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L32",
+      "source_location": "L41",
       "weight": 1.0
     },
     {
@@ -91146,7 +91248,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L51",
+      "source_location": "L60",
       "weight": 1.0
     },
     {
@@ -91155,7 +91257,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L68",
+      "source_location": "L77",
       "weight": 1.0
     },
     {
@@ -91164,7 +91266,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L81",
+      "source_location": "L90",
       "weight": 1.0
     },
     {
@@ -91173,7 +91275,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L96",
+      "source_location": "L105",
       "weight": 1.0
     },
     {
@@ -91182,7 +91284,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L112",
+      "source_location": "L121",
       "weight": 1.0
     },
     {
@@ -91191,7 +91293,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L123",
+      "source_location": "L136",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_admin_pages_site_homepage_edit",
+      "target": "resources_js_admin_pages_site_homepage_edit_synccomputerpreviews",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/admin/pages/site/homepage/edit.js",
+      "source_location": "L170",
       "weight": 1.0
     },
     {
@@ -91200,7 +91311,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L157",
+      "source_location": "L181",
       "weight": 1.0
     },
     {
@@ -91210,7 +91321,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L54",
+      "source_location": "L63",
       "weight": 1.0
     },
     {
@@ -91220,7 +91331,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L57",
+      "source_location": "L66",
       "weight": 1.0
     },
     {
@@ -91230,7 +91341,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L59",
+      "source_location": "L68",
       "weight": 1.0
     },
     {
@@ -91240,7 +91351,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L62",
+      "source_location": "L71",
       "weight": 1.0
     },
     {
@@ -91250,7 +91361,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L93",
+      "source_location": "L102",
       "weight": 1.0
     },
     {
@@ -91260,7 +91371,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L148",
+      "source_location": "L161",
       "weight": 1.0
     },
     {
@@ -91270,7 +91381,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L149",
+      "source_location": "L162",
       "weight": 1.0
     },
     {
@@ -91280,7 +91391,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L150",
+      "source_location": "L163",
       "weight": 1.0
     },
     {
@@ -91290,7 +91401,17 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L153",
+      "source_location": "L166",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_admin_pages_site_homepage_edit_synccomputerpreviews",
+      "target": "resources_js_admin_pages_site_homepage_edit_safecolor",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/admin/pages/site/homepage/edit.js",
+      "source_location": "L176",
       "weight": 1.0
     },
     {
@@ -91300,7 +91421,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L162",
+      "source_location": "L186",
       "weight": 1.0
     },
     {
@@ -91310,7 +91431,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L163",
+      "source_location": "L187",
       "weight": 1.0
     },
     {
@@ -91320,7 +91441,7 @@
       "context": "argument",
       "confidence": "INFERRED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L164",
+      "source_location": "L188",
       "weight": 1.0
     },
     {
@@ -91330,7 +91451,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L165",
+      "source_location": "L189",
       "weight": 1.0
     },
     {
@@ -91340,7 +91461,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L166",
+      "source_location": "L190",
       "weight": 1.0
     },
     {
@@ -91350,7 +91471,17 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L167",
+      "source_location": "L191",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_admin_pages_site_homepage_edit_init",
+      "target": "resources_js_admin_pages_site_homepage_edit_synccomputerpreviews",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/admin/pages/site/homepage/edit.js",
+      "source_location": "L192",
       "weight": 1.0
     },
     {
@@ -91360,7 +91491,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L194",
+      "source_location": "L221",
       "weight": 1.0
     },
     {
@@ -91370,7 +91501,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L202",
+      "source_location": "L229",
       "weight": 1.0
     },
     {
@@ -91380,7 +91511,7 @@
       "context": "collection",
       "confidence": "INFERRED",
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L251",
+      "source_location": "L278",
       "weight": 1.0
     },
     {
@@ -96346,6 +96477,26 @@
       "weight": 1.0
     },
     {
+      "source": "resources_views_admin_pages_site_homepage_partials_computer_preview_blade",
+      "target": "resources_views_admin_pages_site_homepage_partials_computer_preview_blade_php_site_partials_home_hero_computer",
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/admin/pages/site/homepage/partials/_computer-preview.blade.php",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "resources_views_admin_pages_site_homepage_partials_setting_groups_blade",
+      "target": "admin_pages_site_homepage_partials_computer_preview",
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/admin/pages/site/homepage/partials/_setting-groups.blade.php",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
       "source": "resources_views_admin_pages_site_homepage_partials_setting_groups_blade",
       "target": "admin_pages_site_homepage_partials_surface_editor",
       "relation": "includes",
@@ -96688,6 +96839,16 @@
     {
       "source": "resources_views_site_home_blade",
       "target": "resources_views_site_home_blade_php_site_partials_theme_toggle",
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/site/home.blade.php",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "resources_views_site_home_blade",
+      "target": "resources_views_site_home_blade_php_site_partials_home_hero_computer",
       "relation": "includes",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -98306,7 +98467,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L55",
+      "source_location": "L74",
       "weight": 1.0
     },
     {
@@ -98315,7 +98476,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L101",
+      "source_location": "L120",
       "weight": 1.0
     },
     {
@@ -98324,7 +98485,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L259",
+      "source_location": "L299",
       "weight": 1.0
     },
     {
@@ -98333,7 +98494,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L283",
+      "source_location": "L323",
       "weight": 1.0
     },
     {
@@ -98342,7 +98503,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L387",
+      "source_location": "L427",
       "weight": 1.0
     },
     {
@@ -99457,7 +99618,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L142",
+      "source_location": "L150",
       "weight": 1.0
     },
     {
@@ -99466,7 +99627,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L162",
+      "source_location": "L170",
       "weight": 1.0
     },
     {
@@ -99475,7 +99636,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L179",
+      "source_location": "L187",
       "weight": 1.0
     },
     {
@@ -99484,7 +99645,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L184",
+      "source_location": "L192",
       "weight": 1.0
     },
     {
@@ -99584,7 +99745,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L147",
+      "source_location": "L155",
       "weight": 1.0
     },
     {
@@ -99594,7 +99755,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L181",
+      "source_location": "L189",
       "weight": 1.0
     },
     {
@@ -104015,7 +104176,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Http/Controllers/Admin/Site/HomepageConfigurationController.php",
-      "source_location": "L112",
+      "source_location": "L113",
       "weight": 1.0
     },
     {
@@ -106138,7 +106299,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L58",
+      "source_location": "L64",
       "weight": 1.0
     },
     {
@@ -106149,7 +106310,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L191",
+      "source_location": "L216",
       "weight": 1.0
     },
     {
@@ -106160,7 +106321,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L191",
+      "source_location": "L216",
       "weight": 1.0
     },
     {
@@ -106171,7 +106332,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L294",
+      "source_location": "L320",
       "weight": 1.0
     },
     {
@@ -106182,7 +106343,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Services/Site/HomepageConfigurationService.php",
-      "source_location": "L321",
+      "source_location": "L347",
       "weight": 1.0
     },
     {
@@ -108701,7 +108862,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L239",
+      "source_location": "L266",
       "weight": 1.0
     },
     {
@@ -109042,7 +109203,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L57",
+      "source_location": "L76",
       "weight": 1.0
     },
     {
@@ -109053,7 +109214,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L105",
+      "source_location": "L124",
       "weight": 1.0
     },
     {
@@ -109064,7 +109225,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L109",
+      "source_location": "L128",
       "weight": 1.0
     },
     {
@@ -109075,7 +109236,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L220",
+      "source_location": "L257",
       "weight": 1.0
     },
     {
@@ -109086,7 +109247,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L285",
+      "source_location": "L325",
       "weight": 1.0
     },
     {
@@ -109097,7 +109258,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L297",
+      "source_location": "L337",
       "weight": 1.0
     },
     {
@@ -109108,7 +109269,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L301",
+      "source_location": "L341",
       "weight": 1.0
     },
     {
@@ -109119,7 +109280,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L340",
+      "source_location": "L380",
       "weight": 1.0
     },
     {
@@ -109130,7 +109291,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L389",
+      "source_location": "L429",
       "weight": 1.0
     },
     {
@@ -109141,7 +109302,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L393",
+      "source_location": "L433",
       "weight": 1.0
     },
     {
@@ -109152,7 +109313,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L401",
+      "source_location": "L441",
       "weight": 1.0
     },
     {
@@ -109592,7 +109753,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L16",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -109603,7 +109764,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/admin/pages/site/homepage/edit.js",
-      "source_location": "L20",
+      "source_location": "L29",
       "weight": 1.0
     },
     {

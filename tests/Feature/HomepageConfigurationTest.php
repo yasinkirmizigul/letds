@@ -21,6 +21,17 @@ class HomepageConfigurationTest extends TestCase
 
     public function test_homepage_uses_schema_defaults_and_dynamic_color_variables(): void
     {
+        $resolved = app(HomepageConfigurationService::class)->resolved('tr');
+
+        $this->assertStringStartsWith(
+            asset('assets/site/home/images/home-background-light.svg') . '?v=',
+            data_get($resolved, 'backgroundDefaults.light.url')
+        );
+        $this->assertStringStartsWith(
+            asset('assets/site/home/images/home-background-dark.svg') . '?v=',
+            data_get($resolved, 'backgroundDefaults.dark.url')
+        );
+
         $this->get('/')
             ->assertOk()
             ->assertSee('The combination of great design and diligent app development.')
@@ -30,12 +41,20 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('--home-stat-before:#ec6367', false)
             ->assertSee('--home-analysis-tab-after-text:#ffffff', false)
             ->assertSee('--home-hero-after-text:#ffffff', false)
+            ->assertSee('--home-computer-frame:#1a3d59', false)
+            ->assertSee('--home-computer-alert:#ef3851', false)
+            ->assertSee('data-home-computer-variant="outline"', false)
+            ->assertSee('data-home-computer-variant="solid"', false)
+            ->assertDontSee('images/concept-before.svg', false)
+            ->assertDontSee('images/concept-after.svg', false)
             ->assertSee('assets/site/home/css/home.css?v=', false)
             ->assertSee('data-stat-symbols="true"', false)
             ->assertSee('data-stat-symbol-mode="idle"', false)
             ->assertSee('data-home-mode="analysis"', false)
             ->assertSee('class="home-hero-pending', false)
             ->assertSee('data-site-theme-toggle', false)
+            ->assertSee('home-background-light.svg', false)
+            ->assertSee('home-background-dark.svg', false)
             ->assertSee('probablue-site-theme', false)
             ->assertSee('PROBABLUE')
             ->assertSee('İstatistiksel Analiz ve Danışma')
@@ -134,6 +153,11 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('Sembol çalışma biçimi')
             ->assertSee('Sol Panel Yüzeyi')
             ->assertSee('Sağ Panel Yüzeyi')
+            ->assertSee('Bilgisayar Paleti')
+            ->assertSee('data-homepage-computer-preview="true"', false)
+            ->assertSee('name="settings[computer_frame_color]"', false)
+            ->assertSee('name="settings[consultation_computer_frame_color]"', false)
+            ->assertSee('Tema duyarlı varsayılan SVG')
             ->assertSee('Panel Renkleri');
 
         $payload = array_replace($service->contentDefaults(), [
@@ -153,6 +177,9 @@ class HomepageConfigurationTest extends TestCase
                 'analysis_tab_after_text_color' => '#112233',
                 'hero_after_text_color' => '#223344',
                 'consultation_hero_before_text_color' => '#445566',
+                'computer_frame_color' => '#102030',
+                'computer_alert_color' => '#aa2233',
+                'consultation_computer_frame_color' => '#204060',
                 'tooltip_1_title_color' => '#334455',
                 'before_pattern' => 'carbon',
                 'before_pattern_color' => '#556677',
@@ -181,6 +208,8 @@ class HomepageConfigurationTest extends TestCase
         $this->assertSame('top', $service->current()->fresh()->settings['background_position']);
         $this->assertSame('#112233', $service->current()->fresh()->settings['analysis_tab_after_text_color']);
         $this->assertSame('#223344', $service->current()->fresh()->settings['hero_after_text_color']);
+        $this->assertSame('#102030', $service->current()->fresh()->settings['computer_frame_color']);
+        $this->assertSame('#204060', $service->current()->fresh()->settings['consultation_computer_frame_color']);
         $this->assertSame('carbon', $service->current()->fresh()->settings['before_pattern']);
         $this->assertSame(34, $service->current()->fresh()->settings['before_pattern_opacity']);
         $this->assertSame(
@@ -215,6 +244,14 @@ class HomepageConfigurationTest extends TestCase
             '#445566',
             $service->resolved('tr')['modes']['consultation']['styles']['--home-hero-before-text']
         );
+        $this->assertSame(
+            '#102030',
+            $service->resolved('tr')['modes']['analysis']['styles']['--home-computer-frame']
+        );
+        $this->assertSame(
+            '#204060',
+            $service->resolved('tr')['modes']['consultation']['styles']['--home-computer-frame']
+        );
         $this->assertSame('#334455', $service->resolved('tr')['tooltips'][0]['title_color']);
 
         $backgroundMedia = Media::query()->findOrFail(
@@ -237,6 +274,7 @@ class HomepageConfigurationTest extends TestCase
                 false
             )
             ->assertSee('data-home-background-url="'.$backgroundMedia->url().'"', false)
+            ->assertSee('--home-background-image-dark:url(&quot;'.$backgroundMedia->url().'&quot;)', false)
             ->assertSee('data-stat-symbol-mode="moving"', false)
             ->assertSee('Analiz Merkezi')
             ->assertSee('Uzman Danışmanlık')
@@ -248,6 +286,8 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('--home-background-position:top', false)
             ->assertSee('--home-analysis-tab-after-text:#112233', false)
             ->assertSee('--home-hero-after-text:#223344', false)
+            ->assertSee('--home-computer-frame:#102030', false)
+            ->assertSee('--home-computer-alert:#aa2233', false)
             ->assertSee('--home-before-pattern-opacity:0.34', false)
             ->assertSee('--home-before-pattern-size:22px', false)
             ->assertSee('--home-before-pattern-blur:0.75px', false)

@@ -70,6 +70,7 @@ class HomepageConfigurationController extends Controller
             'modeSettingGroups' => $modeSettingGroups,
             'sharedSettingGroups' => $sharedSettingGroups,
             'mediaPreviews' => $mediaPreviews,
+            'backgroundDefaults' => $configurationService->defaultBackgrounds(),
         ]);
     }
 

@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <pattern id="grid" width="96" height="96" patternUnits="userSpaceOnUse">
+      <path d="M96 0H0V96" fill="none" stroke="#d9f3ff" stroke-opacity=".11" />
+      <circle cx="1" cy="1" r="1.5" fill="#d9f3ff" fill-opacity=".18" />
+    </pattern>
+    <radialGradient id="coral-glow" cx="0" cy="0" r="1" gradientTransform="translate(160 190) rotate(34) scale(670 440)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f46f73" stop-opacity=".34" />
+      <stop offset="1" stop-color="#f46f73" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="cyan-glow" cx="0" cy="0" r="1" gradientTransform="translate(1760 920) rotate(-145) scale(700 440)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22b6e9" stop-opacity=".28" />
+      <stop offset="1" stop-color="#22b6e9" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="edge-fade" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="white" />
+      <stop offset=".28" stop-color="white" stop-opacity=".76" />
+      <stop offset=".42" stop-color="black" />
+      <stop offset=".58" stop-color="black" />
+      <stop offset=".72" stop-color="white" stop-opacity=".76" />
+      <stop offset="1" stop-color="white" />
+    </linearGradient>
+    <mask id="edge-mask">
+      <rect width="1920" height="1080" fill="url(#edge-fade)" />
+    </mask>
+    <linearGradient id="trend" x1="120" y1="900" x2="1800" y2="210" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ff8589" stop-opacity=".72" />
+      <stop offset=".48" stop-color="#d9f3ff" stop-opacity=".18" />
+      <stop offset="1" stop-color="#42c7f4" stop-opacity=".64" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1920" height="1080" fill="#06131d" fill-opacity=".86" />
+  <rect width="1920" height="1080" fill="url(#coral-glow)" />
+  <rect width="1920" height="1080" fill="url(#cyan-glow)" />
+  <rect width="1920" height="1080" fill="url(#grid)" opacity=".48" mask="url(#edge-mask)" />
+
+  <g fill="none" stroke="#d9f3ff" stroke-linecap="round" mask="url(#edge-mask)">
+    <path d="M-120 280C42 102 246 76 418 180S642 410 548 568 246 746 20 648-198 436-120 280Z" stroke-opacity=".16" stroke-width="2" />
+    <path d="M-82 310C52 154 230 130 372 216s194 278 102 398S230 714 44 630-154 440-82 310Z" stroke-opacity=".11" />
+    <path d="M2035 362c-132-162-342-194-496-74s-194 330-64 456 350 106 486-26 180-238 74-356Z" stroke-opacity=".15" stroke-width="2" />
+    <path d="M1992 390c-110-132-284-152-410-56s-154 266-50 370 286 90 396-18 148-200 64-296Z" stroke-opacity=".10" />
+    <path d="M86 884C260 828 378 674 518 722s150 174 268 164 140-116 274-112 170 132 312 104 198-208 458-158" stroke="url(#trend)" stroke-width="3" />
+    <path d="M86 918C260 862 378 708 518 756s150 174 268 164 140-116 274-112 170 132 312 104 198-208 458-158" stroke-opacity=".10" stroke-dasharray="5 12" />
+  </g>
+
+  <g fill="#d9f3ff" fill-opacity=".34" stroke="#ffffff" stroke-opacity=".22">
+    <circle cx="122" cy="188" r="5" />
+    <circle cx="202" cy="246" r="8" />
+    <circle cx="312" cy="166" r="4" />
+    <circle cx="390" cy="292" r="6" />
+    <circle cx="1542" cy="754" r="5" />
+    <circle cx="1620" cy="676" r="8" />
+    <circle cx="1712" cy="736" r="4" />
+    <circle cx="1804" cy="642" r="6" />
+    <circle cx="1846" cy="806" r="3" />
+  </g>
+
+  <g fill="none" stroke="#d9f3ff" stroke-opacity=".16">
+    <path d="M120 750V902H458" />
+    <path d="M1462 198V350H1800" />
+    <path d="M156 862l72-42 74 18 82-92 58 22" stroke="#ff8589" stroke-opacity=".52" stroke-width="2" />
+    <path d="M1494 312l68-48 76 20 62-76 72 30" stroke="#42c7f4" stroke-opacity=".48" stroke-width="2" />
+  </g>
+</svg>

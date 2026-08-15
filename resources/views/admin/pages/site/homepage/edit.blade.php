@@ -97,6 +97,7 @@
                             'groups' => $modeSettingGroups[$key] ?? [],
                             'settingValues' => $settingValues,
                             'mediaPreviews' => $mediaPreviews,
+                            'backgroundDefaults' => $backgroundDefaults,
                         ])
                     </div>
                 </div>
@@ -118,6 +119,7 @@
                     'groups' => $sharedSettingGroups,
                     'settingValues' => $settingValues,
                     'mediaPreviews' => $mediaPreviews,
+                    'backgroundDefaults' => $backgroundDefaults,
                 ])
             </div>
 

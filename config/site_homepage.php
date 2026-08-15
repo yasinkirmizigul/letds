@@ -47,10 +47,25 @@ $surfaceField = static function (
     ];
 };
 
+$computerPaletteFields = static function (string $prefix = ''): array {
+    return [
+        ['key' => $prefix.'computer_frame_color', 'label' => 'Kasa ve Ayak', 'type' => 'color', 'default' => '#1a3d59'],
+        ['key' => $prefix.'computer_detail_color', 'label' => 'Eksen ve İkincil Grafik', 'type' => 'color', 'default' => '#345170'],
+        ['key' => $prefix.'computer_warm_color', 'label' => 'Sarı Veri Çubuğu', 'type' => 'color', 'default' => '#fcb515'],
+        ['key' => $prefix.'computer_neutral_color', 'label' => 'Nötr Veri Çubuğu', 'type' => 'color', 'default' => '#a8b9bf'],
+        ['key' => $prefix.'computer_cool_color', 'label' => 'Mavi Veri Çubuğu', 'type' => 'color', 'default' => '#4687c7'],
+        ['key' => $prefix.'computer_alert_color', 'label' => 'Kırmızı Veri Çubuğu', 'type' => 'color', 'default' => '#ef3851'],
+    ];
+};
+
 return [
     'key' => 'concept-home',
     'title' => 'Ana Sayfa Yönetimi',
     'description' => 'Bu projeye özel ana sayfanın metin, bağlantı ve renk ayarları.',
+    'default_backgrounds' => [
+        'light' => 'assets/site/home/images/home-background-light.svg',
+        'dark' => 'assets/site/home/images/home-background-dark.svg',
+    ],
 
     'modes' => [
         'analysis' => [
@@ -369,6 +384,17 @@ return [
             ],
         ],
         [
+            'key' => 'computer_palette',
+            'title' => 'Bilgisayar Paleti',
+            'description' => 'Ortadaki salınan bilgisayarın kasa, grafik ve vurgu renkleri.',
+            'mode' => 'analysis',
+            'preview' => 'computer',
+            'preview_prefix' => '',
+            'wrapper_class' => 'xl:col-span-2',
+            'content_class' => 'sm:grid-cols-2 xl:grid-cols-3',
+            'fields' => $computerPaletteFields(),
+        ],
+        [
             'key' => 'buttons',
             'title' => 'Buton Renkleri',
             'description' => 'Butonun iki paneldeki normal ve üzerine gelme renkleri.',
@@ -410,6 +436,17 @@ return [
             ],
         ],
         [
+            'key' => 'consultation_computer_palette',
+            'title' => 'Bilgisayar Paleti',
+            'description' => 'Danışma görünümündeki bilgisayarın kasa, grafik ve vurgu renkleri.',
+            'mode' => 'consultation',
+            'preview' => 'computer',
+            'preview_prefix' => 'consultation_',
+            'wrapper_class' => 'xl:col-span-2',
+            'content_class' => 'sm:grid-cols-2 xl:grid-cols-3',
+            'fields' => $computerPaletteFields('consultation_'),
+        ],
+        [
             'key' => 'consultation_buttons',
             'title' => 'Buton Renkleri',
             'description' => 'Danışma butonunun iki paneldeki normal ve hover renkleri.',
@@ -423,8 +460,8 @@ return [
         ],
         [
             'key' => 'background',
-            'title' => 'Arka Plan Fotoğrafı',
-            'description' => 'Ana sayfa fotoğrafı, parlaklık ve panel renklerinden oluşan overlay ayarları.',
+            'title' => 'Arka Plan Görseli',
+            'description' => 'Tema duyarlı varsayılan SVG veya özel fotoğraf, parlaklık ve panel overlay ayarları.',
             'fields' => [
                 [
                     'key' => 'background_media_id',

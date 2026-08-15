@@ -28,6 +28,12 @@ class HomepageConfigurationService
         '--home-drag-handle' => 'drag_handle_color',
         '--home-stat-before' => 'cursor_symbol_before_color',
         '--home-stat-after' => 'cursor_symbol_after_color',
+        '--home-computer-frame' => 'computer_frame_color',
+        '--home-computer-detail' => 'computer_detail_color',
+        '--home-computer-warm' => 'computer_warm_color',
+        '--home-computer-neutral' => 'computer_neutral_color',
+        '--home-computer-cool' => 'computer_cool_color',
+        '--home-computer-alert' => 'computer_alert_color',
         '--home-cta-before-text' => 'cta_before_text_color',
         '--home-cta-after-text' => 'cta_after_text_color',
         '--home-cta-before-hover-bg' => 'cta_before_hover_background',
@@ -99,6 +105,25 @@ class HomepageConfigurationService
     {
         return collect($this->settingFields())
             ->mapWithKeys(fn (array $field) => [$field['key'] => $field['default'] ?? null])
+            ->all();
+    }
+
+    public function defaultBackgrounds(): array
+    {
+        return collect($this->schema()['default_backgrounds'] ?? [])
+            ->mapWithKeys(function ($path, string $theme): array {
+                $path = ltrim(trim((string) $path), '/');
+
+                $absolutePath = public_path($path);
+                $version = is_file($absolutePath) ? filemtime($absolutePath) : null;
+
+                return $path === '' ? [] : [
+                    $theme => [
+                        'path' => $path,
+                        'url' => asset($path) . ($version ? '?v=' . $version : ''),
+                    ],
+                ];
+            })
             ->all();
     }
 
@@ -217,9 +242,10 @@ class HomepageConfigurationService
         $modes = $this->resolvedModes($content, $settings);
         $headerLogo = $this->headerLogo($settings);
         $backgroundImage = $this->mediaAsset($settings, 'background_media_id');
+        $backgroundDefaults = $this->defaultBackgrounds();
         $sections = $this->homepageSectionService->resolved($locale);
 
-        return compact('content', 'settings', 'tooltips', 'modes', 'headerLogo', 'backgroundImage', 'sections');
+        return compact('content', 'settings', 'tooltips', 'modes', 'headerLogo', 'backgroundImage', 'backgroundDefaults', 'sections');
     }
 
     public function safeLink(?string $value, string $fallback): string

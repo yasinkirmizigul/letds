@@ -17,6 +17,12 @@
   --home-after-pattern-blur: 0;
   --home-before-pattern-blend: soft-light;
   --home-after-pattern-blend: soft-light;
+  --home-computer-frame: #1a3d59;
+  --home-computer-detail: #345170;
+  --home-computer-warm: #fcb515;
+  --home-computer-neutral: #a8b9bf;
+  --home-computer-cool: #4687c7;
+  --home-computer-alert: #ef3851;
   --home-before-text: #445963;
   --home-after-text: #ffffff;
   --home-hero-before-text: #445963;
@@ -450,6 +456,11 @@ html.home-hero-pending .home-drag-handle {
   filter: brightness(var(--home-background-brightness));
 }
 
+html[data-site-theme="dark"] .wrapper-after::before,
+html[data-site-theme="dark"] .wrapper-before::before {
+  background-image: var(--home-background-image-dark, var(--home-background-image));
+}
+
 .wrapper-after::after,
 .wrapper-before::after {
   z-index: 1;
@@ -508,9 +519,16 @@ html.home-hero-pending .home-drag-handle {
   margin: -225px auto 0;
 }
 
-.img-bird-wrapper img {
+.img-bird-wrapper > img,
+.img-bird-wrapper > .home-hero-computer {
+  display: block;
   width: 100%;
   height: auto;
+}
+
+.home-hero-computer [fill],
+.home-hero-computer [stroke] {
+  transition: fill 0.36s ease, stroke 0.36s ease;
 }
 
 .home-hero-float {

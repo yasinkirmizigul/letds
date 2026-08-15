@@ -8,6 +8,13 @@
         </div>
 
         <div class="kt-card-content grid gap-4 p-4 sm:p-6 {{ $group['content_class'] ?? 'sm:grid-cols-2' }}">
+            @if(($group['preview'] ?? null) === 'computer')
+                @include('admin.pages.site.homepage.partials._computer-preview', [
+                    'prefix' => $group['preview_prefix'] ?? '',
+                    'settingValues' => $settingValues,
+                ])
+            @endif
+
             @foreach($group['fields'] as $field)
                 @php
                     $key = $field['key'];
@@ -103,6 +110,9 @@
                         $isBackground = ($field['preview'] ?? null) === 'background';
                         $uploadName = $field['upload_name'] ?? null;
                         $clearFlagName = $field['clear_flag_name'] ?? null;
+                        $defaultBackgroundLightUrl = $isBackground ? data_get($backgroundDefaults ?? [], 'light.url') : null;
+                        $defaultBackgroundDarkUrl = $isBackground ? data_get($backgroundDefaults ?? [], 'dark.url', $defaultBackgroundLightUrl) : null;
+                        $hasDefaultBackground = filled($defaultBackgroundLightUrl);
                     @endphp
                     <div class="{{ $wrapperClass }} grid gap-3" data-homepage-media-field="true" data-homepage-media-kind="{{ $isBackground ? 'background' : 'logo' }}">
                         <label class="kt-form-label">{{ $field['label'] }}</label>
@@ -119,13 +129,14 @@
 
                         <div class="homepage-logo-picker {{ $isBackground ? 'homepage-background-picker' : '' }} grid gap-4 border bg-background p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
                             <div
-                                class="{{ $isBackground ? 'homepage-background-preview aspect-[16/7]' : 'flex min-h-24 items-center justify-center p-4' }} relative overflow-hidden rounded-lg border border-dashed border-border bg-muted/20"
+                                class="{{ $isBackground ? 'homepage-background-preview aspect-[16/7]' : 'flex min-h-24 items-center justify-center p-4' }} {{ $isBackground && $previewUrl ? 'has-media' : ($hasDefaultBackground ? 'has-default' : '') }} relative overflow-hidden rounded-lg border border-dashed border-border bg-muted/20"
                                 @if($isBackground)
                                     data-homepage-background-preview="true"
-                                    style="--homepage-preview-after: {{ data_get($settingValues, 'after_background_color', '#ec6367') }}; --homepage-preview-before: {{ data_get($settingValues, 'before_background_color', '#ffffff') }}; --homepage-preview-opacity: {{ data_get($settingValues, 'background_overlay_enabled', true) ? ((float) data_get($settingValues, 'background_overlay_opacity', 65) / 100) : 0 }}; --homepage-preview-brightness: {{ (float) data_get($settingValues, 'background_brightness', 100) }}%; --homepage-preview-position: {{ data_get($settingValues, 'background_position', 'center') }}"
+                                    data-homepage-has-default="{{ $hasDefaultBackground ? 'true' : 'false' }}"
+                                    style="--homepage-preview-after: {{ data_get($settingValues, 'after_background_color', '#ec6367') }}; --homepage-preview-before: {{ data_get($settingValues, 'before_background_color', '#ffffff') }}; --homepage-preview-opacity: {{ data_get($settingValues, 'background_overlay_enabled', true) ? ((float) data_get($settingValues, 'background_overlay_opacity', 65) / 100) : 0 }}; --homepage-preview-brightness: {{ (float) data_get($settingValues, 'background_brightness', 100) }}%; --homepage-preview-position: {{ data_get($settingValues, 'background_position', 'center') }}; --homepage-default-background-light: url('{{ $defaultBackgroundLightUrl }}'); --homepage-default-background-dark: url('{{ $defaultBackgroundDarkUrl }}')"
                                 @endif
                             >
-                                <div class="{{ $previewUrl ? 'hidden' : '' }} text-center text-sm text-muted-foreground" data-homepage-media-placeholder="true">
+                                <div class="{{ $previewUrl || $hasDefaultBackground ? 'hidden' : '' }} text-center text-sm text-muted-foreground" data-homepage-media-placeholder="true">
                                     <i class="ki-outline ki-picture mb-2 block text-2xl"></i>
                                     {{ $isBackground ? 'Henüz arka plan seçilmedi' : 'Henüz logo seçilmedi' }}
                                 </div>
@@ -137,6 +148,12 @@
                                     data-homepage-media-preview="true"
                                 >
                                 @if($isBackground)
+                                    @if($hasDefaultBackground)
+                                        <span class="homepage-background-preview__default-badge {{ $previewUrl ? 'hidden' : '' }}" data-homepage-default-background-label="true">
+                                            <i class="ki-outline ki-colors-square"></i>
+                                            Tema duyarlı varsayılan SVG
+                                        </span>
+                                    @endif
                                     <span class="homepage-background-preview__overlay homepage-background-preview__overlay--after" aria-hidden="true"></span>
                                     <span class="homepage-background-preview__overlay homepage-background-preview__overlay--before" aria-hidden="true"></span>
                                     <span class="homepage-background-preview__pattern homepage-background-preview__pattern--after" data-homepage-background-pattern="after" data-homepage-pattern="none" aria-hidden="true"></span>
@@ -177,7 +194,7 @@
                             </div>
                         </div>
                         <div class="text-xs text-muted-foreground">
-                            {{ $isBackground ? 'JPG, PNG veya WebP yükleyebilirsiniz. Yeni yüklemeler WebP olarak saklanır.' : 'Şeffaf zeminli yatay veya kare logo kullanılması önerilir.' }}
+                            {{ $isBackground ? 'Özel görsel yüklemezseniz açık ve koyu moda uyumlu varsayılan SVG kullanılır. JPG, PNG ve WebP yüklemeleri WebP olarak saklanır.' : 'Şeffaf zeminli yatay veya kare logo kullanılması önerilir.' }}
                         </div>
                         @if($uploadName)
                             @error($uploadName)<div class="text-xs text-danger">{{ $message }}</div>@enderror

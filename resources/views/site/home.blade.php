@@ -22,6 +22,9 @@
     $rightMode = $modeList[1] ?? $activeMode;
     $headerLogo = $homepage['headerLogo'] ?? null;
     $backgroundImage = $homepage['backgroundImage'] ?? null;
+    $backgroundDefaults = $homepage['backgroundDefaults'] ?? [];
+    $backgroundLightUrl = $backgroundImage['url'] ?? data_get($backgroundDefaults, 'light.url');
+    $backgroundDarkUrl = $backgroundImage['url'] ?? data_get($backgroundDefaults, 'dark.url', $backgroundLightUrl);
     $backgroundLoadingColor = $activeMode['styles']['--home-after-bg'] ?? '#ec6367';
     $homepageTitle = $homepageContent['browser_title'] ?: $siteName;
     $homeCssPath = 'assets/site/home/css/home.css';
@@ -29,7 +32,8 @@
     $homeCssUrl = asset($homeCssPath) . '?v=' . filemtime(public_path($homeCssPath));
     $homeJsUrl = asset($homeJsPath) . '?v=' . filemtime(public_path($homeJsPath));
     $homepageStyle = collect(array_replace($activeMode['styles'] ?? [], [
-        '--home-background-image' => $backgroundImage ? 'url("' . $backgroundImage['url'] . '")' : 'none',
+        '--home-background-image' => $backgroundLightUrl ? 'url("' . $backgroundLightUrl . '")' : 'none',
+        '--home-background-image-dark' => $backgroundDarkUrl ? 'url("' . $backgroundDarkUrl . '")' : 'var(--home-background-image)',
         '--home-background-brightness' => (float) $homepageSettings['background_brightness'] . '%',
         '--home-background-overlay-opacity' => $homepageSettings['background_overlay_enabled']
             ? (float) $homepageSettings['background_overlay_opacity'] / 100
@@ -140,7 +144,7 @@
                 <div class="wrapper-after">
                     <span class="home-surface-pattern" aria-hidden="true"></span>
                     <div class="img-bird-wrapper home-hero-float">
-                        <img src="{{ asset('assets/site/home/images/concept-before.svg') }}" alt="">
+                        @include('site.partials.home-hero-computer', ['variant' => 'outline'])
                         @foreach($homepageTooltipItems as $item)
                             <button type="button" class="tooltip-item tooltip-item-{{ $item['position'] }}" data-header-text="{{ $item['key'] }}" aria-label="{{ $item['aria_label'] }}"></button>
                         @endforeach
@@ -187,7 +191,7 @@
                 <div class="wrapper-before">
                     <span class="home-surface-pattern" aria-hidden="true"></span>
                     <div class="img-bird-wrapper home-hero-float">
-                        <img src="{{ asset('assets/site/home/images/concept-after.svg') }}" alt="">
+                        @include('site.partials.home-hero-computer', ['variant' => 'solid'])
                         @foreach($homepageTooltipItems as $item)
                             <button type="button" class="tooltip-item tooltip-item-{{ $item['position'] }}" data-header-text="{{ $item['key'] }}" aria-label="{{ $item['aria_label'] }}"></button>
                         @endforeach

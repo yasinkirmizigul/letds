@@ -12,6 +12,15 @@ const SURFACE_PATTERNS = new Set([
 
 const SURFACE_BLEND_MODES = new Set(['soft-light', 'overlay', 'normal', 'multiply', 'screen']);
 
+const COMPUTER_COLOR_SETTINGS = {
+    '--home-computer-frame': ['computer_frame_color', '#1a3d59'],
+    '--home-computer-detail': ['computer_detail_color', '#345170'],
+    '--home-computer-warm': ['computer_warm_color', '#fcb515'],
+    '--home-computer-neutral': ['computer_neutral_color', '#a8b9bf'],
+    '--home-computer-cool': ['computer_cool_color', '#4687c7'],
+    '--home-computer-alert': ['computer_alert_color', '#ef3851'],
+};
+
 function safePattern(value) {
     return SURFACE_PATTERNS.has(value) ? value : 'none';
 }
@@ -113,11 +122,15 @@ function syncMediaField(field) {
     const preview = field.querySelector('[data-homepage-media-preview]');
     const placeholder = field.querySelector('[data-homepage-media-placeholder]');
     const backgroundPreview = field.querySelector('[data-homepage-background-preview]');
+    const defaultBackgroundLabel = field.querySelector('[data-homepage-default-background-label]');
     const hasMedia = Boolean(preview?.getAttribute('src'));
+    const hasDefaultBackground = backgroundPreview?.dataset.homepageHasDefault === 'true';
 
     preview?.classList.toggle('hidden', !hasMedia);
-    placeholder?.classList.toggle('hidden', hasMedia);
+    placeholder?.classList.toggle('hidden', hasMedia || hasDefaultBackground);
     backgroundPreview?.classList.toggle('has-media', hasMedia);
+    backgroundPreview?.classList.toggle('has-default', !hasMedia && hasDefaultBackground);
+    defaultBackgroundLabel?.classList.toggle('hidden', hasMedia);
 }
 
 function syncBackgroundPreview(root) {
@@ -154,6 +167,17 @@ function syncBackgroundPreview(root) {
     });
 }
 
+function syncComputerPreviews(root) {
+    root.querySelectorAll('[data-homepage-computer-preview]').forEach((preview) => {
+        const prefix = preview.dataset.homepageComputerPrefix || '';
+
+        Object.entries(COMPUTER_COLOR_SETTINGS).forEach(([property, [key, fallback]]) => {
+            const input = root.querySelector(`[name="settings[${prefix}${key}]"]`);
+            preview.style.setProperty(property, safeColor(input?.value, fallback));
+        });
+    });
+}
+
 export async function init(ctx = {}) {
     const root = ctx.root || document;
     const signal = ctx.signal;
@@ -165,10 +189,12 @@ export async function init(ctx = {}) {
     bindModeLabels(root, signal);
     syncSurfaceEditors(root);
     syncBackgroundPreview(root);
+    syncComputerPreviews(root);
 
     root.addEventListener('input', () => {
         syncSurfaceEditors(root);
         syncBackgroundPreview(root);
+        syncComputerPreviews(root);
     }, { signal });
 
     root.addEventListener('change', (event) => {
@@ -176,6 +202,7 @@ export async function init(ctx = {}) {
         if (!fileInput) {
             syncSurfaceEditors(root);
             syncBackgroundPreview(root);
+            syncComputerPreviews(root);
             return;
         }
 

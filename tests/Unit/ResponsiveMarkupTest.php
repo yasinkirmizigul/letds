@@ -118,6 +118,8 @@ class ResponsiveMarkupTest extends TestCase
         $css = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
         $homeCss = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'home.css');
         $homeView = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home.blade.php');
+        $lightBackground = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'home-background-light.svg');
+        $darkBackground = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'home-background-dark.svg');
 
         $this->assertStringContainsString('body.site-shell .probablue-brand__tagline', $css);
         $this->assertStringContainsString('html[data-site-theme="dark"] body.site-shell .site-theme-toggle', $css);
@@ -135,6 +137,12 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('class="icon-drag__arrow"', $homeView);
         $this->assertStringContainsString('width: 16px;', $homeCss);
         $this->assertStringNotContainsString('content: "‹";', $homeCss);
+        $this->assertStringContainsString('--home-background-image-dark', $homeView);
+        $this->assertStringContainsString('html[data-site-theme="dark"] .wrapper-after::before', $homeCss);
+        $this->assertStringContainsString('viewBox="0 0 1920 1080"', $lightBackground);
+        $this->assertStringContainsString('viewBox="0 0 1920 1080"', $darkBackground);
+        $this->assertStringNotContainsString('<text', $lightBackground);
+        $this->assertStringNotContainsString('<text', $darkBackground);
         $this->assertStringContainsString('body.site-shell .kt-select-dropdown', $css);
         $this->assertStringContainsString('background: var(--background) !important;', $css);
     }
