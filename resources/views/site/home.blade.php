@@ -1,5 +1,6 @@
 @php
-    $siteName = ($siteSettings ?? null)?->localized('site_name') ?: config('app.name');
+    $siteName = trim((string) (($siteSettings ?? null)?->localized('site_name') ?: 'PROBABLUE'));
+    $siteName = strcasecmp($siteName, 'Laravel') === 0 ? 'PROBABLUE' : $siteName;
     $locale = $siteCurrentLocale ?? app()->getLocale();
     $isRtl = ($siteCurrentLanguage ?? null)?->is_rtl ?? false;
     $homepageContent = $homepage['content'] ?? [];
@@ -55,6 +56,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @include('site.partials.theme-bootstrap')
     <title>{{ $homepageTitle }}</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('assets/site/images/favicon.svg') }}">
     @if($backgroundImage)
@@ -92,30 +94,35 @@
                 <a
                     href="{{ \App\Support\Site\SiteLocalization::homeUrl($locale) }}"
                     class="wrapper-logo home-header-logo {{ $headerLogo ? 'has-image' : 'is-fallback' }}"
-                    aria-label="{{ $siteName }}"
+                    aria-label="{{ $headerLogo ? $siteName : 'PROBABLUE - İstatistiksel Analiz ve Danışma' }}"
                     data-home-header-contrast="true"
                 >
                     @if($headerLogo)
                         <img src="{{ $headerLogo['url'] }}" alt="{{ $headerLogo['alt'] ?: $siteName }}">
                     @else
-                <svg version="1.1" id="logo-bird" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50px" height="38px" viewBox="0 0 196 150" role="img" aria-hidden="true">
-                    <path fill="#FFFFFF" d="M191.093,24.257c-11.956-.201-30.951-.723-49.513.614-1.496.108-3.137-.356-3.973-1.604-3.091-4.639-9.893-6.956-14.949-6.956-13.474,0-21.184,13.571-21.968,25.713C89.261,29.907,76.711,18.973,60.043,6.34c.227,7.467,1.176,15.347,2.322,22.71,6.621,1.708,9.882,2.667,23.345,8.411C59.604,30.438,34.16,23.823,4.344,23.498c19.222,26.09,46.251,47.769,77.883,60.469-4.309.051-10.248-2.303-13.7-3.984-11.605,16.58-19.181,36.777-19.181,58.936,0,1.594.036,3.174.108,4.742,15.991-4.18,30.425-12.236,42.221-23.104l-.005-.01c-.903-5.129-1.368-9.795-1.46-15.16-4.242.381-12.137-.373-15.708-1.744,1.264.016,5.666.041,7.183.041,2.879,0,5.702-.238,8.452-.703,24.212-4.023,42.505-25.068,42.505-50.42V41.415c0-7.307,7.927-12.926,14.052-13.504,7.064-1.156,26.869-2.719,44.43-2.843.728-.176.701-.693-.031-.811zM128.092,27.683c-1.316,0-2.39-1.068-2.39-2.384,0-1.321,1.073-2.384,2.39-2.384,1.315,0,2.384,1.063,2.384,2.384,0,1.316-1.069,2.384-2.384,2.384z"/>
-                </svg>
+                        <span class="probablue-brand probablue-brand--home" aria-hidden="true">
+                            <span class="probablue-brand__name">PROBA<span>BLUE</span></span>
+                            <span class="probablue-brand__tagline">İstatistiksel Analiz ve Danışma</span>
+                        </span>
                     @endif
                 </a>
 
-                <button
-                    type="button"
-                    class="home-mode-tab home-mode-tab--right"
-                    role="tab"
-                    aria-selected="false"
-                    data-home-mode-tab="{{ $rightMode['key'] }}"
-                    data-home-mode-payload="{{ json_encode($rightMode, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) }}"
-                    data-home-header-contrast="true"
-                >
-                    <span>{{ $rightMode['label'] }}</span>
-                    <span class="home-mode-tab__icon">@include('site.partials.home-mode-icon', ['icon' => $rightMode['icon']])</span>
-                </button>
+                <div class="home-mode-nav__end">
+                    <button
+                        type="button"
+                        class="home-mode-tab home-mode-tab--right"
+                        role="tab"
+                        aria-selected="false"
+                        data-home-mode-tab="{{ $rightMode['key'] }}"
+                        data-home-mode-payload="{{ json_encode($rightMode, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) }}"
+                        data-home-header-contrast="true"
+                    >
+                        <span>{{ $rightMode['label'] }}</span>
+                        <span class="home-mode-tab__icon">@include('site.partials.home-mode-icon', ['icon' => $rightMode['icon']])</span>
+                    </button>
+
+                    @include('site.partials.theme-toggle', ['variant' => 'home'])
+                </div>
             </nav>
         </div>
     </header>

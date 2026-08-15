@@ -1,17 +1,27 @@
+@php
+    $publicSiteName = trim((string) $siteSettings->localized('site_name'));
+    $publicSiteName = $publicSiteName === '' || strcasecmp($publicSiteName, 'Laravel') === 0 ? 'PROBABLUE' : $publicSiteName;
+    $publicSiteTagline = trim((string) $siteSettings->localized('site_tagline'));
+    $publicSiteTagline = $publicSiteTagline === '' || $publicSiteTagline === 'Dijital vitrin ve içerik yönetimi'
+        ? 'İstatistiksel Analiz ve Danışma'
+        : $publicSiteTagline;
+@endphp
+
 <!DOCTYPE html>
-<html lang="{{ $siteCurrentLocale }}" dir="{{ $siteCurrentLanguage?->is_rtl ? 'rtl' : 'ltr' }}" data-kt-theme="true" data-kt-theme-mode="light">
+<html lang="{{ $siteCurrentLocale }}" dir="{{ $siteCurrentLanguage?->is_rtl ? 'rtl' : 'ltr' }}" data-kt-theme="true">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     {{-- JS erken işareti: reveal animasyonlarının gizli başlangıç durumu yalnızca JS çalışırken uygulanır (script yüklenmezse içerik görünür kalır) --}}
     <script>document.documentElement.classList.add('site-js');</script>
-    <title>{{ ($pageTitle ?? null) ? $pageTitle . ' | ' . ($siteSettings->localized('site_name') ?: config('app.name')) : ($siteSettings->localized('site_name') ?: config('app.name')) }}</title>
+    @include('site.partials.theme-bootstrap')
+    <title>{{ ($pageTitle ?? null) ? $pageTitle . ' | ' . $publicSiteName : $publicSiteName }}</title>
     @if(filled($metaDescription ?? null))
         <meta name="description" content="{{ $metaDescription }}">
         <meta property="og:description" content="{{ $metaDescription }}">
     @endif
-    <meta property="og:title" content="{{ ($pageTitle ?? null) ?: ($siteSettings->localized('site_name') ?: config('app.name')) }}">
+    <meta property="og:title" content="{{ ($pageTitle ?? null) ?: $publicSiteName }}">
     <meta property="og:type" content="{{ $openGraphType ?? 'website' }}">
     <meta property="og:url" content="{{ $canonicalUrl ?? request()->url() }}">
     <link rel="canonical" href="{{ $canonicalUrl ?? request()->url() }}">
@@ -48,14 +58,9 @@
 
     <header class="site-header sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-xl" x-data="{ mobileOpen: false }">
         <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-3 sm:gap-4 sm:px-4 lg:h-[72px] lg:px-6">
-            <a href="{{ \App\Support\Site\SiteLocalization::homeUrl($siteCurrentLocale) }}" class="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3 xl:flex-none">
-                <span class="site-brand-mark inline-flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary text-sm font-semibold text-white lg:size-12">
-                    {{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($siteSettings->localized('site_name') ?: config('app.name'), 0, 2)) }}
-                </span>
-                <span class="grid min-w-0">
-                    <span class="truncate text-sm font-semibold text-foreground sm:text-base">{{ $siteSettings->localized('site_name') ?: config('app.name') }}</span>
-                    <span class="hidden text-sm text-muted-foreground lg:block">{{ $siteSettings->localized('site_tagline') ?: 'Dijital vitrin ve içerik yönetimi' }}</span>
-                </span>
+            <a href="{{ \App\Support\Site\SiteLocalization::homeUrl($siteCurrentLocale) }}" class="probablue-brand probablue-brand--shell" aria-label="PROBABLUE - İstatistiksel Analiz ve Danışma">
+                <span class="probablue-brand__name">PROBA<span>BLUE</span></span>
+                <span class="probablue-brand__tagline">İstatistiksel Analiz ve Danışma</span>
             </a>
 
             <nav class="hidden items-center gap-1 xl:flex" aria-label="Ana menü" data-site-primary-navigation>
@@ -65,6 +70,8 @@
             </nav>
 
             <div class="flex shrink-0 items-center gap-1.5 sm:gap-2">
+                @include('site.partials.theme-toggle')
+
                 @if($siteLanguages->count() > 1)
                     <div x-data="{ open: false }" @click.outside="open = false" class="relative">
                         <button type="button" @click="open = !open" :aria-expanded="open" aria-haspopup="true" class="site-language-trigger kt-btn kt-btn-light">
@@ -166,9 +173,9 @@
     <footer class="border-t border-border bg-muted/40">
         <div class="mx-auto grid max-w-7xl gap-10 px-4 py-14 {{ $hasFooterNavigation ? 'lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)]' : 'lg:grid-cols-2' }} lg:px-6">
             <div class="grid gap-4">
-                <div class="font-display text-2xl text-foreground">{{ $siteSettings->localized('site_name') ?: config('app.name') }}</div>
+                <div class="font-display text-2xl text-foreground">{{ $publicSiteName }}</div>
                 <div class="max-w-sm text-sm leading-7 text-muted-foreground">
-                    {{ $siteSettings->localized('footer_note') ?: ($siteSettings->localized('site_tagline') ?: 'Dijital vitrin ve içerik yönetimi') }}
+                    {{ $siteSettings->localized('footer_note') ?: $publicSiteTagline }}
                 </div>
                 <div class="grid gap-2 text-sm text-muted-foreground">
                     @if($siteSettings->contact_email)
@@ -210,7 +217,7 @@
 
         <div class="border-t border-border py-5">
             <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 text-xs text-muted-foreground lg:px-6">
-                <span>&copy; {{ date('Y') }} {{ $siteSettings->localized('site_name') ?: config('app.name') }}</span>
+                <span>&copy; {{ date('Y') }} {{ $publicSiteName }}</span>
             </div>
         </div>
     </footer>

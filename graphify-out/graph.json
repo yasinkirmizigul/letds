@@ -25836,8 +25836,24 @@
       "_origin": "ast"
     },
     {
+      "id": "resources_views_site_home_blade_php_site_partials_theme_bootstrap",
+      "label": "site.partials.theme-bootstrap",
+      "file_type": "code",
+      "source_file": "resources/views/site/home.blade.php",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
       "id": "site_partials_home_mode_icon",
       "label": "site.partials.home-mode-icon",
+      "file_type": "code",
+      "source_file": "resources/views/site/home.blade.php",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_views_site_home_blade_php_site_partials_theme_toggle",
+      "label": "site.partials.theme-toggle",
       "file_type": "code",
       "source_file": "resources/views/site/home.blade.php",
       "source_location": null,
@@ -25868,8 +25884,24 @@
       "_origin": "ast"
     },
     {
+      "id": "resources_views_site_layouts_main_app_blade_php_site_partials_theme_bootstrap",
+      "label": "site.partials.theme-bootstrap",
+      "file_type": "code",
+      "source_file": "resources/views/site/layouts/main/app.blade.php",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
       "id": "site_partials_navigation_desktop_item",
       "label": "site.partials.navigation.desktop-item",
+      "file_type": "code",
+      "source_file": "resources/views/site/layouts/main/app.blade.php",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_views_site_layouts_main_app_blade_php_site_partials_theme_toggle",
+      "label": "site.partials.theme-toggle",
       "file_type": "code",
       "source_file": "resources/views/site/layouts/main/app.blade.php",
       "source_location": null,
@@ -25968,6 +26000,22 @@
       "label": "mobile-item.blade.php",
       "file_type": "code",
       "source_file": "resources/views/site/partials/navigation/mobile-item.blade.php",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_views_site_partials_theme_bootstrap_blade",
+      "label": "theme-bootstrap.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/site/partials/theme-bootstrap.blade.php",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_views_site_partials_theme_toggle_blade",
+      "label": "theme-toggle.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/site/partials/theme-toggle.blade.php",
       "source_location": null,
       "_origin": "ast"
     },
@@ -26464,7 +26512,7 @@
       "label": ".test_configuration_resolves_translations_and_sanitizes_tooltip_html()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L49",
+      "source_location": "L54",
       "_origin": "ast"
     },
     {
@@ -26472,7 +26520,7 @@
       "label": ".test_superadmin_can_open_and_update_the_custom_homepage_manager()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L95",
+      "source_location": "L100",
       "_origin": "ast"
     },
     {
@@ -26480,7 +26528,7 @@
       "label": ".test_homepage_surface_patterns_are_allowlisted_and_bounded()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L251",
+      "source_location": "L256",
       "_origin": "ast"
     },
     {
@@ -26488,7 +26536,7 @@
       "label": ".test_superadmin_can_manage_multilingual_homepage_sections_and_cards()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L275",
+      "source_location": "L280",
       "_origin": "ast"
     },
     {
@@ -26496,7 +26544,7 @@
       "label": ".test_homepage_section_manager_rejects_unsafe_links_and_keeps_reordering_scoped()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L379",
+      "source_location": "L384",
       "_origin": "ast"
     },
     {
@@ -26680,7 +26728,23 @@
       "label": "SitePortalFlowTest",
       "file_type": "code",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L22",
+      "source_location": "L23",
+      "_origin": "ast"
+    },
+    {
+      "id": "tests_feature_siteportalflowtest_siteportalflowtest_test_public_site_layout_uses_probablue_branding_and_persistent_theme_control",
+      "label": ".test_public_site_layout_uses_probablue_branding_and_persistent_theme_control()",
+      "file_type": "code",
+      "source_file": "tests/Feature/SitePortalFlowTest.php",
+      "source_location": "L27",
+      "_origin": "ast"
+    },
+    {
+      "id": "tests_feature_siteportalflowtest_siteportalflowtest_test_contact_recipient_select_shows_names_without_exposing_email_addresses",
+      "label": ".test_contact_recipient_select_shows_names_without_exposing_email_addresses()",
+      "file_type": "code",
+      "source_file": "tests/Feature/SitePortalFlowTest.php",
+      "source_location": "L41",
       "_origin": "ast"
     },
     {
@@ -26688,7 +26752,7 @@
       "label": ".test_public_blog_can_be_searched_filtered_and_opened()",
       "file_type": "code",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L26",
+      "source_location": "L61",
       "_origin": "ast"
     },
     {
@@ -26696,7 +26760,7 @@
       "label": ".test_only_public_galleries_with_images_are_visible()",
       "file_type": "code",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L67",
+      "source_location": "L102",
       "_origin": "ast"
     },
     {
@@ -26704,7 +26768,7 @@
       "label": ".test_completed_appointment_creates_one_member_project()",
       "file_type": "code",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L108",
+      "source_location": "L143",
       "_origin": "ast"
     },
     {
@@ -26712,7 +26776,7 @@
       "label": ".test_member_can_upload_private_project_files_but_cannot_open_another_members_project()",
       "file_type": "code",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L131",
+      "source_location": "L166",
       "_origin": "ast"
     },
     {
@@ -26720,7 +26784,7 @@
       "label": ".test_delivered_project_receives_one_project_review()",
       "file_type": "code",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L168",
+      "source_location": "L203",
       "_origin": "ast"
     },
     {
@@ -26728,7 +26792,7 @@
       "label": ".test_member_can_update_profile_and_sensitive_changes_require_current_password()",
       "file_type": "code",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L197",
+      "source_location": "L232",
       "_origin": "ast"
     },
     {
@@ -26736,7 +26800,7 @@
       "label": ".actors()",
       "file_type": "code",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L222",
+      "source_location": "L257",
       "_origin": "ast"
     },
     {
@@ -26876,11 +26940,19 @@
       "_origin": "ast"
     },
     {
+      "id": "tests_unit_responsivemarkuptest_responsivemarkuptest_test_public_theme_and_probablue_brand_have_responsive_styles",
+      "label": ".test_public_theme_and_probablue_brand_have_responsive_styles()",
+      "file_type": "code",
+      "source_file": "tests/Unit/ResponsiveMarkupTest.php",
+      "source_location": "L116",
+      "_origin": "ast"
+    },
+    {
       "id": "tests_unit_responsivemarkuptest_responsivemarkuptest_frontendsourcefiles",
       "label": ".frontendSourceFiles()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L116",
+      "source_location": "L131",
       "_origin": "ast"
     },
     {
@@ -26888,7 +26960,7 @@
       "label": ".hasTopLevelComma()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L136",
+      "source_location": "L151",
       "_origin": "ast"
     },
     {
@@ -26896,7 +26968,7 @@
       "label": ".relativePath()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L153",
+      "source_location": "L168",
       "_origin": "ast"
     },
     {
@@ -26904,7 +26976,7 @@
       "label": ".projectRoot()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L158",
+      "source_location": "L173",
       "_origin": "ast"
     },
     {
@@ -96595,7 +96667,27 @@
     },
     {
       "source": "resources_views_site_home_blade",
+      "target": "resources_views_site_home_blade_php_site_partials_theme_bootstrap",
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/site/home.blade.php",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "resources_views_site_home_blade",
       "target": "site_partials_home_mode_icon",
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/site/home.blade.php",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "resources_views_site_home_blade",
+      "target": "resources_views_site_home_blade_php_site_partials_theme_toggle",
       "relation": "includes",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -96625,7 +96717,27 @@
     },
     {
       "source": "resources_views_site_layouts_main_app_blade",
+      "target": "resources_views_site_layouts_main_app_blade_php_site_partials_theme_bootstrap",
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/site/layouts/main/app.blade.php",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "resources_views_site_layouts_main_app_blade",
       "target": "site_partials_navigation_desktop_item",
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/site/layouts/main/app.blade.php",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "resources_views_site_layouts_main_app_blade",
+      "target": "resources_views_site_layouts_main_app_blade_php_site_partials_theme_toggle",
       "relation": "includes",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -98194,7 +98306,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L49",
+      "source_location": "L54",
       "weight": 1.0
     },
     {
@@ -98203,7 +98315,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L95",
+      "source_location": "L100",
       "weight": 1.0
     },
     {
@@ -98212,7 +98324,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L251",
+      "source_location": "L256",
       "weight": 1.0
     },
     {
@@ -98221,7 +98333,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L275",
+      "source_location": "L280",
       "weight": 1.0
     },
     {
@@ -98230,7 +98342,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L379",
+      "source_location": "L384",
       "weight": 1.0
     },
     {
@@ -98810,7 +98922,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "user",
+      "target": "app_models_admin_user_role_role",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -98820,7 +98932,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "appointment",
+      "target": "user",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -98830,7 +98942,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "member",
+      "target": "appointment",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -98840,7 +98952,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "servicereview",
+      "target": "member",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -98850,7 +98962,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "memberprojectworkflowservice",
+      "target": "servicereview",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -98860,7 +98972,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "servicereviewassignmentservice",
+      "target": "memberprojectworkflowservice",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -98870,7 +98982,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "refreshdatabase",
+      "target": "servicereviewassignmentservice",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -98880,7 +98992,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "uploadedfile",
+      "target": "refreshdatabase",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -98890,7 +99002,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "storage",
+      "target": "uploadedfile",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -98900,7 +99012,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "str",
+      "target": "storage",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -98910,7 +99022,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "tests_testcase_testcase",
+      "target": "str",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -98920,11 +99032,21 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
+      "target": "tests_testcase_testcase",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/SitePortalFlowTest.php",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_siteportalflowtest",
       "target": "tests_feature_siteportalflowtest_siteportalflowtest",
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -98933,7 +99055,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -98942,7 +99064,25 @@
       "relation": "mixes_in",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L24",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_siteportalflowtest_siteportalflowtest",
+      "target": "tests_feature_siteportalflowtest_siteportalflowtest_test_public_site_layout_uses_probablue_branding_and_persistent_theme_control",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/SitePortalFlowTest.php",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_siteportalflowtest_siteportalflowtest",
+      "target": "tests_feature_siteportalflowtest_siteportalflowtest_test_contact_recipient_select_shows_names_without_exposing_email_addresses",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/SitePortalFlowTest.php",
+      "source_location": "L41",
       "weight": 1.0
     },
     {
@@ -98951,7 +99091,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L26",
+      "source_location": "L61",
       "weight": 1.0
     },
     {
@@ -98960,7 +99100,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L67",
+      "source_location": "L102",
       "weight": 1.0
     },
     {
@@ -98969,7 +99109,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L108",
+      "source_location": "L143",
       "weight": 1.0
     },
     {
@@ -98978,7 +99118,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L131",
+      "source_location": "L166",
       "weight": 1.0
     },
     {
@@ -98987,7 +99127,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L168",
+      "source_location": "L203",
       "weight": 1.0
     },
     {
@@ -98996,7 +99136,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L197",
+      "source_location": "L232",
       "weight": 1.0
     },
     {
@@ -99005,7 +99145,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L222",
+      "source_location": "L257",
       "weight": 1.0
     },
     {
@@ -99015,7 +99155,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L110",
+      "source_location": "L145",
       "weight": 1.0
     },
     {
@@ -99025,7 +99165,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L134",
+      "source_location": "L169",
       "weight": 1.0
     },
     {
@@ -99035,7 +99175,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L170",
+      "source_location": "L205",
       "weight": 1.0
     },
     {
@@ -99045,7 +99185,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L199",
+      "source_location": "L234",
       "weight": 1.0
     },
     {
@@ -99304,7 +99444,7 @@
     },
     {
       "source": "tests_unit_responsivemarkuptest_responsivemarkuptest",
-      "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_frontendsourcefiles",
+      "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_test_public_theme_and_probablue_brand_have_responsive_styles",
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
@@ -99313,11 +99453,20 @@
     },
     {
       "source": "tests_unit_responsivemarkuptest_responsivemarkuptest",
+      "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_frontendsourcefiles",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Unit/ResponsiveMarkupTest.php",
+      "source_location": "L131",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_unit_responsivemarkuptest_responsivemarkuptest",
       "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_hastoplevelcomma",
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L136",
+      "source_location": "L151",
       "weight": 1.0
     },
     {
@@ -99326,7 +99475,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L153",
+      "source_location": "L168",
       "weight": 1.0
     },
     {
@@ -99335,7 +99484,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L158",
+      "source_location": "L173",
       "weight": 1.0
     },
     {
@@ -99419,13 +99568,23 @@
       "weight": 1.0
     },
     {
+      "source": "tests_unit_responsivemarkuptest_responsivemarkuptest_test_public_theme_and_probablue_brand_have_responsive_styles",
+      "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_projectroot",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Unit/ResponsiveMarkupTest.php",
+      "source_location": "L118",
+      "weight": 1.0
+    },
+    {
       "source": "tests_unit_responsivemarkuptest_responsivemarkuptest_frontendsourcefiles",
       "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_projectroot",
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L121",
+      "source_location": "L136",
       "weight": 1.0
     },
     {
@@ -99435,7 +99594,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L155",
+      "source_location": "L170",
       "weight": 1.0
     },
     {
@@ -108883,7 +109042,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L51",
+      "source_location": "L56",
       "weight": 1.0
     },
     {
@@ -108894,7 +109053,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L99",
+      "source_location": "L104",
       "weight": 1.0
     },
     {
@@ -108905,7 +109064,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L103",
+      "source_location": "L108",
       "weight": 1.0
     },
     {
@@ -108916,7 +109075,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L212",
+      "source_location": "L217",
       "weight": 1.0
     },
     {
@@ -108927,7 +109086,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L277",
+      "source_location": "L282",
       "weight": 1.0
     },
     {
@@ -108938,7 +109097,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L289",
+      "source_location": "L294",
       "weight": 1.0
     },
     {
@@ -108949,7 +109108,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L293",
+      "source_location": "L298",
       "weight": 1.0
     },
     {
@@ -108960,7 +109119,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L332",
+      "source_location": "L337",
       "weight": 1.0
     },
     {
@@ -108971,7 +109130,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L381",
+      "source_location": "L386",
       "weight": 1.0
     },
     {
@@ -108982,7 +109141,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L385",
+      "source_location": "L390",
       "weight": 1.0
     },
     {
@@ -108993,7 +109152,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L393",
+      "source_location": "L398",
       "weight": 1.0
     },
     {
@@ -109228,6 +109387,28 @@
       "weight": 1.0
     },
     {
+      "source": "tests_feature_siteportalflowtest_siteportalflowtest_test_contact_recipient_select_shows_names_without_exposing_email_addresses",
+      "target": "app_models_admin_user_role_role",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tests/Feature/SitePortalFlowTest.php",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_siteportalflowtest_siteportalflowtest_test_contact_recipient_select_shows_names_without_exposing_email_addresses",
+      "target": "app_models_admin_user_user_user",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/SitePortalFlowTest.php",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
       "source": "tests_feature_siteportalflowtest_siteportalflowtest_test_public_blog_can_be_searched_filtered_and_opened",
       "target": "app_models_admin_category_category",
       "relation": "calls",
@@ -109235,7 +109416,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L28",
+      "source_location": "L63",
       "weight": 1.0
     },
     {
@@ -109246,7 +109427,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L33",
+      "source_location": "L68",
       "weight": 1.0
     },
     {
@@ -109257,7 +109438,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L39",
+      "source_location": "L74",
       "weight": 1.0
     },
     {
@@ -109268,7 +109449,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L72",
+      "source_location": "L107",
       "weight": 1.0
     },
     {
@@ -109279,7 +109460,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L81",
+      "source_location": "L116",
       "weight": 1.0
     },
     {
@@ -109290,7 +109471,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L85",
+      "source_location": "L120",
       "weight": 1.0
     },
     {
@@ -109301,7 +109482,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L111",
+      "source_location": "L146",
       "weight": 1.0
     },
     {
@@ -109312,7 +109493,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L114",
+      "source_location": "L149",
       "weight": 1.0
     },
     {
@@ -109323,7 +109504,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L135",
+      "source_location": "L170",
       "weight": 1.0
     },
     {
@@ -109334,7 +109515,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L142",
+      "source_location": "L177",
       "weight": 1.0
     },
     {
@@ -109345,7 +109526,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L171",
+      "source_location": "L206",
       "weight": 1.0
     },
     {
@@ -109356,7 +109537,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L174",
+      "source_location": "L209",
       "weight": 1.0
     },
     {
@@ -109367,7 +109548,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L179",
+      "source_location": "L214",
       "weight": 1.0
     },
     {
@@ -109378,7 +109559,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L224",
+      "source_location": "L259",
       "weight": 1.0
     },
     {
@@ -109389,7 +109570,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L230",
+      "source_location": "L265",
       "weight": 1.0
     },
     {

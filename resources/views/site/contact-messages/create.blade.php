@@ -59,7 +59,7 @@
                                             value="{{ $recipient->id }}"
                                             @selected((int) old('recipient_user_id', $selectedRecipientId) === (int) $recipient->id)
                                         >
-                                            {{ $recipient->name }}{{ $recipient->email ? ' - ' . $recipient->email : '' }}
+                                            {{ $recipient->name }}
                                         </option>
                                     @endforeach
                                 </select>

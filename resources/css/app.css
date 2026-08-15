@@ -434,20 +434,95 @@ body.site-shell .site-header {
     border-color: color-mix(in oklab, var(--border) 82%, transparent);
     background: color-mix(in oklab, var(--background) 88%, transparent) !important;
     box-shadow: 0 0.75rem 2.5rem rgb(38 58 67 / 5%);
+    transition: border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
 }
 
-body.site-shell .site-brand-mark {
-    position: relative;
+body.site-shell .probablue-brand {
+    display: inline-grid;
+    min-width: 0;
+    align-content: center;
+    color: var(--foreground);
+    line-height: 1;
+    text-decoration: none;
+}
+
+body.site-shell .probablue-brand--shell {
+    flex: 1 1 auto;
+    gap: 0.28rem;
+}
+
+body.site-shell .probablue-brand__name {
     overflow: hidden;
-    box-shadow: 0 0.55rem 1.5rem rgb(216 77 84 / 24%);
-    transform: rotate(-3deg);
+    color: currentColor;
+    font-size: clamp(1.05rem, 1.7vw, 1.38rem);
+    font-weight: 830;
+    letter-spacing: 0.055em;
+    line-height: 1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-body.site-shell .site-brand-mark::after {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(145deg, rgb(255 255 255 / 28%), transparent 52%);
-    content: '';
+body.site-shell .probablue-brand__name span {
+    color: #2188e8;
+}
+
+body.site-shell .probablue-brand__tagline {
+    overflow: hidden;
+    color: var(--muted-foreground);
+    font-size: clamp(0.54rem, 0.78vw, 0.68rem);
+    font-weight: 650;
+    letter-spacing: 0.055em;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body.site-shell .site-theme-toggle {
+    position: relative;
+    display: inline-grid;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex: 0 0 2.5rem;
+    place-items: center;
+    border: 1px solid color-mix(in oklab, var(--border) 86%, transparent);
+    border-radius: 0.85rem;
+    color: var(--foreground);
+    background: color-mix(in oklab, var(--background) 72%, var(--muted));
+    box-shadow: 0 0.45rem 1.3rem rgb(38 58 67 / 8%);
+    cursor: pointer;
+    transition: color 180ms ease, border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
+}
+
+body.site-shell .site-theme-toggle:hover {
+    border-color: color-mix(in oklab, var(--primary) 58%, var(--border));
+    color: var(--primary);
+    transform: translateY(-1px);
+}
+
+body.site-shell .site-theme-toggle:focus-visible {
+    outline: 3px solid color-mix(in oklab, var(--primary) 28%, transparent);
+    outline-offset: 2px;
+}
+
+body.site-shell .site-theme-toggle__icon {
+    display: none;
+    width: 1.15rem;
+    height: 1.15rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.7;
+}
+
+html[data-site-theme="light"] body.site-shell .site-theme-toggle__icon--moon,
+html[data-site-theme="dark"] body.site-shell .site-theme-toggle__icon--sun {
+    display: block;
+}
+
+html[data-site-theme="dark"] body.site-shell .site-theme-toggle {
+    background: color-mix(in oklab, var(--background) 62%, var(--accent));
+    box-shadow: 0 0.65rem 1.5rem rgb(0 0 0 / 18%);
 }
 
 body.site-shell .site-page {
@@ -2165,6 +2240,121 @@ textarea.kt-input:disabled,
     opacity: .72;
     cursor: not-allowed;
     background: color-mix(in oklab, var(--foreground) 5%, var(--background));
+}
+
+body.site-shell select.kt-select option {
+    background-color: var(--background);
+    color: var(--foreground);
+}
+
+body.site-shell .kt-select-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+body.site-shell .kt-select-display {
+    display: flex;
+    min-height: 2.625rem;
+    width: 100%;
+    align-items: center;
+    padding: .625rem 2.5rem .625rem .875rem;
+    border: 1px solid var(--border);
+    border-radius: .625rem;
+    color: var(--foreground);
+    background: color-mix(in oklab, var(--background) 96%, white 4%);
+    box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
+    cursor: pointer;
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+
+body.site-shell .kt-select-display::after {
+    position: absolute;
+    right: .9rem;
+    width: .48rem;
+    height: .48rem;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    color: var(--muted-foreground);
+    content: '';
+    pointer-events: none;
+    transform: translateY(-20%) rotate(45deg);
+}
+
+body.site-shell .kt-select-display:focus,
+body.site-shell .kt-select-display[aria-expanded="true"] {
+    border-color: color-mix(in oklab, #3e97ff 70%, var(--border));
+    box-shadow: 0 0 0 .18rem rgb(62 151 255 / 16%);
+}
+
+body.site-shell .kt-select-dropdown {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: .75rem;
+    color: var(--foreground);
+    background: var(--background) !important;
+    box-shadow: 0 .85rem 2.25rem rgb(15 23 42 / 16%);
+}
+
+body.site-shell .kt-select-options {
+    max-height: 15.625rem;
+    overflow-y: auto;
+    margin: 0;
+    padding: .4rem;
+    background: var(--background);
+    list-style: none;
+}
+
+body.site-shell .kt-select-option {
+    display: flex;
+    min-height: 2.5rem;
+    align-items: center;
+    gap: .625rem;
+    padding: .55rem .75rem;
+    border-radius: .5rem;
+    color: var(--foreground);
+    background: var(--background);
+    cursor: pointer;
+    transition: color .15s ease, background-color .15s ease;
+}
+
+body.site-shell .kt-select-option:hover,
+body.site-shell .kt-select-option.focused,
+body.site-shell .kt-select-option.hover,
+body.site-shell .kt-select-option.highlighted {
+    color: var(--accent-foreground);
+    background: var(--accent);
+}
+
+body.site-shell .kt-select-option[aria-selected="true"] {
+    color: var(--primary);
+    background: color-mix(in oklab, var(--primary) 11%, var(--background));
+}
+
+body.site-shell .kt-select-option-text {
+    overflow: hidden;
+    min-width: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+html[data-site-theme="dark"] body.site-shell .kt-select-display {
+    background-color: var(--background);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 18%);
+}
+
+html[data-site-theme="dark"] body.site-shell .kt-select-dropdown {
+    background-color: var(--background);
+    box-shadow: 0 .85rem 2.25rem rgb(0 0 0 / 24%);
+}
+
+html[data-site-theme="dark"] body.site-shell .kt-select-options,
+html[data-site-theme="dark"] body.site-shell .kt-select-option {
+    background-color: var(--background);
+}
+
+body.site-shell .kt-select-dropdown.hidden {
+    display: none;
 }
 
 /* Homepage manager: stronger form affordances without changing other admin screens. */

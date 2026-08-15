@@ -22,9 +22,9 @@ class ContactMessageController extends Controller
         $recipients = User::query()
             ->adminAccessible()
             ->orderBy('name')
-            ->get(['id', 'name', 'email']);
+            ->get(['id', 'name']);
 
-        if (!$recipients->contains('id', $recipientId)) {
+        if (! $recipients->contains('id', $recipientId)) {
             $recipientId = null;
         }
 

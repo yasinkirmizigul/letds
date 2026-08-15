@@ -113,6 +113,21 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringNotContainsString('sm:grid-cols-3', $surfaceEditor);
     }
 
+    public function test_public_theme_and_probablue_brand_have_responsive_styles(): void
+    {
+        $css = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
+        $homeCss = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'home.css');
+
+        $this->assertStringContainsString('body.site-shell .probablue-brand__tagline', $css);
+        $this->assertStringContainsString('html[data-site-theme="dark"] body.site-shell .site-theme-toggle', $css);
+        $this->assertStringContainsString('grid-template-areas:', $homeCss);
+        $this->assertStringContainsString('"brand theme"', $homeCss);
+        $this->assertStringContainsString('html[data-site-theme="dark"] .home-discovery-section', $homeCss);
+        $this->assertStringContainsString('.wrapper-logo.has-image', $homeCss);
+        $this->assertStringContainsString('body.site-shell .kt-select-dropdown', $css);
+        $this->assertStringContainsString('background: var(--background) !important;', $css);
+    }
+
     private function frontendSourceFiles(): array
     {
         $files = [];

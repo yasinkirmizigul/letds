@@ -7,6 +7,7 @@ use App\Models\Admin\Category;
 use App\Models\Admin\Gallery\Gallery;
 use App\Models\Admin\Media\Media;
 use App\Models\Admin\Project\Project;
+use App\Models\Admin\User\Role;
 use App\Models\Admin\User\User;
 use App\Models\Appointment\Appointment;
 use App\Models\Member;
@@ -22,6 +23,40 @@ use Tests\TestCase;
 class SitePortalFlowTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_public_site_layout_uses_probablue_branding_and_persistent_theme_control(): void
+    {
+        $this->get(route('site.blog.index'))
+            ->assertOk()
+            ->assertSee('class="probablue-brand probablue-brand--shell"', false)
+            ->assertSee('PROBABLUE')
+            ->assertSee('İstatistiksel Analiz ve Danışma')
+            ->assertSee('data-site-theme-toggle', false)
+            ->assertSee('probablue-site-theme', false)
+            ->assertSee('<title>Blog | PROBABLUE</title>', false)
+            ->assertDontSee('Laravel')
+            ->assertDontSee('data-kt-theme-mode="light"', false);
+    }
+
+    public function test_contact_recipient_select_shows_names_without_exposing_email_addresses(): void
+    {
+        $role = Role::query()->create([
+            'name' => 'Admin',
+            'slug' => 'admin',
+        ]);
+        $recipient = User::query()->create([
+            'name' => 'Analiz Uzmanı',
+            'email' => 'hidden-recipient@example.test',
+            'password' => 'password',
+            'is_active' => true,
+        ]);
+        $recipient->roles()->attach($role);
+
+        $this->get(route('site.contact-messages.create'))
+            ->assertOk()
+            ->assertSee('Analiz Uzmanı')
+            ->assertDontSee('hidden-recipient@example.test');
+    }
 
     public function test_public_blog_can_be_searched_filtered_and_opened(): void
     {
