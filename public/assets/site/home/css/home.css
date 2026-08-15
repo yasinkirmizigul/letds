@@ -812,36 +812,23 @@ body.home-mode-changing .content-before-after .btn-header {
   height: 30px;
   margin-top: -15px;
   place-items: center;
+  overflow: hidden;
   border-radius: 50%;
   background: var(--home-drag-handle);
-  box-shadow:
-    0 0 0 2px rgba(255, 255, 255, 0.82),
-    0 10px 28px rgba(68, 89, 99, 0.24);
   transition: opacity 0.18s ease, transform 0.3s ease;
 }
 
-.icon-drag::before,
-.icon-drag::after {
-  position: absolute;
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1;
+.icon-drag__arrow {
+  display: block;
+  width: 16px;
+  height: 8px;
+  fill: #ffffff;
+  shape-rendering: geometricPrecision;
 }
 
 .home-before-after.is-entering .home-drag-handle {
   cursor: default;
   pointer-events: none;
-}
-
-.icon-drag::before {
-  content: "‹";
-  left: 7px;
-}
-
-.icon-drag::after {
-  content: "›";
-  right: 7px;
 }
 
 body.home-leaving {

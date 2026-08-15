@@ -132,6 +132,9 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('.home-hero-float {', $homeCss);
         $this->assertStringContainsString('.home-hero-shadow {', $homeCss);
         $this->assertStringNotContainsString('et-anim="floating_special"', $homeView);
+        $this->assertStringContainsString('class="icon-drag__arrow"', $homeView);
+        $this->assertStringContainsString('width: 16px;', $homeCss);
+        $this->assertStringNotContainsString('content: "‹";', $homeCss);
         $this->assertStringContainsString('body.site-shell .kt-select-dropdown', $css);
         $this->assertStringContainsString('background: var(--background) !important;', $css);
     }

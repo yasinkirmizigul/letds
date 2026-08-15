@@ -231,7 +231,11 @@
             </div>
 
             <button type="button" id="dragme" class="home-drag-handle" aria-label="Compare views" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
-                <span class="icon-drag" aria-hidden="true"></span>
+                <span class="icon-drag" aria-hidden="true">
+                    <svg class="icon-drag__arrow" viewBox="0 0 16 8" focusable="false">
+                        <path d="M0 4 4 1v2h8V1l4 3-4 3V5H4v2Z" />
+                    </svg>
+                </span>
             </button>
         </section>
 
