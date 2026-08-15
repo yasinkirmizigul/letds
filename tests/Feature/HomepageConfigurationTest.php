@@ -34,6 +34,7 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('data-stat-symbols="true"', false)
             ->assertSee('data-stat-symbol-mode="idle"', false)
             ->assertSee('data-home-mode="analysis"', false)
+            ->assertSee('class="home-hero-pending', false)
             ->assertSee('data-site-theme-toggle', false)
             ->assertSee('probablue-site-theme', false)
             ->assertSee('PROBABLUE')
@@ -131,6 +132,8 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('Carbon Fiber')
             ->assertSee('Piksel Kareler')
             ->assertSee('Sembol çalışma biçimi')
+            ->assertSee('Sol Panel Yüzeyi')
+            ->assertSee('Sağ Panel Yüzeyi')
             ->assertSee('Panel Renkleri');
 
         $payload = array_replace($service->contentDefaults(), [
@@ -228,7 +231,7 @@ class HomepageConfigurationTest extends TestCase
 
         $this->get('/')
             ->assertOk()
-            ->assertSee('class="home-background-loading"', false)
+            ->assertSee('class="home-hero-pending home-background-loading"', false)
             ->assertSee(
                 '<link rel="preload" as="image" href="'.$backgroundMedia->url().'" fetchpriority="high">',
                 false

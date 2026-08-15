@@ -25,6 +25,7 @@
       window.clearTimeout(fallbackTimer);
       root.classList.remove('home-background-loading');
       root.classList.add('home-background-ready');
+      window.dispatchEvent(new CustomEvent('home:backgroundready'));
     };
 
     const revealAfterDecode = () => {
@@ -64,7 +65,7 @@
       const delay = Number(item.getAttribute('et-anim-delay') || 0);
       const easing = item.getAttribute('et-anim-easing') || 'ease';
 
-      transitionTimer = window.setTimeout(() => {
+      window.setTimeout(() => {
         item.classList.add(`et-in-viewport-${name}`);
         item.style.animation = `${name} ${duration}ms ${easing} forwards`;
       }, delay);
@@ -207,6 +208,8 @@
 
     let ratio = 0.5;
     let dragging = false;
+    let introActive = false;
+    let introFrame = 0;
 
     const bounds = () => root.getBoundingClientRect();
 
@@ -247,7 +250,57 @@
       }, 680);
     };
 
+    const finishIntro = () => {
+      introActive = false;
+      ratio = 0.5;
+      moveToRatio();
+      root.classList.remove('is-entering');
+      document.documentElement.classList.remove('home-hero-pending');
+    };
+
+    const playIntro = () => {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      afterWrapper.style.width = `${window.innerWidth}px`;
+
+      if (reduceMotion) {
+        finishIntro();
+        return;
+      }
+
+      introActive = true;
+      ratio = 0;
+      root.classList.add('is-entering');
+      moveTo(bounds().left);
+
+      const duration = 1000;
+      let startedAt = null;
+
+      const tick = (timestamp) => {
+        if (!introActive) return;
+        if (startedAt === null) startedAt = timestamp;
+
+        const progress = Math.min((timestamp - startedAt) / duration, 1);
+        const easedProgress = 1 - Math.pow(1 - progress, 3);
+        const rect = bounds();
+
+        ratio = easedProgress * 0.5;
+        moveTo(rect.left + rect.width * ratio);
+
+        if (progress < 1) {
+          introFrame = window.requestAnimationFrame(tick);
+          return;
+        }
+
+        finishIntro();
+      };
+
+      introFrame = window.requestAnimationFrame(tick);
+    };
+
     handle.addEventListener('pointerdown', (event) => {
+      if (introActive) return;
+
       dragging = true;
       handle.setPointerCapture?.(event.pointerId);
       moveTo(event.clientX);
@@ -263,11 +316,14 @@
     });
 
     root.addEventListener('click', (event) => {
+      if (introActive) return;
       if (event.target.closest('.tooltip-item, .btn-header, #dragme')) return;
       animateTo(event.clientX);
     });
 
     handle.addEventListener('keydown', (event) => {
+      if (introActive) return;
+
       const step = event.shiftKey ? 0.1 : 0.03;
 
       if (event.key === 'ArrowLeft') {
@@ -296,7 +352,17 @@
     });
 
     window.addEventListener('resize', moveToRatio);
-    moveToRatio();
+
+    if (document.documentElement.classList.contains('home-background-loading')) {
+      window.addEventListener('home:backgroundready', playIntro, { once: true });
+    } else {
+      playIntro();
+    }
+
+    window.addEventListener('pagehide', () => {
+      introActive = false;
+      window.cancelAnimationFrame(introFrame);
+    }, { once: true });
   }
 
   function initPageExitTransition() {

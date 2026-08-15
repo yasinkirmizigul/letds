@@ -411,6 +411,14 @@ html[data-site-theme="dark"] .site-theme-toggle__icon--sun {
   background: var(--home-after-bg);
 }
 
+html.home-hero-pending .view-after {
+  width: 0;
+}
+
+html.home-hero-pending .home-drag-handle {
+  left: 0;
+}
+
 .wrapper-after,
 .wrapper-before {
   position: relative;
@@ -495,14 +503,19 @@ html[data-site-theme="dark"] .site-theme-toggle__icon--sun {
   right: 0;
   z-index: 9;
   display: block;
-  width: 500px;
+  width: min(400px, calc(100vw - 64px));
   height: 385px;
-  margin: -250px auto 0;
+  margin: -225px auto 0;
 }
 
 .img-bird-wrapper img {
   width: 100%;
   height: auto;
+}
+
+.home-hero-float {
+  opacity: 1;
+  animation: floating_special 3500ms ease infinite;
 }
 
 .et-in-viewport-check {
@@ -529,6 +542,10 @@ html[data-site-theme="dark"] .site-theme-toggle__icon--sun {
   margin: 0 auto;
   border-radius: 50%;
   background: radial-gradient(ellipse at center, rgba(36, 45, 52, 0.24) 0%, rgba(36, 45, 52, 0.15) 35%, rgba(36, 45, 52, 0) 72%);
+}
+
+.home-hero-shadow {
+  animation: pulse_special 3500ms ease infinite;
 }
 
 .tooltip-item {
@@ -758,7 +775,7 @@ body.home-mode-changing .content-before-after .btn-header {
   width: 2px;
   height: 100%;
   padding: 0;
-  cursor: ew-resize;
+  cursor: move;
   border: 0;
   background-color: var(--home-drag-handle);
   touch-action: none;
@@ -796,18 +813,25 @@ body.home-mode-changing .content-before-after .btn-header {
   margin-top: -15px;
   place-items: center;
   border-radius: 50%;
-  background: var(--home-before-bg);
-  box-shadow: 0 10px 28px rgba(68, 89, 99, 0.22);
+  background: var(--home-drag-handle);
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.82),
+    0 10px 28px rgba(68, 89, 99, 0.24);
   transition: opacity 0.18s ease, transform 0.3s ease;
 }
 
 .icon-drag::before,
 .icon-drag::after {
   position: absolute;
-  color: var(--home-drag-handle);
+  color: #ffffff;
   font-size: 14px;
   font-weight: 700;
   line-height: 1;
+}
+
+.home-before-after.is-entering .home-drag-handle {
+  cursor: default;
+  pointer-events: none;
 }
 
 .icon-drag::before {
@@ -1270,9 +1294,9 @@ body.home-leaving .icon-drag {
   }
 
   .img-bird-wrapper {
-    width: min(500px, calc(100vw - 40px));
+    width: min(340px, calc(100vw - 48px));
     height: auto;
-    margin-top: -210px;
+    margin-top: -200px;
   }
 
   .content-before-after .content-right,
@@ -1350,8 +1374,8 @@ html[data-site-theme="dark"] .home-feature-section:not([data-surface="dark"]) {
   }
 
   .img-bird-wrapper {
-    width: calc(100vw - 30px);
-    margin-top: -180px;
+    width: min(280px, calc(100vw - 40px));
+    margin-top: -185px;
   }
 }
 

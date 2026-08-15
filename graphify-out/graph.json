@@ -26512,7 +26512,7 @@
       "label": ".test_configuration_resolves_translations_and_sanitizes_tooltip_html()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L54",
+      "source_location": "L55",
       "_origin": "ast"
     },
     {
@@ -26520,7 +26520,7 @@
       "label": ".test_superadmin_can_open_and_update_the_custom_homepage_manager()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L100",
+      "source_location": "L101",
       "_origin": "ast"
     },
     {
@@ -26528,7 +26528,7 @@
       "label": ".test_homepage_surface_patterns_are_allowlisted_and_bounded()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L256",
+      "source_location": "L259",
       "_origin": "ast"
     },
     {
@@ -26536,7 +26536,7 @@
       "label": ".test_superadmin_can_manage_multilingual_homepage_sections_and_cards()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L280",
+      "source_location": "L283",
       "_origin": "ast"
     },
     {
@@ -26544,7 +26544,7 @@
       "label": ".test_homepage_section_manager_rejects_unsafe_links_and_keeps_reordering_scoped()",
       "file_type": "code",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L384",
+      "source_location": "L387",
       "_origin": "ast"
     },
     {
@@ -26952,7 +26952,7 @@
       "label": ".frontendSourceFiles()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L131",
+      "source_location": "L139",
       "_origin": "ast"
     },
     {
@@ -26960,7 +26960,7 @@
       "label": ".hasTopLevelComma()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L151",
+      "source_location": "L159",
       "_origin": "ast"
     },
     {
@@ -26968,7 +26968,7 @@
       "label": ".relativePath()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L168",
+      "source_location": "L176",
       "_origin": "ast"
     },
     {
@@ -26976,7 +26976,7 @@
       "label": ".projectRoot()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L173",
+      "source_location": "L181",
       "_origin": "ast"
     },
     {
@@ -98306,7 +98306,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L54",
+      "source_location": "L55",
       "weight": 1.0
     },
     {
@@ -98315,7 +98315,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L100",
+      "source_location": "L101",
       "weight": 1.0
     },
     {
@@ -98324,7 +98324,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L256",
+      "source_location": "L259",
       "weight": 1.0
     },
     {
@@ -98333,7 +98333,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L280",
+      "source_location": "L283",
       "weight": 1.0
     },
     {
@@ -98342,7 +98342,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L384",
+      "source_location": "L387",
       "weight": 1.0
     },
     {
@@ -99457,7 +99457,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L131",
+      "source_location": "L139",
       "weight": 1.0
     },
     {
@@ -99466,7 +99466,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L151",
+      "source_location": "L159",
       "weight": 1.0
     },
     {
@@ -99475,7 +99475,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L168",
+      "source_location": "L176",
       "weight": 1.0
     },
     {
@@ -99484,7 +99484,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L173",
+      "source_location": "L181",
       "weight": 1.0
     },
     {
@@ -99584,7 +99584,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L136",
+      "source_location": "L144",
       "weight": 1.0
     },
     {
@@ -99594,7 +99594,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L170",
+      "source_location": "L178",
       "weight": 1.0
     },
     {
@@ -109042,7 +109042,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L56",
+      "source_location": "L57",
       "weight": 1.0
     },
     {
@@ -109053,7 +109053,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L104",
+      "source_location": "L105",
       "weight": 1.0
     },
     {
@@ -109064,7 +109064,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L108",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -109075,7 +109075,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L217",
+      "source_location": "L220",
       "weight": 1.0
     },
     {
@@ -109086,7 +109086,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L282",
+      "source_location": "L285",
       "weight": 1.0
     },
     {
@@ -109097,7 +109097,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L294",
+      "source_location": "L297",
       "weight": 1.0
     },
     {
@@ -109108,7 +109108,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L298",
+      "source_location": "L301",
       "weight": 1.0
     },
     {
@@ -109119,7 +109119,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L337",
+      "source_location": "L340",
       "weight": 1.0
     },
     {
@@ -109130,7 +109130,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L386",
+      "source_location": "L389",
       "weight": 1.0
     },
     {
@@ -109141,7 +109141,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L390",
+      "source_location": "L393",
       "weight": 1.0
     },
     {
@@ -109152,7 +109152,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/HomepageConfigurationTest.php",
-      "source_location": "L398",
+      "source_location": "L401",
       "weight": 1.0
     },
     {

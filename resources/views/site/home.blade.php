@@ -49,7 +49,8 @@
 <html
     lang="{{ str_replace('_', '-', $locale) }}"
     dir="{{ $isRtl ? 'rtl' : 'ltr' }}"
-    @if($backgroundImage) class="home-background-loading" style="--home-background-loading-color: {{ $backgroundLoadingColor }}" @endif
+    class="home-hero-pending{{ $backgroundImage ? ' home-background-loading' : '' }}"
+    @if($backgroundImage) style="--home-background-loading-color: {{ $backgroundLoadingColor }}" @endif
 >
 <head>
     <meta charset="UTF-8">
@@ -63,6 +64,12 @@
         <link rel="preload" as="image" href="{{ $backgroundImage['url'] }}" fetchpriority="high">
     @endif
     <link rel="stylesheet" href="{{ $homeCssUrl }}">
+    <noscript>
+        <style>
+            html.home-hero-pending .view-after { width: 50% !important; }
+            html.home-hero-pending .home-drag-handle { left: 50% !important; }
+        </style>
+    </noscript>
     @if($backgroundImage)
         <noscript><style>html.home-background-loading body.site-home-index { opacity: 1 !important; }</style></noscript>
     @endif
@@ -132,14 +139,14 @@
             <div class="view view-after" data-after-view>
                 <div class="wrapper-after">
                     <span class="home-surface-pattern" aria-hidden="true"></span>
-                    <div class="img-bird-wrapper et-in-viewport-check" et-anim="floating_special" et-anim-duration="3500" et-anim-delay="0" et-anim-easing="ease">
+                    <div class="img-bird-wrapper home-hero-float">
                         <img src="{{ asset('assets/site/home/images/concept-before.svg') }}" alt="">
                         @foreach($homepageTooltipItems as $item)
                             <button type="button" class="tooltip-item tooltip-item-{{ $item['position'] }}" data-header-text="{{ $item['key'] }}" aria-label="{{ $item['aria_label'] }}"></button>
                         @endforeach
                     </div>
 
-                    <div class="shadown-bird et-in-viewport-check" et-anim="pulse_special" et-anim-duration="3500" et-anim-delay="0" et-anim-easing="ease"></div>
+                    <div class="shadown-bird home-hero-shadow"></div>
 
                     <div class="content-before-after right-position">
                         <div class="content-right">
@@ -179,14 +186,14 @@
             <div class="view view-before">
                 <div class="wrapper-before">
                     <span class="home-surface-pattern" aria-hidden="true"></span>
-                    <div class="img-bird-wrapper et-in-viewport-check" et-anim="floating_special" et-anim-duration="3500" et-anim-delay="0" et-anim-easing="ease">
+                    <div class="img-bird-wrapper home-hero-float">
                         <img src="{{ asset('assets/site/home/images/concept-after.svg') }}" alt="">
                         @foreach($homepageTooltipItems as $item)
                             <button type="button" class="tooltip-item tooltip-item-{{ $item['position'] }}" data-header-text="{{ $item['key'] }}" aria-label="{{ $item['aria_label'] }}"></button>
                         @endforeach
                     </div>
 
-                    <div class="shadown-bird et-in-viewport-check" et-anim="pulse_special" et-anim-duration="3500" et-anim-delay="0" et-anim-easing="ease"></div>
+                    <div class="shadown-bird home-hero-shadow"></div>
 
                     <div class="content-before-after left-position">
                         <div class="content-right">

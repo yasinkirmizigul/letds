@@ -117,6 +117,7 @@ class ResponsiveMarkupTest extends TestCase
     {
         $css = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
         $homeCss = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'home.css');
+        $homeView = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home.blade.php');
 
         $this->assertStringContainsString('body.site-shell .probablue-brand__tagline', $css);
         $this->assertStringContainsString('html[data-site-theme="dark"] body.site-shell .site-theme-toggle', $css);
@@ -124,6 +125,13 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('"brand theme"', $homeCss);
         $this->assertStringContainsString('html[data-site-theme="dark"] .home-discovery-section', $homeCss);
         $this->assertStringContainsString('.wrapper-logo.has-image', $homeCss);
+        $this->assertStringContainsString('html.home-hero-pending .view-after', $homeCss);
+        $this->assertStringContainsString('width: min(400px, calc(100vw - 64px));', $homeCss);
+        $this->assertStringContainsString('color: #ffffff;', $homeCss);
+        $this->assertStringContainsString('cursor: move;', $homeCss);
+        $this->assertStringContainsString('.home-hero-float {', $homeCss);
+        $this->assertStringContainsString('.home-hero-shadow {', $homeCss);
+        $this->assertStringNotContainsString('et-anim="floating_special"', $homeView);
         $this->assertStringContainsString('body.site-shell .kt-select-dropdown', $css);
         $this->assertStringContainsString('background: var(--background) !important;', $css);
     }

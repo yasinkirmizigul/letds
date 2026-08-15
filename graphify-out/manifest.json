@@ -2345,8 +2345,8 @@
     "semantic_hash": ""
   },
   "resources/views/site/home.blade.php": {
-    "mtime": 1786815152.3535242,
-    "ast_hash": "0fcdcea1b9a3a71a0a162af78cd0833f",
+    "mtime": 1786819126.1497655,
+    "ast_hash": "a5e6b6126eb4f3b987a3c2ed61b29cf8",
     "semantic_hash": ""
   },
   "resources/views/site/layouts/main/app.blade.php": {
@@ -2750,8 +2750,8 @@
     "semantic_hash": ""
   },
   "config/site_homepage.php": {
-    "mtime": 1786296991.5750916,
-    "ast_hash": "520d9aa8b6daa76494e745a193742227",
+    "mtime": 1786819126.1660063,
+    "ast_hash": "b30dc643d555b410587448f2e1e20616",
     "semantic_hash": ""
   },
   "database/migrations/2026_08_01_000002_create_site_homepage_configs_table.php": {
@@ -2775,8 +2775,8 @@
     "semantic_hash": ""
   },
   "tests/Feature/HomepageConfigurationTest.php": {
-    "mtime": 1786814907.7898772,
-    "ast_hash": "cc42f44024b1eacb3380d0fbe7c0dc60",
+    "mtime": 1786819314.3733644,
+    "ast_hash": "86c05c83bbe70957ab01b66e0ef3a1bd",
     "semantic_hash": ""
   },
   "resources/views/admin/pages/site/homepage/partials/_setting-groups.blade.php": {
@@ -3035,8 +3035,8 @@
     "semantic_hash": ""
   },
   "tests/Unit/ResponsiveMarkupTest.php": {
-    "mtime": 1786816754.236918,
-    "ast_hash": "5c84d32931cef6fd37e9441e28a74d6c",
+    "mtime": 1786819196.1224892,
+    "ast_hash": "bc3c56419060b082a0e01fb377007ac2",
     "semantic_hash": ""
   },
   "app/Http/Controllers/Site/Cms/FaqController.php": {

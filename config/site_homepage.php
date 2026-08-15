@@ -100,8 +100,8 @@ return [
             'rules' => ['required', 'string', 'max:80'],
             'mode' => 'analysis',
             'colors' => [
-                ['key' => 'analysis_tab_after_text_color', 'label' => 'Renkli panel', 'default' => '#ffffff'],
-                ['key' => 'analysis_tab_before_text_color', 'label' => 'Açık panel', 'default' => '#445963'],
+                ['key' => 'analysis_tab_after_text_color', 'label' => 'Sol panel', 'default' => '#ffffff'],
+                ['key' => 'analysis_tab_before_text_color', 'label' => 'Sağ panel', 'default' => '#445963'],
             ],
         ],
         [
@@ -114,8 +114,8 @@ return [
             'wrapper_class' => 'grid gap-2 lg:col-span-2',
             'mode' => 'analysis',
             'colors' => [
-                ['key' => 'hero_after_text_color', 'label' => 'Renkli panel', 'default' => '#ffffff'],
-                ['key' => 'hero_before_text_color', 'label' => 'Açık panel', 'default' => '#445963'],
+                ['key' => 'hero_after_text_color', 'label' => 'Sol panel', 'default' => '#ffffff'],
+                ['key' => 'hero_before_text_color', 'label' => 'Sağ panel', 'default' => '#445963'],
             ],
         ],
         [
@@ -126,8 +126,8 @@ return [
             'rules' => ['required', 'string', 'max:120'],
             'mode' => 'analysis',
             'colors' => [
-                ['key' => 'cta_after_text_color', 'label' => 'Renkli panel', 'default' => '#ffffff'],
-                ['key' => 'cta_before_text_color', 'label' => 'Açık panel', 'default' => '#eb5155'],
+                ['key' => 'cta_after_text_color', 'label' => 'Sol panel', 'default' => '#ffffff'],
+                ['key' => 'cta_before_text_color', 'label' => 'Sağ panel', 'default' => '#eb5155'],
             ],
         ],
         [
@@ -154,8 +154,8 @@ return [
             'rules' => ['required', 'string', 'max:80'],
             'mode' => 'consultation',
             'colors' => [
-                ['key' => 'consultation_tab_after_text_color', 'label' => 'Renkli panel', 'default' => '#ffffff'],
-                ['key' => 'consultation_tab_before_text_color', 'label' => 'Açık panel', 'default' => '#293f4b'],
+                ['key' => 'consultation_tab_after_text_color', 'label' => 'Sol panel', 'default' => '#ffffff'],
+                ['key' => 'consultation_tab_before_text_color', 'label' => 'Sağ panel', 'default' => '#293f4b'],
             ],
         ],
         [
@@ -168,8 +168,8 @@ return [
             'wrapper_class' => 'grid gap-2 lg:col-span-2',
             'mode' => 'consultation',
             'colors' => [
-                ['key' => 'consultation_hero_after_text_color', 'label' => 'Renkli panel', 'default' => '#ffffff'],
-                ['key' => 'consultation_hero_before_text_color', 'label' => 'Açık panel', 'default' => '#293f4b'],
+                ['key' => 'consultation_hero_after_text_color', 'label' => 'Sol panel', 'default' => '#ffffff'],
+                ['key' => 'consultation_hero_before_text_color', 'label' => 'Sağ panel', 'default' => '#293f4b'],
             ],
         ],
         [
@@ -180,8 +180,8 @@ return [
             'rules' => ['required', 'string', 'max:120'],
             'mode' => 'consultation',
             'colors' => [
-                ['key' => 'consultation_cta_after_text_color', 'label' => 'Renkli panel', 'default' => '#ffffff'],
-                ['key' => 'consultation_cta_before_text_color', 'label' => 'Açık panel', 'default' => '#006ae6'],
+                ['key' => 'consultation_cta_after_text_color', 'label' => 'Sol panel', 'default' => '#ffffff'],
+                ['key' => 'consultation_cta_before_text_color', 'label' => 'Sağ panel', 'default' => '#006ae6'],
             ],
         ],
         [
@@ -201,7 +201,7 @@ return [
         ],
         [
             'key' => 'tooltip_1_title',
-            'label' => 'Açık Panel Metni',
+            'label' => 'Sağ Panel Metni',
             'type' => 'textarea',
             'rows' => 3,
             'default' => 'We make sleek and modern designs for your business.',
@@ -213,7 +213,7 @@ return [
         ],
         [
             'key' => 'tooltip_1_highlighted_title',
-            'label' => 'Renkli Panel Metni',
+            'label' => 'Sol Panel Metni',
             'type' => 'textarea',
             'rows' => 3,
             'default' => 'We make <span class="color-main">sleek and modern</span> designs for your business.',
@@ -231,7 +231,7 @@ return [
         ],
         [
             'key' => 'tooltip_2_title',
-            'label' => 'Açık Panel Metni',
+            'label' => 'Sağ Panel Metni',
             'type' => 'textarea',
             'rows' => 3,
             'default' => 'Our creations embrace <br>the simplicity to look extraordinary.',
@@ -243,7 +243,7 @@ return [
         ],
         [
             'key' => 'tooltip_2_highlighted_title',
-            'label' => 'Renkli Panel Metni',
+            'label' => 'Sol Panel Metni',
             'type' => 'textarea',
             'rows' => 3,
             'default' => 'Our creations embrace <br>the <span class="color-main">simplicity</span> to look extraordinary.',
@@ -261,7 +261,7 @@ return [
         ],
         [
             'key' => 'tooltip_3_title',
-            'label' => 'Açık Panel Metni',
+            'label' => 'Sağ Panel Metni',
             'type' => 'textarea',
             'rows' => 3,
             'default' => 'Platforms are built from a solid engine & best experiments.',
@@ -273,7 +273,7 @@ return [
         ],
         [
             'key' => 'tooltip_3_highlighted_title',
-            'label' => 'Renkli Panel Metni',
+            'label' => 'Sol Panel Metni',
             'type' => 'textarea',
             'rows' => 3,
             'default' => 'Platforms are built from a <span class="color-main">solid engine</span> & best experiments.',
@@ -291,7 +291,7 @@ return [
         ],
         [
             'key' => 'tooltip_4_title',
-            'label' => 'Açık Panel Metni',
+            'label' => 'Sağ Panel Metni',
             'type' => 'textarea',
             'rows' => 3,
             'default' => 'EngineThemes are easy to setup and customize to match your needs.',
@@ -303,7 +303,7 @@ return [
         ],
         [
             'key' => 'tooltip_4_highlighted_title',
-            'label' => 'Renkli Panel Metni',
+            'label' => 'Sol Panel Metni',
             'type' => 'textarea',
             'rows' => 3,
             'default' => 'EngineThemes are <span class="color-main">easy to setup</span> and customize to match your needs.',
@@ -347,12 +347,12 @@ return [
             'wrapper_class' => 'xl:col-span-2',
             'content_class' => 'lg:grid-cols-2',
             'fields' => [
-                $surfaceField('', 'before', 'Açık Panel Yüzeyi', '#ffffff', '#445963'),
-                $surfaceField('', 'after', 'Renkli Panel Yüzeyi', '#ec6367', '#ffffff'),
-                ['key' => 'before_text_color', 'label' => 'Açık Panel Metni', 'type' => 'color', 'default' => '#445963'],
-                ['key' => 'after_text_color', 'label' => 'Renkli Panel Metni', 'type' => 'color', 'default' => '#ffffff'],
-                ['key' => 'before_highlight_color', 'label' => 'Açık Panel Vurgusu', 'type' => 'color', 'default' => '#ec6367'],
-                ['key' => 'after_highlight_color', 'label' => 'Renkli Panel Vurgusu', 'type' => 'color', 'default' => '#445963'],
+                $surfaceField('', 'after', 'Sol Panel Yüzeyi', '#ec6367', '#ffffff'),
+                $surfaceField('', 'before', 'Sağ Panel Yüzeyi', '#ffffff', '#445963'),
+                ['key' => 'after_text_color', 'label' => 'Sol Panel Metni', 'type' => 'color', 'default' => '#ffffff'],
+                ['key' => 'before_text_color', 'label' => 'Sağ Panel Metni', 'type' => 'color', 'default' => '#445963'],
+                ['key' => 'after_highlight_color', 'label' => 'Sol Panel Vurgusu', 'type' => 'color', 'default' => '#445963'],
+                ['key' => 'before_highlight_color', 'label' => 'Sağ Panel Vurgusu', 'type' => 'color', 'default' => '#ec6367'],
             ],
         ],
         [
@@ -361,11 +361,11 @@ return [
             'description' => 'Analiz görünümündeki bilgi noktaları, ayırıcı ve sembol renkleri.',
             'mode' => 'analysis',
             'fields' => [
-                ['key' => 'before_hotspot_color', 'label' => 'Açık Panel Noktaları', 'type' => 'color', 'default' => '#ec6367'],
-                ['key' => 'after_hotspot_color', 'label' => 'Renkli Panel Noktaları', 'type' => 'color', 'default' => '#ffffff'],
+                ['key' => 'after_hotspot_color', 'label' => 'Sol Panel Noktaları', 'type' => 'color', 'default' => '#ffffff'],
+                ['key' => 'before_hotspot_color', 'label' => 'Sağ Panel Noktaları', 'type' => 'color', 'default' => '#ec6367'],
                 ['key' => 'drag_handle_color', 'label' => 'Karşılaştırma Tutamacı', 'type' => 'color', 'default' => '#ec6367'],
-                ['key' => 'cursor_symbol_before_color', 'label' => 'Açık Panel Uçuşan Semboller', 'type' => 'color', 'default' => '#ec6367'],
-                ['key' => 'cursor_symbol_after_color', 'label' => 'Renkli Panel Uçuşan Semboller', 'type' => 'color', 'default' => '#ffffff'],
+                ['key' => 'cursor_symbol_after_color', 'label' => 'Sol Panel Uçuşan Semboller', 'type' => 'color', 'default' => '#ffffff'],
+                ['key' => 'cursor_symbol_before_color', 'label' => 'Sağ Panel Uçuşan Semboller', 'type' => 'color', 'default' => '#ec6367'],
             ],
         ],
         [
@@ -374,10 +374,10 @@ return [
             'description' => 'Butonun iki paneldeki normal ve üzerine gelme renkleri.',
             'mode' => 'analysis',
             'fields' => [
-                ['key' => 'cta_before_hover_background', 'label' => 'Açık Panel Hover Zemini', 'type' => 'color', 'default' => '#eb5155'],
-                ['key' => 'cta_before_hover_text', 'label' => 'Açık Panel Hover Metni', 'type' => 'color', 'default' => '#ffffff'],
-                ['key' => 'cta_after_hover_background', 'label' => 'Renkli Panel Hover Zemini', 'type' => 'color', 'default' => '#ffffff'],
-                ['key' => 'cta_after_hover_text', 'label' => 'Renkli Panel Hover Metni', 'type' => 'color', 'default' => '#eb5155'],
+                ['key' => 'cta_after_hover_background', 'label' => 'Sol Panel Hover Zemini', 'type' => 'color', 'default' => '#ffffff'],
+                ['key' => 'cta_after_hover_text', 'label' => 'Sol Panel Hover Metni', 'type' => 'color', 'default' => '#eb5155'],
+                ['key' => 'cta_before_hover_background', 'label' => 'Sağ Panel Hover Zemini', 'type' => 'color', 'default' => '#eb5155'],
+                ['key' => 'cta_before_hover_text', 'label' => 'Sağ Panel Hover Metni', 'type' => 'color', 'default' => '#ffffff'],
             ],
         ],
         [
@@ -388,12 +388,12 @@ return [
             'wrapper_class' => 'xl:col-span-2',
             'content_class' => 'lg:grid-cols-2',
             'fields' => [
-                $surfaceField('consultation_', 'before', 'Açık Panel Yüzeyi', '#f7fafc', '#293f4b'),
-                $surfaceField('consultation_', 'after', 'Renkli Panel Yüzeyi', '#176b87', '#ffffff'),
-                ['key' => 'consultation_before_text_color', 'label' => 'Açık Panel Metni', 'type' => 'color', 'default' => '#293f4b'],
-                ['key' => 'consultation_after_text_color', 'label' => 'Renkli Panel Metni', 'type' => 'color', 'default' => '#ffffff'],
-                ['key' => 'consultation_before_highlight_color', 'label' => 'Açık Panel Vurgusu', 'type' => 'color', 'default' => '#006ae6'],
-                ['key' => 'consultation_after_highlight_color', 'label' => 'Renkli Panel Vurgusu', 'type' => 'color', 'default' => '#a7f3d0'],
+                $surfaceField('consultation_', 'after', 'Sol Panel Yüzeyi', '#176b87', '#ffffff'),
+                $surfaceField('consultation_', 'before', 'Sağ Panel Yüzeyi', '#f7fafc', '#293f4b'),
+                ['key' => 'consultation_after_text_color', 'label' => 'Sol Panel Metni', 'type' => 'color', 'default' => '#ffffff'],
+                ['key' => 'consultation_before_text_color', 'label' => 'Sağ Panel Metni', 'type' => 'color', 'default' => '#293f4b'],
+                ['key' => 'consultation_after_highlight_color', 'label' => 'Sol Panel Vurgusu', 'type' => 'color', 'default' => '#a7f3d0'],
+                ['key' => 'consultation_before_highlight_color', 'label' => 'Sağ Panel Vurgusu', 'type' => 'color', 'default' => '#006ae6'],
             ],
         ],
         [
@@ -402,11 +402,11 @@ return [
             'description' => 'Danışma görünümündeki bilgi noktaları, ayırıcı ve sembol renkleri.',
             'mode' => 'consultation',
             'fields' => [
-                ['key' => 'consultation_before_hotspot_color', 'label' => 'Açık Panel Noktaları', 'type' => 'color', 'default' => '#006ae6'],
-                ['key' => 'consultation_after_hotspot_color', 'label' => 'Renkli Panel Noktaları', 'type' => 'color', 'default' => '#ffffff'],
+                ['key' => 'consultation_after_hotspot_color', 'label' => 'Sol Panel Noktaları', 'type' => 'color', 'default' => '#ffffff'],
+                ['key' => 'consultation_before_hotspot_color', 'label' => 'Sağ Panel Noktaları', 'type' => 'color', 'default' => '#006ae6'],
                 ['key' => 'consultation_drag_handle_color', 'label' => 'Karşılaştırma Tutamacı', 'type' => 'color', 'default' => '#006ae6'],
-                ['key' => 'consultation_cursor_symbol_before_color', 'label' => 'Açık Panel Uçuşan Semboller', 'type' => 'color', 'default' => '#006ae6'],
-                ['key' => 'consultation_cursor_symbol_after_color', 'label' => 'Renkli Panel Uçuşan Semboller', 'type' => 'color', 'default' => '#ffffff'],
+                ['key' => 'consultation_cursor_symbol_after_color', 'label' => 'Sol Panel Uçuşan Semboller', 'type' => 'color', 'default' => '#ffffff'],
+                ['key' => 'consultation_cursor_symbol_before_color', 'label' => 'Sağ Panel Uçuşan Semboller', 'type' => 'color', 'default' => '#006ae6'],
             ],
         ],
         [
@@ -415,10 +415,10 @@ return [
             'description' => 'Danışma butonunun iki paneldeki normal ve hover renkleri.',
             'mode' => 'consultation',
             'fields' => [
-                ['key' => 'consultation_cta_before_hover_background', 'label' => 'Açık Panel Hover Zemini', 'type' => 'color', 'default' => '#006ae6'],
-                ['key' => 'consultation_cta_before_hover_text', 'label' => 'Açık Panel Hover Metni', 'type' => 'color', 'default' => '#ffffff'],
-                ['key' => 'consultation_cta_after_hover_background', 'label' => 'Renkli Panel Hover Zemini', 'type' => 'color', 'default' => '#ffffff'],
-                ['key' => 'consultation_cta_after_hover_text', 'label' => 'Renkli Panel Hover Metni', 'type' => 'color', 'default' => '#176b87'],
+                ['key' => 'consultation_cta_after_hover_background', 'label' => 'Sol Panel Hover Zemini', 'type' => 'color', 'default' => '#ffffff'],
+                ['key' => 'consultation_cta_after_hover_text', 'label' => 'Sol Panel Hover Metni', 'type' => 'color', 'default' => '#176b87'],
+                ['key' => 'consultation_cta_before_hover_background', 'label' => 'Sağ Panel Hover Zemini', 'type' => 'color', 'default' => '#006ae6'],
+                ['key' => 'consultation_cta_before_hover_text', 'label' => 'Sağ Panel Hover Metni', 'type' => 'color', 'default' => '#ffffff'],
             ],
         ],
         [
