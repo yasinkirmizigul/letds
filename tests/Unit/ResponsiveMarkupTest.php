@@ -169,6 +169,24 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString("event.pointerType === 'touch'", $script);
     }
 
+    public function test_public_inner_page_heroes_keep_a_compact_responsive_scale(): void
+    {
+        $css = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
+        $faqView = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'faqs'.DIRECTORY_SEPARATOR.'index.blade.php');
+
+        $this->assertMatchesRegularExpression(
+            '/\.site-page-hero\s*\{[^}]*gap:\s*clamp\(0\.8rem, 1\.4vw, 1\.1rem\);[^}]*padding:\s*clamp\(1\.6rem, 3vw, 2\.75rem\);/s',
+            $css
+        );
+        $this->assertMatchesRegularExpression(
+            '/\.site-title\s*\{[^}]*max-width:\s*18ch;[^}]*font-size:\s*clamp\(2\.15rem, 4\.2vw, 3\.9rem\);/s',
+            $css
+        );
+        $this->assertStringContainsString('lg:py-14', $faqView);
+        $this->assertStringNotContainsString('lg:py-20', $faqView);
+        $this->assertStringNotContainsString('lg:text-6xl', $faqView);
+    }
+
     private function frontendSourceFiles(): array
     {
         $files = [];

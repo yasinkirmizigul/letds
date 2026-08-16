@@ -27,16 +27,16 @@
             <div class="absolute -bottom-32 left-[12%] size-72 rounded-full bg-success/10 blur-3xl"></div>
         </div>
 
-        <div class="relative mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:py-16 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-end lg:px-6 lg:py-20">
+        <div class="relative mx-auto grid max-w-7xl gap-6 px-4 py-9 sm:py-11 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-end lg:px-6 lg:py-14">
             <div class="max-w-3xl">
                 <div class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
                     <i class="ki-outline ki-message-question text-base" aria-hidden="true"></i>
                     {{ $siteSettings->uiLine('faq_page_kicker') }}
                 </div>
-                <h1 class="mt-5 max-w-2xl font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+                <h1 class="mt-4 max-w-2xl font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
                     {{ $siteSettings->uiLine('faq_page_heading') }}
                 </h1>
-                <p class="mt-5 max-w-2xl text-base leading-8 text-muted-foreground sm:text-lg">
+                <p class="mt-4 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
                     {{ $siteSettings->uiLine('faq_page_description') }}
                 </p>
             </div>

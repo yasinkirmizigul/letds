@@ -3035,8 +3035,8 @@
     "semantic_hash": ""
   },
   "tests/Unit/ResponsiveMarkupTest.php": {
-    "mtime": 1786916232.2925236,
-    "ast_hash": "95be3f70e890c0af0d171ef21e1bb133",
+    "mtime": 1786917634.8549006,
+    "ast_hash": "b063ff46c551dd97b99deaa00178491c",
     "semantic_hash": ""
   },
   "app/Http/Controllers/Site/Cms/FaqController.php": {
@@ -3050,8 +3050,8 @@
     "semantic_hash": ""
   },
   "resources/views/site/faqs/index.blade.php": {
-    "mtime": 1786284900.7524443,
-    "ast_hash": "4f476e75a5b8eca018b000fb7aa57b57",
+    "mtime": 1786917634.8489616,
+    "ast_hash": "622364c3087057ba447f83911497480d",
     "semantic_hash": ""
   },
   "resources/views/site/home-sections/about-faq.blade.php": {
