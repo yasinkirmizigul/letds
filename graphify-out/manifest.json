@@ -2015,9 +2015,9 @@
     "semantic_hash": "2129db09340ce20b2586d78da3fe517f"
   },
   "resources/views/admin/pages/notifications/index.blade.php": {
-    "mtime": 1778053322.6390333,
-    "ast_hash": "a9d00bcb8da55b15fb0d0cab4a593046",
-    "semantic_hash": "a9d00bcb8da55b15fb0d0cab4a593046"
+    "mtime": 1786918790.6295674,
+    "ast_hash": "d7bd3e4b0d6d05151bc9af86242c54f1",
+    "semantic_hash": ""
   },
   "resources/views/admin/pages/permissions/create.blade.php": {
     "mtime": 1777902192.028063,
@@ -3035,8 +3035,8 @@
     "semantic_hash": ""
   },
   "tests/Unit/ResponsiveMarkupTest.php": {
-    "mtime": 1786917634.8549006,
-    "ast_hash": "b063ff46c551dd97b99deaa00178491c",
+    "mtime": 1786918790.6411746,
+    "ast_hash": "a69e83aacdcb71927e99f493130a9d73",
     "semantic_hash": ""
   },
   "app/Http/Controllers/Site/Cms/FaqController.php": {

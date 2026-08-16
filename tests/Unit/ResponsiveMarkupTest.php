@@ -187,6 +187,21 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringNotContainsString('lg:text-6xl', $faqView);
     }
 
+    public function test_notification_filters_use_ktui_selects_in_a_responsive_row(): void
+    {
+        $css = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
+        $view = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'pages'.DIRECTORY_SEPARATOR.'notifications'.DIRECTORY_SEPARATOR.'index.blade.php');
+
+        $this->assertStringContainsString('admin-notification-filter-header', $view);
+        $this->assertStringContainsString('admin-notification-filter-form', $view);
+        $this->assertSame(2, substr_count($view, 'data-kt-select="true"'));
+        $this->assertSame(2, substr_count($view, 'class="kt-select w-full"'));
+        $this->assertMatchesRegularExpression(
+            '/\.admin-notification-filter-form\s*\{[^}]*display:\s*grid;[^}]*grid-template-columns:\s*11\.25rem 12\.5rem auto;/s',
+            $css
+        );
+    }
+
     private function frontendSourceFiles(): array
     {
         $files = [];

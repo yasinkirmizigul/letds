@@ -40,27 +40,43 @@
         </div>
 
         <div class="kt-card">
-            <div class="kt-card-header py-5 flex-wrap gap-4">
+            <div class="kt-card-header admin-notification-filter-header py-5">
                 <div>
                     <h3 class="kt-card-title">Bildirimler</h3>
                     <div class="text-sm text-muted-foreground">İş yoğunluğunu modüle ve okunma durumuna göre süzün.</div>
                 </div>
 
-                <form method="GET" class="flex flex-wrap items-center gap-2">
-                    <select name="status" class="kt-select w-full md:w-[180px]">
-                        <option value="active" @selected($status === 'active')>Aktif</option>
-                        <option value="unread" @selected($status === 'unread')>Okunmamış</option>
-                        <option value="read" @selected($status === 'read')>Okunmuş</option>
-                        <option value="dismissed" @selected($status === 'dismissed')>Kapatılan</option>
-                    </select>
+                <form method="GET" class="admin-notification-filter-form">
+                    <div class="admin-notification-filter-control">
+                        <select
+                            name="status"
+                            class="kt-select w-full"
+                            data-kt-select="true"
+                            data-kt-select-placeholder="Bildirim durumu"
+                            aria-label="Bildirim durumu"
+                        >
+                            <option value="active" @selected($status === 'active')>Aktif</option>
+                            <option value="unread" @selected($status === 'unread')>Okunmamış</option>
+                            <option value="read" @selected($status === 'read')>Okunmuş</option>
+                            <option value="dismissed" @selected($status === 'dismissed')>Kapatılan</option>
+                        </select>
+                    </div>
 
-                    <select name="type" class="kt-select w-full md:w-[190px]">
-                        @foreach($typeOptions as $typeKey => $typeLabel)
-                            <option value="{{ $typeKey }}" @selected($type === $typeKey)>{{ $typeLabel }}</option>
-                        @endforeach
-                    </select>
+                    <div class="admin-notification-filter-control">
+                        <select
+                            name="type"
+                            class="kt-select w-full"
+                            data-kt-select="true"
+                            data-kt-select-placeholder="Bildirim türü"
+                            aria-label="Bildirim türü"
+                        >
+                            @foreach($typeOptions as $typeKey => $typeLabel)
+                                <option value="{{ $typeKey }}" @selected($type === $typeKey)>{{ $typeLabel }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                    <button type="submit" class="kt-btn kt-btn-light">Filtrele</button>
+                    <button type="submit" class="kt-btn kt-btn-light admin-notification-filter-submit">Filtrele</button>
                 </form>
             </div>
 

@@ -4086,6 +4086,68 @@ thead th.dt-orderable-none .dt-column-order { display:none !important; }
     box-shadow: none;
 }
 
+.admin-notification-filter-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem 1.5rem;
+}
+
+.admin-notification-filter-form {
+    display: grid;
+    grid-template-columns: 11.25rem 12.5rem auto;
+    align-items: center;
+    gap: .5rem;
+}
+
+.admin-notification-filter-control {
+    min-width: 0;
+}
+
+.admin-notification-filter-control :is(.kt-select, .kt-select-wrapper, [data-kt-select-wrapper]) {
+    width: 100% !important;
+    min-width: 0;
+}
+
+.admin-notification-filter-submit {
+    min-height: 2.625rem;
+    white-space: nowrap;
+}
+
+@media (max-width: 64rem) {
+    .admin-notification-filter-header {
+        grid-template-columns: minmax(0, 1fr);
+        align-items: stretch;
+    }
+
+    .admin-notification-filter-form {
+        width: 100%;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    }
+}
+
+@media (max-width: 42rem) {
+    .admin-notification-filter-form {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .admin-notification-filter-submit {
+        grid-column: 1 / -1;
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 24rem) {
+    .admin-notification-filter-form {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .admin-notification-filter-submit {
+        grid-column: auto;
+    }
+}
+
 .dark .app-shell-surface {
     background:
         radial-gradient(circle at top left, rgb(62 151 255 / 22%), transparent 30%),
