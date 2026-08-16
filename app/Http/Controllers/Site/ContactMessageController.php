@@ -20,7 +20,7 @@ class ContactMessageController extends Controller
         $recipientId = request()->integer('recipient');
 
         $recipients = User::query()
-            ->adminAccessible()
+            ->publicContactRecipient()
             ->orderBy('name')
             ->get(['id', 'name']);
 
@@ -40,7 +40,7 @@ class ContactMessageController extends Controller
     public function store(StoreContactMessageRequest $request): RedirectResponse
     {
         $recipient = User::query()
-            ->adminAccessible()
+            ->publicContactRecipient()
             ->whereKey($request->integer('recipient_user_id'))
             ->firstOrFail(['id', 'name']);
 

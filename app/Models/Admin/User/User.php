@@ -7,6 +7,7 @@ use App\Models\Admin\Media\Media;
 use App\Models\ContactMessage;
 use App\Models\Review\ServiceReview;
 use App\Notifications\AdminResetPasswordNotification;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -130,6 +131,14 @@ class User extends Authenticatable
         return $query
             ->where('is_active', true)
             ->whereHas('roles', fn ($roles) => $roles->whereIn('slug', ['admin', 'superadmin']));
+    }
+
+    public function scopePublicContactRecipient(Builder $query): Builder
+    {
+        return $query
+            ->where('is_active', true)
+            ->whereHas('roles', fn (Builder $roles) => $roles->whereNotIn('slug', ['admin', 'superadmin']))
+            ->whereDoesntHave('roles', fn (Builder $roles) => $roles->whereIn('slug', ['admin', 'superadmin']));
     }
 
     /**

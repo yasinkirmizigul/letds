@@ -29,6 +29,12 @@
     @include('admin.layouts.main.sidebar._sidebar_item_inner', compact('item','isActive'))
     @endadmin
 
+    {{-- Guard (superadmin) --}}
+@elseif($guard === 'superadmin')
+    @if(auth()->user()?->isSuperAdmin())
+        @include('admin.layouts.main.sidebar._sidebar_item_inner', compact('item','isActive'))
+    @endif
+
     {{-- Permission Any --}}
 @elseif($permAny)
     @permAny($permAny)

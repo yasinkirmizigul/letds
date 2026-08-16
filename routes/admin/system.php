@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AuditLog\AuditLogController;
 use App\Http\Controllers\Admin\Menu\AdminMenuVisibilityController;
+use App\Http\Controllers\Admin\System\DemoDataFactoryController;
 use App\Http\Controllers\Admin\TrashController;
 use Illuminate\Support\Facades\Route;
 
@@ -12,6 +13,15 @@ Route::middleware('superadmin')
         Route::get('/', [AdminMenuVisibilityController::class, 'edit'])->name('edit');
         Route::put('/', [AdminMenuVisibilityController::class, 'update'])->name('update');
         Route::delete('/', [AdminMenuVisibilityController::class, 'reset'])->name('reset');
+    });
+
+Route::middleware('superadmin')
+    ->prefix('demo-data')
+    ->as('demo-data.')
+    ->group(function () {
+        Route::get('/', [DemoDataFactoryController::class, 'index'])->name('index');
+        Route::post('/generate', [DemoDataFactoryController::class, 'generate'])->name('generate');
+        Route::delete('/reset', [DemoDataFactoryController::class, 'reset'])->name('reset');
     });
 
 Route::prefix('trash')->as('trash.')->group(function () {

@@ -10,6 +10,7 @@ use App\Models\Admin\Project\Project;
 use App\Models\Admin\User\Role;
 use App\Models\Admin\User\User;
 use App\Models\Appointment\Appointment;
+use App\Models\ContactMessage;
 use App\Models\Member;
 use App\Models\Review\ServiceReview;
 use App\Services\Project\MemberProjectWorkflowService;
@@ -38,11 +39,19 @@ class SitePortalFlowTest extends TestCase
             ->assertDontSee('data-kt-theme-mode="light"', false);
     }
 
-    public function test_contact_recipient_select_shows_names_without_exposing_email_addresses(): void
+    public function test_contact_recipient_select_only_shows_non_admin_users_without_exposing_emails(): void
     {
-        $role = Role::query()->create([
+        $providerRole = Role::query()->create([
+            'name' => 'Provider',
+            'slug' => 'provider',
+        ]);
+        $adminRole = Role::query()->create([
             'name' => 'Admin',
             'slug' => 'admin',
+        ]);
+        $superAdminRole = Role::query()->create([
+            'name' => 'Super Admin',
+            'slug' => 'superadmin',
         ]);
         $recipient = User::query()->create([
             'name' => 'Analiz Uzmanı',
@@ -50,12 +59,69 @@ class SitePortalFlowTest extends TestCase
             'password' => 'password',
             'is_active' => true,
         ]);
-        $recipient->roles()->attach($role);
+        $admin = User::query()->create([
+            'name' => 'İletişim Test Admini',
+            'email' => 'hidden-admin@example.test',
+            'password' => 'password',
+            'is_active' => true,
+        ]);
+        $superAdmin = User::query()->create([
+            'name' => 'İletişim Test Süper Admini',
+            'email' => 'hidden-superadmin@example.test',
+            'password' => 'password',
+            'is_active' => true,
+        ]);
+        $recipient->roles()->attach($providerRole);
+        $admin->roles()->attach($adminRole);
+        $superAdmin->roles()->attach($superAdminRole);
 
         $this->get(route('site.contact-messages.create'))
             ->assertOk()
             ->assertSee('Analiz Uzmanı')
-            ->assertDontSee('hidden-recipient@example.test');
+            ->assertDontSee('hidden-recipient@example.test')
+            ->assertDontSee('İletişim Test Admini')
+            ->assertDontSee('İletişim Test Süper Admini')
+            ->assertDontSee('hidden-admin@example.test')
+            ->assertDontSee('hidden-superadmin@example.test');
+    }
+
+    public function test_contact_message_cannot_be_sent_to_admin_or_super_admin(): void
+    {
+        $adminRole = Role::query()->create(['name' => 'Admin', 'slug' => 'admin']);
+        $superAdminRole = Role::query()->create(['name' => 'Super Admin', 'slug' => 'superadmin']);
+
+        $admin = User::query()->create([
+            'name' => 'Engellenen Admin',
+            'email' => 'blocked-admin@example.test',
+            'password' => 'password',
+            'is_active' => true,
+        ]);
+        $superAdmin = User::query()->create([
+            'name' => 'Engellenen Süper Admin',
+            'email' => 'blocked-superadmin@example.test',
+            'password' => 'password',
+            'is_active' => true,
+        ]);
+        $admin->roles()->attach($adminRole);
+        $superAdmin->roles()->attach($superAdminRole);
+
+        foreach ([$admin, $superAdmin] as $blockedRecipient) {
+            $this->from(route('site.contact-messages.create'))
+                ->post(route('site.contact-messages.store'), [
+                    'recipient_user_id' => $blockedRecipient->id,
+                    'name' => 'Misafir',
+                    'surname' => 'Kullanıcı',
+                    'contact_channels' => [ContactMessage::CONTACT_CHANNEL_EMAIL],
+                    'email' => 'guest@example.test',
+                    'subject' => 'İletişim talebi',
+                    'priority' => ContactMessage::PRIORITY_NORMAL,
+                    'message' => 'Bu mesaj yönetici hesaplarına gönderilmemelidir.',
+                ])
+                ->assertRedirect(route('site.contact-messages.create'))
+                ->assertSessionHasErrors('recipient_user_id');
+        }
+
+        $this->assertDatabaseCount('contact_messages', 0);
     }
 
     public function test_public_blog_can_be_searched_filtered_and_opened(): void
@@ -135,7 +201,11 @@ class SitePortalFlowTest extends TestCase
 
         $this->get(route('site.galleries.show', $publicGallery->slug))
             ->assertOk()
-            ->assertSee('data-gallery-dialog', false);
+            ->assertSee('data-gallery-dialog', false)
+            ->assertSee('site-lightbox__viewport', false)
+            ->assertSee('data-gallery-close', false)
+            ->assertSee('data-gallery-prev', false)
+            ->assertSee('data-gallery-next', false);
 
         $this->get(route('site.galleries.show', $privateGallery->slug))->assertNotFound();
     }

@@ -254,6 +254,13 @@ $systemMenu = [
                 'active' => ['admin.trash.*'],
                 'perm' => 'trash.view',
             ],
+            [
+                'key' => 'system.demo_data',
+                'title' => 'Örnek Veri Fabrikası',
+                'route' => 'admin.demo-data.index',
+                'active' => ['admin.demo-data.*'],
+                'guard' => 'superadmin',
+            ],
         ],
     ],
 ];

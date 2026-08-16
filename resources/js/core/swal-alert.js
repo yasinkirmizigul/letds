@@ -102,6 +102,7 @@ export async function showConfirmDialog(options = {}) {
     const meta = getMeta(options.type || 'warning');
     const title = normalizeText(options.title, meta.title);
     const message = normalizeText(options.message, '');
+    const confirmationText = normalizeText(options.confirmationText, '');
 
     if (!swal) {
         console.warn('SweetAlert2 bulunamadı. Confirm gösterilemedi.');
@@ -123,10 +124,25 @@ export async function showConfirmDialog(options = {}) {
         allowOutsideClick: options.allowOutsideClick ?? false,
         allowEscapeKey: options.allowEscapeKey ?? true,
         backdrop: 'rgba(15, 23, 42, 0.52)',
+        input: confirmationText ? 'text' : undefined,
+        inputPlaceholder: confirmationText ? (options.inputPlaceholder || confirmationText) : undefined,
+        inputAttributes: confirmationText ? {
+            autocapitalize: 'characters',
+            autocomplete: 'off',
+            spellcheck: 'false',
+            'aria-label': options.inputAriaLabel || `Onaylamak için ${confirmationText} yazın`,
+        } : undefined,
+        inputValidator: confirmationText ? (value) => {
+            const normalized = normalizeText(value).toLocaleUpperCase('tr-TR');
+            const expected = confirmationText.toLocaleUpperCase('tr-TR');
+
+            return normalized === expected ? undefined : `Devam etmek için ${confirmationText} yazın.`;
+        } : undefined,
         customClass: {
             popup: `swal2-kt-popup swal2-kt-popup--${meta.variant}`,
             title: 'swal2-kt-title',
             htmlContainer: 'swal2-kt-text',
+            input: 'swal2-kt-input',
             actions: 'swal2-kt-actions',
             confirmButton: buildConfirmButtonClass(meta.variant),
             cancelButton: 'kt-btn swal2-kt-button swal2-kt-cancel',

@@ -82,7 +82,7 @@ class StoreContactMessageRequest extends FormRequest
             }
 
             $recipientExists = User::query()
-                ->adminAccessible()
+                ->publicContactRecipient()
                 ->whereKey($recipientId)
                 ->exists();
 

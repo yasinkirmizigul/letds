@@ -77,6 +77,15 @@
                     ])
                     @endadmin
 
+                @elseif($childGuard === 'superadmin')
+                    @if(auth()->user()?->isSuperAdmin())
+                        @include('admin.layouts.main.sidebar._sidebar_item_inner_child', [
+                            'childTitle' => $childTitle,
+                            'childRoute' => $childRoute,
+                            'childIsActive' => $childIsActive,
+                        ])
+                    @endif
+
                 @elseif($childPermAny)
                     @permAny($childPermAny)
                     @include('admin.layouts.main.sidebar._sidebar_item_inner_child', [

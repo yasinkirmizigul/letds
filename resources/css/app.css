@@ -875,26 +875,250 @@ body.site-shell .site-gallery-item img { width: 100%; height: 100%; min-height: 
 body.site-shell .site-gallery-item:hover img { transform: scale(1.04); }
 
 body.site-shell .site-lightbox {
-    width: min(94vw, 74rem);
+    position: fixed;
+    inset: 0;
+    width: 100dvw;
+    height: 100dvh;
     max-width: none;
-    padding: 0;
+    max-height: none;
+    margin: 0;
+    padding: clamp(0.75rem, 2.2vw, 2rem);
     border: 0;
-    border-radius: 1.5rem;
-    background: #142229;
+    background: transparent;
     color: #fff;
-    box-shadow: 0 2rem 7rem rgb(0 0 0 / 45%);
+    overflow: hidden;
+}
+
+body.site-shell .site-lightbox[open] {
+    display: grid;
+    place-items: center;
+    animation: site-lightbox-enter 220ms ease-out both;
 }
 
 body.site-shell .site-lightbox::backdrop {
-    background: rgb(8 16 20 / 82%);
-    backdrop-filter: blur(0.4rem);
+    background: rgb(5 12 16 / 88%);
+    backdrop-filter: blur(0.65rem) saturate(0.72);
+    animation: site-lightbox-backdrop-enter 180ms ease-out both;
 }
 
-body.site-shell .site-lightbox img {
+body.site-shell.site-lightbox-open {
+    overflow: hidden;
+}
+
+body.site-shell .site-lightbox__panel {
+    position: relative;
+    display: grid;
+    width: min(100%, 96rem);
+    height: min(100%, 64rem);
+    min-height: 0;
+    grid-template-rows: minmax(0, 1fr) auto;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 13%);
+    border-radius: clamp(1rem, 2vw, 1.75rem);
+    background: linear-gradient(145deg, rgb(19 34 41 / 97%), rgb(8 19 24 / 98%));
+    box-shadow: 0 2.5rem 8rem rgb(0 0 0 / 62%);
+}
+
+body.site-shell .site-lightbox__viewport {
+    --site-lightbox-media-gap: clamp(0.65rem, 2vw, 1.5rem);
+
+    position: relative;
+    display: grid;
+    min-width: 0;
+    min-height: 0;
+    place-items: center;
+    overflow: hidden;
+    padding: 0;
+    background:
+        radial-gradient(circle at 50% 45%, rgb(255 255 255 / 6%), transparent 54%),
+        rgb(4 12 16 / 72%);
+    touch-action: pan-y;
+}
+
+body.site-shell .site-lightbox__viewport img {
+    position: absolute;
+    inset: var(--site-lightbox-media-gap);
     display: block;
-    width: 100%;
-    max-height: 78vh;
+    width: calc(100% - (var(--site-lightbox-media-gap) * 2));
+    height: calc(100% - (var(--site-lightbox-media-gap) * 2));
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: clamp(0.65rem, 1.4vw, 1.15rem);
     object-fit: contain;
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 160ms ease, transform 220ms ease;
+    user-select: none;
+}
+
+body.site-shell .site-lightbox.is-loading .site-lightbox__viewport img {
+    opacity: 0;
+    transform: scale(0.985);
+}
+
+body.site-shell .site-lightbox__loader {
+    position: absolute;
+    z-index: 1;
+    display: grid;
+    width: 3rem;
+    height: 3rem;
+    place-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 160ms ease;
+}
+
+body.site-shell .site-lightbox.is-loading .site-lightbox__loader {
+    opacity: 1;
+}
+
+body.site-shell .site-lightbox__loader span {
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid rgb(255 255 255 / 22%);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: site-lightbox-spin 700ms linear infinite;
+}
+
+body.site-shell .site-lightbox__control {
+    position: absolute;
+    z-index: 4;
+    display: grid;
+    width: 3rem;
+    height: 3rem;
+    place-items: center;
+    border: 1px solid rgb(255 255 255 / 18%);
+    border-radius: 999px;
+    background: rgb(8 20 25 / 78%);
+    color: #fff;
+    box-shadow: 0 0.8rem 2.25rem rgb(0 0 0 / 26%);
+    backdrop-filter: blur(0.75rem);
+    transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+body.site-shell .site-lightbox__control:hover {
+    border-color: rgb(255 255 255 / 38%);
+    background: rgb(29 123 120 / 92%);
+}
+
+body.site-shell .site-lightbox__control:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+}
+
+body.site-shell .site-lightbox__control svg {
+    width: 1.3rem;
+    height: 1.3rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+body.site-shell .site-lightbox__close {
+    top: clamp(1.1rem, 2vw, 1.75rem);
+    right: clamp(1.1rem, 2vw, 1.75rem);
+}
+
+body.site-shell .site-lightbox__previous,
+body.site-shell .site-lightbox__next {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+body.site-shell .site-lightbox__previous { left: clamp(1.1rem, 2vw, 1.75rem); }
+body.site-shell .site-lightbox__next { right: clamp(1.1rem, 2vw, 1.75rem); }
+body.site-shell .site-lightbox__previous:hover,
+body.site-shell .site-lightbox__next:hover { transform: translateY(-50%) scale(1.06); }
+body.site-shell .site-lightbox__close:hover { transform: scale(1.06); }
+
+body.site-shell .site-lightbox__footer {
+    display: flex;
+    min-width: 0;
+    min-height: 4.25rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem clamp(1rem, 2.2vw, 1.75rem);
+    border-top: 1px solid rgb(255 255 255 / 10%);
+    background: rgb(16 31 37 / 96%);
+}
+
+body.site-shell .site-lightbox__caption {
+    min-width: 0;
+    overflow: hidden;
+    color: rgb(255 255 255 / 84%);
+    font-size: 0.9rem;
+    font-weight: 560;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body.site-shell .site-lightbox__counter {
+    flex: 0 0 auto;
+    padding: 0.35rem 0.7rem;
+    border: 1px solid rgb(255 255 255 / 12%);
+    border-radius: 999px;
+    background: rgb(255 255 255 / 7%);
+    color: rgb(255 255 255 / 72%);
+    font-size: 0.76rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+}
+
+@keyframes site-lightbox-enter {
+    from { opacity: 0; transform: scale(0.985); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes site-lightbox-backdrop-enter {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes site-lightbox-spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 42rem) {
+    body.site-shell .site-lightbox {
+        padding: 0.5rem;
+    }
+
+    body.site-shell .site-lightbox__panel {
+        width: 100%;
+        height: 100%;
+        border-radius: 1rem;
+    }
+
+    body.site-shell .site-lightbox__viewport {
+        --site-lightbox-media-gap: 0.5rem;
+    }
+
+    body.site-shell .site-lightbox__control {
+        width: 2.75rem;
+        height: 2.75rem;
+    }
+
+    body.site-shell .site-lightbox__close { top: 0.85rem; right: 0.85rem; }
+    body.site-shell .site-lightbox__previous { left: 0.85rem; }
+    body.site-shell .site-lightbox__next { right: 0.85rem; }
+
+    body.site-shell .site-lightbox__footer {
+        min-height: 3.75rem;
+        padding: 0.75rem 0.9rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.site-shell .site-lightbox[open],
+    body.site-shell .site-lightbox::backdrop,
+    body.site-shell .site-lightbox__loader span {
+        animation: none;
+    }
 }
 
 body.site-shell .site-member-nav {
@@ -3399,6 +3623,26 @@ span.flatpickr-weekday,
     font-size: .98rem !important;
     line-height: 1.7 !important;
     color: var(--muted-foreground) !important;
+}
+
+.swal2-popup.swal2-kt-popup .swal2-kt-input {
+    width: 100% !important;
+    height: 2.75rem !important;
+    margin: 1.1rem 0 0 !important;
+    border: 1px solid var(--border) !important;
+    border-radius: .75rem !important;
+    color: var(--foreground) !important;
+    background: var(--background) !important;
+    box-shadow: none !important;
+    font: inherit !important;
+    text-align: center;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.swal2-popup.swal2-kt-popup .swal2-kt-input:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 20%, transparent) !important;
 }
 
 .swal2-kt-popup .swal2-kt-actions {

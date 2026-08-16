@@ -150,6 +150,25 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('background: var(--background) !important;', $css);
     }
 
+    public function test_public_gallery_lightbox_is_viewport_centered_and_responsive(): void
+    {
+        $css = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
+        $script = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'gallery-lightbox.js');
+
+        $this->assertMatchesRegularExpression(
+            '/\.site-lightbox\s*\{[^}]*position:\s*fixed;[^}]*inset:\s*0;[^}]*width:\s*100dvw;[^}]*height:\s*100dvh;/s',
+            $css
+        );
+        $this->assertStringContainsString('place-items: center;', $css);
+        $this->assertMatchesRegularExpression(
+            '/\.site-lightbox__viewport img\s*\{[^}]*position:\s*absolute;[^}]*inset:\s*var\(--site-lightbox-media-gap\);[^}]*max-width:\s*100%;[^}]*max-height:\s*100%;[^}]*object-fit:\s*contain;/s',
+            $css
+        );
+        $this->assertStringContainsString("document.body.classList.add('site-lightbox-open')", $script);
+        $this->assertStringContainsString("event.key === 'ArrowLeft'", $script);
+        $this->assertStringContainsString("event.pointerType === 'touch'", $script);
+    }
+
     private function frontendSourceFiles(): array
     {
         $files = [];

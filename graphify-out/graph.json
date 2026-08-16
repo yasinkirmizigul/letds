@@ -5620,6 +5620,70 @@
       "_origin": "ast"
     },
     {
+      "id": "app_http_controllers_admin_system_demodatafactorycontroller",
+      "label": "DemoDataFactoryController.php",
+      "file_type": "code",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller",
+      "label": "DemoDataFactoryController",
+      "file_type": "code",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L13",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller_index",
+      "label": ".index()",
+      "file_type": "code",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L15",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_http_controllers_admin_system_demodatafactorycontroller_php_view",
+      "label": "View",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller_generate",
+      "label": ".generate()",
+      "file_type": "code",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L25",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_http_controllers_admin_system_demodatafactorycontroller_php_request",
+      "label": "Request",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_http_controllers_admin_system_demodatafactorycontroller_php_redirectresponse",
+      "label": "RedirectResponse",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller_reset",
+      "label": ".reset()",
+      "file_type": "code",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L42",
+      "_origin": "ast"
+    },
+    {
       "id": "app_http_controllers_admin_tinymcecontroller",
       "label": "TinyMceController.php",
       "file_type": "code",
@@ -10288,7 +10352,7 @@
       "label": "User",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L19",
+      "source_location": "L20",
       "_origin": "ast"
     },
     {
@@ -10320,7 +10384,7 @@
       "label": ".casts()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L45",
+      "source_location": "L46",
       "_origin": "ast"
     },
     {
@@ -10328,7 +10392,7 @@
       "label": ".roles()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L55",
+      "source_location": "L56",
       "_origin": "ast"
     },
     {
@@ -10336,7 +10400,7 @@
       "label": ".hasRole()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L63",
+      "source_location": "L64",
       "_origin": "ast"
     },
     {
@@ -10344,7 +10408,7 @@
       "label": ".isSuperAdmin()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L79",
+      "source_location": "L80",
       "_origin": "ast"
     },
     {
@@ -10352,7 +10416,7 @@
       "label": ".isAdmin()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L87",
+      "source_location": "L88",
       "_origin": "ast"
     },
     {
@@ -10360,7 +10424,7 @@
       "label": ".hasGlobalOperationalScope()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L100",
+      "source_location": "L101",
       "_origin": "ast"
     },
     {
@@ -10368,7 +10432,7 @@
       "label": ".canManageUser()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L105",
+      "source_location": "L106",
       "_origin": "ast"
     },
     {
@@ -10376,7 +10440,7 @@
       "label": ".canManageRole()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L114",
+      "source_location": "L115",
       "_origin": "ast"
     },
     {
@@ -10384,7 +10448,7 @@
       "label": ".canAssignRole()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L123",
+      "source_location": "L124",
       "_origin": "ast"
     },
     {
@@ -10392,7 +10456,23 @@
       "label": ".scopeAdminAccessible()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L128",
+      "source_location": "L129",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_models_admin_user_user_user_scopepubliccontactrecipient",
+      "label": ".scopePublicContactRecipient()",
+      "file_type": "code",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L136",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_models_admin_user_user_php_builder",
+      "label": "Builder",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
       "_origin": "ast"
     },
     {
@@ -10400,7 +10480,7 @@
       "label": ".permissionSlugsCached()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L138",
+      "source_location": "L147",
       "_origin": "ast"
     },
     {
@@ -10408,7 +10488,7 @@
       "label": ".hasPermission()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L158",
+      "source_location": "L167",
       "_origin": "ast"
     },
     {
@@ -10416,7 +10496,7 @@
       "label": ".hasAnyPermission()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L179",
+      "source_location": "L188",
       "_origin": "ast"
     },
     {
@@ -10424,7 +10504,7 @@
       "label": ".canAccessAdmin()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L192",
+      "source_location": "L201",
       "_origin": "ast"
     },
     {
@@ -10432,7 +10512,7 @@
       "label": ".canAccessBackoffice()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L197",
+      "source_location": "L206",
       "_origin": "ast"
     },
     {
@@ -10440,7 +10520,7 @@
       "label": ".canAccess()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L213",
+      "source_location": "L222",
       "_origin": "ast"
     },
     {
@@ -10448,7 +10528,7 @@
       "label": ".badgeLabel()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L217",
+      "source_location": "L226",
       "_origin": "ast"
     },
     {
@@ -10456,7 +10536,7 @@
       "label": ".topRole()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L230",
+      "source_location": "L239",
       "_origin": "ast"
     },
     {
@@ -10464,7 +10544,7 @@
       "label": ".topRolePriority()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L237",
+      "source_location": "L246",
       "_origin": "ast"
     },
     {
@@ -10472,7 +10552,7 @@
       "label": ".avatarMedia()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L246",
+      "source_location": "L255",
       "_origin": "ast"
     },
     {
@@ -10480,7 +10560,7 @@
       "label": ".receivedContactMessages()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L251",
+      "source_location": "L260",
       "_origin": "ast"
     },
     {
@@ -10496,7 +10576,7 @@
       "label": ".dashboardPreference()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L256",
+      "source_location": "L265",
       "_origin": "ast"
     },
     {
@@ -10512,7 +10592,7 @@
       "label": ".receivedServiceReviews()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L261",
+      "source_location": "L270",
       "_origin": "ast"
     },
     {
@@ -10520,7 +10600,7 @@
       "label": ".avatarUrl()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L266",
+      "source_location": "L275",
       "_origin": "ast"
     },
     {
@@ -10528,7 +10608,7 @@
       "label": ".skillTags()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L285",
+      "source_location": "L294",
       "_origin": "ast"
     },
     {
@@ -10536,7 +10616,7 @@
       "label": ".profileCompletionPercentage()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L306",
+      "source_location": "L315",
       "_origin": "ast"
     },
     {
@@ -10544,7 +10624,7 @@
       "label": ".sendPasswordResetNotification()",
       "file_type": "code",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L324",
+      "source_location": "L333",
       "_origin": "ast"
     },
     {
@@ -13281,6 +13361,302 @@
       "file_type": "code",
       "source_file": "app/Services/Admin/AdminNotificationService.php",
       "source_location": "L120",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice",
+      "label": "DemoDataFactoryService.php",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "label": "DemoDataFactoryService",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L57",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_overview",
+      "label": ".overview()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L118",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "label": ".generate()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L153",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_reset",
+      "label": ".reset()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L194",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createproviders",
+      "label": ".createProviders()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L254",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_php_collection",
+      "label": "Collection",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createmembers",
+      "label": ".createMembers()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L294",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcategories",
+      "label": ".createCategories()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L336",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createmedia",
+      "label": ".createMedia()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L355",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_creategalleries",
+      "label": ".createGalleries()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L385",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createblogposts",
+      "label": ".createBlogPosts()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L417",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createproducts",
+      "label": ".createProducts()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L465",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createappointments",
+      "label": ".createAppointments()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L551",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createprojects",
+      "label": ".createProjects()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L608",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcontactmessages",
+      "label": ".createContactMessages()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L671",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createsitecontent",
+      "label": ".createSiteContent()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L722",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcommercedata",
+      "label": ".createCommerceData()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L845",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createreviews",
+      "label": ".createReviews()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1004",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createsystemactivity",
+      "label": ".createSystemActivity()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1079",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createtrashscenarios",
+      "label": ".createTrashScenarios()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1135",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_protecteduserids",
+      "label": ".protectedUserIds()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1149",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_protectedmediaids",
+      "label": ".protectedMediaIds()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1160",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_filesscheduledfordeletion",
+      "label": ".filesScheduledForDeletion()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1187",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_deletephysicalfiles",
+      "label": ".deletePhysicalFiles()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1224",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_cleanauthenticationstate",
+      "label": ".cleanAuthenticationState()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1237",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_detachdeletedmenueditor",
+      "label": ".detachDeletedMenuEditor()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1252",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_deleteexcept",
+      "label": ".deleteExcept()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1264",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_runlocked",
+      "label": ".runLocked()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1275",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_php_closure",
+      "label": "Closure",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_module",
+      "label": ".module()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1289",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_counttable",
+      "label": ".countTable()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1294",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_nonadminusercount",
+      "label": ".nonAdminUserCount()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1299",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_sitecontentcount",
+      "label": ".siteContentCount()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1310",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_spreadcreatedat",
+      "label": ".spreadCreatedAt()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1318",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_php_model",
+      "label": "Model",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "app_services_admin_demodatafactoryservice_demodatafactoryservice_demosvg",
+      "label": ".demoSvg()",
+      "file_type": "code",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1324",
       "_origin": "ast"
     },
     {
@@ -20560,7 +20936,7 @@
       "label": "NoopPage()",
       "file_type": "code",
       "source_file": "resources/js/admin/pages/index.js",
-      "source_location": "L69",
+      "source_location": "L70",
       "_origin": "ast"
     },
     {
@@ -20568,7 +20944,7 @@
       "label": "registerPages()",
       "file_type": "code",
       "source_file": "resources/js/admin/pages/index.js",
-      "source_location": "L71",
+      "source_location": "L72",
       "_origin": "ast"
     },
     {
@@ -22169,6 +22545,22 @@
       "file_type": "code",
       "source_file": "resources/js/admin/pages/site/sliders/index.js",
       "source_location": "L5",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_admin_pages_system_demo_data_index",
+      "label": "index.js",
+      "file_type": "code",
+      "source_file": "resources/js/admin/pages/system/demo-data/index.js",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_admin_pages_system_demo_data_index_init",
+      "label": "init()",
+      "file_type": "code",
+      "source_file": "resources/js/admin/pages/system/demo-data/index.js",
+      "source_location": "L3",
       "_origin": "ast"
     },
     {
@@ -25716,6 +26108,22 @@
       "_origin": "ast"
     },
     {
+      "id": "resources_views_admin_pages_system_demo_data_index_blade",
+      "label": "index.blade.php",
+      "file_type": "code",
+      "source_file": "resources/views/admin/pages/system/demo-data/index.blade.php",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_views_admin_pages_system_demo_data_index_blade_php_admin_partials_flash",
+      "label": "admin.partials._flash",
+      "file_type": "code",
+      "source_file": "resources/views/admin/pages/system/demo-data/index.blade.php",
+      "source_location": null,
+      "_origin": "ast"
+    },
+    {
       "id": "resources_views_admin_pages_trash_index_blade",
       "label": "index.blade.php",
       "file_type": "code",
@@ -26612,6 +27020,62 @@
       "_origin": "ast"
     },
     {
+      "id": "tests_feature_admindemodatafactorytest",
+      "label": "AdminDemoDataFactoryTest.php",
+      "file_type": "code",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "tests_feature_admindemodatafactorytest_admindemodatafactorytest",
+      "label": "AdminDemoDataFactoryTest",
+      "file_type": "code",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L28",
+      "_origin": "ast"
+    },
+    {
+      "id": "refreshdatabase",
+      "label": "RefreshDatabase",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_only_super_admin_can_open_or_run_demo_data_factory",
+      "label": ".test_only_super_admin_can_open_or_run_demo_data_factory()",
+      "file_type": "code",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L32",
+      "_origin": "ast"
+    },
+    {
+      "id": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_super_admin_can_generate_relational_sample_data_for_main_modules",
+      "label": ".test_super_admin_can_generate_relational_sample_data_for_main_modules()",
+      "file_type": "code",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L57",
+      "_origin": "ast"
+    },
+    {
+      "id": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_reset_removes_operational_data_but_preserves_system_core_and_design_media",
+      "label": ".test_reset_removes_operational_data_but_preserves_system_core_and_design_media()",
+      "file_type": "code",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L97",
+      "_origin": "ast"
+    },
+    {
+      "id": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_userwithrole",
+      "label": ".userWithRole()",
+      "file_type": "code",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L180",
+      "_origin": "ast"
+    },
+    {
       "id": "tests_feature_adminloginbrandingtest",
       "label": "AdminLoginBrandingTest.php",
       "file_type": "code",
@@ -26625,14 +27089,6 @@
       "file_type": "code",
       "source_file": "tests/Feature/AdminLoginBrandingTest.php",
       "source_location": "L15",
-      "_origin": "ast"
-    },
-    {
-      "id": "refreshdatabase",
-      "label": "RefreshDatabase",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
       "_origin": "ast"
     },
     {
@@ -27072,7 +27528,7 @@
       "label": "SitePortalFlowTest",
       "file_type": "code",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L23",
+      "source_location": "L24",
       "_origin": "ast"
     },
     {
@@ -27080,15 +27536,23 @@
       "label": ".test_public_site_layout_uses_probablue_branding_and_persistent_theme_control()",
       "file_type": "code",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L27",
+      "source_location": "L28",
       "_origin": "ast"
     },
     {
-      "id": "tests_feature_siteportalflowtest_siteportalflowtest_test_contact_recipient_select_shows_names_without_exposing_email_addresses",
-      "label": ".test_contact_recipient_select_shows_names_without_exposing_email_addresses()",
+      "id": "tests_feature_siteportalflowtest_siteportalflowtest_test_contact_recipient_select_only_shows_non_admin_users_without_exposing_emails",
+      "label": ".test_contact_recipient_select_only_shows_non_admin_users_without_exposing_emails()",
       "file_type": "code",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L41",
+      "source_location": "L42",
+      "_origin": "ast"
+    },
+    {
+      "id": "tests_feature_siteportalflowtest_siteportalflowtest_test_contact_message_cannot_be_sent_to_admin_or_super_admin",
+      "label": ".test_contact_message_cannot_be_sent_to_admin_or_super_admin()",
+      "file_type": "code",
+      "source_file": "tests/Feature/SitePortalFlowTest.php",
+      "source_location": "L88",
       "_origin": "ast"
     },
     {
@@ -27096,7 +27560,7 @@
       "label": ".test_public_blog_can_be_searched_filtered_and_opened()",
       "file_type": "code",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L61",
+      "source_location": "L127",
       "_origin": "ast"
     },
     {
@@ -27104,7 +27568,7 @@
       "label": ".test_only_public_galleries_with_images_are_visible()",
       "file_type": "code",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L102",
+      "source_location": "L168",
       "_origin": "ast"
     },
     {
@@ -27112,7 +27576,7 @@
       "label": ".test_completed_appointment_creates_one_member_project()",
       "file_type": "code",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L143",
+      "source_location": "L213",
       "_origin": "ast"
     },
     {
@@ -27120,7 +27584,7 @@
       "label": ".test_member_can_upload_private_project_files_but_cannot_open_another_members_project()",
       "file_type": "code",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L166",
+      "source_location": "L236",
       "_origin": "ast"
     },
     {
@@ -27128,7 +27592,7 @@
       "label": ".test_delivered_project_receives_one_project_review()",
       "file_type": "code",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L203",
+      "source_location": "L273",
       "_origin": "ast"
     },
     {
@@ -27136,7 +27600,7 @@
       "label": ".test_member_can_update_profile_and_sensitive_changes_require_current_password()",
       "file_type": "code",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L232",
+      "source_location": "L302",
       "_origin": "ast"
     },
     {
@@ -27144,7 +27608,7 @@
       "label": ".actors()",
       "file_type": "code",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L257",
+      "source_location": "L327",
       "_origin": "ast"
     },
     {
@@ -27292,11 +27756,19 @@
       "_origin": "ast"
     },
     {
+      "id": "tests_unit_responsivemarkuptest_responsivemarkuptest_test_public_gallery_lightbox_is_viewport_centered_and_responsive",
+      "label": ".test_public_gallery_lightbox_is_viewport_centered_and_responsive()",
+      "file_type": "code",
+      "source_file": "tests/Unit/ResponsiveMarkupTest.php",
+      "source_location": "L153",
+      "_origin": "ast"
+    },
+    {
       "id": "tests_unit_responsivemarkuptest_responsivemarkuptest_frontendsourcefiles",
       "label": ".frontendSourceFiles()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L153",
+      "source_location": "L172",
       "_origin": "ast"
     },
     {
@@ -27304,7 +27776,7 @@
       "label": ".hasTopLevelComma()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L173",
+      "source_location": "L192",
       "_origin": "ast"
     },
     {
@@ -27312,7 +27784,7 @@
       "label": ".relativePath()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L190",
+      "source_location": "L209",
       "_origin": "ast"
     },
     {
@@ -27320,7 +27792,7 @@
       "label": ".projectRoot()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L195",
+      "source_location": "L214",
       "_origin": "ast"
     },
     {
@@ -52348,6 +52820,211 @@
       "context": "return_type"
     },
     {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller",
+      "target": "app_http_controllers_controller_controller",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller",
+      "target": "user",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller",
+      "target": "app_http_controllers_admin_system_demodatafactorycontroller_php_redirectresponse",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller",
+      "target": "app_http_controllers_admin_system_demodatafactorycontroller_php_request",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller",
+      "target": "app_http_controllers_admin_system_demodatafactorycontroller_php_view",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller",
+      "target": "throwable",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller",
+      "target": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller",
+      "target": "app_http_controllers_controller_controller",
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller",
+      "target": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller_index",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller_index",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L15",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller_index",
+      "target": "app_http_controllers_admin_system_demodatafactorycontroller_php_view",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L15",
+      "weight": 1.0,
+      "context": "return_type"
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller",
+      "target": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller_generate",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller_generate",
+      "target": "app_http_controllers_admin_system_demodatafactorycontroller_php_request",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L25",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller_generate",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L25",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller_generate",
+      "target": "app_http_controllers_admin_system_demodatafactorycontroller_php_redirectresponse",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L25",
+      "weight": 1.0,
+      "context": "return_type"
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller",
+      "target": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller_reset",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller_reset",
+      "target": "app_http_controllers_admin_system_demodatafactorycontroller_php_request",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L42",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller_reset",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L42",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller_reset",
+      "target": "app_http_controllers_admin_system_demodatafactorycontroller_php_redirectresponse",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L42",
+      "weight": 1.0,
+      "context": "return_type"
+    },
+    {
+      "source": "app_http_controllers_admin_system_demodatafactorycontroller_demodatafactorycontroller_index",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "relation": "references_constant",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/Http/Controllers/Admin/System/DemoDataFactoryController.php",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
       "source": "app_http_controllers_admin_tinymcecontroller",
       "target": "app_http_controllers_controller_controller",
       "relation": "imports",
@@ -63908,7 +64585,7 @@
     },
     {
       "source": "app_models_admin_user_user",
-      "target": "hasfactory",
+      "target": "app_models_admin_user_user_php_builder",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -63918,7 +64595,7 @@
     },
     {
       "source": "app_models_admin_user_user",
-      "target": "belongsto",
+      "target": "hasfactory",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -63928,7 +64605,7 @@
     },
     {
       "source": "app_models_admin_user_user",
-      "target": "app_models_admin_user_user_php_hasmany",
+      "target": "belongsto",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -63938,7 +64615,7 @@
     },
     {
       "source": "app_models_admin_user_user",
-      "target": "app_models_admin_user_user_php_hasone",
+      "target": "app_models_admin_user_user_php_hasmany",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -63948,7 +64625,7 @@
     },
     {
       "source": "app_models_admin_user_user",
-      "target": "user",
+      "target": "app_models_admin_user_user_php_hasone",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -63958,7 +64635,7 @@
     },
     {
       "source": "app_models_admin_user_user",
-      "target": "notifiable",
+      "target": "user",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -63968,7 +64645,7 @@
     },
     {
       "source": "app_models_admin_user_user",
-      "target": "cache",
+      "target": "notifiable",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -63978,7 +64655,7 @@
     },
     {
       "source": "app_models_admin_user_user",
-      "target": "storage",
+      "target": "cache",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -63988,11 +64665,21 @@
     },
     {
       "source": "app_models_admin_user_user",
+      "target": "storage",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "app_models_admin_user_user",
       "target": "app_models_admin_user_user_user",
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L19",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -64001,7 +64688,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L19",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -64010,7 +64697,7 @@
       "relation": "mixes_in",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -64019,7 +64706,7 @@
       "relation": "mixes_in",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -64028,7 +64715,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L45",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -64037,7 +64724,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L55",
+      "source_location": "L56",
       "weight": 1.0
     },
     {
@@ -64046,7 +64733,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L63",
+      "source_location": "L64",
       "weight": 1.0
     },
     {
@@ -64055,7 +64742,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L79",
+      "source_location": "L80",
       "weight": 1.0
     },
     {
@@ -64064,7 +64751,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L87",
+      "source_location": "L88",
       "weight": 1.0
     },
     {
@@ -64073,7 +64760,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L100",
+      "source_location": "L101",
       "weight": 1.0
     },
     {
@@ -64082,7 +64769,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L105",
+      "source_location": "L106",
       "weight": 1.0
     },
     {
@@ -64091,7 +64778,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L105",
+      "source_location": "L106",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -64101,7 +64788,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L114",
+      "source_location": "L115",
       "weight": 1.0
     },
     {
@@ -64110,7 +64797,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L114",
+      "source_location": "L115",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -64120,7 +64807,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L123",
+      "source_location": "L124",
       "weight": 1.0
     },
     {
@@ -64129,7 +64816,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L123",
+      "source_location": "L124",
       "weight": 1.0,
       "context": "parameter_type"
     },
@@ -64139,8 +64826,27 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L128",
+      "source_location": "L129",
       "weight": 1.0
+    },
+    {
+      "source": "app_models_admin_user_user_user",
+      "target": "app_models_admin_user_user_user_scopepubliccontactrecipient",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L136",
+      "weight": 1.0
+    },
+    {
+      "source": "app_models_admin_user_user_user_scopepubliccontactrecipient",
+      "target": "app_models_admin_user_user_php_builder",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Models/Admin/User/User.php",
+      "source_location": "L136",
+      "weight": 1.0,
+      "context": "parameter_type"
     },
     {
       "source": "app_models_admin_user_user_user",
@@ -64148,7 +64854,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L138",
+      "source_location": "L147",
       "weight": 1.0
     },
     {
@@ -64157,7 +64863,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L158",
+      "source_location": "L167",
       "weight": 1.0
     },
     {
@@ -64166,7 +64872,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L179",
+      "source_location": "L188",
       "weight": 1.0
     },
     {
@@ -64175,7 +64881,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L192",
+      "source_location": "L201",
       "weight": 1.0
     },
     {
@@ -64184,7 +64890,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L197",
+      "source_location": "L206",
       "weight": 1.0
     },
     {
@@ -64193,7 +64899,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L213",
+      "source_location": "L222",
       "weight": 1.0
     },
     {
@@ -64202,7 +64908,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L217",
+      "source_location": "L226",
       "weight": 1.0
     },
     {
@@ -64211,7 +64917,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L230",
+      "source_location": "L239",
       "weight": 1.0
     },
     {
@@ -64220,7 +64926,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L237",
+      "source_location": "L246",
       "weight": 1.0
     },
     {
@@ -64229,7 +64935,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L246",
+      "source_location": "L255",
       "weight": 1.0
     },
     {
@@ -64238,7 +64944,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L251",
+      "source_location": "L260",
       "weight": 1.0
     },
     {
@@ -64247,7 +64953,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L251",
+      "source_location": "L260",
       "weight": 1.0,
       "context": "return_type"
     },
@@ -64257,7 +64963,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L256",
+      "source_location": "L265",
       "weight": 1.0
     },
     {
@@ -64266,7 +64972,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L256",
+      "source_location": "L265",
       "weight": 1.0,
       "context": "return_type"
     },
@@ -64276,7 +64982,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L261",
+      "source_location": "L270",
       "weight": 1.0
     },
     {
@@ -64285,7 +64991,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L261",
+      "source_location": "L270",
       "weight": 1.0,
       "context": "return_type"
     },
@@ -64295,7 +65001,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L266",
+      "source_location": "L275",
       "weight": 1.0
     },
     {
@@ -64304,7 +65010,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L285",
+      "source_location": "L294",
       "weight": 1.0
     },
     {
@@ -64313,7 +65019,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L306",
+      "source_location": "L315",
       "weight": 1.0
     },
     {
@@ -64322,7 +65028,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L324",
+      "source_location": "L333",
       "weight": 1.0
     },
     {
@@ -64332,7 +65038,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L57",
+      "source_location": "L58",
       "weight": 1.0
     },
     {
@@ -64342,7 +65048,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L73",
+      "source_location": "L74",
       "weight": 1.0
     },
     {
@@ -64352,7 +65058,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L81",
+      "source_location": "L82",
       "weight": 1.0
     },
     {
@@ -64362,7 +65068,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L94",
+      "source_location": "L95",
       "weight": 1.0
     },
     {
@@ -64372,7 +65078,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L102",
+      "source_location": "L103",
       "weight": 1.0
     },
     {
@@ -64382,7 +65088,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L107",
+      "source_location": "L108",
       "weight": 1.0
     },
     {
@@ -64392,7 +65098,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L111",
+      "source_location": "L112",
       "weight": 1.0
     },
     {
@@ -64402,7 +65108,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L120",
+      "source_location": "L121",
       "weight": 1.0
     },
     {
@@ -64412,7 +65118,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L125",
+      "source_location": "L126",
       "weight": 1.0
     },
     {
@@ -64422,7 +65128,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L144",
+      "source_location": "L153",
       "weight": 1.0
     },
     {
@@ -64432,7 +65138,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L170",
+      "source_location": "L179",
       "weight": 1.0
     },
     {
@@ -64442,7 +65148,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L182",
+      "source_location": "L191",
       "weight": 1.0
     },
     {
@@ -64452,7 +65158,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L194",
+      "source_location": "L203",
       "weight": 1.0
     },
     {
@@ -64462,7 +65168,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L203",
+      "source_location": "L212",
       "weight": 1.0
     },
     {
@@ -64472,7 +65178,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L203",
+      "source_location": "L212",
       "weight": 1.0
     },
     {
@@ -64482,7 +65188,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L207",
+      "source_location": "L216",
       "weight": 1.0
     },
     {
@@ -64492,7 +65198,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L215",
+      "source_location": "L224",
       "weight": 1.0
     },
     {
@@ -64502,7 +65208,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L215",
+      "source_location": "L224",
       "weight": 1.0
     },
     {
@@ -64512,7 +65218,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L219",
+      "source_location": "L228",
       "weight": 1.0
     },
     {
@@ -64522,7 +65228,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L223",
+      "source_location": "L232",
       "weight": 1.0
     },
     {
@@ -64532,7 +65238,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L227",
+      "source_location": "L236",
       "weight": 1.0
     },
     {
@@ -64542,7 +65248,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L235",
+      "source_location": "L244",
       "weight": 1.0
     },
     {
@@ -64552,7 +65258,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L242",
+      "source_location": "L251",
       "weight": 1.0
     },
     {
@@ -64562,7 +65268,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L270",
+      "source_location": "L279",
       "weight": 1.0
     },
     {
@@ -64572,7 +65278,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L316",
+      "source_location": "L325",
       "weight": 1.0
     },
     {
@@ -70397,6 +71103,1573 @@
       "confidence": "EXTRACTED",
       "source_file": "app/Services/Admin/AdminNotificationService.php",
       "source_location": "L135",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "adminnotification",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "app_models_admin_auditlog_auditlog_auditlog",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "blogpost",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "app_models_admin_category_category",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "app_models_admin_ecommerce_ecommercecoupon_ecommercecoupon",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "app_models_admin_ecommerce_ecommerceinvoice_ecommerceinvoice",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "ecommerceorder",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "ecommerceorderitem",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "ecommerceorderstatushistory",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "ecommerceordertransaction",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "app_models_admin_ecommerce_ecommerceshipment_ecommerceshipment",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "inventorymovement",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "app_models_admin_ecommerce_paymentwebhookevent_paymentwebhookevent",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "gallery",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "media",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "product",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "productvariant",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "project",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "projectfile",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "app_models_admin_user_permission_permission",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "role",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "app_models_admin_user_user_user",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "appointment",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "appointmentslot",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "app_models_appointment_globalblackout_globalblackout",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "providertimeoff",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "app_models_appointment_providerworkinghour_providerworkinghour",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "contactmessage",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "member",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "servicereview",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "servicereviewitem",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "app_models_review_servicereviewquestion_servicereviewquestion",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "app_models_site_homeslider_homeslider",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "app_models_site_paymentintegration_paymentintegration",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "app_models_site_sitecounter_sitecounter",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "sitefaq",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "app_models_site_sitehomepageconfig_sitehomepageconfig",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "sitehomepagesection",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "sitepage",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "sitesetting",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_php_closure",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_php_model",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "cache",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "db",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "hash",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "schema",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "storage",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "str",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "runtimeexception",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "throwable",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_overview",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L118",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L153",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "target": "app_models_admin_user_user_user",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L153",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_reset",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L194",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_reset",
+      "target": "app_models_admin_user_user_user",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L194",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createproviders",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L254",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createproviders",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L254",
+      "weight": 1.0,
+      "context": "return_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createmembers",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L294",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createmembers",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L294",
+      "weight": 1.0,
+      "context": "return_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcategories",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L336",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcategories",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L336",
+      "weight": 1.0,
+      "context": "return_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createmedia",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L355",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createmedia",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L355",
+      "weight": 1.0,
+      "context": "return_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_creategalleries",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L385",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_creategalleries",
+      "target": "app_models_admin_user_user_user",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L385",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_creategalleries",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L385",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createblogposts",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L417",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createblogposts",
+      "target": "app_models_admin_user_user_user",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L417",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createblogposts",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L417",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createproducts",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L465",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createproducts",
+      "target": "app_models_admin_user_user_user",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L465",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createproducts",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L465",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createappointments",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L551",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createappointments",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L551",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createappointments",
+      "target": "app_models_admin_user_user_user",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L551",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createprojects",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L608",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createprojects",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L608",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcontactmessages",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L671",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcontactmessages",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L671",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createsitecontent",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L722",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createsitecontent",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L722",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcommercedata",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L845",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcommercedata",
+      "target": "app_models_admin_user_user_user",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L845",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcommercedata",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L845",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createreviews",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1004",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createreviews",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1004",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createsystemactivity",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1079",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createsystemactivity",
+      "target": "app_models_admin_user_user_user",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1079",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createsystemactivity",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1079",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createtrashscenarios",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1135",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createtrashscenarios",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1135",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_protecteduserids",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1149",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_protecteduserids",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1149",
+      "weight": 1.0,
+      "context": "return_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_protectedmediaids",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1160",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_protectedmediaids",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1160",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_filesscheduledfordeletion",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1187",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_filesscheduledfordeletion",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1187",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_deletephysicalfiles",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1224",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_cleanauthenticationstate",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1237",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_cleanauthenticationstate",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1237",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_detachdeletedmenueditor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1252",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_detachdeletedmenueditor",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1252",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_deleteexcept",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1264",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_deleteexcept",
+      "target": "app_services_admin_demodatafactoryservice_php_collection",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1264",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_runlocked",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1275",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_runlocked",
+      "target": "app_services_admin_demodatafactoryservice_php_closure",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1275",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_module",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1289",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_counttable",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1294",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_nonadminusercount",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1299",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_sitecontentcount",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1310",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_spreadcreatedat",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1318",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_spreadcreatedat",
+      "target": "app_services_admin_demodatafactoryservice_php_model",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1318",
+      "weight": 1.0,
+      "context": "parameter_type"
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_demosvg",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1324",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_overview",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_module",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L121",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_overview",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_nonadminusercount",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L121",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_overview",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_counttable",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L122",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_overview",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_sitecontentcount",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L130",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_overview",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_protecteduserids",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L139",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_overview",
+      "target": "app_models_admin_user_user_user",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L145",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_runlocked",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L155",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_overview",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L157",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createproviders",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L161",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createmembers",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L162",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcategories",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L163",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createmedia",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L164",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_creategalleries",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L165",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createblogposts",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L166",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createproducts",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L167",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createappointments",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L168",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createprojects",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L169",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcontactmessages",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L171",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createsitecontent",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L172",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcommercedata",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L173",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createreviews",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L174",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createsystemactivity",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L175",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createtrashscenarios",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L176",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_reset",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_runlocked",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L196",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_reset",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_protecteduserids",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L197",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_reset",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_protectedmediaids",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L202",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_reset",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_filesscheduledfordeletion",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L203",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_reset",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_deleteexcept",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L217",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_reset",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_cleanauthenticationstate",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L236",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_reset",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_detachdeletedmenueditor",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L237",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_reset",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_deletephysicalfiles",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L243",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createproviders",
+      "target": "app_models_admin_user_user_user",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L275",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createproviders",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_spreadcreatedat",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L288",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createmembers",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_spreadcreatedat",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L330",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createmedia",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_demosvg",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L366",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createblogposts",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_spreadcreatedat",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L459",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createproducts",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_spreadcreatedat",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L545",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createprojects",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_spreadcreatedat",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L665",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcontactmessages",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_spreadcreatedat",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L718",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcommercedata",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_spreadcreatedat",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L918",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_protecteduserids",
+      "target": "app_models_admin_user_user_user",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1155",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_protectedmediaids",
+      "target": "app_models_admin_user_user_user",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1165",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_cleanauthenticationstate",
+      "target": "app_models_admin_user_user_user",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1247",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_nonadminusercount",
+      "target": "app_models_admin_user_user_user",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1305",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_sitecontentcount",
+      "target": "app_services_admin_demodatafactoryservice_demodatafactoryservice_counttable",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1315",
       "weight": 1.0
     },
     {
@@ -89170,11 +91443,21 @@
     },
     {
       "source": "resources_js_admin_pages_index",
+      "target": "resources_js_admin_pages_system_demo_data_index",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/admin/pages/index.js",
+      "source_location": "L68",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_admin_pages_index",
       "target": "resources_js_admin_pages_index_nooppage",
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/index.js",
-      "source_location": "L69",
+      "source_location": "L70",
       "weight": 1.0
     },
     {
@@ -89183,7 +91466,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/index.js",
-      "source_location": "L71",
+      "source_location": "L72",
       "weight": 1.0
     },
     {
@@ -89193,7 +91476,7 @@
       "context": "argument",
       "confidence": "INFERRED",
       "source_file": "resources/js/admin/pages/index.js",
-      "source_location": "L150",
+      "source_location": "L152",
       "weight": 1.0
     },
     {
@@ -92661,6 +94944,25 @@
       "weight": 1.0
     },
     {
+      "source": "resources_js_admin_pages_system_demo_data_index",
+      "target": "ref_core_swal_alert",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/admin/pages/system/demo-data/index.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_admin_pages_system_demo_data_index",
+      "target": "resources_js_admin_pages_system_demo_data_index_init",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/admin/pages/system/demo-data/index.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
       "source": "resources_js_admin_pages_trash_index",
       "target": "ref_sweetalert2",
       "relation": "imports_from",
@@ -95976,7 +98278,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/core/swal-alert.js",
-      "source_location": "L131",
+      "source_location": "L147",
       "weight": 1.0
     },
     {
@@ -97712,6 +100014,16 @@
       "weight": 1.0
     },
     {
+      "source": "resources_views_admin_pages_system_demo_data_index_blade",
+      "target": "resources_views_admin_pages_system_demo_data_index_blade_php_admin_partials_flash",
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "resources/views/admin/pages/system/demo-data/index.blade.php",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
       "source": "resources_views_admin_pages_users_create_blade",
       "target": "resources_views_admin_pages_users_create_blade_php_admin_partials_flash",
       "relation": "includes",
@@ -98603,7 +100915,7 @@
     },
     {
       "source": "routes_admin_system",
-      "target": "trashcontroller",
+      "target": "demodatafactorycontroller",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -98613,12 +100925,22 @@
     },
     {
       "source": "routes_admin_system",
-      "target": "route",
+      "target": "trashcontroller",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "routes/admin/system.php",
       "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "routes_admin_system",
+      "target": "route",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "routes/admin/system.php",
+      "source_location": "L7",
       "weight": 1.0
     },
     {
@@ -98857,6 +101179,359 @@
       "confidence": "EXTRACTED",
       "source_file": "scripts/share-demo.ps1",
       "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "adminmenusetting",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "blogpost",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "ecommerceorder",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "media",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "product",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "projectfile",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "app_models_admin_user_permission_permission",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "role",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "app_models_admin_user_user_user",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "appointment",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "contactmessage",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "servicereview",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "app_models_site_paymentintegration_paymentintegration",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "sitefaq",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "app_models_site_sitehomepageconfig_sitehomepageconfig",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "app_models_site_sitenavigationitem_sitenavigationitem",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "sitesetting",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "refreshdatabase",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "hash",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "storage",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "str",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "tests_testcase_testcase",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest",
+      "target": "tests_feature_admindemodatafactorytest_admindemodatafactorytest",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest",
+      "target": "tests_testcase_testcase",
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest",
+      "target": "refreshdatabase",
+      "relation": "mixes_in",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest",
+      "target": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_only_super_admin_can_open_or_run_demo_data_factory",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest",
+      "target": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_super_admin_can_generate_relational_sample_data_for_main_modules",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest",
+      "target": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_reset_removes_operational_data_but_preserves_system_core_and_design_media",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L97",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest",
+      "target": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_userwithrole",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L180",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_userwithrole",
+      "target": "app_models_admin_user_user_user",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L180",
+      "weight": 1.0,
+      "context": "return_type"
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_only_super_admin_can_open_or_run_demo_data_factory",
+      "target": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_userwithrole",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_super_admin_can_generate_relational_sample_data_for_main_modules",
+      "target": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_userwithrole",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_super_admin_can_generate_relational_sample_data_for_main_modules",
+      "target": "app_models_admin_user_user_user",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_reset_removes_operational_data_but_preserves_system_core_and_design_media",
+      "target": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_userwithrole",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L101",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_reset_removes_operational_data_but_preserves_system_core_and_design_media",
+      "target": "app_models_admin_user_user_user",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L155",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_userwithrole",
+      "target": "app_models_admin_user_user_user",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L186",
       "weight": 1.0
     },
     {
@@ -100310,7 +102985,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "member",
+      "target": "contactmessage",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -100320,7 +102995,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "servicereview",
+      "target": "member",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -100330,7 +103005,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "memberprojectworkflowservice",
+      "target": "servicereview",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -100340,7 +103015,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "servicereviewassignmentservice",
+      "target": "memberprojectworkflowservice",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -100350,7 +103025,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "refreshdatabase",
+      "target": "servicereviewassignmentservice",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -100360,7 +103035,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "uploadedfile",
+      "target": "refreshdatabase",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -100370,7 +103045,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "storage",
+      "target": "uploadedfile",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -100380,7 +103055,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "str",
+      "target": "storage",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -100390,7 +103065,7 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
-      "target": "tests_testcase_testcase",
+      "target": "str",
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -100400,11 +103075,21 @@
     },
     {
       "source": "tests_feature_siteportalflowtest",
+      "target": "tests_testcase_testcase",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/SitePortalFlowTest.php",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_siteportalflowtest",
       "target": "tests_feature_siteportalflowtest_siteportalflowtest",
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -100413,7 +103098,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -100422,7 +103107,7 @@
       "relation": "mixes_in",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L25",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
@@ -100431,16 +103116,25 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L27",
+      "source_location": "L28",
       "weight": 1.0
     },
     {
       "source": "tests_feature_siteportalflowtest_siteportalflowtest",
-      "target": "tests_feature_siteportalflowtest_siteportalflowtest_test_contact_recipient_select_shows_names_without_exposing_email_addresses",
+      "target": "tests_feature_siteportalflowtest_siteportalflowtest_test_contact_recipient_select_only_shows_non_admin_users_without_exposing_emails",
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L41",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_siteportalflowtest_siteportalflowtest",
+      "target": "tests_feature_siteportalflowtest_siteportalflowtest_test_contact_message_cannot_be_sent_to_admin_or_super_admin",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Feature/SitePortalFlowTest.php",
+      "source_location": "L88",
       "weight": 1.0
     },
     {
@@ -100449,7 +103143,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L61",
+      "source_location": "L127",
       "weight": 1.0
     },
     {
@@ -100458,7 +103152,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L102",
+      "source_location": "L168",
       "weight": 1.0
     },
     {
@@ -100467,7 +103161,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L143",
+      "source_location": "L213",
       "weight": 1.0
     },
     {
@@ -100476,7 +103170,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L166",
+      "source_location": "L236",
       "weight": 1.0
     },
     {
@@ -100485,7 +103179,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L203",
+      "source_location": "L273",
       "weight": 1.0
     },
     {
@@ -100494,7 +103188,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L232",
+      "source_location": "L302",
       "weight": 1.0
     },
     {
@@ -100503,7 +103197,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L257",
+      "source_location": "L327",
       "weight": 1.0
     },
     {
@@ -100513,7 +103207,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L145",
+      "source_location": "L215",
       "weight": 1.0
     },
     {
@@ -100523,7 +103217,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L169",
+      "source_location": "L239",
       "weight": 1.0
     },
     {
@@ -100533,7 +103227,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L205",
+      "source_location": "L275",
       "weight": 1.0
     },
     {
@@ -100543,7 +103237,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L234",
+      "source_location": "L304",
       "weight": 1.0
     },
     {
@@ -100811,7 +103505,7 @@
     },
     {
       "source": "tests_unit_responsivemarkuptest_responsivemarkuptest",
-      "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_frontendsourcefiles",
+      "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_test_public_gallery_lightbox_is_viewport_centered_and_responsive",
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
@@ -100820,11 +103514,20 @@
     },
     {
       "source": "tests_unit_responsivemarkuptest_responsivemarkuptest",
+      "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_frontendsourcefiles",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Unit/ResponsiveMarkupTest.php",
+      "source_location": "L172",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_unit_responsivemarkuptest_responsivemarkuptest",
       "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_hastoplevelcomma",
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L173",
+      "source_location": "L192",
       "weight": 1.0
     },
     {
@@ -100833,7 +103536,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L190",
+      "source_location": "L209",
       "weight": 1.0
     },
     {
@@ -100842,7 +103545,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L195",
+      "source_location": "L214",
       "weight": 1.0
     },
     {
@@ -100936,13 +103639,23 @@
       "weight": 1.0
     },
     {
+      "source": "tests_unit_responsivemarkuptest_responsivemarkuptest_test_public_gallery_lightbox_is_viewport_centered_and_responsive",
+      "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_projectroot",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Unit/ResponsiveMarkupTest.php",
+      "source_location": "L155",
+      "weight": 1.0
+    },
+    {
       "source": "tests_unit_responsivemarkuptest_responsivemarkuptest_frontendsourcefiles",
       "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_projectroot",
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L158",
+      "source_location": "L177",
       "weight": 1.0
     },
     {
@@ -100952,7 +103665,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L192",
+      "source_location": "L211",
       "weight": 1.0
     },
     {
@@ -103078,6 +105791,16 @@
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/pages/index.js",
       "source_location": "L67",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_admin_pages_index",
+      "target": "resources_js_admin_pages_system_demo_data_index_init",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/admin/pages/index.js",
+      "source_location": "L68",
       "weight": 1.0
     },
     {
@@ -106778,7 +109501,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "app/Models/Admin/User/User.php",
-      "source_location": "L143",
+      "source_location": "L152",
       "weight": 1.0
     },
     {
@@ -107131,6 +109854,699 @@
       "confidence_score": 0.8,
       "source_file": "app/Providers/AppServiceProvider.php",
       "source_location": "L97",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_generate",
+      "target": "app_support_datetimehelper_datetimehelper_now",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L156",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_reset",
+      "target": "app_services_site_homepageconfigurationservice_homepageconfigurationservice_schema",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L206",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createproviders",
+      "target": "app_models_admin_user_role_role",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L256",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createproviders",
+      "target": "app_models_admin_user_permission_permission",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L260",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createmembers",
+      "target": "app_models_member_member",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L302",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createmembers",
+      "target": "app_support_datetimehelper_datetimehelper_now",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L308",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcategories",
+      "target": "app_models_admin_category_category",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L347",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createmedia",
+      "target": "app_models_admin_media_media_media",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L368",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_creategalleries",
+      "target": "app_models_admin_gallery_gallery_gallery",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L393",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_creategalleries",
+      "target": "app_support_datetimehelper_datetimehelper_now",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L398",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createblogposts",
+      "target": "app_models_admin_blogpost_blogpost_blogpost",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L437",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createblogposts",
+      "target": "app_support_datetimehelper_datetimehelper_now",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L443",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createproducts",
+      "target": "app_models_admin_product_product_product",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L485",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createproducts",
+      "target": "app_support_datetimehelper_datetimehelper_now",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L490",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createproducts",
+      "target": "app_models_admin_product_productvariant_productvariant",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L519",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createproducts",
+      "target": "app_models_admin_ecommerce_inventorymovement_inventorymovement",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L531",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createappointments",
+      "target": "app_models_appointment_providerworkinghour_providerworkinghour",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L555",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createappointments",
+      "target": "app_models_appointment_providertimeoff_providertimeoff",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L565",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createappointments",
+      "target": "app_support_datetimehelper_datetimehelper_now",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L567",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createappointments",
+      "target": "app_models_appointment_globalblackout_globalblackout",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L572",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createappointments",
+      "target": "app_models_appointment_appointment_appointment",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L586",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createappointments",
+      "target": "app_models_appointment_appointmentslot_appointmentslot",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L598",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createprojects",
+      "target": "app_models_admin_project_project_project",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L630",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createprojects",
+      "target": "app_support_datetimehelper_datetimehelper_now",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L639",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createprojects",
+      "target": "app_models_admin_project_projectfile_projectfile",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L653",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcontactmessages",
+      "target": "app_models_contactmessage_contactmessage",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L690",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcontactmessages",
+      "target": "app_support_datetimehelper_datetimehelper_now",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L708",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createsitecontent",
+      "target": "app_models_site_sitepage_sitepage",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L724",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createsitecontent",
+      "target": "app_support_datetimehelper_datetimehelper_now",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L739",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createsitecontent",
+      "target": "app_models_site_sitefaq_sitefaq",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L770",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createsitecontent",
+      "target": "app_models_site_sitecounter_sitecounter",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L787",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createsitecontent",
+      "target": "app_models_site_homeslider_homeslider",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L805",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createsitecontent",
+      "target": "app_models_site_sitehomepagesection_sitehomepagesection",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L820",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcommercedata",
+      "target": "app_models_admin_ecommerce_ecommercecoupon_ecommercecoupon",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L852",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcommercedata",
+      "target": "app_support_datetimehelper_datetimehelper_now",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L863",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcommercedata",
+      "target": "app_models_site_paymentintegration_paymentintegration",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L869",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcommercedata",
+      "target": "app_models_admin_ecommerce_ecommerceorder_ecommerceorder",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L886",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcommercedata",
+      "target": "app_models_admin_ecommerce_ecommerceorderitem_ecommerceorderitem",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L920",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcommercedata",
+      "target": "app_models_admin_ecommerce_ecommerceordertransaction_ecommerceordertransaction",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L937",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcommercedata",
+      "target": "app_models_admin_ecommerce_ecommerceorderstatushistory_ecommerceorderstatushistory",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L948",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcommercedata",
+      "target": "app_models_admin_ecommerce_ecommerceshipment_ecommerceshipment",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L961",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcommercedata",
+      "target": "app_models_admin_ecommerce_ecommerceinvoice_ecommerceinvoice",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L974",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createcommercedata",
+      "target": "app_models_admin_ecommerce_paymentwebhookevent_paymentwebhookevent",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L989",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createreviews",
+      "target": "app_models_review_servicereviewquestion_servicereviewquestion",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1011",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createreviews",
+      "target": "app_models_review_servicereview_servicereview",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1023",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createreviews",
+      "target": "app_support_datetimehelper_datetimehelper_now",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1035",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createreviews",
+      "target": "app_models_review_servicereviewitem_servicereviewitem",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1051",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createsystemactivity",
+      "target": "app_models_admin_adminnotification_adminnotification",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1086",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createsystemactivity",
+      "target": "app_support_datetimehelper_datetimehelper_now",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1095",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_createsystemactivity",
+      "target": "app_models_admin_auditlog_auditlog_auditlog",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1113",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_protecteduserids",
+      "target": "app_services_site_homepageconfigurationservice_homepageconfigurationservice_schema",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1151",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_protectedmediaids",
+      "target": "app_services_site_homepageconfigurationservice_homepageconfigurationservice_schema",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1164",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_protectedmediaids",
+      "target": "app_models_site_sitesetting_sitesetting",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1169",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_protectedmediaids",
+      "target": "app_models_site_sitehomepageconfig_sitehomepageconfig",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1173",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_filesscheduledfordeletion",
+      "target": "app_services_site_homepageconfigurationservice_homepageconfigurationservice_schema",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1191",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_filesscheduledfordeletion",
+      "target": "app_models_admin_media_media_media",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1192",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_filesscheduledfordeletion",
+      "target": "app_models_admin_project_projectfile_projectfile",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1206",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_filesscheduledfordeletion",
+      "target": "app_models_member_member",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1212",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_cleanauthenticationstate",
+      "target": "app_services_site_homepageconfigurationservice_homepageconfigurationservice_schema",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1239",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_detachdeletedmenueditor",
+      "target": "app_services_site_homepageconfigurationservice_homepageconfigurationservice_schema",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1254",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_counttable",
+      "target": "app_services_site_homepageconfigurationservice_homepageconfigurationservice_schema",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1296",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_nonadminusercount",
+      "target": "app_services_site_homepageconfigurationservice_homepageconfigurationservice_schema",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1301",
+      "weight": 1.0
+    },
+    {
+      "source": "app_services_admin_demodatafactoryservice_demodatafactoryservice_spreadcreatedat",
+      "target": "app_support_datetimehelper_datetimehelper_now",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "app/Services/Admin/DemoDataFactoryService.php",
+      "source_location": "L1320",
       "weight": 1.0
     },
     {
@@ -109704,7 +113120,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "resources/js/admin/pages/index.js",
-      "source_location": "L72",
+      "source_location": "L73",
       "weight": 1.0
     },
     {
@@ -110324,6 +113740,193 @@
       "weight": 1.0
     },
     {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_super_admin_can_generate_relational_sample_data_for_main_modules",
+      "target": "app_models_site_sitenavigationitem_sitenavigationitem",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_super_admin_can_generate_relational_sample_data_for_main_modules",
+      "target": "app_models_site_sitefaq_sitefaq",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L76",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_super_admin_can_generate_relational_sample_data_for_main_modules",
+      "target": "app_models_review_servicereview_servicereview",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_super_admin_can_generate_relational_sample_data_for_main_modules",
+      "target": "app_models_admin_blogpost_blogpost_blogpost",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L86",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_super_admin_can_generate_relational_sample_data_for_main_modules",
+      "target": "app_models_admin_product_product_product",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L87",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_super_admin_can_generate_relational_sample_data_for_main_modules",
+      "target": "app_models_appointment_appointment_appointment",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L88",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_super_admin_can_generate_relational_sample_data_for_main_modules",
+      "target": "app_models_contactmessage_contactmessage",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_super_admin_can_generate_relational_sample_data_for_main_modules",
+      "target": "app_models_admin_ecommerce_ecommerceorder_ecommerceorder",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L91",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_super_admin_can_generate_relational_sample_data_for_main_modules",
+      "target": "app_models_admin_media_media_media",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L93",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_reset_removes_operational_data_but_preserves_system_core_and_design_media",
+      "target": "app_models_admin_user_permission_permission",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_reset_removes_operational_data_but_preserves_system_core_and_design_media",
+      "target": "app_models_admin_media_media_media",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L110",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_reset_removes_operational_data_but_preserves_system_core_and_design_media",
+      "target": "app_models_site_sitesetting_sitesetting",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L119",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_reset_removes_operational_data_but_preserves_system_core_and_design_media",
+      "target": "app_models_site_sitehomepageconfig_sitehomepageconfig",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L120",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_reset_removes_operational_data_but_preserves_system_core_and_design_media",
+      "target": "app_models_site_paymentintegration_paymentintegration",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L125",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_reset_removes_operational_data_but_preserves_system_core_and_design_media",
+      "target": "app_models_admin_adminmenusetting_adminmenusetting",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L133",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_test_reset_removes_operational_data_but_preserves_system_core_and_design_media",
+      "target": "app_models_admin_project_projectfile_projectfile",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L142",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_admindemodatafactorytest_admindemodatafactorytest_userwithrole",
+      "target": "app_models_admin_user_role_role",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/AdminDemoDataFactoryTest.php",
+      "source_location": "L182",
+      "weight": 1.0
+    },
+    {
       "source": "tests_feature_adminloginbrandingtest_adminloginbrandingtest_test_superadmin_can_upload_and_remove_the_admin_login_logo",
       "target": "app_models_site_sitesetting_sitesetting",
       "relation": "calls",
@@ -110896,25 +114499,47 @@
       "weight": 1.0
     },
     {
-      "source": "tests_feature_siteportalflowtest_siteportalflowtest_test_contact_recipient_select_shows_names_without_exposing_email_addresses",
+      "source": "tests_feature_siteportalflowtest_siteportalflowtest_test_contact_recipient_select_only_shows_non_admin_users_without_exposing_emails",
       "target": "app_models_admin_user_role_role",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L43",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
-      "source": "tests_feature_siteportalflowtest_siteportalflowtest_test_contact_recipient_select_shows_names_without_exposing_email_addresses",
+      "source": "tests_feature_siteportalflowtest_siteportalflowtest_test_contact_recipient_select_only_shows_non_admin_users_without_exposing_emails",
       "target": "app_models_admin_user_user_user",
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L47",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_siteportalflowtest_siteportalflowtest_test_contact_message_cannot_be_sent_to_admin_or_super_admin",
+      "target": "app_models_admin_user_role_role",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/SitePortalFlowTest.php",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_feature_siteportalflowtest_siteportalflowtest_test_contact_message_cannot_be_sent_to_admin_or_super_admin",
+      "target": "app_models_admin_user_user_user",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests/Feature/SitePortalFlowTest.php",
+      "source_location": "L93",
       "weight": 1.0
     },
     {
@@ -110925,7 +114550,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L63",
+      "source_location": "L129",
       "weight": 1.0
     },
     {
@@ -110936,7 +114561,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L68",
+      "source_location": "L134",
       "weight": 1.0
     },
     {
@@ -110947,7 +114572,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L74",
+      "source_location": "L140",
       "weight": 1.0
     },
     {
@@ -110958,7 +114583,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L107",
+      "source_location": "L173",
       "weight": 1.0
     },
     {
@@ -110969,7 +114594,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L116",
+      "source_location": "L182",
       "weight": 1.0
     },
     {
@@ -110980,7 +114605,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L120",
+      "source_location": "L186",
       "weight": 1.0
     },
     {
@@ -110991,7 +114616,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L146",
+      "source_location": "L216",
       "weight": 1.0
     },
     {
@@ -111002,7 +114627,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L149",
+      "source_location": "L219",
       "weight": 1.0
     },
     {
@@ -111013,7 +114638,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L170",
+      "source_location": "L240",
       "weight": 1.0
     },
     {
@@ -111024,7 +114649,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L177",
+      "source_location": "L247",
       "weight": 1.0
     },
     {
@@ -111035,7 +114660,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L206",
+      "source_location": "L276",
       "weight": 1.0
     },
     {
@@ -111046,7 +114671,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L209",
+      "source_location": "L279",
       "weight": 1.0
     },
     {
@@ -111057,7 +114682,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L214",
+      "source_location": "L284",
       "weight": 1.0
     },
     {
@@ -111068,7 +114693,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L259",
+      "source_location": "L329",
       "weight": 1.0
     },
     {
@@ -111079,7 +114704,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/Feature/SitePortalFlowTest.php",
-      "source_location": "L265",
+      "source_location": "L335",
       "weight": 1.0
     },
     {

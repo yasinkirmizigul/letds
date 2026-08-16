@@ -65,6 +65,7 @@ import MenuVisibilityEdit from './menu-visibility/edit';
 import ServiceReviewsIndex from './service-reviews/index';
 import ServiceReviewQuestions from './service-reviews/questions';
 import AuditLogsIndex from './audit-logs/index';
+import DemoDataIndex from './system/demo-data/index';
 
 const NoopPage = async () => {};
 
@@ -75,6 +76,7 @@ export function registerPages() {
     register('service-reviews.index', ServiceReviewsIndex);
     register('service-reviews.questions', ServiceReviewQuestions);
     register('audit.index', AuditLogsIndex);
+    register('demo-data.index', DemoDataIndex);
 
     register('blog.create', BlogCreate);
     register('blog.edit', BlogEdit);

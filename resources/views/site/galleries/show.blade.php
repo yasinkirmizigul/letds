@@ -37,17 +37,39 @@
             @endforeach
         </section>
 
-        <dialog class="site-lightbox" data-gallery-dialog aria-label="Galeri görseli">
-            <div class="relative">
-                <button type="button" class="absolute right-3 top-3 z-10 grid size-11 place-items-center rounded-full bg-black/55 text-xl text-white backdrop-blur" data-gallery-close aria-label="Kapat">×</button>
-                <button type="button" class="absolute left-3 top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-black/55 text-xl text-white backdrop-blur" data-gallery-prev aria-label="Önceki görsel">←</button>
-                <img src="" alt="" data-gallery-dialog-image>
-                <button type="button" class="absolute right-3 top-1/2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-black/55 text-xl text-white backdrop-blur" data-gallery-next aria-label="Sonraki görsel">→</button>
-                <div class="flex items-center justify-between gap-4 px-5 py-4 text-sm text-white/75">
-                    <span data-gallery-dialog-caption></span>
-                    <span data-gallery-dialog-counter></span>
+        <dialog class="site-lightbox" data-gallery-dialog aria-labelledby="gallery-lightbox-title" aria-describedby="gallery-lightbox-caption">
+            <section class="site-lightbox__panel">
+                <h2 id="gallery-lightbox-title" class="sr-only">{{ $gallery->name }} galeri görüntüleyicisi</h2>
+
+                <button type="button" class="site-lightbox__control site-lightbox__close" data-gallery-close aria-label="Galeriyi kapat">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 6l12 12M18 6 6 18" />
+                    </svg>
+                </button>
+
+                <div class="site-lightbox__viewport" data-gallery-viewport>
+                    <div class="site-lightbox__loader" data-gallery-loader aria-hidden="true"><span></span></div>
+
+                    <button type="button" class="site-lightbox__control site-lightbox__previous" data-gallery-prev aria-label="Önceki görsel">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="m15 18-6-6 6-6" />
+                        </svg>
+                    </button>
+
+                    <img src="" alt="" draggable="false" data-gallery-dialog-image>
+
+                    <button type="button" class="site-lightbox__control site-lightbox__next" data-gallery-next aria-label="Sonraki görsel">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="m9 18 6-6-6-6" />
+                        </svg>
+                    </button>
                 </div>
-            </div>
+
+                <footer class="site-lightbox__footer">
+                    <span id="gallery-lightbox-caption" class="site-lightbox__caption" data-gallery-dialog-caption></span>
+                    <span class="site-lightbox__counter" data-gallery-dialog-counter aria-live="polite"></span>
+                </footer>
+            </section>
         </dialog>
     </div>
 
