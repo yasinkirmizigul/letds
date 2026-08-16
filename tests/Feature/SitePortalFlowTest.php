@@ -78,6 +78,8 @@ class SitePortalFlowTest extends TestCase
         $this->get(route('site.contact-messages.create'))
             ->assertOk()
             ->assertSee('Analiz Uzmanı')
+            ->assertSee('class="kt-input w-full', false)
+            ->assertSee('data-contact-message-field', false)
             ->assertDontSee('hidden-recipient@example.test')
             ->assertDontSee('İletişim Test Admini')
             ->assertDontSee('İletişim Test Süper Admini')

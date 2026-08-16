@@ -232,7 +232,8 @@
                                 <textarea
                                     name="message"
                                     rows="8"
-                                    class="kt-textarea w-full @error('message') kt-input-invalid @enderror"
+                                    class="kt-input w-full @error('message') kt-input-invalid @enderror"
+                                    data-contact-message-field
                                     placeholder="İhtiyacınızı, beklentinizi ya da yaşadığınız durumu detaylıca yazın"
                                 >{{ old('message') }}</textarea>
                                 @error('message')
