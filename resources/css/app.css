@@ -521,6 +521,8 @@ html[data-site-theme="dark"] body.site-shell .site-theme-toggle__icon--sun {
 }
 
 html[data-site-theme="dark"] body.site-shell .site-theme-toggle {
+    border-color: color-mix(in oklab, var(--foreground) 46%, var(--border));
+    color: color-mix(in oklab, var(--foreground) 88%, white);
     background: color-mix(in oklab, var(--background) 62%, var(--accent));
     box-shadow: 0 0.65rem 1.5rem rgb(0 0 0 / 18%);
 }

@@ -126,6 +126,7 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('grid-template-areas:', $homeCss);
         $this->assertStringContainsString('"brand theme"', $homeCss);
         $this->assertStringContainsString('html[data-site-theme="dark"] .home-discovery-section', $homeCss);
+        $this->assertStringContainsString('html[data-site-theme="dark"] .site-home-header .home-theme-toggle', $homeCss);
         $this->assertStringContainsString('.wrapper-logo.has-image', $homeCss);
         $this->assertStringContainsString('html.home-hero-pending .view-after', $homeCss);
         $this->assertStringContainsString('width: min(400px, calc(100vw - 64px));', $homeCss);

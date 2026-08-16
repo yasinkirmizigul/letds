@@ -27296,7 +27296,7 @@
       "label": ".frontendSourceFiles()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L150",
+      "source_location": "L151",
       "_origin": "ast"
     },
     {
@@ -27304,7 +27304,7 @@
       "label": ".hasTopLevelComma()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L170",
+      "source_location": "L171",
       "_origin": "ast"
     },
     {
@@ -27312,7 +27312,7 @@
       "label": ".relativePath()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L187",
+      "source_location": "L188",
       "_origin": "ast"
     },
     {
@@ -27320,7 +27320,7 @@
       "label": ".projectRoot()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L192",
+      "source_location": "L193",
       "_origin": "ast"
     },
     {
@@ -100815,7 +100815,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L150",
+      "source_location": "L151",
       "weight": 1.0
     },
     {
@@ -100824,7 +100824,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L170",
+      "source_location": "L171",
       "weight": 1.0
     },
     {
@@ -100833,7 +100833,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L187",
+      "source_location": "L188",
       "weight": 1.0
     },
     {
@@ -100842,7 +100842,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L192",
+      "source_location": "L193",
       "weight": 1.0
     },
     {
@@ -100942,7 +100942,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L155",
+      "source_location": "L156",
       "weight": 1.0
     },
     {
@@ -100952,7 +100952,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L189",
+      "source_location": "L190",
       "weight": 1.0
     },
     {

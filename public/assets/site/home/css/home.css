@@ -352,6 +352,11 @@ html[data-site-theme="dark"] .site-theme-toggle__icon--sun {
   background: color-mix(in srgb, var(--home-sticky-header-bg) 82%, transparent);
 }
 
+html[data-site-theme="dark"] .site-home-header .home-theme-toggle {
+  color: rgba(245, 248, 250, 0.9);
+  border-color: rgba(245, 248, 250, 0.62);
+}
+
 .home-mode-tab.on-after {
   color: var(--home-after-text);
 }
