@@ -2,6 +2,7 @@
 @import "@fontsource-variable/besley/index.css";
 @import "tailwindcss";
 @import "./kt-btn-bootstrap.css";
+@import "./title-tooltips.css";
 
 /* =========================
    THEME TOKENS (OKLCH palette'e bağlanır)

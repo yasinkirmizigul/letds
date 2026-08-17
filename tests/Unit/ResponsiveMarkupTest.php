@@ -290,6 +290,49 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('.homepage-color-control > input', $css);
     }
 
+    public function test_admin_preview_link_and_global_title_tooltips_are_available(): void
+    {
+        $root = $this->projectRoot().DIRECTORY_SEPARATOR;
+        $header = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'layouts'.DIRECTORY_SEPARATOR.'main'.DIRECTORY_SEPARATOR.'header.blade.php');
+        $tooltipScript = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR.'core'.DIRECTORY_SEPARATOR.'title-tooltips.js');
+        $adminScript = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'app.js');
+        $siteScript = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'app.js');
+        $homeTooltipScript = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'title-tooltips.js');
+        $homeView = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home.blade.php');
+        $css = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
+        $tooltipCss = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'title-tooltips.css');
+        $viteConfig = file_get_contents($root.'vite.config.js');
+
+        $this->assertStringContainsString("route('site.home')", $header);
+        $this->assertStringContainsString('target="_blank"', $header);
+        $this->assertStringContainsString('rel="noopener noreferrer"', $header);
+        $this->assertStringContainsString('title="Siteyi önizle"', $header);
+        $this->assertStringContainsString('aria-label="Siteyi önizle"', $header);
+        $this->assertStringContainsString('ki-outline ki-eye', $header);
+
+        $this->assertStringContainsString("import initTitleTooltips from '@/core/title-tooltips';", $adminScript);
+        $this->assertStringContainsString("import initTitleTooltips from '@/core/title-tooltips';", $siteScript);
+        $this->assertStringContainsString("import initTitleTooltips from '@/core/title-tooltips';", $homeTooltipScript);
+        $this->assertStringContainsString('initTitleTooltips(document);', $adminScript);
+        $this->assertStringContainsString('initTitleTooltips(document);', $siteScript);
+        $this->assertStringContainsString('initTitleTooltips(document)', $homeTooltipScript);
+        $this->assertStringContainsString("@vite(['resources/css/title-tooltips.css', 'resources/js/site/title-tooltips.js'])", $homeView);
+        $this->assertStringContainsString("'resources/css/title-tooltips.css'", $viteConfig);
+        $this->assertStringContainsString("'resources/js/site/title-tooltips.js'", $viteConfig);
+        $this->assertStringContainsString('new MutationObserver', $tooltipScript);
+        $this->assertStringContainsString("element.removeAttribute('title')", $tooltipScript);
+        $this->assertStringContainsString("tooltip.setAttribute('role', 'tooltip')", $tooltipScript);
+        $this->assertStringContainsString("element.setAttribute('aria-describedby'", $tooltipScript);
+        $this->assertStringContainsString("event.key === 'Escape'", $tooltipScript);
+
+        $this->assertStringContainsString('@import "./title-tooltips.css";', $css);
+        $this->assertStringContainsString('.app-title-tooltip {', $tooltipCss);
+        $this->assertStringContainsString('.app-title-tooltip.is-visible', $tooltipCss);
+        $this->assertStringContainsString('.app-title-tooltip[data-placement="bottom"]', $tooltipCss);
+        $this->assertStringContainsString('html[data-site-theme="dark"] body.site-shell', $tooltipCss);
+        $this->assertStringContainsString('html[data-site-theme="dark"] body.site-home-index', $tooltipCss);
+    }
+
     private function frontendSourceFiles(): array
     {
         $files = [];

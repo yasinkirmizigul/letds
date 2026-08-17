@@ -3,6 +3,7 @@ import './auth/member-register';
 import { initReviewStars } from './reviews';
 import Alpine from 'alpinejs';
 import { initGlobalBlockUi } from '@/core/block-ui';
+import initTitleTooltips from '@/core/title-tooltips';
 
 window.Alpine = Alpine;
 Alpine.start();
@@ -45,6 +46,7 @@ function domReady(fn) {
 }
 
 domReady(() => {
+    initTitleTooltips(document);
     initKtComponents();
     initReveals();
     initReviewStars();

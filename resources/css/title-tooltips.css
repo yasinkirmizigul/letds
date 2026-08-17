@@ -1,0 +1,73 @@
+:where(body.dash_app, body.site-shell, body.site-home-index) {
+    --app-title-tooltip-bg: #17242a;
+    --app-title-tooltip-border: #3b4d55;
+    --app-title-tooltip-fg: #f8fafc;
+}
+
+.dark body.dash_app,
+html[data-site-theme="dark"] body.site-shell,
+html[data-site-theme="dark"] body.site-home-index {
+    --app-title-tooltip-bg: #2a343d;
+    --app-title-tooltip-border: #52616a;
+    --app-title-tooltip-fg: #f8fafc;
+}
+
+.app-title-tooltip {
+    position: fixed;
+    z-index: 1600;
+    max-width: min(20rem, calc(100vw - 1rem));
+    padding: .5rem .68rem;
+    pointer-events: none;
+    visibility: hidden;
+    opacity: 0;
+    border: 1px solid var(--app-title-tooltip-border, #3b4d55);
+    border-radius: .65rem;
+    background: var(--app-title-tooltip-bg, #17242a);
+    box-shadow: 0 14px 34px rgb(15 23 42 / 22%);
+    color: var(--app-title-tooltip-fg, #f8fafc);
+    font-family: inherit;
+    font-size: .75rem;
+    font-weight: 700;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+    text-align: center;
+    transform: translateY(.25rem) scale(.98);
+    transition: opacity 140ms ease, transform 140ms ease, visibility 140ms ease;
+}
+
+.app-title-tooltip[data-placement="bottom"] {
+    transform: translateY(-.25rem) scale(.98);
+}
+
+.app-title-tooltip.is-visible {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.app-title-tooltip::after {
+    position: absolute;
+    bottom: -.29rem;
+    left: var(--app-tooltip-arrow-x, 50%);
+    width: .52rem;
+    height: .52rem;
+    content: "";
+    border-right: 1px solid var(--app-title-tooltip-border, #3b4d55);
+    border-bottom: 1px solid var(--app-title-tooltip-border, #3b4d55);
+    background: inherit;
+    transform: translateX(-50%) rotate(45deg);
+}
+
+.app-title-tooltip[data-placement="bottom"]::after {
+    top: -.29rem;
+    bottom: auto;
+    border: 0;
+    border-top: 1px solid var(--app-title-tooltip-border, #3b4d55);
+    border-left: 1px solid var(--app-title-tooltip-border, #3b4d55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .app-title-tooltip {
+        transition: none;
+    }
+}

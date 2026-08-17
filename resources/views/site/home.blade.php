@@ -68,6 +68,7 @@
         <link rel="preload" as="image" href="{{ $backgroundImage['url'] }}" fetchpriority="high">
     @endif
     <link rel="stylesheet" href="{{ $homeCssUrl }}">
+    @vite(['resources/css/title-tooltips.css', 'resources/js/site/title-tooltips.js'])
     <noscript>
         <style>
             html.home-hero-pending .view-after { width: 50% !important; }

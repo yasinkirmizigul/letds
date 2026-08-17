@@ -1290,8 +1290,8 @@
     "semantic_hash": "d8eda274115af5fd2aaa8230af329ef7"
   },
   "resources/js/admin/app.js": {
-    "mtime": 1786955013.9262342,
-    "ast_hash": "cf2547ea525371427964935ce7468187",
+    "mtime": 1786969030.8856378,
+    "ast_hash": "d35932ae7974ff04d861a895bab30106",
     "semantic_hash": ""
   },
   "resources/js/admin/helpers/datatable-helper.js": {
@@ -1710,8 +1710,8 @@
     "semantic_hash": ""
   },
   "resources/js/site/app.js": {
-    "mtime": 1786831032.73447,
-    "ast_hash": "b2e39365615eacf001c63a2c5c9d0fe7",
+    "mtime": 1786969030.8866427,
+    "ast_hash": "5e7832b5403ac248f8d3905600b3fe05",
     "semantic_hash": ""
   },
   "resources/js/site/appointments/index.js": {
@@ -1765,8 +1765,8 @@
     "semantic_hash": ""
   },
   "resources/views/admin/layouts/main/header.blade.php": {
-    "mtime": 1786280392.1917887,
-    "ast_hash": "40fe8373fbe1e47669a7412f3b50ea05",
+    "mtime": 1786969030.8824017,
+    "ast_hash": "9b74e79fd0fe4def170b9a776a4664d0",
     "semantic_hash": ""
   },
   "resources/views/admin/layouts/main/sidebar.blade.php": {
@@ -2345,8 +2345,8 @@
     "semantic_hash": ""
   },
   "resources/views/site/home.blade.php": {
-    "mtime": 1786822943.6759906,
-    "ast_hash": "fe5371349b974825ae9881b8a8278e48",
+    "mtime": 1786969362.6395273,
+    "ast_hash": "81b11b1bc172f49ac886cae06c3b873b",
     "semantic_hash": ""
   },
   "resources/views/site/layouts/main/app.blade.php": {
@@ -2495,8 +2495,8 @@
     "semantic_hash": "76e58ba62c35169939383683b189578a"
   },
   "vite.config.js": {
-    "mtime": 1785833848.1935215,
-    "ast_hash": "6dd74505f90ecdcd62321fe87f3570c8",
+    "mtime": 1786969362.6395273,
+    "ast_hash": "6c8a2f44a9158b60ce961b18ca1150f0",
     "semantic_hash": ""
   },
   "app/Console/Commands/SyncServiceReviews.php": {
@@ -3035,8 +3035,8 @@
     "semantic_hash": ""
   },
   "tests/Unit/ResponsiveMarkupTest.php": {
-    "mtime": 1786964367.515826,
-    "ast_hash": "d7d94a52aaed8264fe31a760cffe58d0",
+    "mtime": 1786969362.6395273,
+    "ast_hash": "0aa8dc9e75fb99b728c4719938f65f0e",
     "semantic_hash": ""
   },
   "app/Http/Controllers/Site/Cms/FaqController.php": {
@@ -3137,6 +3137,16 @@
   "resources/js/admin/helpers/semantic-panels.js": {
     "mtime": 1786955013.9262342,
     "ast_hash": "cec8d9f8ea6e0ef08a0f34d6220d2231",
+    "semantic_hash": ""
+  },
+  "resources/js/core/title-tooltips.js": {
+    "mtime": 1786969078.9586332,
+    "ast_hash": "b0f7fb2d2696ad692ec5da3bbf0ff63d",
+    "semantic_hash": ""
+  },
+  "resources/js/site/title-tooltips.js": {
+    "mtime": 1786969362.6395273,
+    "ast_hash": "e5c8bfc0acfa1e9336d48af2ea6ffee7",
     "semantic_hash": ""
   }
 }

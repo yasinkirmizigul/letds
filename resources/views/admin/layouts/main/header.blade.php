@@ -32,6 +32,14 @@
 
         <!-- Topbar -->
         <div class="admin-topbar flex shrink-0 items-center gap-1 sm:gap-2.5">
+            <a href="{{ route('site.home') }}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="kt-btn kt-btn-ghost kt-btn-icon size-8 hover:bg-background hover:[&_i]:text-primary"
+               title="Siteyi önizle"
+               aria-label="Siteyi önizle">
+                <i class="ki-outline ki-eye text-xl" aria-hidden="true"></i>
+            </a>
             @includeIf('admin.partials.topbar-notifications')
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

@@ -18688,7 +18688,7 @@
       "label": "markReady()",
       "file_type": "code",
       "source_file": "resources/js/admin/app.js",
-      "source_location": "L24",
+      "source_location": "L25",
       "_origin": "ast"
     },
     {
@@ -18696,7 +18696,7 @@
       "label": "loaderFallback",
       "file_type": "code",
       "source_file": "resources/js/admin/app.js",
-      "source_location": "L34",
+      "source_location": "L35",
       "_origin": "ast"
     },
     {
@@ -18704,7 +18704,7 @@
       "label": "domReady()",
       "file_type": "code",
       "source_file": "resources/js/admin/app.js",
-      "source_location": "L90",
+      "source_location": "L91",
       "_origin": "ast"
     },
     {
@@ -24292,6 +24292,70 @@
       "_origin": "ast"
     },
     {
+      "id": "resources_js_core_title_tooltips",
+      "label": "title-tooltips.js",
+      "file_type": "code",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_title_tooltips_specialized_tooltip_selector",
+      "label": "SPECIALIZED_TOOLTIP_SELECTOR",
+      "file_type": "code",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L3",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_title_tooltips_aselement",
+      "label": "asElement()",
+      "file_type": "code",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L14",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_title_tooltips_ensureaccessiblename",
+      "label": "ensureAccessibleName()",
+      "file_type": "code",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L19",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_title_tooltips_upgradetitle",
+      "label": "upgradeTitle()",
+      "file_type": "code",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L30",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_title_tooltips_upgradetitleswithin",
+      "label": "upgradeTitlesWithin()",
+      "file_type": "code",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L45",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_title_tooltips_describedbyids",
+      "label": "describedByIds()",
+      "file_type": "code",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L53",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_core_title_tooltips_inittitletooltips",
+      "label": "initTitleTooltips()",
+      "file_type": "code",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L59",
+      "_origin": "ast"
+    },
+    {
       "id": "resources_js_site_app",
       "label": "app.js",
       "file_type": "code",
@@ -24304,7 +24368,7 @@
       "label": "initKtComponents()",
       "file_type": "code",
       "source_file": "resources/js/site/app.js",
-      "source_location": "L11",
+      "source_location": "L12",
       "_origin": "ast"
     },
     {
@@ -24312,7 +24376,7 @@
       "label": "initReveals()",
       "file_type": "code",
       "source_file": "resources/js/site/app.js",
-      "source_location": "L19",
+      "source_location": "L20",
       "_origin": "ast"
     },
     {
@@ -24320,7 +24384,7 @@
       "label": "domReady()",
       "file_type": "code",
       "source_file": "resources/js/site/app.js",
-      "source_location": "L39",
+      "source_location": "L40",
       "_origin": "ast"
     },
     {
@@ -24745,6 +24809,22 @@
       "file_type": "code",
       "source_file": "resources/js/site/reviews.js",
       "source_location": "L15",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_site_title_tooltips",
+      "label": "title-tooltips.js",
+      "file_type": "code",
+      "source_file": "resources/js/site/title-tooltips.js",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "resources_js_site_title_tooltips_domready",
+      "label": "domReady()",
+      "file_type": "code",
+      "source_file": "resources/js/site/title-tooltips.js",
+      "source_location": "L3",
       "_origin": "ast"
     },
     {
@@ -27964,11 +28044,19 @@
       "_origin": "ast"
     },
     {
+      "id": "tests_unit_responsivemarkuptest_responsivemarkuptest_test_admin_preview_link_and_global_title_tooltips_are_available",
+      "label": ".test_admin_preview_link_and_global_title_tooltips_are_available()",
+      "file_type": "code",
+      "source_file": "tests/Unit/ResponsiveMarkupTest.php",
+      "source_location": "L293",
+      "_origin": "ast"
+    },
+    {
       "id": "tests_unit_responsivemarkuptest_responsivemarkuptest_frontendsourcefiles",
       "label": ".frontendSourceFiles()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L293",
+      "source_location": "L336",
       "_origin": "ast"
     },
     {
@@ -27976,7 +28064,7 @@
       "label": ".hasTopLevelComma()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L313",
+      "source_location": "L356",
       "_origin": "ast"
     },
     {
@@ -27984,7 +28072,7 @@
       "label": ".relativePath()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L330",
+      "source_location": "L373",
       "_origin": "ast"
     },
     {
@@ -27992,7 +28080,7 @@
       "label": ".projectRoot()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L335",
+      "source_location": "L378",
       "_origin": "ast"
     },
     {
@@ -84856,7 +84944,7 @@
     },
     {
       "source": "resources_js_admin_app",
-      "target": "resources_js_admin_helpers_semantic_panels",
+      "target": "ref_core_title_tooltips",
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -84866,7 +84954,7 @@
     },
     {
       "source": "resources_js_admin_app",
-      "target": "ref_core_metronic_pickers",
+      "target": "resources_js_admin_helpers_semantic_panels",
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -84876,7 +84964,7 @@
     },
     {
       "source": "resources_js_admin_app",
-      "target": "ref_core_block_ui",
+      "target": "ref_core_metronic_pickers",
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -84886,11 +84974,21 @@
     },
     {
       "source": "resources_js_admin_app",
+      "target": "ref_core_block_ui",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/admin/app.js",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_admin_app",
       "target": "resources_js_admin_app_markready",
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/app.js",
-      "source_location": "L24",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -84899,7 +84997,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/app.js",
-      "source_location": "L34",
+      "source_location": "L35",
       "weight": 1.0
     },
     {
@@ -84908,7 +85006,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/app.js",
-      "source_location": "L90",
+      "source_location": "L91",
       "weight": 1.0
     },
     {
@@ -99156,6 +99254,129 @@
       "weight": 1.0
     },
     {
+      "source": "resources_js_core_title_tooltips",
+      "target": "resources_js_core_title_tooltips_specialized_tooltip_selector",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_title_tooltips",
+      "target": "resources_js_core_title_tooltips_aselement",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_title_tooltips",
+      "target": "resources_js_core_title_tooltips_ensureaccessiblename",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_title_tooltips",
+      "target": "resources_js_core_title_tooltips_upgradetitle",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_title_tooltips",
+      "target": "resources_js_core_title_tooltips_upgradetitleswithin",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_title_tooltips",
+      "target": "resources_js_core_title_tooltips_describedbyids",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_title_tooltips",
+      "target": "resources_js_core_title_tooltips_inittitletooltips",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_title_tooltips_upgradetitle",
+      "target": "resources_js_core_title_tooltips_ensureaccessiblename",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_title_tooltips_upgradetitleswithin",
+      "target": "resources_js_core_title_tooltips_upgradetitle",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_title_tooltips_inittitletooltips",
+      "target": "resources_js_core_title_tooltips_upgradetitleswithin",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L66",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_title_tooltips_inittitletooltips",
+      "target": "resources_js_core_title_tooltips_describedbyids",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L86",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_title_tooltips_inittitletooltips",
+      "target": "resources_js_core_title_tooltips_aselement",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L165",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_core_title_tooltips_inittitletooltips",
+      "target": "resources_js_core_title_tooltips_upgradetitle",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/core/title-tooltips.js",
+      "source_location": "L197",
+      "weight": 1.0
+    },
+    {
       "source": "resources_js_site_app",
       "target": "resources_js_bootstrap",
       "relation": "imports_from",
@@ -99217,11 +99438,21 @@
     },
     {
       "source": "resources_js_site_app",
+      "target": "ref_core_title_tooltips",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/site/app.js",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_site_app",
       "target": "resources_js_site_app_initktcomponents",
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/site/app.js",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -99230,7 +99461,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/site/app.js",
-      "source_location": "L19",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -99239,7 +99470,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/site/app.js",
-      "source_location": "L39",
+      "source_location": "L40",
       "weight": 1.0
     },
     {
@@ -100025,6 +100256,25 @@
       "confidence": "EXTRACTED",
       "source_file": "resources/js/site/reviews.js",
       "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_site_title_tooltips",
+      "target": "ref_core_title_tooltips",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/site/title-tooltips.js",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "resources_js_site_title_tooltips",
+      "target": "resources_js_site_title_tooltips_domready",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "resources/js/site/title-tooltips.js",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
@@ -104442,7 +104692,7 @@
     },
     {
       "source": "tests_unit_responsivemarkuptest_responsivemarkuptest",
-      "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_frontendsourcefiles",
+      "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_test_admin_preview_link_and_global_title_tooltips_are_available",
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
@@ -104451,11 +104701,20 @@
     },
     {
       "source": "tests_unit_responsivemarkuptest_responsivemarkuptest",
+      "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_frontendsourcefiles",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Unit/ResponsiveMarkupTest.php",
+      "source_location": "L336",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_unit_responsivemarkuptest_responsivemarkuptest",
       "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_hastoplevelcomma",
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L313",
+      "source_location": "L356",
       "weight": 1.0
     },
     {
@@ -104464,7 +104723,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L330",
+      "source_location": "L373",
       "weight": 1.0
     },
     {
@@ -104473,7 +104732,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L335",
+      "source_location": "L378",
       "weight": 1.0
     },
     {
@@ -104647,13 +104906,23 @@
       "weight": 1.0
     },
     {
+      "source": "tests_unit_responsivemarkuptest_responsivemarkuptest_test_admin_preview_link_and_global_title_tooltips_are_available",
+      "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_projectroot",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Unit/ResponsiveMarkupTest.php",
+      "source_location": "L295",
+      "weight": 1.0
+    },
+    {
       "source": "tests_unit_responsivemarkuptest_responsivemarkuptest_frontendsourcefiles",
       "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_projectroot",
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L298",
+      "source_location": "L341",
       "weight": 1.0
     },
     {
@@ -104663,7 +104932,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L332",
+      "source_location": "L375",
       "weight": 1.0
     },
     {
@@ -106298,7 +106567,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/admin/app.js",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
