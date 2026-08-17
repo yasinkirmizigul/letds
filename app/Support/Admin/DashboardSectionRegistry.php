@@ -4,6 +4,12 @@ namespace App\Support\Admin;
 
 class DashboardSectionRegistry
 {
+    public const MAX_LAYOUT_COLUMNS = 3;
+
+    private const DEFAULT_LAYOUT_GROUPS = [
+        ['recent_messages', 'upcoming_appointments', 'recent_content'],
+    ];
+
     public static function definitions(array $capabilities = []): array
     {
         return [
@@ -391,5 +397,56 @@ class DashboardSectionRegistry
         }
 
         return $keys;
+    }
+
+    public static function topLevelKeys(array $definitions): array
+    {
+        return collect($definitions)
+            ->filter(fn (array $definition) => ($definition['available'] ?? false) === true)
+            ->keys()
+            ->values()
+            ->all();
+    }
+
+    public static function defaultLayoutRows(array $definitions): array
+    {
+        $topLevelKeys = self::topLevelKeys($definitions);
+        $groupByKey = [];
+
+        foreach (self::DEFAULT_LAYOUT_GROUPS as $groupIndex => $group) {
+            foreach ($group as $key) {
+                $groupByKey[$key] = $groupIndex;
+            }
+        }
+
+        $renderedGroups = [];
+        $rows = [];
+
+        foreach ($topLevelKeys as $key) {
+            $groupIndex = $groupByKey[$key] ?? null;
+
+            if ($groupIndex === null) {
+                $rows[] = [$key];
+
+                continue;
+            }
+
+            if (isset($renderedGroups[$groupIndex])) {
+                continue;
+            }
+
+            $row = array_values(array_filter(
+                self::DEFAULT_LAYOUT_GROUPS[$groupIndex],
+                fn (string $groupKey) => in_array($groupKey, $topLevelKeys, true)
+            ));
+
+            if ($row !== []) {
+                $rows[] = array_slice($row, 0, self::MAX_LAYOUT_COLUMNS);
+            }
+
+            $renderedGroups[$groupIndex] = true;
+        }
+
+        return $rows;
     }
 }

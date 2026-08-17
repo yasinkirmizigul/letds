@@ -16,6 +16,19 @@
         $showOperationsHealth = ($dashboardSectionVisibility['operations_health'] ?? false) && $visibleHealthCards->isNotEmpty();
         $showCommerceFlow = ($dashboardSectionVisibility['commerce_flow'] ?? false) && $canEcommerce;
         $showRiskCenter = ($dashboardSectionVisibility['risk_center'] ?? false) && $visibleRiskGroups->isNotEmpty();
+        $renderableDashboardSections = [
+            'hero_overview' => $dashboardSectionVisibility['hero_overview'] ?? false,
+            'kpi_overview' => ($dashboardSectionVisibility['kpi_overview'] ?? false) && $visibleKpis->isNotEmpty(),
+            'module_overview' => ($dashboardSectionVisibility['module_overview'] ?? false) && $visibleModuleCards->isNotEmpty(),
+            'operations_health' => $showOperationsHealth,
+            'commerce_flow' => $showCommerceFlow,
+            'activity_charts' => ($dashboardSectionVisibility['activity_charts'] ?? false) && ($showMonthlyChart || $showActionChart || $showScheduleChart),
+            'recent_messages' => $dashboardSectionVisibility['recent_messages'] ?? false,
+            'upcoming_appointments' => $dashboardSectionVisibility['upcoming_appointments'] ?? false,
+            'recent_content' => $dashboardSectionVisibility['recent_content'] ?? false,
+            'risk_center' => $showRiskCenter,
+            'audit_issues' => ($dashboardSectionVisibility['audit_issues'] ?? false) && $canAudit,
+        ];
         $hasRenderableDashboardSection =
             ($dashboardSectionVisibility['hero_overview'] ?? false)
             || (($dashboardSectionVisibility['kpi_overview'] ?? false) && $visibleKpis->isNotEmpty())
@@ -28,6 +41,52 @@
             || ($dashboardSectionVisibility['recent_content'] ?? false)
             || $showRiskCenter
             || (($dashboardSectionVisibility['audit_issues'] ?? false) && $canAudit);
+        $activeDashboardLayoutRows = collect($dashboardLayoutRows ?? [])
+            ->map(fn ($row) => collect($row)
+                ->filter(fn ($key) => $renderableDashboardSections[$key] ?? false)
+                ->values()
+                ->all())
+            ->filter()
+            ->values();
+
+        if ($activeDashboardLayoutRows->isEmpty() && $hasRenderableDashboardSection) {
+            $activeDashboardLayoutRows = collect($renderableDashboardSections)
+                ->filter()
+                ->keys()
+                ->sortBy(fn ($key) => $dashboardSectionOrderIndex[$key] ?? PHP_INT_MAX)
+                ->map(fn ($key) => [$key])
+                ->values();
+        }
+
+        $dashboardLayoutPlacement = [];
+        $dashboardLayoutOrder = 10;
+        foreach ($activeDashboardLayoutRows as $rowIndex => $row) {
+            $columnCount = max(1, min(3, count($row)));
+            $columnSpan = match ($columnCount) {
+                2 => 3,
+                3 => 2,
+                default => 6,
+            };
+
+            foreach ($row as $key) {
+                $dashboardLayoutPlacement[$key] = [
+                    'span' => $columnSpan,
+                    'order' => $dashboardLayoutOrder,
+                    'row' => $rowIndex + 1,
+                    'columns' => $columnCount,
+                ];
+                $dashboardLayoutOrder += 10;
+            }
+        }
+
+        $dashboardBlockAttributes = function (string $key) use ($dashboardLayoutPlacement, $dashboardSectionOrderIndex): array {
+            return $dashboardLayoutPlacement[$key] ?? [
+                'span' => 6,
+                'order' => $dashboardSectionOrderIndex[$key] ?? 9990,
+                'row' => 0,
+                'columns' => 1,
+            ];
+        };
     @endphp
 
     <div class="kt-container-fixed dashboard-shell"
@@ -36,8 +95,8 @@
          data-action-chart='@json($actionChart)'
          data-schedule-chart='@json($scheduleChart)'>
 
-        <div class="grid gap-5 lg:gap-7.5">
-            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div class="dashboard-layout-grid">
+            <div class="dashboard-layout-heading flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                     <h1 class="text-xl font-semibold text-foreground">Kontrol Paneli</h1>
                     <div class="text-sm text-muted-foreground">
@@ -52,7 +111,7 @@
             </div>
 
             @unless($hasRenderableDashboardSection)
-                <section class="kt-card overflow-hidden">
+                <section class="dashboard-layout-full kt-card overflow-hidden">
                     <div class="kt-card-content px-6 py-10 text-center">
                         <div class="mx-auto inline-flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">
                             <i class="ki-filled ki-setting-2 text-2xl"></i>
@@ -71,12 +130,13 @@
             @endunless
 
             @if($dashboardSectionVisibility['hero_overview'] ?? false)
-                <section class="dashboard-hero kt-card" style="order: {{ $dashboardSectionOrderIndex['hero_overview'] ?? 20 }};">
+                @php($blockLayout = $dashboardBlockAttributes('hero_overview'))
+                <section class="dashboard-layout-block dashboard-hero kt-card" data-dashboard-block="hero_overview" data-dashboard-layout-row="{{ $blockLayout['row'] }}" data-dashboard-layout-columns="{{ $blockLayout['columns'] }}" style="--dashboard-grid-span: {{ $blockLayout['span'] }}; order: {{ $blockLayout['order'] }};">
                     <div class="dashboard-hero__orb dashboard-hero__orb--primary"></div>
                     <div class="dashboard-hero__orb dashboard-hero__orb--secondary"></div>
 
                     <div class="kt-card-content p-6 lg:p-8">
-                        <div class="grid gap-6 {{ $showHeroFocusList ? 'xl:grid-cols-[1.25fr_.75fr]' : '' }} xl:items-start">
+                        <div class="dashboard-hero-layout grid gap-6 {{ $showHeroFocusList ? 'xl:grid-cols-[1.25fr_.75fr]' : '' }} xl:items-start">
                             <div class="relative z-[1]">
                                 <div class="dashboard-kicker">Yönetim merkezi</div>
                                 <h2 class="mt-3 text-2xl font-semibold tracking-tight text-foreground lg:text-3xl">
@@ -157,7 +217,8 @@
             @endif
 
             @if(($dashboardSectionVisibility['kpi_overview'] ?? false) && $visibleKpis->isNotEmpty())
-                <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5" style="order: {{ $dashboardSectionOrderIndex['kpi_overview'] ?? 30 }};">
+                @php($blockLayout = $dashboardBlockAttributes('kpi_overview'))
+                <div class="dashboard-layout-block dashboard-kpi-grid grid gap-4 md:grid-cols-2 xl:grid-cols-5" data-dashboard-block="kpi_overview" data-dashboard-layout-row="{{ $blockLayout['row'] }}" data-dashboard-layout-columns="{{ $blockLayout['columns'] }}" style="--dashboard-grid-span: {{ $blockLayout['span'] }}; order: {{ $blockLayout['order'] }};">
                     @foreach($visibleKpis as $kpi)
                         <article class="dashboard-kpi-card kt-card" style="--dashboard-accent: {{ $kpi['accent'] }};">
                             <div class="kt-card-content p-5">
@@ -178,7 +239,8 @@
             @endif
 
             @if(($dashboardSectionVisibility['module_overview'] ?? false) && $visibleModuleCards->isNotEmpty())
-                <section class="kt-card" style="order: {{ $dashboardSectionOrderIndex['module_overview'] ?? 40 }};">
+                @php($blockLayout = $dashboardBlockAttributes('module_overview'))
+                <section class="dashboard-layout-block kt-card" data-dashboard-block="module_overview" data-dashboard-layout-row="{{ $blockLayout['row'] }}" data-dashboard-layout-columns="{{ $blockLayout['columns'] }}" style="--dashboard-grid-span: {{ $blockLayout['span'] }}; order: {{ $blockLayout['order'] }};">
                     <div class="kt-card-header py-5 flex-wrap gap-4">
                         <div>
                             <h3 class="kt-card-title">Hızlı erişim</h3>
@@ -188,7 +250,7 @@
                         </div>
                     </div>
                     <div class="kt-card-content p-5">
-                        <div class="grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
+                        <div class="dashboard-adaptive-grid grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
                             @foreach($visibleModuleCards as $card)
                                 <article class="dashboard-module-card" style="--dashboard-accent: {{ $card['accent'] }};">
                                     <div class="dashboard-module-card__head">
@@ -223,7 +285,8 @@
             @endif
 
             @if($showOperationsHealth)
-                <section class="kt-card" style="order: {{ $dashboardSectionOrderIndex['operations_health'] ?? 45 }};">
+                @php($blockLayout = $dashboardBlockAttributes('operations_health'))
+                <section class="dashboard-layout-block kt-card" data-dashboard-block="operations_health" data-dashboard-layout-row="{{ $blockLayout['row'] }}" data-dashboard-layout-columns="{{ $blockLayout['columns'] }}" style="--dashboard-grid-span: {{ $blockLayout['span'] }}; order: {{ $blockLayout['order'] }};">
                     <div class="kt-card-header py-5 flex-wrap gap-4">
                         <div>
                             <h3 class="kt-card-title">Operasyon sağlığı</h3>
@@ -233,7 +296,7 @@
                         </div>
                     </div>
                     <div class="kt-card-content p-5">
-                        <div class="grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
+                        <div class="dashboard-adaptive-grid grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
                             @foreach($visibleHealthCards as $card)
                                 <article class="dashboard-module-card" style="--dashboard-accent: {{ $card['accent'] }};">
                                     <div class="dashboard-module-card__head">
@@ -265,7 +328,8 @@
             @endif
 
             @if($showCommerceFlow)
-                <section class="kt-card" style="order: {{ $dashboardSectionOrderIndex['commerce_flow'] ?? 48 }};">
+                @php($blockLayout = $dashboardBlockAttributes('commerce_flow'))
+                <section class="dashboard-layout-block kt-card" data-dashboard-block="commerce_flow" data-dashboard-layout-row="{{ $blockLayout['row'] }}" data-dashboard-layout-columns="{{ $blockLayout['columns'] }}" style="--dashboard-grid-span: {{ $blockLayout['span'] }}; order: {{ $blockLayout['order'] }};">
                     <div class="kt-card-header py-5 flex-wrap gap-4">
                         <div>
                             <h3 class="kt-card-title">Sipariş akışı</h3>
@@ -279,7 +343,7 @@
                     </div>
 
                     <div class="kt-card-content p-5">
-                        <div class="grid gap-5 xl:grid-cols-[.85fr_1.15fr]">
+                        <div class="dashboard-split-grid grid gap-5 xl:grid-cols-[.85fr_1.15fr]">
                             <div class="grid gap-3">
                                 @foreach($commercePipeline as $item)
                                     <a href="{{ route('admin.ecommerce.orders.index') }}" class="dashboard-list-item">
@@ -320,7 +384,8 @@
             @endif
 
             @if(($dashboardSectionVisibility['activity_charts'] ?? false) && ($showMonthlyChart || $showActionChart || $showScheduleChart))
-                <div class="grid gap-5 {{ $showMonthlyChart && $showSecondaryCharts ? 'xl:grid-cols-[1.35fr_.65fr]' : '' }}" style="order: {{ $dashboardSectionOrderIndex['activity_charts'] ?? 50 }};">
+                @php($blockLayout = $dashboardBlockAttributes('activity_charts'))
+                <div class="dashboard-layout-block dashboard-chart-layout grid gap-5 {{ $showMonthlyChart && $showSecondaryCharts ? 'xl:grid-cols-[1.35fr_.65fr]' : '' }}" data-dashboard-block="activity_charts" data-dashboard-layout-row="{{ $blockLayout['row'] }}" data-dashboard-layout-columns="{{ $blockLayout['columns'] }}" style="--dashboard-grid-span: {{ $blockLayout['span'] }}; order: {{ $blockLayout['order'] }};">
                     @if($showMonthlyChart)
                         <section class="kt-card">
                             <div class="kt-card-header py-5 flex-wrap gap-4">
@@ -375,10 +440,9 @@
                 </div>
             @endif
 
-            @if(($dashboardSectionVisibility['recent_messages'] ?? false) || ($dashboardSectionVisibility['upcoming_appointments'] ?? false) || ($dashboardSectionVisibility['recent_content'] ?? false))
-                <div class="grid gap-5 xl:grid-cols-3" style="order: {{ $dashboardFlowOrder }}">
-                    @if($dashboardSectionVisibility['recent_messages'] ?? false)
-                        <section class="kt-card" style="order: {{ $dashboardSectionOrderIndex['recent_messages'] ?? 60 }};">
+            @if($dashboardSectionVisibility['recent_messages'] ?? false)
+                @php($blockLayout = $dashboardBlockAttributes('recent_messages'))
+                <section class="dashboard-layout-block kt-card" data-dashboard-block="recent_messages" data-dashboard-layout-row="{{ $blockLayout['row'] }}" data-dashboard-layout-columns="{{ $blockLayout['columns'] }}" style="--dashboard-grid-span: {{ $blockLayout['span'] }}; order: {{ $blockLayout['order'] }};">
                             <div class="kt-card-header py-5 flex-wrap gap-4">
                                 <div>
                                     <h3 class="kt-card-title">Son mesajlar</h3>
@@ -402,11 +466,12 @@
                                     </div>
                                 @endif
                             </div>
-                        </section>
-                    @endif
+                </section>
+            @endif
 
-                    @if($dashboardSectionVisibility['upcoming_appointments'] ?? false)
-                        <section class="kt-card" style="order: {{ $dashboardSectionOrderIndex['upcoming_appointments'] ?? 70 }};">
+            @if($dashboardSectionVisibility['upcoming_appointments'] ?? false)
+                @php($blockLayout = $dashboardBlockAttributes('upcoming_appointments'))
+                <section class="dashboard-layout-block kt-card" data-dashboard-block="upcoming_appointments" data-dashboard-layout-row="{{ $blockLayout['row'] }}" data-dashboard-layout-columns="{{ $blockLayout['columns'] }}" style="--dashboard-grid-span: {{ $blockLayout['span'] }}; order: {{ $blockLayout['order'] }};">
                             <div class="kt-card-header py-5 flex-wrap gap-4">
                                 <div>
                                     <h3 class="kt-card-title">{{ $canAppointments ? 'Yaklaşan randevular' : 'Operasyon notu' }}</h3>
@@ -436,11 +501,12 @@
                                     </div>
                                 @endif
                             </div>
-                        </section>
-                    @endif
+                </section>
+            @endif
 
-                    @if($dashboardSectionVisibility['recent_content'] ?? false)
-                        <section class="kt-card" style="order: {{ $dashboardSectionOrderIndex['recent_content'] ?? 80 }};">
+            @if($dashboardSectionVisibility['recent_content'] ?? false)
+                @php($blockLayout = $dashboardBlockAttributes('recent_content'))
+                <section class="dashboard-layout-block kt-card" data-dashboard-block="recent_content" data-dashboard-layout-row="{{ $blockLayout['row'] }}" data-dashboard-layout-columns="{{ $blockLayout['columns'] }}" style="--dashboard-grid-span: {{ $blockLayout['span'] }}; order: {{ $blockLayout['order'] }};">
                             <div class="kt-card-header py-5 flex-wrap gap-4">
                                 <div>
                                     <h3 class="kt-card-title">Son güncellenen içerikler</h3>
@@ -464,13 +530,12 @@
                                     </div>
                                 @endif
                             </div>
-                        </section>
-                    @endif
-                </div>
+                </section>
             @endif
 
             @if($showRiskCenter)
-                <section class="kt-card" style="order: {{ $dashboardSectionOrderIndex['risk_center'] ?? 85 }};">
+                @php($blockLayout = $dashboardBlockAttributes('risk_center'))
+                <section class="dashboard-layout-block kt-card" data-dashboard-block="risk_center" data-dashboard-layout-row="{{ $blockLayout['row'] }}" data-dashboard-layout-columns="{{ $blockLayout['columns'] }}" style="--dashboard-grid-span: {{ $blockLayout['span'] }}; order: {{ $blockLayout['order'] }};">
                     <div class="kt-card-header py-5 flex-wrap gap-4">
                         <div>
                             <h3 class="kt-card-title">Risk merkezi</h3>
@@ -480,7 +545,7 @@
                         </div>
                     </div>
                     <div class="kt-card-content p-5">
-                        <div class="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+                        <div class="dashboard-adaptive-grid grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
                             @foreach($visibleRiskGroups as $group)
                                 <article class="dashboard-module-card" style="--dashboard-accent: {{ $group['accent'] }};">
                                     <div class="dashboard-module-card__head">
@@ -511,7 +576,8 @@
             @endif
 
             @if(($dashboardSectionVisibility['audit_issues'] ?? false) && $canAudit)
-                <section class="kt-card" style="order: {{ $dashboardSectionOrderIndex['audit_issues'] ?? 90 }};">
+                @php($blockLayout = $dashboardBlockAttributes('audit_issues'))
+                <section class="dashboard-layout-block kt-card" data-dashboard-block="audit_issues" data-dashboard-layout-row="{{ $blockLayout['row'] }}" data-dashboard-layout-columns="{{ $blockLayout['columns'] }}" style="--dashboard-grid-span: {{ $blockLayout['span'] }}; order: {{ $blockLayout['order'] }};">
                     <div class="kt-card-header py-5 flex-wrap gap-4">
                         <div>
                             <h3 class="kt-card-title">Son sistem uyarıları</h3>

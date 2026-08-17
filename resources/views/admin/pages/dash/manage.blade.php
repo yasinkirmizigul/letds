@@ -43,51 +43,123 @@
                     </div>
 
                     <div class="kt-card-content p-6">
-                        <div class="grid gap-6 xl:grid-cols-[minmax(0,.95fr)_minmax(0,1.05fr)]">
-                            <section class="grid gap-3">
+                        <div class="grid items-start gap-6">
+                            <section class="grid content-start gap-3">
                                 <div>
-                                    <h4 class="text-base font-semibold text-foreground">Ana blok sırası</h4>
+                                    <h4 class="text-base font-semibold text-foreground">Ana blok yerleşimi</h4>
                                     <div class="text-sm text-muted-foreground">
-                                        Kontrol panelindeki büyük bölümlerin yukarıdan aşağıya sırasını belirler.
+                                        Blokları sıralayabilir veya bir diğerinin üzerine bırakarak aynı satırda gösterebilirsin.
                                     </div>
                                 </div>
 
-                                <div class="dashboard-sort-list" data-dashboard-sort-list>
-                                    @foreach($orderedDashboardSections as $section)
-                                        <div class="dashboard-sort-item" draggable="true" data-dashboard-sort-item>
-                                            <input type="hidden" name="section_order[]" value="{{ $section['key'] }}">
+                                <div class="dashboard-layout-builder" data-dashboard-layout-builder>
+                                    <div class="dashboard-layout-builder__hint">
+                                        <span class="inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                            <i class="ki-filled ki-grid"></i>
+                                        </span>
+                                        <span>
+                                            Her satır en fazla <strong>3 blok</strong> içerir. Kart tutamacı sütunlar arasında, satır tutamacı ise yalnız yukarı-aşağı taşır. Ayır butonu kartı tekli satıra çıkarır.
+                                        </span>
+                                    </div>
 
-                                            <button type="button" class="dashboard-sort-handle kt-btn kt-btn-sm kt-btn-light kt-btn-icon" title="Sürükle">
-                                                <i class="ki-outline ki-menu"></i>
-                                            </button>
+                                    <div class="sr-only" role="status" aria-live="polite" data-dashboard-layout-status></div>
 
-                                            <span class="inline-flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                                                <i class="{{ $section['icon'] }} text-lg"></i>
-                                            </span>
+                                    <div class="dashboard-layout-new-row-zone" data-dashboard-new-row-zone data-dashboard-new-row-position="before">
+                                        <i class="ki-filled ki-up"></i>
+                                        <span><strong>Yeni üst satır</strong> oluşturmak için kartı buraya bırak</span>
+                                    </div>
 
-                                            <span class="min-w-0 flex-1">
-                                                <span class="block font-semibold text-foreground">{{ $section['label'] }}</span>
-                                                <span class="mt-1 block text-sm text-muted-foreground">{{ $section['description'] }}</span>
-                                            </span>
+                                    <div class="dashboard-layout-rows" data-dashboard-layout-rows>
+                                        @foreach($dashboardLayoutRows as $rowIndex => $row)
+                                            @php
+                                                $rowSections = collect($row)
+                                                    ->map(fn ($key) => $dashboardSectionsByKey->get($key))
+                                                    ->filter()
+                                                    ->values();
+                                            @endphp
 
-                                            <span class="{{ $section['visible'] ? 'kt-badge kt-badge-sm kt-badge-light-success' : 'kt-badge kt-badge-sm kt-badge-light' }}">
-                                                {{ $section['visible'] ? 'Görünür' : 'Gizli' }}
-                                            </span>
+                                            @if($rowSections->isNotEmpty())
+                                                <div class="dashboard-layout-row" data-dashboard-layout-row>
+                                                    <div class="dashboard-layout-row__head">
+                                                        <span class="dashboard-layout-row__title">
+                                                            <button type="button" class="dashboard-layout-row__handle kt-btn kt-btn-sm kt-btn-light kt-btn-icon" data-dashboard-row-handle title="Satırı sürükleyerek taşı" aria-label="Satır {{ $loop->iteration }} sırasını sürükleyerek değiştir">
+                                                                <i class="ki-outline ki-menu"></i>
+                                                            </button>
+                                                            <span class="font-semibold text-foreground" data-dashboard-layout-row-number>Satır {{ $loop->iteration }}</span>
+                                                        </span>
+                                                        <span class="dashboard-layout-row__actions">
+                                                            <span class="kt-badge kt-badge-sm kt-badge-light-primary" data-dashboard-layout-column-label>
+                                                                {{ $rowSections->count() }} sütun
+                                                            </span>
+                                                            <button type="button" class="kt-btn kt-btn-sm kt-btn-light kt-btn-icon" data-dashboard-row-move="up" title="Satırı yukarı taşı" aria-label="Satır {{ $loop->iteration }} sırasını yukarı taşı">
+                                                                <i class="ki-filled ki-arrow-up"></i>
+                                                            </button>
+                                                            <button type="button" class="kt-btn kt-btn-sm kt-btn-light kt-btn-icon" data-dashboard-row-move="down" title="Satırı aşağı taşı" aria-label="Satır {{ $loop->iteration }} sırasını aşağı taşı">
+                                                                <i class="ki-filled ki-arrow-down"></i>
+                                                            </button>
+                                                        </span>
+                                                    </div>
 
-                                            <span class="inline-flex shrink-0 gap-1">
-                                                <button type="button" class="kt-btn kt-btn-sm kt-btn-light kt-btn-icon" data-dashboard-move="up" title="Yukarı taşı">
-                                                    <i class="ki-filled ki-arrow-up"></i>
-                                                </button>
-                                                <button type="button" class="kt-btn kt-btn-sm kt-btn-light kt-btn-icon" data-dashboard-move="down" title="Aşağı taşı">
-                                                    <i class="ki-filled ki-arrow-down"></i>
-                                                </button>
-                                            </span>
-                                        </div>
-                                    @endforeach
+                                                    <div class="dashboard-layout-row__cells" data-dashboard-layout-cells data-columns="{{ $rowSections->count() }}">
+                                                        @foreach($rowSections as $section)
+                                                            <article
+                                                                class="dashboard-layout-item"
+                                                                draggable="true"
+                                                                data-dashboard-layout-item
+                                                                data-dashboard-section-key="{{ $section['key'] }}"
+                                                            >
+                                                                <input type="hidden" name="section_order[]" value="{{ $section['key'] }}">
+                                                                <input type="hidden" name="layout_rows[{{ $rowIndex }}][]" value="{{ $section['key'] }}" data-dashboard-layout-input>
+
+                                                                <div class="dashboard-layout-item__top">
+                                                                    <button type="button" class="dashboard-sort-handle kt-btn kt-btn-sm kt-btn-light kt-btn-icon" title="Sürükleyerek taşı" aria-label="{{ $section['label'] }} bloğunu sürükleyerek taşı">
+                                                                        <i class="ki-outline ki-menu"></i>
+                                                                    </button>
+
+                                                                    <span class="inline-flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                                                                        <i class="{{ $section['icon'] }} text-lg"></i>
+                                                                    </span>
+
+                                                                    <span class="min-w-0 flex-1">
+                                                                        <span class="block font-semibold text-foreground">{{ $section['label'] }}</span>
+                                                                        <span class="mt-1 block text-xs leading-5 text-muted-foreground">{{ $section['description'] }}</span>
+                                                                    </span>
+                                                                </div>
+
+                                                                <div class="dashboard-layout-item__footer">
+                                                                    <span class="{{ $section['visible'] ? 'kt-badge kt-badge-sm kt-badge-light-success' : 'kt-badge kt-badge-sm kt-badge-light' }}">
+                                                                        {{ $section['visible'] ? 'Görünür' : 'Gizli' }}
+                                                                    </span>
+
+                                                                    <span class="inline-flex shrink-0 gap-1">
+                                                                        <button type="button" class="kt-btn kt-btn-sm kt-btn-light kt-btn-icon" data-dashboard-layout-move="previous" title="Satırda sola taşı" aria-label="{{ $section['label'] }} bloğunu satırda sola taşı">
+                                                                            <i class="ki-filled ki-arrow-left"></i>
+                                                                        </button>
+                                                                        <button type="button" class="kt-btn kt-btn-sm kt-btn-light kt-btn-icon" data-dashboard-layout-move="next" title="Satırda sağa taşı" aria-label="{{ $section['label'] }} bloğunu satırda sağa taşı">
+                                                                            <i class="ki-filled ki-arrow-right"></i>
+                                                                        </button>
+                                                                        <button type="button" class="kt-btn kt-btn-sm kt-btn-light shrink-0" data-dashboard-layout-separate title="Yeni tekli satıra ayır" aria-label="{{ $section['label'] }} bloğunu yeni tekli satıra ayır">
+                                                                            <i class="ki-filled ki-row-horizontal"></i>
+                                                                            <span>Ayır</span>
+                                                                        </button>
+                                                                    </span>
+                                                                </div>
+                                                            </article>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
+
+                                    <div class="dashboard-layout-new-row-zone" data-dashboard-new-row-zone data-dashboard-new-row-position="after">
+                                        <i class="ki-filled ki-down"></i>
+                                        <span><strong>Yeni alt satır</strong> oluşturmak için kartı buraya bırak</span>
+                                    </div>
                                 </div>
                             </section>
 
-                            <section class="grid gap-3">
+                            <section class="grid content-start gap-3">
                                 <div>
                                     <h4 class="text-base font-semibold text-foreground">Kart sırası</h4>
                                     <div class="text-sm text-muted-foreground">
@@ -95,7 +167,7 @@
                                     </div>
                                 </div>
 
-                                <div class="grid gap-4">
+                                <div class="grid items-start gap-4 xl:grid-cols-2">
                                     @foreach($orderedDashboardSections->whereIn('key', ['kpi_overview', 'module_overview']) as $section)
                                         @if(!empty($section['children']))
                                             <div class="rounded-[22px] border border-border bg-background/70 p-4">

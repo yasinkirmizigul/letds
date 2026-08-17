@@ -756,10 +756,7 @@ class DashController extends Controller
         $dashboardSectionVisibility = $this->resolveDashboardSectionVisibility($user, $dashboardSections);
         $dashboardSectionOrder = $this->resolveDashboardSectionOrder($user, $dashboardSections);
         $dashboardSectionOrderIndex = $this->dashboardSectionOrderIndex($dashboardSectionOrder);
-        $dashboardFlowOrder = min(array_map(
-            fn (string $key) => $dashboardSectionOrderIndex[$key] ?? PHP_INT_MAX,
-            ['recent_messages', 'upcoming_appointments', 'recent_content']
-        ));
+        $dashboardLayoutRows = $this->resolveDashboardLayoutRows($user, $dashboardSections, $dashboardSectionOrder);
 
         $kpis = $this->sortDashboardItemsByOrder($kpis, $dashboardSectionOrder);
         $moduleCards = $this->sortDashboardItemsByOrder($moduleCards, $dashboardSectionOrder);
@@ -835,7 +832,7 @@ class DashController extends Controller
             'dashboardSections' => $dashboardSections,
             'dashboardSectionVisibility' => $dashboardSectionVisibility,
             'dashboardSectionOrderIndex' => $dashboardSectionOrderIndex,
-            'dashboardFlowOrder' => $dashboardFlowOrder,
+            'dashboardLayoutRows' => $dashboardLayoutRows,
             'hasVisibleDashboardSection' => $hasVisibleDashboardSection,
         ]);
     }
@@ -869,6 +866,7 @@ class DashController extends Controller
         $dashboardSections = $this->dashboardSectionDefinitions($capabilities);
         $dashboardSectionVisibility = $this->resolveDashboardSectionVisibility($user, $dashboardSections);
         $dashboardSectionOrder = $this->resolveDashboardSectionOrder($user, $dashboardSections);
+        $dashboardLayoutRows = $this->resolveDashboardLayoutRows($user, $dashboardSections, $dashboardSectionOrder);
         $dashboardSectionOrderIndex = $this->dashboardSectionOrderIndex($dashboardSectionOrder);
         $orderedDashboardSections = $this->dashboardSectionsForManagement(
             $dashboardSections,
@@ -883,6 +881,8 @@ class DashController extends Controller
             'pageDescription' => 'Kontrol paneli yönetimi',
             'dashboardSectionGroups' => $groupedSections,
             'orderedDashboardSections' => $orderedDashboardSections,
+            'dashboardSectionsByKey' => $orderedDashboardSections->keyBy('key'),
+            'dashboardLayoutRows' => $dashboardLayoutRows,
             'dashboardSectionVisibility' => $dashboardSectionVisibility,
             'activeSectionCount' => collect($dashboardSectionVisibility)->filter()->count(),
             'availableSectionCount' => count(DashboardSectionRegistry::availableKeys($dashboardSections)),
@@ -918,7 +918,22 @@ class DashController extends Controller
         $dashboardSections = $this->dashboardSectionDefinitions($capabilities);
         $defaults = DashboardSectionRegistry::defaults($dashboardSections);
         $availableKeys = DashboardSectionRegistry::availableKeys($dashboardSections);
-        $defaultOrder = $availableKeys;
+        $topLevelKeys = DashboardSectionRegistry::topLevelKeys($dashboardSections);
+        $defaultLayoutRows = DashboardSectionRegistry::defaultLayoutRows($dashboardSections);
+        $childKeys = array_values(array_diff($availableKeys, $topLevelKeys));
+        $sortableChildKeys = collect(['kpi_overview', 'module_overview'])
+            ->flatMap(fn (string $parentKey) => collect($dashboardSections[$parentKey]['children'] ?? [])
+                ->filter(fn (array $child) => ($child['available'] ?? false) === true)
+                ->keys())
+            ->values()
+            ->all();
+        $defaultOrder = collect($defaultLayoutRows)
+            ->flatten()
+            ->merge($sortableChildKeys)
+            ->merge($childKeys)
+            ->unique()
+            ->values()
+            ->all();
 
         $validated = $request->validate([
             'action' => ['nullable', 'string', 'in:save,reset'],
@@ -926,6 +941,9 @@ class DashController extends Controller
             'visible_sections.*' => ['string'],
             'section_order' => ['nullable', 'array'],
             'section_order.*' => ['string'],
+            'layout_rows' => ['nullable', 'array'],
+            'layout_rows.*' => ['array', 'max:'.DashboardSectionRegistry::MAX_LAYOUT_COLUMNS],
+            'layout_rows.*.*' => ['string'],
         ]);
 
         if (($validated['action'] ?? 'save') === 'reset') {
@@ -954,13 +972,23 @@ class DashController extends Controller
             ->unique()
             ->values();
 
-        $sectionOrder = $submittedOrder
+        $submittedTopLevelOrder = $submittedOrder
+            ->filter(fn (string $key) => in_array($key, $topLevelKeys, true))
+            ->values()
+            ->all();
+        $layoutRows = array_key_exists('layout_rows', $validated)
+            ? $this->normaliseDashboardLayoutRows($validated['layout_rows'] ?? [], $topLevelKeys, $submittedTopLevelOrder)
+            : $this->resolveDashboardLayoutRows($user, $dashboardSections, array_merge($submittedTopLevelOrder, $topLevelKeys));
+
+        $sectionOrder = collect($layoutRows)
+            ->flatten()
+            ->merge($submittedOrder->filter(fn (string $key) => in_array($key, $childKeys, true)))
             ->merge($availableKeys)
             ->unique()
             ->values()
             ->all();
 
-        if ($visibleSections === $defaults && $sectionOrder === $defaultOrder) {
+        if ($visibleSections === $defaults && $sectionOrder === $defaultOrder && $layoutRows === $defaultLayoutRows) {
             $user->dashboardPreference()->delete();
         } else {
             $user->dashboardPreference()->updateOrCreate(
@@ -968,13 +996,14 @@ class DashController extends Controller
                 [
                     'visible_sections' => $visibleSections,
                     'section_order' => $sectionOrder,
+                    'layout_rows' => $layoutRows,
                 ]
             );
         }
 
         return redirect()
             ->route('admin.dashboard.manage')
-            ->with('success', 'Kontrol paneli görünürlüğü ve sırası güncellendi.');
+            ->with('success', 'Kontrol paneli görünürlüğü, sırası ve yerleşimi güncellendi.');
     }
 
     private function can(?User $user, string $permission): bool
@@ -1812,6 +1841,7 @@ class DashController extends Controller
             'trashView' => (bool) ($capabilities['trashView'] ?? false),
             'ecommerceOrdersView' => (bool) ($capabilities['ecommerceOrdersView'] ?? false),
             'membersView' => (bool) ($capabilities['membersView'] ?? false),
+            'serviceReviewsView' => (bool) ($capabilities['serviceReviewsView'] ?? false),
             'sitePaymentsView' => (bool) ($capabilities['sitePaymentsView'] ?? false),
             'siteSettingsView' => (bool) ($capabilities['siteSettingsView'] ?? false),
             'siteLanguagesView' => (bool) ($capabilities['siteLanguagesView'] ?? false),
@@ -1855,6 +1885,92 @@ class DashController extends Controller
             ->unique()
             ->values()
             ->all();
+    }
+
+    private function resolveDashboardLayoutRows(User $user, array $dashboardSections, array $sectionOrder): array
+    {
+        $topLevelKeys = DashboardSectionRegistry::topLevelKeys($dashboardSections);
+        $orderedTopLevelKeys = collect($sectionOrder)
+            ->filter(fn (string $key) => in_array($key, $topLevelKeys, true))
+            ->values()
+            ->all();
+        $stored = $user->dashboardPreference?->layout_rows;
+
+        if (is_array($stored) && $stored !== []) {
+            return $this->normaliseDashboardLayoutRows($stored, $topLevelKeys, $orderedTopLevelKeys);
+        }
+
+        $defaultRows = DashboardSectionRegistry::defaultLayoutRows($dashboardSections);
+        $defaultRowByKey = [];
+
+        foreach ($defaultRows as $rowIndex => $row) {
+            foreach ($row as $key) {
+                $defaultRowByKey[$key] = $rowIndex;
+            }
+        }
+
+        $legacyRows = [];
+        $renderedRows = [];
+
+        foreach ($orderedTopLevelKeys as $key) {
+            $rowIndex = $defaultRowByKey[$key] ?? null;
+
+            if ($rowIndex === null) {
+                $legacyRows[] = [$key];
+
+                continue;
+            }
+
+            if (isset($renderedRows[$rowIndex])) {
+                continue;
+            }
+
+            $legacyRows[] = collect($orderedTopLevelKeys)
+                ->filter(fn (string $orderedKey) => ($defaultRowByKey[$orderedKey] ?? null) === $rowIndex)
+                ->values()
+                ->all();
+            $renderedRows[$rowIndex] = true;
+        }
+
+        return $this->normaliseDashboardLayoutRows($legacyRows, $topLevelKeys, $orderedTopLevelKeys);
+    }
+
+    private function normaliseDashboardLayoutRows(array $rows, array $topLevelKeys, array $orderedTopLevelKeys): array
+    {
+        $normalised = [];
+        $usedKeys = [];
+
+        foreach ($rows as $row) {
+            if (! is_array($row)) {
+                continue;
+            }
+
+            $normalisedRow = collect($row)
+                ->map(fn ($key) => (string) $key)
+                ->filter(fn (string $key) => in_array($key, $topLevelKeys, true) && ! in_array($key, $usedKeys, true))
+                ->unique()
+                ->take(DashboardSectionRegistry::MAX_LAYOUT_COLUMNS)
+                ->values()
+                ->all();
+
+            if ($normalisedRow === []) {
+                continue;
+            }
+
+            $normalised[] = $normalisedRow;
+            $usedKeys = array_merge($usedKeys, $normalisedRow);
+        }
+
+        foreach (array_merge($orderedTopLevelKeys, $topLevelKeys) as $key) {
+            if (! in_array($key, $topLevelKeys, true) || in_array($key, $usedKeys, true)) {
+                continue;
+            }
+
+            $normalised[] = [$key];
+            $usedKeys[] = $key;
+        }
+
+        return $normalised;
     }
 
     private function dashboardSectionOrderIndex(array $sectionOrder): array

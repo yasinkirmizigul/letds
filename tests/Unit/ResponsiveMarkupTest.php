@@ -89,6 +89,16 @@ class ResponsiveMarkupTest extends TestCase
         );
         $this->assertStringContainsString('block-size: fit-content;', $css);
         $this->assertMatchesRegularExpression(
+            '/\.grid\[class\*="grid-cols-"\] > \.grid\s*\{[^}]*align-self:\s*start;[^}]*align-content:\s*start;[^}]*block-size:\s*fit-content;/s',
+            $css,
+            'Nested grid columns must not stretch to the height of a taller sibling.'
+        );
+        $this->assertMatchesRegularExpression(
+            '/\.grid\[data-equal-height="true"\]\[class\*="grid-cols-"\] > \.grid\s*\{[^}]*align-self:\s*stretch;[^}]*align-content:\s*normal;[^}]*block-size:\s*auto;/s',
+            $css,
+            'Equal-height nested grids must remain an explicit opt-in.'
+        );
+        $this->assertMatchesRegularExpression(
             '/\.home-discovery-layout\s*\{[^}]*align-items:\s*start;/s',
             $homeCss,
             'The homepage About and FAQ panels must keep independent heights.'
@@ -331,6 +341,50 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('.app-title-tooltip[data-placement="bottom"]', $tooltipCss);
         $this->assertStringContainsString('html[data-site-theme="dark"] body.site-shell', $tooltipCss);
         $this->assertStringContainsString('html[data-site-theme="dark"] body.site-home-index', $tooltipCss);
+    }
+
+    public function test_dashboard_manage_sort_columns_keep_their_natural_height(): void
+    {
+        $view = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'pages'.DIRECTORY_SEPARATOR.'dash'.DIRECTORY_SEPARATOR.'manage.blade.php');
+
+        $this->assertStringContainsString(
+            'class="grid items-start gap-6"',
+            $view
+        );
+        $this->assertSame(2, substr_count($view, 'class="grid content-start gap-3"'));
+        $this->assertStringContainsString('class="grid items-start gap-4 xl:grid-cols-2"', $view);
+    }
+
+    public function test_dashboard_layout_supports_one_two_and_three_column_rows(): void
+    {
+        $root = $this->projectRoot().DIRECTORY_SEPARATOR;
+        $dashboardView = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'pages'.DIRECTORY_SEPARATOR.'dash'.DIRECTORY_SEPARATOR.'index.blade.php');
+        $manageView = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'pages'.DIRECTORY_SEPARATOR.'dash'.DIRECTORY_SEPARATOR.'manage.blade.php');
+        $script = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'pages'.DIRECTORY_SEPARATOR.'dash'.DIRECTORY_SEPARATOR.'manage.js');
+        $css = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
+
+        $this->assertStringContainsString('data-dashboard-layout-builder', $manageView);
+        $this->assertStringContainsString('name="layout_rows[', $manageView);
+        $this->assertStringContainsString('data-dashboard-layout-separate', $manageView);
+        $this->assertStringContainsString('<span>Ayır</span>', $manageView);
+        $this->assertStringContainsString('data-dashboard-row-handle', $manageView);
+        $this->assertStringContainsString('data-dashboard-row-move="up"', $manageView);
+        $this->assertStringContainsString('data-dashboard-row-move="down"', $manageView);
+        $this->assertSame(2, substr_count($manageView, 'data-dashboard-new-row-zone'));
+        $this->assertStringContainsString('const MAX_LAYOUT_COLUMNS = 3;', $script);
+        $this->assertStringContainsString("import Sortable from 'sortablejs';", $script);
+        $this->assertStringContainsString("name: 'dashboard-layout-items'", $script);
+        $this->assertStringContainsString("draggable: '>[data-dashboard-layout-row]'", $script);
+        $this->assertStringContainsString("draggable: '>[data-dashboard-layout-item]'", $script);
+        $this->assertStringContainsString('function repairNestedRows()', $script);
+        $this->assertStringContainsString("Blok gruptan çıkarıldı", $script);
+        $this->assertStringContainsString('dashboard-layout-grid', $dashboardView);
+        $this->assertStringContainsString('data-dashboard-block="recent_messages"', $dashboardView);
+        $this->assertStringNotContainsString('$dashboardFlowOrder', $dashboardView);
+        $this->assertStringContainsString('grid-template-columns: repeat(6, minmax(0, 1fr));', $css);
+        $this->assertStringContainsString('grid-column: span var(--dashboard-grid-span, 6);', $css);
+        $this->assertStringContainsString('.dashboard-layout-row__cells[data-columns="3"]', $css);
+        $this->assertStringContainsString('.dashboard-layout-new-row-zone', $css);
     }
 
     private function frontendSourceFiles(): array

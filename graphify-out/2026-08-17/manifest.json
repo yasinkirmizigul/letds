@@ -1360,8 +1360,8 @@
     "semantic_hash": ""
   },
   "resources/js/admin/pages/dash/manage.js": {
-    "mtime": 1786983869.4427795,
-    "ast_hash": "ebea5d26052b3889c5f1bebe5b2f3e26",
+    "mtime": 1786981278.958449,
+    "ast_hash": "6493034db5e0bd1ced0c35aa007bea1e",
     "semantic_hash": ""
   },
   "resources/js/admin/pages/ecommerce/orders/form.js": {
@@ -1900,8 +1900,8 @@
     "semantic_hash": ""
   },
   "resources/views/admin/pages/dash/manage.blade.php": {
-    "mtime": 1786983737.3361473,
-    "ast_hash": "6dc2190386ba448fb27c6e611dfd51b9",
+    "mtime": 1786981375.0143664,
+    "ast_hash": "ef58b2fc924112af3b5106efbe209890",
     "semantic_hash": ""
   },
   "resources/views/admin/pages/ecommerce/coupons/form.blade.php": {
@@ -3035,8 +3035,8 @@
     "semantic_hash": ""
   },
   "tests/Unit/ResponsiveMarkupTest.php": {
-    "mtime": 1786983737.3381379,
-    "ast_hash": "a1bcffea8fb9ce5b00db2d5ee5295779",
+    "mtime": 1786981375.0143664,
+    "ast_hash": "5de1daeed0a90a3f5b6bd7c16c2bf020",
     "semantic_hash": ""
   },
   "app/Http/Controllers/Site/Cms/FaqController.php": {

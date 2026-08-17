@@ -12,6 +12,7 @@ class AdminDashboardPreference extends Model
         'user_id',
         'visible_sections',
         'section_order',
+        'layout_rows',
     ];
 
     protected function casts(): array
@@ -19,6 +20,7 @@ class AdminDashboardPreference extends Model
         return [
             'visible_sections' => 'array',
             'section_order' => 'array',
+            'layout_rows' => 'array',
         ];
     }
 
