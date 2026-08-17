@@ -2381,6 +2381,7 @@ body.site-shell [x-cloak] {
 }
 
 .kt-input,
+.kt-textarea,
 .kt-select,
 textarea.kt-input,
 select.kt-input,
@@ -2396,6 +2397,7 @@ input.kt-input {
 }
 
 .dark .kt-input,
+.dark .kt-textarea,
 .dark .kt-select,
 .dark textarea.kt-input,
 .dark select.kt-input,
@@ -2414,11 +2416,13 @@ input.kt-input {
 input.kt-input,
 select.kt-input,
 textarea.kt-input,
+.kt-textarea,
 .kt-select {
     padding: .625rem .875rem;
 }
 
-textarea.kt-input {
+textarea.kt-input,
+.kt-textarea {
     min-height: 6rem;
     line-height: 1.5;
 }
@@ -2444,7 +2448,8 @@ textarea.kt-input {
 .kt-input > input::placeholder,
 .kt-input > textarea::placeholder,
 input.kt-input::placeholder,
-textarea.kt-input::placeholder {
+textarea.kt-input::placeholder,
+.kt-textarea::placeholder {
     color: color-mix(in oklab, var(--muted-foreground) 78%, transparent);
 }
 
@@ -2452,6 +2457,8 @@ textarea.kt-input::placeholder {
 input.kt-input:focus,
 select.kt-input:focus,
 textarea.kt-input:focus,
+.kt-textarea:focus,
+.kt-textarea:focus-visible,
 .kt-select:focus {
     border-color: color-mix(in oklab, #3e97ff 70%, var(--border));
     box-shadow: 0 0 0 .18rem rgb(62 151 255 / 16%);
@@ -2462,10 +2469,51 @@ textarea.kt-input:focus,
 input.kt-input:disabled,
 select.kt-input:disabled,
 textarea.kt-input:disabled,
+.kt-textarea:disabled,
 .kt-select:disabled {
     opacity: .72;
     cursor: not-allowed;
     background: color-mix(in oklab, var(--foreground) 5%, var(--background));
+}
+
+:where(body.dash_app, body.site-shell) {
+    --app-form-control-border: color-mix(in oklab, var(--border) 76%, var(--foreground) 24%);
+    --app-form-control-border-hover: color-mix(in oklab, var(--border) 58%, var(--foreground) 42%);
+}
+
+:where(body.dash_app, body.site-shell) :is(
+    .kt-input,
+    .kt-textarea,
+    .kt-select,
+    .admin-auth-input,
+    .site-search input,
+    .homepage-color-control
+) {
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-color: var(--app-form-control-border) !important;
+}
+
+:where(body.dash_app, body.site-shell) :is(.kt-input, .kt-textarea, .kt-select, .site-search input):hover {
+    border-color: var(--app-form-control-border-hover) !important;
+}
+
+/* Standalone text controls receive a safe border; compound controls keep it on their wrapper. */
+:where(body.dash_app, body.site-shell) :is(
+    input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]):not([type="button"]):not([type="submit"]):not([type="reset"]),
+    textarea
+):not(:where(.kt-input, .kt-textarea, .admin-quick-search-input)):not(:where(.kt-input > input, .kt-input > textarea, .admin-auth-input > input, .site-search input, .homepage-color-control > input)) {
+    border: 1px solid var(--app-form-control-border) !important;
+    border-radius: .625rem;
+}
+
+:where(body.dash_app, body.site-shell) :is(
+    input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]):not([type="button"]):not([type="submit"]):not([type="reset"]),
+    textarea
+):not(:where(.kt-input, .kt-textarea, .admin-quick-search-input)):not(:where(.kt-input > input, .kt-input > textarea, .admin-auth-input > input, .site-search input, .homepage-color-control > input)):focus {
+    border-color: color-mix(in oklab, #3e97ff 70%, var(--app-form-control-border)) !important;
+    box-shadow: 0 0 0 .18rem rgb(62 151 255 / 16%);
+    outline: none;
 }
 
 body.site-shell select.kt-select option {

@@ -27956,11 +27956,19 @@
       "_origin": "ast"
     },
     {
+      "id": "tests_unit_responsivemarkuptest_responsivemarkuptest_test_dashboard_and_site_text_controls_have_a_visible_border_contract",
+      "label": ".test_dashboard_and_site_text_controls_have_a_visible_border_contract()",
+      "file_type": "code",
+      "source_file": "tests/Unit/ResponsiveMarkupTest.php",
+      "source_location": "L261",
+      "_origin": "ast"
+    },
+    {
       "id": "tests_unit_responsivemarkuptest_responsivemarkuptest_frontendsourcefiles",
       "label": ".frontendSourceFiles()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L261",
+      "source_location": "L293",
       "_origin": "ast"
     },
     {
@@ -27968,7 +27976,7 @@
       "label": ".hasTopLevelComma()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L281",
+      "source_location": "L313",
       "_origin": "ast"
     },
     {
@@ -27976,7 +27984,7 @@
       "label": ".relativePath()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L298",
+      "source_location": "L330",
       "_origin": "ast"
     },
     {
@@ -27984,7 +27992,7 @@
       "label": ".projectRoot()",
       "file_type": "code",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L303",
+      "source_location": "L335",
       "_origin": "ast"
     },
     {
@@ -104425,7 +104433,7 @@
     },
     {
       "source": "tests_unit_responsivemarkuptest_responsivemarkuptest",
-      "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_frontendsourcefiles",
+      "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_test_dashboard_and_site_text_controls_have_a_visible_border_contract",
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
@@ -104434,11 +104442,20 @@
     },
     {
       "source": "tests_unit_responsivemarkuptest_responsivemarkuptest",
+      "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_frontendsourcefiles",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Unit/ResponsiveMarkupTest.php",
+      "source_location": "L293",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_unit_responsivemarkuptest_responsivemarkuptest",
       "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_hastoplevelcomma",
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L281",
+      "source_location": "L313",
       "weight": 1.0
     },
     {
@@ -104447,7 +104464,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L298",
+      "source_location": "L330",
       "weight": 1.0
     },
     {
@@ -104456,7 +104473,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L303",
+      "source_location": "L335",
       "weight": 1.0
     },
     {
@@ -104600,13 +104617,43 @@
       "weight": 1.0
     },
     {
+      "source": "tests_unit_responsivemarkuptest_responsivemarkuptest_test_dashboard_and_site_text_controls_have_a_visible_border_contract",
+      "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_projectroot",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Unit/ResponsiveMarkupTest.php",
+      "source_location": "L263",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_unit_responsivemarkuptest_responsivemarkuptest_test_dashboard_and_site_text_controls_have_a_visible_border_contract",
+      "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_frontendsourcefiles",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Unit/ResponsiveMarkupTest.php",
+      "source_location": "L267",
+      "weight": 1.0
+    },
+    {
+      "source": "tests_unit_responsivemarkuptest_responsivemarkuptest_test_dashboard_and_site_text_controls_have_a_visible_border_contract",
+      "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_relativepath",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Unit/ResponsiveMarkupTest.php",
+      "source_location": "L277",
+      "weight": 1.0
+    },
+    {
       "source": "tests_unit_responsivemarkuptest_responsivemarkuptest_frontendsourcefiles",
       "target": "tests_unit_responsivemarkuptest_responsivemarkuptest_projectroot",
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L266",
+      "source_location": "L298",
       "weight": 1.0
     },
     {
@@ -104616,7 +104663,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "source_location": "L300",
+      "source_location": "L332",
       "weight": 1.0
     },
     {

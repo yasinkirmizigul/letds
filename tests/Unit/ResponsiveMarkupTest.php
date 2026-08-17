@@ -258,6 +258,38 @@ class ResponsiveMarkupTest extends TestCase
         );
     }
 
+    public function test_dashboard_and_site_text_controls_have_a_visible_border_contract(): void
+    {
+        $css = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
+        $violations = [];
+        $textareaCount = 0;
+
+        foreach ($this->frontendSourceFiles() as $file) {
+            $contents = file_get_contents($file);
+            $normalised = preg_replace('/{{.*?}}/s', 'BLADE_EXPRESSION', $contents);
+            $normalised = preg_replace('/\$\{.*?}/s', 'JS_EXPRESSION', $normalised);
+            preg_match_all('/<textarea\b[^>]*>/is', $normalised, $matches);
+
+            foreach ($matches[0] as $textarea) {
+                $textareaCount++;
+
+                if (!preg_match('/class\s*=\s*["\'][^"\']*(?:kt-input|kt-textarea)[^"\']*["\']/i', $textarea)) {
+                    $violations[] = $this->relativePath($file).' => '.preg_replace('/\s+/', ' ', trim($textarea));
+                }
+            }
+        }
+
+        $this->assertGreaterThan(30, $textareaCount, 'The textarea audit unexpectedly scanned too few controls.');
+        $this->assertSame([], $violations, 'Textareas without the shared border contract: '.implode(', ', $violations));
+        $this->assertMatchesRegularExpression(
+            '/\.kt-input,\s*\.kt-textarea,\s*\.kt-select,[^{]*\{[^}]*border:\s*1px solid var\(--border\);/s',
+            $css
+        );
+        $this->assertStringContainsString('--app-form-control-border:', $css);
+        $this->assertStringContainsString(':where(body.dash_app, body.site-shell)', $css);
+        $this->assertStringContainsString('.homepage-color-control > input', $css);
+    }
+
     private function frontendSourceFiles(): array
     {
         $files = [];
