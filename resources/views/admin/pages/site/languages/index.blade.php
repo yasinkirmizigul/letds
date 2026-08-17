@@ -36,7 +36,7 @@
         </div>
 
         <div class="grid gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
-            <div class="kt-card">
+            <div class="kt-card admin-panel admin-panel--create" data-admin-panel="create">
                 <div class="kt-card-header py-5">
                     <div>
                         <h3 class="kt-card-title">Yeni Dil Ekle</h3>
@@ -110,7 +110,7 @@
                 </form>
             </div>
 
-            <div class="grid gap-4">
+            <div class="grid gap-4 admin-collection-stack" data-admin-panel-stack="collection">
                 @foreach($languages as $language)
                     <div class="rounded-[28px] app-surface-card p-5">
                         <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">

@@ -21,9 +21,10 @@ class AppointmentSettingsController extends Controller
     ) {
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $providers = User::query()
+            ->visibleTo($request->user())
             ->where('is_active', true)
             ->whereHas('roles', function ($query) {
                 $query->whereIn('slug', ['provider', 'admin', 'superadmin']);
@@ -42,6 +43,8 @@ class AppointmentSettingsController extends Controller
 
     public function providerSchedule(User $provider)
     {
+        $this->assertProviderVisible($provider);
+
         $hours = ProviderWorkingHour::query()
             ->where('provider_id', $provider->id)
             ->orderBy('day_of_week')
@@ -66,6 +69,8 @@ class AppointmentSettingsController extends Controller
 
     public function saveProviderSchedule(Request $request, User $provider)
     {
+        $this->assertProviderVisible($provider);
+
         $data = $request->validate([
             'days' => ['required', 'array', 'size:7'],
             'days.*.day_of_week' => ['required', 'integer', 'between:0,6'],
@@ -99,6 +104,8 @@ class AppointmentSettingsController extends Controller
 
     public function storeTimeOff(Request $request, User $provider)
     {
+        $this->assertProviderVisible($provider);
+
         $data = $request->validate([
             'start_at' => ['required', 'date'],
             'end_at' => ['required', 'date', 'after:start_at'],
@@ -122,6 +129,7 @@ class AppointmentSettingsController extends Controller
 
     public function updateTimeOff(Request $request, User $provider, ProviderTimeOff $timeOff)
     {
+        $this->assertProviderVisible($provider);
         abort_unless((int) $timeOff->provider_id === (int) $provider->id, 404);
 
         $data = $request->validate([
@@ -146,6 +154,7 @@ class AppointmentSettingsController extends Controller
 
     public function destroyTimeOff(User $provider, ProviderTimeOff $timeOff)
     {
+        $this->assertProviderVisible($provider);
         abort_unless((int) $timeOff->provider_id === (int) $provider->id, 404);
 
         $timeOff->delete();
@@ -219,6 +228,14 @@ class AppointmentSettingsController extends Controller
             'blocks' => ['nullable', 'integer', 'min:1', 'max:6'],
         ]);
 
+        abort_unless(
+            User::query()
+                ->visibleTo($request->user())
+                ->whereKey((int) $data['provider_id'])
+                ->exists(),
+            404
+        );
+
         $slots = $this->availabilityService->getAvailableStartsForDate(
             (int) $data['provider_id'],
             Carbon::parse($data['date']),
@@ -290,5 +307,10 @@ class AppointmentSettingsController extends Controller
         $end = Carbon::createFromFormat('H:i:s', strlen($endTime) === 5 ? $endTime . ':00' : $endTime);
 
         return max(0, $start->diffInMinutes($end, false));
+    }
+
+    private function assertProviderVisible(User $provider): void
+    {
+        abort_unless($provider->isVisibleTo(request()->user()), 404);
     }
 }

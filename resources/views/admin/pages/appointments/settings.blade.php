@@ -211,7 +211,7 @@
                                     <thead>
                                     <tr>
                                         <th class="min-w-[180px]">Gün</th>
-                                        <th class="min-w-[120px]">Durum</th>
+                                        <th class="min-w-[140px] whitespace-nowrap">Durum</th>
                                         <th class="min-w-[150px]">Başlangıç</th>
                                         <th class="min-w-[150px]">Bitiş</th>
                                         <th class="min-w-[140px]">Günlük süre</th>

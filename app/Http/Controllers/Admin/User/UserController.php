@@ -11,9 +11,12 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $baseQuery = User::query();
+        /** @var User $actor */
+        $actor = $request->user();
+        $canViewSuperAdmins = $actor->isSuperAdmin();
+        $baseQuery = User::query()->visibleTo($actor);
 
         $users = (clone $baseQuery)
             ->select(['id', 'name', 'email', 'is_active', 'created_at'])
@@ -23,6 +26,7 @@ class UserController extends Controller
 
         $roles = Role::query()
             ->select(['id', 'name', 'slug', 'priority'])
+            ->when(! $canViewSuperAdmins, fn ($query) => $query->where('slug', '!=', 'superadmin'))
             ->orderByDesc('priority')
             ->orderBy('name')
             ->get();
@@ -32,7 +36,9 @@ class UserController extends Controller
             'active' => (clone $baseQuery)->where('is_active', true)->count(),
             'inactive' => (clone $baseQuery)->where('is_active', false)->count(),
             'admins' => (clone $baseQuery)->whereHas('roles', fn ($query) => $query->whereIn('slug', ['admin', 'superadmin']))->count(),
-            'superadmins' => (clone $baseQuery)->whereHas('roles', fn ($query) => $query->where('slug', 'superadmin'))->count(),
+            'superadmins' => $canViewSuperAdmins
+                ? (clone $baseQuery)->whereHas('roles', fn ($query) => $query->where('slug', 'superadmin'))->count()
+                : 0,
         ];
 
         return view('admin.pages.users.index', [
@@ -40,6 +46,7 @@ class UserController extends Controller
             'users' => $users,
             'roles' => $roles,
             'stats' => $stats,
+            'canViewSuperAdmins' => $canViewSuperAdmins,
         ]);
     }
 
@@ -80,6 +87,7 @@ class UserController extends Controller
 
     public function edit(Request $request, User $user)
     {
+        abort_unless($user->isVisibleTo($request->user()), 404);
         abort_unless($request->user()?->canManageUser($user), 403);
 
         $roles = $this->assignableRoles($request->user());
@@ -92,6 +100,7 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
+        abort_unless($user->isVisibleTo($request->user()), 404);
         abort_unless($request->user()?->canManageUser($user), 403);
 
         $assignableRoleIds = $this->assignableRoles($request->user())->pluck('id')->all();
@@ -122,6 +131,7 @@ class UserController extends Controller
 
     public function destroy(Request $request, User $user)
     {
+        abort_unless($user->isVisibleTo($request->user()), 404);
         abort_unless($request->user()?->canManageUser($user), 403);
 
         $user->roles()->detach();

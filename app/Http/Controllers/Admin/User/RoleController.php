@@ -11,10 +11,11 @@ use Illuminate\Validation\Rule;
 
 class RoleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $roles = Role::query()
             ->select(['id','name','slug','priority','created_at'])
+            ->when(! $request->user()?->isSuperAdmin(), fn ($query) => $query->where('slug', '!=', 'superadmin'))
             ->withCount('users')
             ->with(['permissions:id,name'])
             ->orderByDesc('priority')
@@ -39,6 +40,7 @@ class RoleController extends Controller
 
     public function edit(Request $request, Role $role)
     {
+        $this->assertRoleVisible($request, $role);
         abort_unless($request->user()?->canManageRole($role), 403);
 
         $role->load('permissions:id');
@@ -77,6 +79,7 @@ class RoleController extends Controller
 
     public function update(Request $request, Role $role)
     {
+        $this->assertRoleVisible($request, $role);
         $u = auth()->user();
         $myP = $u?->topRolePriority() ?? 0;
         $targetP = (int)($role->priority ?? 0);
@@ -113,6 +116,7 @@ class RoleController extends Controller
 
     public function destroy(Request $request, Role $role)
     {
+        $this->assertRoleVisible($request, $role);
         abort_unless($request->user()?->canManageRole($role), 403);
 
         if ($role->slug === 'admin') {
@@ -125,5 +129,10 @@ class RoleController extends Controller
 
         Rbac::bumpVersion();
         return redirect()->route('admin.roles.index')->with('ok', 'Rol silindi.');
+    }
+
+    private function assertRoleVisible(Request $request, Role $role): void
+    {
+        abort_if($role->slug === 'superadmin' && ! $request->user()?->isSuperAdmin(), 404);
     }
 }

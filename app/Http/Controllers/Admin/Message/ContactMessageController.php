@@ -34,12 +34,14 @@ class ContactMessageController extends Controller
         $canViewAllMessages = $user->hasGlobalOperationalScope();
         $recipientOptions = $canViewAllMessages
             ? User::query()
+                ->visibleTo($user)
                 ->adminAccessible()
                 ->orderBy('name')
                 ->get(['id', 'name'])
             : collect();
 
         $assigneeOptions = User::query()
+            ->visibleTo($user)
             ->adminAccessible()
             ->orderBy('name')
             ->get(['id', 'name', 'email']);
@@ -93,6 +95,7 @@ class ContactMessageController extends Controller
             'message' => $contactMessage,
             'statusOptions' => ContactMessage::statusOptionsSorted(),
             'assigneeOptions' => User::query()
+                ->visibleTo($user)
                 ->adminAccessible()
                 ->orderBy('name')
                 ->get(['id', 'name', 'email']),
@@ -109,7 +112,21 @@ class ContactMessageController extends Controller
 
         $validated = $request->validate([
             'status' => ['required', Rule::in(array_keys(ContactMessage::statusOptions()))],
-            'assigned_user_id' => ['nullable', 'integer', 'exists:users,id'],
+            'assigned_user_id' => [
+                'nullable',
+                'integer',
+                function (string $attribute, mixed $value, \Closure $fail) use ($user): void {
+                    $allowed = User::query()
+                        ->visibleTo($user)
+                        ->adminAccessible()
+                        ->whereKey((int) $value)
+                        ->exists();
+
+                    if (! $allowed) {
+                        $fail('Seçilen kullanıcı atama için kullanılamıyor.');
+                    }
+                },
+            ],
             'due_at' => ['nullable', 'date'],
             'tags' => ['nullable', 'string', 'max:1000'],
             'internal_note' => ['nullable', 'string', 'max:5000'],
@@ -152,7 +169,9 @@ class ContactMessageController extends Controller
         $contactMessage->forceFill($payload)->save();
 
         if ((int) ($payload['assigned_user_id'] ?? 0) > 0 && (int) ($payload['assigned_user_id'] ?? 0) !== $beforeAssignee) {
-            $assignee = User::query()->find($payload['assigned_user_id']);
+            $assignee = User::query()
+                ->visibleTo($user)
+                ->find($payload['assigned_user_id']);
             app(AdminNotificationService::class)->notifyUser($assignee, [
                 'type' => 'message',
                 'severity' => 'info',

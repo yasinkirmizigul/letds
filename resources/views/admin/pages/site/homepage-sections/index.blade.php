@@ -263,8 +263,8 @@
                                 <span class="kt-badge kt-badge-light-primary w-fit">{{ $section->items->where('is_active', true)->count() }} aktif</span>
                             </div>
 
-                            <details class="group rounded-3xl border border-dashed border-primary/40 bg-primary-light/40">
-                                <summary class="flex cursor-pointer list-none items-center justify-between gap-3 p-5">
+                            <details class="group rounded-3xl border border-dashed admin-panel admin-panel--create" data-admin-panel="create">
+                                <summary class="admin-panel__header flex cursor-pointer list-none items-center justify-between gap-3 p-5">
                                     <div class="flex items-center gap-3">
                                         <span class="grid size-10 place-items-center rounded-2xl bg-primary text-primary-foreground">
                                             <i class="ki-filled ki-plus"></i>
@@ -277,7 +277,7 @@
                                     <i class="ki-filled ki-down text-primary transition-transform group-open:rotate-180"></i>
                                 </summary>
 
-                                <form method="POST" action="{{ route('admin.site.homepage-sections.items.store', $section) }}" class="grid gap-5 border-t border-primary/20 p-5" data-native-submit="true">
+                                <form method="POST" action="{{ route('admin.site.homepage-sections.items.store', $section) }}" class="admin-panel__content grid gap-5 border-t border-primary/20 p-5" data-native-submit="true">
                                     @csrf
 
                                     @include('admin.components.localized-content-tabs', [

@@ -22,7 +22,7 @@ class SuperAdminSeeder extends Seeder
         $super->permissions()->sync(Permission::pluck('id')->all());
 
         if ($this->shouldCreateUsers()) {
-            $email = env('SEED_SUPERADMIN_EMAIL', 'admin@admin.com');
+            $email = env('SEED_SUPERADMIN_EMAIL', 'superadmin@admin.com');
             $name  = env('SEED_SUPERADMIN_NAME', 'Super Admin');
             $pass  = env('SEED_SUPERADMIN_PASS', '123456');
 

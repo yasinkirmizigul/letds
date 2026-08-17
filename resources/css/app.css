@@ -4086,6 +4086,250 @@ thead th.dt-orderable-none .dt-column-order { display:none !important; }
     box-shadow: none;
 }
 
+/* =========================
+   ADMIN SEMANTIC WORKSPACES
+   Create = muted sage, collection = slate blue.
+   ========================= */
+body.dash_app {
+    --admin-create-accent: #527a60;
+    --admin-create-header: #d5e4d9;
+    --admin-create-surface: #edf4ef;
+    --admin-create-field: #f9fcfa;
+    --admin-create-border: #aac4b2;
+    --admin-collection-accent: #4d6e7b;
+    --admin-collection-header: #d7e1e7;
+    --admin-collection-surface: #edf2f5;
+    --admin-collection-field: #f8fafb;
+    --admin-collection-border: #aebfc8;
+    --admin-sidebar-surface: #edf1ef;
+    --admin-sidebar-header: #e5ebe8;
+    --admin-sidebar-border: #cbd6d1;
+    --admin-card-header-surface: #e3eaec;
+    --admin-card-header-border: #c4d0d4;
+    --admin-card-header-accent: #5d7782;
+    --admin-card-header-muted: #5c6d75;
+}
+
+.dark body.dash_app {
+    --admin-create-accent: #8dbd9f;
+    --admin-create-header: #17271d;
+    --admin-create-surface: #1b2b21;
+    --admin-create-field: #26382c;
+    --admin-create-border: #3d6049;
+    --admin-collection-accent: #83a9b9;
+    --admin-collection-header: #18272e;
+    --admin-collection-surface: #1e2d35;
+    --admin-collection-field: #293a43;
+    --admin-collection-border: #3f5964;
+    --admin-sidebar-surface: #141a1e;
+    --admin-sidebar-header: #10161a;
+    --admin-sidebar-border: #29343a;
+    --admin-card-header-surface: #242a31;
+    --admin-card-header-border: #3b4850;
+    --admin-card-header-accent: #8ba5b0;
+    --admin-card-header-muted: #94a3ad;
+}
+
+body.dash_app .admin-panel {
+    --admin-panel-accent: var(--admin-collection-accent);
+    --admin-panel-header: var(--admin-collection-header);
+    --admin-panel-surface: var(--admin-collection-surface);
+    --admin-panel-field: var(--admin-collection-field);
+    --admin-panel-border: var(--admin-collection-border);
+    position: relative;
+    border-color: var(--admin-panel-border) !important;
+    background: var(--admin-panel-surface) !important;
+    box-shadow: 0 16px 36px rgb(29 52 64 / 8%);
+    transition: border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+}
+
+body.dash_app .admin-panel--create {
+    --admin-panel-accent: var(--admin-create-accent);
+    --admin-panel-header: var(--admin-create-header);
+    --admin-panel-surface: var(--admin-create-surface);
+    --admin-panel-field: var(--admin-create-field);
+    --admin-panel-border: var(--admin-create-border);
+}
+
+body.dash_app .admin-panel::before {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    right: 1rem;
+    left: 1rem;
+    height: 2px;
+    content: "";
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--admin-panel-accent) 82%, transparent);
+    pointer-events: none;
+}
+
+body.dash_app .admin-panel > .kt-card-header {
+    border-bottom-color: color-mix(in oklab, var(--admin-panel-border) 82%, transparent) !important;
+    background:
+        linear-gradient(110deg, color-mix(in oklab, var(--admin-panel-accent) 9%, transparent), transparent 58%),
+        var(--admin-panel-header) !important;
+}
+
+body.dash_app .admin-panel > .admin-panel__header {
+    border-bottom-color: color-mix(in oklab, var(--admin-panel-border) 82%, transparent) !important;
+    background:
+        linear-gradient(110deg, color-mix(in oklab, var(--admin-panel-accent) 9%, transparent), transparent 58%),
+        var(--admin-panel-header) !important;
+}
+
+body.dash_app .admin-panel > :is(.kt-card-content, .kt-card-body, form.kt-card-content),
+body.dash_app .admin-panel > :is(.kt-card-footer, .admin-panel__content) {
+    background: var(--admin-panel-surface) !important;
+}
+
+body.dash_app .admin-panel > .kt-card-header .kt-card-title {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+}
+
+body.dash_app .admin-panel > .kt-card-header .kt-card-title::before {
+    width: .42rem;
+    height: .42rem;
+    flex: 0 0 .42rem;
+    content: "";
+    border-radius: 999px;
+    background: var(--admin-panel-accent);
+    box-shadow: 0 0 0 .22rem color-mix(in oklab, var(--admin-panel-accent) 14%, transparent);
+}
+
+body.dash_app .admin-panel :is(
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]):not([type="button"]):not([type="submit"]),
+    textarea,
+    select,
+    .kt-input,
+    .kt-select,
+    .kt-select-wrapper,
+    [data-kt-select-wrapper]
+) {
+    border-color: color-mix(in oklab, var(--admin-panel-border) 84%, var(--foreground) 16%) !important;
+    background-color: var(--admin-panel-field) !important;
+}
+
+body.dash_app .admin-panel :is(
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
+    textarea,
+    select,
+    .kt-input,
+    .kt-select
+):focus,
+body.dash_app .admin-panel :is(.kt-input, .kt-select):focus-within {
+    border-color: color-mix(in oklab, var(--admin-panel-accent) 68%, var(--admin-panel-border)) !important;
+    box-shadow: 0 0 0 .18rem color-mix(in oklab, var(--admin-panel-accent) 15%, transparent) !important;
+}
+
+body.dash_app .admin-panel--create .app-surface-card--soft {
+    border-color: color-mix(in oklab, var(--admin-create-border) 78%, transparent);
+    background: color-mix(in oklab, var(--admin-create-field) 84%, var(--admin-create-surface)) !important;
+}
+
+body.dash_app .admin-panel--collection .kt-table thead tr {
+    background: color-mix(in oklab, var(--admin-collection-header) 88%, var(--admin-collection-accent) 12%);
+}
+
+body.dash_app .admin-panel--collection .kt-table tbody tr {
+    background: var(--admin-collection-surface);
+}
+
+body.dash_app .admin-panel--collection .kt-table tbody tr:nth-child(even) {
+    background: color-mix(in oklab, var(--admin-collection-field) 62%, var(--admin-collection-surface));
+}
+
+body.dash_app .admin-panel--collection .kt-table tbody tr:hover {
+    background: color-mix(in oklab, var(--admin-collection-accent) 9%, var(--admin-collection-surface));
+}
+
+body.dash_app .admin-collection-stack > :is(.kt-card, .app-surface-card) {
+    border-color: var(--admin-collection-border) !important;
+    background: var(--admin-collection-surface) !important;
+    box-shadow: 0 14px 32px rgb(29 52 64 / 7%);
+}
+
+body.dash_app .admin-collection-stack > :is(.kt-card, .app-surface-card) > .kt-card-header {
+    border-bottom-color: color-mix(in oklab, var(--admin-collection-border) 82%, transparent) !important;
+    background: var(--admin-collection-header) !important;
+}
+
+body.dash_app :is(.kt-card, .app-surface-card) > .kt-card-header,
+body.dash_app .admin-panel > .admin-panel__header {
+    position: relative;
+    border-block-end-color: var(--admin-card-header-border) !important;
+    border-start-start-radius: inherit;
+    border-start-end-radius: inherit;
+    background:
+        linear-gradient(105deg, color-mix(in oklab, var(--admin-card-header-accent) 9%, transparent), transparent 48%),
+        var(--admin-card-header-surface) !important;
+    box-shadow: inset 0 -1px 0 color-mix(in oklab, var(--admin-card-header-accent) 12%, transparent);
+}
+
+body.dash_app :is(.kt-card, .app-surface-card) > .kt-card-header .kt-card-title,
+body.dash_app .admin-panel > .admin-panel__header :is(.kt-card-title, h1, h2, h3) {
+    color: var(--foreground);
+}
+
+body.dash_app :is(.kt-card, .app-surface-card) > .kt-card-header .text-muted-foreground,
+body.dash_app .admin-panel > .admin-panel__header .text-muted-foreground {
+    color: var(--admin-card-header-muted) !important;
+}
+
+.appointment-day-toggle {
+    display: inline-flex;
+    min-width: 6.75rem;
+    align-items: center;
+    gap: .625rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.appointment-day-toggle > .kt-checkbox {
+    flex: 0 0 auto;
+}
+
+.appointment-day-toggle__status {
+    min-width: 4rem;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.dark body.dash_app .admin-panel,
+.dark body.dash_app .admin-collection-stack > :is(.kt-card, .app-surface-card) {
+    box-shadow: 0 20px 42px rgb(0 0 0 / 24%);
+}
+
+body.dash_app .kt-sidebar {
+    border-inline-end-color: var(--admin-sidebar-border) !important;
+    background:
+        linear-gradient(180deg, var(--admin-sidebar-header), transparent 10rem),
+        var(--admin-sidebar-surface) !important;
+    box-shadow: inset -1px 0 color-mix(in oklab, var(--foreground) 4%, transparent);
+}
+
+body.dash_app .kt-sidebar .kt-sidebar-header {
+    background: color-mix(in oklab, var(--admin-sidebar-header) 92%, transparent);
+}
+
+body.dash_app .kt-sidebar #sidebar_menu > .kt-menu-item > :is(.kt-menu-link, .kt-menu-label) .kt-menu-link,
+body.dash_app .kt-sidebar #sidebar_menu > .kt-menu-item > .kt-menu-link {
+    border-color: transparent;
+}
+
+body.dash_app .kt-sidebar #sidebar_menu > .kt-menu-item.active > :is(.kt-menu-link, .kt-menu-label) .kt-menu-link,
+body.dash_app .kt-sidebar #sidebar_menu > .kt-menu-item.active > .kt-menu-link,
+body.dash_app .kt-sidebar #sidebar_menu > .kt-menu-item.here > .kt-menu-link {
+    border-color: color-mix(in oklab, var(--primary) 24%, var(--admin-sidebar-border));
+    background: color-mix(in oklab, var(--primary) 9%, var(--admin-sidebar-surface)) !important;
+}
+
+body.dash_app .kt-sidebar #sidebar_menu .kt-menu-link:hover {
+    background: color-mix(in oklab, var(--foreground) 6%, var(--admin-sidebar-surface)) !important;
+}
+
 .admin-notification-filter-header {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;

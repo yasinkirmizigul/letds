@@ -45,7 +45,9 @@ class MemberAccountController extends Controller
                 ->exists(),
             'pendingReviews' => $member->serviceReviews()
                 ->pending()
-                ->with('provider:id,name,title')
+                ->with(['provider' => fn ($provider) => $provider
+                    ->visibleTo(null)
+                    ->select(['users.id', 'users.name', 'users.title'])])
                 ->latest('service_completed_at')
                 ->limit(3)
                 ->get(),

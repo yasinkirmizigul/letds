@@ -13,7 +13,7 @@
 
         <div class="grid gap-5 lg:gap-7.5">
 
-            <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+            <div class="grid gap-4 md:grid-cols-2 {{ $canViewSuperAdmins ? 'xl:grid-cols-5' : 'xl:grid-cols-4' }}">
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
                         <div class="text-sm text-muted-foreground">Toplam kullanıcı</div>
@@ -34,16 +34,18 @@
                 </div>
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
-                        <div class="text-sm text-muted-foreground">Admin / Super Admin</div>
+                        <div class="text-sm text-muted-foreground">{{ $canViewSuperAdmins ? 'Admin / Super Admin' : 'Yönetici' }}</div>
                         <div class="mt-2 text-2xl font-semibold">{{ number_format((int) ($stats['admins'] ?? 0)) }}</div>
                     </div>
                 </div>
+                @if($canViewSuperAdmins)
                 <div class="kt-card">
                     <div class="kt-card-content p-5">
                         <div class="text-sm text-muted-foreground">Super Admin</div>
                         <div class="mt-2 text-2xl font-semibold">{{ number_format((int) ($stats['superadmins'] ?? 0)) }}</div>
                     </div>
                 </div>
+                @endif
             </div>
 
             <div class="kt-card kt-card-grid min-w-full">

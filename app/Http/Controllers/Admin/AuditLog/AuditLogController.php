@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\AuditLog;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\AuditLog\AuditLog;
+use App\Models\Admin\User\User;
 use App\Support\Audit\AuditEvent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -14,6 +15,8 @@ class AuditLogController extends Controller
 {
     public function index(Request $request)
     {
+        /** @var User $actor */
+        $actor = $request->user();
         $mode = $request->string('mode', 'all')->toString();
         $q = trim((string) $request->get('q', ''));
         $action = trim((string) $request->get('action', ''));
@@ -21,7 +24,8 @@ class AuditLogController extends Controller
         $method = strtoupper(trim((string) $request->get('method', '')));
         $perpage = max(10, min(200, (int) $request->get('perpage', 25)));
 
-        $query = AuditLog::query()->latest('id');
+        $baseQuery = AuditLog::query()->visibleTo($actor);
+        $query = (clone $baseQuery)->latest('id');
 
         $this->applyModeFilter($query, $mode);
         $this->applyFilters($query, [
@@ -36,14 +40,14 @@ class AuditLogController extends Controller
             ->withQueryString();
 
         $stats = [
-            'total' => AuditLog::count(),
-            'system' => $this->modeCount('system'),
-            'user' => $this->modeCount('user'),
-            'errors' => AuditLog::query()->where('status', '>=', 400)->count(),
-            'slow' => AuditLog::query()->where('duration_ms', '>=', 1000)->count(),
+            'total' => (clone $baseQuery)->count(),
+            'system' => $this->modeCount('system', $actor),
+            'user' => $this->modeCount('user', $actor),
+            'errors' => (clone $baseQuery)->where('status', '>=', 400)->count(),
+            'slow' => (clone $baseQuery)->where('duration_ms', '>=', 1000)->count(),
         ];
 
-        $actionOptions = AuditLog::query()
+        $actionOptions = (clone $baseQuery)
             ->whereNotNull('action')
             ->where('action', '!=', '')
             ->select('action')
@@ -61,16 +65,20 @@ class AuditLogController extends Controller
         ]);
     }
 
-    public function show(AuditLog $auditLog)
+    public function show(Request $request, AuditLog $auditLog)
     {
+        abort_unless($auditLog->isVisibleTo($request->user()), 404);
+
         return view('admin.pages.audit-logs.show', [
             'row' => $auditLog,
         ]);
     }
 
-    public function clear(): RedirectResponse
+    public function clear(Request $request): RedirectResponse
     {
-        $deletedCount = DB::transaction(fn (): int => AuditLog::query()->delete());
+        $deletedCount = DB::transaction(
+            fn (): int => AuditLog::query()->visibleTo($request->user())->delete()
+        );
 
         AuditEvent::log('audit-logs.clear', [
             'deleted_count' => $deletedCount,
@@ -81,9 +89,9 @@ class AuditLogController extends Controller
             ->with('success', number_format($deletedCount).' eski log kaydı temizlendi. Güvenlik için bu işlemin kaydı tutuldu.');
     }
 
-    private function modeCount(string $mode): int
+    private function modeCount(string $mode, User $actor): int
     {
-        $query = AuditLog::query();
+        $query = AuditLog::query()->visibleTo($actor);
         $this->applyModeFilter($query, $mode);
 
         return $query->count();

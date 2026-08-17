@@ -52,17 +52,27 @@ class MemberController extends Controller
 
     public function show(Member $member): View
     {
+        $actor = auth()->user();
+        $visibleAppointments = fn ($query) => $query->whereHas(
+            'provider',
+            fn ($provider) => $provider->visibleTo($actor)
+        );
+
         $member->loadCount([
-            'appointments',
+            'appointments' => $visibleAppointments,
             'contactMessages',
             'appointments as active_appointments_count' => fn ($query) => $query
+                ->whereHas('provider', fn ($provider) => $provider->visibleTo($actor))
                 ->where('status', Appointment::STATUS_BOOKED)
                 ->where('end_at', '>=', now()),
         ]);
 
         $member->load([
             'appointments' => fn ($query) => $query
-                ->with('provider:id,name')
+                ->whereHas('provider', fn ($provider) => $provider->visibleTo($actor))
+                ->with(['provider' => fn ($provider) => $provider
+                    ->visibleTo($actor)
+                    ->select(['users.id', 'users.name'])])
                 ->latest('start_at'),
             'contactMessages' => fn ($query) => $query
                 ->latest('created_at'),

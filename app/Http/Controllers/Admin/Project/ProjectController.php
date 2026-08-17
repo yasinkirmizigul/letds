@@ -206,7 +206,9 @@ class ProjectController extends Controller
             'featuredMedia',
             'translations',
             'member:id,name,surname,email',
-            'appointment.provider:id,name,title',
+            'appointment.provider' => fn ($provider) => $provider
+                ->visibleTo(auth()->user())
+                ->select(['users.id', 'users.name', 'users.title']),
             'files.member:id,name,surname',
         ]);
 

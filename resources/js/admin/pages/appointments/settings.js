@@ -180,8 +180,8 @@ function applyWorkingHourRowState(row) {
 
     if (statusBadge) {
         statusBadge.className = enabled
-            ? 'kt-badge kt-badge-sm kt-badge-light-success'
-            : 'kt-badge kt-badge-sm kt-badge-light'
+            ? 'appointment-day-toggle__status kt-badge kt-badge-sm kt-badge-light-success'
+            : 'appointment-day-toggle__status kt-badge kt-badge-sm kt-badge-light'
         statusBadge.textContent = enabled ? 'Açık' : 'Kapalı'
     }
 }
@@ -214,15 +214,12 @@ function renderWorkingHours(root, hours = []) {
                     </div>
                 </td>
                 <td>
-                    <div class="flex items-center gap-3">
-                        <label class="inline-flex items-center gap-2 text-sm text-foreground">
-                            <input type="checkbox" class="kt-checkbox kt-checkbox-sm" data-day-enabled="${day.value}" ${row?.is_enabled ? 'checked' : ''}>
-                            Çalışma açık
-                        </label>
-                        <span data-day-status class="${row?.is_enabled ? 'kt-badge kt-badge-sm kt-badge-light-success' : 'kt-badge kt-badge-sm kt-badge-light'}">
+                    <label class="appointment-day-toggle">
+                        <input type="checkbox" class="kt-checkbox kt-checkbox-sm" data-day-enabled="${day.value}" ${row?.is_enabled ? 'checked' : ''} aria-label="${escapeHtml(day.label)} çalışma durumunu değiştir">
+                        <span data-day-status class="appointment-day-toggle__status ${row?.is_enabled ? 'kt-badge kt-badge-sm kt-badge-light-success' : 'kt-badge kt-badge-sm kt-badge-light'}">
                             ${row?.is_enabled ? 'Açık' : 'Kapalı'}
                         </span>
-                    </div>
+                    </label>
                 </td>
                 <td>
                     <div class="kt-input kt-time-input w-full">

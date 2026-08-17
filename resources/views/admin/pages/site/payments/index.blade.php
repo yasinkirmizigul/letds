@@ -44,7 +44,7 @@
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             @foreach($providerDefinitions as $providerKey => $definition)
                 @php($integrationTypeLabel = \App\Support\Site\PaymentProviderRegistry::integrationTypeLabel($definition['integration_type'] ?? 'payment_gateway'))
-                <a href="{{ route('admin.site.payments.create', ['provider' => $providerKey]) }}" class="rounded-[28px] app-surface-card p-5 transition hover:-translate-y-0.5">
+                <a href="{{ route('admin.site.payments.create', ['provider' => $providerKey]) }}" class="rounded-[28px] app-surface-card admin-panel admin-panel--create p-5 transition hover:-translate-y-0.5" data-admin-panel="create">
                     <div class="flex items-start justify-between gap-3">
                         <div>
                             <div class="text-lg font-semibold text-foreground">{{ $definition['label'] ?? $providerKey }}</div>
@@ -57,7 +57,7 @@
             @endforeach
         </div>
 
-        <div class="kt-card">
+        <div class="kt-card admin-panel admin-panel--collection" data-admin-panel="collection">
             <div class="kt-card-header py-5">
                 <div>
                     <h3 class="kt-card-title">Entegrasyon Havuzu</h3>

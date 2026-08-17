@@ -24,7 +24,9 @@ class ServiceReviewController extends Controller
 
         $reviews = ServiceReview::query()
             ->where('member_id', $member->id)
-            ->with('provider:id,name,title')
+            ->with(['provider' => fn ($provider) => $provider
+                ->visibleTo(null)
+                ->select(['users.id', 'users.name', 'users.title'])])
             ->orderByRaw('CASE WHEN status = ? THEN 0 ELSE 1 END', [ServiceReview::STATUS_PENDING])
             ->latest('service_completed_at')
             ->paginate(12);
@@ -51,7 +53,9 @@ class ServiceReviewController extends Controller
     ): View {
         $this->authorizeMember($request, $serviceReview);
         $serviceReview = $assignmentService->ensureQuestionSnapshot($serviceReview);
-        $serviceReview->loadMissing('provider:id,name,title');
+        $serviceReview->loadMissing(['provider' => fn ($provider) => $provider
+            ->visibleTo(null)
+            ->select(['users.id', 'users.name', 'users.title'])]);
 
         return view('site.reviews.show', [
             'pageTitle' => $serviceReview->isPending() ? 'Hizmeti Değerlendir' : 'Değerlendirme Detayı',

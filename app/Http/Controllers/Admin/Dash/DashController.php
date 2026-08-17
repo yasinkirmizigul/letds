@@ -83,6 +83,13 @@ class DashController extends Controller
         ];
 
         $serviceReviewQuery = ServiceReview::query();
+        if (! $user->isSuperAdmin()) {
+            $serviceReviewQuery->where(function ($query) use ($user): void {
+                $query
+                    ->whereNull('provider_user_id')
+                    ->orWhereHas('provider', fn ($provider) => $provider->visibleTo($user));
+            });
+        }
         if (!$user->isAdmin() && $user->hasRole('provider')) {
             $serviceReviewQuery->where('provider_user_id', $user->id);
         }
@@ -119,11 +126,12 @@ class DashController extends Controller
             'attached' => $can['galleriesView'] ? (int) DB::table('galleryables')->count() : 0,
         ];
 
+        $visibleUsers = User::query()->visibleTo($user);
         $userStats = [
-            'total' => $can['usersView'] ? User::query()->count() : 0,
-            'active' => $can['usersView'] ? User::query()->where('is_active', true)->count() : 0,
+            'total' => $can['usersView'] ? (clone $visibleUsers)->count() : 0,
+            'active' => $can['usersView'] ? (clone $visibleUsers)->where('is_active', true)->count() : 0,
             'admins' => $can['usersView']
-                ? User::query()->whereHas('roles', fn ($query) => $query->whereIn('slug', ['admin', 'superadmin']))->count()
+                ? (clone $visibleUsers)->whereHas('roles', fn ($query) => $query->whereIn('slug', ['admin', 'superadmin']))->count()
                 : 0,
         ];
 
@@ -153,6 +161,9 @@ class DashController extends Controller
         ];
 
         $appointmentsQuery = Appointment::query()->where('status', Appointment::STATUS_BOOKED);
+        if (! $user->isSuperAdmin()) {
+            $appointmentsQuery->whereHas('provider', fn ($provider) => $provider->visibleTo($user));
+        }
         if (!$user->hasGlobalOperationalScope()) {
             $appointmentsQuery->where('provider_id', $user->id);
         }
@@ -166,9 +177,9 @@ class DashController extends Controller
             : 0;
 
         $auditStats = [
-            'errors' => $can['auditView'] ? AuditLog::query()->where('status', '>=', 400)->count() : 0,
+            'errors' => $can['auditView'] ? AuditLog::query()->visibleTo($user)->where('status', '>=', 400)->count() : 0,
             'today' => $can['auditView']
-                ? AuditLog::query()->where('created_at', '>=', $now->copy()->startOfDay())->count()
+                ? AuditLog::query()->visibleTo($user)->where('created_at', '>=', $now->copy()->startOfDay())->count()
                 : 0,
         ];
 
@@ -756,6 +767,7 @@ class DashController extends Controller
 
         $recentAuditIssues = $can['auditView']
             ? AuditLog::query()
+                ->visibleTo($user)
                 ->where('status', '>=', 400)
                 ->latest('id')
                 ->limit(5)
@@ -1381,6 +1393,9 @@ class DashController extends Controller
         }
 
         $query = Appointment::query();
+        if (! $user->isSuperAdmin()) {
+            $query->whereHas('provider', fn ($provider) => $provider->visibleTo($user));
+        }
         if (!$user->hasGlobalOperationalScope()) {
             $query->where('provider_id', $user->id);
         }

@@ -25,7 +25,7 @@
         </div>
 
         <div class="grid gap-6 xl:grid-cols-[400px_minmax(0,1fr)]">
-            <div class="kt-card self-start">
+            <div class="kt-card self-start admin-panel admin-panel--create" data-admin-panel="create">
                 <div class="kt-card-header py-5">
                     <div>
                         <h2 class="kt-card-title">Yeni Soru</h2>
@@ -45,7 +45,7 @@
                 </form>
             </div>
 
-            <section class="grid gap-4">
+            <section class="grid gap-4 admin-collection-stack" data-admin-panel-stack="collection">
                 @forelse($questions as $question)
                     <div class="kt-card">
                         <div class="kt-card-header py-5">

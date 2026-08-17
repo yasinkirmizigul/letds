@@ -121,9 +121,9 @@ class AdminRoleProfileTest extends TestCase
         $this->get(route('admin.users.edit', $editor))->assertOk();
         $this->get(route('admin.users.profile', $editor))->assertOk();
         $this->get(route('admin.users.edit', $otherAdmin))->assertForbidden();
-        $this->get(route('admin.users.edit', $superAdmin))->assertForbidden();
+        $this->get(route('admin.users.edit', $superAdmin))->assertNotFound();
         $this->get(route('admin.roles.edit', $adminRole))->assertForbidden();
-        $this->get(route('admin.roles.edit', $superAdminRole))->assertForbidden();
+        $this->get(route('admin.roles.edit', $superAdminRole))->assertNotFound();
 
         $this->actingAs($superAdmin);
         $this->get(route('admin.users.edit', $admin))->assertOk();
@@ -210,5 +210,103 @@ class AdminRoleProfileTest extends TestCase
         $this->assertTrue($message->isVisibleToUser($provider));
         $this->assertFalse($message->isVisibleToUser($otherProvider));
         $this->assertSame([$message->id], ContactMessage::query()->visibleToUser($admin)->pluck('id')->all());
+    }
+
+    public function test_superadmin_account_is_invisible_to_admin_but_visible_to_superadmin(): void
+    {
+        $this->seed(PermissionSeeder::class);
+        $this->seed(SuperAdminSeeder::class);
+        $this->seed(AdminSeeder::class);
+
+        $admin = User::query()
+            ->whereHas('roles', fn ($query) => $query->where('slug', 'admin'))
+            ->firstOrFail();
+        $superAdmin = User::query()
+            ->whereHas('roles', fn ($query) => $query->where('slug', 'superadmin'))
+            ->firstOrFail();
+        $superAdminRole = Role::query()->where('slug', 'superadmin')->firstOrFail();
+
+        $superAdmin->forceFill([
+            'name' => 'Hidden Platform Owner',
+            'email' => 'hidden-owner@example.test',
+        ])->save();
+
+        $hiddenLog = AuditLog::query()->create([
+            'user_id' => $superAdmin->id,
+            'user_name' => $superAdmin->name,
+            'user_email' => $superAdmin->email,
+            'action' => 'hidden.owner.action',
+            'status' => 200,
+        ]);
+        $visibleLog = AuditLog::query()->create([
+            'user_id' => $admin->id,
+            'user_name' => $admin->name,
+            'user_email' => $admin->email,
+            'action' => 'visible.admin.action',
+            'status' => 200,
+        ]);
+
+        $this->actingAs($admin);
+
+        $this->get(route('admin.users.index'))
+            ->assertOk()
+            ->assertDontSee($superAdmin->name)
+            ->assertDontSee($superAdmin->email);
+
+        $this->get(route('admin.roles.index'))
+            ->assertOk()
+            ->assertDontSee($superAdminRole->name);
+
+        $this->getJson(route('admin.quick-search', ['q' => 'Hidden Platform Owner']))
+            ->assertOk()
+            ->assertJsonMissing(['title' => $superAdmin->name]);
+
+        $this->get(route('admin.messages.index'))
+            ->assertOk()
+            ->assertDontSee($superAdmin->name)
+            ->assertDontSee($superAdmin->email);
+
+        $this->get(route('admin.appointments.settings'))
+            ->assertOk()
+            ->assertDontSee($superAdmin->name);
+
+        $this->get(route('admin.service-reviews.index'))
+            ->assertOk()
+            ->assertDontSee($superAdmin->name);
+
+        $this->get(route('admin.users.profile', $superAdmin))->assertNotFound();
+        $this->get(route('admin.users.edit', $superAdmin))->assertNotFound();
+        $this->put(route('admin.users.update', $superAdmin), [])->assertNotFound();
+        $this->delete(route('admin.users.destroy', $superAdmin))->assertNotFound();
+        $this->get(route('admin.roles.edit', $superAdminRole))->assertNotFound();
+
+        $this->get(route('admin.audit-logs.index'))
+            ->assertOk()
+            ->assertSee($visibleLog->action)
+            ->assertDontSee($hiddenLog->action)
+            ->assertDontSee($superAdmin->email);
+        $this->get(route('admin.audit-logs.show', $hiddenLog))->assertNotFound();
+
+        $this->delete(route('admin.audit-logs.clear'))
+            ->assertRedirect(route('admin.audit-logs.index'));
+        $this->assertDatabaseHas('audit_logs', ['id' => $hiddenLog->id]);
+        $this->assertDatabaseMissing('audit_logs', ['id' => $visibleLog->id]);
+
+        $this->assertFalse(User::query()->visibleTo($admin)->whereKey($superAdmin)->exists());
+        $this->assertTrue(User::query()->visibleTo($superAdmin)->whereKey($superAdmin)->exists());
+
+        $this->actingAs($superAdmin);
+
+        $this->get(route('admin.users.index'))
+            ->assertOk()
+            ->assertSee($superAdmin->name)
+            ->assertSee($superAdmin->email);
+        $this->get(route('admin.roles.index'))
+            ->assertOk()
+            ->assertSee($superAdminRole->name);
+        $this->get(route('admin.audit-logs.index'))
+            ->assertOk()
+            ->assertSee($hiddenLog->action)
+            ->assertSee($superAdmin->email);
     }
 }

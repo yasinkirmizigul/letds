@@ -47,7 +47,7 @@ class ServiceReviewController extends Controller
         return view('admin.pages.service-reviews.index', [
             'reviews' => $reviews,
             'filters' => $filters,
-            'providers' => $this->providerOptions(),
+            'providers' => $this->providerOptions($actor),
             'members' => Member::query()->orderBy('name')->orderBy('surname')->get(['id', 'name', 'surname', 'email']),
             'stats' => [
                 'all' => $total,
@@ -114,6 +114,14 @@ class ServiceReviewController extends Controller
 
     private function applyContextFilters(Builder $query, array $filters, User $actor): Builder
     {
+        if (! $actor->isSuperAdmin()) {
+            $query->where(function (Builder $builder) use ($actor): void {
+                $builder
+                    ->whereNull('provider_user_id')
+                    ->orWhereHas('provider', fn (Builder $provider) => $provider->visibleTo($actor));
+            });
+        }
+
         if (! $actor->isAdmin() && $actor->hasRole('provider')) {
             $query->where('provider_user_id', $actor->id);
         }
@@ -141,9 +149,10 @@ class ServiceReviewController extends Controller
             ->when($filters['date_to'] !== '', fn (Builder $builder) => $builder->whereDate('service_completed_at', '<=', $filters['date_to']));
     }
 
-    private function providerOptions()
+    private function providerOptions(User $actor)
     {
         return User::query()
+            ->visibleTo($actor)
             ->where('is_active', true)
             ->whereHas('roles', fn (Builder $query) => $query->whereIn('slug', ['provider', 'admin', 'superadmin']))
             ->orderBy('name')
@@ -215,6 +224,16 @@ class ServiceReviewController extends Controller
 
     private function assertCanView(User $actor, ServiceReview $review): void
     {
+        if ($review->provider_user_id) {
+            abort_unless(
+                User::query()
+                    ->visibleTo($actor)
+                    ->whereKey($review->provider_user_id)
+                    ->exists(),
+                404
+            );
+        }
+
         if (! $actor->isAdmin() && $actor->hasRole('provider')) {
             abort_unless((int) $review->provider_user_id === (int) $actor->id, 403);
         }

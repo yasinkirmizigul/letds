@@ -14,6 +14,7 @@ import initCreateFormAccordions from '@/core/create-form-accordion';
 import initAjaxForms from '@/core/ajax-forms';
 import initAdminQuickSearch from '@/core/admin-quick-search';
 import initAdminSidebar from '@/core/admin-sidebar';
+import initAdminSemanticPanels from './helpers/semantic-panels';
 import { initMetronicPickers } from '@/core/metronic-pickers';
 import { initGlobalBlockUi } from '@/core/block-ui';
 
@@ -96,6 +97,7 @@ function domReady(fn) {
 
 domReady(async () => {
     try {
+        initAdminSemanticPanels(document);
         initCreateFormAccordions(document);
         initDateInputValues(document);
         initMetronicPickers(document);

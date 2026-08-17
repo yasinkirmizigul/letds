@@ -202,6 +202,62 @@ class ResponsiveMarkupTest extends TestCase
         );
     }
 
+    public function test_admin_workspaces_use_distinct_create_and_collection_surfaces(): void
+    {
+        $root = $this->projectRoot().DIRECTORY_SEPARATOR;
+        $css = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
+        $script = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'helpers'.DIRECTORY_SEPARATOR.'semantic-panels.js');
+        $appScript = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'app.js');
+        $layout = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'layouts'.DIRECTORY_SEPARATOR.'main'.DIRECTORY_SEPARATOR.'app.blade.php');
+        $listLayout = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'list-layout.blade.php');
+
+        foreach ([
+            '--admin-create-header',
+            '--admin-create-surface',
+            '--admin-create-field',
+            '--admin-collection-header',
+            '--admin-collection-surface',
+            '--admin-collection-field',
+            '--admin-sidebar-surface',
+            '--admin-card-header-surface',
+            '--admin-card-header-border',
+            '.admin-panel--create',
+            '.admin-panel--collection',
+            '.admin-collection-stack',
+        ] as $requiredStyle) {
+            $this->assertStringContainsString($requiredStyle, $css);
+        }
+
+        $this->assertStringContainsString('.dark body.dash_app', $css);
+        $this->assertStringContainsString('CREATE_TITLE_PATTERN', $script);
+        $this->assertStringContainsString('COLLECTION_TITLE_PATTERN', $script);
+        $this->assertStringContainsString('new MutationObserver', $script);
+        $this->assertStringContainsString("import initAdminSemanticPanels from './helpers/semantic-panels';", $appScript);
+        $this->assertStringContainsString('data-admin-page-mode="{{ $adminPageMode }}"', $layout);
+        $this->assertStringContainsString('admin-panel--collection', $listLayout);
+    }
+
+    public function test_appointment_day_status_and_card_headers_do_not_wrap_or_merge_with_bodies(): void
+    {
+        $root = $this->projectRoot().DIRECTORY_SEPARATOR;
+        $css = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
+        $script = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'pages'.DIRECTORY_SEPARATOR.'appointments'.DIRECTORY_SEPARATOR.'settings.js');
+        $view = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'pages'.DIRECTORY_SEPARATOR.'appointments'.DIRECTORY_SEPARATOR.'settings.blade.php');
+
+        $this->assertStringNotContainsString('Çalışma açık', $script);
+        $this->assertStringContainsString('appointment-day-toggle__status', $script);
+        $this->assertStringContainsString('aria-label="${escapeHtml(day.label)} çalışma durumunu değiştir"', $script);
+        $this->assertStringContainsString('min-w-[140px] whitespace-nowrap', $view);
+        $this->assertMatchesRegularExpression(
+            '/\.appointment-day-toggle\s*\{[^}]*min-width:\s*6\.75rem;[^}]*white-space:\s*nowrap;/s',
+            $css
+        );
+        $this->assertMatchesRegularExpression(
+            '/body\.dash_app :is\(\.kt-card, \.app-surface-card\) > \.kt-card-header[^}]*var\(--admin-card-header-surface\)/s',
+            $css
+        );
+    }
+
     private function frontendSourceFiles(): array
     {
         $files = [];

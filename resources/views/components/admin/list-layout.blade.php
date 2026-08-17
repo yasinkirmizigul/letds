@@ -1,5 +1,5 @@
 {{-- views/admin/components/list-layout.blade.php --}}
-<div class="kt-card kt-card-grid">
+<div class="kt-card kt-card-grid admin-panel admin-panel--collection" data-admin-panel="collection">
     <div class="kt-card-header admin-list-toolbar py-4">
         <div class="flex flex-wrap items-center justify-between gap-3 w-full">
             <div class="flex min-w-0 flex-1 flex-wrap items-center gap-3">

@@ -22,7 +22,12 @@ class MemberProjectController extends Controller
         $member = $request->user('member');
         $search = trim($request->string('q')->toString());
         $projects = $member->projects()
-            ->with(['appointment.provider:id,name,title', 'serviceReview'])
+            ->with([
+                'appointment.provider' => fn ($provider) => $provider
+                    ->visibleTo(null)
+                    ->select(['users.id', 'users.name', 'users.title']),
+                'serviceReview',
+            ])
             ->withCount('files')
             ->search($search)
             ->orderByDesc('updated_at')
@@ -41,7 +46,9 @@ class MemberProjectController extends Controller
     {
         $project = $this->ownedProject($request, $project);
         $project->load([
-            'appointment.provider:id,name,title',
+            'appointment.provider' => fn ($provider) => $provider
+                ->visibleTo(null)
+                ->select(['users.id', 'users.name', 'users.title']),
             'files.member:id,name,surname',
             'serviceReview',
         ]);

@@ -255,6 +255,7 @@ class AdminQuickSearchController extends Controller
         if ($this->can($user, 'users.view')) {
             $like = $this->like($query);
             $items = array_merge($items, User::query()
+                ->visibleTo($user)
                 ->where(function (Builder $builder) use ($like) {
                     $builder
                         ->where('name', 'like', $like)
@@ -487,6 +488,13 @@ class AdminQuickSearchController extends Controller
 
         $like = $this->like($query);
         $items = Appointment::query()
+            ->when(
+                ! $user->isSuperAdmin(),
+                fn (Builder $builder) => $builder->whereHas(
+                    'provider',
+                    fn (Builder $provider) => $provider->visibleTo($user)
+                )
+            )
             ->with(['member:id,name,surname,email,phone', 'provider:id,name,email'])
             ->where(function (Builder $builder) use ($like) {
                 $builder

@@ -27,7 +27,9 @@ class AppointmentController extends Controller
                 ->getActiveForMember($member->id);
         }
 
-        $providers = User::whereHas('roles', fn($q) => $q->where('slug','provider'))
+        $providers = User::query()
+            ->visibleTo($this->adminViewer())
+            ->whereHas('roles', fn($q) => $q->where('slug','provider'))
             ->where('is_active', 1)
             ->get(['id','name']);
 
@@ -43,6 +45,7 @@ class AppointmentController extends Controller
             'provider_id' => ['required','integer'],
             'date' => ['required','date'],
         ]);
+        $this->assertPublicProvider((int) $data['provider_id']);
 
         return $this->availabilityService->getAvailableStartsForDate(
             (int)$data['provider_id'],
@@ -68,6 +71,7 @@ class AppointmentController extends Controller
                 'start_at' => ['required'],
                 'blocks' => ['required','integer','min:1','max:4'],
             ]);
+            $this->assertPublicProvider((int) $data['provider_id']);
 
             $appointment = $this->appointmentService->create([
                 'provider_id' => $data['provider_id'],
@@ -104,6 +108,7 @@ class AppointmentController extends Controller
             'provider_id' => ['required','integer'],
             'month' => ['required','date'],
         ]);
+        $this->assertPublicProvider((int) $data['provider_id']);
 
         $start = \Carbon\Carbon::parse($data['month'])->startOfMonth();
         $end = $start->copy()->endOfMonth();
@@ -169,6 +174,7 @@ class AppointmentController extends Controller
                 'start_at' => ['required'],
                 'blocks' => ['required', 'integer', 'min:1', 'max:4'],
             ]);
+            $this->assertPublicProvider((int) $data['provider_id']);
 
             $appointment = Appointment::findOrFail($id);
 
@@ -208,5 +214,28 @@ class AppointmentController extends Controller
                 'message' => 'Randevu yeniden planlanamadı.',
             ], 500);
         }
+    }
+
+    private function assertPublicProvider(int $providerId): void
+    {
+        $exists = User::query()
+            ->visibleTo($this->adminViewer())
+            ->whereKey($providerId)
+            ->where('is_active', true)
+            ->whereHas('roles', fn ($roles) => $roles->where('slug', 'provider'))
+            ->exists();
+
+        if (! $exists) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'provider_id' => 'Seçilen uzman kullanılamıyor.',
+            ]);
+        }
+    }
+
+    private function adminViewer(): ?User
+    {
+        $viewer = auth('web')->user();
+
+        return $viewer instanceof User ? $viewer : null;
     }
 }

@@ -82,6 +82,28 @@ class User extends Authenticatable
         return $this->hasRole('superadmin');
     }
 
+    public function scopeSuperAdmins(Builder $query): Builder
+    {
+        return $query->whereHas('roles', fn (Builder $roles) => $roles->where('slug', 'superadmin'));
+    }
+
+    public function scopeVisibleTo(Builder $query, ?self $viewer): Builder
+    {
+        if ($viewer?->isSuperAdmin()) {
+            return $query;
+        }
+
+        return $query->whereDoesntHave(
+            'roles',
+            fn (Builder $roles) => $roles->where('slug', 'superadmin')
+        );
+    }
+
+    public function isVisibleTo(?self $viewer): bool
+    {
+        return $viewer?->isSuperAdmin() || ! $this->isSuperAdmin();
+    }
+
     /**
      * Admin veya Superadmin
      */

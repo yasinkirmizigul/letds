@@ -42,11 +42,17 @@ class AppointmentCalendarController extends Controller
 
     public function events(Request $request)
     {
+        /** @var User $actor */
+        $actor = $request->user();
         $providerId = $this->resolveProviderId($request);
         $from = $request->string('from')->toString();
         $to = $request->string('to')->toString();
 
         $appointmentsQuery = Appointment::query()
+            ->when(
+                ! $actor->isSuperAdmin(),
+                fn ($query) => $query->whereHas('provider', fn ($provider) => $provider->visibleTo($actor))
+            )
             ->with([
                 'member:id,name,surname,email,phone',
                 'provider:id,name,title',
@@ -104,6 +110,10 @@ class AppointmentCalendarController extends Controller
             });
 
         $timeOffQuery = ProviderTimeOff::query()
+            ->when(
+                ! $actor->isSuperAdmin(),
+                fn ($query) => $query->whereHas('provider', fn ($provider) => $provider->visibleTo($actor))
+            )
             ->with(['provider:id,name,title']);
 
         if ($providerId) {
@@ -501,6 +511,7 @@ class AppointmentCalendarController extends Controller
     protected function providerOptionsQuery(User $actor)
     {
         return User::query()
+            ->visibleTo($actor)
             ->where('is_active', true)
             ->whereHas('roles', function ($q) {
                 $q->whereIn('slug', ['provider', 'admin', 'superadmin']);
@@ -513,6 +524,7 @@ class AppointmentCalendarController extends Controller
     protected function transferProviderOptionsQuery(User $actor)
     {
         return User::query()
+            ->visibleTo($actor)
             ->where('is_active', true)
             ->whereHas('roles', function ($q) {
                 $q->whereIn('slug', ['provider', 'admin', 'superadmin']);
@@ -536,11 +548,23 @@ class AppointmentCalendarController extends Controller
 
         $providerId = $request->integer('provider_id');
 
+        if ($providerId > 0) {
+            abort_unless(
+                $this->providerOptionsQuery($actor)->whereKey($providerId)->exists(),
+                404
+            );
+        }
+
         return $providerId > 0 ? $providerId : null;
     }
 
     protected function assertCanAccessProvider(User $actor, int $providerId): void
     {
+        abort_unless(
+            User::query()->visibleTo($actor)->whereKey($providerId)->exists(),
+            404
+        );
+
         if ($actor->hasGlobalOperationalScope()) {
             return;
         }

@@ -96,6 +96,29 @@ if (-not $SkipBuild) {
     }
 }
 
+$viteManifest = Join-Path $projectRoot 'public\build\manifest.json'
+if (-not (Test-Path -LiteralPath $viteManifest -PathType Leaf)) {
+    $buildHint = if ($SkipBuild) {
+        'Komutu -SkipBuild olmadan yeniden calistirin.'
+    } else {
+        'Vite build cikti ayarlarini kontrol edin.'
+    }
+
+    throw "Frontend production manifesti bulunamadi: $viteManifest`n$buildHint"
+}
+
+# Laravel, public/hot varken production build yerine yerel Vite adresini kullanir.
+# Quick Tunnel disaridan acildigi icin bu isaretci her paylasimda temizlenmelidir.
+$viteHotFile = Join-Path $projectRoot 'public\hot'
+if (Test-Path -LiteralPath $viteHotFile) {
+    Remove-Item -LiteralPath $viteHotFile -Force
+    Write-Host 'Eski Vite gelistirme baglantisi temizlendi; production dosyalari kullanilacak.' -ForegroundColor DarkGray
+}
+
+if (Test-Path -LiteralPath $viteHotFile) {
+    throw "Vite gelistirme baglantisi temizlenemedi: $viteHotFile"
+}
+
 $env:APP_ENV = 'production'
 $env:APP_DEBUG = 'false'
 $env:DEMO_ACCESS_ENABLED = 'true'

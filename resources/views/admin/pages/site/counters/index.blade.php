@@ -33,7 +33,7 @@
         </div>
 
         <div class="grid gap-6 xl:grid-cols-[400px_minmax(0,1fr)]">
-            <div class="kt-card">
+            <div class="kt-card admin-panel admin-panel--create" data-admin-panel="create">
                 <div class="kt-card-header py-5">
                     <div>
                         <h3 class="kt-card-title">Yeni Sayaç Ekle</h3>
@@ -97,7 +97,7 @@
                 </form>
             </div>
 
-            <div class="kt-card">
+            <div class="kt-card admin-panel admin-panel--collection" data-admin-panel="collection">
                 <div class="kt-card-header py-5">
                     <div>
                         <h3 class="kt-card-title">Sayaç Havuzu</h3>

@@ -228,6 +228,21 @@ class ContactMessage extends Model
             return $query->whereRaw('1 = 0');
         }
 
+        if (! $user->isSuperAdmin()) {
+            $query
+                ->whereNotIn('recipient_user_id', User::query()->superAdmins()->select('users.id'))
+                ->where(function (Builder $builder): void {
+                    $builder
+                        ->whereNull('assigned_user_id')
+                        ->orWhereNotIn('assigned_user_id', User::query()->superAdmins()->select('users.id'));
+                })
+                ->where(function (Builder $builder): void {
+                    $builder
+                        ->whereNull('closed_by_user_id')
+                        ->orWhereNotIn('closed_by_user_id', User::query()->superAdmins()->select('users.id'));
+                });
+        }
+
         if ($user->hasGlobalOperationalScope()) {
             return $query;
         }
@@ -242,6 +257,20 @@ class ContactMessage extends Model
     public function isVisibleToUser(?User $user): bool
     {
         if (!$user) {
+            return false;
+        }
+
+        if (
+            ! $user->isSuperAdmin()
+            && User::query()
+                ->superAdmins()
+                ->whereKey(array_filter([
+                    $this->recipient_user_id,
+                    $this->assigned_user_id,
+                    $this->closed_by_user_id,
+                ]))
+                ->exists()
+        ) {
             return false;
         }
 
