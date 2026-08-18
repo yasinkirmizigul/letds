@@ -36,6 +36,51 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertSame([], $violations, 'Legacy Bootstrap utilities found in: '.implode(', ', $violations));
     }
 
+    public function test_public_site_uses_the_bundled_font_awesome_icon_contract(): void
+    {
+        $root = $this->projectRoot().DIRECTORY_SEPARATOR;
+        $siteViews = $root.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site';
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($siteViews, FilesystemIterator::SKIP_DOTS)
+        );
+        $legacyIconViews = [];
+
+        foreach ($iterator as $file) {
+            if ($file->getExtension() !== 'php') {
+                continue;
+            }
+
+            if (preg_match('/\bki-(?:outline|filled|solid)\b/', file_get_contents($file->getPathname()))) {
+                $legacyIconViews[] = $this->relativePath($file->getPathname());
+            }
+        }
+
+        $appCss = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
+        $fontAwesomeCss = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'fontawesome-solid-subset.css');
+
+        $this->assertSame([], $legacyIconViews, 'Public site views still using unloaded Keenicons: '.implode(', ', $legacyIconViews));
+        $this->assertStringContainsString('@import "./fontawesome-solid-subset.css";', $appCss);
+        $this->assertStringContainsString('font-family: "Font Awesome 6 Free";', $fontAwesomeCss);
+        $this->assertStringContainsString('.fa-magnifying-glass::before', $fontAwesomeCss);
+        $this->assertStringContainsString('../../public/assets/site/plugins/global/fonts/@fortawesome/fa-solid-900.woff2', $fontAwesomeCss);
+        $this->assertStringNotContainsString('url("/assets/site/plugins/global/fonts/', $fontAwesomeCss);
+    }
+
+    public function test_public_desktop_navigation_and_home_feature_palette_do_not_collapse(): void
+    {
+        $root = $this->projectRoot().DIRECTORY_SEPARATOR;
+        $css = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
+        $homeCss = file_get_contents($root.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'home.css');
+        $desktopItem = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'partials'.DIRECTORY_SEPARATOR.'navigation'.DIRECTORY_SEPARATOR.'desktop-item.blade.php');
+        $featureView = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home-sections'.DIRECTORY_SEPARATOR.'features.blade.php');
+
+        $this->assertStringContainsString('site-desktop-nav-label', $desktopItem);
+        $this->assertMatchesRegularExpression('/\.site-desktop-nav-link\s*\{[^}]*flex:\s*0 0 auto;[^}]*white-space:\s*nowrap;/s', $css);
+        $this->assertStringContainsString('--home-feature-custom-accent:', $featureView);
+        $this->assertStringContainsString('--home-feature-palette-accent', $homeCss);
+        $this->assertStringContainsString('--home-feature-palette-dark-bg', $homeCss);
+    }
+
     public function test_arbitrary_grid_templates_use_valid_column_separators(): void
     {
         $violations = [];

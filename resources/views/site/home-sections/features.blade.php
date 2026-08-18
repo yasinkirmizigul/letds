@@ -2,7 +2,7 @@
     class="home-feature-section"
     data-surface="{{ $section['surface'] }}"
     data-alignment="{{ $section['alignment'] }}"
-    style="--home-feature-accent: {{ $section['accent_color'] }}; --home-feature-columns: {{ $section['columns'] }};"
+    style="--home-feature-custom-accent: {{ $section['accent_color'] }}; --home-feature-columns: {{ $section['columns'] }};"
     aria-labelledby="home-feature-title-{{ $section['id'] }}"
 >
     <div class="home-feature-section__glow" aria-hidden="true"></div>

@@ -34,7 +34,11 @@
     @vite(['resources/css/app.css', 'resources/js/site/app.js'])
     @stack('site_css')
 </head>
-<body class="site-shell min-h-screen bg-background text-foreground">
+<body
+    class="site-shell min-h-screen bg-background text-foreground"
+    data-site-palette="{{ $siteSettings->palette() }}"
+    style="{{ $siteSettings->paletteCssVariables() }}"
+>
 @php
     $siteMember = auth('member')->user();
     $hasActiveMemberSession = $siteMember && $siteMember->is_active && !$siteMember->trashed();
@@ -57,13 +61,13 @@
     <a href="#site-main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 kt-btn kt-btn-primary">İçeriğe atla</a>
 
     <header class="site-header sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-xl" x-data="{ mobileOpen: false }">
-        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-3 sm:gap-4 sm:px-4 lg:h-[72px] lg:px-6">
+        <div class="site-header__inner mx-auto flex h-16 items-center justify-between gap-2 px-3 sm:gap-4 sm:px-4 lg:h-[72px] lg:px-6">
             <a href="{{ \App\Support\Site\SiteLocalization::homeUrl($siteCurrentLocale) }}" class="probablue-brand probablue-brand--shell" aria-label="PROBABLUE - İstatistiksel Analiz ve Danışma">
                 <span class="probablue-brand__name">PROBA<span>BLUE</span></span>
                 <span class="probablue-brand__tagline">İstatistiksel Analiz ve Danışma</span>
             </a>
 
-            <nav class="hidden items-center gap-1 xl:flex" aria-label="Ana menü" data-site-primary-navigation>
+            <nav class="site-desktop-navigation hidden items-center xl:flex" aria-label="Ana menü" data-site-primary-navigation>
                 @foreach($sitePrimaryNavigation as $navItem)
                     @include('site.partials.navigation.desktop-item', ['navItem' => $navItem])
                 @endforeach
@@ -89,26 +93,47 @@
 
                 <div class="hidden items-center gap-2 xl:flex">
                     @if($hasActiveMemberSession)
-                        <a href="{{ route('member.account.show', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light">
-                            {{ $siteSettings->uiLine('nav_member_account_label') }}
-                        </a>
-                        <a href="{{ route('member.projects.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light">
-                            Projelerim
-                        </a>
-                        <a href="{{ route('member.reviews.index', ['site_locale' => $siteCurrentLocale]) }}" class="hidden kt-btn kt-btn-light 2xl:inline-flex">
-                            Değerlendirmeler
-                            @if(($memberPendingReviewCount ?? 0) > 0)
-                                <span class="kt-badge kt-badge-sm kt-badge-primary ms-1">{{ $memberPendingReviewCount }}</span>
-                            @endif
-                        </a>
-                        <a href="{{ route('member.appointments.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary">
-                            {{ $siteSettings->uiLine('nav_member_panel_label') }}
-                        </a>
+                        <div class="relative" x-data="{ memberMenuOpen: false }" @click.outside="memberMenuOpen = false">
+                            <button
+                                type="button"
+                                class="kt-btn kt-btn-primary"
+                                @click="memberMenuOpen = !memberMenuOpen"
+                                :aria-expanded="memberMenuOpen"
+                                aria-haspopup="true"
+                            >
+                                <i class="fa-solid fa-circle-user" aria-hidden="true"></i>
+                                {{ $siteSettings->uiLine('nav_member_panel_label') }}
+                                @if(($memberPendingReviewCount ?? 0) > 0)
+                                    <span class="kt-badge kt-badge-sm kt-badge-light ms-1">{{ $memberPendingReviewCount }}</span>
+                                @endif
+                                <i class="fa-solid fa-chevron-down text-[10px]" aria-hidden="true"></i>
+                            </button>
 
-                        <form method="POST" action="{{ route('member.logout') }}">
-                            @csrf
-                            <button type="submit" class="kt-btn kt-btn-light">{{ $siteSettings->uiLine('nav_logout_label') }}</button>
-                        </form>
+                            <div
+                                x-show="memberMenuOpen"
+                                x-cloak
+                                x-transition.origin.top.right
+                                class="site-member-header-menu absolute right-0 top-full z-50 mt-2 w-64 rounded-2xl border border-border bg-background p-2 shadow-xl"
+                            >
+                                <div class="border-b border-border px-3 py-2.5">
+                                    <div class="truncate text-sm font-semibold text-foreground">{{ $siteMember->full_name }}</div>
+                                    <div class="truncate text-xs text-muted-foreground">{{ $siteMember->email }}</div>
+                                </div>
+                                <a href="{{ route('member.account.show', ['site_locale' => $siteCurrentLocale]) }}" class="site-member-header-menu__item">Hesabım</a>
+                                <a href="{{ route('member.appointments.index', ['site_locale' => $siteCurrentLocale]) }}" class="site-member-header-menu__item">Randevularım</a>
+                                <a href="{{ route('member.projects.index', ['site_locale' => $siteCurrentLocale]) }}" class="site-member-header-menu__item">Projelerim</a>
+                                <a href="{{ route('member.reviews.index', ['site_locale' => $siteCurrentLocale]) }}" class="site-member-header-menu__item">
+                                    <span>Değerlendirmelerim</span>
+                                    @if(($memberPendingReviewCount ?? 0) > 0)
+                                        <span class="kt-badge kt-badge-sm kt-badge-primary">{{ $memberPendingReviewCount }}</span>
+                                    @endif
+                                </a>
+                                <form method="POST" action="{{ route('member.logout') }}" class="mt-1 border-t border-border pt-1">
+                                    @csrf
+                                    <button type="submit" class="site-member-header-menu__item w-full text-danger">{{ $siteSettings->uiLine('nav_logout_label') }}</button>
+                                </form>
+                            </div>
+                        </div>
                     @else
                         <a href="{{ route('member.register', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light">
                             {{ $siteSettings->uiLine('nav_member_register_label') }}

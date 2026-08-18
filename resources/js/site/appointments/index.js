@@ -12,12 +12,15 @@ let isDayLoading = false;
 let isSubmitting = false;
 let isCancelling = false;
 let isRescheduleMode = false;
+let currentStep = 1;
 
 document.addEventListener('DOMContentLoaded', () => {
     initMetronicPickers(document);
 
     const providerEl = document.getElementById('provider');
     const dateEl = document.getElementById('date');
+    const meetingMethodEl = document.getElementById('meetingMethod');
+    const memberNoteEl = document.getElementById('appointmentMemberNote');
     const cancelBtn = document.getElementById('cancelBtn');
     const rescheduleBtn = document.getElementById('rescheduleBtn');
     const prevMonthBtn = document.getElementById('prevMonthBtn');
@@ -26,6 +29,16 @@ document.addEventListener('DOMContentLoaded', () => {
     providerId = providerEl ? providerEl.value : null;
 
     bindActiveAppointmentActions(cancelBtn, rescheduleBtn);
+    bindStepperControls();
+    syncMeetingMethodDescription();
+    syncAppointmentPreview();
+    showAppointmentStep(1, false);
+
+    meetingMethodEl?.addEventListener('change', () => {
+        syncMeetingMethodDescription();
+        syncAppointmentPreview();
+    });
+    memberNoteEl?.addEventListener('input', syncAppointmentPreview);
 
     if (prevMonthBtn) {
         prevMonthBtn.addEventListener('click', () => {
@@ -48,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedDate = null;
             clearSlots();
             clearDate();
+            syncAppointmentPreview();
             await renderCalendar();
         });
     }
@@ -57,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedDate = getDateInputValue(dateEl) || null;
             loadSlots();
             highlightSelectedDate();
+            syncAppointmentPreview();
         });
     }
 
@@ -79,9 +94,99 @@ function bindActiveAppointmentActions(cancelBtn, rescheduleBtn) {
             window.__RESCHEDULE_MODE__ = true;
             showBookingUi();
             showRescheduleBanner();
+            showAppointmentStep(1);
             renderCalendar();
         });
     }
+}
+
+function bindStepperControls() {
+    document.getElementById('appointmentStep1Next')?.addEventListener('click', () => {
+        if (!getAppointmentPreference().meeting_method_id) {
+            showAppointmentAlert('warning', 'Görüşme yöntemi gerekli', 'Devam etmek için görüşme yöntemlerinden birini seçin.');
+            return;
+        }
+
+        showAppointmentStep(2);
+    });
+    document.getElementById('appointmentStep2Back')?.addEventListener('click', () => showAppointmentStep(1));
+    document.getElementById('appointmentStep2Next')?.addEventListener('click', () => {
+        if (!selectedSlot) {
+            showAppointmentAlert('warning', 'Saat seçimi gerekli', 'Devam etmek için uygun saatlerden birini seçin.');
+            return;
+        }
+
+        syncAppointmentPreview();
+        showAppointmentStep(3);
+    });
+    document.getElementById('appointmentStep3Back')?.addEventListener('click', () => showAppointmentStep(2));
+    document.getElementById('appointmentSubmit')?.addEventListener('click', () => {
+        if (isRescheduleMode) {
+            confirmReschedule();
+            return;
+        }
+
+        confirmBooking();
+    });
+}
+
+function showAppointmentStep(step, shouldScroll = true) {
+    currentStep = Math.min(3, Math.max(1, Number(step) || 1));
+
+    document.querySelectorAll('[data-appointment-step-panel]').forEach((panel) => {
+        panel.classList.toggle('hidden', Number(panel.dataset.appointmentStepPanel) !== currentStep);
+    });
+
+    document.querySelectorAll('[data-appointment-step]').forEach((indicator) => {
+        const indicatorStep = Number(indicator.dataset.appointmentStep);
+        indicator.dataset.state = indicatorStep < currentStep ? 'complete' : (indicatorStep === currentStep ? 'active' : 'upcoming');
+        indicator.setAttribute('aria-current', indicatorStep === currentStep ? 'step' : 'false');
+    });
+
+    if (shouldScroll) {
+        document.getElementById('booking-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function syncAppointmentPreview() {
+    const provider = document.getElementById('provider');
+    const nextButton = document.getElementById('appointmentStep2Next');
+    const providerPreview = document.getElementById('appointmentPreviewProvider');
+    const datePreview = document.getElementById('appointmentPreviewDate');
+    const timePreview = document.getElementById('appointmentPreviewTime');
+    const modePreview = document.getElementById('appointmentPreviewMode');
+    const meetingMethodPreview = document.getElementById('appointmentPreviewMeetingMethod');
+    const memberNotePreview = document.getElementById('appointmentPreviewMemberNote');
+    const submitLabel = document.querySelector('[data-submit-label]');
+    const preference = getAppointmentPreference();
+
+    if (nextButton) nextButton.disabled = !selectedSlot;
+    if (providerPreview) providerPreview.textContent = provider?.selectedOptions?.[0]?.textContent?.trim() || '-';
+    if (datePreview) datePreview.textContent = selectedSlot ? formatAppointmentDate(selectedSlot.start_at) : '-';
+    if (timePreview) timePreview.textContent = selectedSlot ? formatTime(selectedSlot.start_at) : '-';
+    if (modePreview) modePreview.textContent = isRescheduleMode ? 'Randevuyu yeniden planla' : 'Yeni ön görüşme';
+    if (meetingMethodPreview) meetingMethodPreview.textContent = preference.meeting_method_name || '-';
+    if (memberNotePreview) memberNotePreview.textContent = preference.notes_member || 'Not eklenmedi';
+    if (submitLabel) submitLabel.textContent = isRescheduleMode ? 'Yeni Saati Onayla' : 'Randevuyu Onayla';
+}
+
+function getAppointmentPreference() {
+    const meetingMethod = document.getElementById('meetingMethod');
+
+    return {
+        meeting_method_id: meetingMethod?.value || null,
+        meeting_method_name: meetingMethod?.selectedOptions?.[0]?.textContent?.trim() || null,
+        notes_member: document.getElementById('appointmentMemberNote')?.value?.trim() || null,
+    };
+}
+
+function syncMeetingMethodDescription() {
+    const meetingMethod = document.getElementById('meetingMethod');
+    const description = document.getElementById('meetingMethodDescription');
+    if (!description) return;
+
+    description.textContent = meetingMethod?.selectedOptions?.[0]?.dataset?.description
+        || 'Bu yöntem için ek bir açıklama bulunmuyor.';
 }
 
 function hideBookingUi() {
@@ -241,6 +346,7 @@ async function loadSlots() {
 
     isDayLoading = true;
     selectedSlot = null;
+    syncAppointmentPreview();
     container.innerHTML = slotSkeletonCells();
     empty?.classList.add('hidden');
 
@@ -293,17 +399,13 @@ function selectSlot(el, slot) {
 
     el.classList.add('is-selected');
     selectedSlot = slot;
-
-    if (isRescheduleMode) {
-        confirmReschedule();
-        return;
-    }
-
-    confirmBooking();
+    syncAppointmentPreview();
+    showAppointmentStep(3);
 }
 
 async function confirmBooking() {
-    if (!selectedSlot || isSubmitting) return;
+    const preference = getAppointmentPreference();
+    if (!selectedSlot || !preference.meeting_method_id || isSubmitting) return;
 
     const ok = await showConfirmDialog({
         type: 'info',
@@ -314,17 +416,19 @@ async function confirmBooking() {
     });
 
     if (!ok) {
-        selectedSlot = null;
         return;
     }
 
     isSubmitting = true;
+    setAppointmentSubmitState(true);
 
     try {
         const data = await post('/member/appointments', {
             provider_id: providerId,
             start_at: selectedSlot.start_at,
-            blocks: 1
+            blocks: 1,
+            meeting_method_id: preference.meeting_method_id,
+            notes_member: preference.notes_member
         }, { ignoreGlobalError: true });
 
         if (!data.success) {
@@ -338,6 +442,7 @@ async function confirmBooking() {
         showAppointmentAlert('error', 'Randevu oluşturulamadi', 'Lütfen daha sonra tekrar deneyin.');
     } finally {
         isSubmitting = false;
+        setAppointmentSubmitState(false);
     }
 }
 
@@ -375,28 +480,31 @@ async function cancelAppointment() {
 }
 
 async function confirmReschedule() {
-    if (!selectedSlot || isSubmitting || !window.__ACTIVE_APPOINTMENT_ID__) return;
+    const preference = getAppointmentPreference();
+    if (!selectedSlot || !preference.meeting_method_id || isSubmitting || !window.__ACTIVE_APPOINTMENT_ID__) return;
 
     const ok = await showConfirmDialog({
         type: 'info',
-        title: 'Randevu yeniden planlansin mi?',
+        title: 'Randevu yeniden planlansın mı?',
         message: `${formatTime(selectedSlot.start_at)} saatine taşınacak.`,
         confirmButtonText: 'Yeniden planla',
         cancelButtonText: 'Vazgeç'
     });
 
     if (!ok) {
-        selectedSlot = null;
         return;
     }
 
     isSubmitting = true;
+    setAppointmentSubmitState(true);
 
     try {
         const data = await post(`/member/appointments/${window.__ACTIVE_APPOINTMENT_ID__}/reschedule`, {
             provider_id: providerId,
             start_at: selectedSlot.start_at,
-            blocks: 1
+            blocks: 1,
+            meeting_method_id: preference.meeting_method_id,
+            notes_member: preference.notes_member
         }, { ignoreGlobalError: true });
 
         if (!data.success) {
@@ -410,6 +518,7 @@ async function confirmReschedule() {
         showAppointmentAlert('error', 'Randevu yeniden planlanamadı', 'Lütfen daha sonra tekrar deneyin.');
     } finally {
         isSubmitting = false;
+        setAppointmentSubmitState(false);
     }
 }
 
@@ -426,6 +535,24 @@ function formatTime(dateStr) {
         hour: '2-digit',
         minute: '2-digit'
     });
+}
+
+function formatAppointmentDate(dateStr) {
+    return new Date(dateStr).toLocaleDateString('tr-TR', {
+        weekday: 'long',
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+    });
+}
+
+function setAppointmentSubmitState(isBusy) {
+    const button = document.getElementById('appointmentSubmit');
+    if (!button) return;
+
+    button.disabled = isBusy;
+    button.setAttribute('aria-busy', isBusy ? 'true' : 'false');
+    button.classList.toggle('is-loading', isBusy);
 }
 
 function calendarSkeletonCells() {

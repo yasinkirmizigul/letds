@@ -12,6 +12,7 @@
             ['name' => 'description', 'type' => 'textarea', 'rows' => 3, 'label' => 'Kart Açıklaması', 'placeholder' => 'Ziyaretçiye sunulan değeri kısa ve net anlatın'],
             ['name' => 'link_label', 'label' => 'Bağlantı Metni', 'placeholder' => 'Örn. Detayları İncele'],
         ];
+        $columnOptions = $placement === 'services' ? [2, 3, 4, 5, 6] : [2, 3, 4];
     @endphp
 
     <div
@@ -23,21 +24,23 @@
 
         <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div class="grid gap-2">
-                <span class="kt-badge kt-badge-sm kt-badge-light-primary w-fit">Ana Sayfa İçerik Sistemi</span>
+                <span class="kt-badge kt-badge-sm kt-badge-light-primary w-fit">{{ $manager['badge'] }}</span>
                 <div>
-                    <h1 class="text-xl font-semibold">Ana Sayfa Bölümleri</h1>
+                    <h1 class="text-xl font-semibold">{{ $manager['title'] }}</h1>
                     <div class="max-w-3xl text-sm text-muted-foreground">
-                        Müşteri memnuniyeti, esnek çalışma ve benzeri değer kartlarını çok dilli olarak yönetin; görünümü ve sıralamayı kod değiştirmeden belirleyin.
+                        {{ $manager['description'] }} Görünümü ve sıralamayı kod değiştirmeden belirleyin.
                     </div>
                 </div>
             </div>
 
             <div class="flex flex-wrap gap-2">
-                <a href="{{ route('admin.site.homepage.edit') }}" class="kt-btn kt-btn-light">
-                    <i class="ki-filled ki-setting-2"></i>
-                    Hero Ayarları
-                </a>
-                <a href="{{ route('site.home') }}" target="_blank" rel="noopener" class="kt-btn kt-btn-primary">
+                @if($placement === 'homepage')
+                    <a href="{{ route('admin.site.homepage.edit') }}" class="kt-btn kt-btn-light">
+                        <i class="ki-filled ki-setting-2"></i>
+                        Hero Ayarları
+                    </a>
+                @endif
+                <a href="{{ route($manager['preview_route']) }}" target="_blank" rel="noopener" class="kt-btn kt-btn-primary">
                     <i class="ki-filled ki-eye"></i>
                     Canlı Ön İzleme
                 </a>
@@ -66,14 +69,28 @@
         <section class="kt-card overflow-hidden">
             <div class="kt-card-header py-5">
                 <div>
-                    <h2 class="kt-card-title">Yeni Değer Kartları Bölümü</h2>
-                    <div class="text-sm text-muted-foreground">Aynı ana sayfada birden fazla kart grubu oluşturabilirsiniz.</div>
+                    <h2 class="kt-card-title">{{ $manager['create_title'] }}</h2>
+                    <div class="text-sm text-muted-foreground">{{ $manager['create_description'] }}</div>
                 </div>
-                <span class="kt-badge kt-badge-light-info">Tip: Özellik Kartları</span>
+                <span class="kt-badge kt-badge-light-info">{{ count($sectionTypeOptions) }} bölüm tipi</span>
             </div>
 
             <form method="POST" action="{{ route('admin.site.homepage-sections.store') }}" class="kt-card-content grid gap-5 p-5 lg:p-6" data-native-submit="true">
                 @csrf
+                <input type="hidden" name="placement" value="{{ $placement }}">
+
+                @if(count($sectionTypeOptions) === 1)
+                    <input type="hidden" name="type" value="{{ array_key_first($sectionTypeOptions) }}">
+                @else
+                    <div class="grid max-w-md gap-2">
+                        <label class="kt-form-label">Bölüm Tipi</label>
+                        <select name="type" class="kt-select" data-kt-select="true">
+                            @foreach($sectionTypeOptions as $value => $label)
+                                <option value="{{ $value }}" @selected(old('type', 'services') === $value)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
 
                 @include('admin.components.localized-content-tabs', [
                     'moduleKey' => 'homepage_section_create',
@@ -92,7 +109,7 @@
                     <div class="grid gap-2">
                         <label class="kt-form-label">Kolon Sayısı</label>
                         <select name="settings[columns]" class="kt-select" data-kt-select="true">
-                            @foreach([2, 3, 4] as $column)
+                            @foreach($columnOptions as $column)
                                 <option value="{{ $column }}" @selected((int) old('settings.columns', 3) === $column)>{{ $column }} kolon</option>
                             @endforeach
                         </select>
@@ -198,6 +215,20 @@
                             <form method="POST" action="{{ route('admin.site.homepage-sections.update', $section) }}" class="grid gap-5 border-t border-border p-5" data-native-submit="true">
                                 @csrf
                                 @method('PUT')
+                                <input type="hidden" name="placement" value="{{ $placement }}">
+
+                                @if(count($sectionTypeOptions) === 1)
+                                    <input type="hidden" name="type" value="{{ array_key_first($sectionTypeOptions) }}">
+                                @else
+                                    <div class="grid max-w-md gap-2">
+                                        <label class="kt-form-label">Bölüm Tipi</label>
+                                        <select name="type" class="kt-select" data-kt-select="true">
+                                            @foreach($sectionTypeOptions as $value => $label)
+                                                <option value="{{ $value }}" @selected($section->type === $value)>{{ $label }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
 
                                 @include('admin.components.localized-content-tabs', [
                                     'moduleKey' => 'homepage_section_' . $section->id,
@@ -216,7 +247,7 @@
                                     <div class="grid gap-2">
                                         <label class="kt-form-label">Kolon Sayısı</label>
                                         <select name="settings[columns]" class="kt-select" data-kt-select="true">
-                                            @foreach([2, 3, 4] as $column)
+                                            @foreach($columnOptions as $column)
                                                 <option value="{{ $column }}" @selected((int) $sectionSettings['columns'] === $column)>{{ $column }} kolon</option>
                                             @endforeach
                                         </select>
@@ -247,7 +278,7 @@
                                     <label class="flex items-center gap-3">
                                         <input type="hidden" name="is_active" value="0">
                                         <input type="checkbox" name="is_active" value="1" class="kt-checkbox" @checked($section->is_active)>
-                                        <span class="text-sm text-muted-foreground">Bölümü ana sayfada göster</span>
+                                        <span class="text-sm text-muted-foreground">{{ $manager['visibility_label'] }}</span>
                                     </label>
                                     <button type="submit" class="kt-btn kt-btn-light-primary">Bölümü Güncelle</button>
                                 </div>
@@ -394,7 +425,7 @@
                                                 <label class="flex items-center gap-3">
                                                     <input type="hidden" name="is_active" value="0">
                                                     <input type="checkbox" name="is_active" value="1" class="kt-checkbox" @checked($item->is_active)>
-                                                    <span class="text-sm text-muted-foreground">Kartı ana sayfada göster</span>
+                                                    <span class="text-sm text-muted-foreground">Kartı {{ $placement === 'services' ? 'hizmetler sayfasında' : 'ana sayfada' }} göster</span>
                                                 </label>
 
                                                 <button type="submit" class="kt-btn kt-btn-light-primary w-full">Kartı Güncelle</button>
@@ -415,8 +446,8 @@
                     <div class="mx-auto grid size-16 place-items-center rounded-3xl bg-primary-light text-primary">
                         <i class="ki-filled ki-grid text-3xl"></i>
                     </div>
-                    <h2 class="mt-5 text-lg font-semibold">Henüz ana sayfa bölümü yok</h2>
-                    <p class="mt-2 text-sm text-muted-foreground">Yukarıdaki formdan ilk değer kartları bölümünüzü oluşturun.</p>
+                    <h2 class="mt-5 text-lg font-semibold">Henüz içerik bölümü yok</h2>
+                    <p class="mt-2 text-sm text-muted-foreground">Yukarıdaki formdan ilk bölümünüzü oluşturun.</p>
                 </div>
             @endforelse
         </div>

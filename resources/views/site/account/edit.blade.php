@@ -39,6 +39,11 @@
                     <input id="member_phone" name="phone" value="{{ old('phone', $member->phone) }}" class="kt-input @error('phone') kt-input-invalid @enderror" autocomplete="tel" placeholder="05xx xxx xx xx">
                     @error('phone')<span class="text-xs text-danger">{{ $message }}</span>@enderror
                 </div>
+                <div class="grid gap-2 sm:col-span-2">
+                    <label for="member_institution" class="kt-form-label">Kurum / Üniversite</label>
+                    <input id="member_institution" name="institution" value="{{ old('institution', $member->institution) }}" class="kt-input @error('institution') kt-input-invalid @enderror" autocomplete="organization" placeholder="Kurum veya üniversite adınız">
+                    @error('institution')<span class="text-xs text-danger">{{ $message }}</span>@enderror
+                </div>
             </div>
 
             <div class="border-t border-border pt-7">

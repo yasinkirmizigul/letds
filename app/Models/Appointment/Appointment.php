@@ -34,11 +34,13 @@ class Appointment extends Model
     protected $fillable = [
         'provider_id',
         'member_id',
+        'meeting_method_id',
         'start_at',
         'end_at',
         'blocks',
         'status',
         'notes_internal',
+        'notes_member',
         'cancelled_at',
         'cancel_reason',
         'cancelled_by_user_id',
@@ -87,6 +89,11 @@ class Appointment extends Model
     public function member(): BelongsTo
     {
         return $this->belongsTo(Member::class, 'member_id')->withTrashed();
+    }
+
+    public function meetingMethod(): BelongsTo
+    {
+        return $this->belongsTo(AppointmentMeetingMethod::class, 'meeting_method_id')->withTrashed();
     }
 
     public function slots(): HasMany

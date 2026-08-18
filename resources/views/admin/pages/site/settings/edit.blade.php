@@ -222,6 +222,39 @@
                     <div class="kt-card">
                         <div class="kt-card-header py-5">
                             <div>
+                                <h3 class="kt-card-title">Site Renk Paleti</h3>
+                                <div class="text-sm text-muted-foreground">Seçim; site başlığı, butonlar, kartlar, odak renkleri ve açık/koyu mod yüzeylerine birlikte uygulanır.</div>
+                            </div>
+                            <span class="kt-badge kt-badge-light-primary">Canlı tema</span>
+                        </div>
+
+                        <div class="kt-card-content grid gap-4 p-6 md:grid-cols-2">
+                            @foreach(\App\Models\Site\SiteSetting::PALETTE_OPTIONS as $value => $palette)
+                                <label class="group flex cursor-pointer items-center gap-4 rounded-2xl border border-border bg-background/70 p-4 transition hover:border-primary/50">
+                                    <input
+                                        type="radio"
+                                        name="site_palette"
+                                        value="{{ $value }}"
+                                        class="kt-radio shrink-0"
+                                        @checked(old('site_palette', $settings->palette()) === $value)
+                                    >
+                                    <span class="min-w-0 flex-1">
+                                        <span class="block font-semibold text-foreground">{{ $palette['label'] }}</span>
+                                        <span class="mt-1 block text-sm text-muted-foreground">{{ $palette['description'] }}</span>
+                                    </span>
+                                    <span class="flex shrink-0 -space-x-1" aria-hidden="true">
+                                        @foreach($palette['swatches'] as $swatch)
+                                            <span class="size-8 rounded-full border-2 border-background shadow-sm" style="background: {{ $swatch }}"></span>
+                                        @endforeach
+                                    </span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header py-5">
+                            <div>
                                 <h3 class="kt-card-title">İletişim Kanalları ve Harita Entegrasyonu</h3>
                                 <div class="text-sm text-muted-foreground">Dil fark etmeksizin sabit kalan sistem alanları burada yönetilir.</div>
                             </div>

@@ -13,6 +13,25 @@ class HomepageSectionService
         'shield' => 'Güven ve koruma',
         'clock' => 'Zaman ve hız',
         'sparkles' => 'Kalite ve yenilik',
+        'blueprint' => 'Araştırma ve planlama',
+        'document' => 'Makale ve doküman',
+        'report' => 'Raporlama',
+        'health' => 'Klinik araştırma',
+        'ai' => 'Yapay zeka',
+        'conversation' => 'Ön görüşme',
+        'search' => 'Değerlendirme',
+        'support' => 'Destek ve revizyon',
+    ];
+
+    public const TYPE_OPTIONS = [
+        'features' => 'Özellik kartları',
+        'services' => 'Hizmet kartları',
+        'process' => 'Süreç adımları',
+    ];
+
+    public const PLACEMENT_OPTIONS = [
+        'homepage' => 'Ana sayfa',
+        'services' => 'Hizmetler sayfası',
     ];
 
     public const SURFACE_OPTIONS = [
@@ -32,7 +51,33 @@ class HomepageSectionService
 
         return SiteHomepageSection::query()
             ->active()
+            ->forPlacement('homepage')
             ->where('type', 'features')
+            ->with([
+                'translations',
+                'items' => fn ($query) => $query->active(),
+                'items.translations',
+            ])
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get()
+            ->map(fn (SiteHomepageSection $section) => $this->resolveSection($section, $locale))
+            ->filter(fn (array $section) => $section['items'] !== [])
+            ->values()
+            ->all();
+    }
+
+    public function resolvedForPlacement(string $placement, ?string $locale = null): array
+    {
+        $locale = trim((string) ($locale ?: app()->getLocale()));
+
+        if (! array_key_exists($placement, self::PLACEMENT_OPTIONS)) {
+            return [];
+        }
+
+        return SiteHomepageSection::query()
+            ->active()
+            ->forPlacement($placement)
             ->with([
                 'translations',
                 'items' => fn ($query) => $query->active(),
@@ -67,7 +112,7 @@ class HomepageSectionService
     private function resolveSection(SiteHomepageSection $section, string $locale): array
     {
         $settings = $section->settings ?? [];
-        $columns = min(4, max(2, (int) ($settings['columns'] ?? 3)));
+        $columns = min(6, max(2, (int) ($settings['columns'] ?? 3)));
         $alignment = array_key_exists((string) ($settings['alignment'] ?? ''), self::ALIGNMENT_OPTIONS)
             ? (string) $settings['alignment']
             : 'left';
@@ -80,7 +125,8 @@ class HomepageSectionService
 
         return [
             'id' => $section->id,
-            'type' => 'features',
+            'type' => array_key_exists($section->type, self::TYPE_OPTIONS) ? $section->type : 'features',
+            'placement' => $section->placement ?: 'homepage',
             'eyebrow' => (string) $section->localized('eyebrow', $locale, ''),
             'title' => (string) $section->localized('title', $locale, ''),
             'description' => (string) $section->localized('description', $locale, ''),

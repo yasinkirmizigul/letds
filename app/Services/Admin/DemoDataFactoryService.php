@@ -304,6 +304,7 @@ class DemoDataFactoryService
                 'surname' => $name[1],
                 'email' => 'demo.uye'.($index + 1).'.'.$token.'@example.test',
                 'phone' => '0532 400 '.str_pad((string) (1200 + $index), 4, '0', STR_PAD_LEFT),
+                'institution' => ['Marmara Üniversitesi', 'İstanbul Üniversitesi', 'Ankara Üniversitesi', 'Ege Üniversitesi'][$index % 4],
                 'password' => Hash::make(self::DEMO_PASSWORD),
                 'email_verified_at' => $index === 6 ? null : now()->subDays(40 - $index),
                 'membership_terms_accepted_at' => $index === 6 ? null : now()->subDays(40 - $index),

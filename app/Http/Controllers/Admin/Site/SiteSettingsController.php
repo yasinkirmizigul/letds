@@ -53,6 +53,7 @@ class SiteSettingsController extends Controller
             'submit_action' => ['nullable', 'string', 'in:save,generate_seo_draft,save_generate_seo'],
             'site_name' => ['nullable', 'string', 'max:255'],
             'site_tagline' => ['nullable', 'string', 'max:255'],
+            'site_palette' => ['nullable', 'string', 'in:'.implode(',', array_keys(SiteSetting::PALETTE_OPTIONS))],
             'admin_login_logo' => ['nullable', 'file', 'max:4096', 'mimes:jpg,jpeg,png,webp'],
             'clear_admin_login_logo' => ['nullable', 'boolean'],
             'hero_notice' => ['nullable', 'string', 'max:500'],
@@ -124,6 +125,7 @@ class SiteSettingsController extends Controller
         $settingsPayload = [
             'site_name' => $validated['site_name'] ?? null,
             'site_tagline' => $validated['site_tagline'] ?? null,
+            'site_palette' => $validated['site_palette'] ?? $settings->palette(),
             'hero_notice' => $validated['hero_notice'] ?? null,
             'contact_email' => $validated['contact_email'] ?? null,
             'contact_phone' => $validated['contact_phone'] ?? null,

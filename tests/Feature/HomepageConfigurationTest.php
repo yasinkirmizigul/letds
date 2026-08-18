@@ -7,6 +7,7 @@ use App\Models\Admin\User\Role;
 use App\Models\Admin\User\User;
 use App\Models\Site\SiteHomepageSection;
 use App\Models\Site\SiteLanguage;
+use App\Models\Site\SiteSetting;
 use App\Services\Site\HomepageConfigurationService;
 use App\Services\Site\HomepageSectionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -69,6 +70,43 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('VIEW THEMES');
 
         $this->assertDatabaseCount('site_homepage_configs', 1);
+    }
+
+    public function test_probablue_palette_recolors_the_custom_homepage_and_mode_payloads(): void
+    {
+        SiteSetting::current()->update(['site_palette' => 'probablue']);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('data-site-palette="probablue"', false)
+            ->assertSee('--home-before-bg:#eef6ff', false)
+            ->assertSee('--home-after-bg:#087cf0', false)
+            ->assertSee('--home-before-text:#102d5a', false)
+            ->assertSee('--home-sticky-logo:#087cf0', false)
+            ->assertSee('--home-feature-palette-accent:#087cf0', false)
+            ->assertSee('--home-feature-palette-bg:#eef6ff', false)
+            ->assertSee('--home-feature-palette-dark-bg:#0d2038', false)
+            ->assertDontSee('--home-after-bg:#ec6367', false);
+    }
+
+    public function test_homepage_can_switch_to_probablue_split_layout_without_loading_interactive_compare(): void
+    {
+        $service = app(HomepageConfigurationService::class);
+        $config = $service->current();
+        $config->update([
+            'settings' => array_replace($service->settingDefaults(), [
+                'hero_layout' => 'probablue',
+            ]),
+        ]);
+
+        $this->get(route('site.home'))
+            ->assertOk()
+            ->assertSee('data-home-layout="probablue"', false)
+            ->assertSee('class="home-probablue-hero"', false)
+            ->assertSee('home-probablue-panel--analysis', false)
+            ->assertSee('home-probablue-panel--consultation', false)
+            ->assertDontSee('id="before-after"', false)
+            ->assertDontSee('id="dragme"', false);
     }
 
     public function test_configuration_resolves_translations_and_sanitizes_tooltip_html(): void

@@ -16,6 +16,8 @@ class SiteNavigationRoutes
 
     public const FAQS = 'site.faqs.index';
 
+    public const SERVICES = 'site.services.index';
+
     public static function options(): array
     {
         return [
@@ -23,6 +25,7 @@ class SiteNavigationRoutes
             self::BLOG => 'Blog',
             self::GALLERIES => 'Galeri',
             self::FAQS => 'Sıkça Sorulan Sorular',
+            self::SERVICES => 'Hizmetler',
             self::CONTACT => 'İletişim',
         ];
     }
@@ -42,7 +45,7 @@ class SiteNavigationRoutes
 
         return match ($routeName) {
             self::HOME => SiteLocalization::homeUrl($locale),
-            self::BLOG, self::GALLERIES, self::FAQS => SiteLocalization::localizedRoute(
+            self::BLOG, self::GALLERIES, self::FAQS, self::SERVICES => SiteLocalization::localizedRoute(
                 $routeName,
                 locale: $locale,
             ),

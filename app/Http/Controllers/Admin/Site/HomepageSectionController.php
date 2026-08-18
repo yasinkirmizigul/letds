@@ -26,7 +26,18 @@ class HomepageSectionController extends Controller
 
     public function index(): View
     {
+        return $this->managerView('homepage');
+    }
+
+    public function services(): View
+    {
+        return $this->managerView('services');
+    }
+
+    private function managerView(string $placement): View
+    {
         $sections = SiteHomepageSection::query()
+            ->forPlacement($placement)
             ->with(['translations', 'items.translations'])
             ->orderBy('sort_order')
             ->orderBy('id')
@@ -37,6 +48,29 @@ class HomepageSectionController extends Controller
             'iconOptions' => HomepageSectionService::ICON_OPTIONS,
             'surfaceOptions' => HomepageSectionService::SURFACE_OPTIONS,
             'alignmentOptions' => HomepageSectionService::ALIGNMENT_OPTIONS,
+            'sectionTypeOptions' => $placement === 'services'
+                ? array_intersect_key(HomepageSectionService::TYPE_OPTIONS, array_flip(['services', 'process']))
+                : ['features' => HomepageSectionService::TYPE_OPTIONS['features']],
+            'placement' => $placement,
+            'manager' => $placement === 'services' ? [
+                'badge' => 'Hizmet Sayfası İçerik Sistemi',
+                'title' => 'Hizmetler Yönetimi',
+                'description' => 'Hizmet kartlarını ve çalışma süreci adımlarını çok dilli olarak yönetin.',
+                'create_title' => 'Yeni Hizmet Alanı',
+                'create_description' => 'Hizmet kartı veya süreç adımı grubu oluşturabilirsiniz.',
+                'preview_route' => 'site.services.index',
+                'index_route' => 'admin.site.services.index',
+                'visibility_label' => 'Bölümü hizmetler sayfasında göster',
+            ] : [
+                'badge' => 'Ana Sayfa İçerik Sistemi',
+                'title' => 'Ana Sayfa Bölümleri',
+                'description' => 'Müşteri memnuniyeti, esnek çalışma ve benzeri değer kartlarını çok dilli olarak yönetin.',
+                'create_title' => 'Yeni Değer Kartları Bölümü',
+                'create_description' => 'Aynı ana sayfada birden fazla kart grubu oluşturabilirsiniz.',
+                'preview_route' => 'site.home',
+                'index_route' => 'admin.site.homepage-sections.index',
+                'visibility_label' => 'Bölümü ana sayfada göster',
+            ],
             'stats' => [
                 'sections' => $sections->count(),
                 'active_sections' => $sections->where('is_active', true)->count(),
@@ -52,8 +86,9 @@ class HomepageSectionController extends Controller
 
         $section = DB::transaction(function () use ($validated): SiteHomepageSection {
             $section = SiteHomepageSection::query()->create($validated['record'] + [
-                'type' => 'features',
-                'sort_order' => ((int) SiteHomepageSection::query()->max('sort_order')) + 1,
+                'sort_order' => ((int) SiteHomepageSection::query()
+                    ->forPlacement($validated['record']['placement'])
+                    ->max('sort_order')) + 1,
             ]);
 
             $this->syncSectionTranslations($section, $validated['translations']);
@@ -63,7 +98,7 @@ class HomepageSectionController extends Controller
 
         AuditEvent::log('site.homepage.section.create', ['site_homepage_section_id' => $section->id]);
 
-        return $this->sectionRedirect($section, 'Ana sayfa bölümü oluşturuldu.');
+        return $this->sectionRedirect($section, 'İçerik bölümü oluşturuldu.');
     }
 
     public function update(Request $request, SiteHomepageSection $homepageSection): RedirectResponse
@@ -83,13 +118,14 @@ class HomepageSectionController extends Controller
     public function destroy(SiteHomepageSection $homepageSection): RedirectResponse
     {
         $id = $homepageSection->id;
+        $placement = $homepageSection->placement;
         $homepageSection->delete();
 
         AuditEvent::log('site.homepage.section.delete', ['site_homepage_section_id' => $id]);
 
         return redirect()
-            ->route('admin.site.homepage-sections.index')
-            ->with('success', 'Ana sayfa bölümü ve bağlı kartları silindi.');
+            ->route($placement === 'services' ? 'admin.site.services.index' : 'admin.site.homepage-sections.index')
+            ->with('success', 'İçerik bölümü ve bağlı kartları silindi.');
     }
 
     public function reorder(Request $request): JsonResponse
@@ -98,6 +134,13 @@ class HomepageSectionController extends Controller
             'ids' => ['required', 'array', 'min:1'],
             'ids.*' => ['integer', 'distinct', 'exists:site_homepage_sections,id'],
         ]);
+        $sections = SiteHomepageSection::query()->whereKey($payload['ids'])->get(['id', 'placement']);
+
+        if ($sections->pluck('placement')->unique()->count() !== 1) {
+            throw ValidationException::withMessages([
+                'ids' => 'Yalnızca aynı sayfaya ait bölümler birlikte sıralanabilir.',
+            ]);
+        }
 
         DB::transaction(function () use ($payload): void {
             foreach ($payload['ids'] as $index => $id) {
@@ -193,12 +236,19 @@ class HomepageSectionController extends Controller
 
     private function validatedSection(Request $request): array
     {
+        $request->mergeIfMissing([
+            'placement' => 'homepage',
+            'type' => 'features',
+        ]);
+
         $validated = $request->validate([
+            'placement' => ['required', Rule::in(array_keys(HomepageSectionService::PLACEMENT_OPTIONS))],
+            'type' => ['required', Rule::in(array_keys(HomepageSectionService::TYPE_OPTIONS))],
             'eyebrow' => ['nullable', 'string', 'max:80'],
             'title' => ['required', 'string', 'max:160'],
             'description' => ['nullable', 'string', 'max:700'],
             'settings' => ['required', 'array'],
-            'settings.columns' => ['required', 'integer', Rule::in([2, 3, 4])],
+            'settings.columns' => ['required', 'integer', Rule::in([2, 3, 4, 5, 6])],
             'settings.alignment' => ['required', Rule::in(array_keys(HomepageSectionService::ALIGNMENT_OPTIONS))],
             'settings.surface' => ['required', Rule::in(array_keys(HomepageSectionService::SURFACE_OPTIONS))],
             'settings.accent_color' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
@@ -209,8 +259,17 @@ class HomepageSectionController extends Controller
             'translations.*.description' => ['nullable', 'string', 'max:700'],
         ]);
 
+        if (($validated['placement'] === 'homepage' && $validated['type'] !== 'features')
+            || ($validated['placement'] === 'services' && ! in_array($validated['type'], ['services', 'process'], true))) {
+            throw ValidationException::withMessages([
+                'type' => 'Seçilen bölüm tipi bu sayfa yerleşiminde kullanılamaz.',
+            ]);
+        }
+
         return [
             'record' => [
+                'placement' => (string) $validated['placement'],
+                'type' => (string) $validated['type'],
                 'eyebrow' => $this->nullableText($validated['eyebrow'] ?? null),
                 'title' => trim($validated['title']),
                 'description' => $this->nullableText($validated['description'] ?? null),
@@ -303,8 +362,12 @@ class HomepageSectionController extends Controller
 
     private function sectionRedirect(SiteHomepageSection $section, string $message): RedirectResponse
     {
+        $route = $section->placement === 'services'
+            ? 'admin.site.services.index'
+            : 'admin.site.homepage-sections.index';
+
         return redirect()
-            ->to(route('admin.site.homepage-sections.index').'#section-'.$section->id)
+            ->to(route($route).'#section-'.$section->id)
             ->with('success', $message);
     }
 }

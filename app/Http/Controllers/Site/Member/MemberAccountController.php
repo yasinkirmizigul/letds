@@ -85,6 +85,7 @@ class MemberAccountController extends Controller
                 Rule::unique('members', 'email')->ignore($member->id),
             ],
             'phone' => ['nullable', 'string', 'max:40'],
+            'institution' => ['nullable', 'string', 'max:190'],
             'current_password' => [
                 Rule::requiredIf($emailChanged || $passwordChanged),
                 'nullable',
@@ -99,6 +100,7 @@ class MemberAccountController extends Controller
                 'surname' => trim($validated['surname']),
                 'email' => mb_strtolower(trim($validated['email'])),
                 'phone' => filled($validated['phone'] ?? null) ? trim($validated['phone']) : null,
+                'institution' => filled($validated['institution'] ?? null) ? trim($validated['institution']) : null,
             ];
 
             if ($emailChanged) {

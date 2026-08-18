@@ -30,7 +30,7 @@
         <div class="relative mx-auto grid max-w-7xl gap-6 px-4 py-9 sm:py-11 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-end lg:px-6 lg:py-14">
             <div class="max-w-3xl">
                 <div class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-                    <i class="ki-outline ki-message-question text-base" aria-hidden="true"></i>
+                    <i class="fa-solid fa-circle-question text-base" aria-hidden="true"></i>
                     {{ $siteSettings->uiLine('faq_page_kicker') }}
                 </div>
                 <h1 class="mt-4 max-w-2xl font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
@@ -48,7 +48,7 @@
                         <div class="mt-1 font-display text-4xl font-semibold text-foreground">{{ $totalFaqCount }}</div>
                     </div>
                     <span class="grid size-14 place-items-center rounded-2xl bg-primary/10 text-primary">
-                        <i class="ki-outline ki-book-open text-2xl" aria-hidden="true"></i>
+                        <i class="fa-solid fa-book-open text-2xl" aria-hidden="true"></i>
                     </span>
                 </div>
                 <div class="mt-5 h-1.5 overflow-hidden rounded-full bg-muted">
@@ -62,7 +62,7 @@
         <form method="GET" action="{{ $faqIndexUrl }}" class="grid gap-3 rounded-3xl border border-border bg-background p-3 shadow-sm sm:grid-cols-[minmax(0,1fr)_240px_auto]" role="search">
             <label class="relative block">
                 <span class="sr-only">SSS ara</span>
-                <i class="ki-outline ki-magnifier pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-lg text-muted-foreground" aria-hidden="true"></i>
+                <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-lg text-muted-foreground" aria-hidden="true"></i>
                 <input
                     type="search"
                     name="q"
@@ -84,7 +84,7 @@
             </label>
 
             <button type="submit" class="kt-btn kt-btn-primary h-12 justify-center px-6">
-                <i class="ki-outline ki-magnifier" aria-hidden="true"></i>
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                 Ara
             </button>
         </form>
@@ -100,7 +100,7 @@
             @endforeach
             @if($hasFilters)
                 <a href="{{ $faqIndexUrl }}" class="kt-btn kt-btn-sm kt-btn-ghost ms-auto">
-                    <i class="ki-outline ki-cross" aria-hidden="true"></i>
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
                     Filtreleri Temizle
                 </a>
             @endif
@@ -156,7 +156,7 @@
         @else
             <div class="mt-10 rounded-3xl border border-dashed border-border bg-muted/30 px-6 py-14 text-center sm:py-20">
                 <span class="mx-auto grid size-16 place-items-center rounded-2xl bg-background text-primary shadow-sm">
-                    <i class="ki-outline ki-message-question text-3xl" aria-hidden="true"></i>
+                    <i class="fa-solid fa-circle-question text-3xl" aria-hidden="true"></i>
                 </span>
                 <h2 class="mt-6 font-display text-2xl font-semibold text-foreground">{{ $siteSettings->uiLine('faq_empty_heading') }}</h2>
                 <p class="mx-auto mt-3 max-w-xl text-sm leading-7 text-muted-foreground">{{ $siteSettings->uiLine('faq_empty_description') }}</p>
@@ -177,7 +177,7 @@
             </div>
             <a href="{{ route('site.contact-messages.create', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn mt-6 shrink-0 border-background/20 bg-background text-foreground hover:bg-background/90 lg:mt-0">
                 {{ $siteSettings->uiLine('faq_contact_cta_label') }}
-                <i class="ki-outline ki-arrow-right" aria-hidden="true"></i>
+                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
         </section>
     </div>

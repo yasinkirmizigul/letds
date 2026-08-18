@@ -15,11 +15,11 @@
             @click="open = !open"
             :aria-expanded="open"
             aria-haspopup="true"
-            class="relative inline-flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors {{ $branchIsCurrent ? $activeClass : $idleClass }}"
+            class="site-desktop-nav-link relative inline-flex items-center text-sm font-medium transition-colors {{ $branchIsCurrent ? $activeClass : $idleClass }}"
         >
-            @if(filled($navItem->icon_class))<i class="{{ $navItem->icon_class }}" aria-hidden="true"></i>@endif
-            <span>{{ $navItem->localized('title') }}</span>
-            <i class="ki-outline ki-down text-[10px]" aria-hidden="true"></i>
+            @if(filled($navItem->icon_class))<i class="site-desktop-nav-icon {{ \App\Support\Site\SiteIcon::classes($navItem->icon_class) }}" aria-hidden="true"></i>@endif
+            <span class="site-desktop-nav-label">{{ $navItem->localized('title') }}</span>
+            <i class="fa-solid fa-chevron-down text-[10px]" aria-hidden="true"></i>
         </button>
         <div x-show="open" x-cloak x-transition.origin.top class="absolute left-0 top-full z-50 mt-2 min-w-[230px] rounded-2xl border border-border bg-background p-2 shadow-lg">
             <a
@@ -29,7 +29,7 @@
                 @if($itemIsCurrent) aria-current="page" @endif
                 class="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium {{ $itemIsCurrent ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-muted/50' }}"
             >
-                @if(filled($navItem->icon_class))<i class="{{ $navItem->icon_class }}" aria-hidden="true"></i>@endif
+                @if(filled($navItem->icon_class))<i class="{{ \App\Support\Site\SiteIcon::classes($navItem->icon_class) }}" aria-hidden="true"></i>@endif
                 <span>{{ $navItem->localized('title') }}</span>
             </a>
             @foreach($navItem->children as $childItem)
@@ -41,7 +41,7 @@
                     @if($childCurrent) aria-current="page" @endif
                     class="mt-1 flex items-center gap-2 rounded-xl px-3 py-2 text-sm {{ $childCurrent ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground' }}"
                 >
-                    @if(filled($childItem->icon_class))<i class="{{ $childItem->icon_class }}" aria-hidden="true"></i>@endif
+                    @if(filled($childItem->icon_class))<i class="{{ \App\Support\Site\SiteIcon::classes($childItem->icon_class) }}" aria-hidden="true"></i>@endif
                     <span>{{ $childItem->localized('title') }}</span>
                 </a>
             @endforeach
@@ -53,9 +53,9 @@
         target="{{ $navItem->target }}"
         @if($navItem->target === '_blank') rel="noopener noreferrer" @endif
         @if($itemIsCurrent) aria-current="page" @endif
-        class="relative inline-flex items-center gap-2 px-3 py-2 text-sm font-medium transition-colors {{ $itemIsCurrent ? $activeClass : $idleClass }}"
+        class="site-desktop-nav-link relative inline-flex items-center text-sm font-medium transition-colors {{ $itemIsCurrent ? $activeClass : $idleClass }}"
     >
-        @if(filled($navItem->icon_class))<i class="{{ $navItem->icon_class }}" aria-hidden="true"></i>@endif
-        <span>{{ $navItem->localized('title') }}</span>
+        @if(filled($navItem->icon_class))<i class="site-desktop-nav-icon {{ \App\Support\Site\SiteIcon::classes($navItem->icon_class) }}" aria-hidden="true"></i>@endif
+        <span class="site-desktop-nav-label">{{ $navItem->localized('title') }}</span>
     </a>
 @endif

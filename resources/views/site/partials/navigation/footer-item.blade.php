@@ -5,7 +5,7 @@
     @if($navItem->isCurrent($siteCurrentLocale)) aria-current="page" @endif
     class="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
 >
-    @if(filled($navItem->icon_class))<i class="{{ $navItem->icon_class }}" aria-hidden="true"></i>@endif
+    @if(filled($navItem->icon_class))<i class="{{ \App\Support\Site\SiteIcon::classes($navItem->icon_class) }}" aria-hidden="true"></i>@endif
     <span>{{ $navItem->localized('title') }}</span>
 </a>
 
@@ -17,7 +17,7 @@
         @if($childItem->isCurrent($siteCurrentLocale)) aria-current="page" @endif
         class="flex items-center gap-2 pl-4 text-sm text-muted-foreground hover:text-foreground"
     >
-        @if(filled($childItem->icon_class))<i class="{{ $childItem->icon_class }}" aria-hidden="true"></i>@endif
+        @if(filled($childItem->icon_class))<i class="{{ \App\Support\Site\SiteIcon::classes($childItem->icon_class) }}" aria-hidden="true"></i>@endif
         <span>{{ $childItem->localized('title') }}</span>
     </a>
 @endforeach

@@ -322,6 +322,16 @@
                         </div>
 
                         <div>
+                            <label class="kt-form-label mb-2">Görüşme yöntemi</label>
+                            <input type="text" id="appointmentMeetingMethod" class="kt-input w-full" readonly>
+                        </div>
+
+                        <div>
+                            <label class="kt-form-label mb-2">Kurum / Üniversite</label>
+                            <input type="text" id="appointmentMemberInstitution" class="kt-input w-full" readonly>
+                        </div>
+
+                        <div>
                             <label class="kt-form-label mb-2">Kişi</label>
                             <select id="appointmentProviderId" class="kt-select">
                                 <option value="">Mevcut kişide kalsın</option>
@@ -363,13 +373,18 @@
                         </div>
 
                         <div class="lg:col-span-2">
+                            <label class="kt-form-label mb-2">Üyenin ön görüşme notu</label>
+                            <textarea id="appointmentMemberNote" rows="3" class="kt-textarea w-full p-2 min-h-[72px]" readonly></textarea>
+                        </div>
+
+                        <div class="lg:col-span-2">
                             <label class="kt-form-label mb-2">Ic not</label>
-                            <textarea id="appointmentNotesInternal" rows="3" class="kt-input w-full p-2 min-h-[44px]"></textarea>
+                            <textarea id="appointmentNotesInternal" rows="3" class="kt-textarea w-full p-2 min-h-[72px]"></textarea>
                         </div>
 
                         <div class="lg:col-span-2">
                             <label class="kt-form-label mb-2">İptal nedeni</label>
-                            <textarea id="appointmentCancelReason" rows="3" class="kt-input w-full p-2 min-h-[44px]" placeholder="Opsiyonel"></textarea>
+                            <textarea id="appointmentCancelReason" rows="3" class="kt-textarea w-full p-2 min-h-[72px]" placeholder="Opsiyonel"></textarea>
                         </div>
                     </div>
 

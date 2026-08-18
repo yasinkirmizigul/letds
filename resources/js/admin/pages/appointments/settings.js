@@ -637,9 +637,34 @@ function initSettingsAccordions(root) {
     })
 }
 
+function initMeetingMethodDeleteConfirmations(root) {
+    qsa(root, '[data-meeting-method-delete="true"]').forEach((form) => {
+        form.addEventListener('submit', async (event) => {
+            if (form.dataset.deleteConfirmed === 'true') return
+
+            event.preventDefault()
+            event.stopPropagation()
+
+            const confirmed = await showConfirmDialog({
+                type: 'warning',
+                title: 'Görüşme yöntemi silinsin mi?',
+                message: 'Yöntem yeni randevularda gösterilmeyecek. Eski randevu kayıtları korunacak.',
+                confirmButtonText: 'Yöntemi sil',
+                cancelButtonText: 'Vazgeç',
+            })
+
+            if (!confirmed) return
+
+            form.dataset.deleteConfirmed = 'true'
+            form.requestSubmit()
+        }, { capture: true })
+    })
+}
+
 export default async function init(ctx) {
     const root = ctx?.root || document
     initSettingsAccordions(root)
+    initMeetingMethodDeleteConfirmations(root)
 
     const providerSelect = qs(root, '#settingsProviderSelect')
     const btnSaveWorkingHours = qs(root, '#btnSaveWorkingHours')

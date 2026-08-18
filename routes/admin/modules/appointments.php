@@ -57,6 +57,18 @@ Route::prefix('appointments')->as('appointments.')->group(function () {
         ->middleware('permission:appointments.update')
         ->name('settings');
 
+    Route::post('/meeting-methods', [AppointmentSettingsController::class, 'storeMeetingMethod'])
+        ->middleware('permission:appointments.update')
+        ->name('meeting-methods.store');
+
+    Route::put('/meeting-methods/{meetingMethod}', [AppointmentSettingsController::class, 'updateMeetingMethod'])
+        ->middleware('permission:appointments.update')
+        ->name('meeting-methods.update');
+
+    Route::delete('/meeting-methods/{meetingMethod}', [AppointmentSettingsController::class, 'destroyMeetingMethod'])
+        ->middleware('permission:appointments.update')
+        ->name('meeting-methods.destroy');
+
     Route::get('/availability', [AppointmentSettingsController::class, 'availability'])
         ->middleware('permission:appointments.view')
         ->name('availability');

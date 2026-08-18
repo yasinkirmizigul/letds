@@ -31,6 +31,7 @@ class Member extends Authenticatable
         'file_size',
         'email',
         'phone',
+        'institution',
         'password',
         'is_active',
         'email_verified_at',

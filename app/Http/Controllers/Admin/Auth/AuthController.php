@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Site\SiteSetting;
+use App\Support\Auth\GuardIntendedUrl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -62,7 +63,11 @@ class AuthController extends Controller
         RateLimiter::clear($this->throttleKey($request));
         $request->session()->regenerate();
 
-        return redirect()->intended(route('admin.dashboard'));
+        $intendedUrl = GuardIntendedUrl::pull($request, ['/admin']);
+
+        return $intendedUrl
+            ? redirect()->to($intendedUrl)
+            : redirect()->route('admin.dashboard');
     }
 
     public function logout(Request $request)

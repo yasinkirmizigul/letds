@@ -10,6 +10,96 @@
     >
         @includeIf('admin.partials._flash')
 
+        @if($canManageMeetingMethods ?? false)
+            <section class="kt-card admin-panel--create" data-form-accordion-skip="true">
+                <div class="kt-card-header py-5">
+                    <div>
+                        <h2 class="kt-card-title">Görüşme yöntemleri</h2>
+                        <p class="mt-1 text-sm text-muted-foreground">
+                            Üyenin ön görüşme formunda seçebileceği kanalları ve sıralarını yönetin.
+                        </p>
+                    </div>
+                    <span class="kt-badge kt-badge-light-success">
+                        {{ ($meetingMethods ?? collect())->where('is_active', true)->count() }} aktif
+                    </span>
+                </div>
+
+                <div class="kt-card-content grid gap-5 p-5 xl:grid-cols-[minmax(260px,.72fr)_minmax(0,1.6fr)] xl:items-start">
+                    <form method="POST" action="{{ route('admin.appointments.meeting-methods.store') }}" class="rounded-2xl border border-success/25 bg-success/5 p-4">
+                        @csrf
+                        <h3 class="font-semibold text-foreground">Yeni yöntem ekle</h3>
+                        <div class="mt-4 grid gap-4">
+                            <label class="grid gap-2">
+                                <span class="kt-form-label">Yöntem adı</span>
+                                <input class="kt-input" type="text" name="name" maxlength="120" placeholder="Örn. Google Meet" required>
+                            </label>
+                            <label class="grid gap-2">
+                                <span class="kt-form-label">Kısa açıklama</span>
+                                <textarea class="kt-textarea min-h-24" name="description" maxlength="255" placeholder="Üyeye gösterilecek kısa bilgi"></textarea>
+                            </label>
+                            <label class="grid gap-2">
+                                <span class="kt-form-label">Sıra</span>
+                                <input class="kt-input" type="number" name="sort_order" min="0" max="10000" value="{{ (($meetingMethods ?? collect())->max('sort_order') ?? 0) + 10 }}" required>
+                            </label>
+                            <input type="hidden" name="is_active" value="0">
+                            <label class="flex items-center gap-3 text-sm font-medium text-foreground">
+                                <input class="kt-checkbox" type="checkbox" name="is_active" value="1" checked>
+                                Üye formunda aktif olarak göster
+                            </label>
+                            <button class="kt-btn kt-btn-success justify-center" type="submit">
+                                <i class="ki-outline ki-plus"></i>
+                                Yöntem Ekle
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="grid gap-3">
+                        @forelse($meetingMethods ?? [] as $meetingMethod)
+                            <article class="rounded-2xl border border-border bg-card p-4">
+                                <form method="POST" action="{{ route('admin.appointments.meeting-methods.update', $meetingMethod) }}" class="grid gap-4 lg:grid-cols-[minmax(170px,.8fr)_minmax(220px,1.4fr)_100px_auto] lg:items-end">
+                                    @csrf
+                                    @method('PUT')
+                                    <label class="grid gap-2">
+                                        <span class="kt-form-label">Yöntem adı</span>
+                                        <input class="kt-input" type="text" name="name" maxlength="120" value="{{ $meetingMethod->name }}" required>
+                                    </label>
+                                    <label class="grid gap-2">
+                                        <span class="kt-form-label">Kısa açıklama</span>
+                                        <input class="kt-input" type="text" name="description" maxlength="255" value="{{ $meetingMethod->description }}" placeholder="İsteğe bağlı açıklama">
+                                    </label>
+                                    <label class="grid gap-2">
+                                        <span class="kt-form-label">Sıra</span>
+                                        <input class="kt-input" type="number" name="sort_order" min="0" max="10000" value="{{ $meetingMethod->sort_order }}" required>
+                                    </label>
+                                    <div class="flex flex-wrap items-center gap-2 lg:pb-px">
+                                        <input type="hidden" name="is_active" value="0">
+                                        <label class="flex min-h-10 items-center gap-2 rounded-lg border border-border px-3 text-sm font-medium text-foreground">
+                                            <input class="kt-checkbox" type="checkbox" name="is_active" value="1" @checked($meetingMethod->is_active)>
+                                            Aktif
+                                        </label>
+                                        <button class="kt-btn kt-btn-primary" type="submit">Kaydet</button>
+                                    </div>
+                                </form>
+
+                                <form method="POST" action="{{ route('admin.appointments.meeting-methods.destroy', $meetingMethod) }}" class="mt-3 flex justify-end" data-meeting-method-delete="true">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="kt-btn kt-btn-sm kt-btn-light-danger" type="submit">
+                                        <i class="ki-outline ki-trash"></i>
+                                        Sil
+                                    </button>
+                                </form>
+                            </article>
+                        @empty
+                            <div class="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+                                Henüz görüşme yöntemi bulunmuyor.
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+            </section>
+        @endif
+
         @if(($providers ?? collect())->isEmpty())
             <section class="kt-card">
                 <div class="kt-card-content p-8 text-center">

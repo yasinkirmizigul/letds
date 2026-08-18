@@ -5,8 +5,19 @@
     $isRtl = ($siteCurrentLanguage ?? null)?->is_rtl ?? false;
     $homepageContent = $homepage['content'] ?? [];
     $homepageSettings = $homepage['settings'] ?? [];
+    $heroLayout = in_array(($homepageSettings['hero_layout'] ?? 'interactive'), ['interactive', 'probablue'], true)
+        ? $homepageSettings['hero_layout']
+        : 'interactive';
     $homepageTooltipItems = $homepage['tooltips'] ?? [];
-    $homepageModes = $homepage['modes'] ?? [];
+    $sitePalette = ($siteSettings ?? null)?->palette() ?? 'coral';
+    $homepagePaletteStyles = ($siteSettings ?? null)?->homepagePaletteStyles() ?? [];
+    $homepageModes = collect($homepage['modes'] ?? [])
+        ->map(function (array $mode) use ($homepagePaletteStyles): array {
+            $mode['styles'] = array_replace($mode['styles'] ?? [], $homepagePaletteStyles);
+
+            return $mode;
+        })
+        ->all();
     $homepageSections = $homepage['sections'] ?? [];
     $activeMode = collect($homepageModes)->first() ?? [
         'key' => 'analysis',
@@ -15,7 +26,7 @@
         'hero_title' => $homepageContent['hero_title'] ?? '',
         'cta_label' => $homepageContent['cta_label'] ?? '',
         'cta_url' => $homepageContent['cta_url'] ?? '#',
-        'styles' => [],
+        'styles' => $homepagePaletteStyles,
     ];
     $modeList = array_values($homepageModes);
     $leftMode = $modeList[0] ?? $activeMode;
@@ -46,7 +57,7 @@
         '--home-logo' => $homepageSettings['logo_color'],
         '--home-sticky-header-bg' => $homepageSettings['sticky_header_background'],
         '--home-sticky-logo' => $homepageSettings['sticky_logo_color'],
-    ]))->map(fn ($value, $key) => $key . ':' . $value)->implode(';');
+    ], $homepagePaletteStyles))->map(fn ($value, $key) => $key . ':' . $value)->implode(';');
 @endphp
 
 <!DOCTYPE html>
@@ -86,7 +97,10 @@
     data-stat-symbol-mode="{{ $homepageSettings['cursor_symbol_mode'] }}"
     data-home-mode="{{ $activeMode['key'] }}"
     data-home-background-url="{{ $backgroundImage['url'] ?? '' }}"
+    data-home-layout="{{ $heroLayout }}"
+    data-site-palette="{{ $sitePalette }}"
 >
+    @if($heroLayout === 'interactive')
     <header id="header-wrapper" class="site-home-header">
         <div class="home-container">
             <nav class="home-mode-nav" aria-label="Ana sayfa hizmetleri">
@@ -138,8 +152,10 @@
             </nav>
         </div>
     </header>
+    @endif
 
     <main>
+        @if($heroLayout === 'interactive')
         <section id="before-after" class="home-before-after" aria-label="Before and after presentation">
             <div class="view view-after" data-after-view>
                 <div class="wrapper-after">
@@ -243,6 +259,16 @@
                 </span>
             </button>
         </section>
+        @else
+            @include('site.home-sections.probablue-hero', [
+                'leftMode' => $leftMode,
+                'rightMode' => $rightMode,
+                'headerLogo' => $headerLogo,
+                'siteName' => $siteName,
+                'locale' => $locale,
+                'ctaNewTab' => $homepageSettings['cta_new_tab'],
+            ])
+        @endif
 
         @foreach($homepageSections as $section)
             @if(($section['type'] ?? null) === 'features')

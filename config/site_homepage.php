@@ -336,6 +336,16 @@ return [
             'title' => 'Davranış',
             'description' => 'Buton ve bilgi noktalarının görünürlük ayarları.',
             'fields' => [
+                [
+                    'key' => 'hero_layout',
+                    'label' => 'Giriş tasarımı',
+                    'type' => 'select',
+                    'default' => 'interactive',
+                    'options' => [
+                        'interactive' => 'Etkileşimli karşılaştırma',
+                        'probablue' => 'Probablue bölünmüş görünüm',
+                    ],
+                ],
                 ['key' => 'cta_new_tab', 'label' => 'Butonu yeni sekmede aç', 'type' => 'boolean', 'default' => false],
                 ['key' => 'cursor_symbols_enabled', 'label' => 'Fare sembol efektini göster', 'type' => 'boolean', 'default' => true],
                 [

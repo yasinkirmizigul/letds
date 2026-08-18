@@ -52,17 +52,19 @@ class AppointmentService
             $appointment = Appointment::create([
                 'provider_id' => $providerId,
                 'member_id' => (int) $data['member_id'],
+                'meeting_method_id' => $data['meeting_method_id'] ?? null,
                 'start_at' => $startAt,
                 'end_at' => $endAt,
                 'blocks' => $blocks,
                 'status' => Appointment::STATUS_BOOKED,
                 'notes_internal' => $data['notes_internal'] ?? null,
+                'notes_member' => $data['notes_member'] ?? null,
                 'created_by_user_id' => $actorUserId,
             ]);
 
             $this->writeSlots($appointment);
 
-            return $appointment->fresh(['member', 'provider']);
+            return $appointment->fresh(['member', 'provider', 'meetingMethod']);
         });
 
         app(AdminNotificationService::class)->fromAppointment($appointment, 'created');
@@ -108,18 +110,20 @@ class AppointmentService
             $new = Appointment::create([
                 'provider_id' => $newProviderId,
                 'member_id' => $appointment->member_id,
+                'meeting_method_id' => $data['meeting_method_id'] ?? $appointment->meeting_method_id,
                 'start_at' => $newStartAt,
                 'end_at' => $newEndAt,
                 'blocks' => $blocks,
                 'status' => Appointment::STATUS_BOOKED,
                 'created_by_user_id' => $actor->id,
                 'notes_internal' => $data['notes_internal'] ?? $appointment->notes_internal,
+                'notes_member' => $data['notes_member'] ?? $appointment->notes_member,
                 'parent_id' => $appointment->id,
             ]);
 
             $this->writeSlots($new);
 
-            return $new->fresh(['member', 'provider', 'parent']);
+            return $new->fresh(['member', 'provider', 'meetingMethod', 'parent']);
         });
 
         app(AdminNotificationService::class)->fromAppointment($new, 'transferred');
@@ -163,7 +167,7 @@ class AppointmentService
 
             $this->writeSlots($appointment);
 
-            return $appointment->fresh(['member', 'provider']);
+            return $appointment->fresh(['member', 'provider', 'meetingMethod']);
         });
 
         app(AdminNotificationService::class)->fromAppointment($updated, 'resized');
@@ -228,6 +232,7 @@ class AppointmentService
     public function getActiveForMember(int $memberId): ?Appointment
     {
         return Appointment::query()
+            ->with('meetingMethod')
             ->where('member_id', $memberId)
             ->where('status', Appointment::STATUS_BOOKED)
             ->where('end_at', '>=', Carbon::now('UTC'))
@@ -316,17 +321,19 @@ class AppointmentService
             $newAppointment = Appointment::create([
                 'provider_id' => $newProviderId,
                 'member_id' => $appointment->member_id,
+                'meeting_method_id' => $data['meeting_method_id'] ?? $appointment->meeting_method_id,
                 'start_at' => $newStartAt,
                 'end_at' => $newEndAt,
                 'blocks' => $blocks,
                 'status' => Appointment::STATUS_BOOKED,
                 'notes_internal' => $appointment->notes_internal,
+                'notes_member' => $data['notes_member'] ?? $appointment->notes_member,
                 'parent_id' => $appointment->id,
             ]);
 
             $this->writeSlots($newAppointment);
 
-            return $newAppointment->fresh(['member', 'provider', 'parent']);
+            return $newAppointment->fresh(['member', 'provider', 'meetingMethod', 'parent']);
         });
 
         app(AdminNotificationService::class)->fromAppointment($newAppointment, 'rescheduled_by_member');

@@ -50,6 +50,13 @@ $contentMenu = [
                 'perm' => 'site_homepage.view',
             ],
             [
+                'key' => 'content.services',
+                'title' => 'Hizmetler Yönetimi',
+                'route' => 'admin.site.services.index',
+                'active' => ['admin.site.services.*'],
+                'perm' => 'site_homepage.view',
+            ],
+            [
                 'key' => 'content.sliders',
                 'title' => 'Ana Sayfa Slider',
                 'route' => 'admin.site.sliders.index',

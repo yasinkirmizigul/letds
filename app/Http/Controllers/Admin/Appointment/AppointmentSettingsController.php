@@ -4,22 +4,24 @@ namespace App\Http\Controllers\Admin\Appointment;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\User\User;
+use App\Models\Appointment\AppointmentMeetingMethod;
 use App\Models\Appointment\GlobalBlackout;
 use App\Models\Appointment\ProviderTimeOff;
 use App\Models\Appointment\ProviderWorkingHour;
 use App\Services\Appointment\AvailabilityService;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class AppointmentSettingsController extends Controller
 {
     public function __construct(
         protected AvailabilityService $availabilityService
-    ) {
-    }
+    ) {}
 
     public function index(Request $request)
     {
@@ -32,12 +34,69 @@ class AppointmentSettingsController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'title']);
 
+        $canManageMeetingMethods = (bool) $request->user()?->isAdmin();
+        $meetingMethods = $canManageMeetingMethods
+            ? AppointmentMeetingMethod::query()->orderBy('sort_order')->orderBy('name')->get()
+            : collect();
+
         return view('admin.pages.appointments.settings', [
             'pageTitle' => 'Randevu Ayarları',
             'providers' => $providers,
             'providerCount' => $providers->count(),
             'timeOffCount' => ProviderTimeOff::query()->count(),
             'blackoutCount' => GlobalBlackout::query()->count(),
+            'canManageMeetingMethods' => $canManageMeetingMethods,
+            'meetingMethods' => $meetingMethods,
+        ]);
+    }
+
+    public function storeMeetingMethod(Request $request): JsonResponse
+    {
+        $this->assertMeetingMethodManager($request);
+        $data = $this->validateMeetingMethod($request);
+
+        AppointmentMeetingMethod::query()->create($data);
+
+        return response()->json([
+            'message' => 'Görüşme yöntemi eklendi.',
+            'redirect_url' => route('admin.appointments.settings'),
+        ], 201);
+    }
+
+    public function updateMeetingMethod(
+        Request $request,
+        AppointmentMeetingMethod $meetingMethod
+    ): JsonResponse {
+        $this->assertMeetingMethodManager($request);
+        $data = $this->validateMeetingMethod($request, $meetingMethod);
+
+        if (! $data['is_active']) {
+            $this->ensureAnotherActiveMeetingMethodExists($meetingMethod);
+        }
+
+        $meetingMethod->update($data);
+
+        return response()->json([
+            'message' => 'Görüşme yöntemi güncellendi.',
+            'redirect_url' => route('admin.appointments.settings'),
+        ]);
+    }
+
+    public function destroyMeetingMethod(
+        Request $request,
+        AppointmentMeetingMethod $meetingMethod
+    ): JsonResponse {
+        $this->assertMeetingMethodManager($request);
+
+        if ($meetingMethod->is_active) {
+            $this->ensureAnotherActiveMeetingMethodExists($meetingMethod);
+        }
+
+        $meetingMethod->delete();
+
+        return response()->json([
+            'message' => 'Görüşme yöntemi silindi.',
+            'redirect_url' => route('admin.appointments.settings'),
         ]);
     }
 
@@ -255,15 +314,16 @@ class AppointmentSettingsController extends Controller
         $errors = [];
 
         foreach ($days as $index => $row) {
-            if (!(bool) ($row['is_enabled'] ?? false)) {
+            if (! (bool) ($row['is_enabled'] ?? false)) {
                 continue;
             }
 
             $start = $row['start_time'] ?? null;
             $end = $row['end_time'] ?? null;
 
-            if (!$start || !$end) {
+            if (! $start || ! $end) {
                 $errors["days.$index.start_time"] = 'Açık günler için başlangıç ve bitiş saati zorunludur.';
+
                 continue;
             }
 
@@ -272,7 +332,7 @@ class AppointmentSettingsController extends Controller
             }
         }
 
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             throw ValidationException::withMessages($errors);
         }
     }
@@ -282,7 +342,7 @@ class AppointmentSettingsController extends Controller
         $enabledHours = $hours->filter(fn (ProviderWorkingHour $hour) => (bool) $hour->is_enabled);
 
         $weeklyMinutes = $enabledHours->sum(function (ProviderWorkingHour $hour) {
-            if (!$hour->start_time || !$hour->end_time) {
+            if (! $hour->start_time || ! $hour->end_time) {
                 return 0;
             }
 
@@ -303,8 +363,8 @@ class AppointmentSettingsController extends Controller
 
     protected function minutesBetween(string $startTime, string $endTime): int
     {
-        $start = Carbon::createFromFormat('H:i:s', strlen($startTime) === 5 ? $startTime . ':00' : $startTime);
-        $end = Carbon::createFromFormat('H:i:s', strlen($endTime) === 5 ? $endTime . ':00' : $endTime);
+        $start = Carbon::createFromFormat('H:i:s', strlen($startTime) === 5 ? $startTime.':00' : $startTime);
+        $end = Carbon::createFromFormat('H:i:s', strlen($endTime) === 5 ? $endTime.':00' : $endTime);
 
         return max(0, $start->diffInMinutes($end, false));
     }
@@ -312,5 +372,52 @@ class AppointmentSettingsController extends Controller
     private function assertProviderVisible(User $provider): void
     {
         abort_unless($provider->isVisibleTo(request()->user()), 404);
+    }
+
+    private function assertMeetingMethodManager(Request $request): void
+    {
+        abort_unless($request->user()?->isAdmin(), 403);
+    }
+
+    private function validateMeetingMethod(
+        Request $request,
+        ?AppointmentMeetingMethod $meetingMethod = null
+    ): array {
+        $data = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:120',
+                Rule::unique('appointment_meeting_methods', 'name')
+                    ->ignore($meetingMethod?->id)
+                    ->whereNull('deleted_at'),
+            ],
+            'description' => ['nullable', 'string', 'max:255'],
+            'is_active' => ['required', 'boolean'],
+            'sort_order' => ['required', 'integer', 'between:0,10000'],
+        ]);
+
+        $data['name'] = trim($data['name']);
+        $data['description'] = filled($data['description'] ?? null)
+            ? trim($data['description'])
+            : null;
+        $data['is_active'] = (bool) $data['is_active'];
+
+        return $data;
+    }
+
+    private function ensureAnotherActiveMeetingMethodExists(
+        AppointmentMeetingMethod $meetingMethod
+    ): void {
+        $hasAnotherActiveMethod = AppointmentMeetingMethod::query()
+            ->active()
+            ->whereKeyNot($meetingMethod->getKey())
+            ->exists();
+
+        if (! $hasAnotherActiveMethod) {
+            throw ValidationException::withMessages([
+                'is_active' => 'Randevu akışı için en az bir aktif görüşme yöntemi kalmalıdır.',
+            ]);
+        }
     }
 }

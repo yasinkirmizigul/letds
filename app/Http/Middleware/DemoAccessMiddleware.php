@@ -8,9 +8,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DemoAccessMiddleware
 {
+    private const LOOPBACK_HOSTS = ['127.0.0.1', 'localhost', '::1'];
+
     public function handle(Request $request, Closure $next): Response
     {
-        if (! config('demo.access.enabled')) {
+        if (! config('demo.access.enabled') || $this->isLocalLoopbackRequest($request)) {
             return $next($request);
         }
 
@@ -36,5 +38,14 @@ class DemoAccessMiddleware
         return $next($request)
             ->header('Cache-Control', 'private, no-store')
             ->header('X-Robots-Tag', 'noindex, nofollow, noarchive');
+    }
+
+    private function isLocalLoopbackRequest(Request $request): bool
+    {
+        $host = trim(strtolower($request->getHost()), '[]');
+        $remoteAddress = trim(strtolower((string) $request->server('REMOTE_ADDR')), '[]');
+
+        return in_array($host, self::LOOPBACK_HOSTS, true)
+            && in_array($remoteAddress, self::LOOPBACK_HOSTS, true);
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Member;
 use App\Models\Site\SiteSetting;
 use App\Services\Member\MemberDocumentService;
+use App\Support\Auth\GuardIntendedUrl;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,8 +19,7 @@ class MemberAuthController extends Controller
 {
     public function __construct(
         private readonly MemberDocumentService $documentService
-    ) {
-    }
+    ) {}
 
     public function showLogin(): View
     {
@@ -49,6 +49,7 @@ class MemberAuthController extends Controller
             'surname' => ['required', 'string', 'max:100'],
             'email' => ['required', 'email', 'max:190', 'unique:members,email'],
             'phone' => ['nullable', 'string', 'max:50'],
+            'institution' => ['nullable', 'string', 'max:190'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'filepath' => ['nullable', 'file', 'max:12288', 'mimes:pdf,jpg,jpeg,png,webp,doc,docx'],
             'membership_terms_read' => ['accepted'],
@@ -67,6 +68,7 @@ class MemberAuthController extends Controller
                 'surname' => trim((string) $validated['surname']),
                 'email' => Str::lower(trim((string) $validated['email'])),
                 'phone' => filled($validated['phone'] ?? null) ? trim((string) $validated['phone']) : null,
+                'institution' => filled($validated['institution'] ?? null) ? trim((string) $validated['institution']) : null,
                 'password' => (string) $validated['password'],
                 'is_active' => true,
                 'membership_terms_accepted_at' => now(),
@@ -83,8 +85,10 @@ class MemberAuthController extends Controller
         Auth::guard('member')->login($member);
         $request->session()->regenerate();
 
+        $intendedUrl = GuardIntendedUrl::pull($request, ['/member', '/randevu-al']);
+
         return redirect()
-            ->route('member.appointments.index')
+            ->to($intendedUrl ?? route('member.appointments.index'))
             ->with('success', 'Üyelik kaydınız oluşturuldu. Randevu paneline yönlendirildiniz.');
     }
 
@@ -106,7 +110,7 @@ class MemberAuthController extends Controller
             ]);
         }
 
-        if ($member && !$member->is_active) {
+        if ($member && ! $member->is_active) {
             throw ValidationException::withMessages([
                 'email' => $member->membership_ended_at
                     ? 'Üyeliğiniz daha önce sonlandırılmış durumda. Yeniden değerlendirme için bizimle iletişime geçebilirsiniz.'
@@ -114,7 +118,7 @@ class MemberAuthController extends Controller
             ]);
         }
 
-        if (!Auth::guard('member')->attempt([
+        if (! Auth::guard('member')->attempt([
             'email' => $email,
             'password' => $data['password'],
             'is_active' => 1,
@@ -132,7 +136,11 @@ class MemberAuthController extends Controller
             'last_login_at' => now(),
         ])->save();
 
-        return redirect()->route('member.appointments.index');
+        $intendedUrl = GuardIntendedUrl::pull($request, ['/member', '/randevu-al']);
+
+        return $intendedUrl
+            ? redirect()->to($intendedUrl)
+            : redirect()->route('member.appointments.index');
     }
 
     public function logout(Request $request): RedirectResponse

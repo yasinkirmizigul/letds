@@ -67,9 +67,52 @@ class DemoAccessTest extends TestCase
         $this->assertSame(Response::HTTP_SERVICE_UNAVAILABLE, $response->getStatusCode());
     }
 
-    private function handleRequest(?string $username = null, ?string $password = null): Response
+    public function test_demo_access_does_not_challenge_local_loopback_requests(): void
     {
-        $server = [];
+        config()->set('demo.access', [
+            'enabled' => true,
+            'username' => 'demo',
+            'password' => 'safe-password',
+        ]);
+
+        $response = $this->handleRequest(
+            host: '127.0.0.1:8000',
+            remoteAddress: '127.0.0.1',
+        );
+
+        $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertSame('ok', $response->getContent());
+        $this->assertFalse($response->headers->has('WWW-Authenticate'));
+    }
+
+    public function test_external_request_cannot_bypass_demo_access_with_a_loopback_host(): void
+    {
+        config()->set('demo.access', [
+            'enabled' => true,
+            'username' => 'demo',
+            'password' => 'safe-password',
+        ]);
+
+        $response = $this->handleRequest(
+            host: '127.0.0.1:8000',
+            remoteAddress: '203.0.113.10',
+        );
+
+        $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+        $this->assertTrue($response->headers->has('WWW-Authenticate'));
+    }
+
+    private function handleRequest(
+        ?string $username = null,
+        ?string $password = null,
+        string $host = 'demo.example.test',
+        string $remoteAddress = '203.0.113.10',
+    ): Response
+    {
+        $server = [
+            'HTTP_HOST' => $host,
+            'REMOTE_ADDR' => $remoteAddress,
+        ];
 
         if ($username !== null) {
             $server['PHP_AUTH_USER'] = $username;

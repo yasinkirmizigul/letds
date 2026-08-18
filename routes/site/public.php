@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Site\Blog\BlogController;
 use App\Http\Controllers\Site\Cms\FaqController;
+use App\Http\Controllers\Site\Cms\ServiceController;
 use App\Http\Controllers\Site\Gallery\GalleryController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +14,7 @@ $registerPublicContentRoutes = static function (): void {
     Route::get('/galeri/{slug}', [GalleryController::class, 'show'])->name('galleries.show');
 
     Route::get('/sikca-sorulan-sorular', [FaqController::class, 'index'])->name('faqs.index');
+    Route::get('/hizmetler', ServiceController::class)->name('services.index');
 };
 
 Route::middleware('site.locale')->name('site.')->group($registerPublicContentRoutes);

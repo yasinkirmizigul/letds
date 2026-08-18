@@ -5,9 +5,13 @@ namespace App\Http\Controllers\Site\Appointment;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\User\User;
 use App\Models\Appointment\Appointment;
+use App\Models\Appointment\AppointmentMeetingMethod;
 use App\Services\Appointment\AppointmentService;
 use App\Services\Appointment\AvailabilityService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class AppointmentController extends Controller
 {
@@ -29,12 +33,20 @@ class AppointmentController extends Controller
 
         $providers = User::query()
             ->visibleTo($this->adminViewer())
-            ->whereHas('roles', fn($q) => $q->where('slug','provider'))
+            ->whereHas('roles', fn ($q) => $q->where('slug', 'provider'))
             ->where('is_active', 1)
-            ->get(['id','name']);
+            ->get(['id', 'name']);
+
+        $meetingMethods = AppointmentMeetingMethod::query()
+            ->active()
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get(['id', 'name', 'description']);
 
         return view('site.appointments.index', compact(
+            'member',
             'providers',
+            'meetingMethods',
             'activeAppointment'
         ));
     }
@@ -42,14 +54,14 @@ class AppointmentController extends Controller
     public function availability(Request $request)
     {
         $data = $request->validate([
-            'provider_id' => ['required','integer'],
-            'date' => ['required','date'],
+            'provider_id' => ['required', 'integer'],
+            'date' => ['required', 'date'],
         ]);
         $this->assertPublicProvider((int) $data['provider_id']);
 
         return $this->availabilityService->getAvailableStartsForDate(
-            (int)$data['provider_id'],
-            \Carbon\Carbon::parse($data['date']),
+            (int) $data['provider_id'],
+            Carbon::parse($data['date']),
             1
         );
     }
@@ -59,32 +71,41 @@ class AppointmentController extends Controller
         try {
             $user = auth('member')->user();
 
-            if (!$user) {
+            if (! $user) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Member login gerekli.'
+                    'message' => 'Member login gerekli.',
                 ], 401);
             }
 
             $data = $request->validate([
-                'provider_id' => ['required','integer'],
+                'provider_id' => ['required', 'integer'],
+                'meeting_method_id' => [
+                    'required',
+                    'integer',
+                    Rule::exists('appointment_meeting_methods', 'id')
+                        ->where(fn ($query) => $query->where('is_active', true)->whereNull('deleted_at')),
+                ],
                 'start_at' => ['required'],
-                'blocks' => ['required','integer','min:1','max:4'],
+                'blocks' => ['required', 'integer', 'min:1', 'max:4'],
+                'notes_member' => ['nullable', 'string', 'max:2000'],
             ]);
             $this->assertPublicProvider((int) $data['provider_id']);
 
             $appointment = $this->appointmentService->create([
                 'provider_id' => $data['provider_id'],
                 'member_id' => $user->id,
+                'meeting_method_id' => $data['meeting_method_id'],
                 'start_at' => $data['start_at'],
                 'blocks' => $data['blocks'],
+                'notes_member' => filled($data['notes_member'] ?? null) ? trim($data['notes_member']) : null,
             ], null);
 
             return response()->json([
                 'success' => true,
-                'id' => $appointment->id
+                'id' => $appointment->id,
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => collect($e->errors())->flatten()->first(),
@@ -102,29 +123,31 @@ class AppointmentController extends Controller
             ], 500);
         }
     }
+
     public function days(Request $request)
     {
         $data = $request->validate([
-            'provider_id' => ['required','integer'],
-            'month' => ['required','date'],
+            'provider_id' => ['required', 'integer'],
+            'month' => ['required', 'date'],
         ]);
         $this->assertPublicProvider((int) $data['provider_id']);
 
-        $start = \Carbon\Carbon::parse($data['month'])->startOfMonth();
+        $start = Carbon::parse($data['month'])->startOfMonth();
         $end = $start->copy()->endOfMonth();
 
         return $this->availabilityService->getCalendarAvailability(
-            (int)$data['provider_id'],
+            (int) $data['provider_id'],
             $start,
             $end
         );
     }
+
     public function cancel($id)
     {
         try {
             $member = auth('member')->user();
 
-            if (!$member) {
+            if (! $member) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Member login gerekli.',
@@ -138,7 +161,7 @@ class AppointmentController extends Controller
             return response()->json([
                 'success' => true,
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => collect($e->errors())->flatten()->first(),
@@ -162,7 +185,7 @@ class AppointmentController extends Controller
         try {
             $member = auth('member')->user();
 
-            if (!$member) {
+            if (! $member) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Member login gerekli.',
@@ -171,10 +194,20 @@ class AppointmentController extends Controller
 
             $data = $request->validate([
                 'provider_id' => ['required', 'integer'],
+                'meeting_method_id' => [
+                    'required',
+                    'integer',
+                    Rule::exists('appointment_meeting_methods', 'id')
+                        ->where(fn ($query) => $query->where('is_active', true)->whereNull('deleted_at')),
+                ],
                 'start_at' => ['required'],
                 'blocks' => ['required', 'integer', 'min:1', 'max:4'],
+                'notes_member' => ['nullable', 'string', 'max:2000'],
             ]);
             $this->assertPublicProvider((int) $data['provider_id']);
+            $data['notes_member'] = filled($data['notes_member'] ?? null)
+                ? trim($data['notes_member'])
+                : null;
 
             $appointment = Appointment::findOrFail($id);
 
@@ -197,7 +230,7 @@ class AppointmentController extends Controller
                     'status' => $updatedAppointment->status,
                 ],
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => collect($e->errors())->flatten()->first(),
@@ -226,7 +259,7 @@ class AppointmentController extends Controller
             ->exists();
 
         if (! $exists) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
+            throw ValidationException::withMessages([
                 'provider_id' => 'Seçilen uzman kullanılamıyor.',
             ]);
         }

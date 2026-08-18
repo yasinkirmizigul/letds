@@ -139,6 +139,22 @@
                         @enderror
                     </div>
 
+                    <div class="grid gap-2">
+                        <label class="text-sm font-medium text-background" for="member_register_institution">Kurum / Üniversite</label>
+                        <input
+                            id="member_register_institution"
+                            type="text"
+                            name="institution"
+                            value="{{ old('institution') }}"
+                            class="kt-input @error('institution') kt-input-invalid @enderror"
+                            placeholder="Kurum veya üniversite adınız"
+                            autocomplete="organization"
+                        >
+                        @error('institution')
+                            <div class="mt-1.5 text-xs text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <div class="grid gap-4 md:grid-cols-2">
                         <div class="grid gap-2">
                             <label class="text-sm font-medium text-background" for="member_register_password">Şifre</label>

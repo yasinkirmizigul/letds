@@ -17,8 +17,7 @@ class AppointmentCalendarController extends Controller
     public function __construct(
         protected AppointmentService $appointmentService,
         protected ScheduleConflictService $scheduleConflictService
-    ) {
-    }
+    ) {}
 
     public function index(Request $request)
     {
@@ -54,8 +53,9 @@ class AppointmentCalendarController extends Controller
                 fn ($query) => $query->whereHas('provider', fn ($provider) => $provider->visibleTo($actor))
             )
             ->with([
-                'member:id,name,surname,email,phone',
+                'member:id,name,surname,email,phone,institution',
                 'provider:id,name,title',
+                'meetingMethod:id,name',
             ])
             ->where('status', Appointment::STATUS_BOOKED);
 
@@ -76,13 +76,13 @@ class AppointmentCalendarController extends Controller
             ->get()
             ->map(function (Appointment $appointment) {
                 $memberName = trim(
-                    ($appointment->member?->name ?? '') . ' ' . ($appointment->member?->surname ?? '')
+                    ($appointment->member?->name ?? '').' '.($appointment->member?->surname ?? '')
                 );
 
                 $color = $this->appointmentEventColor($appointment->status);
 
                 return [
-                    'id' => 'appointment_' . $appointment->id,
+                    'id' => 'appointment_'.$appointment->id,
                     'title' => $memberName !== '' ? $memberName : 'Üye',
                     'start' => $appointment->start_at?->toIso8601String(),
                     'end' => $appointment->end_at?->toIso8601String(),
@@ -99,12 +99,15 @@ class AppointmentCalendarController extends Controller
                         'member_name' => $memberName,
                         'member_email' => $appointment->member?->email,
                         'member_phone' => $appointment->member?->phone,
+                        'member_institution' => $appointment->member?->institution,
+                        'meeting_method_name' => $appointment->meetingMethod?->name,
+                        'notes_member' => $appointment->notes_member,
                         'status' => $appointment->status,
                         'status_label' => $color['label'],
                         'blocks' => $appointment->blocks,
                         'notes_internal' => $appointment->notes_internal,
                         'parent_id' => $appointment->parent_id,
-                        'is_transferred' => !is_null($appointment->parent_id),
+                        'is_transferred' => ! is_null($appointment->parent_id),
                     ],
                 ];
             });
@@ -135,7 +138,7 @@ class AppointmentCalendarController extends Controller
                 $color = $this->blockEventColor($timeOff->block_type ?? 'manual');
 
                 return [
-                    'id' => 'timeoff_' . $timeOff->id,
+                    'id' => 'timeoff_'.$timeOff->id,
                     'title' => $timeOff->reason ?: $color['label'],
                     'start' => $timeOff->start_at?->toIso8601String(),
                     'end' => $timeOff->end_at?->toIso8601String(),
@@ -284,7 +287,7 @@ class AppointmentCalendarController extends Controller
             ->get()
             ->map(function (Appointment $item) {
                 $memberName = trim(
-                    ($item->member?->name ?? '') . ' ' . ($item->member?->surname ?? '')
+                    ($item->member?->name ?? '').' '.($item->member?->surname ?? '')
                 );
 
                 return [
@@ -516,7 +519,7 @@ class AppointmentCalendarController extends Controller
             ->whereHas('roles', function ($q) {
                 $q->whereIn('slug', ['provider', 'admin', 'superadmin']);
             })
-            ->when(!$actor->hasGlobalOperationalScope(), function ($query) use ($actor) {
+            ->when(! $actor->hasGlobalOperationalScope(), function ($query) use ($actor) {
                 $query->whereKey($actor->id);
             });
     }
@@ -532,7 +535,7 @@ class AppointmentCalendarController extends Controller
             ->whereDoesntHave('roles', function ($roleQuery) {
                 $roleQuery->where('slug', 'superadmin');
             })
-            ->when(!$actor->hasGlobalOperationalScope(), function ($query) use ($actor) {
+            ->when(! $actor->hasGlobalOperationalScope(), function ($query) use ($actor) {
                 $query->whereKeyNot($actor->id);
             });
     }
@@ -542,7 +545,7 @@ class AppointmentCalendarController extends Controller
         /** @var User $actor */
         $actor = $request->user();
 
-        if (!$actor->hasGlobalOperationalScope()) {
+        if (! $actor->hasGlobalOperationalScope()) {
             return (int) $actor->id;
         }
 
@@ -704,13 +707,14 @@ class AppointmentCalendarController extends Controller
         $this->assertCanAccessAppointment($actor, $appointment);
 
         $appointment->load([
-            'member:id,name,surname,email,phone',
+            'member:id,name,surname,email,phone,institution',
             'provider:id,name,title',
+            'meetingMethod:id,name',
             'parent:id,start_at,end_at,status',
         ]);
 
         $memberName = trim(
-            ($appointment->member?->name ?? '') . ' ' . ($appointment->member?->surname ?? '')
+            ($appointment->member?->name ?? '').' '.($appointment->member?->surname ?? '')
         );
 
         return response()->json([
@@ -722,6 +726,10 @@ class AppointmentCalendarController extends Controller
             'member_name' => $memberName,
             'member_email' => $appointment->member?->email,
             'member_phone' => $appointment->member?->phone,
+            'member_institution' => $appointment->member?->institution,
+            'meeting_method_id' => $appointment->meeting_method_id,
+            'meeting_method_name' => $appointment->meetingMethod?->name,
+            'notes_member' => $appointment->notes_member,
             'start_at' => $appointment->start_at?->toIso8601String(),
             'end_at' => $appointment->end_at?->toIso8601String(),
             'blocks' => $appointment->blocks,
@@ -730,7 +738,7 @@ class AppointmentCalendarController extends Controller
             'notes_internal' => $appointment->notes_internal,
             'cancel_reason' => $appointment->cancel_reason,
             'parent_id' => $appointment->parent_id,
-            'is_transferred' => !is_null($appointment->parent_id),
+            'is_transferred' => ! is_null($appointment->parent_id),
         ]);
     }
 }

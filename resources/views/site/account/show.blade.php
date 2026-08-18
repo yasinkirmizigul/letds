@@ -89,6 +89,7 @@
                         <div class="rounded-2xl border border-border bg-muted/30 p-4"><dt class="text-xs uppercase tracking-[0.14em] text-muted-foreground">Ad soyad</dt><dd class="mt-2 text-sm font-semibold text-foreground">{{ $member->full_name }}</dd></div>
                         <div class="rounded-2xl border border-border bg-muted/30 p-4"><dt class="text-xs uppercase tracking-[0.14em] text-muted-foreground">E-posta</dt><dd class="mt-2 break-all text-sm font-semibold text-foreground">{{ $member->email }}</dd></div>
                         <div class="rounded-2xl border border-border bg-muted/30 p-4"><dt class="text-xs uppercase tracking-[0.14em] text-muted-foreground">Telefon</dt><dd class="mt-2 text-sm font-semibold text-foreground">{{ $member->phone ?: 'Henüz eklenmedi' }}</dd></div>
+                        <div class="rounded-2xl border border-border bg-muted/30 p-4"><dt class="text-xs uppercase tracking-[0.14em] text-muted-foreground">Kurum / Üniversite</dt><dd class="mt-2 text-sm font-semibold text-foreground">{{ $member->institution ?: 'Henüz eklenmedi' }}</dd></div>
                         <div class="rounded-2xl border border-border bg-muted/30 p-4"><dt class="text-xs uppercase tracking-[0.14em] text-muted-foreground">Son giriş</dt><dd class="mt-2 text-sm font-semibold text-foreground">{{ optional($member->last_login_at)->format('d.m.Y H:i') ?: 'İlk oturum' }}</dd></div>
                     </dl>
                 </div>

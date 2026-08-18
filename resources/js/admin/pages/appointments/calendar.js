@@ -118,6 +118,9 @@ function openAppointmentModal(root, data) {
         statusLabel: data.status_label || data.status || '',
         status: data.status || '',
         notesInternal: data.notes_internal || '',
+        notesMember: data.notes_member || '',
+        meetingMethodName: data.meeting_method_name || '',
+        memberInstitution: data.member_institution || '',
         cancelReason: data.cancel_reason || '',
     }
 
@@ -127,10 +130,16 @@ function openAppointmentModal(root, data) {
     const startAt = qs(root, '#appointmentStartAt')
     const blocks = qs(root, '#appointmentBlocks')
     const notes = qs(root, '#appointmentNotesInternal')
+    const memberNote = qs(root, '#appointmentMemberNote')
+    const meetingMethod = qs(root, '#appointmentMeetingMethod')
+    const memberInstitution = qs(root, '#appointmentMemberInstitution')
     const cancel = qs(root, '#appointmentCancelReason')
     const completeButton = qs(root, '#btnAppointmentComplete')
 
     if (member) member.value = appointmentModalState.memberName
+    if (memberNote) memberNote.value = appointmentModalState.notesMember
+    if (meetingMethod) meetingMethod.value = appointmentModalState.meetingMethodName || 'Belirtilmemiş'
+    if (memberInstitution) memberInstitution.value = appointmentModalState.memberInstitution || 'Belirtilmemiş'
     if (status) status.value = appointmentModalState.statusLabel
     if (provider) {
         syncSelectValue(
@@ -162,6 +171,9 @@ function closeAppointmentModal(root) {
         statusLabel: '',
         status: '',
         notesInternal: '',
+        notesMember: '',
+        meetingMethodName: '',
+        memberInstitution: '',
         cancelReason: '',
     }
 
@@ -749,6 +761,9 @@ function buildEventTooltipHtml(event) {
             { label: 'Üye', value: event.extendedProps?.member_name || event.title || '-' },
             { label: 'Telefon', value: event.extendedProps?.member_phone || '' },
             { label: 'E-posta', value: event.extendedProps?.member_email || '' },
+            { label: 'Kurum / Üniversite', value: event.extendedProps?.member_institution || '' },
+            { label: 'Görüşme yöntemi', value: event.extendedProps?.meeting_method_name || '' },
+            { label: 'Üye notu', value: event.extendedProps?.notes_member || '' },
             { label: 'İç not', value: event.extendedProps?.notes_internal || '' },
         ]
 
@@ -990,6 +1005,9 @@ function hydrateAppointmentEvent(event, data) {
     event.setExtendedProp('member_name', data.member_name)
     event.setExtendedProp('member_email', data.member_email)
     event.setExtendedProp('member_phone', data.member_phone)
+    event.setExtendedProp('member_institution', data.member_institution)
+    event.setExtendedProp('meeting_method_name', data.meeting_method_name)
+    event.setExtendedProp('notes_member', data.notes_member || '')
     event.setExtendedProp('status', data.status)
     event.setExtendedProp('status_label', data.status_label)
     event.setExtendedProp('blocks', data.blocks)

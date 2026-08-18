@@ -6,6 +6,13 @@
 *.md diff=markdown
 *.php diff=php
 
+# Graphify outputs are generated and can be several megabytes. Keep them
+# versioned without forcing desktop Git clients to render their full diffs.
+graphify-out/**/graph.html -diff
+graphify-out/**/graph.json -diff
+graphify-out/**/GRAPH_REPORT.md -diff
+graphify-out/cache/** -diff
+
 /.github export-ignore
 CHANGELOG.md export-ignore
 .styleci.yml export-ignore

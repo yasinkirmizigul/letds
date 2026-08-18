@@ -13,6 +13,7 @@ class SiteHomepageSection extends Model
 
     protected $fillable = [
         'type',
+        'placement',
         'eyebrow',
         'title',
         'description',
@@ -42,6 +43,11 @@ class SiteHomepageSection extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
+    }
+
+    public function scopeForPlacement(Builder $query, string $placement): Builder
+    {
+        return $query->where('placement', $placement);
     }
 
     public function localized(string $field, ?string $locale = null, mixed $fallback = null): mixed

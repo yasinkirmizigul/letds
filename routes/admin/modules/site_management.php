@@ -21,6 +21,10 @@ Route::prefix('site')->as('site.')->group(function () {
         ->middleware('permission:site_homepage.update')
         ->name('homepage.update');
 
+    Route::get('/services', [HomepageSectionController::class, 'services'])
+        ->middleware('permission:site_homepage.view')
+        ->name('services.index');
+
     Route::prefix('homepage/sections')->as('homepage-sections.')->group(function () {
         Route::get('/', [HomepageSectionController::class, 'index'])
             ->middleware('permission:site_homepage.view')
