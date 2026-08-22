@@ -126,9 +126,15 @@
                     @if($headerLogo)
                         <img src="{{ $headerLogo['url'] }}" alt="{{ $headerLogo['alt'] ?: $siteName }}">
                     @else
-                        <span class="probablue-brand probablue-brand--home" aria-hidden="true">
-                            <span class="probablue-brand__name">PROBA<span>BLUE</span></span>
-                            <span class="probablue-brand__tagline">İstatistiksel Analiz ve Danışma</span>
+                        <span class="home-split-brand" data-home-split-brand="true" aria-hidden="true">
+                            <span class="probablue-brand probablue-brand--home home-split-brand__layer home-split-brand__layer--after">
+                                <span class="probablue-brand__name">PROBA<span>BLUE</span></span>
+                                <span class="probablue-brand__tagline">İstatistiksel Analiz ve Danışma</span>
+                            </span>
+                            <span class="probablue-brand probablue-brand--home home-split-brand__layer home-split-brand__layer--before">
+                                <span class="probablue-brand__name">PROBA<span>BLUE</span></span>
+                                <span class="probablue-brand__tagline">İstatistiksel Analiz ve Danışma</span>
+                            </span>
                         </span>
                     @endif
                 </a>

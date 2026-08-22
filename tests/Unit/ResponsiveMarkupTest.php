@@ -172,6 +172,7 @@ class ResponsiveMarkupTest extends TestCase
     {
         $css = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
         $homeCss = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'home.css');
+        $homeJs = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR.'home.js');
         $homeView = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home.blade.php');
         $lightBackground = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'home-background-light.svg');
         $darkBackground = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'home-background-dark.svg');
@@ -185,6 +186,10 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('html[data-site-theme="dark"] .site-home-header.sticky .home-theme-toggle', $homeCss);
         $this->assertMatchesRegularExpression('/\.site-theme-toggle\s*\{[^}]*width:\s*36px;[^}]*height:\s*36px;/s', $homeCss);
         $this->assertStringContainsString('.wrapper-logo.has-image', $homeCss);
+        $this->assertStringContainsString('data-home-split-brand="true"', $homeView);
+        $this->assertStringContainsString('.home-split-brand__layer--after', $homeCss);
+        $this->assertStringContainsString('.home-split-brand__layer--before', $homeCss);
+        $this->assertStringContainsString("item.style.setProperty('--home-header-split-x'", $homeJs);
         $this->assertStringContainsString('html.home-hero-pending .view-after', $homeCss);
         $this->assertStringContainsString('width: min(400px, calc(100vw - 64px));', $homeCss);
         $this->assertStringContainsString('color: #ffffff;', $homeCss);

@@ -228,7 +228,9 @@
       const splitX = rect.left + x;
       headerItems.forEach((item) => {
         const itemRect = item.getBoundingClientRect();
+        const localSplitX = Math.min(Math.max(splitX - itemRect.left, 0), itemRect.width);
         const onAfter = itemRect.left + itemRect.width / 2 <= splitX;
+        item.style.setProperty('--home-header-split-x', `${localSplitX}px`);
         item.classList.toggle('on-after', onAfter);
         item.classList.toggle('on-before', !onAfter);
       });

@@ -610,6 +610,7 @@ body.site-home-index {
 }
 
 .wrapper-logo {
+  position: relative;
   display: flex;
   width: clamp(182px, 18vw, 224px);
   height: 54px;
@@ -633,6 +634,20 @@ body.site-home-index {
 
 .home-header-logo.is-fallback {
   color: var(--home-logo);
+}
+
+.home-split-brand {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+}
+
+.home-split-brand__layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
 .probablue-brand--home {
@@ -670,10 +685,31 @@ body.site-home-index {
   white-space: nowrap;
 }
 
+.home-header-logo .home-split-brand__layer--after {
+  color: var(--home-after-text);
+  clip-path: inset(0 calc(100% - var(--home-header-split-x, 50%)) 0 0);
+}
+
+.home-header-logo .home-split-brand__layer--before {
+  color: var(--home-before-text);
+  clip-path: inset(0 0 0 var(--home-header-split-x, 50%));
+}
+
 .site-home-header.sticky .home-header-logo.is-fallback,
 .site-home-header.grey-bg .home-header-logo.is-fallback,
 .home-header-logo.is-fallback.on-before {
   color: var(--home-sticky-logo);
+}
+
+.site-home-header.sticky .home-split-brand__layer--after,
+.site-home-header.grey-bg .home-split-brand__layer--after {
+  color: var(--home-sticky-logo);
+  clip-path: inset(0);
+}
+
+.site-home-header.sticky .home-split-brand__layer--before,
+.site-home-header.grey-bg .home-split-brand__layer--before {
+  clip-path: inset(0 0 0 100%);
 }
 
 .site-theme-toggle {

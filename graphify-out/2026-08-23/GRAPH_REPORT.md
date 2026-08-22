@@ -5,7 +5,7 @@
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3809 nodes · 8300 edges · 429 communities (282 shown, 147 thin omitted)
+- 3809 nodes · 8301 edges · 420 communities (273 shown, 147 thin omitted)
 - Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 695 edges (avg confidence: 0.79)
 - Token cost: 0 input · 0 output
 
@@ -203,18 +203,14 @@
 - [[_COMMUNITY_library-attach.js|library-attach.js]]
 - [[_COMMUNITY_lock.js|lock.js]]
 - [[_COMMUNITY_blogpartials_gallery.blade.php|blog/partials/_gallery.blade.php]]
-- [[_COMMUNITY_categoriescreate.blade.php|categories/create.blade.php]]
 - [[_COMMUNITY_categoriesedit.blade.php|categories/edit.blade.php]]
-- [[_COMMUNITY_partialsform.blade.php|partials/form.blade.php]]
 - [[_COMMUNITY_edit.js|edit.js]]
 - [[_COMMUNITY_GalleryController.php|GalleryController.php]]
 - [[_COMMUNITY_galleriesedit.blade.php|galleries/edit.blade.php]]
 - [[_COMMUNITY_EcommerceOrderItem.php|EcommerceOrderItem.php]]
 - [[_COMMUNITY_messagesindex.blade.php|messages/index.blade.php]]
 - [[_COMMUNITY_messagesshow.blade.php|messages/show.blade.php]]
-- [[_COMMUNITY_permissionscreate.blade.php|permissions/create.blade.php]]
 - [[_COMMUNITY_permissionsedit.blade.php|permissions/edit.blade.php]]
-- [[_COMMUNITY_permissionsindex.blade.php|permissions/index.blade.php]]
 - [[_COMMUNITY_0001_01_01_000000_create_users_table.php|0001_01_01_000000_create_users_table.php]]
 - [[_COMMUNITY_0001_01_01_000002_create_jobs_table.php|0001_01_01_000002_create_jobs_table.php]]
 - [[_COMMUNITY_0001_01_01_000004_create_permissions_table.php|0001_01_01_000004_create_permissions_table.php]]
@@ -228,7 +224,6 @@
 - [[_COMMUNITY_usersedit.blade.php|users/edit.blade.php]]
 - [[_COMMUNITY_usersindex.blade.php|users/index.blade.php]]
 - [[_COMMUNITY_2026_02_15_000001_create_products_table.php|2026_02_15_000001_create_products_table.php]]
-- [[_COMMUNITY_providers.php|providers.php]]
 - [[_COMMUNITY_2026_04_22_000010_create_home_sliders_table.php|2026_04_22_000010_create_home_sliders_table.php]]
 - [[_COMMUNITY_2026_04_30_000001_add_section_order_to_admin_dashboard_preferences_table.php|2026_04_30_000001_add_section_order_to_admin_dashboard_preferences_table.php]]
 - [[_COMMUNITY_2026_04_21_000001_create_contact_messages_table.php|2026_04_21_000001_create_contact_messages_table.php]]
@@ -263,8 +258,6 @@
 - [[_COMMUNITY_Builder|Builder]]
 - [[_COMMUNITY_2026_07_31_000001_create_admin_menu_settings_table.php|2026_07_31_000001_create_admin_menu_settings_table.php]]
 - [[_COMMUNITY_up|up]]
-- [[_COMMUNITY_2026_05_06_000003_create_ecommerce_operation_tables.php|2026_05_06_000003_create_ecommerce_operation_tables.php]]
-- [[_COMMUNITY_.appointments|.appointments]]
 - [[_COMMUNITY_footer.blade.php|footer.blade.php]]
 - [[_COMMUNITY_head.blade.php|head.blade.php]]
 - [[_COMMUNITY_calendar.blade.php|calendar.blade.php]]
@@ -311,7 +304,6 @@
 - [[_COMMUNITY__picker-modal.blade.php|_picker-modal.blade.php]]
 - [[_COMMUNITY_Seeding notes (safe defaults)|Seeding notes (safe defaults)]]
 - [[_COMMUNITY_home-hero-computer.blade.php|home-hero-computer.blade.php]]
-- [[_COMMUNITY_2026_08_04_000001_add_site_portal_workflow.php|2026_08_04_000001_add_site_portal_workflow.php]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `User` - 179 edges
@@ -334,17 +326,17 @@
   app/Http/Controllers/Admin/Appointment/AppointmentCalendarController.php → app/Services/Appointment/ScheduleConflictService.php
 - `AppointmentSettingsController` --inherits--> `Controller`  [EXTRACTED]
   app/Http/Controllers/Admin/Appointment/AppointmentSettingsController.php → app/Http/Controllers/Controller.php
-- `AppointmentSettingsController` --references--> `AvailabilityService`  [EXTRACTED]
-  app/Http/Controllers/Admin/Appointment/AppointmentSettingsController.php → app/Services/Appointment/AvailabilityService.php
+- `AuditLogController` --inherits--> `Controller`  [EXTRACTED]
+  app/Http/Controllers/Admin/AuditLog/AuditLogController.php → app/Http/Controllers/Controller.php
 
 ## Import Cycles
 - None detected.
 
-## Communities (429 total, 147 thin omitted)
+## Communities (420 total, 147 thin omitted)
 
 ### Community 0 - "Illuminate\Http\RedirectResponse"
-Cohesion: 0.15
-Nodes (8): AppointmentSettingsController, Carbon, Collection, JsonResponse, Request, AppointmentMeetingMethod, Builder, GlobalBlackout
+Cohesion: 0.06
+Nodes (17): AppointmentSettingsController, Carbon, Collection, JsonResponse, Request, AppointmentController, Request, AppointmentMeetingMethod (+9 more)
 
 ### Community 1 - "BlogPost"
 Cohesion: 0.06
@@ -355,32 +347,32 @@ Cohesion: 0.06
 Nodes (74): addDays(), addMonths(), createTimelineToolbar(), dateKey(), dateParts(), defaultAnchorForView(), destroyHistoryTimeline(), destroyHistoryTimelines() (+66 more)
 
 ### Community 3 - "calendar.js"
-Cohesion: 0.18
-Nodes (4): CategoryController, JsonResponse, Request, View
+Cohesion: 0.08
+Nodes (11): TrashPurgeCommand, CategoryController, JsonResponse, Request, View, Category, BelongsTo, HasMany (+3 more)
 
 ### Community 4 - "AuditEvent"
-Cohesion: 0.04
-Nodes (41): down(), up(), down(), up(), down(), up(), down(), up() (+33 more)
+Cohesion: 0.06
+Nodes (30): down(), up(), down(), up(), down(), up(), down(), up() (+22 more)
 
 ### Community 5 - "EcommerceOrder"
 Cohesion: 0.07
 Nodes (69): appointmentModalState, blockModalState, buildEventContent(), buildEventsUrl(), buildEventTooltipHtml(), calcBlocks(), closeAppointmentModal(), closeBlockModal() (+61 more)
 
 ### Community 6 - "Role"
-Cohesion: 0.08
-Nodes (5): EcommerceOrder, BelongsTo, Builder, HasMany, MorphOne
+Cohesion: 0.06
+Nodes (14): OrderController, Carbon, RedirectResponse, Request, View, EcommerceOrder, BelongsTo, Builder (+6 more)
 
 ### Community 7 - "Project"
 Cohesion: 0.06
 Nodes (11): AdminModuleInstallCommand, MakeAdminModule, SyncServiceReviews, AdminModuleInstaller, FilePatcher, ModuleGenerator, Command, ModuleNamer (+3 more)
 
 ### Community 8 - "ModuleNamer"
-Cohesion: 0.07
-Nodes (23): AdminMiddleware, Closure, Request, AjaxRedirectResponseMiddleware, Closure, Request, Response, DemoAccessMiddleware (+15 more)
+Cohesion: 0.06
+Nodes (27): AdminMiddleware, Closure, Request, AjaxRedirectResponseMiddleware, Closure, Request, Response, AuditRequestMiddleware (+19 more)
 
 ### Community 9 - "Illuminate\Database\Eloquent\Model"
-Cohesion: 0.33
-Nodes (3): AvailabilityService, Carbon, Collection
+Cohesion: 0.13
+Nodes (4): BelongsTo, Builder, HasMany, SitePage
 
 ### Community 10 - "PaymentIntegration"
 Cohesion: 0.08
@@ -403,8 +395,8 @@ Cohesion: 0.10
 Nodes (7): DashController, Carbon, Collection, RedirectResponse, Request, View, DashboardSectionRegistry
 
 ### Community 15 - "Product"
-Cohesion: 0.08
-Nodes (6): BelongsTo, Builder, HasMany, MorphOne, MorphToMany, Project
+Cohesion: 0.07
+Nodes (7): BelongsTo, Builder, HasMany, MorphOne, MorphToMany, Project, MemberProjectWorkflowService
 
 ### Community 16 - "AdminMenuRegistry"
 Cohesion: 0.07
@@ -414,25 +406,21 @@ Nodes (11): BelongsTo, Builder, Collection, HasMany, SiteNavigationItem, AppServ
 Cohesion: 0.25
 Nodes (3): AdminQuickSearchController, JsonResponse, Request
 
-### Community 18 - "LocalizedContentTranslationService"
-Cohesion: 0.16
-Nodes (4): DemoDataFactoryService, Closure, Collection, Model
-
 ### Community 19 - ".index"
-Cohesion: 0.08
-Nodes (7): Builder, HasMany, HasOne, self, User, AdminRoleProfile, AdminRoleProfileTest
+Cohesion: 0.10
+Nodes (5): Builder, HasMany, HasOne, self, User
 
 ### Community 20 - "blog/form-shared.js"
 Cohesion: 0.22
 Nodes (5): JsonResponse, RedirectResponse, Request, ProductController, AuditEvent
 
 ### Community 21 - "ContactMessage"
-Cohesion: 0.10
-Nodes (5): StoreCategoryRequest, UpdateCategoryRequest, CategoryTree, Collection, FormRequest
+Cohesion: 0.20
+Nodes (3): StoreCategoryRequest, UpdateCategoryRequest, FormRequest
 
 ### Community 22 - "Closure"
-Cohesion: 0.14
-Nodes (6): RedirectResponse, Request, BelongsTo, HasMany, SiteSetting, SiteMailConfigurator
+Cohesion: 0.12
+Nodes (8): RedirectResponse, Request, View, SiteSettingsController, BelongsTo, HasMany, SiteSetting, SiteMailConfigurator
 
 ### Community 23 - "Appointment"
 Cohesion: 0.10
@@ -441,6 +429,10 @@ Nodes (4): Member, Builder, HasMany, Authenticatable
 ### Community 24 - "products/form-shared.js"
 Cohesion: 0.11
 Nodes (13): HomepageSectionController, JsonResponse, RedirectResponse, Request, View, Builder, HasMany, SiteHomepageSection (+5 more)
+
+### Community 25 - "projects/form-shared.js"
+Cohesion: 0.24
+Nodes (18): activateMode(), bindColorField(), bindModeLabels(), bindRangeField(), COMPUTER_COLOR_SETTINGS, init(), numericValue(), safeBlend() (+10 more)
 
 ### Community 26 - "AppointmentCalendarController"
 Cohesion: 0.12
@@ -454,21 +446,17 @@ Nodes (28): allowScripts, core-js-pure, dependencies, alpinejs, @fontsource-vari
 Cohesion: 0.16
 Nodes (9): HomeSliderController, JsonResponse, RedirectResponse, Request, View, HomeSlider, BelongsTo, Builder (+1 more)
 
-### Community 29 - "ServiceReviewQuestion"
-Cohesion: 0.12
-Nodes (7): BaseTestCase, RefreshDatabase, AdminDashboardLayoutTest, AdminMenuVisibilityAccessTest, MediaServiceWebpTest, TestCase, AdminMenuRegistryTest
-
 ### Community 30 - "Illuminate\Bus\Queueable"
 Cohesion: 0.07
-Nodes (4): ContactMessage, BelongsTo, Builder, AdminDemoDataFactoryTest
+Nodes (6): ContactMessageController, RedirectResponse, View, ContactMessage, BelongsTo, Builder
 
 ### Community 31 - "Category"
 Cohesion: 0.16
 Nodes (7): GalleryController, JsonResponse, Request, Gallery, Builder, HasMany, HasOne
 
 ### Community 32 - "AdminQuickSearchController"
-Cohesion: 0.21
-Nodes (3): JsonResponse, Request, ProjectController
+Cohesion: 0.20
+Nodes (4): JsonResponse, RedirectResponse, Request, ProjectController
 
 ### Community 33 - "User"
 Cohesion: 0.20
@@ -479,28 +467,28 @@ Cohesion: 0.20
 Nodes (24): init(), init(), notify(), clampTextLength(), countWords(), csrfToken(), debounce(), getTheme() (+16 more)
 
 ### Community 35 - "HomepageConfigurationService"
-Cohesion: 0.14
-Nodes (8): AdminMenuVisibilityController, RedirectResponse, Request, View, AdminMenuSetting, BelongsTo, AdminMenuRegistry, AdminMenuVisibility
+Cohesion: 0.09
+Nodes (10): AdminMenuVisibilityController, RedirectResponse, Request, View, AdminMenuSetting, BelongsTo, AdminMenuRegistry, AdminMenuVisibility (+2 more)
 
 ### Community 36 - "SeoFileGenerator"
 Cohesion: 0.17
 Nodes (3): Request, ProfileController, AuditWriter
 
 ### Community 37 - "projects/index.js"
-Cohesion: 0.22
-Nodes (11): SendAppointmentUpdatedMailJob, SendContactMessageReceivedMailJob, AdminContactMessageReceivedMail, AppointmentUpdatedMail, SiteMailTestMail, Dispatchable, InteractsWithQueue, Mailable (+3 more)
+Cohesion: 0.21
+Nodes (12): SendAppointmentAdminNotificationMailJob, SendAppointmentUpdatedMailJob, SendContactMessageReceivedMailJob, AdminContactMessageReceivedMail, AppointmentUpdatedMail, SiteMailTestMail, Dispatchable, InteractsWithQueue (+4 more)
 
 ### Community 38 - "Media"
 Cohesion: 0.11
-Nodes (8): Appointment, BelongsTo, HasMany, HasOne, MorphOne, self, MemberProjectWorkflowService, HasLocalDateTimes
+Nodes (9): Appointment, BelongsTo, HasMany, HasOne, MorphOne, self, AppointmentService, Carbon (+1 more)
 
 ### Community 39 - "HomeSlider"
-Cohesion: 0.14
-Nodes (10): JsonResponse, RedirectResponse, Request, View, SiteCounterController, View, BelongsTo, Builder (+2 more)
+Cohesion: 0.18
+Nodes (9): JsonResponse, RedirectResponse, Request, View, SiteCounterController, BelongsTo, Builder, HasMany (+1 more)
 
 ### Community 40 - "Illuminate\Database\Eloquent\Builder"
-Cohesion: 0.25
-Nodes (3): OrderController, Request, View
+Cohesion: 0.20
+Nodes (6): JsonResponse, Request, TinyMceController, MediaService, UploadedFile, ImageManager
 
 ### Community 41 - "products/index.js"
 Cohesion: 0.08
@@ -515,16 +503,20 @@ Cohesion: 0.16
 Nodes (27): bindActiveAppointmentActions(), bindStepperControls(), calendarSkeletonCells(), cancelAppointment(), confirmBooking(), confirmReschedule(), createSlotElement(), currentMonth (+19 more)
 
 ### Community 44 - "Illuminate\Foundation\Http\FormRequest"
-Cohesion: 0.09
-Nodes (10): ContentPageController, Carbon, JsonResponse, RedirectResponse, Request, View, BelongsTo, Builder (+2 more)
+Cohesion: 0.20
+Nodes (6): ContentPageController, Carbon, JsonResponse, RedirectResponse, Request, View
+
+### Community 45 - "AdminNotification"
+Cohesion: 0.10
+Nodes (8): PageController, View, BaseTestCase, RefreshDatabase, AdminLoginBrandingTest, MediaServiceWebpTest, SiteNavigationManagementTest, TestCase
 
 ### Community 46 - "ajax-forms.js"
 Cohesion: 0.08
 Nodes (23): Adding Your Own Content, Architecture, Available Routes, Build for Production, ✅ Core Implementation, Customization, Demo Layouts, Design Principles (+15 more)
 
 ### Community 48 - "up"
-Cohesion: 0.16
-Nodes (7): RedirectResponse, Request, View, ServiceReviewQuestionController, Builder, HasMany, ServiceReviewQuestion
+Cohesion: 0.05
+Nodes (24): Builder, RedirectResponse, Request, View, ServiceReviewController, RedirectResponse, Request, View (+16 more)
 
 ### Community 49 - "TestCase"
 Cohesion: 0.17
@@ -539,12 +531,8 @@ Cohesion: 0.16
 Nodes (4): AppointmentCalendarController, Request, BelongsTo, ProviderTimeOff
 
 ### Community 52 - "MediaService"
-Cohesion: 0.06
-Nodes (31): MediaController, JsonResponse, Request, JsonResponse, Request, TinyMceController, Media, HasMany (+23 more)
-
-### Community 53 - "trash/index.js"
-Cohesion: 0.10
-Nodes (9): HomepageConfigurationController, RedirectResponse, Request, View, HomepageConfigurationService, HtmlSanitizer, DOMDocument, DOMElement (+1 more)
+Cohesion: 0.21
+Nodes (5): MediaController, JsonResponse, Request, Media, HasMany
 
 ### Community 55 - "What You Must Do When Invoked"
 Cohesion: 0.23
@@ -563,8 +551,8 @@ Cohesion: 0.27
 Nodes (15): bound, buildDialogButtonClass(), buildErrorMessage(), cloneTpl(), esc(), init(), jsonReq(), markBound() (+7 more)
 
 ### Community 59 - "scripts"
-Cohesion: 0.11
-Nodes (8): AdminDashboardPreference, BelongsTo, AppointmentSlot, BelongsTo, BelongsTo, ProviderWorkingHour, HasFactory, Notifiable
+Cohesion: 0.22
+Nodes (5): AppointmentSlot, BelongsTo, BelongsTo, ProviderWorkingHour, HasFactory
 
 ### Community 61 - "member-register.js"
 Cohesion: 0.11
@@ -579,15 +567,11 @@ Cohesion: 0.11
 Nodes (17): Commands you will need, Current state, Done criteria, Git workflow, Maintenance notes, Ortak dönüşüm kuralları (her sayfaya uygula), Plan 005: İkincil sayfaları sisteme hizala — auth, iletişim, CMS sayfası, hesap; SEO skoru sızıntısını kaldır, Scope (+9 more)
 
 ### Community 64 - "Theme Tailwind HTML Laravel Integration"
-Cohesion: 0.19
+Cohesion: 0.21
 Nodes (6): InvoiceController, RedirectResponse, Request, View, EcommerceInvoice, BelongsTo
 
-### Community 65 - "featured-image-manager.js"
-Cohesion: 0.31
-Nodes (3): SendAppointmentAdminNotificationMailJob, AppointmentService, Carbon
-
 ### Community 66 - "SiteFaq"
-Cohesion: 0.18
+Cohesion: 0.16
 Nodes (4): self, UserFactory, Factory, static
 
 ### Community 67 - "AdminResetPasswordNotification.php"
@@ -618,12 +602,8 @@ Nodes (5): BlogController, Builder, JsonResponse, Request, View
 Cohesion: 0.20
 Nodes (6): CouponController, RedirectResponse, Request, View, EcommerceCoupon, Builder
 
-### Community 74 - "swal-alert.js"
-Cohesion: 0.19
-Nodes (6): HomeSliderTranslation, BelongsTo, BelongsTo, SiteFaqTranslation, BelongsTo, SiteHomepageConfigTranslation
-
 ### Community 75 - "admin/layouts/main/app.blade.php"
-Cohesion: 0.15
+Cohesion: 0.13
 Nodes (6): localizedValue(), Model, translationFor(), Collection, Request, SiteLocalization
 
 ### Community 76 - "Plan 001: Site tasarım temelini kur — fontlar, OKLCH token katmanı, Tailwind @theme eşlemesi, motion altyapısı"
@@ -638,13 +618,9 @@ Nodes (11): AppInit(), createCtx(), getPageName(), getPageRoot(), initKtUi(), en
 Cohesion: 0.16
 Nodes (4): ProductStoreRequest, ProductUpdateRequest, BelongsTo, ProductTranslation
 
-### Community 79 - "settings/edit.js"
-Cohesion: 0.16
-Nodes (5): BelongsTo, Builder, HasMany, ServiceReview, MorphTo
-
 ### Community 80 - "admin-quick-search.js"
-Cohesion: 0.33
-Nodes (3): DateTimeHelper, Carbon, CarbonInterface
+Cohesion: 0.24
+Nodes (4): HtmlSanitizer, DOMDocument, DOMElement, DOMNode
 
 ### Community 81 - "metronic-pickers.js"
 Cohesion: 0.35
@@ -662,25 +638,21 @@ Nodes (13): addItemRow(), calculateRow(), findPageRoot(), hydrateProduct(), init
 Cohesion: 0.27
 Nodes (12): csrfToken(), destroy(), get(), handleGlobalAuthExpiry(), HttpError, notify(), parseResponseBody(), post() (+4 more)
 
-### Community 85 - "media/index.js"
-Cohesion: 0.29
-Nodes (5): Builder, RedirectResponse, Request, View, ServiceReviewController
-
 ### Community 87 - "media-upload-modal.js"
-Cohesion: 0.15
-Nodes (6): RedirectResponse, StreamedResponse, ProjectStoreRequest, ProjectUpdateRequest, BelongsTo, ProjectTranslation
+Cohesion: 0.16
+Nodes (5): StreamedResponse, ProjectStoreRequest, ProjectUpdateRequest, BelongsTo, ProjectTranslation
 
 ### Community 88 - "OrderController"
-Cohesion: 0.60
-Nodes (4): down(), insertNavigationItems(), insertNavigationTranslation(), nextSortOrder()
+Cohesion: 0.43
+Nodes (7): down(), insertAboutTranslation(), insertNavigationItems(), insertNavigationTranslation(), insertStarterFaqs(), nextSortOrder(), up()
 
 ### Community 89 - "0001_01_01_000005_create_permission_role_table.php"
-Cohesion: 0.24
+Cohesion: 0.22
 Nodes (4): BelongsTo, SitePageTranslation, Model, SiteDefaultLocalePromotionService
 
 ### Community 90 - "ContentPageController"
-Cohesion: 0.40
-Nodes (4): RedirectResponse, Request, View, ServiceReviewController
+Cohesion: 0.43
+Nodes (4): HomepageConfigurationController, RedirectResponse, Request, View
 
 ### Community 91 - "Plan 005: İkincil sayfaları sisteme hizala — auth, iletişim, CMS sayfası, hesap; SEO skoru sızıntısını kaldır"
 Cohesion: 0.27
@@ -699,12 +671,12 @@ Cohesion: 0.22
 Nodes (6): MemberAuthController, RedirectResponse, Request, View, GuardIntendedUrl, Request
 
 ### Community 95 - "MemberDocumentService"
-Cohesion: 0.42
+Cohesion: 0.36
 Nodes (4): MemberPasswordResetController, RedirectResponse, Request, View
 
 ### Community 96 - "galleries/edit.js"
-Cohesion: 0.15
-Nodes (10): AuditLogController, Builder, RedirectResponse, Request, AuditRequestMiddleware, Closure, Request, Response (+2 more)
+Cohesion: 0.17
+Nodes (7): AuditLogController, Builder, RedirectResponse, Request, AuditLog, Builder, AdminRoleProfileTest
 
 ### Community 97 - "menu-visibility/edit.js"
 Cohesion: 0.23
@@ -731,8 +703,8 @@ Cohesion: 0.43
 Nodes (4): MemberAccountController, RedirectResponse, Request, View
 
 ### Community 106 - "2026_08_01_000002_create_site_homepage_configs_table.php"
-Cohesion: 0.10
-Nodes (12): PermissionController, Request, Permission, Rbac, AdminSeeder, AuthSeeder, DatabaseSeeder, HomepageConfigPermissionSeeder (+4 more)
+Cohesion: 0.09
+Nodes (13): PermissionController, Request, Permission, AdminRoleProfile, Rbac, AdminSeeder, AuthSeeder, DatabaseSeeder (+5 more)
 
 ### Community 108 - "slug-manager.js"
 Cohesion: 0.38
@@ -787,12 +759,8 @@ Cohesion: 0.50
 Nodes (3): JsonResponse, Request, ProjectGalleryController
 
 ### Community 124 - "2025_12_16_142051_create_categorizables_table.php"
-Cohesion: 0.53
+Cohesion: 0.50
 Nodes (3): GalleryController, Request, View
-
-### Community 125 - "site_homepage.php"
-Cohesion: 0.21
-Nodes (4): Carbon, RedirectResponse, EcommerceShipment, BelongsTo
 
 ### Community 126 - "static"
 Cohesion: 0.11
@@ -811,8 +779,8 @@ Cohesion: 0.25
 Nodes (3): init(), req(), initLibraryAttach()
 
 ### Community 131 - ".show"
-Cohesion: 0.36
-Nodes (3): AppointmentObserver, EcommerceOrderObserver, ShouldHandleEventsAfterCommit
+Cohesion: 0.12
+Nodes (4): AppointmentObserver, EcommerceOrderObserver, Notifiable, ShouldHandleEventsAfterCommit
 
 ### Community 132 - "2026_02_15_000002_create_category_product_table.php"
 Cohesion: 0.46
@@ -831,12 +799,8 @@ Cohesion: 0.53
 Nodes (4): Closure, Request, Response, SiteLocaleMiddleware
 
 ### Community 140 - "AdminMenuRegistryTest"
-Cohesion: 0.12
-Nodes (10): AdminNotificationController, JsonResponse, RedirectResponse, Request, View, AdminNotification, BelongsTo, Builder (+2 more)
-
-### Community 141 - "2026_04_22_000005_create_site_pages_table.php"
-Cohesion: 0.47
-Nodes (3): ContactMessageController, RedirectResponse, View
+Cohesion: 0.16
+Nodes (8): AdminNotificationController, JsonResponse, RedirectResponse, Request, View, AdminNotification, BelongsTo, Builder
 
 ### Community 142 - "SiteTranslationSyncService"
 Cohesion: 0.29
@@ -851,12 +815,8 @@ Cohesion: 0.25
 Nodes (7): site.partials.home-hero-computer, site.partials.theme-bootstrap, site.partials.theme-toggle, site.home-sections.about-faq, site.home-sections.features, site.home-sections.probablue-hero, site.partials.home-mode-icon
 
 ### Community 147 - "SiteSettingsController.php"
-Cohesion: 0.12
-Nodes (8): TrashPurgeCommand, Category, BelongsTo, HasMany, Galleryable, HasSiteLocaleTranslations, Model, SoftDeletes
-
-### Community 148 - "ProductStoreRequest"
-Cohesion: 0.24
-Nodes (3): SiteSettingsController, Model, SiteTranslationSyncService
+Cohesion: 0.07
+Nodes (17): CategoryTranslation, BelongsTo, AdminDashboardPreference, BelongsTo, EcommerceOrderItem, BelongsTo, EcommerceOrderStatusHistory, BelongsTo (+9 more)
 
 ### Community 151 - "graphify reference: query, path, explain"
 Cohesion: 0.33
@@ -875,7 +835,7 @@ Cohesion: 0.33
 Nodes (5): site.partials.theme-bootstrap, site.partials.theme-toggle, site.partials.navigation.desktop-item, site.partials.navigation.footer-item, site.partials.navigation.mobile-item
 
 ### Community 157 - "Illuminate\Support\Collection"
-Cohesion: 0.32
+Cohesion: 0.36
 Nodes (5): ContactMessageController, JsonResponse, RedirectResponse, Request, View
 
 ### Community 160 - "cms.js"
@@ -895,8 +855,8 @@ Cohesion: 0.50
 Nodes (3): admin.pages.projects.partials._gallery, admin.components.featured-image-manager, admin.components.localized-content-tabs
 
 ### Community 166 - "projects/create.blade.php"
-Cohesion: 0.21
-Nodes (6): RedirectResponse, Request, View, SiteLanguageController, Builder, SiteLanguage
+Cohesion: 0.16
+Nodes (10): RedirectResponse, Request, View, SiteLanguageController, BelongsTo, SiteCounterTranslation, BelongsTo, SiteFaqTranslation (+2 more)
 
 ### Community 167 - "projects/edit.blade.php"
 Cohesion: 1.00
@@ -939,8 +899,8 @@ Cohesion: 0.39
 Nodes (3): init(), init(), initPermissionsForm()
 
 ### Community 193 - "GalleryController.php"
-Cohesion: 0.12
-Nodes (13): Controller, FaqController, Request, View, PageController, View, View, ServiceController (+5 more)
+Cohesion: 0.15
+Nodes (11): Controller, FaqController, Request, View, View, ServiceController, HomeController, View (+3 more)
 
 ## Knowledge Gaps
 - **372 isolated node(s):** `$schema`, `name`, `type`, `description`, `keywords` (+367 more)
@@ -950,12 +910,12 @@ Nodes (13): Controller, FaqController, Request, View, PageController, View, View
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Controller` connect `GalleryController.php` to `Illuminate\Http\RedirectResponse`, `BlogPost`, `calendar.js`, `PaymentIntegration`, `AdminMenuRegistryTest`, `2026_04_22_000005_create_site_pages_table.php`, `admin/pages/index.js`, `settings.js`, `SiteSettingsController.php`, `blog/form-shared.js`, `ProductStoreRequest`, `products/form-shared.js`, `projects/form-shared.js`, `appointments/index.js`, `Illuminate\Support\Collection`, `Category`, `AdminQuickSearchController`, `HomepageConfigurationService`, `SeoFileGenerator`, `projects/create.blade.php`, `HomeSlider`, `Illuminate\Database\Eloquent\Builder`, `navigation/index.blade.php`, `Illuminate\Foundation\Http\FormRequest`, `AdminNotification`, `up`, `EcommerceCoupon`, `AppointmentSettingsController`, `MediaService`, `trash/index.js`, `What You Must Do When Invoked`, `SiteSettingsController.php`, `blog/index.js`, `orders/form.js`, `Theme Tailwind HTML Laravel Integration`, `composer.json`, `datatable-helper.js`, `categories/index.js`, `gallery-manager.js`, `require-dev`, `media/index.js`, `roles/create.js`, `media-upload-modal.js`, `ContentPageController`, `Plan 005: İkincil sayfaları sisteme hizala — auth, iletişim, CMS sayfası, hesap; SEO skoru sızıntısını kaldır`, `initSliderForm`, `MemberDocumentService`, `galleries/edit.js`, `psr-4`, `projects/partials/_form.blade.php`, ``appointments``, `2026_08_01_000002_create_site_homepage_configs_table.php`, `extra`, `2025_12_14_192415_create_blog_posts_table.php`, `2025_12_16_142024_create_categories_table.php`, `2025_12_16_142051_create_categorizables_table.php`, `site_homepage.php`?**
+- **Why does `Controller` connect `GalleryController.php` to `Illuminate\Http\RedirectResponse`, `BlogPost`, `calendar.js`, `.show`, `Role`, `PaymentIntegration`, `AdminMenuRegistryTest`, `admin/pages/index.js`, `settings.js`, `blog/form-shared.js`, `Closure`, `products/form-shared.js`, `appointments/index.js`, `Illuminate\Support\Collection`, `Illuminate\Bus\Queueable`, `Category`, `AdminQuickSearchController`, `HomepageConfigurationService`, `SeoFileGenerator`, `projects/create.blade.php`, `HomeSlider`, `Illuminate\Database\Eloquent\Builder`, `navigation/index.blade.php`, `Illuminate\Foundation\Http\FormRequest`, `AdminNotification`, `up`, `EcommerceCoupon`, `AppointmentSettingsController`, `MediaService`, `What You Must Do When Invoked`, `SiteSettingsController.php`, `blog/index.js`, `orders/form.js`, `Theme Tailwind HTML Laravel Integration`, `composer.json`, `datatable-helper.js`, `categories/index.js`, `gallery-manager.js`, `require-dev`, `roles/create.js`, `media-upload-modal.js`, `ContentPageController`, `Plan 005: İkincil sayfaları sisteme hizala — auth, iletişim, CMS sayfası, hesap; SEO skoru sızıntısını kaldır`, `initSliderForm`, `MemberDocumentService`, `galleries/edit.js`, `psr-4`, `projects/partials/_form.blade.php`, ``appointments``, `2026_08_01_000002_create_site_homepage_configs_table.php`, `extra`, `2025_12_14_192415_create_blog_posts_table.php`, `2025_12_16_142024_create_categories_table.php`, `2025_12_16_142051_create_categorizables_table.php`?**
   _High betweenness centrality (0.112) - this node is a cross-community bridge._
-- **Why does `Media` connect `MediaService` to `BlogPost`, `SiteFaq`, `SeoFileGenerator`, `datatable-helper.js`, `admin/pages/index.js`, `Product`, `settings.js`, `LocalizedContentTranslationService`, `SiteSettingsController.php`, `trash/index.js`, `roles/create.js`, `Illuminate\Bus\Queueable`, `PaymentWebhookEvent`, `2025_12_14_192415_create_blog_posts_table.php`, `Plan 005: İkincil sayfaları sisteme hizala — auth, iletişim, CMS sayfası, hesap; SEO skoru sızıntısını kaldır`, `categories/create.blade.php`, `static`?**
-  _High betweenness centrality (0.103) - this node is a cross-community bridge._
-- **Why does `User` connect `.index` to `Illuminate\Http\RedirectResponse`, `AdminMenuRegistryTest`, `2026_04_22_000005_create_site_pages_table.php`, `admin/pages/index.js`, `AdminMenuRegistry`, `settings.js`, `LocalizedContentTranslationService`, `SiteSettingsController.php`, `Closure`, `Appointment`, `CategoryTranslation.php`, `projects/form-shared.js`, `AppointmentCalendarController`, `Illuminate\Support\Collection`, `Illuminate\Bus\Queueable`, `ServiceReviewQuestion`, `HomepageConfigurationService`, `SeoFileGenerator`, `navigation/index.blade.php`, `AppointmentSettingsController`, `scripts`, `categories/create.blade.php`, `featured-image-manager.js`, `media/index.js`, `galleries/edit.js`, `projects/partials/_form.blade.php`, `2026_08_01_000002_create_site_homepage_configs_table.php`, `PaymentWebhookEvent`, `2025_12_14_192415_create_blog_posts_table.php`, `.formPayload`?**
-  _High betweenness centrality (0.063) - this node is a cross-community bridge._
+- **Why does `Media` connect `MediaService` to `BlogPost`, `calendar.js`, `admin/pages/index.js`, `Product`, `AdminMenuRegistry`, `settings.js`, `SiteSettingsController.php`, `SeoFileGenerator`, `Illuminate\Database\Eloquent\Builder`, `AdminNotification`, `trash/index.js`, `featured-image-manager.js`, `SiteFaq`, `datatable-helper.js`, `roles/create.js`, `Plan 005: İkincil sayfaları sisteme hizala — auth, iletişim, CMS sayfası, hesap; SEO skoru sızıntısını kaldır`, `PaymentWebhookEvent`, `2025_12_14_192415_create_blog_posts_table.php`, `static`?**
+  _High betweenness centrality (0.101) - this node is a cross-community bridge._
+- **Why does `User` connect `.index` to `Illuminate\Http\RedirectResponse`, `.show`, `calendar.js`, `AdminMenuRegistryTest`, `admin/pages/index.js`, `AdminMenuRegistry`, `settings.js`, `LocalizedContentTranslationService`, `SiteSettingsController.php`, `Closure`, `Appointment`, `CategoryTranslation.php`, `AppointmentCalendarController`, `Illuminate\Support\Collection`, `Illuminate\Bus\Queueable`, `ServiceReviewQuestion`, `HomepageConfigurationService`, `SeoFileGenerator`, `Media`, `navigation/index.blade.php`, `AdminNotification`, `up`, `AppointmentSettingsController`, `scripts`, `featured-image-manager.js`, `media/index.js`, `galleries/edit.js`, `projects/partials/_form.blade.php`, `2026_08_01_000002_create_site_homepage_configs_table.php`, `PaymentWebhookEvent`, `2025_12_14_192415_create_blog_posts_table.php`, `.formPayload`?**
+  _High betweenness centrality (0.064) - this node is a cross-community bridge._
 - **Are the 26 inferred relationships involving `User` (e.g. with `.index()` and `.show()`) actually correct?**
   _`User` has 26 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 9 inferred relationships involving `Project` (e.g. with `.contentQuality()` and `.index()`) actually correct?**

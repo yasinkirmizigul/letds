@@ -645,8 +645,8 @@
     "semantic_hash": "67845243e99bedd71179b98910c8278f"
   },
   "app/Models/Site/SiteSetting.php": {
-    "mtime": 1787090628.1233027,
-    "ast_hash": "af47e2b5c08b60a962e4108e284d54d6",
+    "mtime": 1787435037.7832713,
+    "ast_hash": "77e8f662a5e2b3a9e9e145bfce007bed",
     "semantic_hash": ""
   },
   "app/Models/Site/SiteSettingTranslation.php": {
@@ -2775,8 +2775,8 @@
     "semantic_hash": ""
   },
   "tests/Feature/HomepageConfigurationTest.php": {
-    "mtime": 1787434106.401022,
-    "ast_hash": "3c3df523ccbd34b900217664655509cd",
+    "mtime": 1787435037.785239,
+    "ast_hash": "d33c111aa87923e36f089e06fa5a1a8d",
     "semantic_hash": ""
   },
   "resources/views/admin/pages/site/homepage/partials/_setting-groups.blade.php": {
@@ -3190,8 +3190,8 @@
     "semantic_hash": ""
   },
   "tests/Feature/SiteServicesAndConsultationTest.php": {
-    "mtime": 1787092406.446061,
-    "ast_hash": "6d8890a12a33f35821252e2f8660b255",
+    "mtime": 1787435037.7861786,
+    "ast_hash": "9c2a0d470b3ff82af1eff7054cc0eb7a",
     "semantic_hash": ""
   },
   "app/Support/Auth/GuardIntendedUrl.php": {
