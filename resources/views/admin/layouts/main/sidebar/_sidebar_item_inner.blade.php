@@ -40,7 +40,7 @@
                 {{ $title }}
             </span>
 
-            <span class="kt-menu-arrow me-[-10px] ms-1 w-[20px] shrink-0 justify-end text-muted-foreground">
+            <span class="kt-menu-arrow admin-sidebar-menu-arrow ms-auto w-[20px] shrink-0 justify-end text-muted-foreground">
                 <span class="kt-menu-item-show:hidden inline-flex">
                     <i class="ki-filled ki-plus text-[11px]"></i>
                 </span>

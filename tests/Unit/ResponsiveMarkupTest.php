@@ -223,6 +223,16 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('background: var(--background) !important;', $css);
     }
 
+    public function test_sidebar_accordion_indicator_keeps_space_from_the_right_edge(): void
+    {
+        $sidebarItem = file_get_contents(
+            $this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'layouts'.DIRECTORY_SEPARATOR.'main'.DIRECTORY_SEPARATOR.'sidebar'.DIRECTORY_SEPARATOR.'_sidebar_item_inner.blade.php'
+        );
+
+        $this->assertStringContainsString('admin-sidebar-menu-arrow ms-auto', $sidebarItem);
+        $this->assertStringNotContainsString('me-[-10px]', $sidebarItem);
+    }
+
     public function test_public_gallery_lightbox_is_viewport_centered_and_responsive(): void
     {
         $css = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
