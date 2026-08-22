@@ -37,15 +37,19 @@ class HomepageConfigurationTest extends TestCase
             ->assertOk()
             ->assertSee('The combination of great design and diligent app development.')
             ->assertSee('--home-before-bg:#ffffff', false)
+            ->assertSee('--home-before-color-layer:var(--home-before-bg)', false)
+            ->assertSee('--home-before-surface-opacity:1', false)
+            ->assertSee('--home-after-color-layer:radial-gradient(', false)
             ->assertSee('--home-before-pattern-image:none', false)
             ->assertSee('--home-before-pattern-opacity:0.18', false)
             ->assertSee('--home-stat-before:#ec6367', false)
             ->assertSee('--home-analysis-tab-after-text:#ffffff', false)
             ->assertSee('--home-hero-after-text:#ffffff', false)
-            ->assertSee('--home-computer-frame:#1a3d59', false)
-            ->assertSee('--home-computer-alert:#ef3851', false)
-            ->assertSee('data-home-computer-variant="outline"', false)
-            ->assertSee('data-home-computer-variant="solid"', false)
+            ->assertSee('--home-computer-frame:#072247', false)
+            ->assertSee('--home-computer-alert:#0046d6', false)
+            ->assertSee('--home-computer-gradient-end:#0060ea', false)
+            ->assertSee('data-home-computer-variant="pvt"', false)
+            ->assertSee('data-home-computer-variant="pv"', false)
             ->assertDontSee('images/concept-before.svg', false)
             ->assertDontSee('images/concept-after.svg', false)
             ->assertSee('assets/site/home/css/home.css?v=', false)
@@ -79,12 +83,12 @@ class HomepageConfigurationTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertSee('data-site-palette="probablue"', false)
-            ->assertSee('--home-before-bg:#eef6ff', false)
-            ->assertSee('--home-after-bg:#087cf0', false)
-            ->assertSee('--home-before-text:#102d5a', false)
-            ->assertSee('--home-sticky-logo:#087cf0', false)
-            ->assertSee('--home-feature-palette-accent:#087cf0', false)
-            ->assertSee('--home-feature-palette-bg:#eef6ff', false)
+            ->assertSee('--home-before-bg:#fafcff', false)
+            ->assertSee('--home-after-bg:#0058d4', false)
+            ->assertSee('--home-before-text:#27313d', false)
+            ->assertSee('--home-sticky-logo:#0058d4', false)
+            ->assertSee('--home-feature-palette-accent:#0058d4', false)
+            ->assertSee('--home-feature-palette-bg:#fafcff', false)
             ->assertSee('--home-feature-palette-dark-bg:#0d2038', false)
             ->assertDontSee('--home-after-bg:#ec6367', false);
     }
@@ -185,6 +189,12 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('name="settings[hero_after_text_color]"', false)
             ->assertSee('name="settings[tooltip_1_title_color]"', false)
             ->assertSee('name="settings[before_pattern]"', false)
+            ->assertSee('name="settings[after_color_effect]"', false)
+            ->assertSee('name="settings[before_color_effect]"', false)
+            ->assertSee('name="settings[consultation_after_color_effect]"', false)
+            ->assertSee('Renk Uygulaması')
+            ->assertSee('Düz renk')
+            ->assertSee('Gradyan')
             ->assertSee('data-homepage-pattern="carbon"', false)
             ->assertSee('Carbon Fiber')
             ->assertSee('Piksel Kareler')
@@ -192,10 +202,13 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('İkisi birlikte')
             ->assertSee('Sol Panel Yüzeyi')
             ->assertSee('Sağ Panel Yüzeyi')
-            ->assertSee('Bilgisayar Paleti')
+            ->assertSee('P-V Görsel Paleti')
             ->assertSee('data-homepage-computer-preview="true"', false)
-            ->assertSee('name="settings[computer_frame_color]"', false)
-            ->assertSee('name="settings[consultation_computer_frame_color]"', false)
+            ->assertSee('name="settings[computer_pv_fill_mode]"', false)
+            ->assertSee('name="settings[computer_pv_body_start_color]"', false)
+            ->assertSee('name="settings[consultation_computer_pv_body_start_color]"', false)
+            ->assertSee('P-PVT · Sabit görsel')
+            ->assertSee('P-V · Canlı önizleme')
             ->assertSee('Tema duyarlı varsayılan SVG')
             ->assertSee('Panel Renkleri');
 
@@ -216,10 +229,16 @@ class HomepageConfigurationTest extends TestCase
                 'analysis_tab_after_text_color' => '#112233',
                 'hero_after_text_color' => '#223344',
                 'consultation_hero_before_text_color' => '#445566',
-                'computer_frame_color' => '#102030',
-                'computer_alert_color' => '#aa2233',
-                'consultation_computer_frame_color' => '#204060',
+                'computer_pv_fill_mode' => 'gradient',
+                'computer_pv_body_start_color' => '#102030',
+                'computer_pv_body_end_color' => '#304050',
+                'computer_pv_bar_dark_color' => '#aa2233',
+                'consultation_computer_pv_fill_mode' => 'solid',
+                'consultation_computer_pv_body_start_color' => '#204060',
                 'tooltip_1_title_color' => '#334455',
+                'after_color_effect' => 'solid',
+                'before_color_effect' => 'gradient',
+                'consultation_after_color_effect' => 'gradient',
                 'before_pattern' => 'carbon',
                 'before_pattern_color' => '#556677',
                 'before_pattern_opacity' => 34,
@@ -247,8 +266,10 @@ class HomepageConfigurationTest extends TestCase
         $this->assertSame('top', $service->current()->fresh()->settings['background_position']);
         $this->assertSame('#112233', $service->current()->fresh()->settings['analysis_tab_after_text_color']);
         $this->assertSame('#223344', $service->current()->fresh()->settings['hero_after_text_color']);
-        $this->assertSame('#102030', $service->current()->fresh()->settings['computer_frame_color']);
-        $this->assertSame('#204060', $service->current()->fresh()->settings['consultation_computer_frame_color']);
+        $this->assertSame('#102030', $service->current()->fresh()->settings['computer_pv_body_start_color']);
+        $this->assertSame('#204060', $service->current()->fresh()->settings['consultation_computer_pv_body_start_color']);
+        $this->assertSame('solid', $service->current()->fresh()->settings['after_color_effect']);
+        $this->assertSame('gradient', $service->current()->fresh()->settings['before_color_effect']);
         $this->assertSame('carbon', $service->current()->fresh()->settings['before_pattern']);
         $this->assertSame(34, $service->current()->fresh()->settings['before_pattern_opacity']);
         $this->assertSame(
@@ -288,10 +309,30 @@ class HomepageConfigurationTest extends TestCase
             $service->resolved('tr')['modes']['analysis']['styles']['--home-computer-frame']
         );
         $this->assertSame(
+            '#304050',
+            $service->resolved('tr')['modes']['analysis']['styles']['--home-computer-gradient-end']
+        );
+        $this->assertSame(
             '#204060',
             $service->resolved('tr')['modes']['consultation']['styles']['--home-computer-frame']
         );
+        $this->assertSame(
+            '#204060',
+            $service->resolved('tr')['modes']['consultation']['styles']['--home-computer-gradient-end']
+        );
         $this->assertSame('#334455', $service->resolved('tr')['tooltips'][0]['title_color']);
+        $this->assertSame(
+            'var(--home-after-bg)',
+            $service->resolved('tr')['modes']['analysis']['styles']['--home-after-color-layer']
+        );
+        $this->assertSame(
+            '1',
+            $service->resolved('tr')['modes']['analysis']['styles']['--home-after-surface-opacity']
+        );
+        $this->assertStringStartsWith(
+            'radial-gradient(',
+            $service->resolved('tr')['modes']['analysis']['styles']['--home-before-color-layer']
+        );
 
         $backgroundMedia = Media::query()->findOrFail(
             $service->current()->fresh()->settings['background_media_id']
@@ -327,6 +368,10 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('--home-hero-after-text:#223344', false)
             ->assertSee('--home-computer-frame:#102030', false)
             ->assertSee('--home-computer-alert:#aa2233', false)
+            ->assertSee('--home-computer-gradient-end:#304050', false)
+            ->assertSee('--home-after-color-layer:var(--home-after-bg)', false)
+            ->assertSee('--home-after-surface-opacity:1', false)
+            ->assertSee('--home-before-color-layer:radial-gradient(', false)
             ->assertSee('--home-before-pattern-opacity:0.34', false)
             ->assertSee('--home-before-pattern-size:22px', false)
             ->assertSee('--home-before-pattern-blur:0.75px', false)
@@ -363,6 +408,7 @@ class HomepageConfigurationTest extends TestCase
         $payload = array_replace($service->contentDefaults(), [
             'settings' => array_replace($service->settingDefaults(), [
                 'before_pattern' => 'url-javascript',
+                'after_color_effect' => 'animated-rainbow',
                 'before_pattern_opacity' => 90,
                 'before_pattern_scale' => 2,
                 'before_pattern_blur' => 12,
@@ -375,6 +421,7 @@ class HomepageConfigurationTest extends TestCase
 
         $this->assertTrue($validator->fails());
         $this->assertArrayHasKey('settings.before_pattern', $validator->errors()->toArray());
+        $this->assertArrayHasKey('settings.after_color_effect', $validator->errors()->toArray());
         $this->assertArrayHasKey('settings.before_pattern_opacity', $validator->errors()->toArray());
         $this->assertArrayHasKey('settings.before_pattern_scale', $validator->errors()->toArray());
         $this->assertArrayHasKey('settings.before_pattern_blur', $validator->errors()->toArray());

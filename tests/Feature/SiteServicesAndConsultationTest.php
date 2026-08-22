@@ -150,7 +150,7 @@ class SiteServicesAndConsultationTest extends TestCase
         $this->get(route('site.services.index'))
             ->assertOk()
             ->assertSee('data-site-palette="probablue"', false)
-            ->assertSee('--site-palette-primary:#087cf0', false)
+            ->assertSee('--site-palette-primary:#0058d4', false)
             ->assertSee('--site-palette-dark-background:#0d2038', false);
     }
 }

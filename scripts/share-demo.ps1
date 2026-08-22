@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [ValidateRange(1024, 65535)]
-    [int] $Port = 8000,
+    [int] $Port = 8888,
 
     [ValidatePattern('^[a-zA-Z0-9._-]+$')]
     [string] $Username = 'demo',

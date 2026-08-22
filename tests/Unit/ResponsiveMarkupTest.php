@@ -191,6 +191,19 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('cursor: move;', $homeCss);
         $this->assertStringContainsString('.home-hero-float {', $homeCss);
         $this->assertStringContainsString('.home-hero-shadow {', $homeCss);
+        $this->assertStringContainsString('--home-hero-shadow-offset: 245px;', $homeCss);
+        $this->assertStringContainsString('background: var(--home-after-color-layer, var(--home-after-bg));', $homeCss);
+        $this->assertStringContainsString('opacity: var(--home-before-surface-opacity, var(--home-background-overlay-opacity));', $homeCss);
+        $this->assertStringContainsString('data-homepage-preview-after-effect="solid"', $css);
+        $this->assertStringContainsString('background-image: none;', $css);
+        $this->assertStringContainsString('background-blend-mode: screen, multiply, multiply, normal;', $homeCss);
+        $this->assertStringContainsString('drop-shadow(0 22px 28px', $homeCss);
+        $this->assertMatchesRegularExpression('/\.tooltip-item\s*\{[^}]*z-index:\s*3;/s', $homeCss);
+        $this->assertMatchesRegularExpression(
+            '/@keyframes pulse_special\s*\{.*scaleX\(0\.7\).*scaleX\(1\.08\).*scaleX\(0\.7\)/s',
+            $homeCss,
+            'The ground shadow must expand and contract in sync with the floating logo.'
+        );
         $this->assertStringNotContainsString('et-anim="floating_special"', $homeView);
         $this->assertStringContainsString('class="icon-drag__arrow"', $homeView);
         $this->assertStringContainsString('width: 16px;', $homeCss);

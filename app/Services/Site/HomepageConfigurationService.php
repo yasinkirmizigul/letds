@@ -28,12 +28,12 @@ class HomepageConfigurationService
         '--home-drag-handle' => 'drag_handle_color',
         '--home-stat-before' => 'cursor_symbol_before_color',
         '--home-stat-after' => 'cursor_symbol_after_color',
-        '--home-computer-frame' => 'computer_frame_color',
-        '--home-computer-detail' => 'computer_detail_color',
-        '--home-computer-warm' => 'computer_warm_color',
-        '--home-computer-neutral' => 'computer_neutral_color',
-        '--home-computer-cool' => 'computer_cool_color',
-        '--home-computer-alert' => 'computer_alert_color',
+        '--home-computer-frame' => 'computer_pv_body_start_color',
+        '--home-computer-detail' => 'computer_pv_body_end_color',
+        '--home-computer-warm' => 'computer_pv_bar_light_color',
+        '--home-computer-neutral' => 'computer_pv_bar_mid_color',
+        '--home-computer-cool' => 'computer_pv_bar_vivid_color',
+        '--home-computer-alert' => 'computer_pv_bar_dark_color',
         '--home-cta-before-text' => 'cta_before_text_color',
         '--home-cta-after-text' => 'cta_after_text_color',
         '--home-cta-before-hover-bg' => 'cta_before_hover_background',
@@ -52,6 +52,11 @@ class HomepageConfigurationService
         'blueprint' => 'linear-gradient(color-mix(in srgb, {color} 52%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, {color} 52%, transparent) 1px, transparent 1px), repeating-linear-gradient(0deg, transparent 0 24%, color-mix(in srgb, {color} 20%, transparent) 25%), repeating-linear-gradient(90deg, transparent 0 24%, color-mix(in srgb, {color} 20%, transparent) 25%)',
         'rings' => 'repeating-radial-gradient(circle at center, transparent 0 18%, color-mix(in srgb, {color} 42%, transparent) 19% 21%, transparent 22% 40%)',
         'grain' => 'radial-gradient(circle at 20% 30%, color-mix(in srgb, {color} 54%, transparent) 0 .7px, transparent 1px), radial-gradient(circle at 72% 64%, color-mix(in srgb, {color} 38%, transparent) 0 .6px, transparent .95px), radial-gradient(circle at 44% 82%, color-mix(in srgb, {color} 28%, transparent) 0 .5px, transparent .9px)',
+    ];
+
+    private const SURFACE_GRADIENT_STYLES = [
+        'after' => 'radial-gradient(circle at 68% 44%, color-mix(in srgb, var(--home-after-bg) 78%, #2b82ff) 0%, transparent 46%), radial-gradient(circle at 8% 16%, rgba(0, 10, 38, 0.86) 0%, transparent 58%), radial-gradient(circle at 0% 100%, rgba(0, 14, 49, 0.68) 0%, transparent 56%), linear-gradient(128deg, color-mix(in srgb, var(--home-after-bg) 18%, #011337), color-mix(in srgb, var(--home-after-bg) 82%, #0b56c4))',
+        'before' => 'radial-gradient(circle at 78% 28%, color-mix(in srgb, var(--home-before-highlight) 16%, transparent) 0%, transparent 38%), linear-gradient(135deg, color-mix(in srgb, var(--home-before-bg) 92%, #ffffff), color-mix(in srgb, var(--home-before-bg) 82%, var(--home-before-highlight)))',
     ];
 
     public function __construct(
@@ -416,6 +421,9 @@ class HomepageConfigurationService
                         $property => (string) ($settings[$prefix.$settingKey] ?? ''),
                     ])
                     ->all();
+                $styles['--home-computer-gradient-end'] = ($settings[$prefix.'computer_pv_fill_mode'] ?? 'gradient') === 'gradient'
+                    ? (string) ($settings[$prefix.'computer_pv_body_end_color'] ?? '#0060ea')
+                    : (string) ($settings[$prefix.'computer_pv_body_start_color'] ?? '#072247');
                 $styles = array_replace($styles, $this->resolvedSurfaceStyles($settings, $prefix));
 
                 return [$key => [
@@ -440,9 +448,16 @@ class HomepageConfigurationService
         foreach (['before', 'after'] as $side) {
             $keyPrefix = $prefix.$side;
             $pattern = (string) ($settings[$keyPrefix.'_pattern'] ?? 'none');
+            $colorEffect = (string) ($settings[$keyPrefix.'_color_effect'] ?? ($side === 'after' ? 'gradient' : 'solid'));
             $patternTemplate = self::SURFACE_PATTERN_STYLES[$pattern] ?? self::SURFACE_PATTERN_STYLES['none'];
             $patternColorProperty = "--home-{$side}-pattern-color";
 
+            $styles["--home-{$side}-color-layer"] = $colorEffect === 'gradient'
+                ? self::SURFACE_GRADIENT_STYLES[$side]
+                : "var(--home-{$side}-bg)";
+            $styles["--home-{$side}-surface-opacity"] = $colorEffect === 'solid'
+                ? '1'
+                : 'var(--home-background-overlay-opacity)';
             $styles["--home-{$side}-pattern-image"] = str_replace('{color}', "var({$patternColorProperty})", $patternTemplate);
             $styles["--home-{$side}-pattern-opacity"] = $this->cssNumber((float) ($settings[$keyPrefix.'_pattern_opacity'] ?? 0) / 100);
             $styles["--home-{$side}-pattern-size"] = $this->cssNumber((float) ($settings[$keyPrefix.'_pattern_scale'] ?? 28)).'px';

@@ -645,8 +645,8 @@
     "semantic_hash": "67845243e99bedd71179b98910c8278f"
   },
   "app/Models/Site/SiteSetting.php": {
-    "mtime": 1787435037.7832713,
-    "ast_hash": "77e8f662a5e2b3a9e9e145bfce007bed",
+    "mtime": 1787090628.1233027,
+    "ast_hash": "af47e2b5c08b60a962e4108e284d54d6",
     "semantic_hash": ""
   },
   "app/Models/Site/SiteSettingTranslation.php": {
@@ -2745,13 +2745,13 @@
     "semantic_hash": ""
   },
   "app/Services/Site/HomepageConfigurationService.php": {
-    "mtime": 1787433867.8110607,
-    "ast_hash": "88738cb3abdbfe030f90625fc5f92c26",
+    "mtime": 1787431338.8906648,
+    "ast_hash": "c09dd02385fd4e76a60e57f1fa1b7442",
     "semantic_hash": ""
   },
   "config/site_homepage.php": {
-    "mtime": 1787433850.5332787,
-    "ast_hash": "c5662ebb3b4b1ae11e494905f25e7bb7",
+    "mtime": 1787431323.758153,
+    "ast_hash": "88617bda296c330a4909330ab2337414",
     "semantic_hash": ""
   },
   "database/migrations/2026_08_01_000002_create_site_homepage_configs_table.php": {
@@ -2765,8 +2765,8 @@
     "semantic_hash": ""
   },
   "resources/js/admin/pages/site/homepage/edit.js": {
-    "mtime": 1787433988.569757,
-    "ast_hash": "9c36eebaa1a501de0b75393674d0d275",
+    "mtime": 1787431429.7106147,
+    "ast_hash": "d59e9568a0995281aed34e59864bb151",
     "semantic_hash": ""
   },
   "resources/views/admin/pages/site/homepage/edit.blade.php": {
@@ -2775,13 +2775,13 @@
     "semantic_hash": ""
   },
   "tests/Feature/HomepageConfigurationTest.php": {
-    "mtime": 1787435037.785239,
-    "ast_hash": "d33c111aa87923e36f089e06fa5a1a8d",
+    "mtime": 1787431500.774587,
+    "ast_hash": "5954f9ddb6b009e0e2b2964dd045c41d",
     "semantic_hash": ""
   },
   "resources/views/admin/pages/site/homepage/partials/_setting-groups.blade.php": {
-    "mtime": 1787434106.401022,
-    "ast_hash": "a19483cd0fa07199bc94af1d0ba8407e",
+    "mtime": 1786822973.6945808,
+    "ast_hash": "29f378f0c0c184666a383e5082de12a6",
     "semantic_hash": ""
   },
   "resources/views/site/partials/home-mode-icon.blade.php": {
@@ -2925,8 +2925,8 @@
     "semantic_hash": ""
   },
   "scripts/share-demo.ps1": {
-    "mtime": 1787432160.3669353,
-    "ast_hash": "1932be6bb27a7fa56a9b16abba35058d",
+    "mtime": 1786953675.3222244,
+    "ast_hash": "dfb99bf456f87b24200b2cc21d03dfb1",
     "semantic_hash": ""
   },
   "tests/Feature/DemoAccessTest.php": {
@@ -3035,8 +3035,8 @@
     "semantic_hash": ""
   },
   "tests/Unit/ResponsiveMarkupTest.php": {
-    "mtime": 1787434212.2203631,
-    "ast_hash": "f864c5b5b2933333fc3b05aa02fc2685",
+    "mtime": 1787090628.1413739,
+    "ast_hash": "f77f9c375272a53c1fc78f35c1198a1c",
     "semantic_hash": ""
   },
   "app/Http/Controllers/Site/Cms/FaqController.php": {
@@ -3065,8 +3065,8 @@
     "semantic_hash": ""
   },
   "resources/views/admin/pages/site/homepage/partials/_surface-editor.blade.php": {
-    "mtime": 1787433922.5575118,
-    "ast_hash": "bdbc959db925961e89b4a26b71e2426e",
+    "mtime": 1786298382.069952,
+    "ast_hash": "4ca79ebcdc64fbbe68d65539e24edfb7",
     "semantic_hash": ""
   },
   "resources/views/site/partials/theme-bootstrap.blade.php": {
@@ -3190,8 +3190,8 @@
     "semantic_hash": ""
   },
   "tests/Feature/SiteServicesAndConsultationTest.php": {
-    "mtime": 1787435037.7861786,
-    "ast_hash": "9c2a0d470b3ff82af1eff7054cc0eb7a",
+    "mtime": 1787092406.446061,
+    "ast_hash": "6d8890a12a33f35821252e2f8660b255",
     "semantic_hash": ""
   },
   "app/Support/Auth/GuardIntendedUrl.php": {

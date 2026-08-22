@@ -113,6 +113,13 @@
                         $defaultBackgroundLightUrl = $isBackground ? data_get($backgroundDefaults ?? [], 'light.url') : null;
                         $defaultBackgroundDarkUrl = $isBackground ? data_get($backgroundDefaults ?? [], 'dark.url', $defaultBackgroundLightUrl) : null;
                         $hasDefaultBackground = filled($defaultBackgroundLightUrl);
+                        $backgroundOverlayOpacity = data_get($settingValues, 'background_overlay_enabled', true)
+                            ? ((float) data_get($settingValues, 'background_overlay_opacity', 65) / 100)
+                            : 0;
+                        $previewAfterEffect = data_get($settingValues, 'after_color_effect', 'gradient');
+                        $previewBeforeEffect = data_get($settingValues, 'before_color_effect', 'solid');
+                        $previewAfterOpacity = $previewAfterEffect === 'solid' ? 1 : $backgroundOverlayOpacity;
+                        $previewBeforeOpacity = $previewBeforeEffect === 'solid' ? 1 : $backgroundOverlayOpacity;
                     @endphp
                     <div class="{{ $wrapperClass }} grid gap-3" data-homepage-media-field="true" data-homepage-media-kind="{{ $isBackground ? 'background' : 'logo' }}">
                         <label class="kt-form-label">{{ $field['label'] }}</label>
@@ -133,7 +140,9 @@
                                 @if($isBackground)
                                     data-homepage-background-preview="true"
                                     data-homepage-has-default="{{ $hasDefaultBackground ? 'true' : 'false' }}"
-                                    style="--homepage-preview-after: {{ data_get($settingValues, 'after_background_color', '#ec6367') }}; --homepage-preview-before: {{ data_get($settingValues, 'before_background_color', '#ffffff') }}; --homepage-preview-opacity: {{ data_get($settingValues, 'background_overlay_enabled', true) ? ((float) data_get($settingValues, 'background_overlay_opacity', 65) / 100) : 0 }}; --homepage-preview-brightness: {{ (float) data_get($settingValues, 'background_brightness', 100) }}%; --homepage-preview-position: {{ data_get($settingValues, 'background_position', 'center') }}; --homepage-default-background-light: url('{{ $defaultBackgroundLightUrl }}'); --homepage-default-background-dark: url('{{ $defaultBackgroundDarkUrl }}')"
+                                    data-homepage-preview-after-effect="{{ $previewAfterEffect }}"
+                                    data-homepage-preview-before-effect="{{ $previewBeforeEffect }}"
+                                    style="--homepage-preview-after: {{ data_get($settingValues, 'after_background_color', '#ec6367') }}; --homepage-preview-before: {{ data_get($settingValues, 'before_background_color', '#ffffff') }}; --homepage-preview-opacity: {{ $backgroundOverlayOpacity }}; --homepage-preview-after-opacity: {{ $previewAfterOpacity }}; --homepage-preview-before-opacity: {{ $previewBeforeOpacity }}; --homepage-preview-brightness: {{ (float) data_get($settingValues, 'background_brightness', 100) }}%; --homepage-preview-position: {{ data_get($settingValues, 'background_position', 'center') }}; --homepage-default-background-light: url('{{ $defaultBackgroundLightUrl }}'); --homepage-default-background-dark: url('{{ $defaultBackgroundDarkUrl }}')"
                                 @endif
                             >
                                 <div class="{{ $previewUrl || $hasDefaultBackground ? 'hidden' : '' }} text-center text-sm text-muted-foreground" data-homepage-media-placeholder="true">

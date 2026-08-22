@@ -1,6 +1,7 @@
 @php
     $surfaceFields = collect($field['fields'] ?? [])->keyBy('role');
     $backgroundField = $surfaceFields->get('background', []);
+    $effectField = $surfaceFields->get('effect', []);
     $patternColorField = $surfaceFields->get('pattern-color', []);
     $patternField = $surfaceFields->get('pattern', []);
     $opacityField = $surfaceFields->get('opacity', []);
@@ -27,7 +28,11 @@
         return min($max, max($min, $value));
     };
     $patternOptions = $patternField['options'] ?? [];
+    $effectOptions = $effectField['options'] ?? [];
     $blendOptions = $blendField['options'] ?? [];
+    $effectValue = array_key_exists((string) $storedValue($effectField), $effectOptions)
+        ? (string) $storedValue($effectField)
+        : (string) ($effectField['default'] ?? 'solid');
     $patternValue = array_key_exists((string) $storedValue($patternField), $patternOptions)
         ? (string) $storedValue($patternField)
         : (string) ($patternField['default'] ?? 'none');
@@ -44,6 +49,7 @@
 <article
     class="homepage-surface-editor {{ $field['wrapper_class'] ?? '' }}"
     data-homepage-surface-editor="true"
+    data-homepage-surface-effect="{{ $effectValue }}"
     style="--homepage-surface-color: {{ $backgroundValue }}; --homepage-pattern-ink: {{ $patternColorValue }}; --homepage-pattern-size: {{ $scaleValue }}px; --homepage-pattern-opacity: {{ $opacityValue / 100 }}; --homepage-pattern-blur: {{ $blurValue }}px; --homepage-pattern-blend: {{ $blendValue }}"
 >
     <header class="homepage-surface-editor__header">
@@ -58,7 +64,7 @@
         <span class="homepage-surface-editor__pattern" data-homepage-surface-pattern="true" data-homepage-pattern="{{ $patternValue }}"></span>
         <span class="homepage-surface-editor__preview-content">
             <strong>{{ $field['label'] }}</strong>
-            <small>Renk + doku + fotoğraf karışımı</small>
+            <small data-homepage-surface-effect-copy="true">{{ $effectValue === 'gradient' ? 'Gradyan + doku + fotoğraf karışımı' : 'Düz renk + isteğe bağlı doku' }}</small>
         </span>
     </div>
 
@@ -155,20 +161,38 @@
             @endforeach
         </div>
 
-        <div class="grid gap-2">
-            <label class="kt-form-label" for="homepage_{{ $blendField['key'] }}">{{ $blendField['label'] }}</label>
-            <select
-                id="homepage_{{ $blendField['key'] }}"
-                name="settings[{{ $blendField['key'] }}]"
-                class="kt-select"
-                data-homepage-surface-role="blend"
-            >
-                @foreach($blendOptions as $optionValue => $optionLabel)
-                    <option value="{{ $optionValue }}" @selected($blendValue === (string) $optionValue)>{{ $optionLabel }}</option>
-                @endforeach
-            </select>
-            <p class="text-xs leading-5 text-muted-foreground">Yumuşak ışık fotoğraf ve düz renklerde en dengeli sonucu verir.</p>
-            @error('settings.'.$blendField['key'])<div class="text-xs text-danger">{{ $message }}</div>@enderror
+        <div class="grid gap-4 sm:grid-cols-2">
+            <div class="grid content-start gap-2">
+                <label class="kt-form-label" for="homepage_{{ $effectField['key'] }}">{{ $effectField['label'] }}</label>
+                <select
+                    id="homepage_{{ $effectField['key'] }}"
+                    name="settings[{{ $effectField['key'] }}]"
+                    class="kt-select"
+                    data-homepage-surface-role="effect"
+                >
+                    @foreach($effectOptions as $optionValue => $optionLabel)
+                        <option value="{{ $optionValue }}" @selected($effectValue === (string) $optionValue)>{{ $optionLabel }}</option>
+                    @endforeach
+                </select>
+                <p class="text-xs leading-5 text-muted-foreground">Düz renk, alttaki fotoğrafı kapatarak seçilen zemin rengini net gösterir.</p>
+                @error('settings.'.$effectField['key'])<div class="text-xs text-danger">{{ $message }}</div>@enderror
+            </div>
+
+            <div class="grid content-start gap-2">
+                <label class="kt-form-label" for="homepage_{{ $blendField['key'] }}">{{ $blendField['label'] }}</label>
+                <select
+                    id="homepage_{{ $blendField['key'] }}"
+                    name="settings[{{ $blendField['key'] }}]"
+                    class="kt-select"
+                    data-homepage-surface-role="blend"
+                >
+                    @foreach($blendOptions as $optionValue => $optionLabel)
+                        <option value="{{ $optionValue }}" @selected($blendValue === (string) $optionValue)>{{ $optionLabel }}</option>
+                    @endforeach
+                </select>
+                <p class="text-xs leading-5 text-muted-foreground">Yumuşak ışık fotoğraf ve düz renklerde en dengeli sonucu verir.</p>
+                @error('settings.'.$blendField['key'])<div class="text-xs text-danger">{{ $message }}</div>@enderror
+            </div>
         </div>
     </div>
 </article>

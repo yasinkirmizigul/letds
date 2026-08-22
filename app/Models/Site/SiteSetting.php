@@ -22,7 +22,7 @@ class SiteSetting extends Model
         'probablue' => [
             'label' => 'Probablue Mavi',
             'description' => 'Referanstaki bilimsel, güven veren mavi tonlar.',
-            'swatches' => ['#087cf0', '#102d5a', '#eef6ff'],
+            'swatches' => ['#0058d4', '#27313d', '#fafcff'],
         ],
     ];
 
@@ -35,9 +35,9 @@ class SiteSetting extends Model
             'dark_muted' => '#23343b', 'dark_muted_foreground' => '#a7b8bc', 'dark_accent' => '#293c43', 'dark_accent_foreground' => '#f5f8f7', 'dark_primary_light' => '#422b30',
         ],
         'probablue' => [
-            'primary' => '#087cf0', 'primary_active' => '#0567c9', 'primary_light' => '#e8f3ff', 'primary_rgb' => '8, 124, 240',
-            'ink' => '#102d5a', 'paper' => '#eef6ff', 'background' => '#fbfdff', 'foreground' => '#142e50',
-            'border' => '#d4e3f3', 'muted' => '#edf4fb', 'muted_foreground' => '#60758e', 'accent' => '#e4f0fd', 'accent_foreground' => '#173d6d',
+            'primary' => '#0058d4', 'primary_active' => '#0045aa', 'primary_light' => '#e8f2ff', 'primary_rgb' => '0, 88, 212',
+            'ink' => '#27313d', 'paper' => '#fafcff', 'background' => '#ffffff', 'foreground' => '#25313d',
+            'border' => '#d9e4f2', 'muted' => '#eff5fb', 'muted_foreground' => '#627288', 'accent' => '#e4effe', 'accent_foreground' => '#113b70',
             'dark_paper' => '#08182c', 'dark_background' => '#0d2038', 'dark_foreground' => '#edf6ff', 'dark_border' => '#294562',
             'dark_muted' => '#132b46', 'dark_muted_foreground' => '#9db2c8', 'dark_accent' => '#173653', 'dark_accent_foreground' => '#f3f8ff', 'dark_primary_light' => '#123c69',
         ],

@@ -63,7 +63,7 @@
 
         <div class="home-probablue-hero__device" aria-hidden="true">
             <span class="home-probablue-hero__device-glow"></span>
-            @include('site.partials.home-hero-computer', ['variant' => 'solid'])
+            @include('site.partials.home-hero-computer', ['variant' => 'pv', 'idPrefix' => 'probablue-pv'])
             <span class="home-probablue-hero__device-shadow"></span>
         </div>
     </div>

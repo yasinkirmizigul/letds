@@ -161,7 +161,7 @@
                 <div class="wrapper-after">
                     <span class="home-surface-pattern" aria-hidden="true"></span>
                     <div class="img-bird-wrapper home-hero-float">
-                        @include('site.partials.home-hero-computer', ['variant' => 'outline'])
+                        @include('site.partials.home-hero-computer', ['variant' => 'pvt'])
                         @foreach($homepageTooltipItems as $item)
                             <button type="button" class="tooltip-item tooltip-item-{{ $item['position'] }}" data-header-text="{{ $item['key'] }}" aria-label="{{ $item['aria_label'] }}"></button>
                         @endforeach
@@ -208,7 +208,7 @@
                 <div class="wrapper-before">
                     <span class="home-surface-pattern" aria-hidden="true"></span>
                     <div class="img-bird-wrapper home-hero-float">
-                        @include('site.partials.home-hero-computer', ['variant' => 'solid'])
+                        @include('site.partials.home-hero-computer', ['variant' => 'pv', 'idPrefix' => 'interactive-pv'])
                         @foreach($homepageTooltipItems as $item)
                             <button type="button" class="tooltip-item tooltip-item-{{ $item['position'] }}" data-header-text="{{ $item['key'] }}" aria-label="{{ $item['aria_label'] }}"></button>
                         @endforeach

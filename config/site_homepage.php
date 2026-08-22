@@ -20,13 +20,18 @@ $surfaceBlendModes = [
     'screen' => 'Ekran / Aydınlat',
 ];
 
+$surfaceColorEffects = [
+    'solid' => 'Düz renk',
+    'gradient' => 'Gradyan',
+];
+
 $surfaceField = static function (
     string $prefix,
     string $side,
     string $label,
     string $defaultBackground,
     string $defaultPatternColor,
-) use ($surfacePatterns, $surfaceBlendModes): array {
+) use ($surfacePatterns, $surfaceBlendModes, $surfaceColorEffects): array {
     $keyPrefix = $prefix.$side;
 
     return [
@@ -37,6 +42,7 @@ $surfaceField = static function (
         'side' => $side,
         'fields' => [
             ['key' => $keyPrefix.'_background_color', 'label' => 'Zemin Rengi', 'type' => 'color', 'role' => 'background', 'default' => $defaultBackground],
+            ['key' => $keyPrefix.'_color_effect', 'label' => 'Renk Uygulaması', 'type' => 'select', 'role' => 'effect', 'default' => $side === 'after' ? 'gradient' : 'solid', 'options' => $surfaceColorEffects],
             ['key' => $keyPrefix.'_pattern_color', 'label' => 'Desen Rengi', 'type' => 'color', 'role' => 'pattern-color', 'default' => $defaultPatternColor],
             ['key' => $keyPrefix.'_pattern', 'label' => 'Desen', 'type' => 'select', 'role' => 'pattern', 'default' => 'none', 'options' => $surfacePatterns],
             ['key' => $keyPrefix.'_pattern_opacity', 'label' => 'Desen Yoğunluğu', 'type' => 'range', 'role' => 'opacity', 'default' => 18, 'min' => 0, 'max' => 70, 'step' => 1, 'unit' => '%'],
@@ -49,12 +55,23 @@ $surfaceField = static function (
 
 $computerPaletteFields = static function (string $prefix = ''): array {
     return [
-        ['key' => $prefix.'computer_frame_color', 'label' => 'Kasa ve Ayak', 'type' => 'color', 'default' => '#1a3d59'],
-        ['key' => $prefix.'computer_detail_color', 'label' => 'Eksen ve İkincil Grafik', 'type' => 'color', 'default' => '#345170'],
-        ['key' => $prefix.'computer_warm_color', 'label' => 'Sarı Veri Çubuğu', 'type' => 'color', 'default' => '#fcb515'],
-        ['key' => $prefix.'computer_neutral_color', 'label' => 'Nötr Veri Çubuğu', 'type' => 'color', 'default' => '#a8b9bf'],
-        ['key' => $prefix.'computer_cool_color', 'label' => 'Mavi Veri Çubuğu', 'type' => 'color', 'default' => '#4687c7'],
-        ['key' => $prefix.'computer_alert_color', 'label' => 'Kırmızı Veri Çubuğu', 'type' => 'color', 'default' => '#ef3851'],
+        [
+            'key' => $prefix.'computer_pv_fill_mode',
+            'label' => 'P-V Gövde Dolgusu',
+            'type' => 'select',
+            'default' => 'gradient',
+            'options' => [
+                'gradient' => 'Gradyan',
+                'solid' => 'Düz renk',
+            ],
+            'wrapper_class' => 'sm:col-span-2 xl:col-span-3',
+        ],
+        ['key' => $prefix.'computer_pv_body_start_color', 'label' => 'P-V Gövde Başlangıcı', 'type' => 'color', 'default' => '#072247'],
+        ['key' => $prefix.'computer_pv_body_end_color', 'label' => 'P-V Gövde Bitişi', 'type' => 'color', 'default' => '#0060ea'],
+        ['key' => $prefix.'computer_pv_bar_light_color', 'label' => 'P-V Açık Veri Çubukları', 'type' => 'color', 'default' => '#a0c7fc'],
+        ['key' => $prefix.'computer_pv_bar_mid_color', 'label' => 'P-V Orta Veri Çubukları', 'type' => 'color', 'default' => '#7eaff8'],
+        ['key' => $prefix.'computer_pv_bar_vivid_color', 'label' => 'P-V Canlı Veri ve Akış', 'type' => 'color', 'default' => '#016af6'],
+        ['key' => $prefix.'computer_pv_bar_dark_color', 'label' => 'P-V Koyu Veri ve Akış', 'type' => 'color', 'default' => '#0046d6'],
     ];
 };
 
@@ -396,8 +413,8 @@ return [
         ],
         [
             'key' => 'computer_palette',
-            'title' => 'Bilgisayar Paleti',
-            'description' => 'Ortadaki salınan bilgisayarın kasa, grafik ve vurgu renkleri.',
+            'title' => 'P-V Görsel Paleti',
+            'description' => 'P-PVT sabit kalır; yalnız P-V görselinin gövde, veri ve gradyan renklerini yönetin.',
             'mode' => 'analysis',
             'preview' => 'computer',
             'preview_prefix' => '',
@@ -448,8 +465,8 @@ return [
         ],
         [
             'key' => 'consultation_computer_palette',
-            'title' => 'Bilgisayar Paleti',
-            'description' => 'Danışma görünümündeki bilgisayarın kasa, grafik ve vurgu renkleri.',
+            'title' => 'P-V Görsel Paleti',
+            'description' => 'Danışma görünümünde yalnız P-V görselinin gövde, veri ve gradyan renklerini yönetin.',
             'mode' => 'consultation',
             'preview' => 'computer',
             'preview_prefix' => 'consultation_',

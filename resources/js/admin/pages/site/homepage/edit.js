@@ -11,14 +11,15 @@ const SURFACE_PATTERNS = new Set([
 ]);
 
 const SURFACE_BLEND_MODES = new Set(['soft-light', 'overlay', 'normal', 'multiply', 'screen']);
+const SURFACE_COLOR_EFFECTS = new Set(['solid', 'gradient']);
 
 const COMPUTER_COLOR_SETTINGS = {
-    '--home-computer-frame': ['computer_frame_color', '#1a3d59'],
-    '--home-computer-detail': ['computer_detail_color', '#345170'],
-    '--home-computer-warm': ['computer_warm_color', '#fcb515'],
-    '--home-computer-neutral': ['computer_neutral_color', '#a8b9bf'],
-    '--home-computer-cool': ['computer_cool_color', '#4687c7'],
-    '--home-computer-alert': ['computer_alert_color', '#ef3851'],
+    '--home-computer-frame': ['computer_pv_body_start_color', '#072247'],
+    '--home-computer-detail': ['computer_pv_body_end_color', '#0060ea'],
+    '--home-computer-warm': ['computer_pv_bar_light_color', '#a0c7fc'],
+    '--home-computer-neutral': ['computer_pv_bar_mid_color', '#7eaff8'],
+    '--home-computer-cool': ['computer_pv_bar_vivid_color', '#016af6'],
+    '--home-computer-alert': ['computer_pv_bar_dark_color', '#0046d6'],
 };
 
 function safePattern(value) {
@@ -27,6 +28,10 @@ function safePattern(value) {
 
 function safeBlend(value) {
     return SURFACE_BLEND_MODES.has(value) ? value : 'soft-light';
+}
+
+function safeSurfaceEffect(value, fallback = 'solid') {
+    return SURFACE_COLOR_EFFECTS.has(value) ? value : fallback;
 }
 
 function safeColor(value, fallback = '#ffffff') {
@@ -61,8 +66,11 @@ function syncSurfaceEditors(root) {
     root.querySelectorAll('[data-homepage-surface-editor]').forEach((editor) => {
         const input = (role) => editor.querySelector(`[data-homepage-surface-role="${role}"]${role === 'pattern' ? ':checked' : ''}`);
         const pattern = safePattern(input('pattern')?.value || 'none');
+        const effect = safeSurfaceEffect(input('effect')?.value);
         const patternLayer = editor.querySelector('[data-homepage-surface-pattern]');
+        const effectCopy = editor.querySelector('[data-homepage-surface-effect-copy]');
 
+        editor.dataset.homepageSurfaceEffect = effect;
         editor.style.setProperty('--homepage-surface-color', safeColor(input('background')?.value, '#263238'));
         editor.style.setProperty('--homepage-pattern-ink', safeColor(input('pattern-color')?.value));
         editor.style.setProperty('--homepage-pattern-opacity', String(numericValue(input('opacity'), 0) / 100));
@@ -71,6 +79,11 @@ function syncSurfaceEditors(root) {
         editor.style.setProperty('--homepage-pattern-blend', safeBlend(input('blend')?.value));
 
         if (patternLayer) patternLayer.dataset.homepagePattern = pattern;
+        if (effectCopy) {
+            effectCopy.textContent = effect === 'gradient'
+                ? 'Gradyan + doku + fotoğraf karışımı'
+                : 'Düz renk + isteğe bağlı doku';
+        }
     });
 }
 
@@ -147,9 +160,17 @@ function syncBackgroundPreview(root) {
     const position = setting('background_position')?.value || 'center';
     const afterColor = modeSetting('after_background_color')?.value || '#ec6367';
     const beforeColor = modeSetting('before_background_color')?.value || '#ffffff';
+    const afterEffect = safeSurfaceEffect(modeSetting('after_color_effect')?.value, 'gradient');
+    const beforeEffect = safeSurfaceEffect(modeSetting('before_color_effect')?.value, 'solid');
+    const hasBackdrop = preview.classList.contains('has-media') || preview.classList.contains('has-default');
+    const mixedOpacity = hasBackdrop ? (overlayEnabled ? overlayOpacity / 100 : 0) : 1;
 
+    preview.dataset.homepagePreviewAfterEffect = afterEffect;
+    preview.dataset.homepagePreviewBeforeEffect = beforeEffect;
     preview.style.setProperty('--homepage-preview-brightness', `${brightness}%`);
     preview.style.setProperty('--homepage-preview-opacity', overlayEnabled ? String(overlayOpacity / 100) : '0');
+    preview.style.setProperty('--homepage-preview-after-opacity', afterEffect === 'solid' ? '1' : String(mixedOpacity));
+    preview.style.setProperty('--homepage-preview-before-opacity', beforeEffect === 'solid' ? '1' : String(mixedOpacity));
     preview.style.setProperty('--homepage-preview-position', position);
     preview.style.setProperty('--homepage-preview-after', afterColor);
     preview.style.setProperty('--homepage-preview-before', beforeColor);
@@ -175,6 +196,18 @@ function syncComputerPreviews(root) {
             const input = root.querySelector(`[name="settings[${prefix}${key}]"]`);
             preview.style.setProperty(property, safeColor(input?.value, fallback));
         });
+
+        const fillMode = root.querySelector(`[name="settings[${prefix}computer_pv_fill_mode]"]`)?.value;
+        const startColor = safeColor(
+            root.querySelector(`[name="settings[${prefix}computer_pv_body_start_color]"]`)?.value,
+            '#072247',
+        );
+        const endColor = safeColor(
+            root.querySelector(`[name="settings[${prefix}computer_pv_body_end_color]"]`)?.value,
+            '#0060ea',
+        );
+
+        preview.style.setProperty('--home-computer-gradient-end', fillMode === 'solid' ? startColor : endColor);
     });
 }
 
