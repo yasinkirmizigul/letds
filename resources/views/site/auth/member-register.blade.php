@@ -8,9 +8,9 @@
 @endphp
 
 @section('content')
-    <div class="mx-auto max-w-7xl px-4 py-10">
-        <div class="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_560px]">
-            <section class="overflow-hidden rounded-3xl border border-border bg-background shadow-sm">
+    <div class="site-auth-page mx-auto max-w-7xl px-4 py-10">
+        <div class="site-auth-split grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_560px]">
+            <section class="site-auth-story overflow-hidden rounded-3xl border border-border bg-background shadow-sm">
                 <div class="grid gap-8 p-8 lg:p-10">
                     <div>
                         <div class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
@@ -61,8 +61,8 @@
                 </div>
             </section>
 
-            <section class="rounded-3xl border border-border bg-foreground p-6 text-background shadow-sm lg:p-8">
-                <div class="mb-6">
+            <section class="site-auth-form-card rounded-3xl border border-border bg-foreground p-6 text-background shadow-sm lg:p-8">
+                <div class="site-auth-form-card__heading mb-6">
                     <div class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Kayıt Formu</div>
                     <h2 class="mt-2 font-display text-3xl font-semibold">Yeni Üyelik Oluştur</h2>
                     <p class="mt-3 text-sm leading-7 text-background/70">

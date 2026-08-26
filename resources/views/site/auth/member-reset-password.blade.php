@@ -1,16 +1,18 @@
 @extends('site.layouts.main.app')
 
 @section('content')
-    <div class="mx-auto max-w-xl px-4 py-10">
-        <div class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-            Güvenli Yenileme
+    <div class="site-auth-page site-auth-compact mx-auto max-w-xl px-4 py-10">
+        <div class="site-auth-compact__intro">
+            <div class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+                Güvenli Yenileme
+            </div>
+            <h1 class="mt-3 font-display text-3xl font-semibold leading-tight text-foreground md:text-4xl">Yeni şifrenizi belirleyin ve üye paneline geri dönün.</h1>
+            <p class="mt-4 text-sm leading-8 text-muted-foreground">
+                Güçlü bir şifre belirleyin. Şifre güncellendiğinde mevcut oturum güvenlik yapısı yenilenir ve bir sonraki girişiniz yeni şifre ile gerçekleşir.
+            </p>
         </div>
-        <h1 class="mt-3 font-display text-3xl font-semibold leading-tight text-foreground md:text-4xl">Yeni şifrenizi belirleyin ve üye paneline geri dönün.</h1>
-        <p class="mt-4 text-sm leading-8 text-muted-foreground">
-            Güçlü bir şifre belirleyin. Şifre güncellendiğinde mevcut oturum güvenlik yapısı yenilenir ve bir sonraki girişiniz yeni şifre ile gerçekleşir.
-        </p>
 
-        <section class="mt-8 rounded-3xl border border-border bg-background p-6 shadow-sm lg:p-8">
+        <section class="site-auth-form-card mt-8 rounded-3xl border border-border bg-background p-6 shadow-sm lg:p-8">
             <form method="POST" action="{{ route('member.password.update') }}" class="grid gap-5">
                 @csrf
 

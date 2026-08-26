@@ -446,28 +446,78 @@ body.site-shell .site-header__inner {
 body.site-shell .site-desktop-navigation {
     min-width: 0;
     flex: 0 1 auto;
-    gap: .125rem;
+    gap: .1rem;
+    border: 1px solid color-mix(in oklab, var(--border) 72%, transparent);
+    border-radius: 1rem;
+    background: color-mix(in oklab, var(--background) 72%, var(--muted));
+    box-shadow: inset 0 1px rgb(255 255 255 / 4%), 0 .5rem 1.5rem rgb(16 35 43 / 6%);
+    padding: .24rem;
 }
 
 body.site-shell .site-desktop-nav-link {
+    position: relative;
     min-width: 0;
     flex: 0 0 auto;
-    gap: .4rem;
-    padding: .5rem .55rem;
+    gap: .35rem;
+    border-radius: .72rem;
+    padding: .52rem .68rem;
     white-space: nowrap;
+    transition: color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
-body.site-shell .site-desktop-nav-icon {
-    width: .9rem;
-    flex: 0 0 .9rem;
-    color: color-mix(in srgb, currentColor 80%, var(--primary));
-    font-size: .78rem;
-    text-align: center;
+body.site-shell .site-desktop-nav-link:hover,
+body.site-shell .site-desktop-nav-link:focus-visible {
+    background: color-mix(in srgb, var(--primary) 8%, var(--background));
+    color: var(--foreground);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+body.site-shell .site-desktop-nav-link--active {
+    color: color-mix(in oklab, var(--primary) 84%, var(--foreground));
+    background: linear-gradient(
+        135deg,
+        color-mix(in oklab, var(--primary) 18%, var(--background)),
+        color-mix(in oklab, var(--primary) 8%, var(--background))
+    );
+    box-shadow:
+        inset 0 0 0 1px color-mix(in oklab, var(--primary) 28%, var(--border)),
+        0 .35rem .9rem color-mix(in srgb, var(--primary) 10%, transparent);
+    font-weight: 700;
+}
+
+body.site-shell .site-desktop-nav-link--active:hover,
+body.site-shell .site-desktop-nav-link--active:focus-visible {
+    color: color-mix(in oklab, var(--primary) 90%, var(--foreground));
+    background: linear-gradient(
+        135deg,
+        color-mix(in oklab, var(--primary) 22%, var(--background)),
+        color-mix(in oklab, var(--primary) 11%, var(--background))
+    );
+    box-shadow:
+        inset 0 0 0 1px color-mix(in oklab, var(--primary) 36%, var(--border)),
+        0 .45rem 1rem color-mix(in srgb, var(--primary) 14%, transparent);
 }
 
 body.site-shell .site-desktop-nav-label {
     min-width: 0;
     white-space: nowrap;
+}
+
+body.site-shell .site-desktop-nav-dropdown {
+    background: color-mix(in oklab, var(--background) 94%, transparent);
+    box-shadow: 0 1.25rem 3rem rgb(12 31 38 / 16%);
+    backdrop-filter: blur(18px);
+}
+
+body.site-shell .site-desktop-nav-dropdown__link {
+    transition: color 150ms ease, background-color 150ms ease, padding-left 150ms ease;
+}
+
+body.site-shell .site-desktop-nav-dropdown__link:hover,
+body.site-shell .site-desktop-nav-dropdown__link:focus-visible {
+    padding-left: 1rem;
+    outline: none;
 }
 
 body.site-shell .site-member-header-menu__item {
@@ -508,9 +558,26 @@ body.site-shell .probablue-brand {
 }
 
 body.site-shell .probablue-brand--shell {
-    width: clamp(10rem, 14vw, 12rem);
-    flex: 0 1 clamp(10rem, 14vw, 12rem);
-    gap: 0.28rem;
+    width: clamp(11rem, 15vw, 13rem);
+    flex: 0 1 clamp(11rem, 15vw, 13rem);
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: .55rem;
+}
+
+body.site-shell .probablue-brand--shell .probablue-brand__mark {
+    display: block;
+    width: 1.75rem;
+    aspect-ratio: 415.2 / 450.2;
+    background: linear-gradient(155deg, var(--foreground) 12%, #2188e8 76%);
+    -webkit-mask: var(--site-brand-mark) center / contain no-repeat;
+    mask: var(--site-brand-mark) center / contain no-repeat;
+}
+
+body.site-shell .probablue-brand__copy {
+    display: inline-grid;
+    min-width: 0;
+    gap: .25rem;
 }
 
 body.site-shell .probablue-brand__name {
@@ -564,6 +631,20 @@ body.site-shell .site-theme-toggle:hover {
 body.site-shell .site-theme-toggle:focus-visible {
     outline: 3px solid color-mix(in oklab, var(--primary) 28%, transparent);
     outline-offset: 2px;
+}
+
+body.site-shell .site-mobile-menu-toggle {
+    border: 1px solid color-mix(in oklab, var(--border) 86%, transparent);
+    background: color-mix(in oklab, var(--background) 72%, var(--muted));
+    box-shadow: 0 .45rem 1.3rem rgb(38 58 67 / 8%);
+    transition: color 180ms ease, border-color 180ms ease, background-color 180ms ease;
+}
+
+body.site-shell .site-mobile-menu-toggle:hover,
+body.site-shell .site-mobile-menu-toggle:focus-visible {
+    border-color: color-mix(in oklab, var(--primary) 58%, var(--border));
+    color: var(--primary);
+    outline: none;
 }
 
 body.site-shell .site-theme-toggle__icon {
@@ -1347,6 +1428,86 @@ body.site-shell .site-loading {
 body.site-shell [data-reveal].is-revealed {
     opacity: 1;
     transform: none;
+}
+
+/* Auth forms stay above supplementary content on tablet and mobile screens. */
+body.site-shell .site-auth-page {
+    min-height: calc(100dvh - 4rem);
+}
+
+body.site-shell .site-auth-split {
+    align-items: stretch;
+}
+
+body.site-shell .site-auth-story,
+body.site-shell .site-auth-form-card {
+    min-width: 0;
+}
+
+body.site-shell .site-auth-form-card {
+    align-self: start;
+}
+
+body.site-shell .site-auth-compact {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+@media (max-width: 63.999rem) {
+    body.site-shell .site-auth-page {
+        width: min(100%, 40rem);
+        padding-block: 1.5rem;
+    }
+
+    body.site-shell .site-auth-split {
+        display: block;
+    }
+
+    body.site-shell .site-auth-story {
+        display: none;
+    }
+
+    body.site-shell .site-auth-form-card {
+        width: 100%;
+        margin-inline: auto;
+    }
+}
+
+@media (max-width: 42rem) {
+    body.site-shell .site-auth-page {
+        min-height: calc(100dvh - 4rem);
+        padding: .75rem .75rem 1.5rem;
+    }
+
+    body.site-shell .site-auth-form-card {
+        padding: 1.25rem;
+        border-radius: 1.5rem;
+    }
+
+    body.site-shell .site-auth-form-card__heading {
+        margin-bottom: 1rem;
+    }
+
+    body.site-shell .site-auth-form-card__heading h2,
+    body.site-shell .site-auth-compact__intro h1 {
+        font-size: clamp(1.65rem, 8vw, 2rem);
+        line-height: 1.08;
+    }
+
+    body.site-shell .site-auth-form-card__heading p,
+    body.site-shell .site-auth-compact__intro p {
+        margin-top: .75rem;
+        line-height: 1.55;
+    }
+
+    body.site-shell .site-auth-compact {
+        justify-content: flex-start;
+    }
+
+    body.site-shell .site-auth-compact .site-auth-form-card {
+        margin-top: 1rem;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3863,15 +4024,41 @@ body.site-shell .site-appointment-consent i {
         width: min(100% - 1rem, 80rem);
     }
 
+    body.site-shell .site-header__inner {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    }
+
     body.site-shell .site-header .probablue-brand--shell {
-        width: 9rem;
-        min-width: 9rem;
-        flex: 0 0 9rem;
+        width: auto;
+        min-width: 0;
+        max-width: 7.75rem;
+        grid-column: 2;
+        grid-template-columns: auto minmax(0, 1fr);
+        justify-self: center;
+        gap: .4rem;
+    }
+
+    body.site-shell .site-header .probablue-brand--shell .probablue-brand__mark {
+        width: 1.4rem;
+    }
+
+    body.site-shell .site-header .probablue-brand__copy {
+        gap: 0;
     }
 
     body.site-shell .site-header .probablue-brand__name {
-        font-size: .96rem;
+        font-size: .9rem;
         letter-spacing: .035em;
+    }
+
+    body.site-shell .site-header .probablue-brand__tagline {
+        display: none;
+    }
+
+    body.site-shell .site-header__actions {
+        grid-column: 3;
+        justify-self: end;
     }
 
     body.site-shell .site-appointment-heading,
@@ -6811,6 +6998,36 @@ body.site-shell .site-mobile-nav {
     max-height: calc(100dvh - 4rem);
     overflow-y: auto;
     overscroll-behavior: contain;
+    border-color: color-mix(in oklab, var(--border) 78%, transparent);
+    background: color-mix(in oklab, var(--background) 96%, transparent);
+    box-shadow: 0 1.5rem 3rem rgb(12 31 38 / 14%);
+    backdrop-filter: blur(18px);
+}
+
+body.site-shell .site-mobile-nav__link {
+    position: relative;
+    min-height: 2.65rem;
+    justify-content: space-between;
+    border: 1px solid transparent;
+    padding-inline: .85rem;
+    transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+
+body.site-shell .site-mobile-nav__link:hover,
+body.site-shell .site-mobile-nav__link:focus-visible {
+    border-color: color-mix(in srgb, var(--primary) 18%, var(--border));
+    outline: none;
+    transform: translateX(.2rem);
+}
+
+body.site-shell .site-mobile-nav__link--active {
+    border-color: color-mix(in srgb, var(--primary) 28%, var(--border));
+    box-shadow: inset 3px 0 var(--primary);
+}
+
+body.site-shell .site-mobile-nav__link--child {
+    margin-left: .65rem;
+    color: var(--muted-foreground);
 }
 
 body.site-shell .site-member-nav {

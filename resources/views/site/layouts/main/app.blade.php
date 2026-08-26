@@ -63,8 +63,11 @@
     <header class="site-header sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-xl" x-data="{ mobileOpen: false }">
         <div class="site-header__inner mx-auto flex h-16 items-center justify-between gap-2 px-3 sm:gap-4 sm:px-4 lg:h-[72px] lg:px-6">
             <a href="{{ \App\Support\Site\SiteLocalization::homeUrl($siteCurrentLocale) }}" class="probablue-brand probablue-brand--shell" aria-label="PROBABLUE - İstatistiksel Analiz ve Danışma">
-                <span class="probablue-brand__name">PROBA<span>BLUE</span></span>
-                <span class="probablue-brand__tagline">İstatistiksel Analiz ve Danışma</span>
+                <span class="probablue-brand__mark" style="--site-brand-mark: url('{{ asset('assets/site/home/images/p-v.svg') }}')" aria-hidden="true"></span>
+                <span class="probablue-brand__copy">
+                    <span class="probablue-brand__name">PROBA<span>BLUE</span></span>
+                    <span class="probablue-brand__tagline">İstatistiksel Analiz ve Danışma</span>
+                </span>
             </a>
 
             <nav class="site-desktop-navigation hidden items-center xl:flex" aria-label="Ana menü" data-site-primary-navigation>
@@ -73,7 +76,7 @@
                 @endforeach
             </nav>
 
-            <div class="flex shrink-0 items-center gap-1.5 sm:gap-2">
+            <div class="site-header__actions flex shrink-0 items-center gap-1.5 sm:gap-2">
                 @include('site.partials.theme-toggle')
 
                 @if($siteLanguages->count() > 1)
@@ -144,9 +147,10 @@
                     @endif
                 </div>
 
-                <button type="button" class="relative inline-flex size-10 items-center justify-center rounded-xl text-foreground hover:bg-muted/60 xl:hidden" @click="mobileOpen = !mobileOpen" :aria-expanded="mobileOpen" aria-controls="site-mobile-nav" aria-label="Menü">
-                    <span class="absolute block h-0.5 w-5 rounded-full bg-current transition-transform duration-200" :class="mobileOpen ? '-rotate-45' : '-translate-y-1.5'"></span>
-                    <span class="absolute block h-0.5 w-5 rounded-full bg-current transition-all duration-200" :class="mobileOpen ? 'opacity-0' : 'translate-y-1.5'"></span>
+                <button type="button" class="site-mobile-menu-toggle relative inline-flex size-10 items-center justify-center rounded-xl text-foreground xl:hidden" @click="mobileOpen = !mobileOpen" :aria-expanded="mobileOpen" aria-controls="site-mobile-nav" aria-label="Menü">
+                    <span class="absolute block h-0.5 w-5 rounded-full bg-current transition-transform duration-200" :class="mobileOpen ? 'rotate-45' : '-translate-y-1.5'"></span>
+                    <span class="absolute block h-0.5 w-5 rounded-full bg-current transition-opacity duration-200" :class="mobileOpen ? 'opacity-0' : 'opacity-100'"></span>
+                    <span class="absolute block h-0.5 w-5 rounded-full bg-current transition-transform duration-200" :class="mobileOpen ? '-rotate-45' : 'translate-y-1.5'"></span>
                 </button>
             </div>
         </div>

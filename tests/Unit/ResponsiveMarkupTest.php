@@ -76,6 +76,9 @@ class ResponsiveMarkupTest extends TestCase
 
         $this->assertStringContainsString('site-desktop-nav-label', $desktopItem);
         $this->assertMatchesRegularExpression('/\.site-desktop-nav-link\s*\{[^}]*flex:\s*0 0 auto;[^}]*white-space:\s*nowrap;/s', $css);
+        $this->assertMatchesRegularExpression('/\.site-desktop-nav-link--active\s*\{[^}]*linear-gradient\([^}]*inset 0 0 0 1px/s', $css);
+        $this->assertStringNotContainsString('.site-desktop-nav-link--active::after', $css);
+        $this->assertStringNotContainsString('site-desktop-nav-link--active text-primary', $desktopItem);
         $this->assertStringContainsString('--home-feature-custom-accent:', $featureView);
         $this->assertStringContainsString('--home-feature-palette-accent', $homeCss);
         $this->assertStringContainsString('--home-feature-palette-dark-bg', $homeCss);
@@ -174,6 +177,9 @@ class ResponsiveMarkupTest extends TestCase
         $homeCss = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'home.css');
         $homeJs = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR.'home.js');
         $homeView = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home.blade.php');
+        $siteLayout = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'layouts'.DIRECTORY_SEPARATOR.'main'.DIRECTORY_SEPARATOR.'app.blade.php');
+        $desktopNavigation = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'partials'.DIRECTORY_SEPARATOR.'navigation'.DIRECTORY_SEPARATOR.'desktop-item.blade.php');
+        $mobileNavigation = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'partials'.DIRECTORY_SEPARATOR.'navigation'.DIRECTORY_SEPARATOR.'mobile-item.blade.php');
         $computerSvg = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'probablue-c.svg');
         $lightBackground = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'home-background-light.svg');
         $darkBackground = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'home-background-dark.svg');
@@ -181,7 +187,8 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('body.site-shell .probablue-brand__tagline', $css);
         $this->assertStringContainsString('html[data-site-theme="dark"] body.site-shell .site-theme-toggle', $css);
         $this->assertStringContainsString('grid-template-areas:', $homeCss);
-        $this->assertStringContainsString('"brand theme"', $homeCss);
+        $this->assertStringContainsString('gap: 1px 8px;', $homeCss);
+        $this->assertStringContainsString('"theme brand brand menu"', $homeCss);
         $this->assertStringContainsString('html[data-site-theme="dark"] .home-discovery-section', $homeCss);
         $this->assertStringContainsString('html[data-site-theme="dark"] .site-home-header .home-theme-toggle', $homeCss);
         $this->assertStringContainsString('html[data-site-theme="dark"] .site-home-header.sticky .home-theme-toggle', $homeCss);
@@ -194,6 +201,12 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('.home-split-brand__layer--after', $homeCss);
         $this->assertStringContainsString('.home-split-brand__layer--before', $homeCss);
         $this->assertStringContainsString('.probablue-brand--home .probablue-brand__mark', $homeCss);
+        $this->assertStringContainsString('class="probablue-brand__mark"', $siteLayout);
+        $this->assertStringContainsString('site-mobile-menu-toggle', $siteLayout);
+        $this->assertStringNotContainsString('icon_class', $desktopNavigation);
+        $this->assertStringNotContainsString('icon_class', $mobileNavigation);
+        $this->assertStringContainsString('class="home-mobile-menu"', $homeView);
+        $this->assertStringContainsString('home-mobile-menu__panel', $homeCss);
         $this->assertStringContainsString('mask: url("../images/p-v.svg") center / contain no-repeat;', $homeCss);
         $this->assertStringContainsString("item.style.setProperty('--home-header-split-x'", $homeJs);
         $this->assertStringContainsString('html.home-hero-pending .view-after', $homeCss);
@@ -232,6 +245,30 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringNotContainsString('<text', $darkBackground);
         $this->assertStringContainsString('body.site-shell .kt-select-dropdown', $css);
         $this->assertStringContainsString('background: var(--background) !important;', $css);
+    }
+
+    public function test_public_auth_forms_are_immediately_available_on_mobile(): void
+    {
+        $css = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
+        $authDirectory = $this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'auth'.DIRECTORY_SEPARATOR;
+        $login = file_get_contents($authDirectory.'member-login.blade.php');
+        $register = file_get_contents($authDirectory.'member-register.blade.php');
+        $forgotPassword = file_get_contents($authDirectory.'member-forgot-password.blade.php');
+        $resetPassword = file_get_contents($authDirectory.'member-reset-password.blade.php');
+
+        $this->assertMatchesRegularExpression(
+            '/@media \(max-width: 63\.999rem\)\s*\{.*\.site-auth-story\s*\{\s*display:\s*none;/s',
+            $css,
+            'Supplementary auth stories must not push forms below the mobile viewport.'
+        );
+        $this->assertStringContainsString('site-auth-split', $login);
+        $this->assertStringContainsString('site-auth-form-card', $login);
+        $this->assertStringContainsString('site-auth-split', $register);
+        $this->assertStringContainsString('site-auth-form-card', $register);
+        $this->assertStringContainsString('site-auth-compact', $forgotPassword);
+        $this->assertStringContainsString('site-auth-form-card', $forgotPassword);
+        $this->assertStringContainsString('site-auth-compact', $resetPassword);
+        $this->assertStringContainsString('site-auth-form-card', $resetPassword);
     }
 
     public function test_sidebar_accordion_indicator_keeps_space_from_the_right_edge(): void
