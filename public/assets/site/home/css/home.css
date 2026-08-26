@@ -45,6 +45,7 @@
   --home-logo: #ffffff;
   --home-sticky-header-bg: #ebeef0;
   --home-sticky-logo: #ec6367;
+  --home-sticky-logo-dark: #69adff;
   --home-cta-before-text: #eb5155;
   --home-cta-after-text: #ffffff;
   --home-cta-before-hover-bg: #eb5155;
@@ -613,7 +614,7 @@ body.site-home-index {
   position: relative;
   display: flex;
   width: clamp(182px, 18vw, 224px);
-  height: 54px;
+  height: 64px;
   min-width: 0;
   align-items: center;
   justify-content: center;
@@ -648,6 +649,7 @@ body.site-home-index {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  transition: color 0.28s ease;
 }
 
 .probablue-brand--home {
@@ -655,9 +657,20 @@ body.site-home-index {
   width: 100%;
   min-width: 0;
   align-content: center;
-  gap: 6px;
+  justify-items: center;
+  gap: 2px;
   color: currentColor;
   text-align: center;
+}
+
+.probablue-brand--home .probablue-brand__mark {
+  display: block;
+  width: clamp(20px, 1.9vw, 26px);
+  aspect-ratio: 415.2 / 450.2;
+  justify-self: center;
+  background: currentColor;
+  -webkit-mask: url("../images/p-v.svg") center / contain no-repeat;
+  mask: url("../images/p-v.svg") center / contain no-repeat;
 }
 
 .probablue-brand--home .probablue-brand__name {
@@ -963,7 +976,7 @@ html[data-site-theme="dark"] .wrapper-before::before {
 }
 
 .wrapper-after .img-bird-wrapper::before {
-  background: radial-gradient(ellipse at center, rgba(0, 9, 35, 0.52) 0%, rgba(0, 28, 76, 0.22) 46%, transparent 72%);
+  background: radial-gradient(ellipse at center, rgba(34, 211, 238, 0.2) 0%, rgba(34, 211, 238, 0.08) 46%, transparent 72%);
 }
 
 .wrapper-before .img-bird-wrapper::before {
@@ -979,10 +992,10 @@ html[data-site-theme="dark"] .wrapper-before::before {
   height: auto;
 }
 
-.wrapper-after .img-bird-wrapper > .home-hero-computer {
+.wrapper-after .img-bird-wrapper > .home-hero-computer--pvt {
   filter:
-    drop-shadow(0 20px 25px rgba(0, 8, 30, 0.38))
-    drop-shadow(0 4px 8px rgba(0, 13, 42, 0.24));
+    drop-shadow(0 20px 25px rgba(34, 211, 238, 0.18))
+    drop-shadow(0 4px 9px rgba(34, 211, 238, 0.26));
 }
 
 .wrapper-before .img-bird-wrapper > .home-hero-computer {
@@ -1727,7 +1740,7 @@ body.home-leaving .icon-drag {
 
   .wrapper-logo {
     width: min(210px, calc(100vw - 94px));
-    height: 42px;
+    height: 50px;
     grid-area: brand;
     justify-self: start;
   }
@@ -1757,6 +1770,14 @@ body.home-leaving .icon-drag {
 
   .wrapper-logo img {
     max-height: 40px;
+  }
+
+  .probablue-brand--home {
+    gap: 1px;
+  }
+
+  .probablue-brand--home .probablue-brand__mark {
+    width: 16px;
   }
 
   .home-before-after {
@@ -1806,6 +1827,37 @@ html[data-site-theme="dark"] .site-home-header.grey-bg {
   box-shadow: 0 12px 38px rgba(0, 0, 0, 0.18);
 }
 
+html[data-site-theme="dark"] .site-home-header.sticky .home-mode-tab,
+html[data-site-theme="dark"] .site-home-header.grey-bg .home-mode-tab,
+html[data-site-theme="dark"] .site-home-header.sticky .home-header-logo.is-fallback,
+html[data-site-theme="dark"] .site-home-header.grey-bg .home-header-logo.is-fallback,
+html[data-site-theme="dark"] .site-home-header.sticky .home-split-brand__layer--after,
+html[data-site-theme="dark"] .site-home-header.grey-bg .home-split-brand__layer--after,
+html[data-site-theme="dark"] .site-home-header.sticky .home-theme-toggle,
+html[data-site-theme="dark"] .site-home-header.grey-bg .home-theme-toggle {
+  color: var(--home-sticky-logo-dark);
+}
+
+html[data-site-theme="dark"] .site-home-header.sticky .home-mode-tab:not(.is-active),
+html[data-site-theme="dark"] .site-home-header.grey-bg .home-mode-tab:not(.is-active) {
+  opacity: 0.9;
+}
+
+html[data-site-theme="dark"] .site-home-header.sticky .probablue-brand__name span,
+html[data-site-theme="dark"] .site-home-header.grey-bg .probablue-brand__name span {
+  color: var(--home-sticky-logo-dark);
+}
+
+html[data-site-theme="dark"] .site-home-header.sticky .probablue-brand__tagline,
+html[data-site-theme="dark"] .site-home-header.grey-bg .probablue-brand__tagline {
+  opacity: 0.86;
+}
+
+html[data-site-theme="dark"] .site-home-header.sticky .home-theme-toggle,
+html[data-site-theme="dark"] .site-home-header.grey-bg .home-theme-toggle {
+  border-color: color-mix(in srgb, var(--home-sticky-logo-dark) 72%, transparent);
+}
+
 html[data-site-theme="dark"] .home-feature-section:not([data-surface="dark"]) {
   --home-feature-bg: var(--home-feature-palette-dark-bg, #142229);
   --home-feature-card: var(--home-feature-palette-dark-card, rgba(255, 255, 255, 0.055));
@@ -1849,7 +1901,8 @@ html[data-site-theme="dark"] .home-feature-section:not([data-surface="dark"]) {
   }
 
   .probablue-brand--home {
-    gap: 4px;
+    justify-items: start;
+    gap: 1px;
     text-align: left;
   }
 

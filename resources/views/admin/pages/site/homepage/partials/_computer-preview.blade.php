@@ -31,11 +31,11 @@
     style="{{ $computerPreviewStyle }}"
 >
     <div class="homepage-computer-preview__panel">
-        <span class="homepage-computer-preview__label">P-PVT · Sabit görsel</span>
+        <span class="homepage-computer-preview__label">Probablue Kod Dokulu · Sabit görsel</span>
         @include('site.partials.home-hero-computer', ['variant' => 'pvt'])
     </div>
     <div class="homepage-computer-preview__panel homepage-computer-preview__panel--editable">
-        <span class="homepage-computer-preview__label">P-V · Canlı önizleme</span>
+        <span class="homepage-computer-preview__label">Probablue Canlı Logo · Renk önizlemesi</span>
         @include('site.partials.home-hero-computer', ['variant' => 'pv', 'idPrefix' => $previewIdPrefix])
     </div>
 </div>

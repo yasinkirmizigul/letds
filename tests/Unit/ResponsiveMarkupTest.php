@@ -174,6 +174,7 @@ class ResponsiveMarkupTest extends TestCase
         $homeCss = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'home.css');
         $homeJs = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR.'home.js');
         $homeView = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home.blade.php');
+        $computerSvg = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'probablue-c.svg');
         $lightBackground = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'home-background-light.svg');
         $darkBackground = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'home-background-dark.svg');
 
@@ -184,11 +185,16 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('html[data-site-theme="dark"] .home-discovery-section', $homeCss);
         $this->assertStringContainsString('html[data-site-theme="dark"] .site-home-header .home-theme-toggle', $homeCss);
         $this->assertStringContainsString('html[data-site-theme="dark"] .site-home-header.sticky .home-theme-toggle', $homeCss);
+        $this->assertStringContainsString('--home-sticky-logo-dark: #69adff;', $homeCss);
+        $this->assertStringContainsString('color: var(--home-sticky-logo-dark);', $homeCss);
+        $this->assertStringContainsString('opacity: 0.86;', $homeCss);
         $this->assertMatchesRegularExpression('/\.site-theme-toggle\s*\{[^}]*width:\s*36px;[^}]*height:\s*36px;/s', $homeCss);
         $this->assertStringContainsString('.wrapper-logo.has-image', $homeCss);
         $this->assertStringContainsString('data-home-split-brand="true"', $homeView);
         $this->assertStringContainsString('.home-split-brand__layer--after', $homeCss);
         $this->assertStringContainsString('.home-split-brand__layer--before', $homeCss);
+        $this->assertStringContainsString('.probablue-brand--home .probablue-brand__mark', $homeCss);
+        $this->assertStringContainsString('mask: url("../images/p-v.svg") center / contain no-repeat;', $homeCss);
         $this->assertStringContainsString("item.style.setProperty('--home-header-split-x'", $homeJs);
         $this->assertStringContainsString('html.home-hero-pending .view-after', $homeCss);
         $this->assertStringContainsString('width: min(400px, calc(100vw - 64px));', $homeCss);
@@ -196,6 +202,11 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('cursor: move;', $homeCss);
         $this->assertStringContainsString('.home-hero-float {', $homeCss);
         $this->assertStringContainsString('.home-hero-shadow {', $homeCss);
+        $this->assertStringContainsString('.wrapper-after .img-bird-wrapper > .home-hero-computer--pvt', $homeCss);
+        $this->assertStringContainsString('id="probablue-c-outline-gradient"', $computerSvg);
+        $this->assertStringContainsString('class="probablue-c-outline"', $computerSvg);
+        $this->assertStringContainsString('href="#probablue-c-silhouette"', $computerSvg);
+        $this->assertStringContainsString('drop-shadow(0 4px 9px rgba(34, 211, 238, 0.26))', $homeCss);
         $this->assertStringContainsString('--home-hero-shadow-offset: 245px;', $homeCss);
         $this->assertStringContainsString('background: var(--home-after-color-layer, var(--home-after-bg));', $homeCss);
         $this->assertStringContainsString('opacity: var(--home-before-surface-opacity, var(--home-background-overlay-opacity));', $homeCss);

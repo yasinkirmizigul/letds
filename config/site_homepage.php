@@ -57,7 +57,7 @@ $computerPaletteFields = static function (string $prefix = ''): array {
     return [
         [
             'key' => $prefix.'computer_pv_fill_mode',
-            'label' => 'P-V Gövde Dolgusu',
+            'label' => 'Probablue Logo Gövdesi',
             'type' => 'select',
             'default' => 'gradient',
             'options' => [
@@ -66,12 +66,12 @@ $computerPaletteFields = static function (string $prefix = ''): array {
             ],
             'wrapper_class' => 'sm:col-span-2 xl:col-span-3',
         ],
-        ['key' => $prefix.'computer_pv_body_start_color', 'label' => 'P-V Gövde Başlangıcı', 'type' => 'color', 'default' => '#072247'],
-        ['key' => $prefix.'computer_pv_body_end_color', 'label' => 'P-V Gövde Bitişi', 'type' => 'color', 'default' => '#0060ea'],
-        ['key' => $prefix.'computer_pv_bar_light_color', 'label' => 'P-V Açık Veri Çubukları', 'type' => 'color', 'default' => '#a0c7fc'],
-        ['key' => $prefix.'computer_pv_bar_mid_color', 'label' => 'P-V Orta Veri Çubukları', 'type' => 'color', 'default' => '#7eaff8'],
-        ['key' => $prefix.'computer_pv_bar_vivid_color', 'label' => 'P-V Canlı Veri ve Akış', 'type' => 'color', 'default' => '#016af6'],
-        ['key' => $prefix.'computer_pv_bar_dark_color', 'label' => 'P-V Koyu Veri ve Akış', 'type' => 'color', 'default' => '#0046d6'],
+        ['key' => $prefix.'computer_pv_body_start_color', 'label' => 'Logo Gövde Başlangıcı', 'type' => 'color', 'default' => '#072247'],
+        ['key' => $prefix.'computer_pv_body_end_color', 'label' => 'Logo Gövde Bitişi', 'type' => 'color', 'default' => '#0060ea'],
+        ['key' => $prefix.'computer_pv_bar_light_color', 'label' => 'Açık Veri Çubukları', 'type' => 'color', 'default' => '#a0c7fc'],
+        ['key' => $prefix.'computer_pv_bar_mid_color', 'label' => 'Orta Veri Çubukları', 'type' => 'color', 'default' => '#7eaff8'],
+        ['key' => $prefix.'computer_pv_bar_vivid_color', 'label' => 'Canlı Veri ve Akış', 'type' => 'color', 'default' => '#016af6'],
+        ['key' => $prefix.'computer_pv_bar_dark_color', 'label' => 'Koyu Veri ve Akış', 'type' => 'color', 'default' => '#0046d6'],
     ];
 };
 
@@ -413,8 +413,8 @@ return [
         ],
         [
             'key' => 'computer_palette',
-            'title' => 'P-V Görsel Paleti',
-            'description' => 'P-PVT sabit kalır; yalnız P-V görselinin gövde, veri ve gradyan renklerini yönetin.',
+            'title' => 'Probablue Logo Paleti',
+            'description' => 'Kod dokulu logo sabit kalır; canlı Probablue logosunun gövde, veri ve gradyan renklerini yönetin.',
             'mode' => 'analysis',
             'preview' => 'computer',
             'preview_prefix' => '',
@@ -465,8 +465,8 @@ return [
         ],
         [
             'key' => 'consultation_computer_palette',
-            'title' => 'P-V Görsel Paleti',
-            'description' => 'Danışma görünümünde yalnız P-V görselinin gövde, veri ve gradyan renklerini yönetin.',
+            'title' => 'Probablue Logo Paleti',
+            'description' => 'Danışma görünümündeki canlı Probablue logosunun gövde, veri ve gradyan renklerini yönetin.',
             'mode' => 'consultation',
             'preview' => 'computer',
             'preview_prefix' => 'consultation_',

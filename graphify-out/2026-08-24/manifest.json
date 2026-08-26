@@ -3035,8 +3035,8 @@
     "semantic_hash": ""
   },
   "tests/Unit/ResponsiveMarkupTest.php": {
-    "mtime": 1787595555.0452862,
-    "ast_hash": "80bd4ab24e568c6e4804d05b97f9885f",
+    "mtime": 1787594922.2097008,
+    "ast_hash": "f37a220754f4b69ff3b376f03bed51f5",
     "semantic_hash": ""
   },
   "app/Http/Controllers/Site/Cms/FaqController.php": {

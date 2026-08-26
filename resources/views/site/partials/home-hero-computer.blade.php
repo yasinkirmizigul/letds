@@ -7,7 +7,7 @@
 @if($computerVariant === 'pvt')
     <img
         class="home-hero-computer home-hero-computer--pvt"
-        src="{{ asset('assets/site/home/images/p-pvt.svg') }}"
+        src="{{ asset('assets/site/home/images/probablue-c.svg') }}"
         alt=""
         aria-hidden="true"
         decoding="async"

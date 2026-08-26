@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 387.99 421.29">
+  <defs>
+    <style>
+      .cls-1 {
+        opacity: .75;
+      }
+
+      .cls-2 {
+        fill: #e8a24f;
+      }
+
+      .cls-2, .cls-3, .cls-4, .cls-5, .cls-6, .cls-7, .cls-8, .cls-9, .cls-10, .cls-11, .cls-12, .cls-13 {
+        isolation: isolate;
+      }
+
+      .cls-2, .cls-3, .cls-4, .cls-5, .cls-6, .cls-8, .cls-9, .cls-10, .cls-11, .cls-12, .cls-13 {
+        font-weight: 700;
+      }
+
+      .cls-2, .cls-3, .cls-4, .cls-5, .cls-13 {
+        font-size: 8.18px;
+      }
+
+      .cls-2, .cls-3, .cls-4, .cls-6, .cls-9, .cls-10, .cls-11, .cls-12, .cls-13 {
+        font-family: Consolas-Bold, Consolas;
+      }
+
+      .cls-14 {
+        fill: #002140;
+      }
+
+      .cls-3 {
+        fill: #f05a86;
+      }
+
+      .cls-4 {
+        fill: #d7e4ea;
+      }
+
+      .cls-5 {
+        fill: #0b72c8;
+      }
+
+      .cls-5, .cls-8 {
+        font-family: Consolas-BoldItalic, Consolas;
+      }
+
+      .cls-15, .cls-16 {
+        fill: none;
+      }
+
+      .cls-6 {
+        fill: #f25c8b;
+      }
+
+      .cls-6, .cls-8, .cls-9, .cls-10, .cls-11, .cls-12 {
+        font-size: 8.19px;
+      }
+
+      .cls-16 {
+        stroke: #5267ff;
+        stroke-width: 1.1px;
+      }
+
+      .cls-8 {
+        fill: #2892ff;
+      }
+
+      .cls-9 {
+        fill: #e1edf2;
+      }
+
+      .cls-10 {
+        fill: #8ca4b9;
+      }
+
+      .cls-11 {
+        fill: #f2b04a;
+      }
+
+      .cls-17 {
+        clip-path: url(#clippath);
+      }
+
+      .cls-12 {
+        fill: #7ad84f;
+      }
+
+      .cls-13 {
+        fill: #42d65a;
+      }
+
+      .probablue-c-outline {
+        fill: none;
+        filter: url(#probablue-c-outline-glow);
+        stroke: url(#probablue-c-outline-gradient);
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.65px;
+        vector-effect: non-scaling-stroke;
+      }
+    </style>
+    <linearGradient id="probablue-c-outline-gradient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e5fcff"/>
+      <stop offset=".22" stop-color="#67e8f9"/>
+      <stop offset=".55" stop-color="#22d3ee"/>
+      <stop offset=".8" stop-color="#0787ea"/>
+      <stop offset="1" stop-color="#0642a6"/>
+    </linearGradient>
+    <filter id="probablue-c-outline-glow" x="-12%" y="-12%" width="124%" height="124%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.45" result="outlineBlur"/>
+      <feMerge>
+        <feMergeNode in="outlineBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <clipPath id="clippath">
+      <path id="probablue-c-silhouette" class="cls-15" d="M385.48,139.47c-1.78-13.05-5.16-23.94-8.54-32.02-3-8.45-7.79-19.62-15.87-31.45-7.79-11.36-16.06-19.72-22.82-25.54-7.61-7.23-18.5-15.96-32.77-23.85-11.55-6.38-23.38-11.64-36.8-16.15-15.49-5.35-23.66-6.01-25.82-6.48-1.31-.28-10.42-1.13-22.63-1.69C201.27,1.17,116.48.51,1.28,1.45v4.88c3.76.19,9.11.84,15.21,3.19,6.38,2.54,11.08,5.82,13.9,8.26,2.35,1.97,5.63,5.16,8.45,9.95.19.38.38.66.56,1.03,2.72,5.16,4.04,10.89,4.04,16.62v304l38.73-53.72c7.25-10.73,46.24-74.71,48.96-78.84,4.98-7.32,8.73-13.71,12.68-20.28,3-5.07,5.16-8.92,6.67-11.45,7.89-13.9,7.89-15.02,13.24-23.94.66-1.13,1.78-3,3.19-5.16,1.88-2.91,1.92-3.48,3.99-6.39.94-1.41,2.02-3.36,3.94-5.94,1.97-3.1,4.03-5.82,5.53-7.79,2.07-2.63,4-4.47,5.04-5.23.75-.56,2.63-2.07,5.35-3.57,2.35-1.22,6.67-3.57,12.39-3.76,6.85-.28,12.11,2.63,14.46,4.13,3.76,2.25,6.38,4.6,8.07,6.1,2.63,2.53,4.6,5.07,8.36,10.33,1.41,1.97,2.82,3.85,4.6,6.38,3.94,5.82,5.63,9.2,9.01,15.12.56.94,3.38,5.54,9.2,15.02,9.01,14.55,9.76,15.59,10.61,16.9,6.1,9.11,10.8,15.02,11.92,16.24,4.79,5.82,8.54,9.86,9.67,11.08,2.25,2.35,5.16,5.35,9.48,9.01,3.66,3.19,7.14,5.63,9.86,7.61-4.13,6.67-9.3,13.52-15.49,20.37-6.38,6.95-13.05,12.68-19.62,17.56v-28.54h-7.51v33.71c-5.07,3.19-9.95,5.92-14.55,8.17v-70.42h-7.98v73.98c-5.92,2.44-10.89,4.04-14.65,5.16v-111.73h-7.79v113.23c.09,0-5.26.94-5.26.94-3.1.56-6.2,1.03-9.3,1.41v-154.26h-7.79v155.01c-3.29.19-6.48.38-9.76.38h-5.35v-116.61h-7.32v116.61h-14.46v-84.31h-8.26v84.31h-13.9v-55.21h-7.61v55.3c-4.51.28-9.58.75-14.93,1.69v-31.83h-7.61v33.33h.09c-.28,0-.56.09-.85.19-4.98,1.13-9.48,2.53-13.71,3.94v-19.62h-7.23v22.25c-6.1,1.88-15.68,5.82-25.26,13.71-9.86,8.17-15.82,16.99-18.82,22.53l.32,26.76c0,1.13-.19,2.35-.47,3.47-1.31,4.88-4.51,13.61-12.39,21.31-11.83,11.55-25.91,12.96-29.95,13.24v3l193.25-1.13v-3.57c-3.66-.28-17.09-1.78-28.54-12.96-9.11-8.92-11.92-19.25-12.96-24.88-.28-1.78-.47-3.57-.47-5.26v-53.42c2.91-1.03,12.68-2.62,20.91-2.81,5.11-.29,41.97.75,49.2.38,5.35-.28,14.46-.38,18.68-1.22,14.74-1.6,32.2-6.67,56.62-18.78,20.37-10.05,35.21-22.25,44.88-31.55,8.36-8.64,19.53-22.25,28.54-40.94,8.54-17.56,12.3-33.61,14.08-44.97,1.6-9.76,2.82-23.47.56-39.53l-.28-.19Z"/>
+    </clipPath>
+  </defs>
+  <g id="Layer_2-2" data-name="Layer 2">
+    <g class="cls-17">
+      <g>
+        <polyline id="rect1" class="cls-14" points="440.6 432.3 -40.84 432.3 -40.84 -9.63 440.6 -9.63"/>
+        <g class="cls-1">
+          <text class="cls-4" transform="translate(202.83 62.24)"><tspan x="0" y="0">x2 &lt;- xminx &lt;- x1</tspan></text>
+          <text class="cls-5" transform="translate(202.83 86.41)"><tspan x="0" y="0"># Adding space for legend</tspan></text>
+          <text class="cls-4" transform="translate(202.83 98.49)"><tspan x="0" y="0">ylim &lt;- mdiff + (</tspan></text>
+          <text class="cls-3" transform="translate(286.41 98.49)"><tspan x="0" y="0">3.5</tspan></text>
+          <text class="cls-4" transform="translate(301.16 98.49)"><tspan x="0" y="0">* sddiff)</tspan></text>
+          <text class="cls-4" transform="translate(202.83 110.58)"><tspan x="0" y="0">ylim1 &lt;- mdiff - (</tspan></text>
+          <text class="cls-3" transform="translate(291.32 110.58)"><tspan x="0" y="0">3</tspan></text>
+          <text class="cls-4" transform="translate(296.24 110.58)"><tspan x="0" y="0">* sddiff)</tspan></text>
+          <text class="cls-5" transform="translate(202.83 134.74)"><tspan x="0" y="0"># Plot data</tspan></text>
+          <text class="cls-2" transform="translate(202.83 146.83)"><tspan x="0" y="0">plot</tspan></text>
+          <text class="cls-4" transform="translate(222.5 146.83)"><tspan x="0" y="0">(diffs ~ means, xlab =</tspan></text>
+          <text class="cls-13" transform="translate(335.57 146.83)"><tspan x="0" y="0">&quot;Average of two&quot;</tspan></text>
+          <text class="cls-2" transform="translate(202.83 158.91)"><tspan x="0" y="0">abline</tspan></text>
+          <text class="cls-4" transform="translate(232.33 158.91)"><tspan x="0" y="0">(h = mdiff, col =</tspan></text>
+          <text class="cls-13" transform="translate(320.82 158.91)"><tspan x="0" y="0">&quot;blue&quot;</tspan></text>
+          <text class="cls-4" transform="translate(350.32 158.91)"><tspan x="0" y="0">, lty =</tspan></text>
+          <rect class="cls-16" x="324.63" y="150.92" width="21.87" height="10.38"/>
+          <text class="cls-2" transform="translate(202.83 171)"><tspan x="0" y="0">text</tspan></text>
+          <text class="cls-4" transform="translate(222.5 171)"><tspan x="0" y="0">(x2, mdiff,</tspan></text>
+          <text class="cls-13" transform="translate(281.49 171)"><tspan x="0" y="0">&quot;Mean&quot;</tspan></text>
+          <text class="cls-4" transform="translate(310.99 171)"><tspan x="0" y="0">)</tspan></text>
+          <text class="cls-2" transform="translate(202.83 183.08)"><tspan x="0" y="0">abline</tspan></text>
+          <text class="cls-4" transform="translate(232.33 183.08)"><tspan x="0" y="0">(h =</tspan></text>
+          <text class="cls-3" transform="translate(256.91 183.08)"><tspan x="0" y="0">0</tspan></text>
+          <text class="cls-4" transform="translate(261.83 183.08)"><tspan x="0" y="0">)</tspan></text>
+          <text class="cls-5" transform="translate(202.83 207.25)"><tspan x="0" y="0"># Standard deviations lines &amp; legend</tspan></text>
+          <text class="cls-2" transform="translate(202.83 219.33)"><tspan x="0" y="0">abline</tspan></text>
+          <text class="cls-4" transform="translate(232.33 219.33)"><tspan x="0" y="0">(h = mdiff +</tspan></text>
+          <text class="cls-3" transform="translate(296.24 219.33)"><tspan x="0" y="0">1.96</tspan></text>
+          <text class="cls-4" transform="translate(315.91 219.33)"><tspan x="0" y="0">* sddiff, col =</tspan></text>
+          <text class="cls-2" transform="translate(202.83 231.41)"><tspan x="0" y="0">text</tspan></text>
+          <text class="cls-4" transform="translate(222.5 231.41)"><tspan x="0" y="0">(x2, mdiff +</tspan></text>
+          <text class="cls-3" transform="translate(286.41 231.41)"><tspan x="0" y="0">1.96</tspan></text>
+          <text class="cls-4" transform="translate(306.07 231.41)"><tspan x="0" y="0">* sddiff,</tspan></text>
+          <text class="cls-13" transform="translate(360.15 231.41)"><tspan x="0" y="0">&quot;Upper Limit&quot;</tspan></text>
+          <text class="cls-2" transform="translate(202.83 243.5)"><tspan x="0" y="0">abline</tspan></text>
+          <text class="cls-4" transform="translate(232.33 243.5)"><tspan x="0" y="0">(h = mdiff -</tspan></text>
+          <text class="cls-3" transform="translate(296.24 243.5)"><tspan x="0" y="0">1.96</tspan></text>
+          <text class="cls-4" transform="translate(315.91 243.5)"><tspan x="0" y="0">* sddiff, col =</tspan></text>
+          <text class="cls-2" transform="translate(202.83 255.58)"><tspan x="0" y="0">text</tspan></text>
+          <text class="cls-4" transform="translate(222.5 255.58)"><tspan x="0" y="0">(x2, mdiff -</tspan></text>
+          <text class="cls-3" transform="translate(286.41 255.58)"><tspan x="0" y="0">1.96</tspan></text>
+          <text class="cls-4" transform="translate(306.07 255.58)"><tspan x="0" y="0">* sddiff,</tspan></text>
+          <text class="cls-13" transform="translate(360.15 255.58)"><tspan x="0" y="0">&quot;Lower Limit&quot;</tspan></text>
+        </g>
+        <g class="cls-1">
+          <text class="cls-10" transform="translate(47.6 13.85)"><tspan x="0" y="0">63</tspan></text>
+          <g class="cls-7">
+            <text class="cls-9" transform="translate(65.64 13.85)"><tspan x="0" y="0">idx &lt;- </tspan></text>
+            <text class="cls-6" transform="translate(97.18 13.85)"><tspan x="0" y="0">1</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 25.21)"><tspan x="0" y="0">64</tspan></text>
+          <g class="cls-7">
+            <text class="cls-11" transform="translate(65.64 25.21)"><tspan x="0" y="0">for</tspan></text>
+            <text class="cls-9" transform="translate(79.16 25.21)"><tspan x="0" y="0">(i </tspan></text>
+            <text class="cls-11" transform="translate(92.67 25.21)"><tspan x="0" y="0">in</tspan></text>
+            <text class="cls-9" transform="translate(101.68 25.21)"><tspan x="0" y="0"> </tspan></text>
+            <text class="cls-11" transform="translate(106.19 25.21)"><tspan x="0" y="0">seq</tspan></text>
+            <text class="cls-9" transform="translate(119.7 25.21)"><tspan x="0" y="0">(</tspan></text>
+            <text class="cls-6" transform="translate(124.2 25.21)"><tspan x="0" y="0">1</tspan></text>
+            <text class="cls-9" transform="translate(128.71 25.21)"><tspan x="0" y="0">, ncol(dat), by = </tspan></text>
+            <text class="cls-6" transform="translate(209.79 25.21)"><tspan x="0" y="0">2</tspan></text>
+            <text class="cls-9" transform="translate(214.3 25.21)"><tspan x="0" y="0">)){</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 36.57)"><tspan x="0" y="0">65</tspan></text>
+          <g class="cls-7">
+            <text class="cls-9" transform="translate(65.64 36.57)"><tspan x="0" y="0">x &lt;- dat[[i]]; y &lt;- dat[[i+1]]</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 47.93)"><tspan x="0" y="0">66</tspan></text>
+          <g class="cls-7">
+            <text class="cls-9" transform="translate(65.64 47.93)"><tspan x="0" y="0">ok &lt;- complete.cases(x,y); x &lt;- x[ok]; y &lt;- y[ok]</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 59.29)"><tspan x="0" y="0">67</tspan></text>
+          <text class="cls-10" transform="translate(47.6 70.64)"><tspan x="0" y="0">68</tspan></text>
+          <g class="cls-7">
+            <text class="cls-11" transform="translate(65.64 70.64)"><tspan x="0" y="0">g &lt;- blandr::blandr.draw(</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 82)"><tspan x="0" y="0">69</tspan></text>
+          <g class="cls-7">
+            <text class="cls-9" transform="translate(65.64 82)"><tspan x="0" y="0">x, y,</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 93.36)"><tspan x="0" y="0">70</tspan></text>
+          <g class="cls-7">
+            <text class="cls-9" transform="translate(65.64 93.36)"><tspan x="0" y="0">sig.level = </tspan></text>
+            <text class="cls-6" transform="translate(119.7 93.36)"><tspan x="0" y="0">0.95</tspan></text>
+            <text class="cls-9" transform="translate(137.72 93.36)"><tspan x="0" y="0">,</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 104.72)"><tspan x="0" y="0">71</tspan></text>
+          <g class="cls-7">
+            <text class="cls-9" transform="translate(65.64 104.72)"><tspan x="0" y="0">ciDisplay = </tspan></text>
+            <text class="cls-6" transform="translate(119.7 104.72)"><tspan x="0" y="0">TRUE</tspan></text>
+            <text class="cls-9" transform="translate(137.72 104.72)"><tspan x="0" y="0">,</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 116.08)"><tspan x="0" y="0">72</tspan></text>
+          <g class="cls-7">
+            <text class="cls-9" transform="translate(65.64 116.08)"><tspan x="0" y="0">plotTitle = pair_names[idx]</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 127.44)"><tspan x="0" y="0">73</tspan></text>
+          <g class="cls-7">
+            <text class="cls-9" transform="translate(65.64 127.44)"><tspan x="0" y="0">) +</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 138.8)"><tspan x="0" y="0">74</tspan></text>
+          <g class="cls-7">
+            <text class="cls-11" transform="translate(65.64 138.8)"><tspan x="0" y="0">ggplot2::labs(</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 150.16)"><tspan x="0" y="0">75</tspan></text>
+          <g class="cls-7">
+            <text class="cls-9" transform="translate(65.64 150.16)"><tspan x="0" y="0">x = </tspan></text>
+            <text class="cls-12" transform="translate(83.66 150.16)"><tspan x="0" y="0">&quot;Ortalama (method1+method2)/2&quot;</tspan></text>
+            <text class="cls-9" transform="translate(218.8 150.16)"><tspan x="0" y="0">,</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 161.52)"><tspan x="0" y="0">76</tspan></text>
+          <g class="cls-7">
+            <text class="cls-9" transform="translate(65.64 161.52)"><tspan x="0" y="0">y = </tspan></text>
+            <text class="cls-12" transform="translate(83.66 161.52)"><tspan x="0" y="0">&quot;Fark (method1 - method2)&quot;</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 172.87)"><tspan x="0" y="0">77</tspan></text>
+          <g class="cls-7">
+            <text class="cls-9" transform="translate(65.64 172.87)"><tspan x="0" y="0">)</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 184.23)"><tspan x="0" y="0">78</tspan></text>
+          <text class="cls-10" transform="translate(47.6 195.59)"><tspan x="0" y="0">79</tspan></text>
+          <g class="cls-7">
+            <text class="cls-8" transform="translate(65.64 195.59)"><tspan x="0" y="0"># ekrana çizmek istersen:</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 206.95)"><tspan x="0" y="0">80</tspan></text>
+          <g class="cls-7">
+            <text class="cls-11" transform="translate(65.64 206.95)"><tspan x="0" y="0">print</tspan></text>
+            <text class="cls-9" transform="translate(88.17 206.95)"><tspan x="0" y="0">(g)</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 218.31)"><tspan x="0" y="0">81</tspan></text>
+          <text class="cls-10" transform="translate(47.6 229.67)"><tspan x="0" y="0">82</tspan></text>
+          <g class="cls-7">
+            <text class="cls-8" transform="translate(65.64 229.67)"><tspan x="0" y="0"># dosya adını oluştur</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 241.03)"><tspan x="0" y="0">83</tspan></text>
+          <g class="cls-7">
+            <text class="cls-11" transform="translate(65.64 241.03)"><tspan x="0" y="0">fn &lt;- sprintf(</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 252.39)"><tspan x="0" y="0">84</tspan></text>
+          <g class="cls-7">
+            <text class="cls-12" transform="translate(65.64 252.39)"><tspan x="0" y="0">&quot;%02d_%s_BA.png&quot;</tspan></text>
+            <text class="cls-9" transform="translate(137.72 252.39)"><tspan x="0" y="0">,</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 263.75)"><tspan x="0" y="0">85</tspan></text>
+          <g class="cls-7">
+            <text class="cls-9" transform="translate(65.64 263.75)"><tspan x="0" y="0">idx,</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 275.11)"><tspan x="0" y="0">86</tspan></text>
+          <g class="cls-7">
+            <text class="cls-11" transform="translate(65.64 275.11)"><tspan x="0" y="0">stringr::str_replace_all(</tspan></text>
+            <text class="cls-9" transform="translate(178.26 275.11)"><tspan x="0" y="0">pair_names[idx], </tspan></text>
+            <text class="cls-12" transform="translate(254.84 275.11)"><tspan x="0" y="0">&quot;[^A-Za-z0-9_\.\- ]&quot;</tspan></text>
+            <text class="cls-9" transform="translate(344.94 275.11)"><tspan x="0" y="0">, </tspan></text>
+            <text class="cls-12" transform="translate(353.94 275.11)"><tspan x="0" y="0">&quot;_&quot;</tspan></text>
+            <text class="cls-9" transform="translate(367.46 275.11)"><tspan x="0" y="0">)</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 286.46)"><tspan x="0" y="0">87</tspan></text>
+          <g class="cls-7">
+            <text class="cls-9" transform="translate(65.64 286.46)"><tspan x="0" y="0">)</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 297.82)"><tspan x="0" y="0">88</tspan></text>
+          <text class="cls-10" transform="translate(47.6 309.18)"><tspan x="0" y="0">89</tspan></text>
+          <g class="cls-7">
+            <text class="cls-8" transform="translate(65.64 309.18)"><tspan x="0" y="0"># grafiği kaydet</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 320.54)"><tspan x="0" y="0">90</tspan></text>
+          <g class="cls-7">
+            <text class="cls-11" transform="translate(65.64 320.54)"><tspan x="0" y="0">ggplot2::ggsave(</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 331.9)"><tspan x="0" y="0">91</tspan></text>
+          <g class="cls-7">
+            <text class="cls-9" transform="translate(65.64 331.9)"><tspan x="0" y="0">filename = file.path(outdir, fn),</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 343.26)"><tspan x="0" y="0">92</tspan></text>
+          <g class="cls-7">
+            <text class="cls-9" transform="translate(65.64 343.26)"><tspan x="0" y="0">plot = g,</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 354.62)"><tspan x="0" y="0">93</tspan></text>
+          <g class="cls-7">
+            <text class="cls-9" transform="translate(65.64 354.62)"><tspan x="0" y="0">width = </tspan></text>
+            <text class="cls-6" transform="translate(101.68 354.62)"><tspan x="0" y="0">6</tspan></text>
+            <text class="cls-9" transform="translate(106.19 354.62)"><tspan x="0" y="0">, height = </tspan></text>
+            <text class="cls-6" transform="translate(155.74 354.62)"><tspan x="0" y="0">4</tspan></text>
+            <text class="cls-9" transform="translate(160.24 354.62)"><tspan x="0" y="0">, dpi = </tspan></text>
+            <text class="cls-6" transform="translate(196.28 354.62)"><tspan x="0" y="0">300</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 365.98)"><tspan x="0" y="0">94</tspan></text>
+          <g class="cls-7">
+            <text class="cls-9" transform="translate(65.64 365.98)"><tspan x="0" y="0">)</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 377.34)"><tspan x="0" y="0">95</tspan></text>
+          <text class="cls-10" transform="translate(47.6 388.7)"><tspan x="0" y="0">96</tspan></text>
+          <g class="cls-7">
+            <text class="cls-9" transform="translate(65.64 388.7)"><tspan x="0" y="0">idx &lt;- idx + </tspan></text>
+            <text class="cls-6" transform="translate(124.2 388.7)"><tspan x="0" y="0">1</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 400.05)"><tspan x="0" y="0">97</tspan></text>
+          <g class="cls-7">
+            <text class="cls-9" transform="translate(65.64 400.05)"><tspan x="0" y="0">}</tspan></text>
+          </g>
+          <text class="cls-10" transform="translate(47.6 411.41)"><tspan x="0" y="0">98</tspan></text>
+        </g>
+      </g>
+    </g>
+  </g>
+  <use class="probablue-c-outline" href="#probablue-c-silhouette" xlink:href="#probablue-c-silhouette"/>
+</svg>

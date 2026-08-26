@@ -213,12 +213,6 @@
   "211": ".appointments",
   "212": ".scopeActive",
   "213": "auth.php",
-  "214": "2026_04_22_000010_create_home_sliders_table.php",
-  "215": "2026_04_28_000005_create_payment_integrations_table.php",
-  "216": "2026_04_30_000001_add_section_order_to_admin_dashboard_preferences_table.php",
-  "217": "2026_05_06_000001_create_admin_notifications_table.php",
-  "218": "2026_08_04_000001_add_site_portal_workflow.php",
-  "219": "2026_08_09_000003_add_admin_login_logo_to_site_settings.php",
   "220": "admin_menu/modules/notifications.php",
   "221": "admin_menu/modules/site_cms.php",
   "222": "admin-module-generator.php",
@@ -247,8 +241,6 @@
   "245": "products.php",
   "246": "permissions/modules/site_cms.php",
   "247": "site_payments.php",
-  "248": "Builder",
-  "249": "media.php",
   "251": "2025_12_16_142024_create_categories_table.php",
   "253": "localized-content-tabs.blade.php",
   "254": "footer.blade.php",
@@ -424,5 +416,7 @@
   "425": "tailwind.config.js",
   "426": "vite.config.js",
   "430": "home-pv-graphic.blade.php",
-  "431": "2026_04_21_000001_create_contact_messages_table.php"
+  "431": "2026_04_21_000001_create_contact_messages_table.php",
+  "438": "2026_05_04_000001_create_ecommerce_order_tables.php",
+  "439": "up"
 }
