@@ -7021,8 +7021,30 @@ body.site-shell .site-mobile-nav__link:focus-visible {
 }
 
 body.site-shell .site-mobile-nav__link--active {
-    border-color: color-mix(in srgb, var(--primary) 28%, var(--border));
-    box-shadow: inset 3px 0 var(--primary);
+    border-color: color-mix(in oklab, var(--primary) 38%, var(--border));
+    color: color-mix(in oklab, var(--primary) 88%, var(--foreground));
+    background: linear-gradient(
+        135deg,
+        color-mix(in oklab, var(--primary) 16%, var(--background)),
+        color-mix(in oklab, var(--primary) 8%, var(--background))
+    );
+    box-shadow:
+        inset 3px 0 var(--primary),
+        0 .35rem 1rem color-mix(in srgb, var(--primary) 9%, transparent);
+    font-weight: 700;
+}
+
+html[data-site-theme="dark"] body.site-shell .site-mobile-nav__link--active {
+    border-color: color-mix(in oklab, var(--primary) 58%, var(--border));
+    color: color-mix(in oklab, var(--primary) 58%, white);
+    background: linear-gradient(
+        135deg,
+        color-mix(in oklab, var(--primary) 32%, var(--background)),
+        color-mix(in oklab, var(--primary) 19%, var(--background))
+    );
+    box-shadow:
+        inset 3px 0 color-mix(in oklab, var(--primary) 82%, white),
+        0 .45rem 1.1rem color-mix(in srgb, var(--primary) 16%, transparent);
 }
 
 body.site-shell .site-mobile-nav__link--child {

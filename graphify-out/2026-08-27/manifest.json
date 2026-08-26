@@ -2945,8 +2945,8 @@
     "semantic_hash": ""
   },
   "resources/views/site/partials/navigation/desktop-item.blade.php": {
-    "mtime": 1787780170.9420838,
-    "ast_hash": "f03af6eb9c970964e2543fc9707a02c9",
+    "mtime": 1787786475.9416323,
+    "ast_hash": "b0877e46f86b48b73b4f8e2c3647533f",
     "semantic_hash": ""
   },
   "resources/views/site/partials/navigation/footer-item.blade.php": {
@@ -3035,8 +3035,8 @@
     "semantic_hash": ""
   },
   "tests/Unit/ResponsiveMarkupTest.php": {
-    "mtime": 1787782477.4774787,
-    "ast_hash": "c58b688fe1b8f905ba5e65f302b5684d",
+    "mtime": 1787786475.9416323,
+    "ast_hash": "c0b45df69fbb3cc54f595310675b1d1f",
     "semantic_hash": ""
   },
   "app/Http/Controllers/Site/Cms/FaqController.php": {

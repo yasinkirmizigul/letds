@@ -205,6 +205,8 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('site-mobile-menu-toggle', $siteLayout);
         $this->assertStringNotContainsString('icon_class', $desktopNavigation);
         $this->assertStringNotContainsString('icon_class', $mobileNavigation);
+        $this->assertStringNotContainsString('site-mobile-nav__link--active bg-primary/10 text-primary', $mobileNavigation);
+        $this->assertStringContainsString('html[data-site-theme="dark"] body.site-shell .site-mobile-nav__link--active', $css);
         $this->assertStringContainsString('class="home-mobile-menu"', $homeView);
         $this->assertStringContainsString('home-mobile-menu__panel', $homeCss);
         $this->assertStringContainsString('mask: url("../images/p-v.svg") center / contain no-repeat;', $homeCss);
