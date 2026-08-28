@@ -30,7 +30,7 @@
                     </div>
                     <form method="GET" class="flex flex-wrap items-center gap-2">
                         <input name="q" value="{{ $search }}" class="kt-input w-full md:w-[240px]" placeholder="Belge, sipariş veya müşteri ara">
-                        <select name="status" class="kt-select w-full md:w-[160px]">
+                        <select name="status" class="kt-select w-full md:w-[160px]" data-kt-select="true">
                             <option value="all" @selected($status === 'all')>Tüm durumlar</option>
                             @foreach($statusOptions as $statusKey => $statusLabel)
                                 <option value="{{ $statusKey }}" @selected($status === $statusKey)>{{ $statusLabel }}</option>
@@ -62,7 +62,7 @@
                                     <form method="POST" action="{{ route('admin.ecommerce.invoices.status', $invoice) }}" class="flex items-center gap-2" data-native-submit="true">
                                         @csrf
                                         @method('PATCH')
-                                        <select name="status" class="kt-select w-full sm:w-[140px]">
+                                        <select name="status" class="kt-select w-full sm:w-[140px]" data-kt-select="true">
                                             @foreach($statusOptions as $statusKey => $statusLabel)
                                                 <option value="{{ $statusKey }}" @selected($invoice->status === $statusKey)>{{ $statusLabel }}</option>
                                             @endforeach
@@ -97,7 +97,7 @@
                     <div class="kt-card-content grid gap-4 p-6">
                         <div class="grid gap-2">
                             <label class="kt-form-label">Sipariş</label>
-                            <select name="order_id" class="kt-select">
+                            <select name="order_id" class="kt-select" data-kt-select="true">
                                 <option value="">Sipariş seçin</option>
                                 @foreach($orders as $order)
                                     <option value="{{ $order->id }}">{{ $order->order_number }} · {{ $order->customer_name }} · {{ number_format((float) $order->grand_total, 2, ',', '.') }} {{ $order->currency }}</option>
@@ -106,7 +106,7 @@
                         </div>
                         <div class="grid gap-2">
                             <label class="kt-form-label">Belge Tipi</label>
-                            <select name="type" class="kt-select">
+                            <select name="type" class="kt-select" data-kt-select="true">
                                 @foreach($typeOptions as $typeKey => $typeLabel)
                                     <option value="{{ $typeKey }}">{{ $typeLabel }}</option>
                                 @endforeach
@@ -114,7 +114,7 @@
                         </div>
                         <div class="grid gap-2">
                             <label class="kt-form-label">Durum</label>
-                            <select name="status" class="kt-select">
+                            <select name="status" class="kt-select" data-kt-select="true">
                                 @foreach($statusOptions as $statusKey => $statusLabel)
                                     <option value="{{ $statusKey }}">{{ $statusLabel }}</option>
                                 @endforeach

@@ -74,7 +74,7 @@
                                     @csrf
                                     <input type="hidden" name="target_type" value="product">
                                     <input type="hidden" name="target_id" value="{{ $product->id }}">
-                                    <select name="type" class="kt-select w-full sm:w-[140px]">
+                                    <select name="type" class="kt-select w-full sm:w-[140px]" data-kt-select="true">
                                         @foreach($movementTypeOptions as $typeKey => $typeLabel)
                                             <option value="{{ $typeKey }}">{{ $typeLabel }}</option>
                                         @endforeach
@@ -99,7 +99,7 @@
                                                 @csrf
                                                 <input type="hidden" name="target_type" value="variant">
                                                 <input type="hidden" name="target_id" value="{{ $variant->id }}">
-                                                <select name="type" class="kt-select w-full sm:w-[130px]">
+                                                <select name="type" class="kt-select w-full sm:w-[130px]" data-kt-select="true">
                                                     @foreach($movementTypeOptions as $typeKey => $typeLabel)
                                                         <option value="{{ $typeKey }}">{{ $typeLabel }}</option>
                                                     @endforeach

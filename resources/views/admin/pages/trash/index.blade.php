@@ -102,7 +102,7 @@
                 <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
                     <div class="flex items-center gap-2 order-2 md:order-1">
                         Göster
-                        <select class="kt-select w-16" id="trashPageSize" name="perpage"></select>
+                        <select class="kt-select w-16" id="trashPageSize" name="perpage" data-kt-select="true"></select>
                         / sayfa
                     </div>
 

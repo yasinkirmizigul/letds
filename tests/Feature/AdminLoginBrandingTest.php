@@ -24,7 +24,11 @@ class AdminLoginBrandingTest extends TestCase
             ->assertSee('Koyu Mod')
             ->assertSee('Açık Mod')
             ->assertSee('class="admin-auth-remember"', false)
-            ->assertSee('id="admin_login_remember"', false);
+            ->assertSee('id="admin_login_remember"', false)
+            ->assertSee('assets/admin/media/app/favicon.svg', false)
+            ->assertSee('assets/admin/media/app/favicon-32x32.png', false)
+            ->assertSee('favicon.ico', false)
+            ->assertSee('apple-touch-icon.png', false);
     }
 
     public function test_dashboard_user_menu_has_a_descriptive_theme_control(): void

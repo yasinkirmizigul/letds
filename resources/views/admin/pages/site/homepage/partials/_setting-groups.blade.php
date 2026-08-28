@@ -69,6 +69,7 @@
                             id="homepage_{{ $key }}"
                             name="settings[{{ $key }}]"
                             class="kt-select"
+                            data-kt-select="true"
                         >
                             @foreach(($field['options'] ?? []) as $optionValue => $optionLabel)
                                 <option value="{{ $optionValue }}" @selected((string) $value === (string) $optionValue)>

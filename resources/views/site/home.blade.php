@@ -76,7 +76,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @include('site.partials.theme-bootstrap')
     <title>{{ $homepageTitle }}</title>
-    <link rel="icon" type="image/svg+xml" href="{{ asset('assets/site/images/favicon.svg') }}">
+    @include('partials.favicons', [
+        'faviconSvgPath' => 'assets/site/images/favicon.svg',
+        'faviconPngPath' => 'assets/site/images/favicon-32x32.png',
+    ])
     @if($backgroundImage)
         <link rel="preload" as="image" href="{{ $backgroundImage['url'] }}" fetchpriority="high">
     @endif

@@ -343,7 +343,7 @@
                                 </div>
                                 <div class="grid gap-2">
                                     <label class="kt-form-label">Güvenlik</label>
-                                    <select name="smtp_scheme" class="kt-select">
+                                    <select name="smtp_scheme" class="kt-select" data-kt-select="true">
                                         <option value="smtp" @selected($smtpScheme === 'smtp')>TLS / STARTTLS</option>
                                         <option value="smtps" @selected($smtpScheme === 'smtps')>SSL</option>
                                         <option value="smtp_plain" @selected($smtpScheme === 'smtp_plain')>Yok</option>

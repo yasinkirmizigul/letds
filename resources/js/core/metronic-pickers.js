@@ -60,6 +60,91 @@ function prepareInput(input) {
     input.removeAttribute('data-kt-date-picker-first-weekday');
     input.removeAttribute('data-kt-date-picker-date-format');
     input.setAttribute('autocomplete', 'off');
+    input.setAttribute('aria-haspopup', 'dialog');
+}
+
+function pickerAnchor(input, instance = null) {
+    const wrapper = input.parentElement?.classList.contains('kt-input') ? input.parentElement : null;
+
+    return wrapper || instance?.altInput || input;
+}
+
+function positionPicker(input, instance) {
+    const anchor = pickerAnchor(input, instance);
+    const calendar = instance?.calendarContainer;
+
+    if (!(anchor instanceof HTMLElement) || !(calendar instanceof HTMLElement)) return;
+
+    const anchorRect = anchor.getBoundingClientRect();
+    const calendarRect = calendar.getBoundingClientRect();
+    const viewportPadding = 12;
+    const maxLeft = Math.max(viewportPadding, window.innerWidth - calendarRect.width - viewportPadding);
+    const left = Math.min(Math.max(anchorRect.left, viewportPadding), maxLeft);
+
+    calendar.style.right = 'auto';
+    calendar.style.left = `${left + window.scrollX}px`;
+}
+
+function createAction(label, action, variant = 'default') {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `app-date-picker__action app-date-picker__action--${variant}`;
+    button.dataset.appDatePickerAction = action;
+    button.textContent = label;
+
+    return button;
+}
+
+function decoratePicker(input, instance, mode) {
+    const calendar = instance.calendarContainer;
+    if (!(calendar instanceof HTMLElement)) return;
+
+    calendar.classList.add('app-date-picker');
+    calendar.setAttribute('role', 'dialog');
+    calendar.setAttribute(
+        'aria-label',
+        mode === 'datetime' ? 'Tarih ve saat seçimi' : mode === 'time' ? 'Saat seçimi' : 'Tarih seçimi',
+    );
+
+    if (instance.altInput instanceof HTMLInputElement) {
+        instance.altInput.classList.add('app-date-picker__input');
+        instance.altInput.setAttribute('aria-label', input.getAttribute('aria-label') || input.placeholder || 'Tarih seçin');
+        instance.altInput.setAttribute('aria-haspopup', 'dialog');
+        instance.altInput.setAttribute('autocomplete', 'off');
+        instance.altInput.setAttribute('readonly', 'readonly');
+    }
+
+    if (calendar.querySelector('[data-app-date-picker-footer]')) return;
+
+    const footer = document.createElement('div');
+    footer.className = 'app-date-picker__footer';
+    footer.dataset.appDatePickerFooter = 'true';
+
+    const utilityActions = document.createElement('div');
+    utilityActions.className = 'app-date-picker__footer-group';
+    utilityActions.append(
+        createAction(mode === 'time' ? 'Şimdi' : 'Bugün', 'today', 'primary'),
+        createAction('Temizle', 'clear'),
+    );
+
+    const closeAction = createAction('Kapat', 'close', 'strong');
+    footer.append(utilityActions, closeAction);
+
+    footer.addEventListener('click', (event) => {
+        const action = event.target.closest?.('[data-app-date-picker-action]')?.dataset.appDatePickerAction;
+
+        if (action === 'today') {
+            instance.setDate(new Date(), true);
+            if (mode === 'date') instance.close();
+        } else if (action === 'clear') {
+            instance.clear();
+            instance.close();
+        } else if (action === 'close') {
+            instance.close();
+        }
+    });
+
+    calendar.appendChild(footer);
 }
 
 function initDatePicker(input) {
@@ -68,22 +153,40 @@ function initDatePicker(input) {
     const fp = flatpickr();
     if (!fp) return;
 
+    const initialRawValue = input.value || input.dataset.initialValue || '';
     prepareInput(input);
 
     const mode = input.dataset.appDateMode === 'date' ? 'date' : 'datetime';
     const dateFormat = normalizeKtFormat(input.dataset.appDateFormat || input.dataset.ktDatePickerDateFormat, mode);
 
-    fp(input, {
+    const instance = fp(input, {
         allowInput: false,
         clickOpens: true,
         dateFormat,
-        defaultDate: input.value || input.dataset.initialValue || null,
+        defaultDate: initialRawValue || null,
         disableMobile: true,
         enableTime: mode === 'datetime',
         locale: TR_LOCALE,
         minuteIncrement: Number(input.dataset.appTimeStep || 5),
+        monthSelectorType: 'static',
+        onClose: () => pickerAnchor(input)?.classList.remove('is-picker-open'),
+        onOpen: (_, __, instance) => {
+            pickerAnchor(input, instance)?.classList.add('is-picker-open');
+            window.requestAnimationFrame(() => positionPicker(input, instance));
+        },
+        onReady: (_, __, instance) => {
+            input._appDatePicker = instance;
+            if (instance.input instanceof HTMLInputElement) instance.input._appDatePicker = instance;
+            decoratePicker(input, instance, mode);
+        },
+        position: input.dataset.appDatePosition || 'auto',
         time_24hr: true,
     });
+
+    if (instance?.setDate) {
+        input._appDatePicker = instance;
+        if (instance.input instanceof HTMLInputElement) instance.input._appDatePicker = instance;
+    }
 
     input.dataset.metronicPickerReady = 'true';
 }
@@ -108,6 +211,16 @@ function initTimePicker(input) {
         locale: TR_LOCALE,
         minuteIncrement: Number(input.dataset.appTimeStep || 5),
         noCalendar: true,
+        onClose: () => pickerAnchor(input)?.classList.remove('is-picker-open'),
+        onOpen: (_, __, instance) => {
+            pickerAnchor(input, instance)?.classList.add('is-picker-open');
+            window.requestAnimationFrame(() => positionPicker(input, instance));
+        },
+        onReady: (_, __, instance) => {
+            input._appDatePicker = instance;
+            decoratePicker(input, instance, 'time');
+        },
+        position: input.dataset.appDatePosition || 'auto',
         time_24hr: true,
     });
 

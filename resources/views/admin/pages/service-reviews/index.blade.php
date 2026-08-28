@@ -99,7 +99,7 @@
                 </div>
                 <div class="grid gap-2">
                     <label class="kt-form-label">Hizmet Türü</label>
-                    <select name="service_type" class="kt-select">
+                    <select name="service_type" class="kt-select" data-kt-select="true">
                         <option value="">Tüm hizmetler</option>
                         <option value="appointment" @selected($filters['service_type'] === 'appointment')>Randevu</option>
                         <option value="order" @selected($filters['service_type'] === 'order')>Ürün / Sipariş</option>
@@ -107,7 +107,7 @@
                 </div>
                 <div class="grid gap-2">
                     <label class="kt-form-label">Yanıt Durumu</label>
-                    <select name="status" class="kt-select">
+                    <select name="status" class="kt-select" data-kt-select="true">
                         <option value="">Tüm durumlar</option>
                         <option value="pending" @selected($filters['status'] === 'pending')>Yanıt bekliyor</option>
                         <option value="completed" @selected($filters['status'] === 'completed')>Tamamlandı</option>
@@ -115,7 +115,7 @@
                 </div>
                 <div class="grid gap-2">
                     <label class="kt-form-label">Yıldız Puanı</label>
-                    <select name="rating" class="kt-select">
+                    <select name="rating" class="kt-select" data-kt-select="true">
                         <option value="">Tüm puanlar</option>
                         @foreach(range(5, 1) as $rating)
                             <option value="{{ $rating }}" @selected((int) $filters['rating'] === $rating)>{{ $rating }} yıldız</option>
@@ -125,11 +125,31 @@
                 <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div class="grid gap-2">
                         <label class="kt-form-label">Başlangıç</label>
-                        <input type="date" name="date_from" value="{{ $filters['date_from'] }}" class="kt-input">
+                        <input
+                            type="text"
+                            name="date_from"
+                            value="{{ $filters['date_from'] }}"
+                            class="kt-input"
+                            readonly
+                            placeholder="Başlangıç tarihi"
+                            data-app-date-picker="true"
+                            data-app-date-mode="date"
+                            data-app-date-format="YYYY-MM-DD"
+                        >
                     </div>
                     <div class="grid gap-2">
                         <label class="kt-form-label">Bitiş</label>
-                        <input type="date" name="date_to" value="{{ $filters['date_to'] }}" class="kt-input">
+                        <input
+                            type="text"
+                            name="date_to"
+                            value="{{ $filters['date_to'] }}"
+                            class="kt-input"
+                            readonly
+                            placeholder="Bitiş tarihi"
+                            data-app-date-picker="true"
+                            data-app-date-mode="date"
+                            data-app-date-format="YYYY-MM-DD"
+                        >
                     </div>
                 </div>
                 <div class="flex flex-wrap items-end gap-2 md:col-span-2 xl:col-span-4">

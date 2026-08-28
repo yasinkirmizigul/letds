@@ -4,7 +4,10 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 {{-- SEO istersen burayı doldurursun --}}
 <meta name="description" content="{{ $pageDescription ?? 'Yönetim Paneli' }}" />
-<link rel="icon" type="image/svg+xml" href="{{ asset('assets/admin/media/app/favicon.svg') }}">
+@include('partials.favicons', [
+    'faviconSvgPath' => 'assets/admin/media/app/favicon.svg',
+    'faviconPngPath' => 'assets/admin/media/app/favicon-32x32.png',
+])
 {{-- Vendor CSS --}}
 @stack('vendor_css')
 

@@ -25,11 +25,11 @@ class HomepageConfigurationTest extends TestCase
         $resolved = app(HomepageConfigurationService::class)->resolved('tr');
 
         $this->assertStringStartsWith(
-            asset('assets/site/home/images/home-background-light.svg') . '?v=',
+            asset('assets/site/home/images/home-background-light.svg').'?v=',
             data_get($resolved, 'backgroundDefaults.light.url')
         );
         $this->assertStringStartsWith(
-            asset('assets/site/home/images/home-background-dark.svg') . '?v=',
+            asset('assets/site/home/images/home-background-dark.svg').'?v=',
             data_get($resolved, 'backgroundDefaults.dark.url')
         );
 
@@ -67,6 +67,10 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('probablue-site-theme', false)
             ->assertSee('PROBABLUE')
             ->assertSee('İstatistiksel Analiz ve Danışma')
+            ->assertSee('assets/site/images/favicon.svg', false)
+            ->assertSee('assets/site/images/favicon-32x32.png', false)
+            ->assertSee('rel="icon" type="image/x-icon"', false)
+            ->assertSee('rel="apple-touch-icon" sizes="180x180"', false)
             ->assertDontSee('id="logo-bird"', false)
             ->assertSee('class="home-surface-pattern"', false)
             ->assertSee('İstatistiksel Analiz')

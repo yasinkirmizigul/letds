@@ -168,6 +168,7 @@
                     id="homepage_{{ $effectField['key'] }}"
                     name="settings[{{ $effectField['key'] }}]"
                     class="kt-select"
+                    data-kt-select="true"
                     data-homepage-surface-role="effect"
                 >
                     @foreach($effectOptions as $optionValue => $optionLabel)
@@ -184,6 +185,7 @@
                     id="homepage_{{ $blendField['key'] }}"
                     name="settings[{{ $blendField['key'] }}]"
                     class="kt-select"
+                    data-kt-select="true"
                     data-homepage-surface-role="blend"
                 >
                     @foreach($blendOptions as $optionValue => $optionLabel)

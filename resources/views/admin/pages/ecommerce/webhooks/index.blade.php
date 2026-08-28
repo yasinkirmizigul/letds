@@ -29,7 +29,7 @@
                 </div>
                 <form method="GET" class="flex flex-wrap items-center gap-2">
                     <input name="provider" value="{{ $provider }}" class="kt-input w-full md:w-[220px]" placeholder="Sağlayıcı ara">
-                    <select name="status" class="kt-select w-full md:w-[170px]">
+                    <select name="status" class="kt-select w-full md:w-[170px]" data-kt-select="true">
                         <option value="all" @selected($status === 'all')>Tüm durumlar</option>
                         @foreach($statusOptions as $statusKey => $statusLabel)
                             <option value="{{ $statusKey }}" @selected($status === $statusKey)>{{ $statusLabel }}</option>
@@ -67,7 +67,7 @@
                                 <form method="POST" action="{{ route('admin.ecommerce.webhooks.status', $event) }}" class="grid min-w-0 gap-2 sm:min-w-[260px]" data-native-submit="true">
                                     @csrf
                                     @method('PATCH')
-                                    <select name="status" class="kt-select">
+                                    <select name="status" class="kt-select" data-kt-select="true">
                                         @foreach($statusOptions as $statusKey => $statusLabel)
                                             <option value="{{ $statusKey }}" @selected($event->status === $statusKey)>{{ $statusLabel }}</option>
                                         @endforeach

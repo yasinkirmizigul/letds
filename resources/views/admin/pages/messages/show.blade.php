@@ -65,7 +65,7 @@
                             <div class="grid gap-4 lg:grid-cols-3">
                                 <div class="grid gap-2">
                                     <label class="kt-form-label">Durum</label>
-                                    <select name="status" class="kt-select">
+                                    <select name="status" class="kt-select" data-kt-select="true">
                                         @foreach($statusOptions as $statusKey => $statusOption)
                                             <option value="{{ $statusKey }}" @selected(old('status', $message->status) === $statusKey)>
                                                 {{ $statusOption['label'] }}
@@ -76,7 +76,7 @@
 
                                 <div class="grid gap-2">
                                     <label class="kt-form-label">Atanan Kullanıcı</label>
-                                    <select name="assigned_user_id" class="kt-select">
+                                    <select name="assigned_user_id" class="kt-select" data-kt-select="true" data-kt-select-placeholder="Atanan kullanıcı">
                                         <option value="">Atanmamış</option>
                                         @foreach($assigneeOptions as $assignee)
                                             <option value="{{ $assignee->id }}" @selected((int) old('assigned_user_id', $message->assigned_user_id) === (int) $assignee->id)>

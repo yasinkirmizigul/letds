@@ -35,6 +35,9 @@ class SitePortalFlowTest extends TestCase
             ->assertSee('data-site-theme-toggle', false)
             ->assertSee('probablue-site-theme', false)
             ->assertSee('<title>Blog | PROBABLUE</title>', false)
+            ->assertSee('assets/site/images/favicon.svg', false)
+            ->assertSee('assets/site/images/favicon-32x32.png', false)
+            ->assertSee('apple-touch-icon.png', false)
             ->assertDontSee('Laravel')
             ->assertDontSee('data-kt-theme-mode="light"', false);
     }

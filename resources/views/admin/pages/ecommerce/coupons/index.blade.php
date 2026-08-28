@@ -35,7 +35,7 @@
                 </div>
                 <form method="GET" class="flex flex-wrap items-center gap-2">
                     <input name="q" value="{{ $search }}" class="kt-input w-full md:w-[240px]" placeholder="Kupon kodu veya ad ara">
-                    <select name="status" class="kt-select w-full md:w-[160px]">
+                    <select name="status" class="kt-select w-full md:w-[160px]" data-kt-select="true">
                         <option value="all" @selected($status === 'all')>Tümü</option>
                         <option value="active" @selected($status === 'active')>Aktif</option>
                         <option value="passive" @selected($status === 'passive')>Pasif</option>

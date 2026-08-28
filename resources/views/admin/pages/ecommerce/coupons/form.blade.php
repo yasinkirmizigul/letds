@@ -33,7 +33,7 @@
                 <div class="grid gap-4 md:grid-cols-3">
                     <div class="grid gap-2">
                         <label class="kt-form-label">Tip</label>
-                        <select name="type" class="kt-select">
+                        <select name="type" class="kt-select" data-kt-select="true">
                             @foreach($typeOptions as $typeKey => $typeLabel)
                                 <option value="{{ $typeKey }}" @selected(old('type', $coupon->type) === $typeKey)>{{ $typeLabel }}</option>
                             @endforeach

@@ -18,6 +18,7 @@
 
                         <select name="perpage"
                                 class="kt-select h-9 w-[90px]"
+                                data-kt-select="true"
                                 onchange="this.form.submit()">
                             @foreach([10,25,50,100,200] as $n)
                                 <option value="{{ $n }}" {{ (int)request('perpage',25) === $n ? 'selected' : '' }}>

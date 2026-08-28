@@ -18,6 +18,7 @@ import initTitleTooltips from '@/core/title-tooltips';
 import initAdminSemanticPanels from './helpers/semantic-panels';
 import { initMetronicPickers } from '@/core/metronic-pickers';
 import { initGlobalBlockUi } from '@/core/block-ui';
+import { initDashboardKtSelects } from '@/core/ktui-selects';
 
 window.Swal = Swal;
 window.swal = Swal;
@@ -98,6 +99,7 @@ function domReady(fn) {
 
 domReady(async () => {
     try {
+        initDashboardKtSelects(document);
         initTitleTooltips(document);
         initAdminSemanticPanels(document);
         initCreateFormAccordions(document);

@@ -25,7 +25,10 @@
     <meta property="og:type" content="{{ $openGraphType ?? 'website' }}">
     <meta property="og:url" content="{{ $canonicalUrl ?? request()->url() }}">
     <link rel="canonical" href="{{ $canonicalUrl ?? request()->url() }}">
-    <link rel="icon" type="image/svg+xml" href="{{ asset('assets/site/images/favicon.svg') }}">
+    @include('partials.favicons', [
+        'faviconSvgPath' => 'assets/site/images/favicon.svg',
+        'faviconPngPath' => 'assets/site/images/favicon-32x32.png',
+    ])
 
     @stack('site_meta')
     @stack('site_vendor_css')

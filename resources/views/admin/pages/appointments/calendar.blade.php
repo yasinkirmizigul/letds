@@ -262,7 +262,7 @@
 
                         <div>
                             <label class="kt-form-label text-foreground mb-3">Blok tipi</label>
-                            <select id="blockType" class="kt-select">
+                            <select id="blockType" class="kt-select" data-kt-select="true">
                                 <option value="manual">Genel kapalı</option>
                                 <option value="break">Mola</option>
                                 <option value="meeting">Toplantı</option>
@@ -333,7 +333,7 @@
 
                         <div>
                             <label class="kt-form-label mb-2">Kişi</label>
-                            <select id="appointmentProviderId" class="kt-select">
+                            <select id="appointmentProviderId" class="kt-select" data-kt-select="true">
                                 <option value="">Mevcut kişide kalsın</option>
                                 @foreach($transferProviders as $provider)
                                     <option value="{{ $provider->id }}" data-provider-name="{{ $provider->name }}" data-provider-title="{{ $provider->title }}">
@@ -345,7 +345,7 @@
 
                         <div>
                             <label class="kt-form-label mb-2">Süre</label>
-                            <select id="appointmentBlocks" class="kt-input w-full">
+                            <select id="appointmentBlocks" class="kt-select w-full" data-kt-select="true">
                                 <option value="1">30 dk</option>
                                 <option value="2">60 dk</option>
                                 <option value="3">90 dk</option>

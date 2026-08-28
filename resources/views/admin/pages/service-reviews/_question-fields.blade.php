@@ -12,7 +12,7 @@
 <div class="grid gap-4 md:grid-cols-2">
     <div class="grid gap-2">
         <label class="kt-form-label" for="review_question_type_{{ $questionId }}">Yanıt Türü</label>
-        <select id="review_question_type_{{ $questionId }}" name="type" class="kt-select" data-review-question-type required>
+        <select id="review_question_type_{{ $questionId }}" name="type" class="kt-select" data-kt-select="true" data-review-question-type required>
             @foreach($typeOptions as $value => $label)
                 <option value="{{ $value }}" @selected($selectedType === $value)>{{ $label }}</option>
             @endforeach

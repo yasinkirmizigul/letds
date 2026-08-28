@@ -192,7 +192,7 @@ export default function init(ctx) {
 
                 <div class="grid gap-2">
                     <label class="text-xs text-muted-foreground">Target</label>
-                    <select class="kt-select js-link-target">
+                    <select class="kt-select js-link-target" data-kt-select="true">
                         <option value="" ${!it.link_target ? 'selected' : ''}>(boş)</option>
                         <option value="_self" ${it.link_target === '_self' ? 'selected' : ''}>_self</option>
                         <option value="_blank" ${it.link_target === '_blank' ? 'selected' : ''}>_blank</option>

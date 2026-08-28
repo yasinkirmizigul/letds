@@ -6,6 +6,26 @@ function inferMode(input) {
     return input?.dataset?.appDateMode === 'datetime' ? 'datetime' : 'date';
 }
 
+function usesMachineDateFormat(input) {
+    const format = String(input?.dataset?.appDateFormat || '').trim();
+
+    return format.startsWith('YYYY-MM-DD') || format.startsWith('Y-m-d');
+}
+
+function toConfiguredDateValue(input, machineValue, mode) {
+    if (!machineValue) {
+        return '';
+    }
+
+    if (usesMachineDateFormat(input)) {
+        const format = String(input.dataset.appDateFormat || '');
+
+        return format.includes('T') ? machineValue : machineValue.replace('T', ' ');
+    }
+
+    return toDisplayDateValue(machineValue, mode);
+}
+
 function parseMachineDate(value, mode) {
     const text = String(value || '').trim();
 
@@ -99,11 +119,29 @@ export function setDateInputValue(input, value) {
         return;
     }
 
-    input.value = toDisplayDateValue(value, inferMode(input));
+    const mode = inferMode(input);
+    const machineValue = toMachineDateValue(value, mode);
+
+    const picker = input._appDatePicker || input._flatpickr;
+
+    if (picker) {
+        const machineFormat = mode === 'datetime' ? 'Y-m-d\\TH:i' : 'Y-m-d';
+        picker.setDate(machineValue || null, false, machineFormat);
+        return;
+    }
+
+    input.value = toConfiguredDateValue(input, machineValue, mode);
 }
 
 export function clearDateInputValue(input) {
     if (!input) {
+        return;
+    }
+
+    const picker = input._appDatePicker || input._flatpickr;
+
+    if (picker) {
+        picker.clear(false);
         return;
     }
 
