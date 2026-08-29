@@ -1,6 +1,22 @@
 {
-  "generated_at": "2026-08-29T22:59:52.236066+00:00",
+  "generated_at": "2026-08-29T23:31:15.443866+00:00",
   "nodes": {
+    "app_http_controllers_admin_auth_passwordresetcontroller_passwordresetcontroller": {
+      "code_fingerprint": "884c3a4330984a3599126a1723598429fc092c73aada5075b32a63caa314edd6",
+      "label": "PasswordResetController",
+      "last": "2026-08-29T23:29:57.433881+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-29T23:29:57.433881+00:00",
+          "outcome": "useful",
+          "q": "Şifre ve şifre tekrar alanlarında anlık ve form gönderiminde eşleşme kontrolü var mı?"
+        }
+      ],
+      "score": 0.999979139,
+      "source_file": "app/Http/Controllers/Admin/Auth/PasswordResetController.php",
+      "status": "tentative",
+      "uses": 1
+    },
     "resources_views_admin_layouts_main_header_blade": {
       "code_fingerprint": "f3882af7d9b7e2126cd4ba9b7f159d95297c57b068eeef4a04ffaf7bb639308e",
       "label": "header.blade.php",
@@ -12,7 +28,7 @@
           "q": "anasayfada dark light mode butonu beyaz zemidne gözükmüyor; yanına hamburger menü ve aşağı kayan, kapanabilen header navigasyonu ekle"
         }
       ],
-      "score": 0.999859229,
+      "score": 0.999355823,
       "source_file": "resources/views/admin/layouts/main/header.blade.php",
       "status": "tentative",
       "uses": 1
@@ -28,8 +44,24 @@
           "q": "anasayfada dark light mode butonu beyaz zemidne gözükmüyor; yanına hamburger menü ve aşağı kayan, kapanabilen header navigasyonu ekle"
         }
       ],
-      "score": 0.999859229,
+      "score": 0.999355823,
       "source_file": "resources/views/site/partials/navigation/mobile-item.blade.php",
+      "status": "tentative",
+      "uses": 1
+    },
+    "tests_unit_responsivemarkuptest_responsivemarkuptest": {
+      "code_fingerprint": "e170b61672b0a809df8cabdadff40e761fc6ff34e12ca49baf4caf17b666bd52",
+      "label": "ResponsiveMarkupTest",
+      "last": "2026-08-29T23:02:20.819362+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-29T23:02:20.819362+00:00",
+          "outcome": "useful",
+          "q": "biraz daha açık ton olmalı bence çok koyu kalmış gibiler"
+        }
+      ],
+      "score": 0.999536238,
+      "source_file": "tests/Unit/ResponsiveMarkupTest.php",
       "status": "tentative",
       "uses": 1
     }

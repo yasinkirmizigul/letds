@@ -19,6 +19,7 @@ import initAdminSemanticPanels from './helpers/semantic-panels';
 import { initMetronicPickers } from '@/core/metronic-pickers';
 import { initGlobalBlockUi } from '@/core/block-ui';
 import { initDashboardKtSelects } from '@/core/ktui-selects';
+import { initPasswordConfirmationValidation } from '@/core/password-confirmation';
 
 window.Swal = Swal;
 window.swal = Swal;
@@ -99,6 +100,7 @@ function domReady(fn) {
 
 domReady(async () => {
     try {
+        initPasswordConfirmationValidation(document);
         initDashboardKtSelects(document);
         initTitleTooltips(document);
         initAdminSemanticPanels(document);

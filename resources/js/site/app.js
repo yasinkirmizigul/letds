@@ -4,6 +4,7 @@ import { initReviewStars } from './reviews';
 import Alpine from 'alpinejs';
 import { initGlobalBlockUi } from '@/core/block-ui';
 import initTitleTooltips from '@/core/title-tooltips';
+import { initPasswordConfirmationValidation } from '@/core/password-confirmation';
 
 window.Alpine = Alpine;
 Alpine.start();
@@ -46,6 +47,7 @@ function domReady(fn) {
 }
 
 domReady(() => {
+    initPasswordConfirmationValidation(document);
     initTitleTooltips(document);
     initKtComponents();
     initReveals();

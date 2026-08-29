@@ -106,11 +106,13 @@ before
 behavior
 belirginle
 belongs
+bence
 benchmark
 besley
 between
 beyaz
 bind
+biraz
 blackout
 blackouts
 blade
@@ -277,6 +279,7 @@ cursor
 custom
 customization
 customize
+daha
 dark
 dash
 dashboard
@@ -486,6 +489,7 @@ generator
 get
 getir
 getting
+gibiler
 giri
 girmeyen
 git
@@ -616,6 +620,7 @@ jpeg
 jreq
 json
 kald
+kalm
 kan
 kapanabilen
 kapat
@@ -634,6 +639,7 @@ kincil
 kind
 klar
 kleme
+koyu
 ktui
 kur
 kurallar
@@ -804,6 +810,7 @@ odakl
 off
 offs
 oklch
+olmal
 once
 one
 online
@@ -1272,6 +1279,7 @@ together
 toggle
 token
 tokens
+ton
 tone
 toolbar
 tools
