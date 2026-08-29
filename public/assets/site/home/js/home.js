@@ -124,6 +124,70 @@
     window.addEventListener('resize', sync);
   }
 
+  function initHomeNavigation() {
+    const menus = [...document.querySelectorAll('[data-home-navigation]')];
+    if (!menus.length) return;
+
+    const syncMenu = (menu) => {
+      const toggle = menu.querySelector('[data-home-navigation-toggle]');
+      const panel = menu.querySelector('[data-home-navigation-panel]');
+      if (!toggle) return;
+
+      const isOpen = menu.dataset.open === 'true';
+      toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      toggle.setAttribute('aria-label', isOpen ? 'Site menüsünü kapat' : 'Site menüsünü aç');
+      panel?.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+      panel?.toggleAttribute('inert', !isOpen);
+    };
+
+    const setMenuOpen = (menu, isOpen) => {
+      menu.dataset.open = isOpen ? 'true' : 'false';
+      syncMenu(menu);
+    };
+
+    const closeMenu = (menu, restoreFocus = false) => {
+      if (menu.dataset.open !== 'true') return;
+
+      setMenuOpen(menu, false);
+
+      if (restoreFocus) {
+        menu.querySelector('[data-home-navigation-toggle]')?.focus();
+      }
+    };
+
+    menus.forEach((menu) => {
+      syncMenu(menu);
+
+      menu.querySelector('[data-home-navigation-toggle]')?.addEventListener('click', () => {
+        const willOpen = menu.dataset.open !== 'true';
+
+        if (willOpen) {
+          menus.forEach((otherMenu) => {
+            if (otherMenu !== menu) closeMenu(otherMenu);
+          });
+        }
+
+        setMenuOpen(menu, willOpen);
+      });
+
+      menu.querySelector('[data-home-navigation-panel]')?.addEventListener('click', (event) => {
+        if (event.target.closest('a')) closeMenu(menu);
+      });
+    });
+
+    document.addEventListener('pointerdown', (event) => {
+      menus.forEach((menu) => {
+        if (!menu.contains(event.target)) closeMenu(menu);
+      });
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+
+      menus.forEach((menu) => closeMenu(menu, true));
+    });
+  }
+
   function initHomeModes() {
     const body = document.body;
     const tabs = [...document.querySelectorAll('[data-home-mode-tab]')];
@@ -611,6 +675,7 @@
     initViewportAnimations();
     initTooltips();
     initStickyHeader();
+    initHomeNavigation();
     initHomeModes();
     initBeforeAfter();
     initPageExitTransition();

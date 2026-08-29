@@ -23,6 +23,7 @@
 
         <div class="home-probablue-hero__theme">
             @include('site.partials.theme-toggle', ['variant' => 'home'])
+            @include('site.partials.home-navigation-menu')
         </div>
     </header>
 

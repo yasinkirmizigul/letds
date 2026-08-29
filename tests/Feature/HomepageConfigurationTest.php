@@ -115,6 +115,7 @@ class HomepageConfigurationTest extends TestCase
             ->assertOk()
             ->assertSee('data-home-layout="probablue"', false)
             ->assertSee('class="home-probablue-hero"', false)
+            ->assertSee('data-home-navigation', false)
             ->assertSee('home-probablue-panel--analysis', false)
             ->assertSee('home-probablue-panel--consultation', false)
             ->assertDontSee('id="before-after"', false)

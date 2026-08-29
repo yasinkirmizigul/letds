@@ -1,0 +1,38 @@
+{
+  "generated_at": "2026-08-29T22:59:52.236066+00:00",
+  "nodes": {
+    "resources_views_admin_layouts_main_header_blade": {
+      "code_fingerprint": "f3882af7d9b7e2126cd4ba9b7f159d95297c57b068eeef4a04ffaf7bb639308e",
+      "label": "header.blade.php",
+      "last": "2026-08-29T22:51:05.789183+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-29T22:51:05.789183+00:00",
+          "outcome": "useful",
+          "q": "anasayfada dark light mode butonu beyaz zemidne gözükmüyor; yanına hamburger menü ve aşağı kayan, kapanabilen header navigasyonu ekle"
+        }
+      ],
+      "score": 0.999859229,
+      "source_file": "resources/views/admin/layouts/main/header.blade.php",
+      "status": "tentative",
+      "uses": 1
+    },
+    "resources_views_site_partials_navigation_mobile_item_blade": {
+      "code_fingerprint": "60d333492c736044b23a8b709370fe1d6bf33261f2e0423b28b6a8989066b0ba",
+      "label": "mobile-item.blade.php",
+      "last": "2026-08-29T22:51:05.789183+00:00",
+      "provenance": [
+        {
+          "date": "2026-08-29T22:51:05.789183+00:00",
+          "outcome": "useful",
+          "q": "anasayfada dark light mode butonu beyaz zemidne gözükmüyor; yanına hamburger menü ve aşağı kayan, kapanabilen header navigasyonu ekle"
+        }
+      ],
+      "score": 0.999859229,
+      "source_file": "resources/views/site/partials/navigation/mobile-item.blade.php",
+      "status": "tentative",
+      "uses": 1
+    }
+  },
+  "version": 1
+}
