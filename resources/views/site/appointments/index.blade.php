@@ -20,6 +20,16 @@
                     <span class="site-appointment-kicker">Ücretsiz Ön Görüşme</span>
                     <h1>Projeniz için doğru başlangıcı birlikte planlayalım.</h1>
                     <p>Üyelik bilgilerinizi kontrol edin, uzman ve uygun saati seçin, ardından randevu özetini onaylayın.</p>
+                    <nav class="site-onboarding-tabs site-onboarding-tabs--appointment" aria-label="Başlangıç süreci">
+                        <span class="site-onboarding-tab is-complete">
+                            <i class="fa-solid fa-check" aria-hidden="true"></i>
+                            <span>Kayıt Ol</span>
+                        </span>
+                        <span class="site-onboarding-tab is-active" aria-current="step">
+                            <i class="fa-regular fa-calendar" aria-hidden="true"></i>
+                            <span>Randevu Oluştur</span>
+                        </span>
+                    </nav>
                 </div>
                 <div class="site-appointment-heading__meta">
                     <span><i class="fa-solid fa-clock"></i> Yaklaşık 2 dakika</span>
@@ -117,7 +127,13 @@
                                 @else
                                     <label class="grid gap-2" for="meetingMethod">
                                         <span class="kt-form-label">Görüşme yöntemi</span>
-                                        <select id="meetingMethod" class="kt-select w-full" required>
+                                        <select
+                                            id="meetingMethod"
+                                            class="kt-select w-full"
+                                            data-kt-select="true"
+                                            data-kt-select-placeholder="Görüşme yöntemi seçin"
+                                            required
+                                        >
                                             @foreach($meetingMethods as $meetingMethod)
                                                 <option
                                                     value="{{ $meetingMethod->id }}"
@@ -129,6 +145,22 @@
                                             @endforeach
                                         </select>
                                         <small id="meetingMethodDescription" class="text-sm leading-6 text-muted-foreground"></small>
+                                    </label>
+
+                                    <label class="grid gap-2" for="supportTopic">
+                                        <span class="kt-form-label">Destek almak istediğiniz konu</span>
+                                        <select
+                                            id="supportTopic"
+                                            class="kt-select w-full"
+                                            data-kt-select="true"
+                                            data-kt-select-placeholder="Konu seçin"
+                                            required
+                                        >
+                                            <option value="">Konu seçin</option>
+                                            @foreach(\App\Models\Appointment\Appointment::SUPPORT_TOPICS as $supportTopic)
+                                                <option value="{{ $supportTopic }}" @selected($activeAppointment?->support_topic === $supportTopic)>{{ $supportTopic }}</option>
+                                            @endforeach
+                                        </select>
                                     </label>
 
                                     <label class="grid gap-2" for="appointmentMemberNote">
@@ -167,12 +199,18 @@
                             <div class="site-appointment-schedule">
                                 <div class="site-appointment-provider">
                                     <label class="kt-form-label" for="provider">Görüşeceğiniz uzman</label>
-                                    <select id="provider" class="kt-select w-full">
+                                    <select
+                                        id="provider"
+                                        class="kt-select w-full"
+                                        data-kt-select="true"
+                                        data-kt-select-placeholder="Uzman seçin"
+                                    >
+                                        <option value="any" @selected(! $activeAppointment)>Fark Etmez</option>
                                         @foreach($providers as $provider)
-                                            <option value="{{ $provider->id }}">{{ $provider->name }}</option>
+                                            <option value="{{ $provider->id }}" @selected((int) ($activeAppointment?->provider_id ?? 0) === (int) $provider->id)>{{ $provider->name }}</option>
                                         @endforeach
                                     </select>
-                                    <p>Uzman değiştiğinde uygun takvim otomatik yenilenir.</p>
+                                    <p>“Fark Etmez” seçildiğinde seçtiğiniz saatte müsait olan uzman otomatik atanır.</p>
                                 </div>
 
                                 <div class="site-appointment-calendar-card">
@@ -224,6 +262,7 @@
                             <dl>
                                 <div><dt>İşlem</dt><dd id="appointmentPreviewMode">Yeni ön görüşme</dd></div>
                                 <div><dt>Görüşme yöntemi</dt><dd id="appointmentPreviewMeetingMethod">-</dd></div>
+                                <div><dt>Destek konusu</dt><dd id="appointmentPreviewSupportTopic">-</dd></div>
                                 <div><dt>Uzman</dt><dd id="appointmentPreviewProvider">-</dd></div>
                                 <div><dt>Tarih</dt><dd id="appointmentPreviewDate">-</dd></div>
                                 <div><dt>Saat</dt><dd id="appointmentPreviewTime">-</dd></div>

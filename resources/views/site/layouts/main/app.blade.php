@@ -1,6 +1,6 @@
 @php
     $publicSiteName = trim((string) $siteSettings->localized('site_name'));
-    $publicSiteName = $publicSiteName === '' || strcasecmp($publicSiteName, 'Laravel') === 0 ? 'PROBABLUE' : $publicSiteName;
+    $publicSiteName = $publicSiteName === '' ? config('app.name') : $publicSiteName;
     $publicSiteTagline = trim((string) $siteSettings->localized('site_tagline'));
     $publicSiteTagline = $publicSiteTagline === '' || $publicSiteTagline === 'Dijital vitrin ve içerik yönetimi'
         ? 'İstatistiksel Analiz ve Danışma'
@@ -50,7 +50,7 @@
 <div class="min-h-screen">
     @if($siteSettings->under_construction_enabled)
         <div class="border-b border-border bg-warning/10">
-            <div class="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-3 text-sm md:flex-row md:items-center md:justify-between">
+            <div class="mx-auto flex max-w-[96rem] flex-col gap-2 px-3 py-3 text-sm sm:px-4 md:flex-row md:items-center md:justify-between lg:px-6">
                 <div class="font-medium text-foreground">
                     {{ $siteSettings->localized('under_construction_title') ?: 'Yapım aşaması bildirimi' }}
                 </div>
@@ -127,7 +127,7 @@
                                 </div>
                                 <a href="{{ route('member.account.show', ['site_locale' => $siteCurrentLocale]) }}" class="site-member-header-menu__item">Hesabım</a>
                                 <a href="{{ route('member.appointments.index', ['site_locale' => $siteCurrentLocale]) }}" class="site-member-header-menu__item">Randevularım</a>
-                                <a href="{{ route('member.projects.index', ['site_locale' => $siteCurrentLocale]) }}" class="site-member-header-menu__item">Projelerim</a>
+                                <a href="{{ route('member.projects.index', ['site_locale' => $siteCurrentLocale]) }}" class="site-member-header-menu__item">Analiz Sürecim</a>
                                 <a href="{{ route('member.reviews.index', ['site_locale' => $siteCurrentLocale]) }}" class="site-member-header-menu__item">
                                     <span>Değerlendirmelerim</span>
                                     @if(($memberPendingReviewCount ?? 0) > 0)
@@ -173,7 +173,7 @@
                         {{ $siteSettings->uiLine('nav_member_account_label') }}
                     </a>
                     <a href="{{ route('member.projects.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full justify-center">
-                        Projelerim
+                        Analiz Sürecim
                     </a>
                     <a href="{{ route('member.reviews.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full justify-center">
                         Değerlendirmelerim{{ ($memberPendingReviewCount ?? 0) > 0 ? ' (' . $memberPendingReviewCount . ')' : '' }}
@@ -203,7 +203,7 @@
     </main>
 
     <footer class="border-t border-border bg-muted/40">
-        <div class="mx-auto grid max-w-7xl gap-10 px-4 py-14 {{ $hasFooterNavigation ? 'lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)]' : 'lg:grid-cols-2' }} lg:px-6">
+        <div class="mx-auto grid max-w-[96rem] gap-10 px-3 py-14 sm:px-4 {{ $hasFooterNavigation ? 'lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)]' : 'lg:grid-cols-2' }} lg:px-6">
             <div class="grid gap-4">
                 <div class="font-display text-2xl text-foreground">{{ $publicSiteName }}</div>
                 <div class="max-w-sm text-sm leading-7 text-muted-foreground">
@@ -248,7 +248,7 @@
         </div>
 
         <div class="border-t border-border py-5">
-            <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 text-xs text-muted-foreground lg:px-6">
+            <div class="mx-auto flex max-w-[96rem] flex-wrap items-center justify-between gap-3 px-3 text-xs text-muted-foreground sm:px-4 lg:px-6">
                 <span>&copy; {{ date('Y') }} {{ $publicSiteName }}</span>
             </div>
         </div>

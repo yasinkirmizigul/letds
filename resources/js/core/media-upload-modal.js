@@ -420,7 +420,7 @@ export function initMediaUploadModal(scope = document) {
                     ${
             kind === 'image' && thumb
                 ? `<img src="${thumb}" alt="" class="w-full h-full object-cover">`
-                : `<i class="ki-outline ${kind === 'video' ? 'ki-video' : kind === 'pdf' ? 'ki-file' : 'ki-document'}"></i>`
+                : `<i class="ki-outline ${kind === 'video' ? 'ki-screen' : kind === 'pdf' ? 'ki-file' : 'ki-document'}"></i>`
         }
                 </div>
 

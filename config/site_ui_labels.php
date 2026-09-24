@@ -27,15 +27,15 @@ return [
     ],
     'nav_member_login_label' => [
         'group' => 'navigation',
-        'label' => 'Üye girişi butonu',
-        'placeholder' => 'Üye Girişi',
-        'default' => 'Üye Girişi',
+        'label' => 'Giriş yap butonu',
+        'placeholder' => 'Giriş Yap',
+        'default' => 'Giriş Yap',
     ],
     'nav_member_register_label' => [
         'group' => 'navigation',
-        'label' => 'Üye ol butonu',
-        'placeholder' => 'Üye Ol',
-        'default' => 'Üye Ol',
+        'label' => 'Kayıt ol butonu',
+        'placeholder' => 'Kayıt Ol',
+        'default' => 'Kayıt Ol',
     ],
     'nav_logout_label' => [
         'group' => 'navigation',

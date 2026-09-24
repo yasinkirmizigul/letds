@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-29T23:31:15.443866+00:00",
+  "generated_at": "2026-09-23T09:01:57.691211+00:00",
   "nodes": {
     "app_http_controllers_admin_auth_passwordresetcontroller_passwordresetcontroller": {
       "code_fingerprint": "884c3a4330984a3599126a1723598429fc092c73aada5075b32a63caa314edd6",
@@ -12,7 +12,7 @@
           "q": "Şifre ve şifre tekrar alanlarında anlık ve form gönderiminde eşleşme kontrolü var mı?"
         }
       ],
-      "score": 0.999979139,
+      "score": 0.569102002,
       "source_file": "app/Http/Controllers/Admin/Auth/PasswordResetController.php",
       "status": "tentative",
       "uses": 1
@@ -28,7 +28,7 @@
           "q": "anasayfada dark light mode butonu beyaz zemidne gözükmüyor; yanına hamburger menü ve aşağı kayan, kapanabilen header navigasyonu ekle"
         }
       ],
-      "score": 0.999355823,
+      "score": 0.568747264,
       "source_file": "resources/views/admin/layouts/main/header.blade.php",
       "status": "tentative",
       "uses": 1
@@ -44,7 +44,7 @@
           "q": "anasayfada dark light mode butonu beyaz zemidne gözükmüyor; yanına hamburger menü ve aşağı kayan, kapanabilen header navigasyonu ekle"
         }
       ],
-      "score": 0.999355823,
+      "score": 0.568747264,
       "source_file": "resources/views/site/partials/navigation/mobile-item.blade.php",
       "status": "tentative",
       "uses": 1
@@ -60,7 +60,7 @@
           "q": "biraz daha açık ton olmalı bence çok koyu kalmış gibiler"
         }
       ],
-      "score": 0.999536238,
+      "score": 0.568849941,
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
       "status": "tentative",
       "uses": 1

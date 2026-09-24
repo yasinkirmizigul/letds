@@ -107,7 +107,7 @@ if (-not (Test-Path -LiteralPath $viteManifest -PathType Leaf)) {
     throw "Frontend production manifesti bulunamadi: $viteManifest`n$buildHint"
 }
 
-# Laravel, public/hot varken production build yerine yerel Vite adresini kullanir.
+# Uygulama, public/hot varken production build yerine yerel Vite adresini kullanir.
 # Quick Tunnel disaridan acildigi icin bu isaretci her paylasimda temizlenmelidir.
 $viteHotFile = Join-Path $projectRoot 'public\hot'
 if (Test-Path -LiteralPath $viteHotFile) {
@@ -130,14 +130,14 @@ $env:LOG_LEVEL = 'warning'
 
 & php artisan optimize:clear --no-ansi
 if ($LASTEXITCODE -ne 0) {
-    throw 'Laravel onbellegi temizlenemedi.'
+    throw 'Uygulama onbellegi temizlenemedi.'
 }
 
 $stdoutLog = Join-Path $projectRoot 'storage\logs\demo-server.out.log'
 $stderrLog = Join-Path $projectRoot 'storage\logs\demo-server.err.log'
 $tunnelStdoutLog = Join-Path $projectRoot 'storage\logs\demo-tunnel.out.log'
 $tunnelStderrLog = Join-Path $projectRoot 'storage\logs\demo-tunnel.err.log'
-$laravel = $null
+$appServer = $null
 $tunnel = $null
 
 # Start-Process log redirection behavior differs between PowerShell versions.
@@ -147,7 +147,7 @@ foreach ($logFile in @($stdoutLog, $stderrLog, $tunnelStdoutLog, $tunnelStderrLo
 }
 
 try {
-    $laravel = Start-Process `
+    $appServer = Start-Process `
         -FilePath 'php.exe' `
         -ArgumentList @('artisan', 'serve', '--host=127.0.0.1', "--port=$Port", '--no-reload') `
         -WorkingDirectory $projectRoot `
@@ -160,7 +160,7 @@ try {
     for ($attempt = 0; $attempt -lt 30; $attempt++) {
         Start-Sleep -Milliseconds 500
 
-        if ($laravel.HasExited) {
+        if ($appServer.HasExited) {
             break
         }
 
@@ -182,7 +182,7 @@ try {
             'Sunucu logu olusturulamadi.'
         }
 
-        throw "Laravel demo sunucusu baslatilamadi.`n$details"
+        throw "Uygulama tanitim sunucusu baslatilamadi.`n$details"
     }
 
     $tunnel = Start-Process `
@@ -290,9 +290,9 @@ try {
         $tunnel.WaitForExit()
     }
 
-    if ($laravel -and -not $laravel.HasExited) {
-        Stop-ProcessTree -TargetProcessId $laravel.Id
-        $laravel.WaitForExit()
+    if ($appServer -and -not $appServer.HasExited) {
+        Stop-ProcessTree -TargetProcessId $appServer.Id
+        $appServer.WaitForExit()
     }
 
     Write-Host 'Demo baglantisi kapatildi.' -ForegroundColor DarkGray

@@ -377,7 +377,7 @@
             <div class="kt-card-header py-5">
                 <div>
                     <h3 class="kt-card-title">Tarihler ve Kargo</h3>
-                    <div class="text-sm text-muted-foreground">Metronic uyumlu tarih alanları ve kargo bilgisi.</div>
+                    <div class="text-sm text-muted-foreground">Kurumsal tarih alanları ve kargo bilgisi.</div>
                 </div>
             </div>
             <div class="kt-card-content p-6 grid gap-4">

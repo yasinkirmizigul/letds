@@ -1,10 +1,10 @@
 @extends('site.layouts.main.app')
 
 @section('content')
-    <div class="mx-auto max-w-7xl px-4 py-10 lg:px-6">
+    <div class="site-page">
         @include('site.partials.member-nav')
 
-        <div class="flex flex-col gap-5 border-b border-border pb-8 md:flex-row md:items-end md:justify-between">
+        <div class="mt-7 flex flex-col gap-5 border-b border-border pb-8 md:flex-row md:items-end md:justify-between">
             <div>
                 <div class="text-xs font-semibold uppercase text-primary">Hizmet Deneyimi</div>
                 <h1 class="mt-4 font-display text-3xl font-semibold text-foreground md:text-4xl">Değerlendirmelerim</h1>

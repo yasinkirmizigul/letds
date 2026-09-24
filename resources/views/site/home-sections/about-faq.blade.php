@@ -3,7 +3,7 @@
         <div class="home-discovery-glow" aria-hidden="true"></div>
         <div class="home-feature-container home-discovery-layout">
             @if($aboutPage)
-                <article class="home-about-panel et-in-viewport-check" et-anim="feature-rise" et-anim-duration="620" et-anim-delay="0" et-anim-easing="cubic-bezier(.2,.8,.2,1)">
+                <article id="hakkimizda" class="home-about-panel et-in-viewport-check" et-anim="feature-rise" et-anim-duration="620" et-anim-delay="0" et-anim-easing="cubic-bezier(.2,.8,.2,1)">
                     <span class="home-discovery-eyebrow">{{ $aboutPage->localized('hero_kicker') ?: 'Hakkımızda' }}</span>
                     <h2 id="home-discovery-title">{{ $aboutPage->localized('title') }}</h2>
                     <p>{{ $aboutPage->localized('excerpt') }}</p>
@@ -23,15 +23,17 @@
                         </span>
                     </div>
 
-                    <a href="{{ $aboutPage->publicUrl($locale) }}" class="home-discovery-link">
-                        <span>Hikayemizi Keşfedin</span>
-                        <span aria-hidden="true">→</span>
-                    </a>
+                    @include('site.home-sections.partials.page-link', [
+                        'url' => $aboutPage->publicUrl($locale),
+                        'label' => 'Hakkımızda',
+                        'eyebrow' => 'Hikayemizi Keşfedin',
+                        'variant' => 'about',
+                    ])
                 </article>
             @endif
 
             @if($homepageFaqs->isNotEmpty())
-                <div class="home-faq-panel et-in-viewport-check" et-anim="feature-rise" et-anim-duration="620" et-anim-delay="100" et-anim-easing="cubic-bezier(.2,.8,.2,1)">
+                <div id="sss" class="home-faq-panel et-in-viewport-check" et-anim="feature-rise" et-anim-duration="620" et-anim-delay="100" et-anim-easing="cubic-bezier(.2,.8,.2,1)">
                     <header class="home-faq-panel__header">
                         <div>
                             <span class="home-discovery-eyebrow">{{ $siteSettings->uiLine('home_faq_kicker') }}</span>
@@ -54,10 +56,12 @@
                         @endforeach
                     </div>
 
-                    <a href="{{ $faqUrl }}" class="home-discovery-link home-discovery-link--light">
-                        <span>{{ $siteSettings->uiLine('home_faq_cta_label') }}</span>
-                        <span aria-hidden="true">→</span>
-                    </a>
+                    @include('site.home-sections.partials.page-link', [
+                        'url' => $faqUrl,
+                        'label' => 'Sıkça Sorulan Sorular',
+                        'eyebrow' => $siteSettings->uiLine('home_faq_cta_label'),
+                        'variant' => 'faq',
+                    ])
                 </div>
             @endif
         </div>

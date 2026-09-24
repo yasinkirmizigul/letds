@@ -3,6 +3,9 @@
 @php
     $pageTitle = 'Hizmetlerimiz';
     $metaDescription = 'Araştırma tasarımı, veri analizi, akademik raporlama ve veri bilimi alanlarında uçtan uca istatistik danışmanlığı.';
+    $consultationUrl = auth('member')->check()
+        ? route('member.appointments.index', ['site_locale' => $siteCurrentLocale])
+        : route('member.register', ['site_locale' => $siteCurrentLocale]);
 @endphp
 
 @section('content')
@@ -13,11 +16,9 @@
                 <div class="site-services-hero__copy" data-site-reveal>
                     <span class="site-services-kicker">PROBABLUE / Bilimsel Danışmanlık</span>
                     <h1>Araştırmanızın her aşamasında güvenilir istatistik desteği.</h1>
-                    <p>
-                        Doğru yöntem, şeffaf süreç ve anlaşılır çıktılarla araştırma fikrinizi güçlü bir sonuca dönüştürüyoruz.
-                    </p>
+                    <p>Bilimsel yönteme dayalı, ihtiyaçlarınıza özel ve şeffaf danışmanlık çözümleri sunuyoruz.</p>
                     <div class="site-services-hero__actions">
-                        <a href="{{ route('member.appointments.index') }}" class="site-services-primary-cta" title="Ücretsiz ön görüşme planla">
+                        <a href="{{ $consultationUrl }}" class="site-services-primary-cta" title="Ücretsiz ön görüşme planla">
                             <span>Ücretsiz Ön Görüşme Planla</span>
                             <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                         </a>
@@ -50,7 +51,7 @@
 
         <div class="site-services-content">
             @forelse($serviceSections as $section)
-                <section id="hizmetler" class="site-services-section" style="--services-accent: {{ $section['accent_color'] }}">
+                <section @if($loop->first) id="hizmetler" @endif class="site-services-section" style="--services-accent: {{ $section['accent_color'] }}">
                     <header class="site-services-section__header" data-site-reveal>
                         @if($section['eyebrow'])
                             <span class="site-services-kicker">{{ $section['eyebrow'] }}</span>
@@ -71,7 +72,16 @@
                                     </span>
                                 </div>
                                 <h3>{{ $item['title'] }}</h3>
-                                <p>{{ $item['description'] }}</p>
+                                @php($descriptionLines = collect(preg_split('/\r\n|\r|\n/', $item['description']))->map(fn ($line) => trim($line))->filter()->values())
+                                @if($descriptionLines->count() > 1)
+                                    <ul class="site-service-card__list">
+                                        @foreach($descriptionLines as $line)
+                                            <li>{{ $line }}</li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    <p>{{ $item['description'] }}</p>
+                                @endif
                             </article>
                         @endforeach
                     </div>
@@ -83,7 +93,7 @@
             @endforelse
 
             @foreach($processSections as $section)
-                <section class="site-services-process" style="--services-accent: {{ $section['accent_color'] }}">
+                <section @if($loop->first) id="nasil-ilerliyoruz" @endif class="site-services-process" style="--services-accent: {{ $section['accent_color'] }}">
                     <header class="site-services-section__header site-services-section__header--center" data-site-reveal>
                         @if($section['eyebrow'])
                             <span class="site-services-kicker">{{ $section['eyebrow'] }}</span>
@@ -106,6 +116,11 @@
                             </article>
                         @endforeach
                     </div>
+
+                    <aside class="site-services-pricing" data-site-reveal>
+                        <span class="site-services-kicker">Süre &amp; Fiyatlandırma</span>
+                        <p>Çalışma süresi ve ücret; projenin kapsamı, uygulanacak testler, veri yapısı ve analiz yoğunluğuna göre belirlenir. Ön görüşmenin ardından tahmini teslim süresi ve fiyatlandırma şeffaf biçimde paylaşılır.</p>
+                    </aside>
                 </section>
             @endforeach
 
@@ -113,9 +128,9 @@
                 <div>
                     <span class="site-services-kicker">İlk adım</span>
                     <h2>Projenizi birlikte değerlendirelim.</h2>
-                    <p>Üye hesabınızla giriş yapın, size uygun uzmanı ve görüşme saatini seçin.</p>
+                    <p>Önce hesabınızı oluşturun; ardından size uygun uzmanı ve görüşme saatini seçin.</p>
                 </div>
-                <a href="{{ route('member.appointments.index') }}" class="site-services-primary-cta" title="Ön görüşme randevusu oluştur">
+                <a href="{{ $consultationUrl }}" class="site-services-primary-cta" title="Ön görüşme randevusu oluştur">
                     Randevu Oluştur
                     <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                 </a>

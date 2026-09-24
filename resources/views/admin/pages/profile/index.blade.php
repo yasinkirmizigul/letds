@@ -185,7 +185,7 @@
                         <div class="kt-card-content flex flex-col gap-3">
                             @if($u->website_url)
                                 <a class="kt-link kt-link-underlined kt-link-dashed" href="{{ $u->website_url }}" target="_blank" rel="noopener">
-                                    <i class="ki-filled ki-global me-1"></i>
+                                    <i class="ki-filled ki-compass me-1"></i>
                                     Web Sitesi
                                 </a>
                             @endif

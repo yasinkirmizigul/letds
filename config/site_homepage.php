@@ -141,7 +141,7 @@ return [
             'label' => 'Ana Başlık',
             'type' => 'textarea',
             'rows' => 3,
-            'default' => 'The combination of great design and diligent app development.',
+            'default' => 'Akademik ve profesyonel projeleriniz için istatistiksel danışmanlık.',
             'rules' => ['required', 'string', 'max:500'],
             'wrapper_class' => 'grid gap-2 lg:col-span-2',
             'mode' => 'analysis',
@@ -154,7 +154,7 @@ return [
             'key' => 'cta_label',
             'label' => 'Buton Metni',
             'type' => 'text',
-            'default' => 'VIEW THEMES',
+            'default' => 'İstatistiksel Analiz ve Danışmanlık',
             'rules' => ['required', 'string', 'max:120'],
             'mode' => 'analysis',
             'colors' => [
@@ -167,7 +167,7 @@ return [
             'label' => 'Buton Bağlantısı',
             'type' => 'url',
             'placeholder' => '/iletisim veya https://...',
-            'default' => '',
+            'default' => '#neler-sunuyoruz',
             'rules' => ['nullable', 'string', 'max:500'],
             'mode' => 'analysis',
         ],
@@ -236,7 +236,7 @@ return [
             'label' => 'Sağ Panel Metni',
             'type' => 'textarea',
             'rows' => 3,
-            'default' => 'We make sleek and modern designs for your business.',
+            'default' => 'Araştırma tasarımınızı bilimsel yöntemlerle güçlendirin.',
             'rules' => ['required', 'string', 'max:700'],
             'sanitize' => 'html',
             'colors' => [
@@ -248,7 +248,7 @@ return [
             'label' => 'Sol Panel Metni',
             'type' => 'textarea',
             'rows' => 3,
-            'default' => 'We make <span class="color-main">sleek and modern</span> designs for your business.',
+            'default' => 'Araştırma tasarımınızı <span class="color-main">bilimsel yöntemlerle</span> güçlendirin.',
             'rules' => ['required', 'string', 'max:700'],
             'sanitize' => 'html',
             'colors' => [
@@ -266,7 +266,7 @@ return [
             'label' => 'Sağ Panel Metni',
             'type' => 'textarea',
             'rows' => 3,
-            'default' => 'Our creations embrace <br>the simplicity to look extraordinary.',
+            'default' => 'Verinizi güvenilir ve tekrarlanabilir analizlerle değerlendirin.',
             'rules' => ['required', 'string', 'max:700'],
             'sanitize' => 'html',
             'colors' => [
@@ -278,7 +278,7 @@ return [
             'label' => 'Sol Panel Metni',
             'type' => 'textarea',
             'rows' => 3,
-            'default' => 'Our creations embrace <br>the <span class="color-main">simplicity</span> to look extraordinary.',
+            'default' => 'Verinizi <span class="color-main">güvenilir ve tekrarlanabilir</span> analizlerle değerlendirin.',
             'rules' => ['required', 'string', 'max:700'],
             'sanitize' => 'html',
             'colors' => [
@@ -296,7 +296,7 @@ return [
             'label' => 'Sağ Panel Metni',
             'type' => 'textarea',
             'rows' => 3,
-            'default' => 'Platforms are built from a solid engine & best experiments.',
+            'default' => 'Bulgularınızı anlaşılır tablo ve grafiklerle raporlayın.',
             'rules' => ['required', 'string', 'max:700'],
             'sanitize' => 'html',
             'colors' => [
@@ -308,7 +308,7 @@ return [
             'label' => 'Sol Panel Metni',
             'type' => 'textarea',
             'rows' => 3,
-            'default' => 'Platforms are built from a <span class="color-main">solid engine</span> & best experiments.',
+            'default' => 'Bulgularınızı <span class="color-main">anlaşılır tablo ve grafiklerle</span> raporlayın.',
             'rules' => ['required', 'string', 'max:700'],
             'sanitize' => 'html',
             'colors' => [
@@ -326,7 +326,7 @@ return [
             'label' => 'Sağ Panel Metni',
             'type' => 'textarea',
             'rows' => 3,
-            'default' => 'EngineThemes are easy to setup and customize to match your needs.',
+            'default' => 'Tez ve makale sürecinizde uzman desteği alın.',
             'rules' => ['required', 'string', 'max:700'],
             'sanitize' => 'html',
             'colors' => [
@@ -338,7 +338,7 @@ return [
             'label' => 'Sol Panel Metni',
             'type' => 'textarea',
             'rows' => 3,
-            'default' => 'EngineThemes are <span class="color-main">easy to setup</span> and customize to match your needs.',
+            'default' => 'Tez ve makale sürecinizde <span class="color-main">uzman desteği</span> alın.',
             'rules' => ['required', 'string', 'max:700'],
             'sanitize' => 'html',
             'colors' => [

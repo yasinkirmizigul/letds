@@ -1,7 +1,7 @@
 @extends('site.layouts.main.app')
 
 @section('content')
-    <div class="mx-auto max-w-7xl px-4 py-8">
+    <div class="mx-auto max-w-[96rem] px-3 py-8 sm:px-4 lg:px-6">
         <div class="max-w-3xl">
             @if($page->localized('hero_kicker'))
                 <div class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">

@@ -10,6 +10,7 @@ use App\Services\Appointment\AppointmentService;
 use App\Services\Appointment\AvailabilityService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -31,11 +32,7 @@ class AppointmentController extends Controller
                 ->getActiveForMember($member->id);
         }
 
-        $providers = User::query()
-            ->visibleTo($this->adminViewer())
-            ->whereHas('roles', fn ($q) => $q->where('slug', 'provider'))
-            ->where('is_active', 1)
-            ->get(['id', 'name']);
+        $providers = $this->publicProviders();
 
         $meetingMethods = AppointmentMeetingMethod::query()
             ->active()
@@ -54,9 +51,15 @@ class AppointmentController extends Controller
     public function availability(Request $request)
     {
         $data = $request->validate([
-            'provider_id' => ['required', 'integer'],
+            'provider_id' => ['required', 'string'],
             'date' => ['required', 'date'],
         ]);
+
+        if ($data['provider_id'] === 'any') {
+            return $this->availableSlotsForAnyProvider(Carbon::parse($data['date']));
+        }
+
+        abort_unless(ctype_digit($data['provider_id']), 422, 'Uzman seçimi geçersiz.');
         $this->assertPublicProvider((int) $data['provider_id']);
 
         return $this->availabilityService->getAvailableStartsForDate(
@@ -89,6 +92,7 @@ class AppointmentController extends Controller
                 'start_at' => ['required'],
                 'blocks' => ['required', 'integer', 'min:1', 'max:4'],
                 'notes_member' => ['nullable', 'string', 'max:2000'],
+                'support_topic' => ['required', 'string', Rule::in(Appointment::SUPPORT_TOPICS)],
             ]);
             $this->assertPublicProvider((int) $data['provider_id']);
 
@@ -99,6 +103,7 @@ class AppointmentController extends Controller
                 'start_at' => $data['start_at'],
                 'blocks' => $data['blocks'],
                 'notes_member' => filled($data['notes_member'] ?? null) ? trim($data['notes_member']) : null,
+                'support_topic' => $data['support_topic'],
             ], null);
 
             return response()->json([
@@ -127,9 +132,18 @@ class AppointmentController extends Controller
     public function days(Request $request)
     {
         $data = $request->validate([
-            'provider_id' => ['required', 'integer'],
+            'provider_id' => ['required', 'string'],
             'month' => ['required', 'date'],
         ]);
+
+        if ($data['provider_id'] === 'any') {
+            return $this->calendarForAnyProvider(
+                Carbon::parse($data['month'])->startOfMonth(),
+                Carbon::parse($data['month'])->endOfMonth(),
+            );
+        }
+
+        abort_unless(ctype_digit($data['provider_id']), 422, 'Uzman seçimi geçersiz.');
         $this->assertPublicProvider((int) $data['provider_id']);
 
         $start = Carbon::parse($data['month'])->startOfMonth();
@@ -203,6 +217,7 @@ class AppointmentController extends Controller
                 'start_at' => ['required'],
                 'blocks' => ['required', 'integer', 'min:1', 'max:4'],
                 'notes_member' => ['nullable', 'string', 'max:2000'],
+                'support_topic' => ['required', 'string', Rule::in(Appointment::SUPPORT_TOPICS)],
             ]);
             $this->assertPublicProvider((int) $data['provider_id']);
             $data['notes_member'] = filled($data['notes_member'] ?? null)
@@ -263,6 +278,50 @@ class AppointmentController extends Controller
                 'provider_id' => 'Seçilen uzman kullanılamıyor.',
             ]);
         }
+    }
+
+    private function publicProviders(): Collection
+    {
+        return User::query()
+            ->visibleTo($this->adminViewer())
+            ->whereHas('roles', fn ($q) => $q->where('slug', 'provider'))
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+    }
+
+    private function availableSlotsForAnyProvider(Carbon $date): array
+    {
+        return $this->publicProviders()
+            ->flatMap(function (User $provider) use ($date): array {
+                return collect($this->availabilityService->getAvailableStartsForDate((int) $provider->id, $date, 1))
+                    ->map(fn (array $slot): array => $slot + [
+                        'provider_id' => $provider->id,
+                        'provider_name' => $provider->name,
+                    ])
+                    ->all();
+            })
+            ->sortBy('start_at')
+            ->unique('start_at')
+            ->values()
+            ->all();
+    }
+
+    private function calendarForAnyProvider(Carbon $start, Carbon $end): array
+    {
+        $days = [];
+
+        foreach ($this->publicProviders() as $provider) {
+            foreach ($this->availabilityService->getCalendarAvailability((int) $provider->id, $start, $end) as $date => $availability) {
+                $days[$date] ??= ['has_availability' => false, 'free_count' => 0];
+                $days[$date]['has_availability'] = $days[$date]['has_availability'] || (bool) ($availability['has_availability'] ?? false);
+                $days[$date]['free_count'] += (int) ($availability['free_count'] ?? 0);
+            }
+        }
+
+        ksort($days);
+
+        return $days;
     }
 
     private function adminViewer(): ?User

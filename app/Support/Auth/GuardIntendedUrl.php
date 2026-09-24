@@ -10,7 +10,7 @@ final class GuardIntendedUrl
     private const SESSION_KEY = 'url.intended';
 
     /**
-     * Consume Laravel's shared intended URL only when it belongs to the active guard.
+     * Consume the shared intended URL only when it belongs to the active guard.
      *
      * @param  list<string>  $allowedPathPrefixes
      */

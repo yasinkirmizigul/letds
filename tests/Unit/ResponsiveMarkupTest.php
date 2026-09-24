@@ -62,8 +62,58 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('@import "./fontawesome-solid-subset.css";', $appCss);
         $this->assertStringContainsString('font-family: "Font Awesome 6 Free";', $fontAwesomeCss);
         $this->assertStringContainsString('.fa-magnifying-glass::before', $fontAwesomeCss);
+        $this->assertStringContainsString('.fa-regular,', $fontAwesomeCss);
+        $this->assertStringContainsString('.fa-user::before', $fontAwesomeCss);
+        $this->assertStringContainsString('.fa-calendar::before', $fontAwesomeCss);
+        $this->assertStringContainsString('.fa-bell::before', $fontAwesomeCss);
         $this->assertStringContainsString('../../public/assets/site/plugins/global/fonts/@fortawesome/fa-solid-900.woff2', $fontAwesomeCss);
+        $this->assertStringContainsString('../../public/assets/site/plugins/global/fonts/@fortawesome/fa-regular-400.woff2', $fontAwesomeCss);
         $this->assertStringNotContainsString('url("/assets/site/plugins/global/fonts/', $fontAwesomeCss);
+    }
+
+    public function test_admin_keenicon_classes_exist_in_the_loaded_stylesheets(): void
+    {
+        $root = $this->projectRoot().DIRECTORY_SEPARATOR;
+        $sourceFiles = [];
+
+        foreach ([
+            'resources/views/admin',
+            'resources/views/components/admin',
+            'resources/js/admin',
+            'resources/js/core',
+            'config/admin_menu',
+        ] as $relativeDirectory) {
+            $directory = $root.str_replace('/', DIRECTORY_SEPARATOR, $relativeDirectory);
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS)
+            );
+
+            foreach ($iterator as $file) {
+                if (in_array($file->getExtension(), ['php', 'js'], true)) {
+                    $sourceFiles[] = $file->getPathname();
+                }
+            }
+        }
+
+        $sourceFiles[] = $root.'config'.DIRECTORY_SEPARATOR.'admin_menu.php';
+        $usedIcons = [];
+
+        foreach ($sourceFiles as $sourceFile) {
+            preg_match_all('/\bki-[a-z0-9-]+\b/', file_get_contents($sourceFile), $matches);
+            $usedIcons = array_merge($usedIcons, $matches[0]);
+        }
+
+        $loadedStyles = file_get_contents($root.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'global'.DIRECTORY_SEPARATOR.'plugins.bundle.css')
+            .file_get_contents($root.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'admin'.DIRECTORY_SEPARATOR.'vendors'.DIRECTORY_SEPARATOR.'keenicons'.DIRECTORY_SEPARATOR.'styles.bundle.css');
+        preg_match_all('/\.(ki-[a-z0-9-]+)/', $loadedStyles, $definedMatches);
+
+        $styleClasses = ['ki-outline', 'ki-filled', 'ki-solid', 'ki-duotone'];
+        $usedIcons = array_values(array_diff(array_unique($usedIcons), $styleClasses));
+        $definedIcons = array_unique($definedMatches[1]);
+        $missingIcons = array_values(array_diff($usedIcons, $definedIcons));
+        sort($missingIcons);
+
+        $this->assertSame([], $missingIcons, 'Admin sources use unloaded Keenicons: '.implode(', ', $missingIcons));
     }
 
     public function test_public_desktop_navigation_and_home_feature_palette_do_not_collapse(): void
@@ -73,6 +123,7 @@ class ResponsiveMarkupTest extends TestCase
         $homeCss = file_get_contents($root.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'home.css');
         $desktopItem = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'partials'.DIRECTORY_SEPARATOR.'navigation'.DIRECTORY_SEPARATOR.'desktop-item.blade.php');
         $featureView = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home-sections'.DIRECTORY_SEPARATOR.'features.blade.php');
+        $pageLinkView = file_get_contents($root.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home-sections'.DIRECTORY_SEPARATOR.'partials'.DIRECTORY_SEPARATOR.'page-link.blade.php');
 
         $this->assertStringContainsString('site-desktop-nav-label', $desktopItem);
         $this->assertMatchesRegularExpression('/\.site-desktop-nav-link\s*\{[^}]*flex:\s*0 0 auto;[^}]*white-space:\s*nowrap;/s', $css);
@@ -82,6 +133,11 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('--home-feature-custom-accent:', $featureView);
         $this->assertStringContainsString('--home-feature-palette-accent', $homeCss);
         $this->assertStringContainsString('--home-feature-palette-dark-bg', $homeCss);
+        $this->assertStringContainsString("'label' => 'Hizmetler'", $featureView);
+        $this->assertStringContainsString("'label' => 'Hizmet Süreci'", $featureView);
+        $this->assertStringContainsString("'#nasil-ilerliyoruz'", $featureView);
+        $this->assertStringContainsString('home-section-route', $pageLinkView);
+        $this->assertStringContainsString('.home-section-route__arrow', $homeCss);
     }
 
     public function test_arbitrary_grid_templates_use_valid_column_separators(): void
@@ -194,6 +250,8 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('html[data-site-theme="dark"] .home-discovery-section', $homeCss);
         $this->assertStringContainsString('html[data-site-theme="dark"] .home-theme-toggle', $homeCss);
         $this->assertStringContainsString('html[data-site-theme="dark"] .site-home-header.sticky .home-theme-toggle', $homeCss);
+        $this->assertStringContainsString('html[data-site-theme="dark"] .site-home-header.sticky .home-desktop-navigation__link', $homeCss);
+        $this->assertStringContainsString('background: rgba(10, 24, 32, 0.94);', $homeCss);
         $this->assertStringContainsString('--home-sticky-logo-dark: #69adff;', $homeCss);
         $this->assertStringContainsString('color: var(--home-sticky-logo-dark);', $homeCss);
         $this->assertStringContainsString('background: rgba(255, 255, 255, 0.92);', $homeCss);
@@ -209,11 +267,26 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringNotContainsString('icon_class', $mobileNavigation);
         $this->assertStringNotContainsString('site-mobile-nav__link--active bg-primary/10 text-primary', $mobileNavigation);
         $this->assertStringContainsString('html[data-site-theme="dark"] body.site-shell .site-mobile-nav__link--active', $css);
+        $this->assertStringContainsString('width: min(100%, 96rem);', $css);
+        $this->assertStringContainsString('grid-template-columns: repeat(8, minmax(0, 1fr));', $css);
+        $this->assertStringContainsString('max-w-[96rem]', $siteLayout);
+        $this->assertStringNotContainsString('max-w-7xl', $siteLayout);
         $this->assertStringContainsString("@include('site.partials.home-navigation-menu')", $homeView);
         $this->assertStringContainsString("@include('site.partials.home-navigation-menu')", $probablueHero);
+        $this->assertStringContainsString('class="home-floating-theme-toggle"', $homeView);
+        $this->assertStringContainsString('.home-floating-theme-toggle', $homeCss);
         $this->assertStringContainsString('class="home-mobile-menu"', $homeNavigation);
+        $this->assertStringContainsString('class="home-desktop-navigation"', $homeNavigation);
+        $this->assertStringContainsString('Neler Sunuyoruz?', $homeNavigation);
+        $this->assertStringContainsString('Nasıl İlerliyoruz?', $homeNavigation);
+        $this->assertStringContainsString('Birlikte Başlayalım', $homeNavigation);
+        $this->assertStringContainsString('Kayıt Ol', $homeNavigation);
+        $this->assertStringContainsString('Giriş Yap', $homeNavigation);
         $this->assertStringContainsString('data-home-navigation-toggle', $homeNavigation);
         $this->assertStringContainsString('home-mobile-menu__panel', $homeCss);
+        $this->assertStringContainsString('.home-entry-cta--disabled', $homeCss);
+        $this->assertStringContainsString('.home-faq-list__toggle::before', $homeCss);
+        $this->assertStringContainsString('transform: translate(-50%, -50%) rotate(90deg);', $homeCss);
         $this->assertStringContainsString('transform: translateY(-14px) scale(0.98);', $homeCss);
         $this->assertStringContainsString('initHomeNavigation();', $homeJs);
         $this->assertStringContainsString('mask: url("../images/p-v.svg") center / contain no-repeat;', $homeCss);

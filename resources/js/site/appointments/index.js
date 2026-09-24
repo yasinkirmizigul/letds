@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const providerEl = document.getElementById('provider');
     const dateEl = document.getElementById('date');
     const meetingMethodEl = document.getElementById('meetingMethod');
+    const supportTopicEl = document.getElementById('supportTopic');
     const memberNoteEl = document.getElementById('appointmentMemberNote');
     const cancelBtn = document.getElementById('cancelBtn');
     const rescheduleBtn = document.getElementById('rescheduleBtn');
@@ -38,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         syncMeetingMethodDescription();
         syncAppointmentPreview();
     });
+    supportTopicEl?.addEventListener('change', syncAppointmentPreview);
     memberNoteEl?.addEventListener('input', syncAppointmentPreview);
 
     if (prevMonthBtn) {
@@ -102,8 +104,14 @@ function bindActiveAppointmentActions(cancelBtn, rescheduleBtn) {
 
 function bindStepperControls() {
     document.getElementById('appointmentStep1Next')?.addEventListener('click', () => {
-        if (!getAppointmentPreference().meeting_method_id) {
+        const preference = getAppointmentPreference();
+        if (!preference.meeting_method_id) {
             showAppointmentAlert('warning', 'Görüşme yöntemi gerekli', 'Devam etmek için görüşme yöntemlerinden birini seçin.');
+            return;
+        }
+
+        if (!preference.support_topic) {
+            showAppointmentAlert('warning', 'Destek konusu gerekli', 'Devam etmek için destek almak istediğiniz konuyu seçin.');
             return;
         }
 
@@ -156,16 +164,23 @@ function syncAppointmentPreview() {
     const timePreview = document.getElementById('appointmentPreviewTime');
     const modePreview = document.getElementById('appointmentPreviewMode');
     const meetingMethodPreview = document.getElementById('appointmentPreviewMeetingMethod');
+    const supportTopicPreview = document.getElementById('appointmentPreviewSupportTopic');
     const memberNotePreview = document.getElementById('appointmentPreviewMemberNote');
     const submitLabel = document.querySelector('[data-submit-label]');
     const preference = getAppointmentPreference();
 
     if (nextButton) nextButton.disabled = !selectedSlot;
-    if (providerPreview) providerPreview.textContent = provider?.selectedOptions?.[0]?.textContent?.trim() || '-';
+    if (providerPreview) {
+        const providerLabel = provider?.selectedOptions?.[0]?.textContent?.trim() || '-';
+        providerPreview.textContent = providerId === 'any' && selectedSlot?.provider_name
+            ? `Fark Etmez — ${selectedSlot.provider_name} atanacak`
+            : providerLabel;
+    }
     if (datePreview) datePreview.textContent = selectedSlot ? formatAppointmentDate(selectedSlot.start_at) : '-';
     if (timePreview) timePreview.textContent = selectedSlot ? formatTime(selectedSlot.start_at) : '-';
     if (modePreview) modePreview.textContent = isRescheduleMode ? 'Randevuyu yeniden planla' : 'Yeni ön görüşme';
     if (meetingMethodPreview) meetingMethodPreview.textContent = preference.meeting_method_name || '-';
+    if (supportTopicPreview) supportTopicPreview.textContent = preference.support_topic || '-';
     if (memberNotePreview) memberNotePreview.textContent = preference.notes_member || 'Not eklenmedi';
     if (submitLabel) submitLabel.textContent = isRescheduleMode ? 'Yeni Saati Onayla' : 'Randevuyu Onayla';
 }
@@ -176,6 +191,7 @@ function getAppointmentPreference() {
     return {
         meeting_method_id: meetingMethod?.value || null,
         meeting_method_name: meetingMethod?.selectedOptions?.[0]?.textContent?.trim() || null,
+        support_topic: document.getElementById('supportTopic')?.value || null,
         notes_member: document.getElementById('appointmentMemberNote')?.value?.trim() || null,
     };
 }
@@ -405,7 +421,7 @@ function selectSlot(el, slot) {
 
 async function confirmBooking() {
     const preference = getAppointmentPreference();
-    if (!selectedSlot || !preference.meeting_method_id || isSubmitting) return;
+    if (!selectedSlot || !preference.meeting_method_id || !preference.support_topic || isSubmitting) return;
 
     const ok = await showConfirmDialog({
         type: 'info',
@@ -424,10 +440,11 @@ async function confirmBooking() {
 
     try {
         const data = await post('/member/appointments', {
-            provider_id: providerId,
+            provider_id: selectedSlot.provider_id || providerId,
             start_at: selectedSlot.start_at,
             blocks: 1,
             meeting_method_id: preference.meeting_method_id,
+            support_topic: preference.support_topic,
             notes_member: preference.notes_member
         }, { ignoreGlobalError: true });
 
@@ -481,7 +498,7 @@ async function cancelAppointment() {
 
 async function confirmReschedule() {
     const preference = getAppointmentPreference();
-    if (!selectedSlot || !preference.meeting_method_id || isSubmitting || !window.__ACTIVE_APPOINTMENT_ID__) return;
+    if (!selectedSlot || !preference.meeting_method_id || !preference.support_topic || isSubmitting || !window.__ACTIVE_APPOINTMENT_ID__) return;
 
     const ok = await showConfirmDialog({
         type: 'info',
@@ -500,10 +517,11 @@ async function confirmReschedule() {
 
     try {
         const data = await post(`/member/appointments/${window.__ACTIVE_APPOINTMENT_ID__}/reschedule`, {
-            provider_id: providerId,
+            provider_id: selectedSlot.provider_id || providerId,
             start_at: selectedSlot.start_at,
             blocks: 1,
             meeting_method_id: preference.meeting_method_id,
+            support_topic: preference.support_topic,
             notes_member: preference.notes_member
         }, { ignoreGlobalError: true });
 

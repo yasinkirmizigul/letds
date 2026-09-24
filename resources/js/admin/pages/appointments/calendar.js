@@ -120,6 +120,7 @@ function openAppointmentModal(root, data) {
         notesInternal: data.notes_internal || '',
         notesMember: data.notes_member || '',
         meetingMethodName: data.meeting_method_name || '',
+        supportTopic: data.support_topic || '',
         memberInstitution: data.member_institution || '',
         cancelReason: data.cancel_reason || '',
     }
@@ -763,6 +764,7 @@ function buildEventTooltipHtml(event) {
             { label: 'E-posta', value: event.extendedProps?.member_email || '' },
             { label: 'Kurum / Üniversite', value: event.extendedProps?.member_institution || '' },
             { label: 'Görüşme yöntemi', value: event.extendedProps?.meeting_method_name || '' },
+            { label: 'Destek konusu', value: event.extendedProps?.support_topic || '' },
             { label: 'Üye notu', value: event.extendedProps?.notes_member || '' },
             { label: 'İç not', value: event.extendedProps?.notes_internal || '' },
         ]
@@ -1007,6 +1009,7 @@ function hydrateAppointmentEvent(event, data) {
     event.setExtendedProp('member_phone', data.member_phone)
     event.setExtendedProp('member_institution', data.member_institution)
     event.setExtendedProp('meeting_method_name', data.meeting_method_name)
+    event.setExtendedProp('support_topic', data.support_topic || '')
     event.setExtendedProp('notes_member', data.notes_member || '')
     event.setExtendedProp('status', data.status)
     event.setExtendedProp('status_label', data.status_label)

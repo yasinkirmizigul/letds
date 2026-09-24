@@ -15,6 +15,7 @@
                 <img src="{{ $headerLogo['url'] }}" alt="{{ $headerLogo['alt'] ?: $siteName }}">
             @else
                 <span class="probablue-brand probablue-brand--home" aria-hidden="true">
+                    <span class="probablue-brand__mark" data-home-brand-mark="true"></span>
                     <span class="probablue-brand__name">PROBA<span>BLUE</span></span>
                     <span class="probablue-brand__tagline">İstatistiksel Analiz ve Danışma</span>
                 </span>
@@ -22,7 +23,6 @@
         </a>
 
         <div class="home-probablue-hero__theme">
-            @include('site.partials.theme-toggle', ['variant' => 'home'])
             @include('site.partials.home-navigation-menu')
         </div>
     </header>
@@ -34,13 +34,13 @@
                 <span class="home-probablue-panel__eyebrow">{{ $leftMode['label'] }}</span>
                 <h1>{{ $leftMode['hero_title'] }}</h1>
                 <a
-                    class="home-probablue-panel__cta"
+                    class="home-probablue-panel__cta home-entry-cta"
                     href="{{ $leftMode['cta_url'] }}"
                     title="{{ $leftMode['cta_label'] }}"
                     @if($ctaNewTab) target="_blank" rel="noopener" @endif
                 >
                     <span>{{ $leftMode['cta_label'] }}</span>
-                    <span aria-hidden="true">&#8599;</span>
+                    <span class="home-entry-cta__arrow" aria-hidden="true">&#8594;</span>
                 </a>
             </div>
         </article>
@@ -48,17 +48,12 @@
         <article class="home-probablue-panel home-probablue-panel--consultation" style="{{ $modeStyle($rightMode) }}">
             <span class="home-probablue-panel__grid" aria-hidden="true"></span>
             <div class="home-probablue-panel__content">
-                <span class="home-probablue-panel__eyebrow">{{ $rightMode['label'] }}</span>
-                <h2>{{ $rightMode['hero_title'] }}</h2>
-                <a
-                    class="home-probablue-panel__cta"
-                    href="{{ $rightMode['cta_url'] }}"
-                    title="{{ $rightMode['cta_label'] }}"
-                    @if($ctaNewTab) target="_blank" rel="noopener" @endif
-                >
-                    <span>{{ $rightMode['cta_label'] }}</span>
-                    <span aria-hidden="true">&#8599;</span>
-                </a>
+                <span class="home-probablue-panel__eyebrow">Probablue Studio</span>
+                <h2>Yakında kullanıma açılıyor.</h2>
+                <button type="button" class="home-probablue-panel__cta home-entry-cta home-entry-cta--disabled" disabled aria-disabled="true">
+                    <span>Probablue Studio</span>
+                    <span class="home-entry-cta__arrow" aria-hidden="true">&#8594;</span>
+                </button>
             </div>
         </article>
 

@@ -45,7 +45,7 @@
 
         <div class="mt-6 text-sm leading-7 text-muted-foreground">
             Şifrenizi hatırladıysanız giriş ekranına dönebilirsiniz.
-            <a href="{{ route('member.login', ['site_locale' => $siteCurrentLocale]) }}" class="ml-1 font-medium text-primary hover:underline">Üye girişine git</a>
+            <a href="{{ route('member.login', ['site_locale' => $siteCurrentLocale]) }}" class="ml-1 font-medium text-primary hover:underline">Giriş Yap</a>
         </div>
     </div>
 @endsection

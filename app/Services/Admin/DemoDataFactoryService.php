@@ -266,9 +266,8 @@ class DemoDataFactoryService
         }
 
         $profiles = [
-            ['Ece Yılmaz', 'Veri Analizi Uzmanı', ['Raporlama', 'SPSS', 'İstatistik']],
-            ['Mert Kaya', 'Araştırma Danışmanı', ['Araştırma Tasarımı', 'Power BI', 'Anket']],
-            ['Selin Arslan', 'Proje Koordinatörü', ['Proje Yönetimi', 'Süreç Tasarımı', 'Danışmanlık']],
+            ['Aylin Alboyacı', 'İstatistiksel Analiz Uzmanı', ['Raporlama', 'SPSS', 'İstatistik']],
+            ['Ayça Ölmez Binzat', 'Araştırma ve İstatistik Danışmanı', ['Araştırma Tasarımı', 'Güç Analizi', 'Ölçek Geliştirme']],
         ];
 
         return collect($profiles)->map(function (array $profile, int $index) use ($token, $role): User {

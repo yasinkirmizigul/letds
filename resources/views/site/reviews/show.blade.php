@@ -1,10 +1,10 @@
 @extends('site.layouts.main.app')
 
 @section('content')
-    <div class="mx-auto max-w-5xl px-4 py-10 lg:px-6">
+    <div class="site-page">
         @include('site.partials.member-nav')
 
-        <div class="flex flex-col gap-5 border-b border-border pb-8 md:flex-row md:items-end md:justify-between">
+        <div class="mt-7 flex flex-col gap-5 border-b border-border pb-8 md:flex-row md:items-end md:justify-between">
             <div>
                 <div class="flex flex-wrap items-center gap-2">
                     <span class="kt-badge kt-badge-sm kt-badge-light-primary">{{ $review->serviceTypeLabel() }}</span>

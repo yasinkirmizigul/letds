@@ -27,7 +27,7 @@
             <div class="absolute -bottom-32 left-[12%] size-72 rounded-full bg-success/10 blur-3xl"></div>
         </div>
 
-        <div class="relative mx-auto grid max-w-7xl gap-6 px-4 py-9 sm:py-11 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-end lg:px-6 lg:py-14">
+        <div class="relative mx-auto grid max-w-[96rem] gap-6 px-3 py-9 sm:px-4 sm:py-11 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-end lg:px-6 lg:py-14">
             <div class="max-w-3xl">
                 <div class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
                     <i class="fa-solid fa-circle-question text-base" aria-hidden="true"></i>
@@ -58,7 +58,7 @@
         </div>
     </section>
 
-    <div class="mx-auto max-w-7xl px-4 py-10 lg:px-6 lg:py-14">
+    <div class="mx-auto max-w-[96rem] px-3 py-10 sm:px-4 lg:px-6 lg:py-14">
         <form method="GET" action="{{ $faqIndexUrl }}" class="grid gap-3 rounded-3xl border border-border bg-background p-3 shadow-sm sm:grid-cols-[minmax(0,1fr)_240px_auto]" role="search">
             <label class="relative block">
                 <span class="sr-only">SSS ara</span>
@@ -75,7 +75,12 @@
 
             <label>
                 <span class="sr-only">Konu grubu</span>
-                <select name="group" class="kt-select h-12 w-full">
+                <select
+                    name="group"
+                    class="kt-select h-12 w-full"
+                    data-kt-select="true"
+                    data-kt-select-placeholder="{{ $siteSettings->uiLine('faq_all_groups_label') }}"
+                >
                     <option value="">{{ $siteSettings->uiLine('faq_all_groups_label') }}</option>
                     @foreach($faqGroups as $group)
                         <option value="{{ $group }}" @selected($selectedGroup === $group)>{{ $group }}</option>

@@ -25,7 +25,7 @@
         <div class="mt-7 site-stat-grid" data-reveal>
             <div class="site-stat"><span class="text-sm text-muted-foreground">Toplam randevu</span><strong>{{ $member->appointments_count }}</strong></div>
             <div class="site-stat"><span class="text-sm text-muted-foreground">Aktif randevu</span><strong class="!text-primary">{{ $member->active_appointments_count }}</strong></div>
-            <div class="site-stat"><span class="text-sm text-muted-foreground">Projeler</span><strong>{{ $member->projects_count }}</strong></div>
+            <div class="site-stat"><span class="text-sm text-muted-foreground">Analiz çalışmaları</span><strong>{{ $member->projects_count }}</strong></div>
             <div class="site-stat"><span class="text-sm text-muted-foreground">Bekleyen değerlendirme</span><strong class="!text-warning">{{ $member->pending_service_reviews_count }}</strong></div>
         </div>
 
@@ -48,7 +48,7 @@
                     <div class="site-section-heading mb-6">
                         <div>
                             <span class="site-eyebrow">Son hareketler</span>
-                            <h2 class="mt-4 site-section-title">Projelerim</h2>
+                            <h2 class="mt-4 site-section-title">Analiz Sürecim</h2>
                         </div>
                         <a href="{{ route('member.projects.index', ['site_locale' => $siteCurrentLocale]) }}" class="text-sm font-semibold text-primary">Tümünü gör</a>
                     </div>
@@ -100,7 +100,7 @@
                     <span class="site-eyebrow">Hızlı işlemler</span>
                     <div class="mt-6 grid gap-3">
                         <a href="{{ route('member.appointments.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary w-full">Randevu oluştur</a>
-                        <a href="{{ route('member.projects.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full">Projelerime git</a>
+                        <a href="{{ route('member.projects.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full">Analiz sürecime git</a>
                         <a href="{{ route('member.reviews.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full">Değerlendirmelerim</a>
                         <a href="{{ route('site.contact-messages.create', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full">Mesaj gönder</a>
                     </div>
@@ -112,6 +112,15 @@
                         <div><span class="text-muted-foreground">Koşullar</span><div class="mt-1 font-semibold text-foreground">{{ $member->hasAcceptedMembershipTerms() ? 'Kabul edildi' : 'Onay bekliyor' }}</div></div>
                         <div><span class="text-muted-foreground">Onay tarihi</span><div class="mt-1 font-semibold text-foreground">{{ optional($member->membership_terms_accepted_at)->format('d.m.Y H:i') ?: '-' }}</div></div>
                         <a href="{{ route('member.terms.show', ['site_locale' => $siteCurrentLocale]) }}" class="text-sm font-semibold text-primary">Bilgilendirme metnini aç →</a>
+                    </div>
+                </div>
+
+                <div id="bilmeniz-gerekenler" class="rounded-3xl border border-primary/20 bg-primary/5 p-6">
+                    <span class="site-eyebrow">Bilmeniz Gerekenler</span>
+                    <div class="mt-5 grid gap-4 text-sm leading-7 text-muted-foreground">
+                        <p>Analiz başlamadan önce veri dosyanızın güncel sürümünü ve değişken açıklamalarını ilgili çalışma alanına yükleyin.</p>
+                        <p>Kişisel veya hassas veri içeren dosyalarda doğrudan kimlik bilgilerini kaldırın; gerekli gizlilik koşullarını ön görüşmede belirtin.</p>
+                        <p>Kapsam, tahmini teslim süresi ve fiyatlandırma ön görüşme sonrasında yazılı olarak netleştirilir.</p>
                     </div>
                 </div>
 

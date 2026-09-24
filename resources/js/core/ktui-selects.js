@@ -6,7 +6,7 @@ function selectConstructor() {
     return window.KTSelect || window.ktSelect || null;
 }
 
-function dashboardSelects(scope) {
+function applicationSelects(scope, bodySelector) {
     const selects = [];
 
     if (scope instanceof HTMLSelectElement) {
@@ -16,7 +16,7 @@ function dashboardSelects(scope) {
     scope.querySelectorAll?.('select').forEach((select) => selects.push(select));
 
     return selects.filter((select) => (
-        select.closest('body.dash_app')
+        select.closest(bodySelector)
         && !select.closest('.flatpickr-calendar, [data-app-select-ignore="true"]')
         && select.dataset.ktSelect !== 'false'
     ));
@@ -48,19 +48,19 @@ function syncSelect(select) {
     });
 }
 
-function initScope(scope = document) {
-    dashboardSelects(scope).forEach((select) => {
+function initScope(scope, bodySelector) {
+    applicationSelects(scope, bodySelector).forEach((select) => {
         prepareSelect(select);
         syncSelect(select);
     });
 }
 
-export function initDashboardKtSelects(scope = document) {
-    initScope(scope);
+function initApplicationKtSelects(scope, bodySelector, retry) {
+    initScope(scope, bodySelector);
 
     if (!selectConstructor()) {
         window.clearTimeout(retryTimer);
-        retryTimer = window.setTimeout(() => initDashboardKtSelects(scope), 80);
+        retryTimer = window.setTimeout(retry, 80);
         return;
     }
 
@@ -70,7 +70,7 @@ export function initDashboardKtSelects(scope = document) {
         for (const mutation of mutations) {
             if (mutation.type === 'childList') {
                 mutation.addedNodes.forEach((node) => {
-                    if (node instanceof HTMLElement) initScope(node);
+                    if (node instanceof HTMLElement) initScope(node, bodySelector);
                 });
 
                 if (mutation.target instanceof HTMLOptionElement) {
@@ -92,4 +92,20 @@ export function initDashboardKtSelects(scope = document) {
         childList: true,
         subtree: true,
     });
+}
+
+export function initDashboardKtSelects(scope = document) {
+    initApplicationKtSelects(
+        scope,
+        'body.dash_app',
+        () => initDashboardKtSelects(scope),
+    );
+}
+
+export function initSiteKtSelects(scope = document) {
+    initApplicationKtSelects(
+        scope,
+        'body.site-shell',
+        () => initSiteKtSelects(scope),
+    );
 }

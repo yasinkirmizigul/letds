@@ -31,10 +31,21 @@ class Appointment extends Model
 
     public const STATUS_TRANSFERRED = 'transferred';
 
+    public const SUPPORT_TOPICS = [
+        'Örneklem boyutu / güç analizi',
+        'Araştırma tasarımı',
+        'Veri analizi',
+        'Ölçek geliştirme / uyarlama',
+        'Akademik raporlama',
+        'Proforma fatura',
+        'Diğer',
+    ];
+
     protected $fillable = [
         'provider_id',
         'member_id',
         'meeting_method_id',
+        'support_topic',
         'start_at',
         'end_at',
         'blocks',

@@ -127,7 +127,7 @@
                                 <tr data-kt-empty-row="true">
                                     <td colspan="5" class="py-12">
                                         <div class="flex flex-col items-center justify-center gap-2 text-center text-muted-foreground">
-                                            <i class="ki-outline ki-folder-open text-4xl mb-2"></i>
+                                            <i class="ki-outline ki-folder text-4xl mb-2"></i>
                                             <div class="font-medium text-secondary-foreground">
                                                 Henüz kayıt bulunmuyor.
                                             </div>
@@ -188,7 +188,7 @@
 
                     <div class="kt-modal-body p-6">
                         <div class="flex items-start gap-3" id="roleDeleteAlert">
-                            <i class="ki-filled ki-warning-2 text-2xl text-danger"></i>
+                            <i class="ki-filled ki-information-2 text-2xl text-danger"></i>
                             <div class="grid gap-1">
                                 <div class="font-semibold text-foreground">
                                     Bu rol silinecek: <span id="roleDeleteName" class="font-bold"></span>

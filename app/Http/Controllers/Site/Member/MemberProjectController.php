@@ -35,8 +35,8 @@ class MemberProjectController extends Controller
             ->withQueryString();
 
         return view('site.member-projects.index', [
-            'pageTitle' => 'Projelerim',
-            'metaDescription' => 'Proje ilerlemelerinizi ve paylaşılan dosyaları yönetin.',
+            'pageTitle' => 'Analiz Sürecim',
+            'metaDescription' => 'Analiz aşamalarınızı, belgelerinizi ve sonuçlarınızı tek alanda takip edin.',
             'projects' => $projects,
             'search' => $search,
         ]);

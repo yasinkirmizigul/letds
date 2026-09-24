@@ -248,7 +248,10 @@ class HomepageConfigurationService
         $headerLogo = $this->headerLogo($settings);
         $backgroundImage = $this->mediaAsset($settings, 'background_media_id');
         $backgroundDefaults = $this->defaultBackgrounds();
-        $sections = $this->homepageSectionService->resolved($locale);
+        $sections = array_merge(
+            $this->homepageSectionService->resolved($locale),
+            $this->homepageSectionService->resolvedForPlacement('services', $locale),
+        );
 
         return compact('content', 'settings', 'tooltips', 'modes', 'headerLogo', 'backgroundImage', 'backgroundDefaults', 'sections');
     }

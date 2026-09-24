@@ -35,7 +35,7 @@ class HomepageConfigurationTest extends TestCase
 
         $this->get('/')
             ->assertOk()
-            ->assertSee('The combination of great design and diligent app development.')
+            ->assertSee('Akademik ve profesyonel projeleriniz için istatistiksel danışmanlık.')
             ->assertSee('--home-before-bg:#ffffff', false)
             ->assertSee('--home-before-color-layer:var(--home-before-bg)', false)
             ->assertSee('--home-before-surface-opacity:1', false)
@@ -62,6 +62,7 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('data-home-mode="analysis"', false)
             ->assertSee('class="home-hero-pending', false)
             ->assertSee('data-site-theme-toggle', false)
+            ->assertSee('class="home-floating-theme-toggle"', false)
             ->assertSee('home-background-light.svg', false)
             ->assertSee('home-background-dark.svg', false)
             ->assertSee('probablue-site-theme', false)
@@ -73,13 +74,25 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('rel="apple-touch-icon" sizes="180x180"', false)
             ->assertDontSee('id="logo-bird"', false)
             ->assertSee('class="home-surface-pattern"', false)
-            ->assertSee('İstatistiksel Analiz')
-            ->assertSee('İstatistiksel Danışma')
-            ->assertSee('data-home-mode-tab="consultation"', false)
-            ->assertSee('Müşteri Memnuniyeti')
+            ->assertSee('home-mode-nav--brand-menu', false)
+            ->assertSee('home-desktop-navigation', false)
+            ->assertSee('Neler Sunuyoruz?')
+            ->assertSee('Nasıl İlerliyoruz?')
+            ->assertSee('Birlikte Başlayalım')
+            ->assertSee('Kayıt Ol')
+            ->assertSee('Giriş Yap')
+            ->assertSee('Probablue Studio')
+            ->assertSee('Yakında kullanıma açılıyor.')
+            ->assertSee('aria-disabled="true"', false)
+            ->assertDontSee('data-home-mode-tab=', false)
+            ->assertDontSee('İşinizi birlikte ileri taşıyalım.')
+            ->assertSee('Araştırmanızın her aşamasında yanınızdayız.')
+            ->assertSee('İleri İstatistiksel Analizler')
+            ->assertSee('Basit, şeffaf ve bilimsel bir süreç.')
+            ->assertSee('id="birlikte-baslayalim"', false)
             ->assertSee('data-surface="tint"', false)
             ->assertSee('--home-feature-columns: 3', false)
-            ->assertSee('VIEW THEMES');
+            ->assertSee('İstatistiksel Analiz ve Danışmanlık');
 
         $this->assertDatabaseCount('site_homepage_configs', 1);
     }
@@ -118,6 +131,8 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('data-home-navigation', false)
             ->assertSee('home-probablue-panel--analysis', false)
             ->assertSee('home-probablue-panel--consultation', false)
+            ->assertSee('Probablue Studio')
+            ->assertSee('home-entry-cta--disabled', false)
             ->assertDontSee('id="before-after"', false)
             ->assertDontSee('id="dragme"', false);
     }
@@ -354,6 +369,9 @@ class HomepageConfigurationTest extends TestCase
             'Danışmanlık sekmesi güncellendi',
             $service->resolved('tr')['modes']['consultation']['hero_title']
         );
+        $this->assertSame('Analiz Merkezi', $service->resolved('tr')['modes']['analysis']['label']);
+        $this->assertSame('Uzman Danışmanlık', $service->resolved('tr')['modes']['consultation']['label']);
+        $this->assertSame('/danismanlik', $service->resolved('tr')['modes']['consultation']['cta_url']);
 
         $this->get('/')
             ->assertOk()
@@ -365,10 +383,9 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('data-home-background-url="'.$backgroundMedia->url().'"', false)
             ->assertSee('--home-background-image-dark:url(&quot;'.$backgroundMedia->url().'&quot;)', false)
             ->assertSee('data-stat-symbol-mode="moving"', false)
-            ->assertSee('Analiz Merkezi')
-            ->assertSee('Uzman Danışmanlık')
-            ->assertSee('Danışmanlık sekmesi güncellendi')
-            ->assertSee('/danismanlik', false)
+            ->assertSee('Probablue Studio')
+            ->assertSee('Yakında kullanıma açılıyor.')
+            ->assertDontSee('data-home-mode-tab', false)
             ->assertSee($backgroundMedia->url(), false)
             ->assertSee('--home-background-brightness:80%', false)
             ->assertSee('--home-background-overlay-opacity:0.45', false)
@@ -385,8 +402,7 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('--home-before-pattern-size:22px', false)
             ->assertSee('--home-before-pattern-blur:0.75px', false)
             ->assertSee('--home-before-pattern-blend:overlay', false)
-            ->assertSee('--home-before-pattern-image:repeating-linear-gradient(', false)
-            ->assertSee('--home-tooltip-text: #334455', false);
+            ->assertSee('--home-before-pattern-image:repeating-linear-gradient(', false);
     }
 
     public function test_cursor_symbols_can_run_while_moving_and_idle_together(): void

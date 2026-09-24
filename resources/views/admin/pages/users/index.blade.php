@@ -222,7 +222,7 @@
                                 <tr data-kt-empty-row="true">
                                     <td colspan="8" class="py-12">
                                         <div class="flex flex-col items-center justify-center gap-2 text-center text-muted-foreground">
-                                            <i class="ki-outline ki-folder-open text-4xl mb-2"></i>
+                                            <i class="ki-outline ki-folder text-4xl mb-2"></i>
                                             <div class="font-medium text-secondary-foreground">Henüz kayıt bulunmuyor.</div>
                                             <div class="text-sm">Yeni kayıt ekleyerek baslayabilirsiniz.</div>
                                         </div>

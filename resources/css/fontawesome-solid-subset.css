@@ -7,23 +7,46 @@
          url("../../public/assets/site/plugins/global/fonts/@fortawesome/fa-solid-900.ttf") format("truetype");
 }
 
+@font-face {
+    font-family: "Font Awesome 6 Free";
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src: url("../../public/assets/site/plugins/global/fonts/@fortawesome/fa-regular-400.woff2") format("woff2"),
+         url("../../public/assets/site/plugins/global/fonts/@fortawesome/fa-regular-400.ttf") format("truetype");
+}
+
 .fa-solid,
-.fas {
+.fas,
+.fa-regular,
+.far {
     display: inline-block;
     font-family: "Font Awesome 6 Free";
     font-style: normal;
     font-variant: normal;
-    font-weight: 900;
     line-height: 1;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
 }
 
+.fa-solid,
+.fas {
+    font-weight: 900;
+}
+
+.fa-regular,
+.far {
+    font-weight: 400;
+}
+
 .fa-arrow-left::before { content: "\f060"; }
 .fa-arrow-right::before { content: "\f061"; }
+.fa-bell::before { content: "\f0f3"; }
 .fa-book-open::before { content: "\f518"; }
 .fa-brain::before { content: "\f5dc"; }
 .fa-briefcase::before { content: "\f0b1"; }
+.fa-building-columns::before { content: "\f19c"; }
+.fa-calendar::before { content: "\f133"; }
 .fa-calendar-check::before { content: "\f274"; }
 .fa-calendar-days::before { content: "\f073"; }
 .fa-chart-column::before { content: "\e0e3"; }
@@ -40,18 +63,25 @@
 .fa-clock::before { content: "\f017"; }
 .fa-comments::before { content: "\f086"; }
 .fa-compass-drafting::before { content: "\f568"; }
+.fa-envelope::before { content: "\f0e0"; }
+.fa-eye::before { content: "\f06e"; }
+.fa-eye-slash::before { content: "\f070"; }
 .fa-file-lines::before { content: "\f15c"; }
 .fa-heart::before { content: "\f004"; }
 .fa-heart-pulse::before { content: "\f21e"; }
 .fa-house::before { content: "\f015"; }
 .fa-image::before { content: "\f03e"; }
 .fa-life-ring::before { content: "\f1cd"; }
+.fa-list::before { content: "\f03a"; }
+.fa-lock::before { content: "\f023"; }
 .fa-magnifying-glass::before { content: "\f002"; }
 .fa-note-sticky::before { content: "\f249"; }
 .fa-pen::before { content: "\f304"; }
+.fa-phone::before { content: "\f095"; }
 .fa-rotate::before { content: "\f2f1"; }
 .fa-shield-halved::before { content: "\f3ed"; }
 .fa-sliders::before { content: "\f1de"; }
+.fa-user::before { content: "\f007"; }
 .fa-users::before { content: "\f0c0"; }
 .fa-wand-magic-sparkles::before { content: "\e2ca"; }
 .fa-xmark::before { content: "\f00d"; }

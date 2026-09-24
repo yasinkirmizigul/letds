@@ -26,7 +26,7 @@
 
                         <div class="mt-5 flex flex-wrap gap-2">
                             <span class="kt-badge kt-badge-light"><i class="ki-filled ki-shield-tick"></i> Transaction korumalı</span>
-                            <span class="kt-badge kt-badge-light"><i class="ki-filled ki-link"></i> İlişkisel veri</span>
+                            <span class="kt-badge kt-badge-light"><i class="ki-filled ki-paper-clip"></i> İlişkisel veri</span>
                             <span class="kt-badge kt-badge-light"><i class="ki-filled ki-picture"></i> Yerel SVG medya</span>
                             <span class="kt-badge kt-badge-light"><i class="ki-filled ki-lock-2"></i> Eşzamanlı işlem kilidi</span>
                         </div>
@@ -150,7 +150,7 @@
                     </div>
                     <div class="kt-card-content grid gap-3 p-5 sm:grid-cols-2 sm:p-6">
                         @foreach([
-                            ['Admin / Super Admin hesapları', $protected['users'] ?? 0, 'ki-filled ki-shield-user'],
+                            ['Admin / Super Admin hesapları', $protected['users'] ?? 0, 'ki-filled ki-security-user'],
                             ['Roller', $protected['roles'] ?? 0, 'ki-filled ki-user-tick'],
                             ['Yetkiler', $protected['permissions'] ?? 0, 'ki-filled ki-key-square'],
                             ['Site, tema ve logo ayarları', $protected['site_settings'] ?? 0, 'ki-filled ki-design-1'],

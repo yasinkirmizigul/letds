@@ -1,6 +1,6 @@
 @php
     $siteName = trim((string) (($siteSettings ?? null)?->localized('site_name') ?: 'PROBABLUE'));
-    $siteName = strcasecmp($siteName, 'Laravel') === 0 ? 'PROBABLUE' : $siteName;
+    $siteName = $siteName === '' ? config('app.name') : $siteName;
     $locale = $siteCurrentLocale ?? app()->getLocale();
     $isRtl = ($siteCurrentLanguage ?? null)?->is_rtl ?? false;
     $homepageContent = $homepage['content'] ?? [];
@@ -108,20 +108,7 @@
     @if($heroLayout === 'interactive')
     <header id="header-wrapper" class="site-home-header">
         <div class="home-container">
-            <nav class="home-mode-nav" aria-label="Ana sayfa hizmetleri">
-                <button
-                    type="button"
-                    class="home-mode-tab home-mode-tab--left is-active"
-                    role="tab"
-                    aria-selected="true"
-                    data-home-mode-tab="{{ $leftMode['key'] }}"
-                    data-home-mode-payload="{{ json_encode($leftMode, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) }}"
-                    data-home-header-contrast="true"
-                >
-                    <span class="home-mode-tab__icon">@include('site.partials.home-mode-icon', ['icon' => $leftMode['icon']])</span>
-                    <span>{{ $leftMode['label'] }}</span>
-                </button>
-
+            <nav class="home-mode-nav home-mode-nav--brand-menu" aria-label="Ana sayfa menüsü">
                 <a
                     href="{{ \App\Support\Site\SiteLocalization::homeUrl($locale) }}"
                     class="wrapper-logo home-header-logo {{ $headerLogo ? 'has-image' : 'is-fallback' }}"
@@ -147,26 +134,16 @@
                 </a>
 
                 <div class="home-mode-nav__end">
-                    <button
-                        type="button"
-                        class="home-mode-tab home-mode-tab--right"
-                        role="tab"
-                        aria-selected="false"
-                        data-home-mode-tab="{{ $rightMode['key'] }}"
-                        data-home-mode-payload="{{ json_encode($rightMode, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) }}"
-                        data-home-header-contrast="true"
-                    >
-                        <span>{{ $rightMode['label'] }}</span>
-                        <span class="home-mode-tab__icon">@include('site.partials.home-mode-icon', ['icon' => $rightMode['icon']])</span>
-                    </button>
-
-                    @include('site.partials.theme-toggle', ['variant' => 'home'])
                     @include('site.partials.home-navigation-menu')
                 </div>
             </nav>
         </div>
     </header>
     @endif
+
+    <div class="home-floating-theme-toggle">
+        @include('site.partials.theme-toggle', ['variant' => 'home'])
+    </div>
 
     <main>
         @if($heroLayout === 'interactive')
@@ -189,7 +166,7 @@
                             <p class="text-center">
                                 <a
                                     href="{{ $activeMode['cta_url'] }}"
-                                    class="btn-sumary btn-sumary-big btn-header"
+                                    class="btn-sumary btn-sumary-big btn-header home-entry-cta"
                                     title="{{ $activeMode['cta_label'] }}"
                                     data-home-cta="true"
                                     @if($homepageSettings['cta_new_tab']) target="_blank" rel="noopener" @endif
@@ -200,20 +177,6 @@
                             </p>
                         </div>
 
-                        <div class="content-left">
-                            <ul>
-                                @foreach($homepageTooltipItems as $item)
-                                    <li class="{{ $item['key'] }} {{ $loop->first ? 'active' : '' }}">
-                                        <div class="content-detail-wrapper">
-                                            <div class="img-position">
-                                                <img src="{{ asset('assets/site/home/images/tooltip-dot.png') }}" alt="">
-                                            </div>
-                                            <h2 style="--home-tooltip-text: {{ $item['title_color'] }}">{!! \App\Support\Security\HtmlSanitizer::sanitize($item['title']) !!}</h2>
-                                        </div>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -231,35 +194,19 @@
                     <div class="shadown-bird home-hero-shadow"></div>
 
                     <div class="content-before-after left-position">
-                        <div class="content-right">
-                            <h1 data-home-hero-title="true">{{ $activeMode['hero_title'] }}</h1>
-                            <p class="text-center">
-                                <a
-                                    href="{{ $activeMode['cta_url'] }}"
-                                    class="btn-sumary btn-sumary-big btn-header"
-                                    title="{{ $activeMode['cta_label'] }}"
-                                    data-home-cta="true"
-                                    @if($homepageSettings['cta_new_tab']) target="_blank" rel="noopener" @endif
-                                >
-                                    <span data-home-cta-label="true">{{ $activeMode['cta_label'] }}</span>
-                                    <span class="home-cta-arrow" aria-hidden="true">›</span>
-                                </a>
-                            </p>
-                        </div>
-
                         <div class="content-left">
-                            <ul>
-                                @foreach($homepageTooltipItems as $item)
-                                    <li class="{{ $item['key'] }} {{ $loop->first ? 'active' : '' }}">
-                                        <div class="content-detail-wrapper">
-                                            <div class="img-position">
-                                                <img src="{{ asset('assets/site/home/images/tooltip-dot.png') }}" alt="">
-                                            </div>
-                                            <h2 style="--home-tooltip-text: {{ $item['highlighted_title_color'] }}">{!! \App\Support\Security\HtmlSanitizer::sanitize($item['highlighted_title']) !!}</h2>
-                                        </div>
-                                    </li>
-                                @endforeach
-                            </ul>
+                            <div class="home-passive-studio" aria-labelledby="home-studio-title">
+                                <svg class="home-passive-studio__icon" viewBox="0 0 72 48" aria-hidden="true" focusable="false">
+                                    <path d="M24 14C16 9 10 8 5 8c4 6 5 10 5 16S9 34 5 40c6 0 13-2 20-7 5 5 12 8 21 8 12 0 21-7 21-17S58 7 46 7c-9 0-16 2-22 7Z" />
+                                    <circle cx="51" cy="19" r="2.5" />
+                                    <path d="M59 28c-4 3-8 4-13 4" />
+                                </svg>
+                                <h2 id="home-studio-title">Yakında kullanıma açılıyor.</h2>
+                                <button type="button" class="home-entry-cta home-entry-cta--disabled" disabled aria-disabled="true">
+                                    <span>Probablue Studio</span>
+                                    <span class="home-entry-cta__arrow" aria-hidden="true">→</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -285,11 +232,19 @@
         @endif
 
         @foreach($homepageSections as $section)
-            @if(($section['type'] ?? null) === 'features')
-                @include('site.home-sections.features', ['section' => $section])
+            @if(in_array(($section['type'] ?? null), ['features', 'services', 'process'], true))
+                @include('site.home-sections.features', [
+                    'section' => $section,
+                    'sectionAnchor' => match ($section['type'] ?? null) {
+                        'services' => 'neler-sunuyoruz',
+                        'process' => 'nasil-ilerliyoruz',
+                        default => 'home-feature-' . $section['id'],
+                    },
+                ])
             @endif
         @endforeach
 
+        @include('site.home-sections.start')
         @include('site.home-sections.about-faq')
     </main>
 

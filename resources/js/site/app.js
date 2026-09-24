@@ -5,6 +5,7 @@ import Alpine from 'alpinejs';
 import { initGlobalBlockUi } from '@/core/block-ui';
 import initTitleTooltips from '@/core/title-tooltips';
 import { initPasswordConfirmationValidation } from '@/core/password-confirmation';
+import { initSiteKtSelects } from '@/core/ktui-selects';
 
 window.Alpine = Alpine;
 Alpine.start();
@@ -50,6 +51,7 @@ domReady(() => {
     initPasswordConfirmationValidation(document);
     initTitleTooltips(document);
     initKtComponents();
+    initSiteKtSelects(document);
     initReveals();
     initReviewStars();
     document.documentElement.classList.add('site-js-ready');

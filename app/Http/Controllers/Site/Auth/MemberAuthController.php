@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Site\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Member;
 use App\Models\Site\SiteSetting;
-use App\Services\Member\MemberDocumentService;
 use App\Support\Auth\GuardIntendedUrl;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -17,21 +16,17 @@ use Illuminate\Validation\ValidationException;
 
 class MemberAuthController extends Controller
 {
-    public function __construct(
-        private readonly MemberDocumentService $documentService
-    ) {}
-
     public function showLogin(): View
     {
         return view('site.auth.member-login', [
-            'pageTitle' => 'Üye Girişi',
+            'pageTitle' => 'Giriş Yap',
         ]);
     }
 
     public function showRegister(): View
     {
         return view('site.auth.member-register', [
-            'pageTitle' => 'Üye Kaydı',
+            'pageTitle' => 'Kayıt Ol',
         ]);
     }
 
@@ -51,7 +46,6 @@ class MemberAuthController extends Controller
             'phone' => ['nullable', 'string', 'max:50'],
             'institution' => ['nullable', 'string', 'max:190'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'filepath' => ['nullable', 'file', 'max:12288', 'mimes:pdf,jpg,jpeg,png,webp,doc,docx'],
             'membership_terms_read' => ['accepted'],
             'membership_terms_accepted' => ['accepted'],
         ], [
@@ -62,7 +56,7 @@ class MemberAuthController extends Controller
         $settings = SiteSetting::current();
 
         /** @var Member $member */
-        $member = DB::transaction(function () use ($validated, $request, $settings) {
+        $member = DB::transaction(function () use ($validated, $settings) {
             $member = Member::create([
                 'name' => trim((string) $validated['name']),
                 'surname' => trim((string) $validated['surname']),
@@ -74,10 +68,6 @@ class MemberAuthController extends Controller
                 'membership_terms_accepted_at' => now(),
                 'membership_terms_version' => $settings->memberTermsVersion(),
             ]);
-
-            if ($request->hasFile('filepath')) {
-                $this->documentService->sync($member, $request->file('filepath'));
-            }
 
             return $member;
         });

@@ -24,7 +24,7 @@
 
                 <div class="mt-8 flex flex-wrap gap-3">
                     <a href="{{ route('member.register', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary">Kayıt Ekranına Dön</a>
-                    <a href="{{ route('member.login', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light">Üye Girişine Git</a>
+                    <a href="{{ route('member.login', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light">Giriş Yap</a>
                 </div>
             </div>
         </section>

@@ -5,9 +5,9 @@
         @include('site.partials.member-nav')
 
         <section class="mt-7 site-page-hero" data-reveal>
-            <span class="site-eyebrow">Çalışma alanım</span>
-            <h1 class="site-title">Projeler, dosyalar, ilerleme.</h1>
-            <p class="site-lead">Tamamlanan randevularınızdan doğan projeleri takip edin, gerekli dosyaları güvenle paylaşın ve teslim sonunda deneyiminizi değerlendirin.</p>
+            <span class="site-eyebrow">Analiz Sürecim</span>
+            <h1 class="site-title">Dosyadan sonuca tüm süreç tek yerde.</h1>
+            <p class="site-lead">Dosyalarınızın alındığı andan raporlamaya kadar analizinizin hangi aşamada olduğunu takip edin.</p>
         </section>
 
         <form action="{{ route('member.projects.index', ['site_locale' => $siteCurrentLocale]) }}" method="GET" class="site-filter-panel sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
@@ -21,8 +21,8 @@
         <section class="mt-10 grid gap-4">
             <div class="site-section-heading mb-2">
                 <div>
-                    <span class="site-eyebrow">Projelerim</span>
-                    <h2 class="mt-4 site-section-title">{{ number_format($projects->total()) }} proje</h2>
+                    <span class="site-eyebrow">Çalışmalarım</span>
+                    <h2 class="mt-4 site-section-title">{{ number_format($projects->total()) }} analiz çalışması</h2>
                 </div>
                 <a href="{{ route('member.appointments.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light">Yeni randevu oluştur</a>
             </div>
@@ -43,19 +43,31 @@
                                 <span>Son işlem {{ $project->updated_at->diffForHumans() }}</span>
                             </div>
                         </div>
-                        <a href="{{ route('member.projects.show', ['project' => $project, 'site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary shrink-0">Projeyi aç</a>
+                        <a href="{{ route('member.projects.show', ['project' => $project, 'site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary shrink-0">Süreci aç</a>
                     </div>
                 </article>
             @empty
                 <div class="site-empty">
                     <div>
                         <span class="site-eyebrow mx-auto">İlk adım</span>
-                        <h2 class="mt-5 site-section-title">Henüz bir projeniz bulunmuyor.</h2>
-                        <p class="mx-auto mt-3 max-w-lg text-sm leading-7 text-muted-foreground">Randevunuz tamamlandığında proje çalışma alanınız otomatik olarak oluşturulur.</p>
+                        <h2 class="mt-5 site-section-title">Henüz bir analiz çalışmanız bulunmuyor.</h2>
+                        <p class="mx-auto mt-3 max-w-lg text-sm leading-7 text-muted-foreground">Ön görüşmeniz tamamlandığında analiz çalışma alanınız otomatik olarak oluşturulur.</p>
                         <a href="{{ route('member.appointments.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary mt-6">Randevu oluştur</a>
                     </div>
                 </div>
             @endforelse
+        </section>
+
+        <section id="belgelerim" class="mt-10 rounded-3xl border border-border bg-background p-6 md:p-8" data-reveal>
+            <span class="site-eyebrow">Belgelerim</span>
+            <h2 class="mt-4 site-section-title">Dosyalarınız çalışma bazında korunur.</h2>
+            <p class="mt-3 max-w-3xl text-sm leading-7 text-muted-foreground">Bir çalışma alanını açarak veri dosyalarınızı yükleyebilir, daha önce paylaşılan belgeleri görüntüleyebilir ve izin verilen aşamalarda güncelleyebilirsiniz.</p>
+        </section>
+
+        <section id="sonuclarim" class="mt-7 rounded-3xl border border-border bg-background p-6 md:p-8" data-reveal>
+            <span class="site-eyebrow">Sonuçlarım</span>
+            <h2 class="mt-4 site-section-title">Rapor ve sonuç dosyalarınıza aynı çalışma alanından ulaşın.</h2>
+            <p class="mt-3 max-w-3xl text-sm leading-7 text-muted-foreground">Raporlama aşamasına ulaşan çalışmalarınızın paylaşılan çıktılarını ilgili analiz sürecini açarak indirebilirsiniz.</p>
         </section>
 
         <div class="mt-7">{{ $projects->links() }}</div>

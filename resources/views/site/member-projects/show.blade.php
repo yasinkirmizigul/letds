@@ -7,7 +7,7 @@
         <header class="mt-7 rounded-[2rem] border border-border bg-background p-6 shadow-sm md:p-9" data-reveal>
             <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                 <div>
-                    <a href="{{ route('member.projects.index', ['site_locale' => $siteCurrentLocale]) }}" class="site-eyebrow">Projelerime dön</a>
+                    <a href="{{ route('member.projects.index', ['site_locale' => $siteCurrentLocale]) }}" class="site-eyebrow">Analiz sürecime dön</a>
                     <h1 class="mt-6 max-w-4xl font-display text-3xl font-semibold leading-tight text-foreground md:text-5xl">{{ $project->localizedValue('title') }}</h1>
                     <div class="mt-5 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                         <span class="{{ \App\Models\Admin\Project\Project::statusBadgeClass($project->status) }}">{{ \App\Models\Admin\Project\Project::statusLabel($project->status) }}</span>
@@ -22,7 +22,7 @@
                 @endif
             </div>
 
-            <div class="mt-8 site-workflow" aria-label="Proje ilerleme durumu">
+            <div class="mt-8 site-workflow" aria-label="Analiz ilerleme durumu">
                 @foreach($workflowSteps as $step)
                     <div class="site-workflow-step {{ $step['is_complete'] ? 'is-complete' : '' }} {{ $step['is_current'] ? 'is-current' : '' }}">
                         <span>{{ $step['label'] }}</span>
@@ -45,7 +45,7 @@
         <div class="mt-8 grid gap-7 lg:grid-cols-[minmax(0,1.25fr)_minmax(20rem,.75fr)]">
             <section class="grid gap-7">
                 <div class="rounded-3xl border border-border bg-background p-6 md:p-8">
-                    <span class="site-eyebrow">Proje özeti</span>
+                    <span class="site-eyebrow">Çalışma özeti</span>
                     <div class="site-prose mt-6">
                         {!! $project->localizedValue('content') ?: '<p>Proje kapsamı ekip tarafından güncellenecek.</p>' !!}
                     </div>
@@ -54,7 +54,7 @@
                 <div class="rounded-3xl border border-border bg-background p-6 md:p-8">
                     <div class="site-section-heading mb-6">
                         <div>
-                            <span class="site-eyebrow">Dosya alanı</span>
+                            <span class="site-eyebrow">Belgelerim &amp; Sonuçlarım</span>
                             <h2 class="mt-4 site-section-title">Paylaşılan dosyalar</h2>
                         </div>
                         <span class="text-sm text-muted-foreground">{{ $project->files->count() }} dosya</span>
@@ -117,7 +117,7 @@
                 @if($project->allowsMemberUploads())
                     <form method="POST" action="{{ route('member.projects.files.store', ['project' => $project, 'site_locale' => $siteCurrentLocale]) }}" enctype="multipart/form-data" class="rounded-3xl border border-border bg-background p-6">
                         @csrf
-                        <span class="site-eyebrow">Yeni paylaşım</span>
+                            <span class="site-eyebrow">Yeni belge</span>
                         <label class="site-file-drop mt-6" for="project_files">
                             <span>
                                 <span class="mx-auto grid size-12 place-items-center rounded-full bg-primary/10 text-2xl text-primary">+</span>

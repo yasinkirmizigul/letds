@@ -1,239 +1,86 @@
-# Theme Tailwind HTML Laravel Integration
+# PROBABLUE Kurumsal Platform
 
-This project integrates Theme Tailwind HTML themes into a Laravel application, providing 10 complete demo layouts showcasing different UI patterns and design approaches.
+PROBABLUE; istatistiksel analiz, danışmanlık, içerik yönetimi ve operasyon süreçlerini tek merkezde birleştiren kurumsal bir web platformudur. Ziyaretçi deneyimi, üyelik işlemleri, randevu yönetimi ve yönetim paneli aynı ürün çatısı altında çalışır.
 
-## Project Overview
+## Ürün kapsamı
 
-**Goal**: Convert Theme Tailwind HTML demo layouts (Demo1 through Demo10) into standard Laravel Blade views, providing a comprehensive showcase of Theme's design system within Laravel's MVC architecture.
+- Kurumsal web sitesi ve çok dilli içerik yönetimi
+- Üyelik, profil ve güvenli parola işlemleri
+- Randevu oluşturma ve operasyon takibi
+- Hizmet, proje, ürün, blog ve galeri yönetimi
+- İletişim talepleri ve yönetici bildirimleri
+- Sipariş, ödeme ve kargo süreçleri
+- Rol ve yetki tabanlı yönetim paneli
+- Tema, marka, SEO ve e-posta ayarları
 
-## Tech Stack
+## Teknik gereksinimler
 
-- **Laravel**: 12.x (Latest)
-- **PHP**: 8.2+
-- **Tailwind CSS**: 3.x
-- **Vite**: 5.x for asset building
-- **Node.js**: Latest LTS version
+- PHP 8.4 veya üzeri
+- Composer
+- Node.js ve npm
+- MySQL, PostgreSQL veya SQLite
 
-## Project Structure
+## Kurulum
 
-```
-app/Http/Controllers/
-├── Demo1Controller.php
-├── Demo2Controller.php
-├── ...
-└── Demo10Controller.php
-
-resources/views/
-├── layouts/
-│   ├── partials/
-│   │   ├── head.blade.php
-│   │   └── scripts.blade.php
-│   ├── demo1/
-│   │   ├── base.blade.php
-│   │   └── partials/
-│   ├── demo2/
-│   │   ├── base.blade.php
-│   │   └── partials/
-│   └── ... (demo3-demo10)
-├── pages/
-│   ├── demo1/
-│   │   └── index.blade.php
-│   ├── demo2/
-│   │   └── index.blade.php
-│   └── ... (demo3-demo10)
-└── components/
-    ├── demo1/
-    ├── demo2/
-    ├── ... (demo3-demo10)
-    └── shared/
-
-public/assets/
-├── css/
-│   └── styles.css
-├── js/
-│   ├── core.bundle.js
-│   └── layouts/
-│       ├── app.js
-│       ├── demo2.js
-│       └── ... (demo3-demo10.js)
-├── media/
-└── vendors/
+```bash
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+npm run build
 ```
 
-## Demo Layouts
+Yerel geliştirme ortamını başlatmak için:
 
-This integration includes 10 complete demo layouts, each showcasing different UI patterns:
+```bash
+composer run dev
+```
 
-- **Demo 1**: Sidebar Layout - Traditional admin dashboard with sidebar navigation
-- **Demo 2**: Header Layout - Modern dashboard with top navigation
-- **Demo 3**: Minimal Layout - Clean, minimalist design approach
-- **Demo 4**: Creative Layout - Creative and artistic dashboard design
-- **Demo 5**: Modern Layout - Contemporary UI with modern elements
-- **Demo 6**: Professional Layout - Business-focused professional design
-- **Demo 7**: Corporate Layout - Enterprise-grade corporate dashboard
-- **Demo 8**: Executive Layout - Executive-level dashboard interface
-- **Demo 9**: Premium Layout - Premium design with advanced components
-- **Demo 10**: Ultimate Layout - Most comprehensive layout with all features
+## Test ve kalite kontrolleri
 
-## Features
+```bash
+php artisan test
+npm run build
+```
 
-### ✅ Core Implementation
+Kod biçimlendirme kontrolü için:
 
-1. **Laravel MVC Architecture**
-   - Dedicated controllers for each demo (Demo1Controller - Demo10Controller)
-   - Clean routing structure with named routes
-   - Blade template inheritance and components
+```bash
+vendor/bin/pint
+```
 
-2. **Asset Management**
-   - Theme CSS and JavaScript assets properly integrated
-   - Laravel asset helpers for proper path resolution
-   - Vite integration for development workflow
+## Geçici tanıtım bağlantısı
 
-3. **Template System**
-   - Blade layouts for each demo with proper inheritance
-   - Reusable partials for headers, sidebars, and footers
-   - Component-based architecture for UI elements
-
-4. **Responsive Design**
-   - Mobile-first responsive layouts
-   - Touch-friendly navigation
-   - Adaptive components across all screen sizes
-
-### 🎨 Design System
-
-- **Theme Tailwind CSS** - Complete design system integration
-- **Theme Support** - Light and dark mode switching
-- **Custom Components** - Theme-specific UI components
-- **Icon System** - Comprehensive icon library integration
-
-## Getting Started
-
-### Share a temporary online demo
-
-On Windows, the project can be shared through a free, password-protected Cloudflare Quick Tunnel:
+Windows üzerinde parola korumalı geçici bir Cloudflare bağlantısı oluşturulabilir:
 
 ```powershell
 winget install --id Cloudflare.cloudflared --exact
 .\scripts\share-demo.cmd
 ```
 
-The command builds the frontend, starts Laravel locally, and prints a temporary
-`https://...trycloudflare.com` URL with generated demo credentials. Keep the terminal open while
-the presentation is active and press `Ctrl+C` to close both the public tunnel and local server.
-The script waits until Cloudflare publishes the quick-tunnel DNS record before showing the URL.
-If Windows still reports `DNS_PROBE_FINISHED_NXDOMAIN`, enable Cloudflare (`1.1.1.1`) under the
-browser's **Secure DNS** setting; this means the local/ISP DNS cache is behind the public record.
+Komut, üretim ön yüz paketini hazırlar ve geçici adres ile erişim bilgilerini terminalde gösterir. Bağlantıyı kapatmak için `Ctrl+C` kullanılabilir.
 
-Use `-SkipBuild`, `-Port 8080`, or `-Password your-password` when needed. Quick Tunnel URLs change
-after each restart and are intended for demonstrations, not production hosting.
+## Üretim hazırlığı
 
-### Prerequisites
-- PHP 8.2 or higher
-- Composer
-- Node.js (LTS version)
-- A web server (Apache/Nginx) or use Laravel's built-in server
-
-### Installation
-
-1. **Clone the repository**
 ```bash
-git clone https://github.com/keenthemes/metronic-tailwind-html-integration.git
-cd metronic-tailwind-html-integration/metronic-tailwind-laravel
-```
-
-2. **Install PHP dependencies**
-```bash
-composer install
-```
-
-3. **Install Node.js dependencies**
-```bash
-npm install
-```
-
-4. **Copy Theme assets**
-```bash
-# Copy assets from metronic-tailwind-html/dist/assets to public/assets/
-cp -r ../metronic-tailwind-html/dist/assets public/
-```
-
-5. **Environment setup**
-```bash
-cp .env.example .env
-php artisan key:generate
-```
-
-6. **Start development servers**
-```bash
-# Terminal 1: Laravel server
-php artisan serve
-
-# Terminal 2: Vite dev server
-npm run dev
-```
-
-### Available Routes
-- **Demo 1**: `/demo1` - Sidebar Layout
-- **Demo 2**: `/demo2` - Header Layout
-- **Demo 3**: `/demo3` - Minimal Layout
-- **Demo 4**: `/demo4` - Creative Layout
-- **Demo 5**: `/demo5` - Modern Layout
-- **Demo 6**: `/demo6` - Professional Layout
-- **Demo 7**: `/demo7` - Corporate Layout
-- **Demo 8**: `/demo8` - Executive Layout
-- **Demo 9**: `/demo9` - Premium Layout
-- **Demo 10**: `/demo10` - Ultimate Layout
-
-## Production Deployment
-
-### Build for Production
-```bash
-# Build optimized assets
 npm run build
-
-# Optimize Laravel
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-
-# Optimize Composer autoloader
+php artisan optimize
 composer install --optimize-autoloader --no-dev
 ```
 
-## Customization
+Yayın öncesinde `.env` içindeki uygulama adı, adres, veritabanı, e-posta, kuyruk ve önbellek ayarlarının hedef ortama göre yapılandırılması gerekir.
 
-### Adding Your Own Content
-1. **Controllers**: Modify demo controllers to return your actual data
-2. **Views**: Customize Blade templates with your content
-3. **Components**: Create new Blade components for your specific needs
-4. **Styling**: Add custom CSS in `resources/css/app.css`
+## Proje yapısı
 
-### Extending Layouts
-- Each demo layout is independent and can be customized separately
-- Shared partials allow for consistent elements across demos
-- Component system enables reusable UI elements
+- `app/`: İş kuralları, modeller, denetleyiciler ve servisler
+- `resources/views/`: Site ve yönetim paneli arayüzleri
+- `resources/js/`: Site ve yönetim paneli istemci davranışları
+- `resources/css/`: Ortak tasarım sistemi ve sayfa stilleri
+- `routes/`: Site, üyelik ve yönetim rotaları
+- `database/`: Migration, factory ve başlangıç verileri
+- `tests/`: Birim ve özellik testleri
 
-## Architecture
+## Marka standardı
 
-### Design Principles
-- **MVC Pattern**: Clean separation using Laravel's MVC architecture
-- **Component-Based**: Reusable Blade components for UI elements
-- **Asset Integration**: Proper integration of Theme assets with Laravel
-- **Responsive Design**: Mobile-first approach across all layouts
-
-### File Organization
-- **Controllers**: One controller per demo layout
-- **Views**: Organized by demo with shared layouts and partials
-- **Assets**: Theme assets properly integrated in `public/assets/`
-- **Components**: Reusable UI components for consistent functionality
-
-## Documentation
-
-For detailed integration steps and customization guides, refer to the complete documentation in the main repository.
-
-## Support
-
-For questions and support:
-- Review the integration documentation
-- Check the demo implementations for examples
-- Refer to Laravel documentation for framework-specific questions
+Varsayılan ürün adı `PROBABLUE` olarak tanımlıdır. Müşteriye veya son kullanıcıya gösterilen ekranlarda teknik altyapı, tema sağlayıcısı ya da geliştirme aracı adları kullanılmamalıdır. Görünür metinler ürünün kurumsal diliyle yazılmalıdır.

@@ -235,7 +235,7 @@
                                     <input class="kt-input @error('skills_text') kt-input-invalid @enderror"
                                            name="skills_text"
                                            value="{{ $skillsText }}"
-                                           placeholder="Laravel, Yönetim, Operasyon, Müşteri Deneyimi">
+                                           placeholder="İstatistiksel Analiz, Veri Bilimi, Operasyon, Müşteri Deneyimi">
                                     <div class="text-xs text-muted-foreground">Virgül, noktalı virgül veya satır sonu ile ayırabilirsin.</div>
                                     @error('skills_text') <div class="text-xs text-danger">{{ $message }}</div> @enderror
                                 </div>

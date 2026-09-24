@@ -32,6 +32,12 @@ class SiteNavigationManagementTest extends TestCase
             'title' => 'Sıkça Sorulan Sorular',
             'route_name' => 'site.faqs.index',
         ]);
+        $this->assertSame(
+            ['Ana Sayfa', 'Hakkımızda', 'Hizmetler', 'Blog', 'Galeri', 'Sıkça Sorulan Sorular', 'İletişim'],
+            NavigationTree::forLocation(SiteNavigationItem::LOCATION_PRIMARY, true)
+                ->pluck('title')
+                ->all()
+        );
     }
 
     public function test_public_header_mobile_menu_and_footer_use_only_panel_items(): void

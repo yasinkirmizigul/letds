@@ -1,7 +1,7 @@
 @extends('site.layouts.main.app')
 
 @section('content')
-    <div class="site-page site-page-narrow">
+    <div class="site-page">
         @include('site.partials.member-nav')
 
         <section class="mt-7 site-page-hero" data-reveal>

@@ -15,7 +15,6 @@ active
 activity
 actors
 add
-adding
 address
 admin
 admins
@@ -23,6 +22,7 @@ aesthetic
 after
 agents
 ajax
+alanlar
 alert
 aligned
 all
@@ -38,6 +38,7 @@ analyze
 anasayfada
 anchor
 and
+anl
 announce
 another
 answer
@@ -52,7 +53,6 @@ appointment
 appointments
 arbitrary
 arc
-architecture
 archived
 are
 area
@@ -277,7 +277,6 @@ currency
 current
 cursor
 custom
-customization
 customize
 daha
 dark
@@ -309,7 +308,6 @@ demo
 deneyimini
 dependencies
 dependency
-deployment
 descendant
 described
 description
@@ -341,7 +339,6 @@ display
 distinct
 dns
 document
-documentation
 does
 dom
 done
@@ -412,7 +409,6 @@ export
 exports
 exposes
 exposing
-extending
 extension
 external
 extra
@@ -486,9 +482,9 @@ galleryables
 gate
 generate
 generator
+gereksinimler
 get
 getir
-getting
 gibiler
 giri
 girmeyen
@@ -513,6 +509,7 @@ hamburger
 handle
 has
 have
+haz
 head
 header
 headers
@@ -549,11 +546,13 @@ https
 hub
 humanize
 hydrate
+ici
 ico
 icon
 icons
 idle
 ids
+ifre
 ilebilir
 ileti
 image
@@ -583,7 +582,6 @@ inputs
 insert
 inside
 install
-installation
 installed
 installer
 instances
@@ -620,10 +618,12 @@ jpeg
 jreq
 json
 kald
+kalite
 kalm
 kan
 kapanabilen
 kapat
+kapsam
 kapsaml
 kart
 katman
@@ -639,15 +639,20 @@ kincil
 kind
 klar
 kleme
+kontrol
+kontrolleri
 koyu
 ktui
 kur
 kurallar
+kurulum
+kurumsal
 label
 labels
 lam
 language
 languages
+lant
 lar
 lara
 laravel
@@ -714,6 +719,7 @@ manual
 many
 map
 mark
+marka
 marker
 markup
 matters
@@ -776,6 +782,8 @@ nav
 navigasyon
 navigasyonu
 navigation
+nda
+nderiminde
 need
 needed
 neo
@@ -813,7 +821,6 @@ oklch
 olmal
 once
 one
-online
 only
 open
 opened
@@ -828,7 +835,6 @@ options
 order
 ordered
 orders
-organization
 original
 ortak
 outcome
@@ -899,6 +905,7 @@ placeholders
 placement
 plan
 plans
+platform
 plugin
 plugins
 plural
@@ -918,7 +925,6 @@ preference
 preferences
 preferred
 prepare
-prerequisites
 preserves
 prevent
 preview
@@ -931,7 +937,6 @@ private
 probablue
 process
 product
-production
 products
 profile
 profiles
@@ -978,6 +983,7 @@ reading
 readme
 ready
 real
+rebrand
 received
 receives
 recent
@@ -1033,6 +1039,7 @@ response
 responsive
 restore
 results
+retim
 reveal
 reveals
 review
@@ -1174,10 +1181,10 @@ sss
 stability
 stable
 stack
+standard
 star
 stars
 start
-started
 starter
 starts
 stat
@@ -1239,15 +1246,16 @@ tailwind
 tailwindcss
 takvim
 takvime
+tan
 target
 tasar
 tasarla
-tech
 tek
+teknik
+tekrar
 temelini
 template
 templates
-temporary
 terminate
 termination
 terms
@@ -1392,5 +1400,4 @@ yap
 yeniden
 yor
 you
-your
 zemidne

@@ -106,27 +106,27 @@ class Project extends Model
             'order' => 20,
         ],
         self::STATUS_APPOINTMENT_DONE => [
-            'label' => 'Randevu Tamamlandı',
+            'label' => 'Dosyalar Alındı',
             'badge' => 'kt-badge kt-badge-sm kt-badge-light-success',
             'order' => 30,
         ],
         self::STATUS_DEV_PENDING => [
-            'label' => 'Gelistirme Bekliyor',
+            'label' => 'Veri Kontrolü',
             'badge' => 'kt-badge kt-badge-sm kt-badge-light-warning',
             'order' => 40,
         ],
         self::STATUS_DEV_IN_PROGRESS => [
-            'label' => 'Gelistirme Devam',
+            'label' => 'Analiz',
             'badge' => 'kt-badge kt-badge-sm kt-badge-primary',
             'order' => 50,
         ],
         self::STATUS_DELIVERED => [
-            'label' => 'Teslim Edildi',
+            'label' => 'Raporlama',
             'badge' => 'kt-badge kt-badge-sm kt-badge-info',
             'order' => 60,
         ],
         self::STATUS_APPROVED => [
-            'label' => 'Onaylandi',
+            'label' => 'Tamamlandı',
             'badge' => 'kt-badge kt-badge-sm kt-badge-success',
             'order' => 70,
         ],
@@ -264,7 +264,6 @@ class Project extends Model
             self::STATUS_DEV_IN_PROGRESS,
             self::STATUS_DELIVERED,
             self::STATUS_APPROVED,
-            self::STATUS_CLOSED,
         ];
         $currentOrder = (int) (self::STATUS_OPTIONS[$this->status]['order'] ?? 0);
 

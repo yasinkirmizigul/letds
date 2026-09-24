@@ -355,7 +355,7 @@
                         <tr data-kt-empty-row="true">
                             <td colspan="8" class="py-12">
                                 <div class="grid place-items-center gap-2 text-center text-muted-foreground">
-                                    <i class="ki-outline ki-box text-4xl"></i>
+                                    <i class="ki-outline ki-package text-4xl"></i>
                                     <div class="font-semibold">{{ $isTrash ? 'Silinen ürün yok' : 'Henüz ürün yok' }}</div>
                                     <div class="text-sm">{{ $isTrash ? 'Geri yüklenebilir ürün bulunmuyor.' : 'Yeni ürün ekleyerek bu listeyi doldurabilirsiniz.' }}</div>
                                 </div>

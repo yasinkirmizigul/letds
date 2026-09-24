@@ -176,7 +176,7 @@
                             </option>
                         @endforeach
                     </select>
-                    <div class="text-xs text-muted-foreground">Üye seçildiğinde proje, ilgili kişinin site hesabındaki “Projelerim” alanında görünür.</div>
+                    <div class="text-xs text-muted-foreground">Üye seçildiğinde çalışma, ilgili kişinin site hesabındaki “Analiz Sürecim” alanında görünür.</div>
                     @error('member_id')<div class="text-xs text-danger">{{ $message }}</div>@enderror
                 </div>
 
