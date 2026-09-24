@@ -117,6 +117,10 @@ class SiteNavigationItem extends Model
         }
 
         $resolved = parse_url($this->resolvedUrl($locale));
+        if (filled($resolved['fragment'] ?? null)) {
+            return false;
+        }
+
         $requestHost = request()->getHost();
         $resolvedHost = $resolved['host'] ?? null;
 

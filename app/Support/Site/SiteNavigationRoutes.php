@@ -18,14 +18,21 @@ class SiteNavigationRoutes
 
     public const SERVICES = 'site.services.index';
 
+    public const SERVICES_OFFER = 'site.services.offer';
+
+    public const SERVICES_PROCESS = 'site.services.process';
+
+    public const SERVICES_START = 'site.services.start';
+
     public static function options(): array
     {
         return [
             self::HOME => 'Ana Sayfa',
-            self::BLOG => 'Blog',
-            self::GALLERIES => 'Galeri',
             self::FAQS => 'Sıkça Sorulan Sorular',
             self::SERVICES => 'Hizmetler',
+            self::SERVICES_OFFER => 'Neler Sunuyoruz?',
+            self::SERVICES_PROCESS => 'Nasıl İlerliyoruz?',
+            self::SERVICES_START => 'Birlikte Başlayalım',
             self::CONTACT => 'İletişim',
         ];
     }
@@ -45,10 +52,13 @@ class SiteNavigationRoutes
 
         return match ($routeName) {
             self::HOME => SiteLocalization::homeUrl($locale),
-            self::BLOG, self::GALLERIES, self::FAQS, self::SERVICES => SiteLocalization::localizedRoute(
+            self::FAQS, self::SERVICES => SiteLocalization::localizedRoute(
                 $routeName,
                 locale: $locale,
             ),
+            self::SERVICES_OFFER => SiteLocalization::localizedRoute(self::SERVICES, locale: $locale).'#hizmetler',
+            self::SERVICES_PROCESS => SiteLocalization::localizedRoute(self::SERVICES, locale: $locale).'#nasil-ilerliyoruz',
+            self::SERVICES_START => SiteLocalization::localizedRoute(self::SERVICES, locale: $locale).'#birlikte-baslayalim',
             self::CONTACT => route($routeName, ['site_locale' => $locale]),
         };
     }

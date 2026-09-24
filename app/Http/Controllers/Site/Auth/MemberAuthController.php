@@ -78,8 +78,8 @@ class MemberAuthController extends Controller
         $intendedUrl = GuardIntendedUrl::pull($request, ['/member', '/randevu-al']);
 
         return redirect()
-            ->to($intendedUrl ?? route('member.appointments.index'))
-            ->with('success', 'Üyelik kaydınız oluşturuldu. Randevu paneline yönlendirildiniz.');
+            ->to($intendedUrl ?? route('member.appointments.index', ['open' => 1]))
+            ->with('success', 'Üyelik kaydınız oluşturuldu. Ön görüşme penceresi açıldı.');
     }
 
     public function login(Request $request): RedirectResponse

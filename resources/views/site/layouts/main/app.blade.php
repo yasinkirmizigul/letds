@@ -3,7 +3,7 @@
     $publicSiteName = $publicSiteName === '' ? config('app.name') : $publicSiteName;
     $publicSiteTagline = trim((string) $siteSettings->localized('site_tagline'));
     $publicSiteTagline = $publicSiteTagline === '' || $publicSiteTagline === 'Dijital vitrin ve içerik yönetimi'
-        ? 'İstatistiksel Analiz ve Danışma'
+        ? 'İstatistiksel Analiz ve Danışmanlık'
         : $publicSiteTagline;
 @endphp
 
@@ -65,11 +65,11 @@
 
     <header class="site-header sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-xl" x-data="{ mobileOpen: false }">
         <div class="site-header__inner mx-auto flex h-16 items-center justify-between gap-2 px-3 sm:gap-4 sm:px-4 lg:h-[72px] lg:px-6">
-            <a href="{{ \App\Support\Site\SiteLocalization::homeUrl($siteCurrentLocale) }}" class="probablue-brand probablue-brand--shell" aria-label="PROBABLUE - İstatistiksel Analiz ve Danışma">
+            <a href="{{ \App\Support\Site\SiteLocalization::homeUrl($siteCurrentLocale) }}" class="probablue-brand probablue-brand--shell" aria-label="PROBABLUE - İstatistiksel Analiz ve Danışmanlık">
                 <span class="probablue-brand__mark" style="--site-brand-mark: url('{{ asset('assets/site/home/images/p-v.svg') }}')" aria-hidden="true"></span>
                 <span class="probablue-brand__copy">
                     <span class="probablue-brand__name">PROBA<span>BLUE</span></span>
-                    <span class="probablue-brand__tagline">İstatistiksel Analiz ve Danışma</span>
+                    <span class="probablue-brand__tagline">İstatistiksel Analiz ve Danışmanlık</span>
                 </span>
             </a>
 

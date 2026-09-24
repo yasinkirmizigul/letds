@@ -24,7 +24,7 @@
                     <span class="site-eyebrow">Çalışmalarım</span>
                     <h2 class="mt-4 site-section-title">{{ number_format($projects->total()) }} analiz çalışması</h2>
                 </div>
-                <a href="{{ route('member.appointments.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light">Yeni randevu oluştur</a>
+                <a href="{{ route('member.appointments.index', ['site_locale' => $siteCurrentLocale, 'open' => 1]) }}" class="kt-btn kt-btn-light">Yeni randevu oluştur</a>
             </div>
 
             @forelse($projects as $project)
@@ -52,7 +52,7 @@
                         <span class="site-eyebrow mx-auto">İlk adım</span>
                         <h2 class="mt-5 site-section-title">Henüz bir analiz çalışmanız bulunmuyor.</h2>
                         <p class="mx-auto mt-3 max-w-lg text-sm leading-7 text-muted-foreground">Ön görüşmeniz tamamlandığında analiz çalışma alanınız otomatik olarak oluşturulur.</p>
-                        <a href="{{ route('member.appointments.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary mt-6">Randevu oluştur</a>
+                        <a href="{{ route('member.appointments.index', ['site_locale' => $siteCurrentLocale, 'open' => 1]) }}" class="kt-btn kt-btn-primary mt-6">Randevu oluştur</a>
                     </div>
                 </div>
             @endforelse

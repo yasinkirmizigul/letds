@@ -95,7 +95,7 @@ return [
             'settings_prefix' => '',
         ],
         'consultation' => [
-            'label' => 'İstatistiksel Danışma',
+            'label' => 'İstatistiksel Danışmanlık',
             'icon' => 'message',
             'label_key' => 'consultation_tab_label',
             'hero_title_key' => 'consultation_hero_title',
@@ -174,15 +174,15 @@ return [
 
         [
             'type' => 'section',
-            'label' => 'İstatistiksel Danışma',
-            'description' => 'Danışma sekmesinin üst menü, ana mesaj ve buton içeriği.',
+            'label' => 'İstatistiksel Danışmanlık',
+            'description' => 'Danışmanlık sekmesinin üst menü, ana mesaj ve buton içeriği.',
             'mode' => 'consultation',
         ],
         [
             'key' => 'consultation_tab_label',
             'label' => 'Sekme Metni',
             'type' => 'text',
-            'default' => 'İstatistiksel Danışma',
+            'default' => 'İstatistiksel Danışmanlık',
             'rules' => ['required', 'string', 'max:80'],
             'mode' => 'consultation',
             'colors' => [
@@ -437,7 +437,7 @@ return [
         [
             'key' => 'consultation_panels',
             'title' => 'Panel Renkleri',
-            'description' => 'Danışma görünümünün renk, desen, doku ve fotoğraf karışımı ayarları.',
+            'description' => 'Danışmanlık görünümünün renk, desen, doku ve fotoğraf karışımı ayarları.',
             'mode' => 'consultation',
             'wrapper_class' => 'xl:col-span-2',
             'content_class' => 'lg:grid-cols-2',
@@ -453,7 +453,7 @@ return [
         [
             'key' => 'consultation_controls',
             'title' => 'Noktalar ve Ayırıcı',
-            'description' => 'Danışma görünümündeki bilgi noktaları, ayırıcı ve sembol renkleri.',
+            'description' => 'Danışmanlık görünümündeki bilgi noktaları, ayırıcı ve sembol renkleri.',
             'mode' => 'consultation',
             'fields' => [
                 ['key' => 'consultation_after_hotspot_color', 'label' => 'Sol Panel Noktaları', 'type' => 'color', 'default' => '#ffffff'],
@@ -466,7 +466,7 @@ return [
         [
             'key' => 'consultation_computer_palette',
             'title' => 'Probablue Logo Paleti',
-            'description' => 'Danışma görünümündeki canlı Probablue logosunun gövde, veri ve gradyan renklerini yönetin.',
+            'description' => 'Danışmanlık görünümündeki canlı Probablue logosunun gövde, veri ve gradyan renklerini yönetin.',
             'mode' => 'consultation',
             'preview' => 'computer',
             'preview_prefix' => 'consultation_',
@@ -477,7 +477,7 @@ return [
         [
             'key' => 'consultation_buttons',
             'title' => 'Buton Renkleri',
-            'description' => 'Danışma butonunun iki paneldeki normal ve hover renkleri.',
+            'description' => 'Danışmanlık butonunun iki paneldeki normal ve hover renkleri.',
             'mode' => 'consultation',
             'fields' => [
                 ['key' => 'consultation_cta_after_hover_background', 'label' => 'Sol Panel Hover Zemini', 'type' => 'color', 'default' => '#ffffff'],

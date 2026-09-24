@@ -1,24 +1,3 @@
-@php
-    $servicesUrl = \App\Support\Site\SiteLocalization::localizedRoute('site.services.index', locale: $locale);
-    $aboutNavigationItem = $sitePrimaryNavigation->first(
-        fn ($navItem) => $navItem->page?->slug === 'hakkimizda'
-    );
-    $aboutUrl = $aboutNavigationItem?->resolvedUrl($locale)
-        ?? route('site.pages.show', ['slug' => 'hakkimizda']);
-
-    $homeNavigationItems = collect([
-        ['label' => 'Neler Sunuyoruz?', 'url' => $servicesUrl . '#hizmetler'],
-        ['label' => 'Nasıl İlerliyoruz?', 'url' => $servicesUrl . '#nasil-ilerliyoruz'],
-        ['label' => 'Birlikte Başlayalım', 'url' => $servicesUrl . '#birlikte-baslayalim'],
-        ['label' => 'Hakkımızda', 'url' => $aboutUrl],
-        ['label' => 'SSS', 'url' => \App\Support\Site\SiteLocalization::localizedRoute('site.faqs.index', locale: $locale)],
-    ])->map(fn ($navItem) => [
-        ...$navItem,
-        'target' => null,
-        'is_current' => false,
-    ]);
-@endphp
-
 <div class="home-mobile-menu" data-home-navigation data-open="false">
     <button
         type="button"
@@ -34,21 +13,37 @@
     </button>
 
     <div id="home-navigation-panel" class="home-mobile-menu__panel" aria-hidden="true" data-home-navigation-panel inert>
-        <div class="home-mobile-menu__heading">
-            <span>Menü</span>
-            <small>Sayfalar</small>
-        </div>
-
         <nav class="home-mobile-menu__links" aria-label="Ana menü">
-            @foreach($homeNavigationItems as $navItem)
+            @foreach($sitePrimaryNavigation as $navItem)
+                @php
+                    $itemIsCurrent = $navItem->isCurrent($locale);
+                    $resolvedUrl = $navItem->resolvedUrl($locale);
+                    $sectionId = parse_url($resolvedUrl, PHP_URL_FRAGMENT);
+                @endphp
                 <a
-                    href="{{ $navItem['url'] }}"
-                    class="home-mobile-menu__link {{ $navItem['is_current'] ? 'is-current' : '' }}"
-                    @if($navItem['is_current']) aria-current="page" @endif
-                    @if($navItem['target'] === '_blank') target="_blank" rel="noopener noreferrer" @endif
+                    href="{{ $resolvedUrl }}"
+                    class="home-mobile-menu__link {{ $itemIsCurrent ? 'is-current' : '' }}"
+                    data-site-section-link="{{ $sectionId ?: '' }}"
+                    @if($itemIsCurrent) aria-current="page" @endif
+                    target="{{ $navItem->target }}"
+                    @if($navItem->target === '_blank') rel="noopener noreferrer" @endif
                 >
-                    {{ $navItem['label'] }}
+                    {{ $navItem->localized('title', $locale) }}
                 </a>
+                @foreach($navItem->children as $childItem)
+                    @php
+                        $childIsCurrent = $childItem->isCurrent($locale);
+                    @endphp
+                    <a
+                        href="{{ $childItem->resolvedUrl($locale) }}"
+                        class="home-mobile-menu__link home-mobile-menu__link--child {{ $childIsCurrent ? 'is-current' : '' }}"
+                        @if($childIsCurrent) aria-current="page" @endif
+                        target="{{ $childItem->target }}"
+                        @if($childItem->target === '_blank') rel="noopener noreferrer" @endif
+                    >
+                        {{ $childItem->localized('title', $locale) }}
+                    </a>
+                @endforeach
             @endforeach
         </nav>
 

@@ -17,9 +17,9 @@ class SiteNavigationManagementTest extends TestCase
     {
         $this->assertDatabaseHas('site_navigation_items', [
             'location' => SiteNavigationItem::LOCATION_PRIMARY,
-            'title' => 'Ana Sayfa',
+            'title' => 'Neler Sunuyoruz?',
             'link_type' => SiteNavigationItem::LINK_TYPE_ROUTE,
-            'route_name' => 'site.home',
+            'route_name' => 'site.services.offer',
             'is_active' => true,
         ]);
         $this->assertDatabaseHas('site_navigation_items', [
@@ -29,15 +29,17 @@ class SiteNavigationManagementTest extends TestCase
         ]);
         $this->assertDatabaseHas('site_navigation_items', [
             'location' => SiteNavigationItem::LOCATION_PRIMARY,
-            'title' => 'Sıkça Sorulan Sorular',
+            'title' => 'SSS',
             'route_name' => 'site.faqs.index',
         ]);
         $this->assertSame(
-            ['Ana Sayfa', 'Hakkımızda', 'Hizmetler', 'Blog', 'Galeri', 'Sıkça Sorulan Sorular', 'İletişim'],
+            ['Neler Sunuyoruz?', 'Nasıl İlerliyoruz?', 'Birlikte Başlayalım', 'Hakkımızda', 'SSS'],
             NavigationTree::forLocation(SiteNavigationItem::LOCATION_PRIMARY, true)
                 ->pluck('title')
                 ->all()
         );
+        $this->assertDatabaseMissing('site_navigation_items', ['route_name' => 'site.blog.index']);
+        $this->assertDatabaseMissing('site_navigation_items', ['route_name' => 'site.galleries.index']);
     }
 
     public function test_public_header_mobile_menu_and_footer_use_only_panel_items(): void
@@ -46,9 +48,9 @@ class SiteNavigationManagementTest extends TestCase
 
         SiteNavigationItem::query()->create([
             'location' => SiteNavigationItem::LOCATION_PRIMARY,
-            'title' => 'Panelden Blog',
+            'title' => 'Panelden SSS',
             'link_type' => SiteNavigationItem::LINK_TYPE_ROUTE,
-            'route_name' => 'site.blog.index',
+            'route_name' => 'site.faqs.index',
             'target' => SiteNavigationItem::TARGET_SELF,
             'is_active' => true,
             'sort_order' => 1,
@@ -72,15 +74,35 @@ class SiteNavigationManagementTest extends TestCase
             'sort_order' => 1,
         ]);
 
-        $this->get(route('site.blog.index'))
+        $this->get(route('site.faqs.index'))
             ->assertOk()
             ->assertSee('data-site-primary-navigation', false)
             ->assertSee('data-site-mobile-navigation', false)
             ->assertSee('data-site-footer-navigation', false)
-            ->assertSee('Panelden Blog')
+            ->assertSee('Panelden SSS')
             ->assertSee('Panelden İletişim')
             ->assertDontSee('Gizli Galeri')
             ->assertDontSee('Ana Sayfa');
+    }
+
+    public function test_service_section_links_defer_active_state_to_the_scroll_position(): void
+    {
+        $this->get(route('site.services.index'))
+            ->assertOk()
+            ->assertSee('data-site-section-link="hizmetler"', false)
+            ->assertSee('data-site-section-link="nasil-ilerliyoruz"', false)
+            ->assertSee('data-site-section-link="birlikte-baslayalim"', false)
+            ->assertDontSee('site-desktop-nav-link--active text-primary', false);
+
+        $items = NavigationTree::forLocation(SiteNavigationItem::LOCATION_PRIMARY, true)
+            ->whereIn('route_name', [
+                'site.services.offer',
+                'site.services.process',
+                'site.services.start',
+            ]);
+
+        $this->assertCount(3, $items);
+        $this->assertTrue($items->every(fn (SiteNavigationItem $item) => ! $item->isCurrent('tr')));
     }
 
     public function test_invalid_system_routes_are_not_rendered(): void
@@ -120,15 +142,17 @@ class SiteNavigationManagementTest extends TestCase
             ->get(route('admin.site.navigation.index'))
             ->assertOk()
             ->assertSee('Sistem Sayfası')
-            ->assertSee('site.blog.index', false)
+            ->assertDontSee('site.blog.index', false)
+            ->assertDontSee('site.galleries.index', false)
+            ->assertSee('site.services.offer', false)
             ->assertSee('site.faqs.index', false);
 
         $this->actingAs($user)
             ->post(route('admin.site.navigation.store'), [
                 'location' => SiteNavigationItem::LOCATION_PRIMARY,
-                'title' => 'Yazılar',
+                'title' => 'Neler Sunuyoruz?',
                 'link_type' => SiteNavigationItem::LINK_TYPE_ROUTE,
-                'route_name' => 'site.blog.index',
+                'route_name' => 'site.services.offer',
                 'target' => SiteNavigationItem::TARGET_SELF,
                 'is_active' => '1',
                 'translations' => [],
@@ -137,9 +161,9 @@ class SiteNavigationManagementTest extends TestCase
             ->assertSessionHas('success');
 
         $this->assertDatabaseHas('site_navigation_items', [
-            'title' => 'Yazılar',
+            'title' => 'Neler Sunuyoruz?',
             'link_type' => SiteNavigationItem::LINK_TYPE_ROUTE,
-            'route_name' => 'site.blog.index',
+            'route_name' => 'site.services.offer',
         ]);
     }
 }

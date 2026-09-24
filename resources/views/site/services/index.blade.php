@@ -4,7 +4,7 @@
     $pageTitle = 'Hizmetlerimiz';
     $metaDescription = 'Araştırma tasarımı, veri analizi, akademik raporlama ve veri bilimi alanlarında uçtan uca istatistik danışmanlığı.';
     $consultationUrl = auth('member')->check()
-        ? route('member.appointments.index', ['site_locale' => $siteCurrentLocale])
+        ? route('member.appointments.index', ['site_locale' => $siteCurrentLocale, 'open' => 1])
         : route('member.register', ['site_locale' => $siteCurrentLocale]);
 @endphp
 

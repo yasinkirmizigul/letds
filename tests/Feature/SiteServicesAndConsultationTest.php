@@ -55,7 +55,7 @@ class SiteServicesAndConsultationTest extends TestCase
             'membership_terms_accepted' => '1',
         ]);
 
-        $response->assertRedirect(route('member.appointments.index'));
+        $response->assertRedirect(route('member.appointments.index', ['open' => 1]));
         $this->assertAuthenticated('member');
         $this->assertDatabaseHas('members', [
             'email' => 'deniz.register@example.test',
@@ -106,11 +106,12 @@ class SiteServicesAndConsultationTest extends TestCase
         $this->actingAs($member, 'member')
             ->get(route('member.appointments.index'))
             ->assertOk()
+            ->assertSee('data-appointment-modal', false)
+            ->assertSee('data-appointment-modal-open', false)
             ->assertSee('data-appointment-step="1"', false)
             ->assertSee('data-appointment-step="2"', false)
             ->assertSee('data-appointment-step="3"', false)
-            ->assertSee('site-onboarding-tab is-complete', false)
-            ->assertSee('site-onboarding-tab is-active', false)
+            ->assertSee('Ön Görüşme Randevusu')
             ->assertSee('Yasemin Araştırmacı')
             ->assertSee('yasemin@example.test')
             ->assertSee('05550000000')

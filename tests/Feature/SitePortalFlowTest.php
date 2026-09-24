@@ -31,7 +31,7 @@ class SitePortalFlowTest extends TestCase
             ->assertOk()
             ->assertSee('class="probablue-brand probablue-brand--shell"', false)
             ->assertSee('PROBABLUE')
-            ->assertSee('İstatistiksel Analiz ve Danışma')
+            ->assertSee('İstatistiksel Analiz ve Danışmanlık')
             ->assertSee('data-site-theme-toggle', false)
             ->assertSee('probablue-site-theme', false)
             ->assertSee('<title>Blog | PROBABLUE</title>', false)

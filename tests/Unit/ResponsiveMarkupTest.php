@@ -232,6 +232,7 @@ class ResponsiveMarkupTest extends TestCase
         $css = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
         $homeCss = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'home.css');
         $homeJs = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR.'home.js');
+        $siteJs = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'app.js');
         $homeView = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home.blade.php');
         $homeNavigation = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'partials'.DIRECTORY_SEPARATOR.'home-navigation-menu.blade.php');
         $probablueHero = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'home-sections'.DIRECTORY_SEPARATOR.'probablue-hero.blade.php');
@@ -278,11 +279,14 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('class="home-mobile-menu"', $homeNavigation);
         $this->assertStringNotContainsString('class="home-desktop-navigation"', $homeNavigation);
         $this->assertMatchesRegularExpression('/\.home-mobile-menu\s*\{[^}]*display:\s*block;/s', $homeCss);
-        $this->assertStringContainsString('Neler Sunuyoruz?', $homeNavigation);
-        $this->assertStringContainsString('Nasıl İlerliyoruz?', $homeNavigation);
-        $this->assertStringContainsString('Birlikte Başlayalım', $homeNavigation);
-        $this->assertStringContainsString("localizedRoute('site.services.index'", $homeNavigation);
-        $this->assertStringContainsString("localizedRoute('site.faqs.index'", $homeNavigation);
+        $this->assertStringContainsString('$sitePrimaryNavigation as $navItem', $homeNavigation);
+        $this->assertStringContainsString('$resolvedUrl = $navItem->resolvedUrl($locale)', $homeNavigation);
+        $this->assertStringContainsString('data-site-section-link', $homeNavigation);
+        $this->assertStringContainsString('initSectionNavigation();', $siteJs);
+        $this->assertStringContainsString("link.dataset.siteSectionLink === activeSectionId", $siteJs);
+        $this->assertStringContainsString('reachedPageEnd', $siteJs);
+        $this->assertStringNotContainsString('homeNavigationItems', $homeNavigation);
+        $this->assertStringNotContainsString('home-mobile-menu__heading', $homeNavigation);
         $this->assertStringNotContainsString('#neler-sunuyoruz', $homeNavigation);
         $this->assertStringNotContainsString('Kayıt Ol', $homeNavigation);
         $this->assertStringNotContainsString('Giriş Yap', $homeNavigation);
@@ -407,7 +411,7 @@ class ResponsiveMarkupTest extends TestCase
             $css
         );
         $this->assertMatchesRegularExpression(
-            '/\.site-title\s*\{[^}]*max-width:\s*18ch;[^}]*font-size:\s*clamp\(2\.15rem, 4\.2vw, 3\.9rem\);/s',
+            '/\.site-title\s*\{[^}]*max-width:\s*18ch;[^}]*font-size:\s*clamp\(2rem, 3\.5vw, 3\.2rem\);/s',
             $css
         );
         $this->assertStringContainsString('lg:py-14', $faqView);

@@ -26,10 +26,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const rescheduleBtn = document.getElementById('rescheduleBtn');
     const prevMonthBtn = document.getElementById('prevMonthBtn');
     const nextMonthBtn = document.getElementById('nextMonthBtn');
+    const appointmentModal = document.querySelector('[data-appointment-modal]');
 
     providerId = providerEl ? providerEl.value : null;
 
     bindActiveAppointmentActions(cancelBtn, rescheduleBtn);
+    bindAppointmentModal(appointmentModal);
     bindStepperControls();
     syncMeetingMethodDescription();
     syncAppointmentPreview();
@@ -78,12 +80,59 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (window.__HAS_ACTIVE_APPOINTMENT__ && !window.__RESCHEDULE_MODE__) {
-        hideBookingUi();
         return;
     }
 
-    renderCalendar();
+    if (appointmentModal?.classList.contains('is-open')) {
+        lockAppointmentModal(appointmentModal);
+        renderCalendar();
+    }
 });
+
+function bindAppointmentModal(modal) {
+    if (!modal) return;
+
+    document.querySelectorAll('[data-appointment-modal-open]').forEach((button) => {
+        button.addEventListener('click', () => {
+            openAppointmentModal(modal);
+            renderCalendar();
+        });
+    });
+
+    modal.querySelectorAll('[data-appointment-modal-close]').forEach((button) => {
+        button.addEventListener('click', () => closeAppointmentModal(modal));
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && modal.classList.contains('is-open')) {
+            closeAppointmentModal(modal);
+        }
+    });
+}
+
+function openAppointmentModal(modal = document.querySelector('[data-appointment-modal]')) {
+    if (!modal) return;
+
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    modal.inert = false;
+    lockAppointmentModal(modal);
+    window.setTimeout(() => modal.querySelector('[data-appointment-modal-close]')?.focus(), 50);
+}
+
+function closeAppointmentModal(modal = document.querySelector('[data-appointment-modal]')) {
+    if (!modal) return;
+
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    modal.inert = true;
+    document.body.classList.remove('site-modal-open');
+}
+
+function lockAppointmentModal(modal) {
+    document.body.classList.add('site-modal-open');
+    modal.setAttribute('aria-hidden', 'false');
+}
 
 function bindActiveAppointmentActions(cancelBtn, rescheduleBtn) {
     if (cancelBtn) {
@@ -94,7 +143,7 @@ function bindActiveAppointmentActions(cancelBtn, rescheduleBtn) {
         rescheduleBtn.addEventListener('click', () => {
             isRescheduleMode = true;
             window.__RESCHEDULE_MODE__ = true;
-            showBookingUi();
+            openAppointmentModal();
             showRescheduleBanner();
             showAppointmentStep(1);
             renderCalendar();
@@ -203,20 +252,6 @@ function syncMeetingMethodDescription() {
 
     description.textContent = meetingMethod?.selectedOptions?.[0]?.dataset?.description
         || 'Bu yöntem için ek bir açıklama bulunmuyor.';
-}
-
-function hideBookingUi() {
-    const bookingPanel = document.getElementById('booking-panel');
-    if (bookingPanel) {
-        bookingPanel.classList.add('hidden');
-    }
-}
-
-function showBookingUi() {
-    const bookingPanel = document.getElementById('booking-panel');
-    if (bookingPanel) {
-        bookingPanel.classList.remove('hidden');
-    }
 }
 
 function showRescheduleBanner() {

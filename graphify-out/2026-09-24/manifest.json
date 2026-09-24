@@ -235,8 +235,8 @@
     "semantic_hash": ""
   },
   "app/Http/Controllers/Site/Auth/MemberAuthController.php": {
-    "mtime": 1790195512.331054,
-    "ast_hash": "17c6dd588131276819e353a8013020ee",
+    "mtime": 1790270785.9742239,
+    "ast_hash": "33e37f6b2d9151f056eba8b73ad4beac",
     "semantic_hash": ""
   },
   "app/Http/Controllers/Site/Auth/MemberPasswordResetController.php": {
@@ -1715,8 +1715,8 @@
     "semantic_hash": ""
   },
   "resources/js/site/appointments/index.js": {
-    "mtime": 1790171983.5864837,
-    "ast_hash": "3f5e1a2292a08042c6424f27a20ffea2",
+    "mtime": 1790270971.8574274,
+    "ast_hash": "fbda15ae3d07f430644dd37eb65d3603",
     "semantic_hash": ""
   },
   "resources/js/site/auth/member-register.js": {
@@ -2300,13 +2300,13 @@
     "semantic_hash": ""
   },
   "resources/views/site/account/show.blade.php": {
-    "mtime": 1790172113.1209695,
-    "ast_hash": "17a129aff67fcbedb77db5cc9c99f053",
+    "mtime": 1790270855.264043,
+    "ast_hash": "8176adf76bf481564e51822c29a7e3e7",
     "semantic_hash": ""
   },
   "resources/views/site/appointments/index.blade.php": {
-    "mtime": 1790193797.8556397,
-    "ast_hash": "0d843f020b90d6773d2f19925753adde",
+    "mtime": 1790270971.8564339,
+    "ast_hash": "85db4eab873d16c48520498ab87be968",
     "semantic_hash": ""
   },
   "resources/views/site/auth/member-forgot-password.blade.php": {
@@ -2345,13 +2345,13 @@
     "semantic_hash": ""
   },
   "resources/views/site/home.blade.php": {
-    "mtime": 1790259392.9246304,
-    "ast_hash": "bccce49bf153f4a7cd57530c3f67865e",
+    "mtime": 1790269291.7214186,
+    "ast_hash": "c053f739b36e8d8f0896a0e0c86c6e35",
     "semantic_hash": ""
   },
   "resources/views/site/layouts/main/app.blade.php": {
-    "mtime": 1790175461.3815033,
-    "ast_hash": "f44fc3b7879952e4d01297374539d96f",
+    "mtime": 1790269291.7204196,
+    "ast_hash": "bad8c9cb5b0dca1f656e1e615cc37d63",
     "semantic_hash": ""
   },
   "routes/admin/access.php": {
@@ -2750,8 +2750,8 @@
     "semantic_hash": ""
   },
   "config/site_homepage.php": {
-    "mtime": 1790257059.6458962,
-    "ast_hash": "55cfb44a68b7638872361bb7d65b07f9",
+    "mtime": 1790269291.7234347,
+    "ast_hash": "9ff9095ef58ca54f1950b5ad36e0daae",
     "semantic_hash": ""
   },
   "database/migrations/2026_08_01_000002_create_site_homepage_configs_table.php": {
@@ -2775,8 +2775,8 @@
     "semantic_hash": ""
   },
   "tests/Feature/HomepageConfigurationTest.php": {
-    "mtime": 1790258303.42842,
-    "ast_hash": "ca74a571fc6a2aa23c55d5b0e74ea511",
+    "mtime": 1790269716.7551413,
+    "ast_hash": "0ab93d647a6af5b6bb420c9320cb3dca",
     "semantic_hash": ""
   },
   "resources/views/admin/pages/site/homepage/partials/_setting-groups.blade.php": {
@@ -2885,8 +2885,8 @@
     "semantic_hash": ""
   },
   "resources/views/site/member-projects/index.blade.php": {
-    "mtime": 1790172083.7237668,
-    "ast_hash": "6c49811e6cc94c196efa4f270f73a986",
+    "mtime": 1790270855.2650409,
+    "ast_hash": "77691907929bc9aa849492b9c0b564f2",
     "semantic_hash": ""
   },
   "resources/views/site/member-projects/show.blade.php": {
@@ -2910,8 +2910,8 @@
     "semantic_hash": ""
   },
   "tests/Feature/SitePortalFlowTest.php": {
-    "mtime": 1787927373.2421951,
-    "ast_hash": "544a02c020016380d79f6346939b39a3",
+    "mtime": 1790269291.7234347,
+    "ast_hash": "b0ae306318d92a7e6a54416ef822c36a",
     "semantic_hash": ""
   },
   "app/Http/Middleware/DemoAccessMiddleware.php": {
@@ -2935,8 +2935,8 @@
     "semantic_hash": ""
   },
   "app/Support/Site/SiteNavigationRoutes.php": {
-    "mtime": 1787083536.9602194,
-    "ast_hash": "997f680db596d607d27ba3bcf476a795",
+    "mtime": 1790270732.7595816,
+    "ast_hash": "0df7e2fc3106a4acd9e61e93de06555b",
     "semantic_hash": ""
   },
   "database/migrations/2026_08_09_000001_add_system_routes_to_site_navigation_items.php": {
@@ -2960,8 +2960,8 @@
     "semantic_hash": ""
   },
   "tests/Feature/SiteNavigationManagementTest.php": {
-    "mtime": 1790233073.1255336,
-    "ast_hash": "95df4e224aa3a94fbf5c4577e1e82bc0",
+    "mtime": 1790271149.7384584,
+    "ast_hash": "72327c8b5bb0a32208b771736d2b84d2",
     "semantic_hash": ""
   },
   "app/Http/Controllers/Admin/Site/HomepageSectionController.php": {
@@ -3035,8 +3035,8 @@
     "semantic_hash": ""
   },
   "tests/Unit/ResponsiveMarkupTest.php": {
-    "mtime": 1790258851.5458953,
-    "ast_hash": "673b4ab882a779f1a71ad9974a872c02",
+    "mtime": 1790270951.4873357,
+    "ast_hash": "4178d793f60847b0c20966e9710b95d7",
     "semantic_hash": ""
   },
   "app/Http/Controllers/Site/Cms/FaqController.php": {
@@ -3175,13 +3175,13 @@
     "semantic_hash": ""
   },
   "resources/views/site/home-sections/probablue-hero.blade.php": {
-    "mtime": 1790259392.9256308,
-    "ast_hash": "050b93a2c23d11ac39b580daf6ae7c3e",
+    "mtime": 1790269291.7224183,
+    "ast_hash": "37aaa5dc3a102169601f437c0ec89e1b",
     "semantic_hash": ""
   },
   "resources/views/site/services/index.blade.php": {
-    "mtime": 1790258303.4274187,
-    "ast_hash": "09285e8e66de5883c4a23bbe72e51c16",
+    "mtime": 1790270855.263041,
+    "ast_hash": "96ef50f02924dda7241e2780366bf8d7",
     "semantic_hash": ""
   },
   "resources/views/site/services/partials/icon.blade.php": {
@@ -3190,8 +3190,8 @@
     "semantic_hash": ""
   },
   "tests/Feature/SiteServicesAndConsultationTest.php": {
-    "mtime": 1790258303.4294212,
-    "ast_hash": "30c2ba9362684f8df0accab454056202",
+    "mtime": 1790270951.4873357,
+    "ast_hash": "4296303316009f9ce1c075b4f9e48353",
     "semantic_hash": ""
   },
   "app/Support/Auth/GuardIntendedUrl.php": {
@@ -3225,8 +3225,8 @@
     "semantic_hash": ""
   },
   "resources/views/site/partials/home-pv-graphic.blade.php": {
-    "mtime": 1787582533.622476,
-    "ast_hash": "86f04cc0a99a93f386e7b498e0326868",
+    "mtime": 1790269716.754156,
+    "ast_hash": "7f555c0dfeebf4835f83a9b2c75adf9b",
     "semantic_hash": ""
   },
   "resources/views/partials/favicons.blade.php": {
@@ -3255,8 +3255,8 @@
     "semantic_hash": ""
   },
   "resources/views/site/partials/home-navigation-menu.blade.php": {
-    "mtime": 1790258303.4264169,
-    "ast_hash": "a70abbac3ee2c8b3ad5848e342e41611",
+    "mtime": 1790270732.7595816,
+    "ast_hash": "e4cd4738b6c745b56b760d44866c93e0",
     "semantic_hash": ""
   },
   "graphify-out/memory/query_20260829_225105_anasayfada_dark_light_mode_butonu_beyaz_zemidne_g\u00f6.md": {
@@ -3290,8 +3290,8 @@
     "semantic_hash": ""
   },
   "resources/views/site/home-sections/start.blade.php": {
-    "mtime": 1790233614.4396443,
-    "ast_hash": "8f8378fd065f6d68976ce9b0987862f2",
+    "mtime": 1790270855.264043,
+    "ast_hash": "07886ff12dcb5ff8be7dfda9350dc549",
     "semantic_hash": ""
   },
   "tests/Unit/SiteFormControlMarkupTest.php": {
@@ -3307,6 +3307,16 @@
   "resources/views/site/home-sections/partials/page-link.blade.php": {
     "mtime": 1790234326.2811725,
     "ast_hash": "a6dff306a3aa5ddaec32a7660343de17",
+    "semantic_hash": ""
+  },
+  "database/migrations/2026_09_24_000002_unify_public_navigation.php": {
+    "mtime": 1790270732.7611015,
+    "ast_hash": "10f47b15a147189d8ae5844107b26aba",
+    "semantic_hash": ""
+  },
+  "database/migrations/2026_09_24_000003_remove_legacy_public_navigation_items.php": {
+    "mtime": 1790271149.7374568,
+    "ast_hash": "cbc4e14c8d4edf1379f2195027a67763",
     "semantic_hash": ""
   }
 }

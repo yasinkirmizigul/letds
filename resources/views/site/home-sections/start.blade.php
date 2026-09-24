@@ -6,7 +6,7 @@
             <p>Önce hesabınızı oluşturun; ardından çalışma alanınızdan destek konusunu, uzman tercihinizi ve uygun görüşme saatini seçin.</p>
             <div class="home-start-section__actions">
                 @if($hasActiveMemberSession)
-                    <a href="{{ route('member.appointments.index', ['site_locale' => $locale]) }}" class="home-start-section__primary">Randevu Planla <span aria-hidden="true">→</span></a>
+                    <a href="{{ route('member.appointments.index', ['site_locale' => $locale, 'open' => 1]) }}" class="home-start-section__primary">Randevu Planla <span aria-hidden="true">→</span></a>
                     <a href="{{ route('member.account.show', ['site_locale' => $locale]) }}" class="home-start-section__secondary">Çalışma Alanım</a>
                 @else
                     <a href="{{ route('member.register', ['site_locale' => $locale]) }}" class="home-start-section__primary">Kayıt Ol <span aria-hidden="true">→</span></a>

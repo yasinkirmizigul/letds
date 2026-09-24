@@ -51,7 +51,7 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('data-home-computer-variant="pvt"', false)
             ->assertSee('data-home-computer-variant="pv"', false)
             ->assertSee('assets/site/home/images/probablue-c.svg', false)
-            ->assertSee('viewBox="0 0 385.2 418.08"', false)
+            ->assertSee('viewBox="0 0 385.23 418.11"', false)
             ->assertSee('class="probablue-body"', false)
             ->assertSee('data-home-brand-mark="true"', false)
             ->assertDontSee('images/concept-before.svg', false)
@@ -67,7 +67,7 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('home-background-dark.svg', false)
             ->assertSee('probablue-site-theme', false)
             ->assertSee('PROBABLUE')
-            ->assertSee('İstatistiksel Analiz ve Danışma')
+            ->assertSee('İstatistiksel Analiz ve Danışmanlık')
             ->assertSee('assets/site/images/favicon.svg', false)
             ->assertSee('assets/site/images/favicon-32x32.png', false)
             ->assertSee('rel="icon" type="image/x-icon"', false)
@@ -187,7 +187,7 @@ class HomepageConfigurationTest extends TestCase
         $this->assertSame('/iletisim', $english['content']['cta_url']);
         $this->assertSame('#123456', $english['settings']['after_background_color']);
         $this->assertSame('English homepage title', $english['modes']['analysis']['hero_title']);
-        $this->assertSame('İstatistiksel Danışma', $english['modes']['consultation']['label']);
+        $this->assertSame('İstatistiksel Danışmanlık', $english['modes']['consultation']['label']);
         $this->assertStringNotContainsString('<script', $turkish['tooltips'][0]['title']);
         $this->assertStringContainsString('<strong>Güvenli metin</strong>', $turkish['tooltips'][0]['title']);
     }
@@ -216,7 +216,7 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('Ana Sayfa Yönetimi')
             ->assertSee('Ana Sayfa Sekmeleri')
             ->assertSee('İstatistiksel Analiz İçeriği')
-            ->assertSee('İstatistiksel Danışma İçeriği')
+            ->assertSee('İstatistiksel Danışmanlık İçeriği')
             ->assertSee('data-homepage-admin-mode-label-key="analysis_tab_label"', false)
             ->assertSee('name="settings[analysis_tab_after_text_color]"', false)
             ->assertSee('name="settings[hero_after_text_color]"', false)

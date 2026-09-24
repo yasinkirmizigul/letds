@@ -111,7 +111,7 @@
                 <a
                     href="{{ \App\Support\Site\SiteLocalization::homeUrl($locale) }}"
                     class="wrapper-logo home-header-logo {{ $headerLogo ? 'has-image' : 'is-fallback' }}"
-                    aria-label="{{ $headerLogo ? $siteName : 'PROBABLUE - İstatistiksel Analiz ve Danışma' }}"
+                    aria-label="{{ $headerLogo ? $siteName : 'PROBABLUE - İstatistiksel Analiz ve Danışmanlık' }}"
                     data-home-header-contrast="true"
                 >
                     @if($headerLogo)
@@ -121,12 +121,12 @@
                             <span class="probablue-brand probablue-brand--home home-split-brand__layer home-split-brand__layer--after">
                                 <span class="probablue-brand__mark" data-home-brand-mark="true"></span>
                                 <span class="probablue-brand__name">PROBA<span>BLUE</span></span>
-                                <span class="probablue-brand__tagline">İstatistiksel Analiz ve Danışma</span>
+                                <span class="probablue-brand__tagline">İstatistiksel Analiz ve Danışmanlık</span>
                             </span>
                             <span class="probablue-brand probablue-brand--home home-split-brand__layer home-split-brand__layer--before">
                                 <span class="probablue-brand__mark" data-home-brand-mark="true"></span>
                                 <span class="probablue-brand__name">PROBA<span>BLUE</span></span>
-                                <span class="probablue-brand__tagline">İstatistiksel Analiz ve Danışma</span>
+                                <span class="probablue-brand__tagline">İstatistiksel Analiz ve Danışmanlık</span>
                             </span>
                         </span>
                     @endif

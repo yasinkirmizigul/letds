@@ -15,27 +15,25 @@
         <div class="site-appointment-page__inner">
             @include('site.partials.member-nav')
 
-            <header class="site-appointment-heading">
+            <header class="site-appointment-heading site-appointment-heading--compact">
                 <div>
-                    <span class="site-appointment-kicker">Ücretsiz Ön Görüşme</span>
-                    <h1>Projeniz için doğru başlangıcı birlikte planlayalım.</h1>
-                    <p>Üyelik bilgilerinizi kontrol edin, uzman ve uygun saati seçin, ardından randevu özetini onaylayın.</p>
-                    <nav class="site-onboarding-tabs site-onboarding-tabs--appointment" aria-label="Başlangıç süreci">
-                        <span class="site-onboarding-tab is-complete">
-                            <i class="fa-solid fa-check" aria-hidden="true"></i>
-                            <span>Kayıt Ol</span>
-                        </span>
-                        <span class="site-onboarding-tab is-active" aria-current="step">
-                            <i class="fa-regular fa-calendar" aria-hidden="true"></i>
-                            <span>Randevu Oluştur</span>
-                        </span>
-                    </nav>
+                    <span class="site-appointment-kicker">Üye Çalışma Alanı</span>
+                    <h1>Randevularım</h1>
+                    <p>Ön görüşme talebinizi bu sayfadan oluşturun ve mevcut randevunuzu yönetin.</p>
                 </div>
                 <div class="site-appointment-heading__meta">
-                    <span><i class="fa-solid fa-clock"></i> Yaklaşık 2 dakika</span>
-                    <span><i class="fa-solid fa-shield-halved"></i> Güvenli randevu</span>
+                    @unless($activeAppointment)
+                        <button type="button" class="kt-btn kt-btn-primary" data-appointment-modal-open>
+                            <i class="fa-regular fa-calendar-plus" aria-hidden="true"></i>
+                            Ön Görüşme Oluştur
+                        </button>
+                    @endunless
                 </div>
             </header>
+
+            @if(session('success'))
+                <div class="rounded-2xl border border-success/25 bg-success/10 px-4 py-4 text-sm text-success">{{ session('success') }}</div>
+            @endif
 
             @if($activeAppointment)
                 <section class="site-active-appointment" id="active-appointment-card">
@@ -70,9 +68,35 @@
                     window.__ACTIVE_APPOINTMENT_ID__ = null;
                     window.__RESCHEDULE_MODE__ = false;
                 </script>
+
+                <section class="site-appointment-empty-state">
+                    <span class="site-active-appointment__icon"><i class="fa-regular fa-calendar-plus" aria-hidden="true"></i></span>
+                    <div>
+                        <h2>Henüz bir ön görüşme randevunuz yok.</h2>
+                        <p>Uzman, destek konusu ve uygun saati modal pencereden seçebilirsiniz.</p>
+                    </div>
+                    <button type="button" class="kt-btn kt-btn-primary" data-appointment-modal-open>Randevu Oluştur</button>
+                </section>
             @endif
 
-            <section id="booking-panel" class="site-appointment-shell {{ $activeAppointment ? 'hidden' : '' }}">
+            <div
+                class="site-appointment-modal {{ request()->boolean('open') && ! $activeAppointment ? 'is-open' : '' }}"
+                data-appointment-modal
+                aria-hidden="{{ request()->boolean('open') && ! $activeAppointment ? 'false' : 'true' }}"
+                @unless(request()->boolean('open') && ! $activeAppointment) inert @endunless
+            >
+                <button type="button" class="site-appointment-modal__backdrop" aria-label="Randevu penceresini kapat" data-appointment-modal-close></button>
+                <section id="booking-panel" class="site-appointment-shell site-appointment-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="appointment-modal-title">
+                    <div class="site-appointment-modal__header">
+                        <div>
+                            <span class="site-appointment-kicker">Ücretsiz Ön Görüşme</span>
+                            <h2 id="appointment-modal-title">Ön Görüşme Randevusu</h2>
+                            <p>Uygun tarih ve saati seçerek görüşme talebinizi oluşturun.</p>
+                        </div>
+                        <button type="button" class="site-appointment-modal__close" aria-label="Randevu penceresini kapat" data-appointment-modal-close>
+                            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                        </button>
+                    </div>
                 <div id="reschedule-mode-banner" class="site-appointment-banner hidden">
                     <i class="fa-solid fa-rotate"></i>
                     Yeniden planlama modundasınız. Yeni seçim önceki randevunun yerine geçecek.
@@ -283,7 +307,8 @@
                         </div>
                     </div>
                 </div>
-            </section>
+                </section>
+            </div>
         </div>
     </div>
 @endsection

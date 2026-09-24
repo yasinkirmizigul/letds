@@ -558,8 +558,8 @@ body.site-shell .probablue-brand {
 }
 
 body.site-shell .probablue-brand--shell {
-    width: clamp(11rem, 15vw, 13rem);
-    flex: 0 1 clamp(11rem, 15vw, 13rem);
+    width: clamp(13.5rem, 17vw, 15rem);
+    flex: 0 1 clamp(13.5rem, 17vw, 15rem);
     grid-template-columns: auto minmax(0, 1fr);
     align-items: center;
     gap: .55rem;
@@ -600,7 +600,7 @@ body.site-shell .probablue-brand__tagline {
     color: var(--muted-foreground);
     font-size: clamp(0.54rem, 0.78vw, 0.68rem);
     font-weight: 650;
-    letter-spacing: 0.055em;
+    letter-spacing: 0.035em;
     line-height: 1.2;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -747,7 +747,7 @@ body.site-shell .site-title {
     margin: 0;
     color: var(--foreground);
     font-family: 'Besley Variable', Georgia, serif;
-    font-size: clamp(2.15rem, 4.2vw, 3.9rem);
+    font-size: clamp(2rem, 3.5vw, 3.2rem);
     font-weight: 620;
     letter-spacing: -0.045em;
     line-height: 1.01;
@@ -772,7 +772,7 @@ body.site-shell .site-section-title {
     margin: 0;
     color: var(--foreground);
     font-family: 'Besley Variable', Georgia, serif;
-    font-size: clamp(1.7rem, 3vw, 2.55rem);
+    font-size: clamp(1.55rem, 2.5vw, 2.2rem);
     font-weight: 620;
     letter-spacing: -0.035em;
     line-height: 1.1;
@@ -1501,10 +1501,10 @@ body.site-shell .site-registration-layout {
 body.site-shell .site-registration-story {
     position: relative;
     display: flex;
-    min-height: 52rem;
+    min-height: 44rem;
     flex-direction: column;
     justify-content: center;
-    gap: 2.4rem;
+    gap: 1.8rem;
     overflow: hidden;
     border: 0;
     border-radius: 0;
@@ -1543,15 +1543,17 @@ body.site-shell .site-registration-story__eyebrow {
 body.site-shell .site-registration-story__eyebrow span {
     color: color-mix(in srgb, var(--primary) 58%, white);
     font-family: var(--font-display);
-    font-size: clamp(2.7rem, 5vw, 4.6rem);
+    flex: 0 0 auto;
+    font-size: clamp(2.25rem, 3.8vw, 3.5rem);
     font-weight: 800;
     line-height: 1;
     letter-spacing: -.06em;
+    white-space: nowrap;
 }
 
 body.site-shell .site-registration-story__eyebrow strong {
     font-family: var(--font-display);
-    font-size: clamp(1.25rem, 2.4vw, 2rem);
+    font-size: clamp(1.15rem, 2vw, 1.7rem);
     letter-spacing: -.035em;
 }
 
@@ -1560,7 +1562,7 @@ body.site-shell .site-registration-story h1 {
     margin-top: 1.4rem;
     color: var(--foreground);
     font-family: var(--font-display);
-    font-size: clamp(2rem, 4vw, 3.8rem);
+    font-size: clamp(1.85rem, 3.2vw, 2.9rem);
     font-weight: 750;
     line-height: 1.04;
     letter-spacing: -.052em;
@@ -4152,7 +4154,7 @@ body.site-shell .site-appointment-heading h1 {
     max-width: 52rem;
     margin-top: .8rem;
     font-family: var(--font-display);
-    font-size: clamp(2.2rem, 5vw, 4.8rem);
+    font-size: clamp(2rem, 3.8vw, 3.6rem);
     font-weight: 720;
     line-height: .98;
     letter-spacing: -.052em;
@@ -4213,6 +4215,135 @@ body.site-shell .site-appointment-shell {
     border-radius: 2rem;
     background: var(--background);
     box-shadow: 0 28px 80px color-mix(in srgb, var(--site-ink) 9%, transparent);
+}
+
+body.site-modal-open {
+    overflow: hidden;
+}
+
+body.site-shell .site-appointment-heading--compact {
+    align-items: center;
+    padding-block: clamp(1.4rem, 3vw, 2.4rem);
+}
+
+body.site-shell .site-appointment-heading--compact h1 {
+    font-size: clamp(2rem, 3.4vw, 3.25rem);
+    line-height: 1;
+}
+
+body.site-shell .site-appointment-empty-state {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 1px dashed color-mix(in srgb, var(--primary) 32%, var(--border));
+    border-radius: 1.5rem;
+    background: color-mix(in srgb, var(--primary) 4%, var(--background));
+    padding: 1.25rem;
+}
+
+body.site-shell .site-appointment-empty-state > div {
+    min-width: 0;
+    flex: 1;
+}
+
+body.site-shell .site-appointment-empty-state h2 {
+    font-size: 1rem;
+    font-weight: 750;
+}
+
+body.site-shell .site-appointment-empty-state p {
+    margin-top: .3rem;
+    color: var(--muted-foreground);
+    font-size: .82rem;
+}
+
+body.site-shell .site-appointment-modal {
+    position: fixed;
+    z-index: 80;
+    inset: 0;
+    display: grid;
+    visibility: hidden;
+    place-items: center;
+    padding: clamp(.75rem, 3vw, 2rem);
+    opacity: 0;
+    pointer-events: none;
+    transition: visibility .2s ease, opacity .2s ease;
+}
+
+body.site-shell .site-appointment-modal.is-open {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+body.site-shell .site-appointment-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    background: color-mix(in srgb, var(--site-ink) 68%, transparent);
+    backdrop-filter: blur(8px);
+}
+
+body.site-shell .site-appointment-modal__dialog {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 74rem);
+    max-height: calc(100dvh - clamp(1.5rem, 6vw, 4rem));
+    overflow: auto;
+    overscroll-behavior: contain;
+    transform: translateY(18px) scale(.985);
+    transition: transform .22s ease;
+}
+
+body.site-shell .site-appointment-modal.is-open .site-appointment-modal__dialog {
+    transform: translateY(0) scale(1);
+}
+
+body.site-shell .site-appointment-modal__header {
+    position: sticky;
+    z-index: 4;
+    top: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--background) 94%, transparent);
+    padding: 1.1rem clamp(1.25rem, 3vw, 2rem);
+    backdrop-filter: blur(18px);
+}
+
+body.site-shell .site-appointment-modal__header h2 {
+    margin-top: .25rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 2.5vw, 2rem);
+    font-weight: 720;
+    letter-spacing: -.035em;
+}
+
+body.site-shell .site-appointment-modal__header p {
+    margin-top: .2rem;
+    color: var(--muted-foreground);
+    font-size: .76rem;
+}
+
+body.site-shell .site-appointment-modal__close {
+    display: grid;
+    width: 2.5rem;
+    aspect-ratio: 1;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--background);
+    color: var(--foreground);
+    transition: border-color .18s ease, color .18s ease, transform .18s ease;
+}
+
+body.site-shell .site-appointment-modal__close:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: rotate(5deg);
 }
 
 body.site-shell .site-appointment-banner {
@@ -4608,6 +4739,26 @@ body.site-shell .site-appointment-consent i {
     body.site-shell .site-active-appointment {
         align-items: stretch;
         flex-direction: column;
+    }
+
+    body.site-shell .site-appointment-empty-state {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    body.site-shell .site-appointment-empty-state .site-active-appointment__icon {
+        width: 2.8rem;
+    }
+
+    body.site-shell .site-appointment-modal {
+        align-items: end;
+        padding: 0;
+    }
+
+    body.site-shell .site-appointment-modal__dialog {
+        width: 100%;
+        max-height: calc(100dvh - 1rem);
+        border-radius: 1.5rem 1.5rem 0 0;
     }
 
     body.site-shell .site-appointment-heading__meta {
@@ -8145,7 +8296,7 @@ body.site-shell .site-services-page {
 
 body.site-shell .site-services-hero {
     position: relative;
-    min-height: clamp(34rem, 70svh, 47rem);
+    min-height: clamp(30rem, 62svh, 41rem);
     overflow: hidden;
     border-bottom: 1px solid color-mix(in srgb, var(--primary) 20%, var(--border));
     background:
@@ -8170,13 +8321,13 @@ body.site-shell .site-services-hero__inner {
     z-index: 2;
     display: grid;
     width: min(100%, 96rem);
-    min-height: clamp(34rem, 70svh, 47rem);
+    min-height: clamp(30rem, 62svh, 41rem);
     grid-template-columns: minmax(0, 1.08fr) minmax(22rem, .92fr);
     align-items: center;
     gap: clamp(2rem, 7vw, 7rem);
     margin-inline: auto;
     padding-inline: clamp(0.75rem, 2vw, 1.5rem);
-    padding-block: clamp(4rem, 9vw, 8rem);
+    padding-block: clamp(3rem, 7vw, 6rem);
 }
 
 body.site-shell .site-services-hero__copy {
@@ -8206,7 +8357,7 @@ body.site-shell .site-services-hero h1 {
     margin-top: 1.4rem;
     color: #fff;
     font-family: var(--font-display);
-    font-size: clamp(3rem, 4.8vw, 4.8rem);
+    font-size: clamp(2.6rem, 4vw, 3.8rem);
     font-weight: 720;
     line-height: .94;
     letter-spacing: -.062em;
@@ -8341,7 +8492,7 @@ body.site-shell .site-services-content {
     width: min(100%, 96rem);
     margin-inline: auto;
     padding-inline: clamp(0.75rem, 2vw, 1.5rem);
-    padding-block: clamp(4rem, 8vw, 7rem);
+    padding-block: clamp(3rem, 6vw, 5rem);
 }
 
 body.site-shell .site-services-section,
@@ -8366,7 +8517,7 @@ body.site-shell .site-services-section__header h2,
 body.site-shell .site-services-final-cta h2 {
     margin-top: 1rem;
     font-family: var(--font-display);
-    font-size: clamp(2.25rem, 4.5vw, 4.5rem);
+    font-size: clamp(2rem, 3.6vw, 3.4rem);
     font-weight: 720;
     line-height: .98;
     letter-spacing: -.05em;
@@ -8393,7 +8544,7 @@ body.site-shell .site-service-grid {
 
 body.site-shell .site-service-card {
     position: relative;
-    min-height: 18rem;
+    min-height: 16rem;
     overflow: hidden;
     border: 1px solid var(--border);
     border-radius: 1.6rem;
@@ -8450,7 +8601,7 @@ body.site-shell .site-process-step__icon {
 body.site-shell .site-service-card h3 {
     position: relative;
     z-index: 2;
-    margin-top: 3.4rem;
+    margin-top: 2.5rem;
     font-family: var(--font-display);
     font-size: 1.35rem;
     font-weight: 700;
@@ -8496,8 +8647,8 @@ body.site-shell .site-service-card__list li::before {
 }
 
 body.site-shell .site-services-process {
-    margin-top: clamp(5rem, 10vw, 9rem);
-    padding: clamp(2rem, 5vw, 4rem);
+    margin-top: clamp(3.5rem, 7vw, 6rem);
+    padding: clamp(1.5rem, 4vw, 3rem);
     border: 1px solid var(--border);
     border-radius: 2.2rem;
     background: color-mix(in srgb, var(--muted) 52%, var(--background));
@@ -8566,7 +8717,7 @@ body.site-shell .site-services-final-cta {
     align-items: end;
     justify-content: space-between;
     gap: 2rem;
-    margin-top: clamp(4rem, 8vw, 7rem);
+    margin-top: clamp(3rem, 6vw, 5rem);
     overflow: hidden;
     border-radius: 2rem;
     background:

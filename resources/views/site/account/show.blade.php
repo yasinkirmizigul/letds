@@ -71,7 +71,7 @@
                         @empty
                             <div class="rounded-2xl border border-dashed border-border px-5 py-10 text-center">
                                 <p class="text-sm text-muted-foreground">Tamamlanan bir randevudan sonra proje alanınız burada açılacak.</p>
-                                <a href="{{ route('member.appointments.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary mt-5">Randevu oluştur</a>
+                                <a href="{{ route('member.appointments.index', ['site_locale' => $siteCurrentLocale, 'open' => 1]) }}" class="kt-btn kt-btn-primary mt-5">Randevu oluştur</a>
                             </div>
                         @endforelse
                     </div>
@@ -99,7 +99,7 @@
                 <div class="rounded-3xl border border-border bg-background p-6">
                     <span class="site-eyebrow">Hızlı işlemler</span>
                     <div class="mt-6 grid gap-3">
-                        <a href="{{ route('member.appointments.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary w-full">Randevu oluştur</a>
+                        <a href="{{ route('member.appointments.index', ['site_locale' => $siteCurrentLocale, 'open' => 1]) }}" class="kt-btn kt-btn-primary w-full">Randevu oluştur</a>
                         <a href="{{ route('member.projects.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full">Analiz sürecime git</a>
                         <a href="{{ route('member.reviews.index', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full">Değerlendirmelerim</a>
                         <a href="{{ route('site.contact-messages.create', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light w-full">Mesaj gönder</a>

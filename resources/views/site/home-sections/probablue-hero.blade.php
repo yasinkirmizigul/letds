@@ -17,7 +17,7 @@
                 <span class="probablue-brand probablue-brand--home" aria-hidden="true">
                     <span class="probablue-brand__mark" data-home-brand-mark="true"></span>
                     <span class="probablue-brand__name">PROBA<span>BLUE</span></span>
-                    <span class="probablue-brand__tagline">İstatistiksel Analiz ve Danışma</span>
+                    <span class="probablue-brand__tagline">İstatistiksel Analiz ve Danışmanlık</span>
                 </span>
             @endif
         </a>
