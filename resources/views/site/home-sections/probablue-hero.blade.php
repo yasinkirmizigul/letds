@@ -39,8 +39,12 @@
                     title="{{ $leftMode['cta_label'] }}"
                     @if($ctaNewTab) target="_blank" rel="noopener" @endif
                 >
-                    <span>{{ $leftMode['cta_label'] }}</span>
-                    <span class="home-entry-cta__arrow" aria-hidden="true">&#8594;</span>
+                    <span class="home-entry-cta__label">{{ $leftMode['cta_label'] }}</span>
+                    <span class="home-entry-cta__arrow" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M5 12h13M13 6l6 6-6 6" />
+                        </svg>
+                    </span>
                 </a>
             </div>
         </article>
@@ -51,8 +55,12 @@
                 <span class="home-probablue-panel__eyebrow">Probablue Studio</span>
                 <h2>Yakında kullanıma açılıyor.</h2>
                 <button type="button" class="home-probablue-panel__cta home-entry-cta home-entry-cta--disabled" disabled aria-disabled="true">
-                    <span>Probablue Studio</span>
-                    <span class="home-entry-cta__arrow" aria-hidden="true">&#8594;</span>
+                    <span class="home-entry-cta__label">Probablue Studio</span>
+                    <span class="home-entry-cta__arrow" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M5 12h13M13 6l6 6-6 6" />
+                        </svg>
+                    </span>
                 </button>
             </div>
         </article>
@@ -62,10 +70,5 @@
             @include('site.partials.home-hero-computer', ['variant' => 'pv', 'idPrefix' => 'probablue-pv'])
             <span class="home-probablue-hero__device-shadow"></span>
         </div>
-    </div>
-
-    <div class="home-probablue-hero__scroll" aria-hidden="true">
-        <span></span>
-        Keşfet
     </div>
 </section>

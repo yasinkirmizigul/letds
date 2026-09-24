@@ -18,7 +18,6 @@
             return $mode;
         })
         ->all();
-    $homepageSections = $homepage['sections'] ?? [];
     $activeMode = collect($homepageModes)->first() ?? [
         'key' => 'analysis',
         'label' => 'İstatistiksel Analiz',
@@ -149,39 +148,6 @@
         @if($heroLayout === 'interactive')
         <section id="before-after" class="home-before-after" aria-label="Before and after presentation">
             <div class="view view-after" data-after-view>
-                <div class="wrapper-after">
-                    <span class="home-surface-pattern" aria-hidden="true"></span>
-                    <div class="img-bird-wrapper home-hero-float">
-                        @include('site.partials.home-hero-computer', ['variant' => 'pvt'])
-                        @foreach($homepageTooltipItems as $item)
-                            <button type="button" class="tooltip-item tooltip-item-{{ $item['position'] }}" data-header-text="{{ $item['key'] }}" aria-label="{{ $item['aria_label'] }}"></button>
-                        @endforeach
-                    </div>
-
-                    <div class="shadown-bird home-hero-shadow"></div>
-
-                    <div class="content-before-after right-position">
-                        <div class="content-right">
-                            <h1 data-home-hero-title="true">{{ $activeMode['hero_title'] }}</h1>
-                            <p class="text-center">
-                                <a
-                                    href="{{ $activeMode['cta_url'] }}"
-                                    class="btn-sumary btn-sumary-big btn-header home-entry-cta"
-                                    title="{{ $activeMode['cta_label'] }}"
-                                    data-home-cta="true"
-                                    @if($homepageSettings['cta_new_tab']) target="_blank" rel="noopener" @endif
-                                >
-                                    <span data-home-cta-label="true">{{ $activeMode['cta_label'] }}</span>
-                                    <span class="home-cta-arrow" aria-hidden="true">›</span>
-                                </a>
-                            </p>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="view view-before">
                 <div class="wrapper-before">
                     <span class="home-surface-pattern" aria-hidden="true"></span>
                     <div class="img-bird-wrapper home-hero-float">
@@ -194,6 +160,43 @@
                     <div class="shadown-bird home-hero-shadow"></div>
 
                     <div class="content-before-after left-position">
+                        <div class="content-right">
+                            <h1 data-home-hero-title="true">{{ $activeMode['hero_title'] }}</h1>
+                            <p class="text-center">
+                                <a
+                                    href="{{ $activeMode['cta_url'] }}"
+                                    class="btn-sumary btn-sumary-big btn-header home-entry-cta"
+                                    title="{{ $activeMode['cta_label'] }}"
+                                    data-home-cta="true"
+                                    @if($homepageSettings['cta_new_tab']) target="_blank" rel="noopener" @endif
+                                >
+                                    <span class="home-entry-cta__label" data-home-cta-label="true">{{ $activeMode['cta_label'] }}</span>
+                                    <span class="home-cta-arrow" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" focusable="false">
+                                            <path d="M5 12h13M13 6l6 6-6 6" />
+                                        </svg>
+                                    </span>
+                                </a>
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="view view-before">
+                <div class="wrapper-after">
+                    <span class="home-surface-pattern" aria-hidden="true"></span>
+                    <div class="img-bird-wrapper home-hero-float">
+                        @include('site.partials.home-hero-computer', ['variant' => 'pvt'])
+                        @foreach($homepageTooltipItems as $item)
+                            <button type="button" class="tooltip-item tooltip-item-{{ $item['position'] }}" data-header-text="{{ $item['key'] }}" aria-label="{{ $item['aria_label'] }}"></button>
+                        @endforeach
+                    </div>
+
+                    <div class="shadown-bird home-hero-shadow"></div>
+
+                    <div class="content-before-after right-position">
                         <div class="content-left">
                             <div class="home-passive-studio" aria-labelledby="home-studio-title">
                                 <svg class="home-passive-studio__icon" viewBox="0 0 72 48" aria-hidden="true" focusable="false">
@@ -203,8 +206,12 @@
                                 </svg>
                                 <h2 id="home-studio-title">Yakında kullanıma açılıyor.</h2>
                                 <button type="button" class="home-entry-cta home-entry-cta--disabled" disabled aria-disabled="true">
-                                    <span>Probablue Studio</span>
-                                    <span class="home-entry-cta__arrow" aria-hidden="true">→</span>
+                                    <span class="home-entry-cta__label">Probablue Studio</span>
+                                    <span class="home-entry-cta__arrow" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" focusable="false">
+                                            <path d="M5 12h13M13 6l6 6-6 6" />
+                                        </svg>
+                                    </span>
                                 </button>
                             </div>
                         </div>
@@ -231,21 +238,6 @@
             ])
         @endif
 
-        @foreach($homepageSections as $section)
-            @if(in_array(($section['type'] ?? null), ['features', 'services', 'process'], true))
-                @include('site.home-sections.features', [
-                    'section' => $section,
-                    'sectionAnchor' => match ($section['type'] ?? null) {
-                        'services' => 'neler-sunuyoruz',
-                        'process' => 'nasil-ilerliyoruz',
-                        default => 'home-feature-' . $section['id'],
-                    },
-                ])
-            @endif
-        @endforeach
-
-        @include('site.home-sections.start')
-        @include('site.home-sections.about-faq')
     </main>
 
     <script defer src="{{ $homeJsUrl }}"></script>

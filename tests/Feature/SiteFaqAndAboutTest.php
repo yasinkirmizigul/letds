@@ -38,9 +38,11 @@ class SiteFaqAndAboutTest extends TestCase
 
         $this->get(route('site.home'))
             ->assertOk()
-            ->assertSee('Hikayemizi Keşfedin')
-            ->assertSee('Tüm Soruları İncele')
-            ->assertSee('Sıkça Sorulan Sorular');
+            ->assertSee($aboutPage->publicUrl('tr'), false)
+            ->assertSee(SiteNavigationRoutes::resolve(SiteNavigationRoutes::FAQS, 'tr'), false)
+            ->assertSee('SSS')
+            ->assertDontSee('Hikayemizi Keşfedin')
+            ->assertDontSee('Tüm Soruları İncele');
     }
 
     public function test_public_faq_page_only_lists_active_global_records(): void

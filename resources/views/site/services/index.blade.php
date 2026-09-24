@@ -124,7 +124,7 @@
                 </section>
             @endforeach
 
-            <section class="site-services-final-cta" data-site-reveal>
+            <section id="birlikte-baslayalim" class="site-services-final-cta" data-site-reveal>
                 <div>
                     <span class="site-services-kicker">İlk adım</span>
                     <h2>Projenizi birlikte değerlendirelim.</h2>

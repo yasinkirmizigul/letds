@@ -57,7 +57,8 @@
 /* Alternative page-two layout. It reuses the managed mode content and colors. */
 .home-probablue-hero {
     position: relative;
-    min-height: min(900px, 100svh);
+    height: 100dvh;
+    min-height: 0;
     overflow: hidden;
     background: var(--home-before-bg, #f7fafc);
     isolation: isolate;
@@ -135,7 +136,8 @@
 .home-probablue-hero__panels {
     position: relative;
     display: grid;
-    min-height: min(900px, 100svh);
+    height: 100%;
+    min-height: 0;
     grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -353,11 +355,12 @@ html[data-site-theme='dark'] .home-probablue-hero__brand {
 @media (max-width: 900px) {
     .home-probablue-hero,
     .home-probablue-hero__panels {
-        min-height: auto;
+        height: 100dvh;
+        min-height: 0;
     }
 
     .home-probablue-hero__header {
-        position: relative;
+        position: absolute;
         grid-template-columns: 1fr auto;
         background: var(--home-after-bg, #176b87);
     }
@@ -374,11 +377,12 @@ html[data-site-theme='dark'] .home-probablue-hero__brand {
 
     .home-probablue-hero__panels {
         grid-template-columns: 1fr;
+        grid-template-rows: repeat(2, minmax(0, 1fr));
     }
 
     .home-probablue-panel {
-        min-height: 58svh;
-        padding: 84px 24px 110px;
+        min-height: 0;
+        padding: 76px 24px 24px;
     }
 
     .home-probablue-panel--analysis .home-probablue-panel__content,
@@ -397,8 +401,7 @@ html[data-site-theme='dark'] .home-probablue-hero__brand {
     }
 
     .home-probablue-hero__device {
-        top: 50%;
-        width: min(58vw, 300px);
+        display: none;
     }
 
     .home-probablue-hero__scroll {
@@ -420,13 +423,13 @@ html[data-site-theme='dark'] .home-probablue-hero__brand {
     }
 
     .home-probablue-panel {
-        min-height: 520px;
-        padding: 58px 22px 130px;
+        min-height: 0;
+        padding: 68px 22px 20px;
     }
 
     .home-probablue-panel h1,
     .home-probablue-panel h2 {
-        font-size: clamp(38px, 12vw, 54px);
+        font-size: clamp(27px, 8vw, 40px);
     }
 
     .home-probablue-hero__device {
@@ -459,8 +462,9 @@ html.home-background-ready body.site-home-index {
 }
 
 body.site-home-index {
-  overflow-x: hidden;
-  overflow-y: auto;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
   color: #404040;
   background: var(--home-before-bg);
   font-family: "proxima-nova", "Inter", "Segoe UI", Arial, sans-serif;
@@ -469,7 +473,9 @@ body.site-home-index {
 }
 
 html:has(body.site-home-index) {
-  scroll-behavior: smooth;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 #neler-sunuyoruz,
@@ -554,7 +560,7 @@ html:has(body.site-home-index) {
 }
 
 .home-mode-nav--brand-menu .home-header-logo .home-split-brand__layer--after {
-  color: var(--home-after-text);
+  color: var(--home-before-text);
   clip-path: inset(0);
 }
 
@@ -677,7 +683,7 @@ html:has(body.site-home-index) {
 
 .home-mobile-menu {
   position: relative;
-  display: none;
+  display: block;
   flex: 0 0 36px;
   color: #1c3948;
 }
@@ -1243,8 +1249,8 @@ html[data-site-theme="dark"] .site-home-header.grey-bg .home-theme-toggle {
   position: relative;
   z-index: 1;
   width: 100%;
-  height: 100vh;
-  min-height: 650px;
+  height: 100dvh;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -1263,13 +1269,13 @@ html[data-site-theme="dark"] .site-home-header.grey-bg .home-theme-toggle {
 
 .view-before {
   z-index: 100;
-  background: var(--home-before-bg);
+  background: var(--home-after-bg);
 }
 
 .view-after {
   z-index: 200;
   width: 50%;
-  background: var(--home-after-bg);
+  background: var(--home-before-bg);
 }
 
 html.home-hero-pending .view-after {
@@ -1410,7 +1416,7 @@ html[data-site-theme="dark"] .wrapper-before::before {
     drop-shadow(0 4px 9px rgba(34, 211, 238, 0.26));
 }
 
-.wrapper-before .img-bird-wrapper > .home-hero-computer {
+.wrapper-before .img-bird-wrapper > .home-hero-computer--pv {
   filter:
     drop-shadow(0 22px 28px rgba(4, 32, 82, 0.22))
     drop-shadow(0 4px 9px color-mix(in srgb, var(--home-computer-cool) 18%, transparent));
@@ -1622,21 +1628,31 @@ body.home-mode-changing .content-before-after .btn-header {
   min-height: 54px;
   overflow: hidden;
   gap: 18px;
-  border: 1px solid rgba(255, 255, 255, .3) !important;
+  border: 0 !important;
   border-radius: 999px;
   padding: 0 24px;
   color: #fff !important;
-  background: linear-gradient(100deg, #075bff 0%, #0a8bf4 58%, #1fdbe2 100%) !important;
+  background: linear-gradient(100deg, #075bff 0%, #087ff0 58%, #0a91e8 100%) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .34),
-    0 14px 30px rgba(0, 104, 238, .3),
+    0 14px 30px rgba(0, 91, 218, .26),
     0 4px 12px rgba(2, 29, 88, .18);
   cursor: pointer;
   font: inherit;
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0;
+  line-height: 1.25;
   transition: transform .24s ease, box-shadow .24s ease, filter .24s ease !important;
+}
+
+.home-entry-cta__label {
+  display: inline-flex;
+  align-self: stretch;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.25;
+  text-align: center;
+  transform: translateY(-2px);
 }
 
 .home-entry-cta::before {
@@ -1656,10 +1672,9 @@ body.home-mode-changing .content-before-after .btn-header {
 .home-entry-cta:focus-visible,
 .home-probablue-panel__cta.home-entry-cta:hover {
   color: #fff !important;
-  background: linear-gradient(100deg, #004fe8 0%, #087fe5 54%, #12cad5 100%) !important;
+  background: linear-gradient(100deg, #004fe8 0%, #0879df 54%, #0788db 100%) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .42),
-    0 19px 38px rgba(0, 104, 238, .38),
+    0 19px 38px rgba(0, 91, 218, .32),
     0 6px 16px rgba(2, 29, 88, .22);
   filter: saturate(1.08);
   outline: none;
@@ -1674,12 +1689,32 @@ body.home-mode-changing .content-before-after .btn-header {
 .home-entry-cta .home-cta-arrow,
 .home-entry-cta__arrow {
   position: static;
+  display: inline-grid;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
   margin: 0;
+  place-items: center;
   color: currentColor;
-  font-size: 21px;
-  line-height: 1;
   opacity: 1;
   transition: transform .22s ease;
+}
+
+.home-entry-cta .home-cta-arrow svg,
+.home-entry-cta__arrow svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.4;
+}
+
+.home-entry-cta .home-cta-arrow,
+.home-entry-cta__arrow {
+  transform: translateY(2px);
 }
 
 .home-entry-cta:hover .home-cta-arrow,
@@ -1687,15 +1722,13 @@ body.home-mode-changing .content-before-after .btn-header {
 .home-entry-cta:hover .home-entry-cta__arrow,
 .home-entry-cta:focus-visible .home-entry-cta__arrow {
   right: auto;
-  transform: translateX(5px);
+  transform: translate(5px, 2px);
 }
 
 .home-entry-cta--disabled,
 .home-entry-cta--disabled:hover,
 .home-entry-cta--disabled:focus-visible {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .28),
-    0 13px 28px rgba(0, 104, 238, .24);
+  box-shadow: 0 13px 28px rgba(0, 91, 218, .22);
   cursor: default;
   filter: saturate(.86);
   opacity: .88;
@@ -1710,7 +1743,7 @@ body.home-mode-changing .content-before-after .btn-header {
   display: grid;
   justify-items: center;
   gap: 22px;
-  color: var(--home-before-text);
+  color: var(--home-after-text);
   text-align: center;
 }
 
@@ -1718,7 +1751,7 @@ body.home-mode-changing .content-before-after .btn-header {
   width: 62px;
   height: auto;
   fill: none;
-  stroke: #075bff;
+  stroke: var(--home-after-text);
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 3;
@@ -1726,7 +1759,7 @@ body.home-mode-changing .content-before-after .btn-header {
 
 .home-passive-studio h2 {
   margin: 0 0 4px;
-  color: var(--home-before-text);
+  color: var(--home-after-text);
   font-size: clamp(20px, 2vw, 28px);
   font-weight: 500;
   line-height: 1.3;
@@ -2559,8 +2592,7 @@ body.home-leaving .icon-drag {
   }
 
   body.site-home-index {
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
   }
 
   .site-home-header {
@@ -2734,7 +2766,7 @@ body.home-leaving .icon-drag {
   }
 
   .home-before-after {
-    min-height: 560px;
+    min-height: 0;
   }
 
   .home-feature-heading {

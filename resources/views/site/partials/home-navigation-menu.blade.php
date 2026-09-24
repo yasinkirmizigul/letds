@@ -1,35 +1,23 @@
 @php
+    $servicesUrl = \App\Support\Site\SiteLocalization::localizedRoute('site.services.index', locale: $locale);
+    $aboutNavigationItem = $sitePrimaryNavigation->first(
+        fn ($navItem) => $navItem->page?->slug === 'hakkimizda'
+    );
+    $aboutUrl = $aboutNavigationItem?->resolvedUrl($locale)
+        ?? route('site.pages.show', ['slug' => 'hakkimizda']);
+
     $homeNavigationItems = collect([
-        ['label' => 'Neler Sunuyoruz?', 'url' => '#neler-sunuyoruz'],
-        ['label' => 'Nasıl İlerliyoruz?', 'url' => '#nasil-ilerliyoruz'],
-        ['label' => 'Birlikte Başlayalım', 'url' => '#birlikte-baslayalim'],
-        ['label' => 'Hakkımızda', 'url' => '#hakkimizda'],
-        ['label' => 'SSS', 'url' => '#sss'],
+        ['label' => 'Neler Sunuyoruz?', 'url' => $servicesUrl . '#hizmetler'],
+        ['label' => 'Nasıl İlerliyoruz?', 'url' => $servicesUrl . '#nasil-ilerliyoruz'],
+        ['label' => 'Birlikte Başlayalım', 'url' => $servicesUrl . '#birlikte-baslayalim'],
+        ['label' => 'Hakkımızda', 'url' => $aboutUrl],
+        ['label' => 'SSS', 'url' => \App\Support\Site\SiteLocalization::localizedRoute('site.faqs.index', locale: $locale)],
+    ])->map(fn ($navItem) => [
+        ...$navItem,
+        'target' => null,
+        'is_current' => false,
     ]);
 @endphp
-
-<div class="home-desktop-navigation">
-    <nav class="home-desktop-navigation__links" aria-label="Ana menü">
-        @foreach($homeNavigationItems as $navItem)
-            <a
-                href="{{ $navItem['url'] }}"
-                class="home-desktop-navigation__link"
-            >
-                {{ $navItem['label'] }}
-            </a>
-        @endforeach
-    </nav>
-
-    <div class="home-desktop-navigation__actions">
-        @if($hasActiveMemberSession)
-            <a href="{{ route('member.account.show', ['site_locale' => $locale]) }}" class="home-desktop-navigation__action">Hesabım</a>
-            <a href="{{ route('member.appointments.index', ['site_locale' => $locale]) }}" class="home-desktop-navigation__action home-desktop-navigation__action--primary">{{ $siteSettings->uiLine('nav_member_panel_label') }}</a>
-        @else
-            <a href="{{ route('member.register', ['site_locale' => $locale]) }}" class="home-desktop-navigation__action home-desktop-navigation__action--primary">Kayıt Ol</a>
-            <a href="{{ route('member.login', ['site_locale' => $locale]) }}" class="home-desktop-navigation__action">Giriş Yap</a>
-        @endif
-    </div>
-</div>
 
 <div class="home-mobile-menu" data-home-navigation data-open="false">
     <button
@@ -48,32 +36,21 @@
     <div id="home-navigation-panel" class="home-mobile-menu__panel" aria-hidden="true" data-home-navigation-panel inert>
         <div class="home-mobile-menu__heading">
             <span>Menü</span>
-            <small>Sayfalar ve üye işlemleri</small>
+            <small>Sayfalar</small>
         </div>
 
         <nav class="home-mobile-menu__links" aria-label="Ana menü">
             @foreach($homeNavigationItems as $navItem)
                 <a
                     href="{{ $navItem['url'] }}"
-                    class="home-mobile-menu__link"
+                    class="home-mobile-menu__link {{ $navItem['is_current'] ? 'is-current' : '' }}"
+                    @if($navItem['is_current']) aria-current="page" @endif
+                    @if($navItem['target'] === '_blank') target="_blank" rel="noopener noreferrer" @endif
                 >
                     {{ $navItem['label'] }}
                 </a>
             @endforeach
         </nav>
 
-        <div class="home-mobile-menu__actions">
-            @if($hasActiveMemberSession)
-                <a href="{{ route('member.account.show', ['site_locale' => $locale]) }}" class="home-mobile-menu__action">Hesabım</a>
-                <a href="{{ route('member.appointments.index', ['site_locale' => $locale]) }}" class="home-mobile-menu__action home-mobile-menu__action--primary">{{ $siteSettings->uiLine('nav_member_panel_label') }}</a>
-                <form method="POST" action="{{ route('member.logout') }}">
-                    @csrf
-                    <button type="submit" class="home-mobile-menu__action">{{ $siteSettings->uiLine('nav_logout_label') }}</button>
-                </form>
-            @else
-                <a href="{{ route('member.register', ['site_locale' => $locale]) }}" class="home-mobile-menu__action home-mobile-menu__action--primary">Kayıt Ol</a>
-                <a href="{{ route('member.login', ['site_locale' => $locale]) }}" class="home-mobile-menu__action">Giriş Yap</a>
-            @endif
-        </div>
     </div>
 </div>

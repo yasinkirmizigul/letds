@@ -22,6 +22,7 @@ class SiteServicesAndConsultationTest extends TestCase
     {
         $this->get(route('site.services.index'))
             ->assertOk()
+            ->assertSee('id="birlikte-baslayalim"', false)
             ->assertSee('Araştırmanızın her aşamasında güvenilir istatistik desteği.')
             ->assertSee('Araştırma Tasarımı')
             ->assertSee('Ölçek Geliştirme &amp; Uyarlama', false)

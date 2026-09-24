@@ -167,7 +167,7 @@ return [
             'label' => 'Buton Bağlantısı',
             'type' => 'url',
             'placeholder' => '/iletisim veya https://...',
-            'default' => '#neler-sunuyoruz',
+            'default' => '/hizmetler',
             'rules' => ['nullable', 'string', 'max:500'],
             'mode' => 'analysis',
         ],
