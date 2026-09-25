@@ -354,6 +354,7 @@ class ResponsiveMarkupTest extends TestCase
         $authDirectory = $this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'site'.DIRECTORY_SEPARATOR.'auth'.DIRECTORY_SEPARATOR;
         $login = file_get_contents($authDirectory.'member-login.blade.php');
         $register = file_get_contents($authDirectory.'member-register.blade.php');
+        $registerCard = file_get_contents($authDirectory.'partials'.DIRECTORY_SEPARATOR.'registration-card.blade.php');
         $forgotPassword = file_get_contents($authDirectory.'member-forgot-password.blade.php');
         $resetPassword = file_get_contents($authDirectory.'member-reset-password.blade.php');
 
@@ -364,8 +365,14 @@ class ResponsiveMarkupTest extends TestCase
         );
         $this->assertStringContainsString('site-auth-split', $login);
         $this->assertStringContainsString('site-auth-form-card', $login);
+        $this->assertStringContainsString('site-member-login-story', $login);
+        $this->assertStringNotContainsString('bg-foreground text-background', $login);
+        $this->assertStringContainsString('body.site-shell .site-member-login-story', $css);
         $this->assertStringContainsString('site-auth-split', $register);
-        $this->assertStringContainsString('site-auth-form-card', $register);
+        $this->assertStringContainsString("@include('site.auth.partials.registration-card')", $register);
+        $this->assertStringContainsString('site-auth-form-card', $registerCard);
+        $this->assertStringContainsString('transition: opacity .28s ease, visibility 0s linear .28s;', $css);
+        $this->assertStringContainsString('transform: translateY(1rem) scale(.985);', $css);
         $this->assertStringContainsString('site-auth-compact', $forgotPassword);
         $this->assertStringContainsString('site-auth-form-card', $forgotPassword);
         $this->assertStringContainsString('site-auth-compact', $resetPassword);
@@ -417,6 +424,8 @@ class ResponsiveMarkupTest extends TestCase
         $this->assertStringContainsString('lg:py-14', $faqView);
         $this->assertStringNotContainsString('lg:py-20', $faqView);
         $this->assertStringNotContainsString('lg:text-6xl', $faqView);
+        $this->assertStringContainsString('site-faq-search-input', $faqView);
+        $this->assertStringContainsString('padding-left: 3rem;', $css);
     }
 
     public function test_notification_filters_use_ktui_selects_in_a_responsive_row(): void

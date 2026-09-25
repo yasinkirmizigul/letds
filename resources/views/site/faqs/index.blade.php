@@ -60,14 +60,14 @@
 
     <div class="mx-auto max-w-[96rem] px-3 py-10 sm:px-4 lg:px-6 lg:py-14">
         <form method="GET" action="{{ $faqIndexUrl }}" class="grid gap-3 rounded-3xl border border-border bg-background p-3 shadow-sm sm:grid-cols-[minmax(0,1fr)_240px_auto]" role="search">
-            <label class="relative block">
+            <label class="site-faq-search-field relative block">
                 <span class="sr-only">SSS ara</span>
                 <i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-lg text-muted-foreground" aria-hidden="true"></i>
                 <input
                     type="search"
                     name="q"
                     value="{{ $search }}"
-                    class="kt-input h-12 w-full pl-11"
+                    class="site-faq-search-input kt-input h-12 w-full"
                     placeholder="{{ $siteSettings->uiLine('faq_search_placeholder') }}"
                     autocomplete="off"
                 >

@@ -12,6 +12,7 @@ use App\Models\Site\SiteSetting;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class SiteServicesAndConsultationTest extends TestCase
@@ -30,6 +31,9 @@ class SiteServicesAndConsultationTest extends TestCase
             ->assertSee('Revizyon Desteği')
             ->assertSee('Süre &amp; Fiyatlandırma', false)
             ->assertSee(route('member.register'), false)
+            ->assertSee('data-registration-modal-open', false)
+            ->assertSee('data-registration-modal', false)
+            ->assertSee('id="registration-modal-title"', false)
             ->assertDontSee('Detaylı İncele');
     }
 
@@ -61,6 +65,49 @@ class SiteServicesAndConsultationTest extends TestCase
             'email' => 'deniz.register@example.test',
             'filepath' => null,
         ]);
+    }
+
+    public function test_membership_information_shows_account_navigation_for_signed_in_members(): void
+    {
+        $this->get(route('member.terms.show'))
+            ->assertOk()
+            ->assertSee('Kayıt Ekranına Dön')
+            ->assertSee('Giriş Yap');
+
+        $member = Member::query()->create([
+            'name' => 'Deniz',
+            'surname' => 'Araştırmacı',
+            'email' => 'terms-member@example.test',
+            'password' => 'password',
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($member, 'member')
+            ->get(route('member.terms.show'))
+            ->assertOk()
+            ->assertSee('Hesabıma Dön')
+            ->assertSee(route('member.account.show'), false)
+            ->assertDontSee('Kayıt Ekranına Dön')
+            ->assertDontSee('Giriş Yap');
+    }
+
+    public function test_invalid_service_registration_returns_to_the_open_modal(): void
+    {
+        $response = $this->from(route('site.services.index'))->post(route('member.register.post'), [
+            '_registration_source' => 'services',
+            'name' => '',
+            'surname' => '',
+            'email' => 'gecersiz',
+            'password' => 'short',
+            'password_confirmation' => 'different',
+        ]);
+
+        $response->assertRedirect(route('site.services.index'));
+
+        $this->get(route('site.services.index'))
+            ->assertOk()
+            ->assertSee('site-registration-modal is-open', false)
+            ->assertSee('aria-hidden="false"', false);
     }
 
     public function test_authenticated_service_ctas_continue_directly_to_appointments(): void
@@ -121,6 +168,8 @@ class SiteServicesAndConsultationTest extends TestCase
             ->assertSee('Destek almak istediğiniz konu')
             ->assertSee('Örneklem boyutu / güç analizi')
             ->assertSee('Fark Etmez')
+            ->assertSee('site-appointment-panel__title', false)
+            ->assertSee(route('member.appointments.nearest'), false)
             ->assertSee('appointmentMemberNote', false)
             ->assertSee('appointmentPreviewMeetingMethod', false)
             ->assertSee('Analiz Uzmanı')
@@ -219,6 +268,80 @@ class SiteServicesAndConsultationTest extends TestCase
             ->assertOk()
             ->assertJsonPath('0.provider_id', $provider->id)
             ->assertJsonPath('0.provider_name', 'Aylin Alboyacı');
+    }
+
+    public function test_any_provider_finds_the_nearest_slot_and_assigns_an_available_provider_on_store(): void
+    {
+        Queue::fake();
+
+        $providerRole = Role::query()->create(['name' => 'Provider', 'slug' => 'provider']);
+        $laterProvider = User::query()->create([
+            'name' => 'Geç Uzman',
+            'email' => 'later-provider@example.test',
+            'password' => 'password',
+            'is_active' => true,
+        ]);
+        $earlierProvider = User::query()->create([
+            'name' => 'Erken Uzman',
+            'email' => 'earlier-provider@example.test',
+            'password' => 'password',
+            'is_active' => true,
+        ]);
+        $laterProvider->roles()->attach($providerRole);
+        $earlierProvider->roles()->attach($providerRole);
+
+        $earlierDate = Carbon::now('Europe/Istanbul')->addDays(2)->startOfDay();
+        $laterDate = Carbon::now('Europe/Istanbul')->addDays(3)->startOfDay();
+
+        ProviderWorkingHour::query()->create([
+            'provider_id' => $earlierProvider->id,
+            'day_of_week' => $earlierDate->dayOfWeek,
+            'is_enabled' => true,
+            'start_time' => '09:00:00',
+            'end_time' => '10:00:00',
+        ]);
+        ProviderWorkingHour::query()->create([
+            'provider_id' => $laterProvider->id,
+            'day_of_week' => $laterDate->dayOfWeek,
+            'is_enabled' => true,
+            'start_time' => '09:00:00',
+            'end_time' => '10:00:00',
+        ]);
+
+        $member = Member::query()->create([
+            'name' => 'Deniz',
+            'surname' => 'Araştırmacı',
+            'email' => 'nearest-provider-member@example.test',
+            'password' => 'password',
+            'is_active' => true,
+        ]);
+
+        $nearest = $this->actingAs($member, 'member')
+            ->getJson(route('member.appointments.nearest'))
+            ->assertOk()
+            ->assertJsonPath('slot.provider_id', $earlierProvider->id)
+            ->assertJsonPath('slot.provider_name', 'Erken Uzman')
+            ->json('slot');
+
+        $meetingMethod = AppointmentMeetingMethod::query()->active()->firstOrFail();
+
+        $this->actingAs($member, 'member')
+            ->postJson(route('member.appointments.store'), [
+                'provider_id' => 'any',
+                'meeting_method_id' => $meetingMethod->id,
+                'start_at' => $nearest['start_at'],
+                'blocks' => 1,
+                'support_topic' => 'Veri analizi',
+            ])
+            ->assertOk()
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('provider_id', $earlierProvider->id);
+
+        $this->assertDatabaseHas('appointments', [
+            'member_id' => $member->id,
+            'provider_id' => $earlierProvider->id,
+            'status' => 'booked',
+        ]);
     }
 
     public function test_superadmin_can_open_services_manager_and_site_palette_is_applied(): void

@@ -9,6 +9,7 @@ let selectedDate = null;
 let currentMonth = new Date();
 let isMonthLoading = false;
 let isDayLoading = false;
+let isNearestLoading = false;
 let isSubmitting = false;
 let isCancelling = false;
 let isRescheduleMode = false;
@@ -66,7 +67,13 @@ document.addEventListener('DOMContentLoaded', () => {
             clearSlots();
             clearDate();
             syncAppointmentPreview();
-            await renderCalendar();
+            setAutoAssignmentStatus('');
+
+            if (providerId === 'any') {
+                await selectNearestAvailableSlot();
+            } else {
+                await renderCalendar();
+            }
         });
     }
 
@@ -202,6 +209,10 @@ function showAppointmentStep(step, shouldScroll = true) {
 
     if (shouldScroll) {
         document.getElementById('booking-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    if (currentStep === 2 && providerId === 'any' && !selectedSlot) {
+        selectNearestAvailableSlot();
     }
 }
 
@@ -393,7 +404,7 @@ async function loadSlots() {
     const container = document.getElementById('slots');
     const empty = document.getElementById('slot-empty');
 
-    if (!date || !container || isDayLoading) return;
+    if (!date || !container || isDayLoading) return [];
 
     isDayLoading = true;
     selectedSlot = null;
@@ -407,15 +418,18 @@ async function loadSlots() {
 
         if (!Array.isArray(data) || !data.length) {
             empty?.classList.remove('hidden');
-            return;
+            return [];
         }
 
         data.forEach((slot) => {
             container.appendChild(createSlotElement(slot));
         });
+
+        return data;
     } catch (error) {
         container.innerHTML = `<div class="text-sm text-danger">Saatler yüklenemedi.</div>`;
         showAppointmentAlert('error', 'Saatler yüklenemedi', 'Lütfen daha sonra tekrar deneyin.');
+        return [];
     } finally {
         isDayLoading = false;
     }
@@ -436,12 +450,13 @@ function createSlotElement(slot) {
     el.type = 'button';
     el.className = 'app-slot-button text-center';
     el.innerText = formatTime(slot.start_at);
+    el.dataset.startAt = slot.start_at;
     el.addEventListener('click', () => selectSlot(el, slot));
 
     return el;
 }
 
-function selectSlot(el, slot) {
+function selectSlot(el, slot, shouldAdvance = true) {
     if (isSubmitting) return;
 
     document.querySelectorAll('#slots > button').forEach((button) => {
@@ -451,7 +466,66 @@ function selectSlot(el, slot) {
     el.classList.add('is-selected');
     selectedSlot = slot;
     syncAppointmentPreview();
-    showAppointmentStep(3);
+
+    if (shouldAdvance) {
+        showAppointmentStep(3);
+    }
+}
+
+async function selectNearestAvailableSlot() {
+    if (providerId !== 'any' || selectedSlot || isNearestLoading) return;
+
+    isNearestLoading = true;
+    setAutoAssignmentStatus('En yakın uygun randevu aranıyor…', true);
+
+    try {
+        const endpoint = document.getElementById('provider')?.dataset?.nearestUrl || '/member/appointments/nearest';
+        const data = await get(`${endpoint}?blocks=1`, { ignoreGlobalError: true });
+        const nearestSlot = data?.slot;
+
+        if (!nearestSlot?.start_at) {
+            setAutoAssignmentStatus('Önümüzdeki 90 gün içinde uygun randevu bulunamadı.');
+            return;
+        }
+
+        const date = nearestSlot.start_at.slice(0, 10);
+        selectedDate = date;
+        currentMonth = new Date(`${date}T12:00:00`);
+        await renderCalendar();
+
+        const dateEl = document.getElementById('date');
+        setDateInputValue(dateEl, date);
+        highlightSelectedDate();
+
+        const slots = await loadSlots();
+        const selected = slots.find((slot) => slot.start_at === nearestSlot.start_at) || nearestSlot;
+        const slotButton = Array.from(document.querySelectorAll('#slots > button'))
+            .find((button) => button.dataset.startAt === selected.start_at);
+
+        if (slotButton) {
+            selectSlot(slotButton, selected, false);
+        } else {
+            selectedSlot = selected;
+            syncAppointmentPreview();
+        }
+
+        setAutoAssignmentStatus(
+            `En yakın randevu ${formatAppointmentDate(selected.start_at)} ${formatTime(selected.start_at)}. ${selected.provider_name} otomatik atanacak.`
+        );
+    } catch (error) {
+        setAutoAssignmentStatus('En yakın randevu şu anda bulunamadı. Lütfen tekrar deneyin.');
+    } finally {
+        isNearestLoading = false;
+    }
+}
+
+function setAutoAssignmentStatus(message, isLoading = false) {
+    const status = document.getElementById('appointmentAutoAssignmentStatus');
+    if (!status) return;
+
+    status.textContent = message;
+    status.classList.toggle('hidden', !message);
+    status.classList.toggle('is-loading', isLoading);
 }
 
 async function confirmBooking() {
@@ -475,7 +549,7 @@ async function confirmBooking() {
 
     try {
         const data = await post('/member/appointments', {
-            provider_id: selectedSlot.provider_id || providerId,
+            provider_id: providerId === 'any' ? 'any' : (selectedSlot.provider_id || providerId),
             start_at: selectedSlot.start_at,
             blocks: 1,
             meeting_method_id: preference.meeting_method_id,
@@ -552,7 +626,7 @@ async function confirmReschedule() {
 
     try {
         const data = await post(`/member/appointments/${window.__ACTIVE_APPOINTMENT_ID__}/reschedule`, {
-            provider_id: selectedSlot.provider_id || providerId,
+            provider_id: providerId === 'any' ? 'any' : (selectedSlot.provider_id || providerId),
             start_at: selectedSlot.start_at,
             blocks: 1,
             meeting_method_id: preference.meeting_method_id,

@@ -3,28 +3,28 @@
 @section('content')
     <div class="site-auth-page mx-auto max-w-[96rem] px-3 py-10 sm:px-4 lg:px-6">
         <div class="site-auth-split grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_480px]">
-            <section class="site-auth-story overflow-hidden rounded-3xl border border-border bg-foreground text-background shadow-sm">
+            <section class="site-auth-story site-member-login-story overflow-hidden rounded-3xl border border-border shadow-sm">
                 <div class="flex h-full flex-col justify-between gap-10 p-8 lg:p-10">
                     <div>
                         <div class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
                             Üye Alanı
                         </div>
                         <h1 class="mt-5 font-display text-3xl font-semibold leading-tight md:text-4xl">Randevu, mesaj ve hesap süreçlerini tek panelden yönetin.</h1>
-                        <p class="mt-5 max-w-2xl text-sm leading-8 text-background/75">
+                        <p class="mt-5 max-w-2xl text-sm leading-8 text-muted-foreground">
                             Üyelik hesabınız ile randevu paneline erişebilir, geçmiş kayıtlarınızı takip edebilir ve size özel akışları güvenli şekilde kullanabilirsiniz.
                         </p>
                     </div>
 
-                    <div class="grid gap-6 border-t border-background/15 pt-6 md:grid-cols-2">
+                    <div class="grid gap-6 border-t border-border pt-6 md:grid-cols-2">
                         <div>
-                            <div class="text-xs uppercase tracking-[0.18em] text-background/60">Avantaj</div>
-                            <div class="mt-3 text-lg font-semibold">Hızlı Erişim</div>
-                            <div class="mt-2 text-sm leading-7 text-background/70">Randevu panelinize doğrudan ulaşıp işlemlerinizi birkaç adımda tamamlayın.</div>
+                            <div class="text-xs uppercase tracking-[0.18em] text-primary">Avantaj</div>
+                            <div class="mt-3 text-lg font-semibold text-foreground">Hızlı Erişim</div>
+                            <div class="mt-2 text-sm leading-7 text-muted-foreground">Randevu panelinize doğrudan ulaşıp işlemlerinizi birkaç adımda tamamlayın.</div>
                         </div>
                         <div>
-                            <div class="text-xs uppercase tracking-[0.18em] text-background/60">Güvenlik</div>
-                            <div class="mt-3 text-lg font-semibold">Yetkili Kullanım</div>
-                            <div class="mt-2 text-sm leading-7 text-background/70">Askıya alınan veya sonlandırılan üyeliklerde sistem net geri bildirim verir.</div>
+                            <div class="text-xs uppercase tracking-[0.18em] text-primary">Güvenlik</div>
+                            <div class="mt-3 text-lg font-semibold text-foreground">Yetkili Kullanım</div>
+                            <div class="mt-2 text-sm leading-7 text-muted-foreground">Askıya alınan veya sonlandırılan üyeliklerde sistem net geri bildirim verir.</div>
                         </div>
                     </div>
                 </div>

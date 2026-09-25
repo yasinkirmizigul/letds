@@ -462,7 +462,7 @@ body.site-shell .site-desktop-nav-link {
     border-radius: .72rem;
     padding: .52rem .68rem;
     white-space: nowrap;
-    transition: color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    transition: color 160ms ease, background-color 160ms ease;
 }
 
 body.site-shell .site-desktop-nav-link:hover,
@@ -470,7 +470,6 @@ body.site-shell .site-desktop-nav-link:focus-visible {
     background: color-mix(in srgb, var(--primary) 8%, var(--background));
     color: var(--foreground);
     outline: none;
-    transform: translateY(-1px);
 }
 
 body.site-shell .site-desktop-nav-link--active {
@@ -502,6 +501,13 @@ body.site-shell .site-desktop-nav-link--active:focus-visible {
 body.site-shell .site-desktop-nav-label {
     min-width: 0;
     white-space: nowrap;
+    text-shadow: 0 0 0 transparent;
+    transition: text-shadow 220ms ease;
+}
+
+body.site-shell .site-desktop-nav-link:hover .site-desktop-nav-label,
+body.site-shell .site-desktop-nav-link:focus-visible .site-desktop-nav-label {
+    text-shadow: 0 .18rem .55rem color-mix(in srgb, var(--primary) 34%, transparent);
 }
 
 body.site-shell .site-desktop-nav-dropdown {
@@ -1472,8 +1478,46 @@ body.site-shell .site-auth-form-card {
     min-width: 0;
 }
 
+body.site-shell .site-member-login-story {
+    position: relative;
+    border-color: color-mix(in srgb, var(--primary) 18%, var(--border));
+    background:
+        radial-gradient(circle at 12% 8%, color-mix(in srgb, var(--primary) 18%, transparent), transparent 30%),
+        linear-gradient(155deg, color-mix(in srgb, var(--background) 93%, var(--primary)), var(--background));
+    color: var(--foreground);
+    box-shadow: 0 24px 70px color-mix(in srgb, var(--site-ink) 13%, transparent);
+}
+
+body.site-shell .site-member-login-story::after {
+    position: absolute;
+    right: -9rem;
+    bottom: -13rem;
+    width: 32rem;
+    aspect-ratio: 1;
+    border: 1px solid color-mix(in srgb, var(--primary) 16%, transparent);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary) 4%, transparent);
+    content: '';
+    pointer-events: none;
+}
+
+body.site-shell .site-member-login-story > div {
+    position: relative;
+    z-index: 1;
+}
+
 body.site-shell .site-auth-form-card {
     align-self: start;
+}
+
+body.site-shell .site-faq-search-field > i {
+    z-index: 1;
+    width: 1.125rem;
+    text-align: center;
+}
+
+body.site-shell .site-faq-search-input.kt-input {
+    padding-left: 3rem;
 }
 
 body.site-shell .site-auth-compact {
@@ -1485,6 +1529,89 @@ body.site-shell .site-auth-compact {
 /* Registration and consultation onboarding, aligned with the approved two-step concept. */
 body.site-shell .site-registration-page {
     width: min(100%, 96rem);
+}
+
+body.site-shell .site-registration-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 130;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .28s ease, visibility 0s linear .28s;
+}
+
+body.site-shell .site-registration-modal.is-open {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    transition-delay: 0s;
+}
+
+body.site-shell .site-registration-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    background: color-mix(in srgb, var(--site-ink) 72%, transparent);
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    transition: opacity .32s ease;
+}
+
+body.site-shell .site-registration-modal.is-open .site-registration-modal__backdrop {
+    opacity: 1;
+}
+
+body.site-shell .site-registration-modal__dialog {
+    position: relative;
+    z-index: 1;
+    width: min(66rem, 100%);
+    max-height: calc(100dvh - 2rem);
+    overflow-y: auto;
+    border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--border));
+    border-radius: 1.8rem;
+    background: var(--background);
+    box-shadow: 0 32px 100px color-mix(in srgb, var(--site-ink) 42%, transparent);
+    opacity: 0;
+    transform: translateY(1rem) scale(.985);
+    transition: opacity .28s ease, transform .38s cubic-bezier(.22, 1, .36, 1);
+}
+
+body.site-shell .site-registration-modal.is-open .site-registration-modal__dialog {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+body.site-shell .site-registration-modal__dialog > .site-registration-card {
+    width: 100%;
+    margin: 0;
+    border: 0;
+    box-shadow: none;
+}
+
+body.site-shell .site-registration-modal__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 2;
+    display: grid;
+    width: 2.75rem;
+    aspect-ratio: 1;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--background) 90%, var(--muted));
+    color: var(--foreground);
+    transition: border-color .2s ease, color .2s ease, transform .2s ease;
+}
+
+body.site-shell .site-registration-modal__close:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: rotate(4deg);
 }
 
 body.site-shell .site-registration-layout {
@@ -2046,6 +2173,12 @@ body.site-shell .site-registration-login a {
     .site-js body.site-shell [data-reveal] {
         opacity: 1;
         transform: none;
+        transition: none;
+    }
+
+    body.site-shell .site-registration-modal,
+    body.site-shell .site-registration-modal__backdrop,
+    body.site-shell .site-registration-modal__dialog {
         transition: none;
     }
 }
@@ -4447,9 +4580,12 @@ body.site-shell .site-appointment-panel {
 }
 
 body.site-shell .site-appointment-panel__heading {
-    display: flex;
     max-width: 50rem;
-    align-items: flex-start;
+}
+
+body.site-shell .site-appointment-panel__title {
+    display: flex;
+    align-items: center;
     gap: 1rem;
 }
 
@@ -4474,6 +4610,7 @@ body.site-shell .site-appointment-panel__heading h2 {
 
 body.site-shell .site-appointment-panel__heading p {
     margin-top: .45rem;
+    margin-left: 4rem;
     color: var(--muted-foreground);
     font-size: .88rem;
     line-height: 1.65;
@@ -4576,6 +4713,15 @@ body.site-shell .site-appointment-provider p {
     color: var(--muted-foreground);
     font-size: .72rem;
     line-height: 1.55;
+}
+
+body.site-shell .site-appointment-provider .site-appointment-auto-assignment {
+    border: 1px solid color-mix(in srgb, var(--primary) 24%, var(--border));
+    border-radius: .85rem;
+    background: color-mix(in srgb, var(--primary) 8%, transparent);
+    padding: .7rem .8rem;
+    color: var(--foreground);
+    font-weight: 600;
 }
 
 body.site-shell .site-appointment-calendar-card__header {
@@ -4776,6 +4922,10 @@ body.site-shell .site-appointment-consent i {
 
     body.site-shell .site-appointment-step > span:last-child {
         display: none;
+    }
+
+    body.site-shell .site-appointment-panel__heading p {
+        margin-left: 0;
     }
 
     body.site-shell .site-member-summary,

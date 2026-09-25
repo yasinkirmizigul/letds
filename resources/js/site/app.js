@@ -1,5 +1,5 @@
 import '../bootstrap';
-import './auth/member-register';
+import { initMemberRegistration } from './auth/member-register';
 import { initReviewStars } from './reviews';
 import Alpine from 'alpinejs';
 import { initGlobalBlockUi } from '@/core/block-ui';
@@ -116,6 +116,7 @@ function domReady(fn) {
 }
 
 domReady(() => {
+    initMemberRegistration(document);
     initPasswordConfirmationValidation(document);
     initTitleTooltips(document);
     initKtComponents();

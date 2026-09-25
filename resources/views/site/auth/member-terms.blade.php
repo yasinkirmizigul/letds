@@ -23,8 +23,12 @@
                 </div>
 
                 <div class="mt-8 flex flex-wrap gap-3">
-                    <a href="{{ route('member.register', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary">Kayıt Ekranına Dön</a>
-                    <a href="{{ route('member.login', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light">Giriş Yap</a>
+                    @auth('member')
+                        <a href="{{ route('member.account.show', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary">Hesabıma Dön</a>
+                    @else
+                        <a href="{{ route('member.register', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-primary">Kayıt Ekranına Dön</a>
+                        <a href="{{ route('member.login', ['site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-light">Giriş Yap</a>
+                    @endauth
                 </div>
             </div>
         </section>

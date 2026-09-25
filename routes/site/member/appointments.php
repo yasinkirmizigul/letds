@@ -9,6 +9,7 @@ Route::middleware(['site.locale', 'auth:member', 'member.active'])->group(functi
 
     Route::prefix('member/appointments')->name('member.appointments.')->group(function () {
         Route::get('/', [AppointmentController::class, 'index'])->name('home');
+        Route::get('/nearest', [AppointmentController::class, 'nearest'])->name('nearest');
         Route::get('/availability', [AppointmentController::class, 'availability'])->name('availability');
         Route::get('/days', [AppointmentController::class, 'days'])->name('days');
         Route::post('/', [AppointmentController::class, 'store'])->name('store');

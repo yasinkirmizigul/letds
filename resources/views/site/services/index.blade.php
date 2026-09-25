@@ -6,6 +6,11 @@
     $consultationUrl = auth('member')->check()
         ? route('member.appointments.index', ['site_locale' => $siteCurrentLocale, 'open' => 1])
         : route('member.register', ['site_locale' => $siteCurrentLocale]);
+    $membershipTermsTitle = $siteSettings->localized('member_terms_title') ?: config('membership_terms.title');
+    $membershipTermsSummary = $siteSettings->localized('member_terms_summary') ?: config('membership_terms.summary');
+    $membershipTermsContent = $siteSettings->localized('member_terms_content') ?: config('membership_terms.content');
+    $hasReadTerms = old('membership_terms_read') === '1' || old('membership_terms_read') === 1;
+    $shouldOpenRegistrationModal = $errors->any() && old('_registration_source') === 'services';
 @endphp
 
 @section('content')
@@ -18,7 +23,7 @@
                     <h1>Araştırmanızın her aşamasında güvenilir istatistik desteği.</h1>
                     <p>Bilimsel yönteme dayalı, ihtiyaçlarınıza özel ve şeffaf danışmanlık çözümleri sunuyoruz.</p>
                     <div class="site-services-hero__actions">
-                        <a href="{{ $consultationUrl }}" class="site-services-primary-cta" title="Ücretsiz ön görüşme planla">
+                        <a href="{{ $consultationUrl }}" class="site-services-primary-cta" title="Ücretsiz ön görüşme planla" @guest('member') data-registration-modal-open @endguest>
                             <span>Ücretsiz Ön Görüşme Planla</span>
                             <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                         </a>
@@ -130,11 +135,33 @@
                     <h2>Projenizi birlikte değerlendirelim.</h2>
                     <p>Önce hesabınızı oluşturun; ardından size uygun uzmanı ve görüşme saatini seçin.</p>
                 </div>
-                <a href="{{ $consultationUrl }}" class="site-services-primary-cta" title="Ön görüşme randevusu oluştur">
+                <a href="{{ $consultationUrl }}" class="site-services-primary-cta" title="Ön görüşme randevusu oluştur" @guest('member') data-registration-modal-open @endguest>
                     Randevu Oluştur
                     <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                 </a>
             </section>
         </div>
     </div>
+
+    @guest('member')
+        <div
+            class="site-registration-modal {{ $shouldOpenRegistrationModal ? 'is-open' : '' }}"
+            data-registration-modal
+            aria-hidden="{{ $shouldOpenRegistrationModal ? 'false' : 'true' }}"
+            @unless($shouldOpenRegistrationModal) inert @endunless
+        >
+            <button type="button" class="site-registration-modal__backdrop" aria-label="Kayıt penceresini kapat" data-registration-modal-close></button>
+            <div class="site-registration-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="registration-modal-title">
+                <button type="button" class="site-registration-modal__close" aria-label="Kayıt penceresini kapat" data-registration-modal-close>
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+                @include('site.auth.partials.registration-card', [
+                    'registrationTitleId' => 'registration-modal-title',
+                    'registrationSource' => 'services',
+                ])
+            </div>
+        </div>
+
+        @include('site.auth.partials.membership-terms-modal')
+    @endguest
 @endsection

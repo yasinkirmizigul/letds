@@ -69,6 +69,17 @@ class AppointmentController extends Controller
         );
     }
 
+    public function nearest(Request $request)
+    {
+        $data = $request->validate([
+            'blocks' => ['nullable', 'integer', 'min:1', 'max:4'],
+        ]);
+
+        return response()->json([
+            'slot' => $this->nearestAvailableSlot((int) ($data['blocks'] ?? 1)),
+        ]);
+    }
+
     public function store(Request $request)
     {
         try {
@@ -82,7 +93,7 @@ class AppointmentController extends Controller
             }
 
             $data = $request->validate([
-                'provider_id' => ['required', 'integer'],
+                'provider_id' => ['required', 'regex:/^(any|[1-9][0-9]*)$/'],
                 'meeting_method_id' => [
                     'required',
                     'integer',
@@ -94,10 +105,14 @@ class AppointmentController extends Controller
                 'notes_member' => ['nullable', 'string', 'max:2000'],
                 'support_topic' => ['required', 'string', Rule::in(Appointment::SUPPORT_TOPICS)],
             ]);
-            $this->assertPublicProvider((int) $data['provider_id']);
+            $providerId = $this->resolveProviderId(
+                $data['provider_id'],
+                Carbon::parse($data['start_at']),
+                (int) $data['blocks']
+            );
 
             $appointment = $this->appointmentService->create([
-                'provider_id' => $data['provider_id'],
+                'provider_id' => $providerId,
                 'member_id' => $user->id,
                 'meeting_method_id' => $data['meeting_method_id'],
                 'start_at' => $data['start_at'],
@@ -109,6 +124,7 @@ class AppointmentController extends Controller
             return response()->json([
                 'success' => true,
                 'id' => $appointment->id,
+                'provider_id' => $appointment->provider_id,
             ]);
         } catch (ValidationException $e) {
             return response()->json([
@@ -207,7 +223,7 @@ class AppointmentController extends Controller
             }
 
             $data = $request->validate([
-                'provider_id' => ['required', 'integer'],
+                'provider_id' => ['required', 'regex:/^(any|[1-9][0-9]*)$/'],
                 'meeting_method_id' => [
                     'required',
                     'integer',
@@ -219,12 +235,17 @@ class AppointmentController extends Controller
                 'notes_member' => ['nullable', 'string', 'max:2000'],
                 'support_topic' => ['required', 'string', Rule::in(Appointment::SUPPORT_TOPICS)],
             ]);
-            $this->assertPublicProvider((int) $data['provider_id']);
             $data['notes_member'] = filled($data['notes_member'] ?? null)
                 ? trim($data['notes_member'])
                 : null;
 
             $appointment = Appointment::findOrFail($id);
+            $data['provider_id'] = $this->resolveProviderId(
+                $data['provider_id'],
+                Carbon::parse($data['start_at']),
+                (int) $data['blocks'],
+                $appointment->id
+            );
 
             $updatedAppointment = $this->appointmentService->rescheduleByMember(
                 $appointment,
@@ -290,11 +311,11 @@ class AppointmentController extends Controller
             ->get(['id', 'name']);
     }
 
-    private function availableSlotsForAnyProvider(Carbon $date): array
+    private function availableSlotsForAnyProvider(Carbon $date, int $blocks = 1): array
     {
         return $this->publicProviders()
-            ->flatMap(function (User $provider) use ($date): array {
-                return collect($this->availabilityService->getAvailableStartsForDate((int) $provider->id, $date, 1))
+            ->flatMap(function (User $provider) use ($date, $blocks): array {
+                return collect($this->availabilityService->getAvailableStartsForDate((int) $provider->id, $date, $blocks))
                     ->map(fn (array $slot): array => $slot + [
                         'provider_id' => $provider->id,
                         'provider_name' => $provider->name,
@@ -305,6 +326,76 @@ class AppointmentController extends Controller
             ->unique('start_at')
             ->values()
             ->all();
+    }
+
+    private function nearestAvailableSlot(int $blocks = 1, int $searchDays = 90): ?array
+    {
+        $now = Carbon::now(config('app.timezone'))->seconds(0);
+        $lastDay = $now->copy()->addDays($searchDays)->endOfDay();
+        $month = $now->copy()->startOfMonth();
+
+        while ($month->lte($lastDay)) {
+            $rangeStart = $month->isSameMonth($now)
+                ? $now->copy()->startOfDay()
+                : $month->copy()->startOfMonth();
+            $rangeEnd = $month->copy()->endOfMonth()->min($lastDay);
+
+            foreach ($this->calendarForAnyProvider($rangeStart, $rangeEnd) as $date => $availability) {
+                if (! ($availability['has_availability'] ?? false)) {
+                    continue;
+                }
+
+                $slot = collect($this->availableSlotsForAnyProvider(Carbon::parse($date), $blocks))
+                    ->first(fn (array $candidate): bool => Carbon::parse($candidate['start_at'])->gt($now));
+
+                if ($slot) {
+                    return $slot;
+                }
+            }
+
+            $month->addMonthNoOverflow()->startOfMonth();
+        }
+
+        return null;
+    }
+
+    private function resolveProviderId(
+        string $providerChoice,
+        Carbon $startAt,
+        int $blocks,
+        ?int $ignoreAppointmentId = null
+    ): int {
+        if ($providerChoice !== 'any') {
+            if (! ctype_digit($providerChoice)) {
+                throw ValidationException::withMessages([
+                    'provider_id' => 'Uzman seçimi geçersiz.',
+                ]);
+            }
+
+            $providerId = (int) $providerChoice;
+            $this->assertPublicProvider($providerId);
+
+            return $providerId;
+        }
+
+        foreach ($this->publicProviders() as $provider) {
+            try {
+                $this->availabilityService->assertProviderAvailable(
+                    (int) $provider->id,
+                    $startAt,
+                    $blocks,
+                    $ignoreAppointmentId
+                );
+
+                return (int) $provider->id;
+            } catch (ValidationException) {
+                // Aynı saatte uygun olan bir sonraki uzmanı dene.
+            }
+        }
+
+        throw ValidationException::withMessages([
+            'provider_id' => 'Seçilen saatte uygun uzman kalmadı. En yakın zamanı yeniden seçin.',
+        ]);
     }
 
     private function calendarForAnyProvider(Carbon $start, Carbon $end): array

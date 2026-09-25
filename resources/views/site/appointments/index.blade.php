@@ -121,11 +121,11 @@
                 <div class="site-appointment-panels">
                     <div data-appointment-step-panel="1" class="site-appointment-panel">
                         <div class="site-appointment-panel__heading">
-                            <span class="site-appointment-panel__icon"><i class="fa-solid fa-circle-user"></i></span>
-                            <div>
+                            <div class="site-appointment-panel__title">
+                                <span class="site-appointment-panel__icon"><i class="fa-solid fa-circle-user"></i></span>
                                 <h2>Üyelik bilgilerinizi kontrol edin</h2>
-                                <p>Randevu mevcut hesabınızla eşleştirilecek; bilgileri yeniden girmeniz gerekmiyor.</p>
                             </div>
+                            <p>Randevu mevcut hesabınızla eşleştirilecek; bilgileri yeniden girmeniz gerekmiyor.</p>
                         </div>
 
                         <div class="site-appointment-intake">
@@ -207,11 +207,11 @@
 
                     <div data-appointment-step-panel="2" class="site-appointment-panel hidden">
                         <div class="site-appointment-panel__heading">
-                            <span class="site-appointment-panel__icon"><i class="fa-solid fa-calendar-days"></i></span>
-                            <div>
+                            <div class="site-appointment-panel__title">
+                                <span class="site-appointment-panel__icon"><i class="fa-solid fa-calendar-days"></i></span>
                                 <h2>Size uygun uzmanı ve zamanı seçin</h2>
-                                <p>Takvim yalnızca seçtiğiniz uzmanın gerçekten müsait olduğu saatleri gösterir.</p>
                             </div>
+                            <p>Takvim yalnızca seçtiğiniz uzmanın gerçekten müsait olduğu saatleri gösterir.</p>
                         </div>
 
                         @if($providers->isEmpty())
@@ -228,13 +228,15 @@
                                         class="kt-select w-full"
                                         data-kt-select="true"
                                         data-kt-select-placeholder="Uzman seçin"
+                                        data-nearest-url="{{ route('member.appointments.nearest') }}"
                                     >
                                         <option value="any" @selected(! $activeAppointment)>Fark Etmez</option>
                                         @foreach($providers as $provider)
                                             <option value="{{ $provider->id }}" @selected((int) ($activeAppointment?->provider_id ?? 0) === (int) $provider->id)>{{ $provider->name }}</option>
                                         @endforeach
                                     </select>
-                                    <p>“Fark Etmez” seçildiğinde seçtiğiniz saatte müsait olan uzman otomatik atanır.</p>
+                                    <p>“Fark Etmez” seçildiğinde tüm uzmanlar arasındaki en yakın müsait randevu bulunur ve uygun uzman otomatik atanır.</p>
+                                    <p id="appointmentAutoAssignmentStatus" class="site-appointment-auto-assignment hidden" role="status" aria-live="polite"></p>
                                 </div>
 
                                 <div class="site-appointment-calendar-card">
@@ -271,11 +273,11 @@
 
                     <div data-appointment-step-panel="3" class="site-appointment-panel hidden">
                         <div class="site-appointment-panel__heading">
-                            <span class="site-appointment-panel__icon"><i class="fa-solid fa-circle-check"></i></span>
-                            <div>
+                            <div class="site-appointment-panel__title">
+                                <span class="site-appointment-panel__icon"><i class="fa-solid fa-circle-check"></i></span>
                                 <h2>Randevunuzu onaylayın</h2>
-                                <p>Kaydetmeden önce iletişim ve görüşme bilgilerinizi son kez kontrol edin.</p>
                             </div>
+                            <p>Kaydetmeden önce iletişim ve görüşme bilgilerinizi son kez kontrol edin.</p>
                         </div>
 
                         <div class="site-appointment-preview">
