@@ -2750,8 +2750,8 @@
     "semantic_hash": ""
   },
   "config/site_homepage.php": {
-    "mtime": 1790269291.7234347,
-    "ast_hash": "9ff9095ef58ca54f1950b5ad36e0daae",
+    "mtime": 1790336083.9248369,
+    "ast_hash": "42c62760de44d3d6da24691748dd4dbc",
     "semantic_hash": ""
   },
   "database/migrations/2026_08_01_000002_create_site_homepage_configs_table.php": {

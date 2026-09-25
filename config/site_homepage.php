@@ -407,8 +407,8 @@ return [
                 ['key' => 'after_hotspot_color', 'label' => 'Sol Panel Noktaları', 'type' => 'color', 'default' => '#ffffff'],
                 ['key' => 'before_hotspot_color', 'label' => 'Sağ Panel Noktaları', 'type' => 'color', 'default' => '#ec6367'],
                 ['key' => 'drag_handle_color', 'label' => 'Karşılaştırma Tutamacı', 'type' => 'color', 'default' => '#ec6367'],
-                ['key' => 'cursor_symbol_after_color', 'label' => 'Sol Panel Uçuşan Semboller', 'type' => 'color', 'default' => '#ffffff'],
-                ['key' => 'cursor_symbol_before_color', 'label' => 'Sağ Panel Uçuşan Semboller', 'type' => 'color', 'default' => '#ec6367'],
+                ['key' => 'cursor_symbol_after_color', 'label' => 'Sağ Panel Uçuşan Semboller', 'type' => 'color', 'default' => '#ffffff'],
+                ['key' => 'cursor_symbol_before_color', 'label' => 'Sol Panel Uçuşan Semboller', 'type' => 'color', 'default' => '#ec6367'],
             ],
         ],
         [
@@ -459,8 +459,8 @@ return [
                 ['key' => 'consultation_after_hotspot_color', 'label' => 'Sol Panel Noktaları', 'type' => 'color', 'default' => '#ffffff'],
                 ['key' => 'consultation_before_hotspot_color', 'label' => 'Sağ Panel Noktaları', 'type' => 'color', 'default' => '#006ae6'],
                 ['key' => 'consultation_drag_handle_color', 'label' => 'Karşılaştırma Tutamacı', 'type' => 'color', 'default' => '#006ae6'],
-                ['key' => 'consultation_cursor_symbol_after_color', 'label' => 'Sol Panel Uçuşan Semboller', 'type' => 'color', 'default' => '#ffffff'],
-                ['key' => 'consultation_cursor_symbol_before_color', 'label' => 'Sağ Panel Uçuşan Semboller', 'type' => 'color', 'default' => '#006ae6'],
+                ['key' => 'consultation_cursor_symbol_after_color', 'label' => 'Sağ Panel Uçuşan Semboller', 'type' => 'color', 'default' => '#ffffff'],
+                ['key' => 'consultation_cursor_symbol_before_color', 'label' => 'Sol Panel Uçuşan Semboller', 'type' => 'color', 'default' => '#006ae6'],
             ],
         ],
         [

@@ -559,15 +559,6 @@ html:has(body.site-home-index) {
   justify-content: flex-end;
 }
 
-.home-mode-nav--brand-menu .home-header-logo .home-split-brand__layer--after {
-  color: var(--home-before-text);
-  clip-path: inset(0);
-}
-
-.home-mode-nav--brand-menu .home-header-logo .home-split-brand__layer--before {
-  clip-path: inset(0 0 0 100%);
-}
-
 .home-mode-nav__end {
   display: flex;
   min-width: 0;
@@ -1063,12 +1054,12 @@ html:has(body.site-home-index) {
 }
 
 .home-header-logo .home-split-brand__layer--after {
-  color: var(--home-after-text);
+  color: var(--home-before-text);
   clip-path: inset(0 calc(100% - var(--home-header-split-x, 50%)) 0 0);
 }
 
 .home-header-logo .home-split-brand__layer--before {
-  color: var(--home-before-text);
+  color: var(--home-after-text);
   clip-path: inset(0 0 0 var(--home-header-split-x, 50%));
 }
 

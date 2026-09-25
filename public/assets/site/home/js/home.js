@@ -534,16 +534,12 @@
       context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     };
 
-    const colorAt = (x) => {
-      const split = handle?.getBoundingClientRect().left ?? viewportWidth / 2;
-      const styles = getComputedStyle(body);
-      const beforeColor = styles.getPropertyValue('--home-stat-before').trim() || '#ec6367';
-      const afterColor = styles.getPropertyValue('--home-stat-after').trim() || '#ffffff';
-      return x <= split ? afterColor : beforeColor;
-    };
-
     const draw = (now) => {
       context.clearRect(0, 0, viewportWidth, viewportHeight);
+      const split = handle?.getBoundingClientRect().left ?? viewportWidth / 2;
+      const styles = getComputedStyle(body);
+      const beforeColor = styles.getPropertyValue('--home-stat-before').trim() || '#0058d4';
+      const afterColor = styles.getPropertyValue('--home-stat-after').trim() || '#ffffff';
 
       for (let index = particles.length - 1; index >= 0; index -= 1) {
         const particle = particles[index];
@@ -568,7 +564,7 @@
         context.rotate(particle.rotation + particle.spin * elapsed);
         context.scale(scale, scale);
         context.globalAlpha = opacity;
-        context.fillStyle = particle.color;
+        context.fillStyle = x <= split ? beforeColor : afterColor;
         context.font = `600 ${particle.size}px "Segoe UI", sans-serif`;
         context.textAlign = 'center';
         context.textBaseline = 'middle';
@@ -583,8 +579,6 @@
       const now = performance.now();
       const count = Math.floor(random(2, 5));
       const baseAngle = random(0, Math.PI * 2);
-      const color = colorAt(x);
-
       for (let index = 0; index < count; index += 1) {
         const angle = baseAngle + (Math.PI * 2 * index) / count + random(-0.42, 0.42);
         const speed = random(42, 92);
@@ -594,7 +588,6 @@
           symbol: symbols[Math.floor(Math.random() * symbols.length)],
           x: x + Math.cos(angle) * originRadius,
           y: y + Math.sin(angle) * originRadius,
-          color,
           createdAt: now,
           duration: random(720, 1180),
           velocityX: Math.cos(angle) * speed,
@@ -603,7 +596,7 @@
           phase: random(0, Math.PI * 2),
           rotation: random(-0.45, 0.45),
           spin: random(-1.1, 1.1),
-          opacity: random(0.2, 0.36),
+          opacity: random(0.42, 0.64),
           size: random(12, 18),
         });
       }
