@@ -535,7 +535,8 @@ async function confirmBooking() {
     const ok = await showConfirmDialog({
         type: 'info',
         title: 'Randevu oluşturulsun mu?',
-        message: `${formatTime(selectedSlot.start_at)} için randevu alınacak.`,
+        message: 'Bu saat için randevu alınacak.',
+        prominentTime: formatTime(selectedSlot.start_at),
         confirmButtonText: 'Randevu al',
         cancelButtonText: 'Vazgeç'
     });
@@ -612,7 +613,8 @@ async function confirmReschedule() {
     const ok = await showConfirmDialog({
         type: 'info',
         title: 'Randevu yeniden planlansın mı?',
-        message: `${formatTime(selectedSlot.start_at)} saatine taşınacak.`,
+        message: 'Randevunuz bu saate taşınacak.',
+        prominentTime: formatTime(selectedSlot.start_at),
         confirmButtonText: 'Yeniden planla',
         cancelButtonText: 'Vazgeç'
     });

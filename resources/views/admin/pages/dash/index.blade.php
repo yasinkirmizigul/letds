@@ -96,6 +96,14 @@
          data-schedule-chart='@json($scheduleChart)'>
 
         <div class="dashboard-layout-grid">
+            @if(auth()->user()?->isAdmin() || auth()->user()?->hasRole('provider'))
+                <div class="dashboard-layout-full">
+                    <a href="{{ route('admin.analysis-requests.index') }}" class="kt-card flex items-center justify-between gap-4 p-5 hover:border-primary/50">
+                        <span><strong class="block text-foreground">Ek analiz talepleri</strong><span class="mt-1 block text-sm text-muted-foreground">Üyelerin sorularını ve yüklediği tüm belgeleri inceleyin.</span></span>
+                        <span class="kt-btn kt-btn-sm kt-btn-primary">Talepleri aç</span>
+                    </a>
+                </div>
+            @endif
             <div class="dashboard-layout-heading flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                     <h1 class="text-xl font-semibold text-foreground">Kontrol Paneli</h1>

@@ -1,5 +1,31 @@
 @extends('site.layouts.main.app')
 
+@php
+    $teamCopy = $siteCurrentLocale === 'en'
+        ? [
+            'eyebrow' => 'PROBABLUE / OUR TEAM',
+            'heading' => 'The experts behind the analysis.',
+            'intro' => 'Method, interpretation and communication come together in every project. Meet our experts.',
+            'region' => 'Our experts',
+            'default_role' => 'Statistics Expert',
+            'photo' => 'profile photo',
+            'previous' => 'Previous expert',
+            'next' => 'Next expert',
+            'empty' => 'Expert profiles will appear here when they are added.',
+        ]
+        : [
+            'eyebrow' => 'PROBABLUE / EKİBİMİZ',
+            'heading' => 'Analizin arkasındaki uzmanlar.',
+            'intro' => 'Her çalışmada yöntem, yorum ve iletişim bir arada. Uzmanlarımızla tanışın.',
+            'region' => 'Uzmanlarımız',
+            'default_role' => 'İstatistik Uzmanı',
+            'photo' => 'profil fotoğrafı',
+            'previous' => 'Önceki uzman',
+            'next' => 'Sonraki uzman',
+            'empty' => 'Uzman profilleri eklendiğinde burada görünecek.',
+        ];
+@endphp
+
 @section('content')
     <div class="mx-auto max-w-[96rem] px-3 py-8 sm:px-4 lg:px-6">
         <div class="max-w-3xl">
@@ -47,6 +73,61 @@
                 </div>
             </aside>
         </section>
+
+        @if($page->slug === 'hakkimizda')
+            <section class="site-team" aria-labelledby="site-team-title" data-site-team>
+                <div class="site-team__intro">
+                    <span class="site-team__eyebrow">{{ $teamCopy['eyebrow'] }}</span>
+                    <h2 id="site-team-title">{{ $teamCopy['heading'] }}</h2>
+                    <p>{{ $teamCopy['intro'] }}</p>
+                </div>
+
+                @if($teamExperts->isNotEmpty())
+                <div class="site-team__carousel" role="region" aria-roledescription="carousel" aria-label="{{ $teamCopy['region'] }}">
+                    <div class="site-team__track" data-site-team-track tabindex="0">
+                        @foreach($teamExperts as $expert)
+                            <article class="site-team__card" data-site-team-card role="button" tabindex="0" aria-label="{{ $expert->name }}, {{ $expert->title ?: $teamCopy['default_role'] }}">
+                                <div class="site-team__portrait">
+                                    @if($expert->avatar_media_id || filled($expert->avatar))
+                                        <img src="{{ $expert->avatarUrl() }}" alt="{{ $expert->name }} {{ $teamCopy['photo'] }}" loading="lazy" draggable="false" width="440" height="550">
+                                    @else
+                                        <span class="site-team__monogram" aria-hidden="true">{{ mb_strtoupper(mb_substr($expert->name, 0, 1)) }}</span>
+                                    @endif
+                                </div>
+                            </article>
+                        @endforeach
+                    </div>
+                    <div class="site-team__panels">
+                        @foreach($teamExperts as $expert)
+                                <div class="site-team__details {{ $loop->first ? 'is-active' : '' }}" data-site-team-panel>
+                                    <span class="site-team__role">{{ $expert->title ?: $teamCopy['default_role'] }}</span>
+                                    <h3>{{ $expert->name }}</h3>
+                                    @if($expert->bio)
+                                        <p>{{ \Illuminate\Support\Str::limit(strip_tags($expert->bio), 145) }}</p>
+                                    @endif
+                                    @if($expert->skillTags())
+                                        <div class="site-team__skills">
+                                            @foreach(array_slice($expert->skillTags(), 0, 3) as $skill)
+                                                <span>{{ $skill }}</span>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
+                        @endforeach
+                    </div>
+                    @if($teamExperts->count() > 1)
+                        <div class="site-team__controls">
+                            <button type="button" data-site-team-prev aria-label="{{ $teamCopy['previous'] }}"><span aria-hidden="true">←</span></button>
+                            <span data-site-team-count aria-live="polite"></span>
+                            <button type="button" data-site-team-next aria-label="{{ $teamCopy['next'] }}"><span aria-hidden="true">→</span></button>
+                        </div>
+                    @endif
+                </div>
+                @else
+                    <div class="site-team__empty">{{ $teamCopy['empty'] }}</div>
+                @endif
+            </section>
+        @endif
 
         @if($page->show_counters && $page->counters->isNotEmpty())
             <section class="mt-16" data-reveal>

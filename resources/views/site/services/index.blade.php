@@ -1,7 +1,7 @@
 @extends('site.layouts.main.app')
 
 @php
-    $pageTitle = 'Hizmetlerimiz';
+    $pageTitle = 'Neler Sunuyoruz?';
     $metaDescription = 'Araştırma tasarımı, veri analizi, akademik raporlama ve veri bilimi alanlarında uçtan uca istatistik danışmanlığı.';
     $consultationUrl = auth('member')->check()
         ? route('member.appointments.index', ['site_locale' => $siteCurrentLocale, 'open' => 1])
@@ -27,8 +27,8 @@
                             <span>Ücretsiz Ön Görüşme Planla</span>
                             <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                         </a>
-                        <a href="#hizmetler" class="site-services-secondary-cta" title="Hizmetleri keşfet">
-                            Hizmetleri Keşfet
+                        <a href="#hizmetler" class="site-services-secondary-cta" title="Neler sunduğumuzu keşfet">
+                            Neler Sunuyoruz?
                         </a>
                     </div>
                     <div class="site-services-hero__trust">
@@ -38,25 +38,24 @@
                     </div>
                 </div>
 
-                <div class="site-services-hero__visual" aria-hidden="true" data-site-reveal>
-                    <div class="site-services-mark">
-                        <span class="site-services-mark__p">P</span>
-                        <span class="site-services-mark__axis site-services-mark__axis--x"></span>
-                        <span class="site-services-mark__axis site-services-mark__axis--y"></span>
-                        <span class="site-services-mark__bar site-services-mark__bar--one"></span>
-                        <span class="site-services-mark__bar site-services-mark__bar--two"></span>
-                        <span class="site-services-mark__bar site-services-mark__bar--three"></span>
-                        <span class="site-services-mark__trend"></span>
+                @php($symbolColors = $siteSettings->servicesSymbolColors())
+                <div class="site-services-hero__visual" aria-hidden="true">
+                    <div
+                        class="site-services-particle-logo"
+                        data-site-particle-logo
+                        style="--symbol-1: {{ $symbolColors[0] }}; --symbol-2: {{ $symbolColors[1] }}; --symbol-3: {{ $symbolColors[2] }}; --symbol-4: {{ $symbolColors[3] }}"
+                    >
+                        <span class="site-services-particle-logo__halo"></span>
+                        <canvas data-site-particle-canvas data-logo-src="{{ asset('assets/site/images/favicon.svg') }}"></canvas>
+                        <img class="site-services-particle-logo__fallback" src="{{ asset('assets/site/images/favicon.svg') }}" alt="" width="450" height="450">
                     </div>
-                    <span class="site-services-hero__orbit site-services-hero__orbit--one"></span>
-                    <span class="site-services-hero__orbit site-services-hero__orbit--two"></span>
                 </div>
             </div>
         </section>
 
         <div class="site-services-content">
             @forelse($serviceSections as $section)
-                <section @if($loop->first) id="hizmetler" @endif class="site-services-section" style="--services-accent: {{ $section['accent_color'] }}">
+                <section @if($loop->first) id="hizmetler" @endif class="site-services-section">
                     <header class="site-services-section__header" data-site-reveal>
                         @if($section['eyebrow'])
                             <span class="site-services-kicker">{{ $section['eyebrow'] }}</span>
@@ -72,9 +71,6 @@
                             <article class="site-service-card" data-site-reveal>
                                 <div class="site-service-card__topline">
                                     <span class="site-service-card__number">{{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}</span>
-                                    <span class="site-service-card__icon">
-                                        @include('site.services.partials.icon', ['icon' => $item['icon']])
-                                    </span>
                                 </div>
                                 <h3>{{ $item['title'] }}</h3>
                                 @php($descriptionLines = collect(preg_split('/\r\n|\r|\n/', $item['description']))->map(fn ($line) => trim($line))->filter()->values())
@@ -87,6 +83,7 @@
                                 @else
                                     <p>{{ $item['description'] }}</p>
                                 @endif
+                                <span class="site-service-card__arrow" aria-hidden="true">→</span>
                             </article>
                         @endforeach
                     </div>
@@ -98,8 +95,8 @@
             @endforelse
 
             @foreach($processSections as $section)
-                <section @if($loop->first) id="nasil-ilerliyoruz" @endif class="site-services-process" style="--services-accent: {{ $section['accent_color'] }}">
-                    <header class="site-services-section__header site-services-section__header--center" data-site-reveal>
+                <section @if($loop->first) id="nasil-ilerliyoruz" @endif class="site-services-process">
+                    <header class="site-services-section__header" data-site-reveal>
                         @if($section['eyebrow'])
                             <span class="site-services-kicker">{{ $section['eyebrow'] }}</span>
                         @endif
@@ -113,11 +110,12 @@
                         @foreach($section['items'] as $index => $item)
                             <article class="site-process-step" data-site-reveal>
                                 <span class="site-process-step__index">{{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}</span>
-                                <span class="site-process-step__icon">
-                                    @include('site.services.partials.icon', ['icon' => $item['icon']])
-                                </span>
+                                <div class="site-process-step__illustration" aria-hidden="true">
+                                    <img src="{{ asset('assets/site/images/services/' . ['process-consultation.png', 'process-analysis.png', 'process-report.png', 'process-revision.png'][$index % 4]) }}" alt="" width="1254" height="1254" loading="lazy">
+                                </div>
                                 <h3>{{ $item['title'] }}</h3>
                                 <p>{{ $item['description'] }}</p>
+                                <span class="site-process-step__arrow" aria-hidden="true">→</span>
                             </article>
                         @endforeach
                     </div>

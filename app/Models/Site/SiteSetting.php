@@ -13,6 +13,8 @@ class SiteSetting extends Model
 {
     use HasSiteLocaleTranslations;
 
+    public const SERVICES_SYMBOL_DEFAULTS = ['#f2c75a', '#e4edff', '#6dc7c4', '#ae91dd'];
+
     public const PALETTE_OPTIONS = [
         'coral' => [
             'label' => 'Probablue Mercan',
@@ -47,6 +49,7 @@ class SiteSetting extends Model
         'site_name',
         'site_tagline',
         'site_palette',
+        'services_symbol_colors',
         'admin_login_logo_media_id',
         'hero_notice',
         'contact_email',
@@ -92,6 +95,7 @@ class SiteSetting extends Model
     protected $casts = [
         'under_construction_enabled' => 'boolean',
         'social_links' => 'array',
+        'services_symbol_colors' => 'array',
         'ui_lines' => 'array',
         'sitemap_include_home' => 'boolean',
         'sitemap_include_pages' => 'boolean',
@@ -120,6 +124,22 @@ class SiteSetting extends Model
         $palette = (string) $this->site_palette;
 
         return array_key_exists($palette, self::PALETTE_OPTIONS) ? $palette : 'coral';
+    }
+
+    public function servicesSymbolColors(): array
+    {
+        $stored = $this->services_symbol_colors;
+        if (! is_array($stored) || count($stored) !== 4) {
+            return self::SERVICES_SYMBOL_DEFAULTS;
+        }
+
+        foreach ($stored as $color) {
+            if (! is_string($color) || ! preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
+                return self::SERVICES_SYMBOL_DEFAULTS;
+            }
+        }
+
+        return array_values($stored);
     }
 
     public function paletteCssVariables(): string

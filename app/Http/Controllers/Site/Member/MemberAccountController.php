@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Appointment\Appointment;
 use App\Models\Member;
 use App\Models\Review\ServiceReview;
+use App\Services\Project\ProjectStageWhatsAppService;
 use App\Services\Review\ServiceReviewAssignmentService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -85,6 +86,7 @@ class MemberAccountController extends Controller
                 Rule::unique('members', 'email')->ignore($member->id),
             ],
             'phone' => ['nullable', 'string', 'max:40'],
+            'whatsapp_stage_notifications' => ['sometimes', 'boolean'],
             'institution' => ['nullable', 'string', 'max:190'],
             'current_password' => [
                 Rule::requiredIf($emailChanged || $passwordChanged),
@@ -94,13 +96,26 @@ class MemberAccountController extends Controller
             'password' => ['nullable', 'confirmed', Password::defaults()],
         ]);
 
-        DB::transaction(function () use ($member, $validated, $emailChanged): void {
+        $whatsappPhone = ProjectStageWhatsAppService::normalizePhone($validated['phone'] ?? null);
+        $whatsappEnabled = (bool) ($validated['whatsapp_stage_notifications'] ?? false);
+        if ($whatsappEnabled && ! $whatsappPhone) {
+            return back()->withErrors([
+                'phone' => 'WhatsApp aşama bildirimleri için geçerli bir cep telefonu numarası girin.',
+            ])->withInput();
+        }
+
+        DB::transaction(function () use ($member, $validated, $emailChanged, $whatsappEnabled, $whatsappPhone): void {
             $data = [
                 'name' => trim($validated['name']),
                 'surname' => trim($validated['surname']),
                 'email' => mb_strtolower(trim($validated['email'])),
                 'phone' => filled($validated['phone'] ?? null) ? trim($validated['phone']) : null,
                 'institution' => filled($validated['institution'] ?? null) ? trim($validated['institution']) : null,
+                'whatsapp_stage_opted_in_at' => $whatsappEnabled
+                    ? ($member->whatsapp_stage_opted_in_at && $member->whatsapp_stage_opted_in_phone === $whatsappPhone
+                        ? $member->whatsapp_stage_opted_in_at : now())
+                    : null,
+                'whatsapp_stage_opted_in_phone' => $whatsappEnabled ? $whatsappPhone : null,
             ];
 
             if ($emailChanged) {

@@ -93,11 +93,16 @@
                             </span>
                         </div>
 
-                        <select id="project_status" name="status" class="kt-select w-full @error('status') kt-input-invalid @enderror" data-kt-select="true" data-kt-select-placeholder="Durum">
-                            @foreach($statusOptions as $key => $option)
-                                <option value="{{ $key }}" @selected($currentStatus === $key)>{{ $option['label'] }}</option>
-                            @endforeach
-                        </select>
+                        @if($isEdit && $project->member_id && $project->appointment_id)
+                            <input type="hidden" name="status" value="{{ $currentStatus }}">
+                            <p class="text-xs text-muted-foreground">Bu çalışma aşamasını yalnızca atanmış uzman ilerletir. Yönetici süreç geçmişini izler.</p>
+                        @else
+                            <select id="project_status" name="status" class="kt-select w-full @error('status') kt-input-invalid @enderror" data-kt-select="true" data-kt-select-placeholder="Durum">
+                                @foreach($statusOptions as $key => $option)
+                                    <option value="{{ $key }}" @selected($currentStatus === $key)>{{ $option['label'] }}</option>
+                                @endforeach
+                            </select>
+                        @endif
 
                         <span class="kt-badge kt-badge-sm {{ $initialPublicVisible ? 'kt-badge-light-success' : 'kt-badge-light text-muted-foreground' }}" data-project-public-badge>
                             {{ $initialPublicVisible ? 'Sitede görünebilir' : 'Sitede gizli' }}

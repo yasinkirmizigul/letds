@@ -226,6 +226,9 @@
                                                         <span class="font-semibold text-foreground">{{ $project->title }}</span>
                                                     @endif
                                                     <span class="kt-badge kt-badge-sm kt-badge-light">#{{ $project->id }}</span>
+                                                    @if($project->pending_analysis_requests_count)
+                                                        <a href="{{ route('admin.projects.edit', $project) }}" class="kt-badge kt-badge-sm kt-badge-light-warning">{{ $project->pending_analysis_requests_count }} yeni ek analiz talebi</a>
+                                                    @endif
                                                     <span class="kt-badge kt-badge-sm {{ $seoScore >= 80 ? 'kt-badge-light-success' : ($seoScore >= 50 ? 'kt-badge-light-warning' : 'kt-badge-light-danger') }}">
                                                         SEO %{{ $seoScore }}
                                                     </span>

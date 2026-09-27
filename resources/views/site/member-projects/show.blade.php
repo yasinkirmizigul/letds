@@ -37,9 +37,65 @@
 
         @if($errors->any())
             <div class="mt-6 rounded-2xl border border-danger/25 bg-danger/10 px-4 py-4 text-sm text-danger">
-                <div class="font-semibold">Dosya işlemi tamamlanamadı.</div>
+                <div class="font-semibold">İşlem tamamlanamadı.</div>
                 <div class="mt-1">{{ $errors->first() }}</div>
             </div>
+        @endif
+
+        <div class="mt-8" id="surec-gecmisi" data-reveal>
+            @include('shared.project-workflow-timeline', ['viewer' => 'member'])
+        </div>
+
+        @if($project->allowsAdditionalAnalysisRequests())
+            <section class="site-analysis-support mt-8" id="ek-analiz" data-reveal>
+                @php($report = $project->files->first(fn ($file) => $file->member_id === null && $file->note === 'Analiz raporu'))
+                <div class="site-analysis-support__report">
+                    <span class="site-analysis-support__report-icon"><i class="fa-solid fa-file-lines" aria-hidden="true"></i></span>
+                    <span><strong>Analiz raporunuz</strong><small>Rapor teslim edildi · {{ $report->created_at->format('d.m.Y') }}</small></span>
+                    <i class="fa-solid fa-check site-analysis-support__check" aria-hidden="true"></i>
+                    <a href="{{ route('member.projects.files.download', ['project' => $project, 'projectFile' => $report, 'site_locale' => $siteCurrentLocale]) }}" class="site-analysis-support__report-link">Raporu indir</a>
+                </div>
+                <div class="site-analysis-support__intro">
+                    <span class="site-eyebrow">Rapor sonrası destek</span>
+                    <h2>Aklınızda yeni bir soru mu var?</h2>
+                    <p>Raporunuzu incelerken yeni bir sorunuz oluştuysa veya ek bir analize ihtiyaç duyduysanız uzmanınıza doğrudan yazın.</p>
+                </div>
+                <form method="POST" action="{{ route('member.projects.analysis-requests.store', ['project' => $project, 'site_locale' => $siteCurrentLocale]) }}" enctype="multipart/form-data" class="site-analysis-support__form">
+                    @csrf
+                    <label for="analysis_request_message">Nasıl bir ek analiz istiyorsunuz?</label>
+                    <textarea id="analysis_request_message" name="message" required minlength="10" maxlength="5000" rows="5" placeholder="Örneğin: Yaş gruplarına göre sonuçları da karşılaştırabilir miyiz?">{{ old('message') }}</textarea>
+                    <label class="site-analysis-support__upload" for="analysis_request_documents">
+                        <strong><i class="fa-solid fa-plus" aria-hidden="true"></i> Belgeleri ekle <small>(isteğe bağlı)</small></strong>
+                        <span>Birden fazla rapor, tablo veya veri dosyası seçebilirsiniz. En fazla 5 belge, belge başına 20 MB.</span>
+                        <input id="analysis_request_documents" name="documents[]" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.zip,.jpg,.jpeg,.png,.webp,.txt">
+                    </label>
+                    <div class="site-analysis-support__footer">
+                        <span>Talebiniz doğrudan uzmanınıza iletilir. Yanıtı bu sayfanın süreç geçmişinde görürsünüz.</span>
+                        <button type="submit">Talebimi gönder <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+                    </div>
+                </form>
+                @if($project->analysisRequests->isNotEmpty())
+                    <div class="site-analysis-support__history">
+                        <h3>Uzmanla ek analiz görüşmeleri</h3>
+                        @foreach($project->analysisRequests as $analysisRequest)
+                            <div class="site-analysis-support__history-item">
+                                <span><strong>{{ $analysisRequest->created_at->format('d.m.Y H:i') }}</strong> · {{ \App\Models\Admin\Project\ProjectAnalysisRequest::statusLabel($analysisRequest->status) }}</span>
+                                <p>{{ $analysisRequest->message }}</p>
+                                @foreach($analysisRequest->files as $requestFile)
+                                    <a href="{{ route('member.projects.files.download', ['project' => $project, 'projectFile' => $requestFile, 'site_locale' => $siteCurrentLocale]) }}">{{ $requestFile->original_name }} ↗</a>
+                                @endforeach
+                                <form method="POST" action="{{ route('member.projects.analysis-requests.reply', ['project' => $project, 'analysisRequest' => $analysisRequest, 'site_locale' => $siteCurrentLocale]) }}" enctype="multipart/form-data" class="mt-4 grid gap-2">
+                                    @csrf
+                                    <label for="member-reply-{{ $analysisRequest->id }}" class="font-semibold">Uzmanınıza yeni mesaj</label>
+                                    <textarea id="member-reply-{{ $analysisRequest->id }}" name="message" class="kt-input w-full" rows="3" minlength="2" maxlength="5000" required placeholder="Ek açıklamanızı yazın..."></textarea>
+                                    <input type="file" name="documents[]" multiple class="kt-input w-full" aria-label="Mesaja belge ekle" accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.zip,.jpg,.jpeg,.png,.webp,.txt">
+                                    <button type="submit" class="kt-btn kt-btn-primary w-fit">Mesaj gönder</button>
+                                </form>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </section>
         @endif
 
         <div class="mt-8 grid gap-7 lg:grid-cols-[minmax(0,1.25fr)_minmax(20rem,.75fr)]">
@@ -75,7 +131,7 @@
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <a href="{{ route('member.projects.files.download', ['project' => $project, 'projectFile' => $file, 'site_locale' => $siteCurrentLocale]) }}" class="kt-btn kt-btn-sm kt-btn-light" aria-label="{{ $file->original_name }} dosyasını indir">İndir</a>
-                                    @if((int) $file->member_id === (int) auth('member')->id() && $project->allowsMemberUploads())
+                                    @if((int) $file->member_id === (int) auth('member')->id() && $project->allowsMemberUploads() && ! $project->analysisRequests->contains(fn ($analysisRequest) => (int) $analysisRequest->project_file_id === (int) $file->id || $analysisRequest->files->contains('id', $file->id)))
                                         <form method="POST" action="{{ route('member.projects.files.destroy', ['project' => $project, 'projectFile' => $file, 'site_locale' => $siteCurrentLocale]) }}" data-project-file-delete>
                                             @csrf
                                             @method('DELETE')

@@ -2,7 +2,7 @@
     $sectionType = $section['type'] ?? null;
     $sectionPageLink = match ($sectionType) {
         'services' => [
-            'label' => 'Hizmetler',
+            'label' => 'Neler Sunuyoruz?',
             'url' => \App\Support\Site\SiteLocalization::localizedRoute('site.services.index', locale: $locale) . '#hizmetler',
         ],
         'process' => [

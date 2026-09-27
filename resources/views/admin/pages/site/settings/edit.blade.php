@@ -255,6 +255,24 @@
                     <div class="kt-card">
                         <div class="kt-card-header py-5">
                             <div>
+                                <h3 class="kt-card-title">Neler Sunuyoruz? / Hareketli P</h3>
+                                <div class="text-sm text-muted-foreground">Üst görseldeki Σ, μ, σ ve x̄ sembollerinin renklerini ayarlayın. Sayfanın açık ve koyu düzeni değişmez.</div>
+                            </div>
+                        </div>
+                        <div class="kt-card-content grid gap-4 p-6 sm:grid-cols-2 xl:grid-cols-4">
+                            @foreach(['Σ', 'μ', 'σ', 'x̄'] as $index => $symbol)
+                                <label class="grid gap-2">
+                                    <span class="kt-form-label">{{ $symbol }} sembolü</span>
+                                    <input type="color" name="services_symbol_colors[{{ $index }}]" value="{{ old('services_symbol_colors.' . $index, $settings->servicesSymbolColors()[$index]) }}" class="h-12 w-full cursor-pointer rounded-xl border border-border bg-background p-1">
+                                    @error('services_symbol_colors.' . $index)<span class="text-xs text-danger">{{ $message }}</span>@enderror
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="kt-card">
+                        <div class="kt-card-header py-5">
+                            <div>
                                 <h3 class="kt-card-title">İletişim Kanalları ve Harita Entegrasyonu</h3>
                                 <div class="text-sm text-muted-foreground">Dil fark etmeksizin sabit kalan sistem alanları burada yönetilir.</div>
                             </div>

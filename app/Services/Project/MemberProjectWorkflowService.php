@@ -9,6 +9,8 @@ use Illuminate\Support\Str;
 
 class MemberProjectWorkflowService
 {
+    public function __construct(private readonly ProjectWorkflowService $workflow) {}
+
     public function ensureForCompletedAppointment(Appointment $appointment): ?Project
     {
         return DB::transaction(function () use ($appointment): ?Project {
@@ -32,6 +34,10 @@ class MemberProjectWorkflowService
                     'status' => Project::STATUS_APPOINTMENT_DONE,
                 ]
             );
+
+            if ($project->wasRecentlyCreated) {
+                $this->workflow->record($project, 'project_created', 'system', data: ['status' => $project->status]);
+            }
 
             if (! $project->member_id) {
                 $project->forceFill(['member_id' => $appointment->member_id])->save();

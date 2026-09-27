@@ -304,6 +304,229 @@ class SitePortalFlowTest extends TestCase
         $this->assertDatabaseCount('service_reviews', 2);
     }
 
+    public function test_additional_analysis_requires_delivered_report_and_keeps_attachment_private(): void
+    {
+        Storage::fake('local');
+        [$member] = $this->actors();
+        $otherMember = Member::query()->create([
+            'name' => 'Başka',
+            'surname' => 'Üye',
+            'email' => 'additional-analysis-other@example.test',
+            'password' => 'password',
+            'is_active' => true,
+        ]);
+        $project = Project::query()->create([
+            'member_id' => $member->id,
+            'title' => 'Raporlu proje',
+            'slug' => 'raporlu-proje',
+            'status' => Project::STATUS_DELIVERED,
+        ]);
+
+        $this->actingAs($member, 'member')
+            ->post(route('member.projects.analysis-requests.store', $project), ['message' => 'Yeni karşılaştırma istiyorum.'])
+            ->assertStatus(422);
+
+        $reportPath = UploadedFile::fake()->create('rapor.pdf', 64, 'application/pdf')->store('project-files/reports', 'local');
+        $project->files()->create([
+            'member_id' => null,
+            'disk' => 'local',
+            'path' => $reportPath,
+            'original_name' => 'rapor.pdf',
+            'mime_type' => 'application/pdf',
+            'size' => 65536,
+            'note' => 'Analiz raporu',
+        ]);
+
+        $this->actingAs($member, 'member')
+            ->get(route('member.projects.show', $project))
+            ->assertOk()
+            ->assertSee('Aklınızda yeni bir soru mu var?')
+            ->assertSee('Raporu indir');
+
+        $this->actingAs($member, 'member')
+            ->get(route('member.projects.index'))
+            ->assertOk()
+            ->assertSee('Rapor ve ek analiz');
+
+        $this->actingAs($member, 'member')
+            ->post(route('member.projects.analysis-requests.store', $project), [
+                'message' => 'Yaş gruplarını ayrıca karşılaştırabilir miyiz?',
+                'documents' => [
+                    UploadedFile::fake()->create('ek-veri.csv', 12, 'text/csv'),
+                    UploadedFile::fake()->create('ek-tablo.pdf', 24, 'application/pdf'),
+                ],
+            ])
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $analysisRequest = $project->analysisRequests()->firstOrFail();
+        $this->assertSame('pending', $analysisRequest->status);
+        $this->assertSame($member->id, $analysisRequest->member_id);
+        $this->assertCount(2, $analysisRequest->files);
+        $this->assertEqualsCanonicalizing(['ek-veri.csv', 'ek-tablo.pdf'], $analysisRequest->files->pluck('original_name')->all());
+        foreach ($analysisRequest->files as $requestFile) {
+            Storage::disk('local')->assertExists($requestFile->path);
+        }
+
+        $this->actingAs($member, 'member')
+            ->get(route('member.projects.show', $project))
+            ->assertOk()
+            ->assertSee('ek-veri.csv')
+            ->assertSee('ek-tablo.pdf');
+
+        $this->actingAs($otherMember, 'member')
+            ->post(route('member.projects.analysis-requests.store', $project), ['message' => 'Başkasının raporunu istiyorum.'])
+            ->assertNotFound();
+        $this->actingAs($otherMember, 'member')
+            ->get(route('member.projects.files.download', [$project, $analysisRequest->files->first()]))
+            ->assertNotFound();
+    }
+
+    public function test_provider_dashboard_shows_only_own_analysis_requests_and_all_their_files(): void
+    {
+        Storage::fake('local');
+        [$member, $provider] = $this->actors();
+        [, $otherProvider] = $this->actors();
+        $providerRole = Role::query()->create(['name' => 'Uzman', 'slug' => 'provider']);
+        $provider->roles()->attach($providerRole);
+        $otherProvider->roles()->attach($providerRole);
+
+        $ownAppointment = Appointment::query()->create([
+            'provider_id' => $provider->id,
+            'member_id' => $member->id,
+            'start_at' => now()->subDay(),
+            'end_at' => now()->subDay()->addHour(),
+            'blocks' => 1,
+            'status' => Appointment::STATUS_COMPLETED,
+        ]);
+        $otherAppointment = Appointment::query()->create([
+            'provider_id' => $otherProvider->id,
+            'member_id' => $member->id,
+            'start_at' => now()->subDays(2),
+            'end_at' => now()->subDays(2)->addHour(),
+            'blocks' => 1,
+            'status' => Appointment::STATUS_COMPLETED,
+        ]);
+        $ownProject = Project::query()->create([
+            'member_id' => $member->id,
+            'appointment_id' => $ownAppointment->id,
+            'title' => 'Uzmanın projesi',
+            'slug' => 'uzmanin-projesi',
+            'status' => Project::STATUS_DELIVERED,
+        ]);
+        $otherProject = Project::query()->create([
+            'member_id' => $member->id,
+            'appointment_id' => $otherAppointment->id,
+            'title' => 'Başka uzmanın projesi',
+            'slug' => 'baska-uzmanin-projesi',
+            'status' => Project::STATUS_DELIVERED,
+        ]);
+        $ownRequest = $ownProject->analysisRequests()->create(['member_id' => $member->id, 'message' => 'Kendi analiz talebi', 'status' => 'pending']);
+        $otherRequest = $otherProject->analysisRequests()->create(['member_id' => $member->id, 'message' => 'Gizli analiz talebi', 'status' => 'pending']);
+
+        foreach (['veri.csv', 'tablo.pdf'] as $name) {
+            $path = UploadedFile::fake()->create($name, 8)->store('project-files/test', 'local');
+            $file = $ownProject->files()->create(['member_id' => $member->id, 'disk' => 'local', 'path' => $path, 'original_name' => $name, 'size' => 8192]);
+            $ownRequest->files()->attach($file->id);
+        }
+        $otherPath = UploadedFile::fake()->create('gizli.pdf', 8)->store('project-files/test', 'local');
+        $otherFile = $otherProject->files()->create(['member_id' => $member->id, 'disk' => 'local', 'path' => $otherPath, 'original_name' => 'gizli.pdf', 'size' => 8192]);
+        $otherRequest->files()->attach($otherFile->id);
+
+        $this->actingAs($provider)
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->assertSee(route('admin.analysis-requests.index'));
+        $this->actingAs($provider)
+            ->get(route('admin.analysis-requests.index'))
+            ->assertOk()
+            ->assertSee('Kendi analiz talebi')
+            ->assertSee('veri.csv')
+            ->assertSee('tablo.pdf')
+            ->assertDontSee('Gizli analiz talebi')
+            ->assertDontSee('gizli.pdf');
+        $this->actingAs($provider)
+            ->get(route('admin.analysis-requests.files.download', [$ownRequest, $ownRequest->files()->first()]))
+            ->assertOk();
+        $this->actingAs($provider)
+            ->get(route('admin.analysis-requests.files.download', [$otherRequest, $otherFile]))
+            ->assertNotFound();
+    }
+
+    public function test_member_and_assigned_expert_exchange_reports_messages_and_files_without_admin_approval(): void
+    {
+        Storage::fake('local');
+        [$member, $provider] = $this->actors();
+        [, $otherProvider] = $this->actors();
+        $providerRole = Role::query()->create(['name' => 'Uzman', 'slug' => 'provider']);
+        $adminRole = Role::query()->create(['name' => 'Yönetici', 'slug' => 'admin']);
+        $provider->roles()->attach($providerRole);
+        $otherProvider->roles()->attach($providerRole);
+        $admin = User::query()->create(['name' => 'Yönetici', 'email' => 'oversight@example.test', 'password' => 'password', 'is_active' => true]);
+        $admin->roles()->attach($adminRole);
+
+        $appointment = Appointment::query()->create([
+            'provider_id' => $provider->id, 'member_id' => $member->id,
+            'start_at' => now()->subDay(), 'end_at' => now()->subDay()->addHour(),
+            'blocks' => 1, 'status' => Appointment::STATUS_COMPLETED,
+        ]);
+        $project = Project::query()->create([
+            'appointment_id' => $appointment->id, 'member_id' => $member->id,
+            'title' => 'Karşılıklı analiz', 'slug' => 'karsilikli-analiz',
+            'status' => Project::STATUS_APPOINTMENT_DONE,
+        ]);
+
+        $this->actingAs($otherProvider)->get(route('admin.analysis-requests.projects.show', $project))->assertNotFound();
+        $this->actingAs($otherProvider)->post(route('admin.analysis-requests.projects.reports.store', $project), [
+            'report' => UploadedFile::fake()->create('yabanci.pdf', 10, 'application/pdf'),
+        ])->assertNotFound();
+
+        $this->actingAs($provider)->patch(route('admin.analysis-requests.projects.status.update', $project), ['status' => Project::STATUS_DEV_PENDING])->assertRedirect();
+        $this->actingAs($provider)->patch(route('admin.analysis-requests.projects.status.update', $project), ['status' => Project::STATUS_DEV_IN_PROGRESS])->assertRedirect();
+        $this->assertSame(Project::STATUS_DEV_IN_PROGRESS, $project->fresh()->status);
+        $this->assertDatabaseHas('project_workflow_events', ['project_id' => $project->id, 'event_type' => 'project_status_changed', 'body' => 'Analiz']);
+        $this->actingAs($admin)->patch(route('admin.analysis-requests.projects.status.update', $project), ['status' => Project::STATUS_APPROVED])->assertForbidden();
+
+        $this->actingAs($provider)->post(route('admin.analysis-requests.projects.reports.store', $project), [
+            'report' => UploadedFile::fake()->create('analiz-raporu.pdf', 50, 'application/pdf'),
+        ])->assertRedirect()->assertSessionHas('success');
+        $this->assertSame(Project::STATUS_DELIVERED, $project->fresh()->status);
+        $this->assertDatabaseHas('project_workflow_events', ['project_id' => $project->id, 'event_type' => 'report_delivered', 'actor_id' => $provider->id]);
+
+        $this->actingAs($member, 'member')->get(route('member.projects.show', $project))
+            ->assertOk()->assertSee('Süreç geçmişi')->assertSee('analiz-raporu.pdf');
+        $this->actingAs($member, 'member')->post(route('member.projects.analysis-requests.store', $project), [
+            'message' => 'Yaş gruplarını ayrıca karşılaştırabilir miyiz?',
+            'documents' => [UploadedFile::fake()->create('veriler.csv', 10, 'text/csv')],
+        ])->assertRedirect();
+        $analysisRequest = $project->analysisRequests()->firstOrFail();
+        $this->assertDatabaseHas('admin_notifications', ['user_id' => $provider->id, 'title' => 'Üye ek analiz istedi']);
+
+        $this->actingAs($provider)->get(route('admin.analysis-requests.projects.show', $project))
+            ->assertOk()->assertSee('Yaş gruplarını ayrıca')->assertSee('veriler.csv');
+        $this->actingAs($provider)->post(route('admin.analysis-requests.reply', $analysisRequest), [
+            'message' => 'Karşılaştırmalı tabloyu hazırladım.',
+            'documents' => [UploadedFile::fake()->create('ek-sonuc.pdf', 30, 'application/pdf')],
+            'complete' => '1',
+        ])->assertRedirect();
+        $this->assertSame('completed', $analysisRequest->fresh()->status);
+
+        $this->actingAs($member, 'member')->get(route('member.projects.index'))
+            ->assertOk()->assertSee('yeni bildirim');
+        $this->actingAs($member, 'member')->get(route('member.projects.show', $project))
+            ->assertOk()->assertSee('Karşılaştırmalı tabloyu hazırladım.')->assertSee('ek-sonuc.pdf');
+        $this->actingAs($member, 'member')->post(route('member.projects.analysis-requests.reply', [$project, $analysisRequest]), [
+            'message' => 'Teşekkürler, bir ayrıntı daha soracağım.',
+        ])->assertRedirect();
+        $this->assertSame('pending', $analysisRequest->fresh()->status);
+
+        $this->actingAs($admin)->get(route('admin.analysis-requests.projects.show', $project))
+            ->assertOk()->assertSee('Karşılaştırmalı tabloyu hazırladım.')->assertSee('Teşekkürler, bir ayrıntı daha soracağım.');
+        $this->actingAs($admin)->post(route('admin.analysis-requests.reply', $analysisRequest), [
+            'message' => 'Yönetici yanıtı',
+        ])->assertForbidden();
+    }
+
     public function test_member_can_update_profile_and_sensitive_changes_require_current_password(): void
     {
         [$member] = $this->actors();

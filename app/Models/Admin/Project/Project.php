@@ -49,6 +49,7 @@ class Project extends Model
     protected static function booted(): void
     {
         static::forceDeleting(function (self $project): void {
+            $project->analysisRequests()->delete();
             $project->files()->withTrashed()->get()->each->forceDelete();
         });
     }
@@ -106,7 +107,7 @@ class Project extends Model
             'order' => 20,
         ],
         self::STATUS_APPOINTMENT_DONE => [
-            'label' => 'Dosyalar Alındı',
+            'label' => 'Ön görüşme tamamlandı',
             'badge' => 'kt-badge kt-badge-sm kt-badge-light-success',
             'order' => 30,
         ],
@@ -121,7 +122,7 @@ class Project extends Model
             'order' => 50,
         ],
         self::STATUS_DELIVERED => [
-            'label' => 'Raporlama',
+            'label' => 'Rapor teslim edildi',
             'badge' => 'kt-badge kt-badge-sm kt-badge-info',
             'order' => 60,
         ],
@@ -244,6 +245,22 @@ class Project extends Model
     public function files(): HasMany
     {
         return $this->hasMany(ProjectFile::class)->latest('id');
+    }
+
+    public function analysisRequests(): HasMany
+    {
+        return $this->hasMany(ProjectAnalysisRequest::class)->latest('id');
+    }
+
+    public function workflowEvents(): HasMany
+    {
+        return $this->hasMany(ProjectWorkflowEvent::class)->orderBy('created_at')->orderBy('id');
+    }
+
+    public function allowsAdditionalAnalysisRequests(): bool
+    {
+        return in_array((string) $this->status, [self::STATUS_DELIVERED, self::STATUS_APPROVED, self::STATUS_CLOSED], true)
+            && $this->files()->whereNull('member_id')->where('note', 'Analiz raporu')->exists();
     }
 
     public function serviceReview(): MorphOne

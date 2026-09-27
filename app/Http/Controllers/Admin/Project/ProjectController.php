@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\Project\ProjectStoreRequest;
 use App\Http\Requests\Admin\Project\ProjectUpdateRequest;
 use App\Models\Admin\Category;
 use App\Models\Admin\Project\Project;
+use App\Models\Admin\Project\ProjectAnalysisRequest;
 use App\Models\Admin\Project\ProjectFile;
 use App\Models\Admin\Project\ProjectTranslation;
 use App\Models\Member;
@@ -68,6 +69,7 @@ class ProjectController extends Controller
                 'translations',
                 'member:id,name,surname,email',
             ])
+            ->withCount(['analysisRequests as pending_analysis_requests_count' => fn ($query) => $query->where('status', ProjectAnalysisRequest::STATUS_PENDING)])
             ->search($q)
             ->inStatus($status)
             ->when(! empty($selectedCategoryIds), function ($builder) use ($selectedCategoryIds) {
@@ -170,7 +172,7 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function store(ProjectStoreRequest $request): RedirectResponse
+    public function store(ProjectStoreRequest $request, \App\Services\Project\ProjectWorkflowService $workflow): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -194,6 +196,10 @@ class ProjectController extends Controller
             'title' => (string) $project->title,
         ]);
 
+        if ($project->member_id) {
+            $workflow->record($project, 'project_created', 'admin', (int) auth()->id(), data: ['status' => $project->status]);
+        }
+
         return redirect()
             ->route('admin.projects.index')
             ->with('success', 'Proje oluşturuldu.');
@@ -210,6 +216,8 @@ class ProjectController extends Controller
                 ->visibleTo(auth()->user())
                 ->select(['users.id', 'users.name', 'users.title']),
             'files.member:id,name,surname',
+            'analysisRequests.member:id,name,surname',
+            'analysisRequests.files',
         ]);
 
         $categories = Category::query()
@@ -232,13 +240,16 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function update(ProjectUpdateRequest $request, Project $project): RedirectResponse
+    public function update(ProjectUpdateRequest $request, Project $project, \App\Services\Project\ProjectWorkflowService $workflow): RedirectResponse
     {
         $validated = $request->validated();
         $oldStatus = (string) ($project->status ?? Project::STATUS_DRAFT);
 
         DB::transaction(function () use ($validated, &$project) {
             $project = Project::query()->lockForUpdate()->findOrFail($project->id);
+            if ($project->member_id && $project->appointment_id) {
+                abort_unless((string) $validated['status'] === (string) $project->status, 409, 'Bu çalışmanın aşaması uzman tarafından değiştirildi. Sayfayı yenileyin.');
+            }
             $project->update($this->buildPersistenceData($validated, $project));
             $this->syncCategories($project, $validated['category_ids'] ?? []);
             $this->syncTranslations($project, $validated['translations'] ?? []);
@@ -261,6 +272,12 @@ class ProjectController extends Controller
                 'from' => $oldStatus,
                 'to' => (string) $validated['status'],
             ]);
+            if ($project->member_id) {
+                $workflow->record($project, 'project_status_changed', 'admin', (int) auth()->id(), Project::statusLabel((string) $validated['status']), [
+                    'from' => $oldStatus,
+                    'to' => (string) $validated['status'],
+                ]);
+            }
         }
 
         $this->reviewAssignmentService->assignForProject($project->fresh());

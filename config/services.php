@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    'whatsapp_stage' => [
+        'enabled' => env('WHATSAPP_STAGE_ENABLED', false),
+        'graph_version' => env('WHATSAPP_GRAPH_VERSION'),
+        'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
+        'access_token' => env('WHATSAPP_ACCESS_TOKEN'),
+        'template_name' => env('WHATSAPP_STAGE_TEMPLATE_NAME'),
+        'template_language' => env('WHATSAPP_STAGE_TEMPLATE_LANGUAGE', 'tr'),
+    ],
+
 ];

@@ -62,6 +62,12 @@
             </div>
         </form>
 
+        @if($project->member_id)
+            <a href="{{ route('admin.analysis-requests.projects.show', $project) }}" class="kt-btn kt-btn-light mt-6">Üye–uzman süreç geçmişini görüntüle</a>
+        @endif
+
+        @include('admin.pages.projects.partials._analysis_requests')
+
         @include('admin.pages.media.partials._upload-modal')
     </div>
 @endsection

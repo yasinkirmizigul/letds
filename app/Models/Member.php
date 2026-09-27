@@ -41,6 +41,8 @@ class Member extends Authenticatable
         'suspended_at',
         'membership_ended_at',
         'suspension_reason',
+        'whatsapp_stage_opted_in_at',
+        'whatsapp_stage_opted_in_phone',
     ];
 
     protected $hidden = [
@@ -58,6 +60,7 @@ class Member extends Authenticatable
             'last_login_at' => 'datetime',
             'suspended_at' => 'datetime',
             'membership_ended_at' => 'datetime',
+            'whatsapp_stage_opted_in_at' => 'datetime',
             'deleted_at' => 'datetime',
         ];
     }

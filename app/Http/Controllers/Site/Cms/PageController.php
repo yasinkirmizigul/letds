@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Site\Cms;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin\User\User;
 use App\Models\Site\SitePage;
 use App\Support\Site\SiteLocalization;
 use Illuminate\Contracts\View\View;
@@ -38,6 +39,15 @@ class PageController extends Controller
 
         return view('site.cms.page', [
             'page' => $page,
+            'teamExperts' => $page->slug === 'hakkimizda'
+                ? User::query()
+                    ->where('is_active', true)
+                    ->whereHas('roles', fn (Builder $roles) => $roles->where('slug', 'provider'))
+                    ->whereDoesntHave('roles', fn (Builder $roles) => $roles->where('slug', 'superadmin'))
+                    ->with('avatarMedia')
+                    ->orderBy('name')
+                    ->get()
+                : collect(),
             'currentSitePage' => $page,
             'pageTitle' => $page->localized('meta_title') ?: $page->localized('title'),
         ]);

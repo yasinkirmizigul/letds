@@ -34,6 +34,7 @@
                             <div class="flex flex-wrap items-center gap-2">
                                 <span class="{{ \App\Models\Admin\Project\Project::statusBadgeClass($project->status) }}">{{ \App\Models\Admin\Project\Project::statusLabel($project->status) }}</span>
                                 <span class="text-xs text-muted-foreground">#{{ $project->id }}</span>
+                                @if($project->unread_events_count > 0)<span class="rounded-full bg-primary px-2 py-1 text-xs font-semibold text-primary-foreground">{{ $project->unread_events_count }} yeni bildirim</span>@endif
                             </div>
                             <h2 class="mt-4 site-card-title !text-2xl">{{ $project->localizedValue('title') }}</h2>
                             <p class="mt-2 max-w-3xl text-sm leading-7 text-muted-foreground">{{ $project->excerptPreview(170) }}</p>
@@ -67,7 +68,20 @@
         <section id="sonuclarim" class="mt-7 rounded-3xl border border-border bg-background p-6 md:p-8" data-reveal>
             <span class="site-eyebrow">Sonuçlarım</span>
             <h2 class="mt-4 site-section-title">Rapor ve sonuç dosyalarınıza aynı çalışma alanından ulaşın.</h2>
-            <p class="mt-3 max-w-3xl text-sm leading-7 text-muted-foreground">Raporlama aşamasına ulaşan çalışmalarınızın paylaşılan çıktılarını ilgili analiz sürecini açarak indirebilirsiniz.</p>
+            <p class="mt-3 max-w-3xl text-sm leading-7 text-muted-foreground">Teslim edilen raporlarınızı indirebilir, yeni sorularınız için ek analiz talebi gönderebilirsiniz.</p>
+            @if($reportedProjects->isNotEmpty())
+                <div class="mt-6 grid gap-3">
+                    @foreach($reportedProjects as $reportedProject)
+                        <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-muted/20 p-4">
+                            <div>
+                                <strong class="block text-sm text-foreground">{{ $reportedProject->localizedValue('title') }}</strong>
+                                <span class="mt-1 block text-xs text-muted-foreground">Rapor teslim edildi · {{ $reportedProject->updated_at->format('d.m.Y') }}</span>
+                            </div>
+                            <a class="kt-btn kt-btn-sm kt-btn-primary" href="{{ route('member.projects.show', ['project' => $reportedProject, 'site_locale' => $siteCurrentLocale]) }}#ek-analiz">Rapor ve ek analiz</a>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
         </section>
 
         <div class="mt-7">{{ $projects->links() }}</div>

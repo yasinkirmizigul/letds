@@ -29,7 +29,7 @@ class SiteNavigationRoutes
         return [
             self::HOME => 'Ana Sayfa',
             self::FAQS => 'Sıkça Sorulan Sorular',
-            self::SERVICES => 'Hizmetler',
+            self::SERVICES => 'Neler Sunuyoruz?',
             self::SERVICES_OFFER => 'Neler Sunuyoruz?',
             self::SERVICES_PROCESS => 'Nasıl İlerliyoruz?',
             self::SERVICES_START => 'Birlikte Başlayalım',

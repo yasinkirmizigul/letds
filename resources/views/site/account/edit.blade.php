@@ -47,6 +47,16 @@
             </div>
 
             <div class="border-t border-border pt-7">
+                <h2 class="site-section-title !text-2xl">WhatsApp bildirimleri</h2>
+                <p class="mt-2 text-sm leading-7 text-muted-foreground">Yalnızca analiz aşaması değiştiğinde profilinizdeki telefon numaranıza kısa bir aşama bildirimi gönderilir. Mesaj, belge ve rapor içeriği paylaşılmaz. İstediğiniz zaman bu izni kaldırabilirsiniz.</p>
+                <label for="whatsapp_stage_notifications" class="mt-4 flex items-start gap-3 rounded-2xl border border-border p-4 text-sm leading-6">
+                    <input id="whatsapp_stage_notifications" type="checkbox" name="whatsapp_stage_notifications" value="1" class="mt-1" @checked((bool) old('whatsapp_stage_notifications', $member->whatsapp_stage_opted_in_at !== null))>
+                    <span>Analiz aşaması bildirimlerini WhatsApp üzerinden almak istiyorum.</span>
+                </label>
+                @error('whatsapp_stage_notifications')<span class="mt-2 block text-xs text-danger">{{ $message }}</span>@enderror
+            </div>
+
+            <div class="border-t border-border pt-7">
                 <div class="mb-5">
                     <h2 class="site-section-title !text-2xl">Güvenlik</h2>
                     <p class="mt-2 text-sm leading-7 text-muted-foreground">E-posta veya parola değişikliğinde mevcut parolanızla doğrulama yapmanız gerekir.</p>

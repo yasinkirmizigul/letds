@@ -139,7 +139,7 @@ export async function showConfirmDialog(options = {}) {
             return normalized === expected ? undefined : `Devam etmek için ${confirmationText} yazın.`;
         } : undefined,
         customClass: {
-            popup: `swal2-kt-popup swal2-kt-popup--${meta.variant}`,
+            popup: `swal2-kt-popup swal2-kt-popup--${meta.variant}${options.prominentTime ? ' swal2-appointment-confirm' : ''}`,
             title: 'swal2-kt-title',
             htmlContainer: 'swal2-kt-text',
             input: 'swal2-kt-input',
@@ -147,6 +147,15 @@ export async function showConfirmDialog(options = {}) {
             confirmButton: buildConfirmButtonClass(meta.variant),
             cancelButton: 'kt-btn swal2-kt-button swal2-kt-cancel',
             denyButton: 'kt-btn swal2-kt-button swal2-kt-deny',
+        },
+        didOpen: (popup) => {
+            if (!options.prominentTime) return;
+
+            popup.querySelectorAll('select, .swal2-select').forEach((select) => select.remove());
+            const time = document.createElement('strong');
+            time.className = 'swal2-appointment-time';
+            time.textContent = options.prominentTime;
+            popup.querySelector('.swal2-kt-text')?.prepend(time);
         },
     });
 

@@ -6,6 +6,7 @@ import { initGlobalBlockUi } from '@/core/block-ui';
 import initTitleTooltips from '@/core/title-tooltips';
 import { initPasswordConfirmationValidation } from '@/core/password-confirmation';
 import { initSiteKtSelects } from '@/core/ktui-selects';
+import { initTeamCarousel, initServicesParticleLogo } from './visual-stories';
 
 window.Alpine = Alpine;
 Alpine.start();
@@ -124,5 +125,7 @@ domReady(() => {
     initReveals();
     initSectionNavigation();
     initReviewStars();
+    initTeamCarousel();
+    initServicesParticleLogo();
     document.documentElement.classList.add('site-js-ready');
 });
