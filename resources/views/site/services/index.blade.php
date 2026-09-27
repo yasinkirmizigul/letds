@@ -48,6 +48,7 @@
                         <span class="site-services-particle-logo__halo"></span>
                         <canvas data-site-particle-canvas data-logo-src="{{ asset('assets/site/images/favicon.svg') }}"></canvas>
                         <img class="site-services-particle-logo__fallback" src="{{ asset('assets/site/images/favicon.svg') }}" alt="" width="450" height="450">
+                        <noscript><img class="site-services-particle-logo__nojs" src="{{ asset('assets/site/images/favicon.svg') }}" alt="" width="450" height="450"></noscript>
                     </div>
                 </div>
             </div>

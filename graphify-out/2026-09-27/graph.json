@@ -935,7 +935,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_auth_authcontroller",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": "authcontroller.php"
     },
     {
@@ -946,7 +946,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_auth_authcontroller_authcontroller",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": "authcontroller"
     },
     {
@@ -957,7 +957,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_auth_authcontroller_authcontroller_showlogin",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".showlogin()"
     },
     {
@@ -968,7 +968,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_auth_authcontroller_authcontroller_login",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".login()"
     },
     {
@@ -979,7 +979,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_auth_authcontroller_authcontroller_logout",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".logout()"
     },
     {
@@ -990,7 +990,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_auth_authcontroller_authcontroller_ensureisnotratelimited",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".ensureisnotratelimited()"
     },
     {
@@ -1001,7 +1001,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_auth_authcontroller_authcontroller_throttlekey",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".throttlekey()"
     },
     {
@@ -1012,7 +1012,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_auth_passwordresetcontroller",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": "passwordresetcontroller.php"
     },
     {
@@ -1023,7 +1023,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_auth_passwordresetcontroller_passwordresetcontroller",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": "passwordresetcontroller"
     },
     {
@@ -1034,7 +1034,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_auth_passwordresetcontroller_passwordresetcontroller_showlinkrequestform",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".showlinkrequestform()"
     },
     {
@@ -1045,7 +1045,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_auth_passwordresetcontroller_passwordresetcontroller_sendresetlinkemail",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".sendresetlinkemail()"
     },
     {
@@ -1056,7 +1056,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_auth_passwordresetcontroller_passwordresetcontroller_showresetform",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".showresetform()"
     },
     {
@@ -1067,7 +1067,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_auth_passwordresetcontroller_passwordresetcontroller_reset",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".reset()"
     },
     {
@@ -1078,7 +1078,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_auth_passwordresetcontroller_passwordresetcontroller_canresetpassword",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".canresetpassword()"
     },
     {
@@ -2331,8 +2331,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "app_http_controllers_admin_ecommerce_invoicecontroller_invoicecontroller_index",
-      "community": 28,
-      "community_name": "Illuminate\\Http\\RedirectResponse",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": ".index()"
     },
     {
@@ -2650,8 +2650,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_http_controllers_admin_ecommerce_paymentwebhookeventcontroller",
-      "community": 29,
-      "community_name": "Illuminate\\Http\\Request",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": "paymentwebhookeventcontroller.php"
     },
     {
@@ -2661,8 +2661,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "app_http_controllers_admin_ecommerce_paymentwebhookeventcontroller_paymentwebhookeventcontroller",
-      "community": 29,
-      "community_name": "Illuminate\\Http\\Request",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": "paymentwebhookeventcontroller"
     },
     {
@@ -2672,8 +2672,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "app_http_controllers_admin_ecommerce_paymentwebhookeventcontroller_paymentwebhookeventcontroller_index",
-      "community": 29,
-      "community_name": "Illuminate\\Http\\Request",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": ".index()"
     },
     {
@@ -2683,8 +2683,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "app_http_controllers_admin_ecommerce_paymentwebhookeventcontroller_paymentwebhookeventcontroller_updatestatus",
-      "community": 29,
-      "community_name": "Illuminate\\Http\\Request",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": ".updatestatus()"
     },
     {
@@ -3123,7 +3123,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "app_http_controllers_admin_gallery_productgallerycontroller_productgallerycontroller",
-      "community": 149,
+      "community": 124,
       "community_name": "ProductGalleryController",
       "norm_label": "productgallerycontroller"
     },
@@ -3134,7 +3134,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "app_http_controllers_admin_gallery_productgallerycontroller_productgallerycontroller_index",
-      "community": 149,
+      "community": 124,
       "community_name": "ProductGalleryController",
       "norm_label": ".index()"
     },
@@ -3145,7 +3145,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "app_http_controllers_admin_gallery_productgallerycontroller_productgallerycontroller_attach",
-      "community": 149,
+      "community": 124,
       "community_name": "ProductGalleryController",
       "norm_label": ".attach()"
     },
@@ -3156,7 +3156,7 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "app_http_controllers_admin_gallery_productgallerycontroller_productgallerycontroller_detach",
-      "community": 149,
+      "community": 124,
       "community_name": "ProductGalleryController",
       "norm_label": ".detach()"
     },
@@ -3167,7 +3167,7 @@
       "source_location": "L123",
       "_origin": "ast",
       "id": "app_http_controllers_admin_gallery_productgallerycontroller_productgallerycontroller_reorder",
-      "community": 149,
+      "community": 124,
       "community_name": "ProductGalleryController",
       "norm_label": ".reorder()"
     },
@@ -3178,7 +3178,7 @@
       "source_location": "L181",
       "_origin": "ast",
       "id": "app_http_controllers_admin_gallery_productgallerycontroller_productgallerycontroller_normalizeslot",
-      "community": 149,
+      "community": 124,
       "community_name": "ProductGalleryController",
       "norm_label": ".normalizeslot()"
     },
@@ -3189,7 +3189,7 @@
       "source_location": "L186",
       "_origin": "ast",
       "id": "app_http_controllers_admin_gallery_productgallerycontroller_productgallerycontroller_nextsortorder",
-      "community": 149,
+      "community": 124,
       "community_name": "ProductGalleryController",
       "norm_label": ".nextsortorder()"
     },
@@ -3200,7 +3200,7 @@
       "source_location": "L195",
       "_origin": "ast",
       "id": "app_http_controllers_admin_gallery_productgallerycontroller_productgallerycontroller_syncslotorder",
-      "community": 149,
+      "community": 124,
       "community_name": "ProductGalleryController",
       "norm_label": ".syncslotorder()"
     },
@@ -3640,8 +3640,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_http_controllers_admin_message_contactmessagecontroller",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": "message/contactmessagecontroller.php"
     },
     {
@@ -3717,7 +3717,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_http_controllers_admin_notification_adminnotificationcontroller",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": "adminnotificationcontroller.php"
     },
@@ -3728,7 +3728,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "app_http_controllers_admin_notification_adminnotificationcontroller_adminnotificationcontroller",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": "adminnotificationcontroller"
     },
@@ -3739,7 +3739,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "app_http_controllers_admin_notification_adminnotificationcontroller_adminnotificationcontroller_index",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".index()"
     },
@@ -3750,7 +3750,7 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "app_http_controllers_admin_notification_adminnotificationcontroller_adminnotificationcontroller_read",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".read()"
     },
@@ -3761,7 +3761,7 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "app_http_controllers_admin_notification_adminnotificationcontroller_adminnotificationcontroller_dismiss",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".dismiss()"
     },
@@ -3772,7 +3772,7 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "app_http_controllers_admin_notification_adminnotificationcontroller_adminnotificationcontroller_readall",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".readall()"
     },
@@ -3783,7 +3783,7 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "app_http_controllers_admin_notification_adminnotificationcontroller_adminnotificationcontroller_authorizenotification",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".authorizenotification()"
     },
@@ -3794,7 +3794,7 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "app_http_controllers_admin_notification_adminnotificationcontroller_adminnotificationcontroller_respond",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".respond()"
     },
@@ -5312,8 +5312,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_contentpagecontroller_contentpagecontroller_index",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": ".index()"
     },
     {
@@ -5510,8 +5510,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_faqcontroller",
-      "community": 184,
-      "community_name": "SiteFaq",
+      "community": 144,
+      "community_name": "SiteTranslationSyncService",
       "norm_label": "site/faqcontroller.php"
     },
     {
@@ -5521,8 +5521,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_faqcontroller_faqcontroller",
-      "community": 184,
-      "community_name": "SiteFaq",
+      "community": 144,
+      "community_name": "SiteTranslationSyncService",
       "norm_label": "faqcontroller"
     },
     {
@@ -5532,8 +5532,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_faqcontroller_faqcontroller_construct",
-      "community": 184,
-      "community_name": "SiteFaq",
+      "community": 144,
+      "community_name": "SiteTranslationSyncService",
       "norm_label": ".__construct()"
     },
     {
@@ -5543,8 +5543,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_faqcontroller_faqcontroller_index",
-      "community": 184,
-      "community_name": "SiteFaq",
+      "community": 144,
+      "community_name": "SiteTranslationSyncService",
       "norm_label": ".index()"
     },
     {
@@ -5554,8 +5554,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_faqcontroller_faqcontroller_store",
-      "community": 184,
-      "community_name": "SiteFaq",
+      "community": 144,
+      "community_name": "SiteTranslationSyncService",
       "norm_label": ".store()"
     },
     {
@@ -5565,8 +5565,8 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_faqcontroller_faqcontroller_update",
-      "community": 184,
-      "community_name": "SiteFaq",
+      "community": 144,
+      "community_name": "SiteTranslationSyncService",
       "norm_label": ".update()"
     },
     {
@@ -5576,8 +5576,8 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_faqcontroller_faqcontroller_reorder",
-      "community": 184,
-      "community_name": "SiteFaq",
+      "community": 144,
+      "community_name": "SiteTranslationSyncService",
       "norm_label": ".reorder()"
     },
     {
@@ -5587,8 +5587,8 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_faqcontroller_faqcontroller_destroy",
-      "community": 184,
-      "community_name": "SiteFaq",
+      "community": 144,
+      "community_name": "SiteTranslationSyncService",
       "norm_label": ".destroy()"
     },
     {
@@ -5598,8 +5598,8 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_faqcontroller_faqcontroller_validated",
-      "community": 184,
-      "community_name": "SiteFaq",
+      "community": 144,
+      "community_name": "SiteTranslationSyncService",
       "norm_label": ".validated()"
     },
     {
@@ -5609,8 +5609,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_homeslidercontroller",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": "homeslidercontroller.php"
     },
     {
@@ -5621,7 +5621,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_homeslidercontroller_homeslidercontroller",
       "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community_name": "HomeSlider",
       "norm_label": "homeslidercontroller"
     },
     {
@@ -5643,7 +5643,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_homeslidercontroller_homeslidercontroller_index",
       "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community_name": "HomeSlider",
       "norm_label": ".index()"
     },
     {
@@ -5654,7 +5654,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_homeslidercontroller_homeslidercontroller_create",
       "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community_name": "HomeSlider",
       "norm_label": ".create()"
     },
     {
@@ -5665,7 +5665,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_homeslidercontroller_homeslidercontroller_store",
       "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community_name": "HomeSlider",
       "norm_label": ".store()"
     },
     {
@@ -5676,7 +5676,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_homeslidercontroller_homeslidercontroller_edit",
       "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community_name": "HomeSlider",
       "norm_label": ".edit()"
     },
     {
@@ -5687,7 +5687,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_homeslidercontroller_homeslidercontroller_update",
       "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community_name": "HomeSlider",
       "norm_label": ".update()"
     },
     {
@@ -5698,7 +5698,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_homeslidercontroller_homeslidercontroller_reorder",
       "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community_name": "HomeSlider",
       "norm_label": ".reorder()"
     },
     {
@@ -5709,7 +5709,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_homeslidercontroller_homeslidercontroller_toggleactive",
       "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community_name": "HomeSlider",
       "norm_label": ".toggleactive()"
     },
     {
@@ -5720,7 +5720,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_homeslidercontroller_homeslidercontroller_destroy",
       "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community_name": "HomeSlider",
       "norm_label": ".destroy()"
     },
     {
@@ -5731,7 +5731,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_homeslidercontroller_homeslidercontroller_validated",
       "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community_name": "HomeSlider",
       "norm_label": ".validated()"
     },
     {
@@ -5742,7 +5742,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_homeslidercontroller_homeslidercontroller_syncimageasset",
       "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community_name": "HomeSlider",
       "norm_label": ".syncimageasset()"
     },
     {
@@ -5753,7 +5753,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_homeslidercontroller_homeslidercontroller_deletestoredimage",
       "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community_name": "HomeSlider",
       "norm_label": ".deletestoredimage()"
     },
     {
@@ -6038,8 +6038,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_navigationcontroller",
-      "community": 6,
-      "community_name": "Controller",
+      "community": 29,
+      "community_name": "NavigationController",
       "norm_label": "navigationcontroller.php"
     },
     {
@@ -6049,7 +6049,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_navigationcontroller_navigationcontroller",
-      "community": 124,
+      "community": 29,
       "community_name": "NavigationController",
       "norm_label": "navigationcontroller"
     },
@@ -6060,7 +6060,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_navigationcontroller_navigationcontroller_construct",
-      "community": 124,
+      "community": 29,
       "community_name": "NavigationController",
       "norm_label": ".__construct()"
     },
@@ -6071,7 +6071,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_navigationcontroller_navigationcontroller_index",
-      "community": 124,
+      "community": 29,
       "community_name": "NavigationController",
       "norm_label": ".index()"
     },
@@ -6082,7 +6082,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_navigationcontroller_navigationcontroller_store",
-      "community": 124,
+      "community": 29,
       "community_name": "NavigationController",
       "norm_label": ".store()"
     },
@@ -6093,7 +6093,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_navigationcontroller_navigationcontroller_update",
-      "community": 124,
+      "community": 29,
       "community_name": "NavigationController",
       "norm_label": ".update()"
     },
@@ -6104,7 +6104,7 @@
       "source_location": "L86",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_navigationcontroller_navigationcontroller_updatetree",
-      "community": 124,
+      "community": 29,
       "community_name": "NavigationController",
       "norm_label": ".updatetree()"
     },
@@ -6115,7 +6115,7 @@
       "source_location": "L132",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_navigationcontroller_navigationcontroller_toggleactive",
-      "community": 124,
+      "community": 29,
       "community_name": "NavigationController",
       "norm_label": ".toggleactive()"
     },
@@ -6126,7 +6126,7 @@
       "source_location": "L156",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_navigationcontroller_navigationcontroller_destroy",
-      "community": 124,
+      "community": 29,
       "community_name": "NavigationController",
       "norm_label": ".destroy()"
     },
@@ -6137,7 +6137,7 @@
       "source_location": "L165",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_navigationcontroller_navigationcontroller_validated",
-      "community": 124,
+      "community": 29,
       "community_name": "NavigationController",
       "norm_label": ".validated()"
     },
@@ -6148,7 +6148,7 @@
       "source_location": "L263",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_navigationcontroller_navigationcontroller_nextsortorder",
-      "community": 124,
+      "community": 29,
       "community_name": "NavigationController",
       "norm_label": ".nextsortorder()"
     },
@@ -6467,8 +6467,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_sitelanguagecontroller",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": "sitelanguagecontroller.php"
     },
     {
@@ -6555,8 +6555,8 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_sitelanguagecontroller_sitelanguagecontroller_destroy",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": ".destroy()"
     },
     {
@@ -6621,8 +6621,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "app_http_controllers_admin_site_sitesettingscontroller_sitesettingscontroller_edit",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 144,
+      "community_name": "SiteTranslationSyncService",
       "norm_label": ".edit()"
     },
     {
@@ -7447,7 +7447,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_site_auth_memberauthcontroller",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": "memberauthcontroller.php"
     },
     {
@@ -7458,7 +7458,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_site_auth_memberauthcontroller_memberauthcontroller",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": "memberauthcontroller"
     },
     {
@@ -7469,7 +7469,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_site_auth_memberauthcontroller_memberauthcontroller_showlogin",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".showlogin()"
     },
     {
@@ -7480,7 +7480,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_site_auth_memberauthcontroller_memberauthcontroller_showregister",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".showregister()"
     },
     {
@@ -7491,7 +7491,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_site_auth_memberauthcontroller_memberauthcontroller_showmembershipinformation",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".showmembershipinformation()"
     },
     {
@@ -7502,7 +7502,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_site_auth_memberauthcontroller_memberauthcontroller_register",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".register()"
     },
     {
@@ -7513,7 +7513,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_site_auth_memberauthcontroller_memberauthcontroller_login",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".login()"
     },
     {
@@ -7524,7 +7524,7 @@
       "_origin": "ast",
       "id": "app_http_controllers_site_auth_memberauthcontroller_memberauthcontroller_logout",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".logout()"
     },
     {
@@ -7545,8 +7545,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "app_http_controllers_site_auth_memberpasswordresetcontroller_memberpasswordresetcontroller",
-      "community": 29,
-      "community_name": "Illuminate\\Http\\Request",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": "memberpasswordresetcontroller"
     },
     {
@@ -7556,8 +7556,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "app_http_controllers_site_auth_memberpasswordresetcontroller_memberpasswordresetcontroller_showlinkrequestform",
-      "community": 29,
-      "community_name": "Illuminate\\Http\\Request",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": ".showlinkrequestform()"
     },
     {
@@ -7567,8 +7567,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "app_http_controllers_site_auth_memberpasswordresetcontroller_memberpasswordresetcontroller_sendresetlinkemail",
-      "community": 29,
-      "community_name": "Illuminate\\Http\\Request",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": ".sendresetlinkemail()"
     },
     {
@@ -7578,8 +7578,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "app_http_controllers_site_auth_memberpasswordresetcontroller_memberpasswordresetcontroller_showresetform",
-      "community": 29,
-      "community_name": "Illuminate\\Http\\Request",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": ".showresetform()"
     },
     {
@@ -7589,8 +7589,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "app_http_controllers_site_auth_memberpasswordresetcontroller_memberpasswordresetcontroller_reset",
-      "community": 29,
-      "community_name": "Illuminate\\Http\\Request",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": ".reset()"
     },
     {
@@ -7600,8 +7600,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_http_controllers_site_blog_blogcontroller",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": "blogcontroller.php"
     },
     {
@@ -7611,8 +7611,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "app_http_controllers_site_blog_blogcontroller_blogcontroller",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": "blogcontroller"
     },
     {
@@ -7622,8 +7622,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "app_http_controllers_site_blog_blogcontroller_blogcontroller_index",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": ".index()"
     },
     {
@@ -7633,8 +7633,8 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "app_http_controllers_site_blog_blogcontroller_blogcontroller_show",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": ".show()"
     },
     {
@@ -7644,8 +7644,8 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "app_http_controllers_site_blog_blogcontroller_blogcontroller_basequery",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": ".basequery()"
     },
     {
@@ -7655,8 +7655,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_http_controllers_site_cms_faqcontroller",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": "cms/faqcontroller.php"
     },
     {
@@ -7666,8 +7666,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "app_http_controllers_site_cms_faqcontroller_faqcontroller",
-      "community": 184,
-      "community_name": "SiteFaq",
+      "community": 144,
+      "community_name": "SiteTranslationSyncService",
       "norm_label": "faqcontroller"
     },
     {
@@ -7677,8 +7677,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "app_http_controllers_site_cms_faqcontroller_faqcontroller_index",
-      "community": 184,
-      "community_name": "SiteFaq",
+      "community": 144,
+      "community_name": "SiteTranslationSyncService",
       "norm_label": ".index()"
     },
     {
@@ -7688,8 +7688,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "app_http_controllers_site_cms_faqcontroller_faqcontroller_grouplabel",
-      "community": 184,
-      "community_name": "SiteFaq",
+      "community": 144,
+      "community_name": "SiteTranslationSyncService",
       "norm_label": ".grouplabel()"
     },
     {
@@ -7732,8 +7732,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_http_controllers_site_cms_servicecontroller",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": "servicecontroller.php"
     },
     {
@@ -7743,8 +7743,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "app_http_controllers_site_cms_servicecontroller_servicecontroller",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": "servicecontroller"
     },
     {
@@ -7754,8 +7754,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "app_http_controllers_site_cms_servicecontroller_servicecontroller_invoke",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": ".__invoke()"
     },
     {
@@ -7809,8 +7809,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_http_controllers_site_gallery_gallerycontroller",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": "site/gallery/gallerycontroller.php"
     },
     {
@@ -7820,8 +7820,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "app_http_controllers_site_gallery_gallerycontroller_gallerycontroller",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": "gallerycontroller"
     },
     {
@@ -7831,8 +7831,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "app_http_controllers_site_gallery_gallerycontroller_gallerycontroller_index",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": ".index()"
     },
     {
@@ -7842,8 +7842,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "app_http_controllers_site_gallery_gallerycontroller_gallerycontroller_show",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": ".show()"
     },
     {
@@ -7853,8 +7853,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_http_controllers_site_homecontroller",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": "homecontroller.php"
     },
     {
@@ -7864,8 +7864,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "app_http_controllers_site_homecontroller_homecontroller",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": "homecontroller"
     },
     {
@@ -7875,8 +7875,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "app_http_controllers_site_homecontroller_homecontroller_index",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": ".index()"
     },
     {
@@ -7886,7 +7886,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_http_controllers_site_member_memberaccountcontroller",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": "memberaccountcontroller.php"
     },
@@ -7897,7 +7897,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "app_http_controllers_site_member_memberaccountcontroller_memberaccountcontroller",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": "memberaccountcontroller"
     },
@@ -7908,7 +7908,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "app_http_controllers_site_member_memberaccountcontroller_memberaccountcontroller_show",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".show()"
     },
@@ -7919,7 +7919,7 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "app_http_controllers_site_member_memberaccountcontroller_memberaccountcontroller_edit",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".edit()"
     },
@@ -7930,7 +7930,7 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "app_http_controllers_site_member_memberaccountcontroller_memberaccountcontroller_update",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".update()"
     },
@@ -7941,7 +7941,7 @@
       "source_location": "L137",
       "_origin": "ast",
       "id": "app_http_controllers_site_member_memberaccountcontroller_memberaccountcontroller_terminate",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".terminate()"
     },
@@ -7963,7 +7963,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "app_http_controllers_site_member_memberprojectcontroller_memberprojectcontroller",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": "memberprojectcontroller"
     },
@@ -7974,7 +7974,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "app_http_controllers_site_member_memberprojectcontroller_memberprojectcontroller_index",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".index()"
     },
@@ -7985,7 +7985,7 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "app_http_controllers_site_member_memberprojectcontroller_memberprojectcontroller_show",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".show()"
     },
@@ -7996,7 +7996,7 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "app_http_controllers_site_member_memberprojectcontroller_memberprojectcontroller_storefiles",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".storefiles()"
     },
@@ -8007,7 +8007,7 @@
       "source_location": "L130",
       "_origin": "ast",
       "id": "app_http_controllers_site_member_memberprojectcontroller_memberprojectcontroller_storeanalysisrequest",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".storeanalysisrequest()"
     },
@@ -8018,7 +8018,7 @@
       "source_location": "L187",
       "_origin": "ast",
       "id": "app_http_controllers_site_member_memberprojectcontroller_memberprojectcontroller_reply",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".reply()"
     },
@@ -8029,7 +8029,7 @@
       "source_location": "L227",
       "_origin": "ast",
       "id": "app_http_controllers_site_member_memberprojectcontroller_memberprojectcontroller_download",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".download()"
     },
@@ -8040,7 +8040,7 @@
       "source_location": "L236",
       "_origin": "ast",
       "id": "app_http_controllers_site_member_memberprojectcontroller_memberprojectcontroller_destroyfile",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".destroyfile()"
     },
@@ -8051,7 +8051,7 @@
       "source_location": "L256",
       "_origin": "ast",
       "id": "app_http_controllers_site_member_memberprojectcontroller_memberprojectcontroller_ownedproject",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".ownedproject()"
     },
@@ -9866,8 +9866,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_admin_blogpost_blogposttranslation",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 149,
+      "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "blogposttranslation.php"
     },
     {
@@ -9877,8 +9877,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "app_models_admin_blogpost_blogposttranslation_blogposttranslation",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 149,
+      "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "blogposttranslation"
     },
     {
@@ -9888,8 +9888,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "app_models_admin_blogpost_blogposttranslation_blogposttranslation_blogpost",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 149,
+      "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": ".blogpost()"
     },
     {
@@ -9998,8 +9998,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_admin_categorytranslation",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 149,
+      "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "categorytranslation.php"
     },
     {
@@ -10009,8 +10009,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "app_models_admin_categorytranslation_categorytranslation",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 149,
+      "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "categorytranslation"
     },
     {
@@ -10020,8 +10020,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "app_models_admin_categorytranslation_categorytranslation_category",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 149,
+      "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": ".category()"
     },
     {
@@ -10570,8 +10570,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_admin_ecommerce_ecommerceorderitem",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 85,
+      "community_name": "Category",
       "norm_label": "ecommerceorderitem.php"
     },
     {
@@ -10658,8 +10658,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_admin_ecommerce_ecommerceordertransaction",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 85,
+      "community_name": "Category",
       "norm_label": "ecommerceordertransaction.php"
     },
     {
@@ -11043,7 +11043,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_admin_gallery_galleryable",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "galleryable.php"
     },
@@ -11054,7 +11054,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "app_models_admin_gallery_galleryable_galleryable",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "galleryable"
     },
@@ -11142,8 +11142,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_admin_media_mediatranslation",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 149,
+      "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "mediatranslation.php"
     },
     {
@@ -11153,8 +11153,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "app_models_admin_media_mediatranslation_mediatranslation",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 149,
+      "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "mediatranslation"
     },
     {
@@ -11164,8 +11164,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "app_models_admin_media_mediatranslation_mediatranslation_media",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 149,
+      "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": ".media()"
     },
     {
@@ -11439,8 +11439,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_admin_product_producttranslation",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 149,
+      "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "producttranslation.php"
     },
     {
@@ -11450,8 +11450,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "app_models_admin_product_producttranslation_producttranslation",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 149,
+      "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "producttranslation"
     },
     {
@@ -11461,8 +11461,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "app_models_admin_product_producttranslation_producttranslation_product",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 149,
+      "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": ".product()"
     },
     {
@@ -12088,7 +12088,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_admin_project_projecttranslation",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "projecttranslation.php"
     },
@@ -12099,7 +12099,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "app_models_admin_project_projecttranslation_projecttranslation",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "projecttranslation"
     },
@@ -12110,7 +12110,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "app_models_admin_project_projecttranslation_projecttranslation_project",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": ".project()"
     },
@@ -13100,7 +13100,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_concerns_hassitelocaletranslations",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "hassitelocaletranslations.php"
     },
@@ -13111,7 +13111,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "app_models_concerns_hassitelocaletranslations_translationfor",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "translationfor()"
     },
@@ -13122,7 +13122,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "app_models_concerns_hassitelocaletranslations_localizedvalue",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "localizedvalue()"
     },
@@ -13870,8 +13870,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_review_servicereviewitem",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 92,
+      "community_name": "ServiceReviewItem",
       "norm_label": "servicereviewitem.php"
     },
     {
@@ -13881,8 +13881,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "app_models_review_servicereviewitem_servicereviewitem",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 92,
+      "community_name": "ServiceReviewItem",
       "norm_label": "servicereviewitem"
     },
     {
@@ -13892,8 +13892,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "app_models_review_servicereviewitem_servicereviewitem_casts",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 92,
+      "community_name": "ServiceReviewItem",
       "norm_label": ".casts()"
     },
     {
@@ -13903,8 +13903,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "app_models_review_servicereviewitem_servicereviewitem_review",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 92,
+      "community_name": "ServiceReviewItem",
       "norm_label": ".review()"
     },
     {
@@ -13914,8 +13914,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "app_models_review_servicereviewitem_servicereviewitem_question",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 92,
+      "community_name": "ServiceReviewItem",
       "norm_label": ".question()"
     },
     {
@@ -13925,8 +13925,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "app_models_review_servicereviewitem_servicereviewitem_answervalue",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 92,
+      "community_name": "ServiceReviewItem",
       "norm_label": ".answervalue()"
     },
     {
@@ -13936,8 +13936,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "app_models_review_servicereviewitem_servicereviewitem_questiontypelabel",
-      "community": 45,
-      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
+      "community": 92,
+      "community_name": "ServiceReviewItem",
       "norm_label": ".questiontypelabel()"
     },
     {
@@ -14046,7 +14046,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_site_homeslider",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "homeslider.php"
     },
@@ -14058,7 +14058,7 @@
       "_origin": "ast",
       "id": "app_models_site_homeslider_homeslider",
       "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community_name": "HomeSlider",
       "norm_label": "homeslider"
     },
     {
@@ -14124,7 +14124,7 @@
       "_origin": "ast",
       "id": "app_models_site_homeslider_homeslider_themeoptions",
       "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community_name": "HomeSlider",
       "norm_label": ".themeoptions()"
     },
     {
@@ -14135,7 +14135,7 @@
       "_origin": "ast",
       "id": "app_models_site_homeslider_homeslider_framestyle",
       "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community_name": "HomeSlider",
       "norm_label": ".framestyle()"
     },
     {
@@ -14146,7 +14146,7 @@
       "_origin": "ast",
       "id": "app_models_site_homeslider_homeslider_localized",
       "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community_name": "HomeSlider",
       "norm_label": ".localized()"
     },
     {
@@ -14156,8 +14156,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_site_homeslidertranslation",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": "homeslidertranslation.php"
     },
     {
@@ -14167,8 +14167,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "app_models_site_homeslidertranslation_homeslidertranslation",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": "homeslidertranslation"
     },
     {
@@ -14178,8 +14178,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "app_models_site_homeslidertranslation_homeslidertranslation_slider",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": ".slider()"
     },
     {
@@ -14343,7 +14343,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_site_sitecounter",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "sitecounter.php"
     },
@@ -14420,8 +14420,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_site_sitecountertranslation",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": "sitecountertranslation.php"
     },
     {
@@ -14431,8 +14431,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "app_models_site_sitecountertranslation_sitecountertranslation",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": "sitecountertranslation"
     },
     {
@@ -14442,8 +14442,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "app_models_site_sitecountertranslation_sitecountertranslation_counter",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": ".counter()"
     },
     {
@@ -14453,7 +14453,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_site_sitefaq",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "sitefaq.php"
     },
@@ -14464,8 +14464,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "app_models_site_sitefaq_sitefaq",
-      "community": 184,
-      "community_name": "SiteFaq",
+      "community": 144,
+      "community_name": "SiteTranslationSyncService",
       "norm_label": "sitefaq"
     },
     {
@@ -14508,8 +14508,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "app_models_site_sitefaq_sitefaq_localized",
-      "community": 184,
-      "community_name": "SiteFaq",
+      "community": 144,
+      "community_name": "SiteTranslationSyncService",
       "norm_label": ".localized()"
     },
     {
@@ -14519,8 +14519,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_site_sitefaqtranslation",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": "sitefaqtranslation.php"
     },
     {
@@ -14530,8 +14530,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "app_models_site_sitefaqtranslation_sitefaqtranslation",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": "sitefaqtranslation"
     },
     {
@@ -14541,8 +14541,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "app_models_site_sitefaqtranslation_sitefaqtranslation_faq",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": ".faq()"
     },
     {
@@ -14552,7 +14552,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_site_sitehomepageconfig",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "sitehomepageconfig.php"
     },
@@ -14563,7 +14563,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "app_models_site_sitehomepageconfig_sitehomepageconfig",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "sitehomepageconfig"
     },
@@ -14574,7 +14574,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "app_models_site_sitehomepageconfig_sitehomepageconfig_translations",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": ".translations()"
     },
@@ -14585,8 +14585,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_site_sitehomepageconfigtranslation",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": "sitehomepageconfigtranslation.php"
     },
     {
@@ -14596,8 +14596,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "app_models_site_sitehomepageconfigtranslation_sitehomepageconfigtranslation",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": "sitehomepageconfigtranslation"
     },
     {
@@ -14607,8 +14607,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "app_models_site_sitehomepageconfigtranslation_sitehomepageconfigtranslation_homepageconfig",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": ".homepageconfig()"
     },
     {
@@ -14618,7 +14618,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_site_sitehomepagesection",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "sitehomepagesection.php"
     },
@@ -14695,7 +14695,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_site_sitehomepagesectionitem",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "sitehomepagesectionitem.php"
     },
@@ -14761,7 +14761,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_site_sitehomepagesectionitemtranslation",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "sitehomepagesectionitemtranslation.php"
     },
@@ -14772,7 +14772,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "app_models_site_sitehomepagesectionitemtranslation_sitehomepagesectionitemtranslation",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "sitehomepagesectionitemtranslation"
     },
@@ -14794,8 +14794,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_site_sitehomepagesectiontranslation",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": "sitehomepagesectiontranslation.php"
     },
     {
@@ -14805,8 +14805,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "app_models_site_sitehomepagesectiontranslation_sitehomepagesectiontranslation",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": "sitehomepagesectiontranslation"
     },
     {
@@ -14816,8 +14816,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "app_models_site_sitehomepagesectiontranslation_sitehomepagesectiontranslation_section",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": ".section()"
     },
     {
@@ -14827,7 +14827,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_site_sitelanguage",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "sitelanguage.php"
     },
@@ -14871,7 +14871,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_site_sitenavigationitem",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "sitenavigationitem.php"
     },
@@ -15069,8 +15069,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_site_sitenavigationitemtranslation",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": "sitenavigationitemtranslation.php"
     },
     {
@@ -15080,8 +15080,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "app_models_site_sitenavigationitemtranslation_sitenavigationitemtranslation",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": "sitenavigationitemtranslation"
     },
     {
@@ -15091,8 +15091,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "app_models_site_sitenavigationitemtranslation_sitenavigationitemtranslation_navigationitem",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": ".navigationitem()"
     },
     {
@@ -15311,7 +15311,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_site_sitepagetranslation",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "sitepagetranslation.php"
     },
@@ -15498,8 +15498,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_models_site_sitesettingtranslation",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": "sitesettingtranslation.php"
     },
     {
@@ -15509,8 +15509,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "app_models_site_sitesettingtranslation_sitesettingtranslation",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": "sitesettingtranslation"
     },
     {
@@ -15520,8 +15520,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "app_models_site_sitesettingtranslation_sitesettingtranslation_setting",
-      "community": 92,
-      "community_name": "Illuminate\\Database\\Eloquent\\Model",
+      "community": 45,
+      "community_name": "Illuminate\\Database\\Eloquent\\Relations\\BelongsTo",
       "norm_label": ".setting()"
     },
     {
@@ -16741,7 +16741,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_services_content_localizedcontenttranslationservice",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "localizedcontenttranslationservice.php"
     },
@@ -17247,7 +17247,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_services_site_homepageconfigurationservice",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "homepageconfigurationservice.php"
     },
@@ -17610,7 +17610,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_services_site_seofilegenerator",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "seofilegenerator.php"
     },
@@ -17852,7 +17852,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_services_site_sitedefaultlocalepromotionservice",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "sitedefaultlocalepromotionservice.php"
     },
@@ -17962,7 +17962,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_services_site_sitetranslationsyncservice",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "sitetranslationsyncservice.php"
     },
@@ -18733,7 +18733,7 @@
       "_origin": "ast",
       "id": "app_support_auth_guardintendedurl",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": "guardintendedurl.php"
     },
     {
@@ -18744,7 +18744,7 @@
       "_origin": "ast",
       "id": "app_support_auth_guardintendedurl_guardintendedurl",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": "guardintendedurl"
     },
     {
@@ -18755,7 +18755,7 @@
       "_origin": "ast",
       "id": "app_support_auth_guardintendedurl_guardintendedurl_pull",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".pull()"
     },
     {
@@ -18766,7 +18766,7 @@
       "_origin": "ast",
       "id": "app_support_auth_guardintendedurl_guardintendedurl_issameapplication",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": ".issameapplication()"
     },
     {
@@ -19370,7 +19370,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_support_site_sitelocalization",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "sitelocalization.php"
     },
@@ -36234,7 +36234,7 @@
       "_origin": "ast",
       "id": "routes_admin_auth",
       "community": 122,
-      "community_name": "MemberAuthController.php",
+      "community_name": "Illuminate\\Http\\Request",
       "norm_label": "admin/auth.php"
     },
     {
@@ -36343,8 +36343,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "routes_admin_modules_messages",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": "admin/modules/messages.php"
     },
     {
@@ -36354,7 +36354,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "routes_admin_modules_notifications",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": "admin/modules/notifications.php"
     },
@@ -36442,8 +36442,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "routes_site_content",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": "site/content.php"
     },
     {
@@ -36464,7 +36464,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "routes_site_member_account",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": "account.php"
     },
@@ -36519,8 +36519,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "routes_site_public",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": "public.php"
     },
     {
@@ -37924,7 +37924,7 @@
       "label": "setTransform()",
       "file_type": "code",
       "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L16",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "tests_frontend_visual_stories_test_settransform",
       "community": 44,
@@ -37935,7 +37935,7 @@
       "label": "clearRect()",
       "file_type": "code",
       "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L17",
+      "source_location": "L18",
       "_origin": "ast",
       "id": "tests_frontend_visual_stories_test_clearrect",
       "community": 44,
@@ -37943,43 +37943,10 @@
       "norm_label": "clearrect()"
     },
     {
-      "label": "drawImage()",
-      "file_type": "code",
-      "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L18",
-      "_origin": "ast",
-      "id": "tests_frontend_visual_stories_test_drawimage",
-      "community": 44,
-      "community_name": "visual-stories.test.mjs",
-      "norm_label": "drawimage()"
-    },
-    {
-      "label": "setProperty()",
-      "file_type": "code",
-      "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L29",
-      "_origin": "ast",
-      "id": "tests_frontend_visual_stories_test_setproperty",
-      "community": 44,
-      "community_name": "visual-stories.test.mjs",
-      "norm_label": "setproperty()"
-    },
-    {
-      "label": "add()",
-      "file_type": "code",
-      "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L29",
-      "_origin": "ast",
-      "id": "tests_frontend_visual_stories_test_add",
-      "community": 44,
-      "community_name": "visual-stories.test.mjs",
-      "norm_label": "add()"
-    },
-    {
       "label": "fillText()",
       "file_type": "code",
       "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L37",
+      "source_location": "L20",
       "_origin": "ast",
       "id": "tests_frontend_visual_stories_test_filltext",
       "community": 44,
@@ -37990,7 +37957,7 @@
       "label": "strokeText()",
       "file_type": "code",
       "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L37",
+      "source_location": "L21",
       "_origin": "ast",
       "id": "tests_frontend_visual_stories_test_stroketext",
       "community": 44,
@@ -37998,10 +37965,43 @@
       "norm_label": "stroketext()"
     },
     {
+      "label": "drawImage()",
+      "file_type": "code",
+      "source_file": "tests/Frontend/visual-stories.test.mjs",
+      "source_location": "L22",
+      "_origin": "ast",
+      "id": "tests_frontend_visual_stories_test_drawimage",
+      "community": 44,
+      "community_name": "visual-stories.test.mjs",
+      "norm_label": "drawimage()"
+    },
+    {
+      "label": "setProperty()",
+      "file_type": "code",
+      "source_file": "tests/Frontend/visual-stories.test.mjs",
+      "source_location": "L33",
+      "_origin": "ast",
+      "id": "tests_frontend_visual_stories_test_setproperty",
+      "community": 44,
+      "community_name": "visual-stories.test.mjs",
+      "norm_label": "setproperty()"
+    },
+    {
+      "label": "add()",
+      "file_type": "code",
+      "source_file": "tests/Frontend/visual-stories.test.mjs",
+      "source_location": "L33",
+      "_origin": "ast",
+      "id": "tests_frontend_visual_stories_test_add",
+      "community": 44,
+      "community_name": "visual-stories.test.mjs",
+      "norm_label": "add()"
+    },
+    {
       "label": "addEventListener()",
       "file_type": "code",
       "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L48",
+      "source_location": "L52",
       "_origin": "ast",
       "id": "tests_frontend_visual_stories_test_addeventlistener",
       "community": 44,
@@ -38012,7 +38012,7 @@
       "label": "observe()",
       "file_type": "code",
       "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L53",
+      "source_location": "L57",
       "_origin": "ast",
       "id": "tests_frontend_visual_stories_test_observe",
       "community": 44,
@@ -38023,7 +38023,7 @@
       "label": "constructor()",
       "file_type": "code",
       "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L55",
+      "source_location": "L58",
       "_origin": "ast",
       "id": "tests_frontend_visual_stories_test_constructor",
       "community": 44,
@@ -38034,7 +38034,7 @@
       "label": "src()",
       "file_type": "code",
       "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L56",
+      "source_location": "L63",
       "_origin": "ast",
       "id": "tests_frontend_visual_stories_test_src",
       "community": 44,
@@ -40798,7 +40798,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "illuminate_http_request",
-      "community": 29,
+      "community": 122,
       "community_name": "Illuminate\\Http\\Request",
       "norm_label": "illuminate\\http\\request"
     },
@@ -40864,8 +40864,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "illuminate_contracts_view_view",
-      "community": 60,
-      "community_name": "Illuminate\\Contracts\\View\\View",
+      "community": 6,
+      "community_name": "Controller",
       "norm_label": "illuminate\\contracts\\view\\view"
     },
     {
@@ -41051,7 +41051,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "illuminate_database_eloquent_model",
-      "community": 92,
+      "community": 149,
       "community_name": "Illuminate\\Database\\Eloquent\\Model",
       "norm_label": "illuminate\\database\\eloquent\\model"
     },
@@ -137165,7 +137165,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/site/visual-stories.js",
-      "source_location": "L131",
+      "source_location": "L132",
       "weight": 1.0,
       "_origin": "ast",
       "source": "resources_js_site_visual_stories_initservicesparticlelogo",
@@ -137189,7 +137189,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/site/visual-stories.js",
-      "source_location": "L202",
+      "source_location": "L210",
       "weight": 1.0,
       "_origin": "ast",
       "source": "resources_js_site_visual_stories_initservicesparticlelogo",
@@ -137225,7 +137225,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "resources/js/site/visual-stories.js",
-      "source_location": "L227",
+      "source_location": "L240",
       "weight": 1.0,
       "_origin": "ast",
       "source": "resources_js_site_visual_stories_initservicesparticlelogo",
@@ -141114,7 +141114,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L29",
+      "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_frontend_visual_stories_test",
@@ -141125,7 +141125,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L56",
+      "source_location": "L62",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_frontend_visual_stories_test",
@@ -141136,7 +141136,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L37",
+      "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_frontend_visual_stories_test",
@@ -141147,7 +141147,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L55",
+      "source_location": "L59",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_frontend_visual_stories_test",
@@ -141158,7 +141158,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L37",
+      "source_location": "L22",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_frontend_visual_stories_test",
@@ -141169,7 +141169,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L37",
+      "source_location": "L20",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_frontend_visual_stories_test",
@@ -141180,7 +141180,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L55",
+      "source_location": "L59",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_frontend_visual_stories_test",
@@ -141191,7 +141191,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L29",
+      "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_frontend_visual_stories_test",
@@ -141202,7 +141202,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_frontend_visual_stories_test",
@@ -141213,7 +141213,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L56",
+      "source_location": "L63",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_frontend_visual_stories_test",
@@ -141224,7 +141224,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/Frontend/visual-stories.test.mjs",
-      "source_location": "L37",
+      "source_location": "L21",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_frontend_visual_stories_test",
@@ -144326,5 +144326,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6d8a380469924eecd4bac3a382cf61ebd942f99d"
+  "built_at_commit": "cfb593d9f662e8475c5a51dd548071a57f042035"
 }

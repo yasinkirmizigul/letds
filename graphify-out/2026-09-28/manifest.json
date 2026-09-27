@@ -3415,8 +3415,8 @@
     "semantic_hash": ""
   },
   "resources/js/site/visual-stories.js": {
-    "mtime": 1790542128.2407336,
-    "ast_hash": "4dfa81978773399d5020d301a0112ef2",
+    "mtime": 1790542408.6520479,
+    "ast_hash": "4f61b214222f876c43d962a808d60485",
     "semantic_hash": ""
   },
   "tests/Feature/SiteVisualStoriesTest.php": {

@@ -26,7 +26,7 @@ test('particle animation keeps a fixed population, avoids frame layout reads and
         },
     };
     const canvas = { dataset: { logoSrc: '/logo.svg' }, getContext: () => context };
-    const box = () => { layoutReads++; return { left: 0, top: 0, width: 520, height: 520 }; };
+    const box = () => { layoutReads++; return { left: 0, right: 520, top: 0, width: 520, height: 520 }; };
     const hero = { getBoundingClientRect: box };
     const root = {
         querySelector: () => canvas, closest: () => hero, getBoundingClientRect: box,
@@ -57,10 +57,19 @@ test('particle animation keeps a fixed population, avoids frame layout reads and
         install('ResizeObserver', class { observe() {} });
         install('MutationObserver', class { constructor(callback) { onThemeChange = callback; } observe() {} });
         install('IntersectionObserver', class { constructor(callback) { this.callback = callback; } observe() { this.callback([{ isIntersecting: true }]); } });
-        install('Image', class { addEventListener(_type, callback) { this.onload = callback; } set src(_value) { queueMicrotask(() => this.onload()); } });
+        install('Image', class {
+            handlers = new Map();
+            addEventListener(type, callback) { this.handlers.set(type, callback); }
+            set src(_value) { queueMicrotask(() => this.handlers.get('load')?.()); }
+        });
         initServicesParticleLogo();
         await new Promise((resolve) => setImmediate(resolve));
+        assert.ok(canvas.width > 520 * 1.75, 'The drawing surface needs bleed beyond the visible P for enlarged edge glyphs');
+        const formingPositions = rendered.slice(0, 20).map(({ x, y }) => [x, y]);
+        assert.ok(formingPositions.length > 0, 'Particles must already be visible before the first animation frame');
         step(120);
+        assert.ok(formingPositions.some(([x, y], index) => Math.hypot(x - rendered[index].x, y - rendered[index].y) > 20),
+            'The initial cloud must gather into the logo instead of appearing in its finished form');
         const population = draws;
         const measuredLayouts = layoutReads;
         assert.ok(population > 0);
@@ -72,8 +81,14 @@ test('particle animation keeps a fixed population, avoids frame layout reads and
         assert.equal(layoutReads, measuredLayouts, 'Animation and pointer movement must not measure page layout');
         events.get('pointermove')({ pointerType: 'mouse', clientX: 400, clientY: 260, timeStamp: now });
         step(180);
-        const largeSymbols = rendered.filter((symbol) => symbol.size > 40);
-        assert.ok(largeSymbols.length >= 2 && largeSymbols.length <= 5, 'Only a small local group should be enlarged');
+        const largeSymbols = rendered.filter((symbol) => symbol.size > 55);
+        assert.ok(largeSymbols.length >= 2 && largeSymbols.length <= 4,
+            `Only a small local group should be enlarged, got ${largeSymbols.length}`);
+        const logoSymbols = rendered.slice(0, -22);
+        const leftEdge = Math.min(...logoSymbols.map(({ x, size }) => x - size * .4));
+        const rightEdge = Math.max(...logoSymbols.map(({ x, size }) => x + size * .4));
+        assert.ok(leftEdge >= 81 && rightEdge <= 602,
+            `The projected mark must remain inside the hero when hovered near an edge (${leftEdge}, ${rightEdge})`);
         largeSymbols.forEach((a, index) => {
             largeSymbols.slice(index + 1).forEach((b) => {
                 assert.ok(Math.hypot(a.x - b.x, a.y - b.y) >= (a.size + b.size) * .28,

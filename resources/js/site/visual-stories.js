@@ -126,7 +126,8 @@ export function initServicesParticleLogo() {
     const root = document.querySelector('[data-site-particle-logo]');
     const canvas = root?.querySelector('[data-site-particle-canvas]');
     const context = canvas?.getContext('2d');
-    if (!root || !canvas || !context) return;
+    if (!root || !canvas) return;
+    if (!context) { root.classList.add('is-static'); return; }
     const hero = root.closest('.site-services-hero');
     const preference = motionPreference();
     const logo = new Image();
@@ -135,7 +136,7 @@ export function initServicesParticleLogo() {
         const source = document.createElement('canvas');
         source.width = source.height = 420;
         const sourceContext = source.getContext('2d', { willReadFrequently: true });
-        if (!sourceContext) return;
+        if (!sourceContext) { root.classList.add('is-static'); return; }
         sourceContext.drawImage(logo, 0, 0, 420, 420);
         const pixels = sourceContext.getImageData(0, 0, 420, 420).data;
         const filled = (x, y) => x >= 0 && y >= 0 && x < 420 && y < 420 && pixels[(Math.floor(y) * 420 + Math.floor(x)) * 4 + 3] > 105;
@@ -166,11 +167,11 @@ export function initServicesParticleLogo() {
             brush.textAlign = 'center';
             brush.textBaseline = 'middle';
             brush.lineJoin = 'round';
-            brush.lineWidth = 3.4;
+            brush.lineWidth = 4.5;
             brush.globalAlpha = 1;
             brush.strokeStyle = color;
             brush.strokeText(symbol, 48, 49);
-            brush.globalAlpha = .18;
+            brush.globalAlpha = .28;
             brush.fillStyle = color;
             brush.fillText(symbol, 48, 49);
         });
@@ -178,11 +179,13 @@ export function initServicesParticleLogo() {
         const particles = [];
         const dust = [];
         const featured = new Set();
+        const bleed = .18;
         const pointer = { x: -1000, y: -1000, targetX: -1000, targetY: -1000, dx: 0, dy: 0, velocityX: 0, velocityY: 0, lastEvent: 0, active: false };
         let width = 1, height = 1, scale = 1, frame = 0, lastTime = 0, elapsed = 0;
-        let scroll = 0, tiltX = 0, tiltY = 0;
-        let ratio = 1, scrollLift = 0, previousSortAngle = 10;
-        let geometry = { left: 0, top: 0, heroTop: 0, heroHeight: 1 };
+        let compact = false;
+        let scroll = 0, tiltX = 0, tiltY = 0, hoverStrength = 0;
+        let ratio = 1, scrollLift = 0;
+        let geometry = { left: 0, top: 0, heroTop: 0, heroHeight: 1, visualLeft: 0, visualRight: 1 };
         let visible = false;
         let entrance = preference.matches ? 1 : 0;
         const random = (seed) => { const value = Math.sin(seed * 127.1 + 311.7) * 43758.5453; return value - Math.floor(value); };
@@ -190,28 +193,51 @@ export function initServicesParticleLogo() {
             particles.length = 0;
             featured.clear();
             let index = 0;
-            const step = width < 420 ? 8 : 6;
+            // Fewer, legible symbols form a front face; edge walls and a sparse
+            // back face give the mark volume when it turns toward the pointer.
+            const step = compact ? 10.5 : 9;
+            const addParticle = (x, y, z, face, edge, seed, colorBand) => {
+                const startAngle = random(seed + 29) * Math.PI * 2;
+                const startRadius = Math.sqrt(random(seed + 31)) * .42;
+                const jitter = face === 'front' ? .24 : .18;
+                const baseSize = face === 'front' ? (edge ? 16 : 14) : (face === 'side' ? 11 : 9);
+                const size = (baseSize + random(seed + 8) * (face === 'front' ? 8 : 6))
+                    * (face === 'front' && random(seed + 47) < .045 ? 1.55 : 1);
+                particles.push({
+                    x: (x - 210 + (random(seed) - .5) * step * jitter) / 420,
+                    y: (y - 210 + (random(seed + 3) - .5) * step * jitter) / 420,
+                    z, face, edge,
+                    originX: Math.cos(startAngle) * startRadius,
+                    originY: Math.sin(startAngle) * startRadius,
+                    originZ: (random(seed + 37) - .5) * .85,
+                    introDelay: random(seed + 39) * .16,
+                    kind: random(seed + 5) < .2 ? Math.floor(random(seed + 6) * 4) : colorBand,
+                    size,
+                    phase: random(seed + 11) * Math.PI * 2,
+                    spreadX: Math.cos(Math.atan2(y - 210, x - 210) + (random(seed + 17) - .5) * .7) * (.32 + random(seed + 18) * .3),
+                    spreadY: Math.sin(Math.atan2(y - 210, x - 210) + (random(seed + 17) - .5) * .7) * (.32 + random(seed + 18) * .3),
+                    spreadZ: (random(seed + 23) - .5) * .8,
+                    hover: 0, field: 0, offsetX: 0, offsetY: 0, drawSize: 0, proximity: 0, distance: 0, px: 0, py: 0, depth: 0, perspective: 1,
+                });
+            };
             for (let y = 3; y < 417; y += step) {
                 for (let x = 3; x < 417; x += step) {
                     if (!filled(x, y)) continue;
-                    const edge = !filled(x - step, y) || !filled(x + step, y) || !filled(x, y - step) || !filled(x, y + step);
-                    for (let layer = 0; layer < (edge ? 3 : 2); layer++) {
-                        const seed = index++;
-                        const z = edge ? -24 + layer * 24 : (layer ? 24 : -24);
-                        const colorFlow = Math.sin(x * .027 + Math.sin(y * .018) * 2.2) + Math.cos(y * .035 - x * .014);
-                        const colorBand = Math.floor(clamp((colorFlow + 2) / 4, 0, .999) * 4);
-                        particles.push({
-                            x: (x - 210 + (random(seed) - .5) * step) / 420,
-                            y: (y - 210 + (random(seed + 3) - .5) * step) / 420,
-                            z: (z + Math.sin(x * .028) * Math.cos(y * .03) * 6) / 420,
-                            kind: random(seed + 5) < .25 ? Math.floor(random(seed + 6) * 4) : colorBand,
-                            size: 10 + random(seed + 8) * 11,
-                            phase: random(seed + 11) * Math.PI * 2, spin: (random(seed + 13) - .5) * .6,
-                            spreadX: (random(seed + 17) - .5) * 1.8,
-                            spreadY: (random(seed + 19) - .5) * 1.5,
-                            spreadZ: (random(seed + 23) - .5) * .8,
-                            hover: 0, offsetX: 0, offsetY: 0, drawSize: 0, proximity: 0, distance: 0, px: 0, py: 0, depth: 0, perspective: 1,
-                        });
+                    const edge = !filled(x - step * .8, y) || !filled(x + step * .8, y)
+                        || !filled(x, y - step * .8) || !filled(x, y + step * .8);
+                    const surface = .13 + Math.sqrt(Math.max(0, 1 - ((x - 210) / 260) ** 2 - ((y - 210) / 260) ** 2)) * .16;
+                    const colorFlow = Math.sin(x * .027 + Math.sin(y * .018) * 2.2) + Math.cos(y * .035 - x * .014);
+                    const colorBand = Math.floor(clamp((colorFlow + 2) / 4, 0, .999) * 4);
+                    addParticle(x, y, surface + (random(index + 43) - .5) * .065, 'front', edge, index++, colorBand);
+                    if (edge) {
+                        const edgeX = (!filled(x + step * .8, y) ? 1 : 0) - (!filled(x - step * .8, y) ? 1 : 0);
+                        const edgeY = (!filled(x, y + step * .8) ? 1 : 0) - (!filled(x, y - step * .8) ? 1 : 0);
+                        for (let layer = 0; layer < 2; layer++) {
+                            addParticle(x + edgeX * (layer + 1) * 2, y + edgeY * (layer + 1) * 2,
+                                surface - .16 * (layer + 1), 'side', true, index++, colorBand);
+                        }
+                    } else if (random(index + 57) < .2) {
+                        addParticle(x, y, surface - .38, 'back', false, index++, colorBand);
                     }
                 }
             }
@@ -225,11 +251,12 @@ export function initServicesParticleLogo() {
             const targetScroll = reduced ? 0 : clamp((window.scrollY - geometry.heroTop) / (geometry.heroHeight * .82));
             scroll += (targetScroll - scroll) * ease(.09);
             const turn = smoothstep(scroll / .8);
-            const scatter = smoothstep((scroll - .2) / .75) * .75 + (1 - entrance) * .8;
-            const targetTiltY = !reduced && pointer.active ? (pointer.targetX / width - .5) * .26 : 0;
-            const targetTiltX = !reduced && pointer.active ? (pointer.targetY / height - .5) * -.18 : 0;
-            tiltY += (targetTiltY - tiltY) * ease(.045);
-            tiltX += (targetTiltX - tiltX) * ease(.045);
+            const scatter = smoothstep((scroll - .2) / .75) * .38;
+            const targetTiltY = !reduced && pointer.active ? (pointer.targetX / width - .5) * 1.1 : 0;
+            const targetTiltX = !reduced && pointer.active ? (pointer.targetY / height - .5) * -.72 : 0;
+            tiltY += (targetTiltY - tiltY) * ease(.055);
+            tiltX += (targetTiltX - tiltX) * ease(.055);
+            hoverStrength += ((!reduced && pointer.active ? 1 : 0) - hoverStrength) * ease(.055);
             pointer.x += (pointer.targetX - pointer.x) * ease(.12);
             pointer.y += (pointer.targetY - pointer.y) * ease(.12);
             pointer.velocityX *= Math.exp(-.09 * delta);
@@ -237,49 +264,65 @@ export function initServicesParticleLogo() {
             pointer.dx += (pointer.velocityX - pointer.dx) * ease(.08);
             pointer.dy += (pointer.velocityY - pointer.dy) * ease(.08);
             const time = reduced ? 0 : elapsed;
-            const angleY = reduced ? -.12 : -.12 - turn * 1.32 + tiltY + Math.sin(time * .32) * .055;
-            const angleX = reduced ? .04 : .04 + tiltX + turn * .14 + Math.sin(time * .25) * .025;
+            const angleY = reduced ? -.18 : -.18 - turn * 1.32 + tiltY + Math.sin(time * .37) * .12;
+            const angleX = reduced ? .04 : .04 + tiltX + turn * .14 + Math.sin(time * .29) * .075;
             const cosY = Math.cos(angleY), sinY = Math.sin(angleY), cosX = Math.cos(angleX), sinX = Math.sin(angleX);
-            const centerX = width * (.5 - turn * .08), centerY = height * (.5 + turn * .05) + Math.sin(time * .5) * 3;
-            const zoom = scale * (1 + turn * .12);
+            // Counter-shift the camera as the extrusion turns, so the enlarged
+            // near edge remains visible inside the hero on either side.
+            const centerX = width * (.5 - turn * .08) - tiltY * scale * .34;
+            const centerY = height * (.5 + turn * .05) + tiltX * scale * .16 + Math.sin(time * .5) * 3;
+            const hoverZoom = .13 - Math.min(.1, Math.abs(tiltY) * .3);
+            const zoom = scale * (1 + turn * .12 + hoverStrength * hoverZoom);
             context.setTransform(ratio, 0, 0, ratio, 0, 0);
             context.clearRect(0, 0, width, height);
             const hoverCandidates = [];
-            const radius = Math.min(width * .26, 142);
+            const radius = Math.min(width * .29, 160);
             particles.forEach((particle) => {
-                const x = particle.x + particle.spreadX * scatter, y = particle.y + particle.spreadY * scatter, z = particle.z + particle.spreadZ * scatter;
+                const assembled = reduced ? 1 : smoothstep(clamp((entrance - particle.introDelay) / (1 - particle.introDelay)));
+                const forming = 1 - assembled;
+                const x = particle.x + (particle.originX - particle.x) * forming + particle.spreadX * scatter
+                    + (reduced ? 0 : Math.sin(time * .65 + particle.phase) * .0035);
+                const y = particle.y + (particle.originY - particle.y) * forming + particle.spreadY * scatter
+                    + (reduced ? 0 : Math.cos(time * .58 + particle.phase) * .0035);
+                const z = particle.z + (particle.originZ - particle.z) * forming + particle.spreadZ * scatter
+                    + (reduced ? 0 : Math.sin(time * .8 + particle.phase) * .028);
                 const rotatedX = x * cosY + z * sinY, rotatedZ = z * cosY - x * sinY;
                 const rotatedY = y * cosX - rotatedZ * sinX;
-                particle.depth = y * sinX + rotatedZ * cosX;
-                particle.perspective = 2.5 / (2.5 - particle.depth);
+                const baseDepth = y * sinX + rotatedZ * cosX;
+                const basePerspective = 1.65 / (1.65 - baseDepth);
+                const baseX = centerX + rotatedX * zoom * basePerspective;
+                const baseY = centerY + rotatedY * zoom * basePerspective;
+                const distance = Math.hypot(baseX - pointer.x, baseY - pointer.y);
+                const targetField = !reduced && pointer.active ? smoothstep(1 - distance / radius) : 0;
+                particle.field += (targetField - particle.field) * ease(.09);
+                // Lift a whole patch of the surface in depth, not just isolated
+                // oversized letters. The same depth drives perspective and draw order.
+                particle.depth = baseDepth + particle.field * .23;
+                particle.perspective = 1.65 / (1.65 - particle.depth);
                 particle.px = centerX + rotatedX * zoom * particle.perspective;
                 particle.py = centerY + rotatedY * zoom * particle.perspective;
                 particle.distance = Math.hypot(particle.px - pointer.x, particle.py - pointer.y);
-                particle.proximity = !reduced && pointer.active ? smoothstep(1 - particle.distance / radius) : 0;
-                if (particle.proximity > 0) hoverCandidates.push(particle);
+                particle.proximity = particle.field;
+                if (particle.field > .05 && particle.face === 'front') hoverCandidates.push(particle);
             });
             // Retain a few nearby particles so the reaction follows the cursor
             // without rearranging the glyphs into a geometric ring.
             hoverCandidates.sort((a, b) => a.distance - b.distance);
-            const limit = width < 420 ? 3 : 5;
+            const limit = compact ? 3 : 4;
             for (const particle of featured) {
                 if (!pointer.active || reduced || particle.distance > radius * .9) featured.delete(particle);
             }
             for (const candidate of hoverCandidates) {
                 if (featured.size >= limit || candidate.distance > radius * .85) break;
-                if ([...featured].every((particle) => Math.hypot(candidate.px - particle.px, candidate.py - particle.py) > 51)) featured.add(candidate);
+                if ([...featured].every((particle) => Math.hypot(candidate.px - particle.px, candidate.py - particle.py) > 53)) featured.add(candidate);
             }
-            // Small camera sway does not need a full depth sort every animation frame.
-            if (Math.abs(angleY - previousSortAngle) > .025 || scatter > .02) {
-                particles.sort((a, b) => a.depth - b.depth);
-                previousSortAngle = angleY;
-            }
+            particles.sort((a, b) => a.depth - b.depth);
             const enlarged = [];
             particles.forEach((particle) => {
                 const targetHover = featured.has(particle) ? smoothstep((radius - particle.distance) / (radius * .32)) : 0;
                 particle.hover += (targetHover - particle.hover) * ease(.075);
                 const angle = particle.distance > 2 ? Math.atan2(particle.py - pointer.y, particle.px - pointer.x) : particle.phase;
-                const push = particle.proximity * (21 + 13 * particle.hover) + particle.hover * (18 + Math.sin(particle.phase) * 7);
+                const push = particle.proximity * 25 + particle.hover * (18 + Math.sin(particle.phase) * 5);
                 const targetX = Math.cos(angle) * push + pointer.dx * particle.hover * .35;
                 const targetY = Math.sin(angle) * push + pointer.dy * particle.hover * .35;
                 particle.offsetX += (targetX - particle.offsetX) * ease(.07);
@@ -287,9 +330,9 @@ export function initServicesParticleLogo() {
                 const wave = time * .95 + particle.phase;
                 particle.px += particle.offsetX + Math.sin(wave) * particle.hover * 4;
                 particle.py += particle.offsetY + Math.cos(wave) * particle.hover * 4;
-                const baseSize = particle.size * clamp(width / 500, .72, 1.22) * particle.perspective;
-                const largeSize = Math.min(width * .29, 124) * (.73 + .27 * random(particle.phase + 31));
-                particle.drawSize = baseSize * (1 + particle.proximity * .32) + (largeSize - baseSize) * particle.hover;
+                const baseSize = Math.min(39, particle.size * clamp(width / 500, .76, 1.15) * particle.perspective);
+                const largeSize = Math.min(width * .125, 68) * (.82 + .18 * random(particle.phase + 31));
+                particle.drawSize = baseSize * (1 + particle.proximity * .22) + (largeSize - baseSize) * particle.hover;
                 if (particle.hover > .08) enlarged.push(particle);
             });
             // Local separation prevents overlap, but each glyph remains anchored
@@ -300,7 +343,7 @@ export function initServicesParticleLogo() {
                         const b = enlarged[j];
                         const dx = b.px - a.px, dy = b.py - a.py;
                         const distance = Math.hypot(dx, dy) || .01;
-                        const minimum = (a.drawSize + b.drawSize) * .29 + 7 * Math.min(a.hover, b.hover);
+                        const minimum = (a.drawSize + b.drawSize) * .43 + 7 * Math.min(a.hover, b.hover);
                         if (distance >= minimum) continue;
                         const push = (minimum - distance) / 2;
                         const nx = distance < .1 ? Math.cos(a.phase) : dx / distance;
@@ -310,11 +353,30 @@ export function initServicesParticleLogo() {
                     }
                 });
             }
+            // Keep even the closest, enlarged symbols inside the actual hero
+            // viewport. The canvas itself has bleed, so canvas bounds alone
+            // cannot tell whether a glyph is being clipped by the section.
+            let minX = Infinity, maxX = -Infinity;
+            particles.forEach((particle) => {
+                minX = Math.min(minX, particle.px - particle.drawSize * .4);
+                maxX = Math.max(maxX, particle.px + particle.drawSize * .4);
+            });
+            const visualWidth = Math.max(1, geometry.visualRight - geometry.visualLeft);
+            const fit = Math.min(1, visualWidth / Math.max(1, maxX - minX));
+            const fittedCenter = clamp((minX + maxX) / 2, geometry.visualLeft + (maxX - minX) * fit / 2,
+                geometry.visualRight - (maxX - minX) * fit / 2);
+            const originalCenter = (minX + maxX) / 2;
+            particles.forEach((particle) => {
+                particle.px = fittedCenter + (particle.px - originalCenter) * fit;
+                particle.py = centerY + (particle.py - centerY) * fit;
+                particle.drawSize *= fit;
+            });
             const drawParticle = (particle) => {
                 const size = particle.drawSize;
                 const rotation = particle.phase * .1 + Math.sin(time * .4 + particle.phase) * .18 + particle.hover * Math.sin(time + particle.phase) * .6;
-                context.globalAlpha = clamp((dark ? .96 : .8) + particle.depth * .65 + particle.hover * .22, .45, 1) * (1 - scatter * .16);
-                if (particle.hover <= .08) context.globalAlpha *= 1 - particle.proximity * .24;
+                const faceAlpha = particle.face === 'front' ? (dark ? .86 : .83) : (particle.face === 'side' ? .54 : .3);
+                context.globalAlpha = clamp(faceAlpha + particle.depth * .3 + particle.hover * .2, .18, 1) * (1 - scatter * .16);
+                if (particle.hover <= .08) context.globalAlpha *= 1 - particle.proximity * .16;
                 const c = Math.cos(rotation) * ratio, s = Math.sin(rotation) * ratio;
                 context.setTransform(c, s, -s, c, particle.px * ratio, particle.py * ratio);
                 context.drawImage(sprites[particle.kind], -size / 2, -size / 2, size, size);
@@ -338,7 +400,7 @@ export function initServicesParticleLogo() {
             const delta = Math.min((now - (lastTime || now - 16.67)) / 16.67, 2);
             lastTime = now;
             if (!preference.matches) elapsed += delta / 60;
-            entrance = preference.matches ? 1 : Math.min(1, entrance + delta / 95);
+            entrance = preference.matches ? 1 : Math.min(1, entrance + delta / 42);
             render(delta);
             if (visible && !document.hidden && !preference.matches) frame = requestAnimationFrame(tick);
         };
@@ -350,16 +412,22 @@ export function initServicesParticleLogo() {
         const resize = () => {
             const rect = root.getBoundingClientRect();
             const heroRect = hero.getBoundingClientRect();
-            geometry = { left: rect.left, top: rect.top + window.scrollY, heroTop: heroRect.top + window.scrollY, heroHeight: Math.max(1, heroRect.height) };
-            const previousWidth = width;
-            width = Math.max(1, Math.round(rect.width));
-            height = Math.max(1, Math.round(rect.height));
+            const canvasLeft = rect.left - rect.width * bleed;
+            geometry = {
+                left: canvasLeft, top: rect.top - rect.height * bleed + window.scrollY,
+                heroTop: heroRect.top + window.scrollY, heroHeight: Math.max(1, heroRect.height),
+                visualLeft: rect.left - canvasLeft - 12, visualRight: heroRect.right - canvasLeft - 12,
+            };
+            const wasCompact = compact;
+            compact = rect.width < 420;
+            width = Math.max(1, Math.round(rect.width * (1 + bleed * 2)));
+            height = Math.max(1, Math.round(rect.height * (1 + bleed * 2)));
             ratio = Math.min(window.devicePixelRatio || 1, 1.75);
             canvas.width = Math.round(width * ratio);
             canvas.height = Math.round(height * ratio);
             context.setTransform(ratio, 0, 0, ratio, 0, 0);
-            scale = Math.min(width * 1.01, height * 1.02);
-            if (!particles.length || (previousWidth < 420) !== (width < 420)) buildParticles();
+            scale = Math.min(rect.width * .86, rect.height * .9);
+            if (!particles.length || wasCompact !== compact) buildParticles();
             render();
             start();
         };
@@ -395,14 +463,15 @@ export function initServicesParticleLogo() {
             else start();
         });
         preference.addEventListener('change', () => {
-            scroll = tiltX = tiltY = 0;
+            scroll = tiltX = tiltY = hoverStrength = 0;
             featured.clear();
-            particles.forEach((particle) => { particle.hover = particle.offsetX = particle.offsetY = 0; });
+            particles.forEach((particle) => { particle.hover = particle.field = particle.offsetX = particle.offsetY = 0; });
             pointer.active = false;
             start();
         });
         resize();
         root.classList.add('is-ready');
     }, { once: true });
+    logo.addEventListener('error', () => root.classList.add('is-static'), { once: true });
     logo.src = canvas.dataset.logoSrc;
 }
