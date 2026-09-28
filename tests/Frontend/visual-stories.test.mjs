@@ -72,6 +72,7 @@ test('particle animation keeps a fixed population, avoids frame layout reads and
             'The initial cloud must gather into the logo instead of appearing in its finished form');
         const population = draws;
         const measuredLayouts = layoutReads;
+        const restingAccents = rendered.filter((symbol) => symbol.size > 24).length;
         assert.ok(population > 0);
         for (let i = 0; i < 120; i++) {
             events.get('pointermove')({ pointerType: 'mouse', clientX: 260 + Math.sin(i * .1) * 120, clientY: 260, timeStamp: now });
@@ -81,20 +82,16 @@ test('particle animation keeps a fixed population, avoids frame layout reads and
         assert.equal(layoutReads, measuredLayouts, 'Animation and pointer movement must not measure page layout');
         events.get('pointermove')({ pointerType: 'mouse', clientX: 400, clientY: 260, timeStamp: now });
         step(180);
-        const largeSymbols = rendered.filter((symbol) => symbol.size > 55);
-        assert.ok(largeSymbols.length >= 2 && largeSymbols.length <= 4,
-            `Only a small local group should be enlarged, got ${largeSymbols.length}`);
+        const largeSymbols = rendered.filter((symbol) => symbol.size > 24);
+        assert.ok(largeSymbols.length > restingAccents && largeSymbols.length <= 160,
+            `Hover should accent a local patch of the surface (${restingAccents} at rest, ${largeSymbols.length} on hover)`);
+        assert.ok(Math.max(...rendered.map(({ size }) => size)) <= 45,
+            'No hovered glyph should overpower the particle surface');
         const logoSymbols = rendered.slice(0, -22);
         const leftEdge = Math.min(...logoSymbols.map(({ x, size }) => x - size * .4));
         const rightEdge = Math.max(...logoSymbols.map(({ x, size }) => x + size * .4));
         assert.ok(leftEdge >= 81 && rightEdge <= 602,
             `The projected mark must remain inside the hero when hovered near an edge (${leftEdge}, ${rightEdge})`);
-        largeSymbols.forEach((a, index) => {
-            largeSymbols.slice(index + 1).forEach((b) => {
-                assert.ok(Math.hypot(a.x - b.x, a.y - b.y) >= (a.size + b.size) * .28,
-                    'Enlarged symbols must leave space between their visible glyphs');
-            });
-        });
         const darkColors = paintedColors.slice(-4);
         documentStub.documentElement.dataset.siteTheme = 'light';
         onThemeChange(); step();

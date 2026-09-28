@@ -339,7 +339,7 @@
       root.classList.add('is-entering');
       moveTo(bounds().left);
 
-      const duration = 1000;
+      const duration = 1300;
       let startedAt = null;
 
       const tick = (timestamp) => {

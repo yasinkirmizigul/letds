@@ -161,17 +161,17 @@ export function initServicesParticleLogo() {
         const paintSprites = () => sprites.forEach((sprite, index) => {
             const symbol = ['Σ', 'μ', 'σ', 'x̄'][index];
             const brush = sprite.getContext('2d');
-            const color = dark ? colors[index] : blend(colors[index], '#1b3957', .55);
+            const color = dark ? colors[index] : blend(colors[index], '#1b3957', .72);
             brush.clearRect(0, 0, 96, 96);
             brush.font = '600 63px Georgia, serif';
             brush.textAlign = 'center';
             brush.textBaseline = 'middle';
             brush.lineJoin = 'round';
-            brush.lineWidth = 4.5;
+            brush.lineWidth = 3.5;
             brush.globalAlpha = 1;
             brush.strokeStyle = color;
             brush.strokeText(symbol, 48, 49);
-            brush.globalAlpha = .28;
+            brush.globalAlpha = .2;
             brush.fillStyle = color;
             brush.fillText(symbol, 48, 49);
         });
@@ -193,16 +193,16 @@ export function initServicesParticleLogo() {
             particles.length = 0;
             featured.clear();
             let index = 0;
-            // Fewer, legible symbols form a front face; edge walls and a sparse
+            // Fine glyphs form a continuous surface; edge walls and a sparse
             // back face give the mark volume when it turns toward the pointer.
-            const step = compact ? 10.5 : 9;
+            const step = compact ? 9.2 : 7.25;
             const addParticle = (x, y, z, face, edge, seed, colorBand) => {
                 const startAngle = random(seed + 29) * Math.PI * 2;
                 const startRadius = Math.sqrt(random(seed + 31)) * .42;
-                const jitter = face === 'front' ? .24 : .18;
-                const baseSize = face === 'front' ? (edge ? 16 : 14) : (face === 'side' ? 11 : 9);
-                const size = (baseSize + random(seed + 8) * (face === 'front' ? 8 : 6))
-                    * (face === 'front' && random(seed + 47) < .045 ? 1.55 : 1);
+                const jitter = face === 'front' ? .52 : .36;
+                const baseSize = face === 'front' ? (edge ? 12 : 10) : (face === 'side' ? 8 : 7);
+                const size = (baseSize + random(seed + 8) * (face === 'front' ? 6 : 4))
+                    * (face === 'front' && random(seed + 47) < .025 ? 1.3 : 1);
                 particles.push({
                     x: (x - 210 + (random(seed) - .5) * step * jitter) / 420,
                     y: (y - 210 + (random(seed + 3) - .5) * step * jitter) / 420,
@@ -228,15 +228,15 @@ export function initServicesParticleLogo() {
                     const surface = .13 + Math.sqrt(Math.max(0, 1 - ((x - 210) / 260) ** 2 - ((y - 210) / 260) ** 2)) * .16;
                     const colorFlow = Math.sin(x * .027 + Math.sin(y * .018) * 2.2) + Math.cos(y * .035 - x * .014);
                     const colorBand = Math.floor(clamp((colorFlow + 2) / 4, 0, .999) * 4);
-                    addParticle(x, y, surface + (random(index + 43) - .5) * .065, 'front', edge, index++, colorBand);
+                    addParticle(x, y, surface + (random(index + 43) - .5) * .11, 'front', edge, index++, colorBand);
                     if (edge) {
                         const edgeX = (!filled(x + step * .8, y) ? 1 : 0) - (!filled(x - step * .8, y) ? 1 : 0);
                         const edgeY = (!filled(x, y + step * .8) ? 1 : 0) - (!filled(x, y - step * .8) ? 1 : 0);
-                        for (let layer = 0; layer < 2; layer++) {
-                            addParticle(x + edgeX * (layer + 1) * 2, y + edgeY * (layer + 1) * 2,
-                                surface - .16 * (layer + 1), 'side', true, index++, colorBand);
+                        for (let layer = 0; layer < 3; layer++) {
+                            addParticle(x + edgeX * (layer + 1) * 1.7, y + edgeY * (layer + 1) * 1.7,
+                                surface - .125 * (layer + 1), 'side', true, index++, colorBand);
                         }
-                    } else if (random(index + 57) < .2) {
+                    } else if (random(index + 57) < .28) {
                         addParticle(x, y, surface - .38, 'back', false, index++, colorBand);
                     }
                 }
@@ -271,12 +271,12 @@ export function initServicesParticleLogo() {
             // near edge remains visible inside the hero on either side.
             const centerX = width * (.5 - turn * .08) - tiltY * scale * .34;
             const centerY = height * (.5 + turn * .05) + tiltX * scale * .16 + Math.sin(time * .5) * 3;
-            const hoverZoom = .13 - Math.min(.1, Math.abs(tiltY) * .3);
+            const hoverZoom = .045 - Math.min(.035, Math.abs(tiltY) * .1);
             const zoom = scale * (1 + turn * .12 + hoverStrength * hoverZoom);
             context.setTransform(ratio, 0, 0, ratio, 0, 0);
             context.clearRect(0, 0, width, height);
             const hoverCandidates = [];
-            const radius = Math.min(width * .29, 160);
+            const radius = Math.min(width * .36, 195);
             particles.forEach((particle) => {
                 const assembled = reduced ? 1 : smoothstep(clamp((entrance - particle.introDelay) / (1 - particle.introDelay)));
                 const forming = 1 - assembled;
@@ -308,7 +308,7 @@ export function initServicesParticleLogo() {
             // Retain a few nearby particles so the reaction follows the cursor
             // without rearranging the glyphs into a geometric ring.
             hoverCandidates.sort((a, b) => a.distance - b.distance);
-            const limit = compact ? 3 : 4;
+            const limit = compact ? 2 : 3;
             for (const particle of featured) {
                 if (!pointer.active || reduced || particle.distance > radius * .9) featured.delete(particle);
             }
@@ -322,7 +322,7 @@ export function initServicesParticleLogo() {
                 const targetHover = featured.has(particle) ? smoothstep((radius - particle.distance) / (radius * .32)) : 0;
                 particle.hover += (targetHover - particle.hover) * ease(.075);
                 const angle = particle.distance > 2 ? Math.atan2(particle.py - pointer.y, particle.px - pointer.x) : particle.phase;
-                const push = particle.proximity * 25 + particle.hover * (18 + Math.sin(particle.phase) * 5);
+                const push = particle.proximity * 21 + particle.hover * (8 + Math.sin(particle.phase) * 3);
                 const targetX = Math.cos(angle) * push + pointer.dx * particle.hover * .35;
                 const targetY = Math.sin(angle) * push + pointer.dy * particle.hover * .35;
                 particle.offsetX += (targetX - particle.offsetX) * ease(.07);
@@ -331,8 +331,8 @@ export function initServicesParticleLogo() {
                 particle.px += particle.offsetX + Math.sin(wave) * particle.hover * 4;
                 particle.py += particle.offsetY + Math.cos(wave) * particle.hover * 4;
                 const baseSize = Math.min(39, particle.size * clamp(width / 500, .76, 1.15) * particle.perspective);
-                const largeSize = Math.min(width * .125, 68) * (.82 + .18 * random(particle.phase + 31));
-                particle.drawSize = baseSize * (1 + particle.proximity * .22) + (largeSize - baseSize) * particle.hover;
+                const largeSize = Math.min(width * .08, 38) * (.82 + .18 * random(particle.phase + 31));
+                particle.drawSize = baseSize * (1 + particle.proximity * .3) + (largeSize - baseSize) * particle.hover;
                 if (particle.hover > .08) enlarged.push(particle);
             });
             // Local separation prevents overlap, but each glyph remains anchored
@@ -374,8 +374,8 @@ export function initServicesParticleLogo() {
             const drawParticle = (particle) => {
                 const size = particle.drawSize;
                 const rotation = particle.phase * .1 + Math.sin(time * .4 + particle.phase) * .18 + particle.hover * Math.sin(time + particle.phase) * .6;
-                const faceAlpha = particle.face === 'front' ? (dark ? .86 : .83) : (particle.face === 'side' ? .54 : .3);
-                context.globalAlpha = clamp(faceAlpha + particle.depth * .3 + particle.hover * .2, .18, 1) * (1 - scatter * .16);
+                const faceAlpha = particle.face === 'front' ? (particle.edge ? .92 : .74) : (particle.face === 'side' ? .48 : .28);
+                context.globalAlpha = clamp(faceAlpha + particle.depth * .26 + particle.proximity * .08 + particle.hover * .1, .16, 1) * (1 - scatter * .16);
                 if (particle.hover <= .08) context.globalAlpha *= 1 - particle.proximity * .16;
                 const c = Math.cos(rotation) * ratio, s = Math.sin(rotation) * ratio;
                 context.setTransform(c, s, -s, c, particle.px * ratio, particle.py * ratio);

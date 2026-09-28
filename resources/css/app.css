@@ -1313,6 +1313,10 @@ body.site-shell .site-member-nav a.is-active {
     color: var(--background);
 }
 
+body.site-shell .site-page :is(#belgelerim, #sonuclarim, #bilmeniz-gerekenler) {
+    scroll-margin-top: 6rem;
+}
+
 @media (min-width: 1440px) {
     body.site-shell .site-member-nav {
         display: grid;

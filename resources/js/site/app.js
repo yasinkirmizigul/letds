@@ -7,6 +7,7 @@ import initTitleTooltips from '@/core/title-tooltips';
 import { initPasswordConfirmationValidation } from '@/core/password-confirmation';
 import { initSiteKtSelects } from '@/core/ktui-selects';
 import { initTeamCarousel, initServicesParticleLogo } from './visual-stories';
+import { initMemberNavigation } from './member-navigation';
 
 window.Alpine = Alpine;
 Alpine.start();
@@ -124,6 +125,7 @@ domReady(() => {
     initSiteKtSelects(document);
     initReveals();
     initSectionNavigation();
+    initMemberNavigation();
     initReviewStars();
     initTeamCarousel();
     initServicesParticleLogo();
