@@ -90,6 +90,31 @@ class SitePortalFlowTest extends TestCase
             ->assertDontSee('hidden-superadmin@example.test');
     }
 
+    public function test_contact_form_does_not_expose_internal_system_notes_to_guests_or_members(): void
+    {
+        $member = Member::query()->create([
+            'name' => 'Test',
+            'surname' => 'Üye',
+            'email' => 'contact-member@example.test',
+            'password' => 'password',
+            'is_active' => true,
+        ]);
+
+        foreach ([false, true] as $signedIn) {
+            if ($signedIn) {
+                $this->actingAs($member, 'member');
+            }
+
+            $this->get(route('site.contact-messages.create'))
+                ->assertOk()
+                ->assertSee('Öncelik Rehberi')
+                ->assertDontSee('Sistem Notları')
+                ->assertDontSee('admin panel')
+                ->assertDontSee('Süper admin tüm mesajları görebilir')
+                ->assertDontSee('bu sayfa buna hazır');
+        }
+    }
+
     public function test_contact_message_cannot_be_sent_to_admin_or_super_admin(): void
     {
         $adminRole = Role::query()->create(['name' => 'Admin', 'slug' => 'admin']);

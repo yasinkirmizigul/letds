@@ -21,7 +21,7 @@
                     <span class="site-eyebrow">İletişim Formu</span>
                     <h1 class="mt-5 font-display text-3xl font-semibold text-foreground md:text-4xl">Doğru kişiye doğrudan mesaj gönder</h1>
                     <p class="mt-2 text-sm text-muted-foreground">
-                        Mesajın seçtiğin kullanıcıya admin panel üzerinden düşer. Aciliyet durumunu da belirterek daha net bir yönlendirme yapabilirsin.
+                        Mesajın seçtiğin kişiye iletilir. Aciliyet durumunu da belirterek daha net bir yönlendirme yapabilirsin.
                     </p>
                 </div>
 
@@ -283,22 +283,6 @@
                     </div>
                 </div>
 
-                <div class="rounded-3xl border border-border bg-background">
-                    <div class="border-b border-border px-5 py-5">
-                        <h3 class="text-lg font-semibold text-foreground">Sistem Notları</h3>
-                    </div>
-                    <div class="grid gap-4 p-5 text-sm text-muted-foreground">
-                        <div class="rounded-2xl border border-border bg-muted/40 px-4 py-4">
-                            Mesajı hangi kullanıcıya yönlendirdiğin admin panelde net şekilde görünür.
-                        </div>
-                        <div class="rounded-2xl border border-border bg-muted/40 px-4 py-4">
-                            Süper admin tüm mesajları görebilir; diğer kullanıcılar sadece kendilerine gönderilen kayıtları görür.
-                        </div>
-                        <div class="rounded-2xl border border-border bg-muted/40 px-4 py-4">
-                            İstersen ileride kullanıcı listesinde “bu kişiye mesaj gönder” butonu ekleyebiliriz; bu sayfa buna hazır.
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
