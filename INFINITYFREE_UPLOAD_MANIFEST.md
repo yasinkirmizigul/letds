@@ -20,6 +20,8 @@ Current comparison: deployed P/mobile fixes and both pinned CDN references alrea
 match the development source. Only `resources/css/app.css` was synchronized to
 bring the remote source copy up to date; existing compiled CSS was already correct.
 Upload that source file only if keeping the hosted source tree synchronized.
+The downloaded mirror's latest audit contains **15,023 files / 145,760,990 bytes**,
+with no hosting file-limit violations. No uploaded data or remote-only files were deleted.
 
 **Deployment readiness: READY (local upload package).** Target: `https://probablue.freedev.app`.
 Owner-only environment configuration and hosting smoke tests remain manual steps.

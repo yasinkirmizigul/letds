@@ -49,6 +49,7 @@ function Plan-File([IO.FileSystemInfo]$Item) {
     $target = [IO.Path]::GetFullPath((Join-Path $htdocs $relative))
     if (-not $target.StartsWith($htdocs + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw 'Target escapes htdocs.' }
     Assert-NoLink $target
+    if (Test-Path -LiteralPath $target -PathType Container) { throw "Remote mirror has a directory where a file is required: $relative" }
     if (($Item.Extension -in @('.php','.html','.htm','.js') -and $Item.Length -ge 1000000) -or ($Item.Name -eq '.htaccess' -and $Item.Length -ge 10000) -or $Item.Length -ge 10000000) { throw "File exceeds InfinityFree size limit: $relative" }
     if ((Test-Path -LiteralPath $target -PathType Leaf) -and (Get-FileHash -LiteralPath $Item.FullName).Hash -eq (Get-FileHash -LiteralPath $target).Hash) { return }
     $plan.Add([pscustomobject]@{ Relative=$relative; Source=$Item.FullName; Target=$target })
