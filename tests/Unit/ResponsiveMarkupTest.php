@@ -9,6 +9,16 @@ use RecursiveIteratorIterator;
 
 class ResponsiveMarkupTest extends TestCase
 {
+    public function test_mobile_header_keeps_the_brand_left_and_controls_in_a_separate_column(): void
+    {
+        $css = file_get_contents($this->projectRoot().DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'css'.DIRECTORY_SEPARATOR.'app.css');
+        $mobileCss = substr($css, strpos($css, '@media (max-width: 720px)'));
+
+        $this->assertMatchesRegularExpression('/\.site-header__inner\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\) auto;/s', $mobileCss);
+        $this->assertMatchesRegularExpression('/\.site-header \.probablue-brand--shell\s*\{[^}]*grid-column:\s*1;[^}]*justify-self:\s*start;/s', $mobileCss);
+        $this->assertMatchesRegularExpression('/\.site-header__actions\s*\{[^}]*grid-column:\s*2;[^}]*flex-wrap:\s*nowrap;/s', $mobileCss);
+    }
+
     public function test_frontend_sources_do_not_use_legacy_bootstrap_utilities(): void
     {
         $legacyUtilities = implode('|', [

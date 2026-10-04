@@ -3035,8 +3035,8 @@
     "semantic_hash": ""
   },
   "tests/Unit/ResponsiveMarkupTest.php": {
-    "mtime": 1791105811.8260987,
-    "ast_hash": "ee0568695f520080ec5f7d1c23a0493b",
+    "mtime": 1790434231.6319847,
+    "ast_hash": "94a5b8d43a40f03449f87fafa631b9da",
     "semantic_hash": ""
   },
   "app/Http/Controllers/Site/Cms/FaqController.php": {
@@ -3440,8 +3440,8 @@
     "semantic_hash": ""
   },
   "DEPLOY_INFINITYFREE.md": {
-    "mtime": 1791065081.4351726,
-    "ast_hash": "cdb78546fc2a9919b77729310970a2e6",
+    "mtime": 1791064906.9714143,
+    "ast_hash": "c93d2f9fb65fd3ef40e08a38d4333e0e",
     "semantic_hash": ""
   },
   "scripts/audit-infinityfree-assets.mjs": {
@@ -3460,8 +3460,8 @@
     "semantic_hash": ""
   },
   "INFINITYFREE_UPLOAD_MANIFEST.md": {
-    "mtime": 1791065081.5172906,
-    "ast_hash": "a3122a5f5a6ced238c5e05dc6bccc892",
+    "mtime": 1791064906.889525,
+    "ast_hash": "ac843f2a308e969f4d50c6e91972064f",
     "semantic_hash": ""
   },
   "graphify-out/memory/query_20261003_211516_local_database_and_infinityfree_migration__seed_da.md": {
@@ -3472,21 +3472,6 @@
   "graphify-out/memory/query_20261003_213845_infinityfree_production_upload__composer_and_vite.md": {
     "mtime": 1791063525.1079237,
     "ast_hash": "23293a55f3fa776895c0dcf86c8e3cd7",
-    "semantic_hash": ""
-  },
-  "tests/Frontend/home-motion.test.mjs": {
-    "mtime": 1791106024.3295555,
-    "ast_hash": "b542ded2fa9dfe2b17925250b39a4ecd",
-    "semantic_hash": ""
-  },
-  "graphify-out/memory/query_20261003_220442_apply_the_infinityfree_pinned_cdn_workaround_and_v.md": {
-    "mtime": 1791065082.1487706,
-    "ast_hash": "a9a0b6a2328b3822fd5749594994fbf1",
-    "semantic_hash": ""
-  },
-  "graphify-out/memory/query_20261003_223146_localde_soldaki_infitide_sa\u011fdaki_be_msoldaki_olsun.md": {
-    "mtime": 1791066706.1844618,
-    "ast_hash": "8f8e36efd580b8a8c9777f46b27f39ed",
     "semantic_hash": ""
   }
 }

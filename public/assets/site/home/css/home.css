@@ -1232,6 +1232,7 @@ html[data-site-theme="dark"] .site-home-header.grey-bg .home-theme-toggle {
 }
 
 .home-before-after {
+  --home-hero-float-distance: 30px;
   --home-split-position: 50%;
   --home-split-left-distance: 50vw;
   --home-split-right-distance: 50vw;
@@ -1421,6 +1422,12 @@ html[data-site-theme="dark"] .wrapper-before::before {
 .home-hero-float {
   opacity: 1;
   animation: floating_special 3500ms ease infinite;
+}
+
+/* The two clipped halves and their shadows share one document timeline. */
+.home-before-after[data-home-motion-synced] .home-hero-float,
+.home-before-after[data-home-motion-synced] .home-hero-shadow {
+  animation: none;
 }
 
 .et-in-viewport-check {
@@ -1957,14 +1964,14 @@ body.home-leaving .icon-drag {
 
 @keyframes floating_special {
   0% {
-    transform: translateY(0%);
+    transform: translate3d(0, 0, 0);
   }
   50% {
-    transform: translateY(8%);
+    transform: translate3d(0, var(--home-hero-float-distance, 30px), 0);
   }
   100% {
     opacity: 1;
-    transform: translateY(0%);
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -2771,6 +2778,10 @@ body.home-leaving .icon-drag {
     width: min(340px, calc(100vw - 48px));
     height: auto;
     margin-top: -200px;
+  }
+
+  .home-before-after {
+    --home-hero-float-distance: 24px;
   }
 
   .content-before-after .content-right,

@@ -55,6 +55,51 @@
     }
   }
 
+  function initHeroMotion() {
+    const hero = document.getElementById('before-after');
+    if (!hero) return;
+
+    const floats = [...hero.querySelectorAll('.home-hero-float')];
+    const shadows = [...hero.querySelectorAll('.home-hero-shadow')];
+    if (!floats.length || !floats.every((item) => typeof item.animate === 'function')) return;
+
+    const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const origin = document.timeline.currentTime ?? 0;
+    let animations = [];
+
+    const sync = () => {
+      animations.forEach((animation) => animation.cancel());
+      animations = [];
+      hero.removeAttribute('data-home-motion-synced');
+      if (preference.matches) return;
+
+      const distance = getComputedStyle(hero).getPropertyValue('--home-hero-float-distance').trim() || '30px';
+      const timing = { duration: 3500, easing: 'ease', iterations: Infinity };
+      hero.setAttribute('data-home-motion-synced', '');
+
+      floats.forEach((item) => {
+        animations.push(item.animate([
+          { transform: 'translate3d(0, 0, 0)' },
+          { transform: `translate3d(0, ${distance}, 0)` },
+          { transform: 'translate3d(0, 0, 0)' },
+        ], timing));
+      });
+      shadows.forEach((item) => {
+        animations.push(item.animate([
+          { opacity: 0.38, transform: 'translateX(-50%) scaleX(0.7) scaleY(0.58)' },
+          { opacity: 0.7, transform: 'translateX(-50%) scaleX(1.08) scaleY(0.92)' },
+          { opacity: 0.38, transform: 'translateX(-50%) scaleX(0.7) scaleY(0.58)' },
+        ], timing));
+      });
+      // Avoid independent CSS start times and percentage offsets after image decoding.
+      animations.forEach((animation) => { animation.startTime = origin; });
+    };
+
+    sync();
+    preference.addEventListener('change', sync);
+    window.addEventListener('resize', sync, { passive: true });
+  }
+
   function initViewportAnimations() {
     const items = [...document.querySelectorAll('.et-in-viewport-check')];
     if (!items.length) return;
@@ -665,6 +710,7 @@
 
   ready(() => {
     initBackgroundReadyState();
+    initHeroMotion();
     initViewportAnimations();
     initTooltips();
     initStickyHeader();

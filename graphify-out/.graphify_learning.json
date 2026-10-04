@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-26T21:30:18.994349+00:00",
+  "generated_at": "2026-10-04T15:59:33.819565+00:00",
   "nodes": {
     "app_http_controllers_admin_auth_passwordresetcontroller_passwordresetcontroller": {
       "code_fingerprint": "884c3a4330984a3599126a1723598429fc092c73aada5075b32a63caa314edd6",
@@ -12,8 +12,120 @@
           "q": "Şifre ve şifre tekrar alanlarında anlık ve form gönderiminde eşleşme kontrolü var mı?"
         }
       ],
-      "score": 0.524653242,
+      "score": 0.438432234,
       "source_file": "app/Http/Controllers/Admin/Auth/PasswordResetController.php",
+      "status": "tentative",
+      "uses": 1
+    },
+    "app_jobs_sendprojectstagewhatsappjob_sendprojectstagewhatsappjob": {
+      "code_fingerprint": "bdfbd7de5030678d3d5c937eb945925cd41ab865ff932c9b27fe8e32b1207d79",
+      "label": "SendProjectStageWhatsAppJob",
+      "last": "2026-10-03T21:38:45.108135+00:00",
+      "provenance": [
+        {
+          "date": "2026-10-03T21:38:45.108135+00:00",
+          "outcome": "useful",
+          "q": "InfinityFree production upload: Composer and Vite completeness, oversized assets, rewrite and storage URL compatibility"
+        }
+      ],
+      "score": 0.982492462,
+      "source_file": "app/Jobs/SendProjectStageWhatsAppJob.php",
+      "status": "tentative",
+      "uses": 1
+    },
+    "app_models_admin_user_permission_permission": {
+      "code_fingerprint": "06a6cc993c8df99835acf048866a82022e06660fe921c1eb9b7b9afabc856238",
+      "label": "Permission",
+      "last": "2026-10-03T21:15:16.892868+00:00",
+      "provenance": [
+        {
+          "date": "2026-10-03T21:15:16.892868+00:00",
+          "outcome": "useful",
+          "q": "Local database and InfinityFree migration, seed data, authentication and filesystem compatibility"
+        }
+      ],
+      "score": 0.982122543,
+      "source_file": "app/Models/Admin/User/Permission.php",
+      "status": "tentative",
+      "uses": 1
+    },
+    "app_models_admin_user_role_role": {
+      "code_fingerprint": "048b75ec9bacf15925619b692f94d714563159096fdd0c19cf46a697a2db3745",
+      "label": "Role",
+      "last": "2026-10-03T21:15:16.892868+00:00",
+      "provenance": [
+        {
+          "date": "2026-10-03T21:15:16.892868+00:00",
+          "outcome": "useful",
+          "q": "Local database and InfinityFree migration, seed data, authentication and filesystem compatibility"
+        }
+      ],
+      "score": 0.982122543,
+      "source_file": "app/Models/Admin/User/Role.php",
+      "status": "tentative",
+      "uses": 1
+    },
+    "app_services_site_seofilegenerator_seofilegenerator": {
+      "code_fingerprint": "1960f9fa10a2a122c6e3774834c79a0df63d1ecbbd7096618b2eb55c0ca29b61",
+      "label": "SeoFileGenerator",
+      "last": "2026-10-03T21:38:45.108135+00:00",
+      "provenance": [
+        {
+          "date": "2026-10-03T21:38:45.108135+00:00",
+          "outcome": "useful",
+          "q": "InfinityFree production upload: Composer and Vite completeness, oversized assets, rewrite and storage URL compatibility"
+        }
+      ],
+      "score": 0.982492462,
+      "source_file": "app/Services/Site/SeoFileGenerator.php",
+      "status": "tentative",
+      "uses": 1
+    },
+    "app_support_site_sitelocalization_sitelocalization": {
+      "code_fingerprint": "6b6ad707f523cbb0bb3db19d15bd2ed0d081ade4eed1ae453ee02310f724279d",
+      "label": "SiteLocalization",
+      "last": "2026-10-03T21:15:16.892868+00:00",
+      "provenance": [
+        {
+          "date": "2026-10-03T21:15:16.892868+00:00",
+          "outcome": "useful",
+          "q": "Local database and InfinityFree migration, seed data, authentication and filesystem compatibility"
+        }
+      ],
+      "score": 0.982122543,
+      "source_file": "app/Support/Site/SiteLocalization.php",
+      "status": "tentative",
+      "uses": 1
+    },
+    "database_seeders_databaseseeder_databaseseeder": {
+      "code_fingerprint": "7dbd11ba93e9416d55bb7f764c2e93ba045de297e63feb5e6461b868713b0644",
+      "label": "DatabaseSeeder",
+      "last": "2026-10-03T21:15:16.892868+00:00",
+      "provenance": [
+        {
+          "date": "2026-10-03T21:15:16.892868+00:00",
+          "outcome": "useful",
+          "q": "Local database and InfinityFree migration, seed data, authentication and filesystem compatibility"
+        }
+      ],
+      "score": 0.982122543,
+      "source_file": "database/seeders/DatabaseSeeder.php",
+      "status": "tentative",
+      "uses": 1
+    },
+    "resources_js_core_page_registry_current": {
+      "code_fingerprint": "06626ec54c1fe1fa74cb8816296101de8da4fbc6b9a2747f2a2dd350e8b4634b",
+      "label": "current",
+      "last": "2026-10-03T22:31:46.184897+00:00",
+      "provenance": [
+        {
+          "date": "2026-10-03T22:31:46.184897+00:00",
+          "outcome": "useful",
+          "q": "localde soldaki infitide sağdaki be msoldaki olsun sitiyorum"
+        }
+      ],
+      "score": 0.983328601,
+      "source_file": "resources/js/core/page-registry.js",
       "status": "tentative",
       "uses": 1
     },
@@ -28,7 +140,7 @@
           "q": "anasayfada dark light mode butonu beyaz zemidne gözükmüyor; yanına hamburger menü ve aşağı kayan, kapanabilen header navigasyonu ekle"
         }
       ],
-      "score": 0.524326211,
+      "score": 0.438158947,
       "source_file": "resources/views/admin/layouts/main/header.blade.php",
       "status": "tentative",
       "uses": 1
@@ -44,13 +156,13 @@
           "q": "anasayfada dark light mode butonu beyaz zemidne gözükmüyor; yanına hamburger menü ve aşağı kayan, kapanabilen header navigasyonu ekle"
         }
       ],
-      "score": 0.524326211,
+      "score": 0.438158947,
       "source_file": "resources/views/site/partials/navigation/mobile-item.blade.php",
       "status": "tentative",
       "uses": 1
     },
     "tests_unit_responsivemarkuptest_responsivemarkuptest": {
-      "code_fingerprint": "e70d74206d9af3b2fb541b57dce73e75432cddd897e97fcfbff85bf9811c89e1",
+      "code_fingerprint": "6ed00121e8ffe248c1609d1c597a965543b6caafea5f4c72c206649c64c83649",
       "label": "ResponsiveMarkupTest",
       "last": "2026-08-29T23:02:20.819362+00:00",
       "provenance": [
@@ -60,8 +172,24 @@
           "q": "biraz daha açık ton olmalı bence çok koyu kalmış gibiler"
         }
       ],
-      "score": 0.524420868,
+      "score": 0.438238048,
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
+      "status": "tentative",
+      "uses": 1
+    },
+    "vite": {
+      "code_fingerprint": "9fe0c2c457c3d860baed7ae4b6242785030797021f9e29300b4c71bc49f1397e",
+      "label": "vite",
+      "last": "2026-10-03T22:04:42.148391+00:00",
+      "provenance": [
+        {
+          "date": "2026-10-03T22:04:42.148391+00:00",
+          "outcome": "useful",
+          "q": "Apply the InfinityFree pinned CDN workaround and verify the regenerated deployment package"
+        }
+      ],
+      "score": 0.982901638,
+      "source_file": "package.json",
       "status": "tentative",
       "uses": 1
     }

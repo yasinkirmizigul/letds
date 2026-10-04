@@ -1,0 +1,23 @@
+# InfinityFree: the entire application lives in htdocs.
+# Keep public/.htaccess unchanged: it handles Laravel's front controller.
+Options -Indexes
+RewriteEngine On
+
+# Never serve hidden files, even below public or public storage.
+RewriteRule (^|/)\.(?!well-known(?:/|$)) - [F,END,NC]
+
+# Block direct access to the application's physical/private directories.
+RewriteRule ^(?:app|bootstrap|config|database|resources|routes|vendor|tests)(?:/|$) - [F,END,NC]
+RewriteRule ^(?:public/)?storage/(?:app|framework|logs)(?:/|$) - [F,END,NC]
+
+# Uploaded files must not be executable scripts (including path-info URLs).
+RewriteRule ^(?:public/)?storage/.*\.(?:php[0-9]*|phtml|pht|phar|cgi|pl|py|sh|shtml)(?:[./]|$) - [F,END,NC]
+
+# No storage:link: serve only the public disk, never storage/app/private.
+# END prevents this internal target from being rewritten again.
+RewriteRule ^storage/(.*)$ /storage/app/public/$1 [END]
+
+# Allow certificate challenges and hand internal public requests to its rules.
+RewriteRule ^\.well-known(?:/|$) - [L]
+RewriteRule ^public(?:/|$) - [L]
+RewriteRule ^(.*)$ /public/$1 [L]
