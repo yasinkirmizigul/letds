@@ -15,7 +15,7 @@
                     <div>
                         <h1 class="text-xl font-semibold text-foreground lg:text-2xl">Sol menü görünürlüğü</h1>
                         <p class="mt-2 max-w-[78ch] text-sm leading-6 text-muted-foreground">
-                            Teslim edeceğin yönetim panelinde kullanılmayacak ana menüleri ve alt seçenekleri kapat. Bu ayar paneldeki tüm kullanıcılar için geçerlidir.
+                            Kullanılmayacak ana menüleri ve alt seçenekleri diğer panel kullanıcıları için kapat. Süper admin tüm menüleri görmeye devam eder.
                         </p>
                     </div>
                 </div>

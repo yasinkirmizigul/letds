@@ -7,6 +7,7 @@ use App\Models\Admin\User\Role;
 use App\Models\Admin\User\User;
 use App\Models\Admin\AuditLog\AuditLog;
 use App\Models\ContactMessage;
+use App\Support\Admin\AdminMenuVisibility;
 use App\Support\Admin\AdminRoleProfile;
 use Database\Seeders\AdminSeeder;
 use Database\Seeders\PermissionSeeder;
@@ -89,6 +90,37 @@ class AdminRoleProfileTest extends TestCase
             ->get(route('admin.menu-visibility.edit'))
             ->assertOk()
             ->assertSee('Menü Yönetimi');
+    }
+
+    public function test_superadmin_sidebar_keeps_hidden_menu_items_available(): void
+    {
+        $this->seed(PermissionSeeder::class);
+        $this->seed(SuperAdminSeeder::class);
+        $this->seed(AdminSeeder::class);
+
+        $admin = User::query()->whereHas('roles', fn ($query) => $query->where('slug', 'admin'))->firstOrFail();
+        $superAdmin = User::query()->whereHas('roles', fn ($query) => $query->where('slug', 'superadmin'))->firstOrFail();
+        $visibility = app(AdminMenuVisibility::class);
+        $sidebarLinkCount = function ($response, string $url): int {
+            $document = new \DOMDocument();
+            @$document->loadHTML($response->getContent());
+
+            return (new \DOMXPath($document))
+                ->query('//*[@id="sidebar_menu"]//a[@href="'.$url.'"]')
+                ->length;
+        };
+
+        foreach ([['site_configuration'], ['site_configuration.settings']] as $hiddenKeys) {
+            $visibility->replaceHiddenKeys($hiddenKeys, $superAdmin);
+
+            $adminResponse = $this->actingAs($admin)->get(route('admin.dashboard'));
+            $adminResponse->assertOk();
+            $this->assertSame(0, $sidebarLinkCount($adminResponse, route('admin.site.settings.edit')));
+
+            $superAdminResponse = $this->actingAs($superAdmin)->get(route('admin.dashboard'));
+            $superAdminResponse->assertOk()->assertSee('aria-label="Menü Yönetimi"', false);
+            $this->assertSame(1, $sidebarLinkCount($superAdminResponse, route('admin.site.settings.edit')));
+        }
     }
 
     public function test_role_hierarchy_protects_admin_and_superadmin_accounts(): void

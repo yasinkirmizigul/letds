@@ -51,7 +51,7 @@
                  data-kt-menu-accordion-expand-all="false"
                  id="sidebar_menu">
                 @php
-                    $menu = app(\App\Support\Admin\AdminMenuVisibility::class)->visibleMenu();
+                    $menu = app(\App\Support\Admin\AdminMenuVisibility::class)->visibleMenu($u);
                 @endphp
 
                 @foreach($menu as $item)

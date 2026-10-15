@@ -66,6 +66,34 @@
             </div>
         </div>
 
+        @if($placement === 'services')
+            <section class="kt-card overflow-hidden" id="services-symbol-colors">
+                <div class="kt-card-header py-5">
+                    <div>
+                        <h2 class="kt-card-title">Neler Sunuyoruz? / Hareketli P</h2>
+                        <p class="text-sm text-muted-foreground">Üst görseldeki Σ, μ, σ ve x̄ sembollerinin renklerini ayarlayın. Sayfanın açık ve koyu düzeni değişmez.</p>
+                    </div>
+                </div>
+                <form method="POST" action="{{ route('admin.site.services.symbol-colors.update') }}" class="kt-card-content grid gap-5 p-5 lg:p-6" data-native-submit="true">
+                    @csrf
+                    @method('PUT')
+                    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                        @foreach(['Σ', 'μ', 'σ', 'x̄'] as $index => $symbol)
+                            <label class="grid gap-2">
+                                <span class="kt-form-label">{{ $symbol }} sembolü</span>
+                                <input type="color" name="services_symbol_colors[{{ $index }}]" value="{{ old('services_symbol_colors.' . $index, $siteSettings->servicesSymbolColors()[$index]) }}" class="h-12 w-full cursor-pointer rounded-xl border border-border bg-background p-1">
+                                @error('services_symbol_colors.' . $index)<span class="text-xs text-danger">{{ $message }}</span>@enderror
+                            </label>
+                        @endforeach
+                    </div>
+                    @error('services_symbol_colors')<p class="text-sm text-danger">{{ $message }}</p>@enderror
+                    <div class="flex justify-end">
+                        <button type="submit" class="kt-btn kt-btn-primary">Renkleri Kaydet</button>
+                    </div>
+                </form>
+            </section>
+        @endif
+
         <section class="kt-card overflow-hidden">
             <div class="kt-card-header py-5">
                 <div>

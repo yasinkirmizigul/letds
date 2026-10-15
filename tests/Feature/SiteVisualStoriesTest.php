@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Admin\Media\Media;
+use App\Models\Admin\User\Permission;
 use App\Models\Admin\User\Role;
 use App\Models\Admin\User\User;
 use App\Models\Site\SiteSetting;
@@ -70,14 +71,20 @@ class SiteVisualStoriesTest extends TestCase
         $colors = ['#12549A', '#509CD3', '#8FC8E8', '#B5DEF2'];
 
         $this->actingAs($user)
-            ->get(route('admin.site.settings.edit'))
+            ->get(route('admin.site.services.index'))
             ->assertOk()
-            ->assertSee('Neler Sunuyoruz? / Hareketli P');
+            ->assertSee('Neler Sunuyoruz? / Hareketli P')
+            ->assertSee('name="services_symbol_colors[0]"', false);
+
+        $this->get(route('admin.site.settings.edit'))
+            ->assertOk()
+            ->assertDontSee('Neler Sunuyoruz? / Hareketli P');
 
         $this->actingAs($user)
-            ->put(route('admin.site.settings.update'), ['services_symbol_colors' => $colors])
-            ->assertRedirect(route('admin.site.settings.edit'));
+            ->put(route('admin.site.services.symbol-colors.update'), ['services_symbol_colors' => $colors])
+            ->assertRedirect(route('admin.site.services.index'));
 
+        $this->assertDatabaseHas('audit_logs', ['action' => 'site.services.symbol-colors.update']);
         $this->assertSame($colors, SiteSetting::current()->fresh()->servicesSymbolColors());
         $this->get(route('site.services.index'))
             ->assertOk()
@@ -86,13 +93,40 @@ class SiteVisualStoriesTest extends TestCase
             ->assertSee('data-logo-src=', false);
 
         $this->actingAs($user)
-            ->put(route('admin.site.settings.update'), ['site_name' => 'Probablue'])
+            ->put(route('admin.site.settings.update'), [
+                'site_name' => 'Probablue',
+                'services_symbol_colors' => ['#000000', '#000000', '#000000', '#000000'],
+            ])
             ->assertRedirect(route('admin.site.settings.edit'));
         $this->assertSame($colors, SiteSetting::current()->fresh()->servicesSymbolColors());
 
         $this->actingAs($user)
-            ->put(route('admin.site.settings.update'), ['services_symbol_colors' => ['#000000', 'bad', '#FFFFFF', '#123456']])
+            ->put(route('admin.site.services.symbol-colors.update'), ['services_symbol_colors' => ['#000000', 'bad', '#FFFFFF', '#123456']])
             ->assertSessionHasErrors('services_symbol_colors.1');
         $this->assertSame($colors, SiteSetting::current()->fresh()->servicesSymbolColors());
+    }
+
+    public function test_services_manager_can_save_symbol_colors_without_site_settings_permission(): void
+    {
+        $role = Role::query()->create(['name' => 'Admin', 'slug' => 'admin']);
+        foreach (['site_homepage.view', 'site_homepage.update'] as $slug) {
+            $role->permissions()->attach(Permission::query()->create(['name' => $slug, 'slug' => $slug]));
+        }
+        $user = User::query()->create([
+            'name' => 'Hizmet Editörü', 'email' => 'services-editor@example.test',
+            'password' => 'password', 'is_active' => true,
+        ]);
+        $user->roles()->attach($role);
+        $colors = ['#12549A', '#509CD3', '#8FC8E8', '#B5DEF2'];
+
+        $this->actingAs($user)
+            ->get(route('admin.site.services.index'))
+            ->assertOk()
+            ->assertSee('Neler Sunuyoruz? / Hareketli P');
+
+        $this->put(route('admin.site.services.symbol-colors.update'), ['services_symbol_colors' => $colors])
+            ->assertRedirect(route('admin.site.services.index'));
+        $this->assertSame($colors, SiteSetting::current()->fresh()->servicesSymbolColors());
+        $this->get(route('admin.site.settings.edit'))->assertForbidden();
     }
 }

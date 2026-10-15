@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Site;
 use App\Http\Controllers\Controller;
 use App\Models\Site\SiteHomepageSection;
 use App\Models\Site\SiteHomepageSectionItem;
+use App\Models\Site\SiteSetting;
 use App\Services\Site\HomepageSectionService;
 use App\Services\Site\SiteTranslationSyncService;
 use App\Support\Audit\AuditEvent;
@@ -45,6 +46,7 @@ class HomepageSectionController extends Controller
 
         return view('admin.pages.site.homepage-sections.index', [
             'sections' => $sections,
+            'siteSettings' => $placement === 'services' ? SiteSetting::current() : null,
             'iconOptions' => HomepageSectionService::ICON_OPTIONS,
             'surfaceOptions' => HomepageSectionService::SURFACE_OPTIONS,
             'alignmentOptions' => HomepageSectionService::ALIGNMENT_OPTIONS,
@@ -55,7 +57,7 @@ class HomepageSectionController extends Controller
             'manager' => $placement === 'services' ? [
                 'badge' => 'Hizmet Sayfası İçerik Sistemi',
                 'title' => 'Hizmetler Yönetimi',
-                'description' => 'Hizmet kartlarını ve çalışma süreci adımlarını çok dilli olarak yönetin.',
+                'description' => 'Hizmet kartlarını, çalışma süreci adımlarını ve hareketli P renklerini yönetin.',
                 'create_title' => 'Yeni Hizmet Alanı',
                 'create_description' => 'Hizmet kartı veya süreç adımı grubu oluşturabilirsiniz.',
                 'preview_route' => 'site.services.index',
@@ -78,6 +80,24 @@ class HomepageSectionController extends Controller
                 'active_items' => $sections->sum(fn ($section) => $section->items->where('is_active', true)->count()),
             ],
         ]);
+    }
+
+    public function updateServicesSymbolColors(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'services_symbol_colors' => ['required', 'array', 'size:4'],
+            'services_symbol_colors.*' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
+        ]);
+
+        SiteSetting::current()->update([
+            'services_symbol_colors' => array_values($validated['services_symbol_colors']),
+        ]);
+
+        AuditEvent::log('site.services.symbol-colors.update');
+
+        return redirect()
+            ->route('admin.site.services.index')
+            ->with('success', 'Hareketli P renkleri güncellendi.');
     }
 
     public function store(Request $request): RedirectResponse

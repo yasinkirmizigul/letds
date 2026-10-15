@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-04T15:59:33.819565+00:00",
+  "generated_at": "2026-10-15T15:14:52.141896+00:00",
   "nodes": {
     "app_http_controllers_admin_auth_passwordresetcontroller_passwordresetcontroller": {
       "code_fingerprint": "884c3a4330984a3599126a1723598429fc092c73aada5075b32a63caa314edd6",
@@ -12,7 +12,7 @@
           "q": "Şifre ve şifre tekrar alanlarında anlık ve form gönderiminde eşleşme kontrolü var mı?"
         }
       ],
-      "score": 0.438432234,
+      "score": 0.340279869,
       "source_file": "app/Http/Controllers/Admin/Auth/PasswordResetController.php",
       "status": "tentative",
       "uses": 1
@@ -28,7 +28,7 @@
           "q": "InfinityFree production upload: Composer and Vite completeness, oversized assets, rewrite and storage URL compatibility"
         }
       ],
-      "score": 0.982492462,
+      "score": 0.762540662,
       "source_file": "app/Jobs/SendProjectStageWhatsAppJob.php",
       "status": "tentative",
       "uses": 1
@@ -44,7 +44,7 @@
           "q": "Local database and InfinityFree migration, seed data, authentication and filesystem compatibility"
         }
       ],
-      "score": 0.982122543,
+      "score": 0.762253557,
       "source_file": "app/Models/Admin/User/Permission.php",
       "status": "tentative",
       "uses": 1
@@ -60,7 +60,7 @@
           "q": "Local database and InfinityFree migration, seed data, authentication and filesystem compatibility"
         }
       ],
-      "score": 0.982122543,
+      "score": 0.762253557,
       "source_file": "app/Models/Admin/User/Role.php",
       "status": "tentative",
       "uses": 1
@@ -76,7 +76,7 @@
           "q": "InfinityFree production upload: Composer and Vite completeness, oversized assets, rewrite and storage URL compatibility"
         }
       ],
-      "score": 0.982492462,
+      "score": 0.762540662,
       "source_file": "app/Services/Site/SeoFileGenerator.php",
       "status": "tentative",
       "uses": 1
@@ -92,7 +92,7 @@
           "q": "Local database and InfinityFree migration, seed data, authentication and filesystem compatibility"
         }
       ],
-      "score": 0.982122543,
+      "score": 0.762253557,
       "source_file": "app/Support/Site/SiteLocalization.php",
       "status": "tentative",
       "uses": 1
@@ -108,10 +108,31 @@
           "q": "Local database and InfinityFree migration, seed data, authentication and filesystem compatibility"
         }
       ],
-      "score": 0.982122543,
+      "score": 0.762253557,
       "source_file": "database/seeders/DatabaseSeeder.php",
       "status": "tentative",
       "uses": 1
+    },
+    "package_devdependencies_vite": {
+      "code_fingerprint": "9fe0c2c457c3d860baed7ae4b6242785030797021f9e29300b4c71bc49f1397e",
+      "label": "vite",
+      "last": "2026-10-04T16:08:33.009220+00:00",
+      "provenance": [
+        {
+          "date": "2026-10-04T16:08:33.009220+00:00",
+          "outcome": "useful",
+          "q": "indirdim"
+        },
+        {
+          "date": "2026-10-03T22:04:42.148391+00:00",
+          "outcome": "useful",
+          "q": "Apply the InfinityFree pinned CDN workaround and verify the regenerated deployment package"
+        }
+      ],
+      "score": 1.539098918,
+      "source_file": "package.json",
+      "status": "preferred",
+      "uses": 2
     },
     "resources_js_core_page_registry_current": {
       "code_fingerprint": "06626ec54c1fe1fa74cb8816296101de8da4fbc6b9a2747f2a2dd350e8b4634b",
@@ -124,7 +145,7 @@
           "q": "localde soldaki infitide sağdaki be msoldaki olsun sitiyorum"
         }
       ],
-      "score": 0.983328601,
+      "score": 0.763189614,
       "source_file": "resources/js/core/page-registry.js",
       "status": "tentative",
       "uses": 1
@@ -140,7 +161,7 @@
           "q": "anasayfada dark light mode butonu beyaz zemidne gözükmüyor; yanına hamburger menü ve aşağı kayan, kapanabilen header navigasyonu ekle"
         }
       ],
-      "score": 0.438158947,
+      "score": 0.340067762,
       "source_file": "resources/views/admin/layouts/main/header.blade.php",
       "status": "tentative",
       "uses": 1
@@ -156,7 +177,7 @@
           "q": "anasayfada dark light mode butonu beyaz zemidne gözükmüyor; yanına hamburger menü ve aşağı kayan, kapanabilen header navigasyonu ekle"
         }
       ],
-      "score": 0.438158947,
+      "score": 0.340067762,
       "source_file": "resources/views/site/partials/navigation/mobile-item.blade.php",
       "status": "tentative",
       "uses": 1
@@ -172,24 +193,8 @@
           "q": "biraz daha açık ton olmalı bence çok koyu kalmış gibiler"
         }
       ],
-      "score": 0.438238048,
+      "score": 0.340129155,
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
-      "status": "tentative",
-      "uses": 1
-    },
-    "vite": {
-      "code_fingerprint": "9fe0c2c457c3d860baed7ae4b6242785030797021f9e29300b4c71bc49f1397e",
-      "label": "vite",
-      "last": "2026-10-03T22:04:42.148391+00:00",
-      "provenance": [
-        {
-          "date": "2026-10-03T22:04:42.148391+00:00",
-          "outcome": "useful",
-          "q": "Apply the InfinityFree pinned CDN workaround and verify the regenerated deployment package"
-        }
-      ],
-      "score": 0.982901638,
-      "source_file": "package.json",
       "status": "tentative",
       "uses": 1
     }

@@ -25,6 +25,10 @@ Route::prefix('site')->as('site.')->group(function () {
         ->middleware('permission:site_homepage.view')
         ->name('services.index');
 
+    Route::put('/services/symbol-colors', [HomepageSectionController::class, 'updateServicesSymbolColors'])
+        ->middleware('permission:site_homepage.update')
+        ->name('services.symbol-colors.update');
+
     Route::prefix('homepage/sections')->as('homepage-sections.')->group(function () {
         Route::get('/', [HomepageSectionController::class, 'index'])
             ->middleware('permission:site_homepage.view')

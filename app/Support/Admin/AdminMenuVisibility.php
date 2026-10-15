@@ -48,8 +48,12 @@ final class AdminMenuVisibility
             ->all();
     }
 
-    public function visibleMenu(): array
+    public function visibleMenu(?User $viewer = null): array
     {
+        if ($viewer?->isSuperAdmin()) {
+            return $this->registry->all();
+        }
+
         return $this->registry->visibleMenu($this->hiddenKeys());
     }
 
