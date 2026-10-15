@@ -87,17 +87,31 @@ class HomepageSectionController extends Controller
         $validated = $request->validate([
             'services_symbol_colors' => ['required', 'array', 'size:4'],
             'services_symbol_colors.*' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'services_symbol_light_colors' => ['sometimes', 'required', 'array', 'size:4'],
+            'services_symbol_light_colors.*' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'services_hero_light_background' => ['sometimes', 'required', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'services_hero_dark_background' => ['sometimes', 'required', 'regex:/^#[0-9a-fA-F]{6}$/'],
         ]);
 
-        SiteSetting::current()->update([
+        $updates = [
             'services_symbol_colors' => array_values($validated['services_symbol_colors']),
-        ]);
+        ];
+        if (isset($validated['services_symbol_light_colors'])) {
+            $updates['services_symbol_light_colors'] = array_values($validated['services_symbol_light_colors']);
+        }
+        foreach (['services_hero_light_background', 'services_hero_dark_background'] as $key) {
+            if (isset($validated[$key])) {
+                $updates[$key] = $validated[$key];
+            }
+        }
+
+        SiteSetting::current()->update($updates);
 
         AuditEvent::log('site.services.symbol-colors.update');
 
         return redirect()
             ->route('admin.site.services.index')
-            ->with('success', 'Hareketli P renkleri güncellendi.');
+            ->with('success', 'Hareketli P renkleri ve arka planları güncellendi.');
     }
 
     public function store(Request $request): RedirectResponse

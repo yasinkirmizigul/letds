@@ -13,6 +13,41 @@ export default function init(ctx) {
     const sortableInstances = [];
     const sectionList = root.querySelector('#homepageSectionSortable');
     const sectionReorderUrl = root.dataset.sectionReorderUrl;
+    const visualForm = root.querySelector('[data-services-visual-form]');
+
+    if (visualForm) {
+        const syncPreview = (panel) => {
+            const preview = panel?.querySelector('[data-services-preview]');
+            const background = panel?.querySelector('[data-services-background-color]');
+            if (!preview || !background) return;
+
+            preview.style.backgroundColor = background.value;
+            panel.querySelectorAll('[data-services-symbol-color]').forEach((input) => {
+                const symbol = preview.querySelector(`[data-services-preview-symbol="${input.dataset.servicesSymbolColor}"]`);
+                if (symbol) symbol.style.color = input.value;
+            });
+            panel.querySelectorAll('input[data-default-color]').forEach((input) => {
+                const hex = input.closest('label')?.querySelector('[data-services-hex]');
+                if (hex) hex.textContent = input.value.toUpperCase();
+            });
+        };
+
+        visualForm.querySelectorAll('[data-services-theme]').forEach(syncPreview);
+        visualForm.addEventListener('input', (event) => {
+            if (event.target.matches('input[data-default-color]')) {
+                syncPreview(event.target.closest('[data-services-theme]'));
+            }
+        }, { signal: ctx.signal });
+        visualForm.addEventListener('click', (event) => {
+            const reset = event.target.closest('[data-services-reset]');
+            if (!reset) return;
+            const panel = reset.closest('[data-services-theme]');
+            panel?.querySelectorAll('input[data-default-color]').forEach((input) => {
+                input.value = input.dataset.defaultColor;
+            });
+            syncPreview(panel);
+        }, { signal: ctx.signal });
+    }
 
     if (sectionList && sectionReorderUrl && sectionList.querySelector('[data-section-id]')) {
         sortableInstances.push(new Sortable(sectionList, {

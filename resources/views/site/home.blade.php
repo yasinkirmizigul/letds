@@ -29,7 +29,6 @@
     ];
     $modeList = array_values($homepageModes);
     $leftMode = $modeList[0] ?? $activeMode;
-    $rightMode = $modeList[1] ?? $activeMode;
     $headerLogo = $homepage['headerLogo'] ?? null;
     $backgroundImage = $homepage['backgroundImage'] ?? null;
     $backgroundDefaults = $homepage['backgroundDefaults'] ?? [];
@@ -230,7 +229,6 @@
         @else
             @include('site.home-sections.probablue-hero', [
                 'leftMode' => $leftMode,
-                'rightMode' => $rightMode,
                 'headerLogo' => $headerLogo,
                 'siteName' => $siteName,
                 'locale' => $locale,

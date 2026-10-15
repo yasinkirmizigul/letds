@@ -15,7 +15,7 @@
 
 @section('content')
     <div class="site-services-page">
-        <section class="site-services-hero">
+        <section class="site-services-hero" style="--services-hero-light-bg: {{ $siteSettings->servicesHeroBackground('light') }}; --services-hero-dark-bg: {{ $siteSettings->servicesHeroBackground('dark') }}">
             <span class="site-services-hero__grid" aria-hidden="true"></span>
             <div class="site-services-hero__inner">
                 <div class="site-services-hero__copy" data-site-reveal>
@@ -38,12 +38,13 @@
                     </div>
                 </div>
 
-                @php($symbolColors = $siteSettings->servicesSymbolColors())
+                @php($lightSymbolColors = $siteSettings->servicesSymbolColors('light'))
+                @php($darkSymbolColors = $siteSettings->servicesSymbolColors('dark'))
                 <div class="site-services-hero__visual" aria-hidden="true">
                     <div
                         class="site-services-particle-logo"
                         data-site-particle-logo
-                        style="--symbol-1: {{ $symbolColors[0] }}; --symbol-2: {{ $symbolColors[1] }}; --symbol-3: {{ $symbolColors[2] }}; --symbol-4: {{ $symbolColors[3] }}"
+                        style="--symbol-light-1: {{ $lightSymbolColors[0] }}; --symbol-light-2: {{ $lightSymbolColors[1] }}; --symbol-light-3: {{ $lightSymbolColors[2] }}; --symbol-light-4: {{ $lightSymbolColors[3] }}; --symbol-dark-1: {{ $darkSymbolColors[0] }}; --symbol-dark-2: {{ $darkSymbolColors[1] }}; --symbol-dark-3: {{ $darkSymbolColors[2] }}; --symbol-dark-4: {{ $darkSymbolColors[3] }}"
                     >
                         <span class="site-services-particle-logo__halo"></span>
                         <canvas data-site-particle-canvas data-logo-src="{{ asset('assets/site/images/favicon.svg') }}"></canvas>

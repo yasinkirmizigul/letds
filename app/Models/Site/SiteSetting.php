@@ -14,6 +14,9 @@ class SiteSetting extends Model
     use HasSiteLocaleTranslations;
 
     public const SERVICES_SYMBOL_DEFAULTS = ['#f2c75a', '#e4edff', '#6dc7c4', '#ae91dd'];
+    public const SERVICES_SYMBOL_LIGHT_DEFAULTS = ['#a97200', '#315d88', '#147d83', '#7857a2'];
+    public const SERVICES_HERO_LIGHT_BACKGROUND_DEFAULT = '#f7fbfd';
+    public const SERVICES_HERO_DARK_BACKGROUND_DEFAULT = '#1a3341';
 
     public const PALETTE_OPTIONS = [
         'coral' => [
@@ -25,6 +28,21 @@ class SiteSetting extends Model
             'label' => 'Probablue Mavi',
             'description' => 'Referanstaki bilimsel, güven veren mavi tonlar.',
             'swatches' => ['#0058d4', '#27313d', '#fafcff'],
+        ],
+    ];
+
+    public const THEME_COLOR_FIELDS = [
+        'light' => [
+            'primary' => 'Ana renk', 'primary_active' => 'Buton / hover', 'primary_light' => 'Hafif vurgu',
+            'ink' => 'Başlık rengi', 'paper' => 'Sayfa zemini', 'background' => 'Kart zemini',
+            'foreground' => 'Metin', 'border' => 'Kenarlık', 'muted' => 'İkincil zemin',
+            'muted_foreground' => 'İkincil metin', 'accent' => 'Vurgu zemini', 'accent_foreground' => 'Vurgu metni',
+        ],
+        'dark' => [
+            'primary' => 'Ana renk', 'primary_active' => 'Buton / hover', 'primary_light' => 'Hafif vurgu',
+            'ink' => 'Başlık rengi', 'paper' => 'Sayfa zemini', 'background' => 'Kart zemini',
+            'foreground' => 'Metin', 'border' => 'Kenarlık', 'muted' => 'İkincil zemin',
+            'muted_foreground' => 'İkincil metin', 'accent' => 'Vurgu zemini', 'accent_foreground' => 'Vurgu metni',
         ],
     ];
 
@@ -49,7 +67,11 @@ class SiteSetting extends Model
         'site_name',
         'site_tagline',
         'site_palette',
+        'site_theme_colors',
         'services_symbol_colors',
+        'services_symbol_light_colors',
+        'services_hero_light_background',
+        'services_hero_dark_background',
         'admin_login_logo_media_id',
         'hero_notice',
         'contact_email',
@@ -95,7 +117,9 @@ class SiteSetting extends Model
     protected $casts = [
         'under_construction_enabled' => 'boolean',
         'social_links' => 'array',
+        'site_theme_colors' => 'array',
         'services_symbol_colors' => 'array',
+        'services_symbol_light_colors' => 'array',
         'ui_lines' => 'array',
         'sitemap_include_home' => 'boolean',
         'sitemap_include_pages' => 'boolean',
@@ -126,29 +150,76 @@ class SiteSetting extends Model
         return array_key_exists($palette, self::PALETTE_OPTIONS) ? $palette : 'coral';
     }
 
-    public function servicesSymbolColors(): array
+    public function servicesSymbolColors(string $theme = 'dark'): array
     {
-        $stored = $this->services_symbol_colors;
+        $light = $theme === 'light';
+        $defaults = $light ? self::SERVICES_SYMBOL_LIGHT_DEFAULTS : self::SERVICES_SYMBOL_DEFAULTS;
+        $stored = $light ? $this->services_symbol_light_colors : $this->services_symbol_colors;
         if (! is_array($stored) || count($stored) !== 4) {
-            return self::SERVICES_SYMBOL_DEFAULTS;
+            return $defaults;
         }
 
         foreach ($stored as $color) {
             if (! is_string($color) || ! preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
-                return self::SERVICES_SYMBOL_DEFAULTS;
+                return $defaults;
             }
         }
 
         return array_values($stored);
     }
 
+    public function servicesHeroBackground(string $theme = 'light'): string
+    {
+        $light = $theme !== 'dark';
+        $stored = $light ? $this->services_hero_light_background : $this->services_hero_dark_background;
+
+        return is_string($stored) && preg_match('/^#[0-9a-fA-F]{6}$/', $stored)
+            ? $stored
+            : ($light ? self::SERVICES_HERO_LIGHT_BACKGROUND_DEFAULT : self::SERVICES_HERO_DARK_BACKGROUND_DEFAULT);
+    }
+
     public function paletteCssVariables(): string
     {
         $tokens = self::PALETTE_TOKENS[$this->palette()];
 
+        foreach (self::THEME_COLOR_FIELDS as $theme => $fields) {
+            foreach (array_keys($fields) as $field) {
+                $key = $theme === 'dark' ? 'dark_'.$field : $field;
+                $tokens[$key] = $this->themeColor($theme, $field);
+            }
+        }
+        $tokens['primary_rgb'] = $this->rgbChannels($tokens['primary']);
+        $tokens['dark_primary_rgb'] = $this->rgbChannels($tokens['dark_primary']);
+
         return collect($tokens)
             ->map(fn (string $value, string $key) => '--site-palette-'.str_replace('_', '-', $key).':'.$value)
             ->implode(';');
+    }
+
+    public function themePaletteColor(string $palette, string $theme, string $field): string
+    {
+        $tokens = self::PALETTE_TOKENS[$palette] ?? self::PALETTE_TOKENS['coral'];
+        $key = $theme === 'dark' ? 'dark_'.$field : $field;
+
+        if ($theme === 'dark' && $field === 'ink') {
+            return $tokens['dark_foreground'];
+        }
+
+        return $tokens[$key] ?? $tokens[$field] ?? '#ffffff';
+    }
+
+    public function themeColor(string $theme, string $field): string
+    {
+        $stored = $this->site_theme_colors[$theme][$field] ?? null;
+
+        return is_string($stored) && preg_match('/^#[0-9a-fA-F]{6}$/', $stored)
+            ? $stored
+            : $this->themePaletteColor($this->palette(), $theme, $field);
+    }
+
+    private function rgbChannels(string $hex): string
+    {
+        return implode(', ', array_map(hexdec(...), str_split(substr($hex, 1), 2)));
     }
 
     /**
@@ -164,6 +235,12 @@ class SiteSetting extends Model
         }
 
         $tokens = self::PALETTE_TOKENS['probablue'];
+        foreach (array_keys(self::THEME_COLOR_FIELDS['light']) as $field) {
+            $tokens[$field] = $this->themeColor('light', $field);
+        }
+        foreach (array_keys(self::THEME_COLOR_FIELDS['dark']) as $field) {
+            $tokens['dark_'.$field] = $this->themeColor('dark', $field);
+        }
 
         return [
             '--home-before-bg' => $tokens['paper'],

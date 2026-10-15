@@ -143,6 +143,39 @@ export default function init(ctx = {}) {
     wrapTopLevelCards(page);
     wrapLocalizedSections(page);
 
+    const themeColors = page.querySelector('[data-site-theme-colors]');
+    const syncThemePreview = (panel) => {
+        if (!panel) return;
+        const value = (field) => panel.querySelector(`[data-site-theme-color="${field}"]`)?.value;
+        const preview = panel.querySelector('[data-site-theme-preview]');
+        if (preview) {
+            preview.style.backgroundColor = value('paper');
+            preview.style.color = value('foreground');
+            preview.style.borderColor = value('border');
+        }
+        const button = panel.querySelector('[data-site-theme-preview-button]');
+        if (button) button.style.backgroundColor = value('primary');
+        panel.querySelectorAll('[data-site-theme-color]').forEach((color) => {
+            const hex = color.closest('label')?.querySelector('[data-site-theme-hex]');
+            if (hex) hex.textContent = color.value.toUpperCase();
+        });
+    };
+    themeColors?.addEventListener('input', (event) => {
+        if (event.target.matches('[data-site-theme-color]')) {
+            syncThemePreview(event.target.closest('[data-site-theme-panel]'));
+        }
+    }, { signal: ctx.signal });
+    themeColors?.addEventListener('click', (event) => {
+        const reset = event.target.closest('[data-site-theme-reset]');
+        if (!reset) return;
+        const panel = reset.closest('[data-site-theme-panel]');
+        const palette = page.querySelector('input[name="site_palette"]:checked')?.value === 'probablue' ? 'probablue' : 'coral';
+        panel?.querySelectorAll('[data-site-theme-color]').forEach((color) => {
+            color.value = palette === 'probablue' ? color.dataset.defaultProbablue : color.dataset.defaultCoral;
+        });
+        syncThemePreview(panel);
+    }, { signal: ctx.signal });
+
     const branding = page.querySelector('[data-admin-login-branding]');
     const input = branding?.querySelector('[data-admin-login-logo-input]');
     const preview = branding?.querySelector('[data-admin-login-logo-preview]');

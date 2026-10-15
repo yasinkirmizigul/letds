@@ -186,18 +186,22 @@ class HomepageConfigurationService
     public function persist(array $validated): SiteHomepageConfig
     {
         return DB::transaction(function () use ($validated): SiteHomepageConfig {
-            $config = $this->current();
+            $config = $this->current()->loadMissing('translations');
             $content = $this->normalizeContent(Arr::only($validated, array_keys($this->contentDefaults())));
             $settings = $this->normalizeSettings($validated['settings'] ?? []);
 
             $config->update([
-                'content' => array_replace($this->contentDefaults(), $content),
-                'settings' => array_replace($this->settingDefaults(), $settings),
+                'content' => array_replace($this->contentDefaults(), $config->content ?? [], $content),
+                'settings' => array_replace($this->settingDefaults(), $config->settings ?? [], $settings),
             ]);
 
+            $existingTranslations = $config->translations->keyBy('locale');
             $translations = collect($validated['translations'] ?? [])
-                ->map(fn ($values) => [
-                    'content' => $this->normalizeContent(is_array($values) ? $values : []),
+                ->map(fn ($values, $locale) => [
+                    'content' => array_replace(
+                        $existingTranslations->get($locale)?->content ?? [],
+                        $this->normalizeContent(is_array($values) ? $values : []),
+                    ),
                 ])
                 ->all();
 

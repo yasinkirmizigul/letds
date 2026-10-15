@@ -195,8 +195,8 @@
     "semantic_hash": ""
   },
   "app/Http/Controllers/Admin/Site/SiteSettingsController.php": {
-    "mtime": 1792070412.542686,
-    "ast_hash": "e76ba6d0a939e08721bf0250778484aa",
+    "mtime": 1792079295.846395,
+    "ast_hash": "8803e9020255d244a4781d4f91aedbb9",
     "semantic_hash": ""
   },
   "app/Http/Controllers/Admin/TinyMceController.php": {
@@ -645,8 +645,8 @@
     "semantic_hash": "67845243e99bedd71179b98910c8278f"
   },
   "app/Models/Site/SiteSetting.php": {
-    "mtime": 1790576077.5702553,
-    "ast_hash": "81fd914ee54c80f369b133e5528533e9",
+    "mtime": 1792079446.3155587,
+    "ast_hash": "460aadb6a4bc32838093b98006d4825d",
     "semantic_hash": ""
   },
   "app/Models/Site/SiteSettingTranslation.php": {
@@ -1565,8 +1565,8 @@
     "semantic_hash": "f3e04552da845a4dd37b967d13da675a"
   },
   "resources/js/admin/pages/site/settings/edit.js": {
-    "mtime": 1786275682.2004275,
-    "ast_hash": "f933c1d67cae227744e9f62ed1a0a9bc",
+    "mtime": 1792079335.0394406,
+    "ast_hash": "d5c83f0475212081169f34bc14bf76f7",
     "semantic_hash": ""
   },
   "resources/js/admin/pages/site/sliders/create.js": {
@@ -2185,8 +2185,8 @@
     "semantic_hash": "6a32493129e06cd798ac2f253ef5cb9d"
   },
   "resources/views/admin/pages/site/settings/edit.blade.php": {
-    "mtime": 1792070412.543681,
-    "ast_hash": "9ae4034c88e338598c6bbe4b45b83d24",
+    "mtime": 1792079321.4337761,
+    "ast_hash": "f800f9b4946af1c537fc9e2a8ca7b36a",
     "semantic_hash": ""
   },
   "resources/views/admin/pages/site/sliders/create.blade.php": {
@@ -2750,8 +2750,8 @@
     "semantic_hash": ""
   },
   "config/site_homepage.php": {
-    "mtime": 1790336083.9248369,
-    "ast_hash": "42c62760de44d3d6da24691748dd4dbc",
+    "mtime": 1792078568.3828666,
+    "ast_hash": "13120ed551700a5b9b06892163983c0a",
     "semantic_hash": ""
   },
   "database/migrations/2026_08_01_000002_create_site_homepage_configs_table.php": {
@@ -2775,8 +2775,8 @@
     "semantic_hash": ""
   },
   "tests/Feature/HomepageConfigurationTest.php": {
-    "mtime": 1790269716.7551413,
-    "ast_hash": "0ab93d647a6af5b6bb420c9320cb3dca",
+    "mtime": 1792078579.1123376,
+    "ast_hash": "df39240a512ac4f4c883cc5f929220d9",
     "semantic_hash": ""
   },
   "resources/views/admin/pages/site/homepage/partials/_setting-groups.blade.php": {
@@ -2965,8 +2965,8 @@
     "semantic_hash": ""
   },
   "app/Http/Controllers/Admin/Site/HomepageSectionController.php": {
-    "mtime": 1792070463.0152802,
-    "ast_hash": "9fd6fbd52bacc8c9e5a4f2bbf08c5ba6",
+    "mtime": 1792078403.5253458,
+    "ast_hash": "ce308c3874c4fbad4893753a06338a82",
     "semantic_hash": ""
   },
   "app/Models/Site/SiteHomepageSection.php": {
@@ -3000,13 +3000,13 @@
     "semantic_hash": ""
   },
   "resources/js/admin/pages/site/homepage-sections/index.js": {
-    "mtime": 1786227752.1867466,
-    "ast_hash": "c3d10978fe6a3d05c14bd60492595b8a",
+    "mtime": 1792078651.8992655,
+    "ast_hash": "82a2b6126a319a14ad99271b2b06a8ac",
     "semantic_hash": ""
   },
   "resources/views/admin/pages/site/homepage-sections/index.blade.php": {
-    "mtime": 1792070422.2384865,
-    "ast_hash": "9dc7a7f84924d1054cb9260084f77c33",
+    "mtime": 1792078640.8952515,
+    "ast_hash": "ef2f1cd192e2c62d2adb47b79dd31e5c",
     "semantic_hash": ""
   },
   "resources/views/site/home-sections/features.blade.php": {
@@ -3180,8 +3180,8 @@
     "semantic_hash": ""
   },
   "resources/views/site/services/index.blade.php": {
-    "mtime": 1790576077.8277311,
-    "ast_hash": "3b1613e5c5c2e168dd63e57ab14ecf34",
+    "mtime": 1792078436.1787553,
+    "ast_hash": "0c5ff4e5414b9ffa923c443c3b276c11",
     "semantic_hash": ""
   },
   "resources/views/site/services/partials/icon.blade.php": {
@@ -3415,13 +3415,13 @@
     "semantic_hash": ""
   },
   "resources/js/site/visual-stories.js": {
-    "mtime": 1790577194.7257342,
-    "ast_hash": "29e8f3096344bb690324566bfcd2a285",
+    "mtime": 1792078444.6152077,
+    "ast_hash": "7a1b5743c050795fc38bc08277af556c",
     "semantic_hash": ""
   },
   "tests/Feature/SiteVisualStoriesTest.php": {
-    "mtime": 1792070504.206479,
-    "ast_hash": "a46fff086cf37e7fc076eb0e03864cce",
+    "mtime": 1792079351.2971368,
+    "ast_hash": "19f1b51502b54cf28a0674b669b28c2f",
     "semantic_hash": ""
   },
   "tests/Frontend/visual-stories.test.mjs": {
@@ -3497,6 +3497,21 @@
   "graphify-out/memory/query_20261004_160833_indirdim.md": {
     "mtime": 1791184571.1581495,
     "ast_hash": "3a6140a2d3d747826be237b06eb8e896",
+    "semantic_hash": ""
+  },
+  "database/migrations/2026_10_15_000001_widen_audit_log_action_column.php": {
+    "mtime": 1792077620.050793,
+    "ast_hash": "73e43b37a10ed9630c437d260e95e9d1",
+    "semantic_hash": ""
+  },
+  "database/migrations/2026_10_15_000002_add_services_hero_theme_colors_to_site_settings.php": {
+    "mtime": 1792078531.870477,
+    "ast_hash": "25c52c1e4a18754c0efdc3975cc2aa75",
+    "semantic_hash": ""
+  },
+  "database/migrations/2026_10_15_000003_add_site_theme_colors_to_site_settings.php": {
+    "mtime": 1792079267.9452093,
+    "ast_hash": "7f14b6c3483592bf784eb62ed2a9f991",
     "semantic_hash": ""
   }
 }

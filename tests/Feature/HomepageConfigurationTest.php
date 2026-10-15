@@ -36,13 +36,14 @@ class HomepageConfigurationTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertSee('Akademik ve profesyonel projeleriniz için istatistiksel danışmanlık.')
-            ->assertSee('--home-before-bg:#ffffff', false)
+            ->assertSee('--home-before-bg:#fafcff', false)
+            ->assertSee('--home-after-bg:#0058d4', false)
             ->assertSee('--home-before-color-layer:var(--home-before-bg)', false)
             ->assertSee('--home-before-surface-opacity:1', false)
             ->assertSee('--home-after-color-layer:radial-gradient(', false)
             ->assertSee('--home-before-pattern-image:none', false)
             ->assertSee('--home-before-pattern-opacity:0.18', false)
-            ->assertSee('--home-stat-before:#ec6367', false)
+            ->assertSee('--home-stat-before:#0058d4', false)
             ->assertSee('--home-analysis-tab-after-text:#ffffff', false)
             ->assertSee('--home-hero-after-text:#ffffff', false)
             ->assertSee('--home-computer-frame:#072247', false)
@@ -214,17 +215,19 @@ class HomepageConfigurationTest extends TestCase
             ->get(route('admin.site.homepage.edit'))
             ->assertOk()
             ->assertSee('Ana Sayfa Yönetimi')
-            ->assertSee('Ana Sayfa Sekmeleri')
-            ->assertSee('İstatistiksel Analiz İçeriği')
-            ->assertSee('İstatistiksel Danışmanlık İçeriği')
-            ->assertSee('data-homepage-admin-mode-label-key="analysis_tab_label"', false)
-            ->assertSee('name="settings[analysis_tab_after_text_color]"', false)
+            ->assertSee('Giriş Ekranı Düzeni')
+            ->assertSee('Sol Alan · İstatistiksel Analiz ve Danışmanlık')
+            ->assertSee('Sağ Alan · Probablue Studio')
+            ->assertSee('Sol Alan İçeriği')
+            ->assertDontSee('İstatistiksel Danışmanlık İçeriği')
+            ->assertDontSee('data-homepage-admin-mode-tab', false)
+            ->assertDontSee('name="settings[analysis_tab_after_text_color]"', false)
             ->assertSee('name="settings[hero_after_text_color]"', false)
             ->assertSee('name="settings[tooltip_1_title_color]"', false)
             ->assertSee('name="settings[before_pattern]"', false)
             ->assertSee('name="settings[after_color_effect]"', false)
             ->assertSee('name="settings[before_color_effect]"', false)
-            ->assertSee('name="settings[consultation_after_color_effect]"', false)
+            ->assertDontSee('name="settings[consultation_after_color_effect]"', false)
             ->assertSee('Renk Uygulaması')
             ->assertSee('Düz renk')
             ->assertSee('Gradyan')
@@ -239,7 +242,7 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('data-homepage-computer-preview="true"', false)
             ->assertSee('name="settings[computer_pv_fill_mode]"', false)
             ->assertSee('name="settings[computer_pv_body_start_color]"', false)
-            ->assertSee('name="settings[consultation_computer_pv_body_start_color]"', false)
+            ->assertDontSee('name="settings[consultation_computer_pv_body_start_color]"', false)
             ->assertSee('Probablue Kod Dokulu · Sabit görsel')
             ->assertSee('Probablue Canlı Logo · Renk önizlemesi')
             ->assertSee('Tema duyarlı varsayılan SVG')
@@ -412,6 +415,14 @@ class HomepageConfigurationTest extends TestCase
             ->assertSee('--home-before-pattern-blur:0.75px', false)
             ->assertSee('--home-before-pattern-blend:overlay', false)
             ->assertSee('--home-before-pattern-image:repeating-linear-gradient(', false);
+
+        $this->actingAs($user)->put(route('admin.site.homepage.update'), [
+            'hero_title' => 'Güncel giriş başlığı',
+            'settings' => ['after_background_color' => '#123456'],
+        ])->assertRedirect()->assertSessionHas('success');
+        $this->assertSame('Güncel giriş başlığı', $service->current()->fresh()->content['hero_title']);
+        $this->assertSame('Danışmanlık sekmesi güncellendi', $service->current()->fresh()->content['consultation_hero_title']);
+        $this->assertSame('#204060', $service->current()->fresh()->settings['consultation_computer_pv_body_start_color']);
     }
 
     public function test_cursor_symbols_can_run_while_moving_and_idle_together(): void

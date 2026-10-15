@@ -47,6 +47,16 @@ class HomepageConfigurationController extends Controller
             ->filter(fn (array $field) => blank($field['mode'] ?? null))
             ->values()
             ->all();
+        // The consultation tab is legacy content; the current right-hand Studio panel is passive.
+        $modeLocalizedFields['analysis'] = collect($modeLocalizedFields['analysis'] ?? [])
+            ->map(function (array $field): array {
+                if (($field['key'] ?? null) === 'analysis_tab_label') {
+                    unset($field['colors']);
+                }
+
+                return $field;
+            })
+            ->all();
         $settingGroups = collect($configurationService->settingGroups());
         $modeSettingGroups = $modes->mapWithKeys(fn (array $mode, string $key) => [
             $key => $settingGroups->where('mode', $key)->values()->all(),
@@ -79,7 +89,19 @@ class HomepageConfigurationController extends Controller
         HomepageConfigurationService $configurationService,
         MediaService $mediaService,
     ): RedirectResponse {
-        $validator = Validator::make($request->all(), array_merge(
+        $configuration = $configurationService->current();
+        $input = array_replace(
+            $configurationService->contentDefaults(),
+            $configuration->content ?? [],
+            $request->all(),
+        );
+        $input['settings'] = array_replace(
+            $configurationService->settingDefaults(),
+            $configuration->settings ?? [],
+            (array) $request->input('settings', []),
+        );
+
+        $validator = Validator::make($input, array_merge(
             $configurationService->validationRules(),
             [
                 'background_image' => ['nullable', 'file', 'max:12288', 'mimes:jpg,jpeg,png,webp'],
@@ -87,8 +109,8 @@ class HomepageConfigurationController extends Controller
             ]
         ));
 
-        $validator->after(function ($validator) use ($request, $configurationService): void {
-            foreach ($configurationService->unsafeLinks($request->all()) as $key) {
+        $validator->after(function ($validator) use ($input, $configurationService): void {
+            foreach ($configurationService->unsafeLinks($input) as $key) {
                 $validator->errors()->add(
                     $key,
                     'Bağlantı /, #, ?, http, https, mailto veya tel ile başlamalıdır.'

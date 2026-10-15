@@ -44,69 +44,48 @@
             <section class="kt-card overflow-hidden">
                 <div class="kt-card-header py-5">
                     <div>
-                        <h2 class="kt-card-title">Ana Sayfa Sekmeleri</h2>
-                        <div class="text-sm text-muted-foreground">Her sekmenin metinlerini, bağlantılarını ve renklerini ayrı yönetin.</div>
+                        <h2 class="kt-card-title">Giriş Ekranı Düzeni</h2>
+                        <div class="text-sm text-muted-foreground">Giriş artık sekmeli değil; iki yan yana alan olarak çalışıyor.</div>
                     </div>
                 </div>
-                <div class="kt-card-content p-4 sm:p-6">
-                    <div class="homepage-admin-mode-tabs" role="tablist" aria-label="Ana sayfa sekmesi seçimi">
-                        @foreach($modes as $key => $mode)
-                            @php
-                                $modeLabel = data_get($defaultValues, $mode['label_key'], $mode['label']);
-                            @endphp
-                            <button
-                                type="button"
-                                class="homepage-admin-mode-tab {{ $loop->first ? 'is-active' : '' }}"
-                                role="tab"
-                                aria-selected="{{ $loop->first ? 'true' : 'false' }}"
-                                aria-controls="homepage_admin_mode_{{ $key }}"
-                                data-homepage-admin-mode-tab="{{ $key }}"
-                                data-homepage-admin-mode-label-key="{{ $mode['label_key'] }}"
-                                data-homepage-admin-mode-default-label="{{ $mode['label'] }}"
-                            >
-                                <span class="homepage-admin-mode-tab__icon">
-                                    <i class="ki-filled {{ ($mode['icon'] ?? 'chart') === 'message' ? 'ki-messages' : 'ki-chart-simple' }}"></i>
-                                </span>
-                                <span data-homepage-admin-mode-label="true">{{ $modeLabel }}</span>
-                            </button>
-                        @endforeach
+                <div class="kt-card-content grid gap-4 p-4 sm:grid-cols-2 sm:p-6">
+                    <div class="rounded-xl border border-primary/35 bg-primary/5 p-4">
+                        <div class="font-semibold text-foreground">Sol Alan · İstatistiksel Analiz ve Danışmanlık</div>
+                        <p class="mt-1 text-sm text-muted-foreground">Başlık, yönlendirme butonu ve iki tarafın görünüm renkleri aşağıdaki ayarlardan yönetilir.</p>
+                    </div>
+                    <div class="rounded-xl border border-border bg-background p-4">
+                        <div class="font-semibold text-foreground">Sağ Alan · Probablue Studio</div>
+                        <p class="mt-1 text-sm text-muted-foreground">Yakında açılacak pasif alan. Eski “İstatistiksel Danışmanlık” sekmesi artık kullanılmıyor; kayıtlı eski içerikler korunur.</p>
                     </div>
                 </div>
             </section>
 
-            @foreach($modes as $key => $mode)
-                <div
-                    id="homepage_admin_mode_{{ $key }}"
-                    class="{{ $loop->first ? '' : 'hidden' }} grid gap-6"
-                    role="tabpanel"
-                    data-homepage-admin-mode-panel="{{ $key }}"
-                >
-                    @include('admin.components.localized-content-tabs', [
-                        'moduleKey' => 'site_homepage_' . $key,
-                        'title' => $mode['label'] . ' İçeriği',
-                        'description' => 'Bu sekmenin üst menü etiketi, ana mesajı ve buton bilgileri.',
-                        'defaultValues' => $defaultValues,
-                        'storedTranslations' => $translationValues,
-                        'settingValues' => $settingValues,
-                        'fields' => $modeLocalizedFields[$key] ?? [],
-                        'contentGridClass' => 'grid gap-5 lg:grid-cols-2',
-                    ])
+            <div class="grid gap-6">
+                @include('admin.components.localized-content-tabs', [
+                    'moduleKey' => 'site_homepage_analysis',
+                    'title' => 'Sol Alan İçeriği',
+                    'description' => 'Analiz başlığı, buton metni ve bağlantısı. Sağdaki Studio alanı şimdilik sabittir.',
+                    'defaultValues' => $defaultValues,
+                    'storedTranslations' => $translationValues,
+                    'settingValues' => $settingValues,
+                    'fields' => $modeLocalizedFields['analysis'] ?? [],
+                    'contentGridClass' => 'grid gap-5 lg:grid-cols-2',
+                ])
 
-                    <div class="grid gap-6 xl:grid-cols-2">
-                        @include('admin.pages.site.homepage.partials._setting-groups', [
-                            'groups' => $modeSettingGroups[$key] ?? [],
-                            'settingValues' => $settingValues,
-                            'mediaPreviews' => $mediaPreviews,
-                            'backgroundDefaults' => $backgroundDefaults,
-                        ])
-                    </div>
+                <div class="grid gap-6 xl:grid-cols-2">
+                    @include('admin.pages.site.homepage.partials._setting-groups', [
+                        'groups' => $modeSettingGroups['analysis'] ?? [],
+                        'settingValues' => $settingValues,
+                        'mediaPreviews' => $mediaPreviews,
+                        'backgroundDefaults' => $backgroundDefaults,
+                    ])
                 </div>
-            @endforeach
+            </div>
 
             @include('admin.components.localized-content-tabs', [
                 'moduleKey' => 'site_homepage_shared',
                 'title' => 'Ortak Ana Sayfa İçeriği',
-                'description' => 'Tarayıcı başlığı ve iki sekmede ortak kullanılan bilgi noktaları.',
+                'description' => 'Tarayıcı başlığı ve girişteki ortak bilgi noktaları.',
                 'defaultValues' => $defaultValues,
                 'storedTranslations' => $translationValues,
                 'settingValues' => $settingValues,

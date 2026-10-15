@@ -49,7 +49,15 @@ class SiteSettingsController extends Controller
     ): RedirectResponse {
         $isSeoDraft = $request->input('submit_action') === 'generate_seo_draft';
 
-        $validated = $request->validate([
+        $themeColorRules = ['site_theme_colors' => ['sometimes', 'required', 'array:light,dark']];
+        foreach (SiteSetting::THEME_COLOR_FIELDS as $theme => $fields) {
+            $themeColorRules["site_theme_colors.$theme"] = ['required_with:site_theme_colors', 'array:'.implode(',', array_keys($fields))];
+            foreach (array_keys($fields) as $field) {
+                $themeColorRules["site_theme_colors.$theme.$field"] = ['required_with:site_theme_colors', 'regex:/^#[0-9a-fA-F]{6}$/'];
+            }
+        }
+
+        $validated = $request->validate(array_merge([
             'submit_action' => ['nullable', 'string', 'in:save,generate_seo_draft,save_generate_seo'],
             'site_name' => ['nullable', 'string', 'max:255'],
             'site_tagline' => ['nullable', 'string', 'max:255'],
@@ -112,7 +120,7 @@ class SiteSettingsController extends Controller
             'translations.*.under_construction_message' => ['nullable', 'string'],
             'translations.*.ui_lines' => ['nullable', 'array'],
             'translations.*.ui_lines.*' => ['nullable', 'string', 'max:500'],
-        ]);
+        ], $themeColorRules));
 
         $settings = SiteSetting::current();
         $brandingChangeRequested = $request->hasFile('admin_login_logo')
@@ -164,6 +172,10 @@ class SiteSettingsController extends Controller
             'smtp_username' => $validated['smtp_username'] ?? null,
             'smtp_timeout' => $validated['smtp_timeout'] ?? null,
         ];
+
+        if (isset($validated['site_theme_colors'])) {
+            $settingsPayload['site_theme_colors'] = $validated['site_theme_colors'];
+        }
 
         if ($isSeoDraft) {
             $previewSettings = $settings->replicate();

@@ -100,37 +100,6 @@ function bindRangeField(field, signal) {
     sync();
 }
 
-function activateMode(root, key) {
-    root.querySelectorAll('[data-homepage-admin-mode-tab]').forEach((tab) => {
-        const active = tab.dataset.homepageAdminModeTab === key;
-        tab.classList.toggle('is-active', active);
-        tab.setAttribute('aria-selected', active ? 'true' : 'false');
-        tab.tabIndex = active ? 0 : -1;
-    });
-
-    root.querySelectorAll('[data-homepage-admin-mode-panel]').forEach((panel) => {
-        panel.classList.toggle('hidden', panel.dataset.homepageAdminModePanel !== key);
-    });
-
-    syncBackgroundPreview(root);
-}
-
-function bindModeLabels(root, signal) {
-    root.querySelectorAll('[data-homepage-admin-mode-label-key]').forEach((tab) => {
-        const key = tab.dataset.homepageAdminModeLabelKey;
-        const input = key ? root.querySelector(`[name="${key}"]`) : null;
-        const label = tab.querySelector('[data-homepage-admin-mode-label]');
-        if (!input || !label) return;
-
-        const sync = () => {
-            label.textContent = input.value.trim() || tab.dataset.homepageAdminModeDefaultLabel || '';
-        };
-
-        input.addEventListener('input', sync, { signal });
-        sync();
-    });
-}
-
 function syncMediaField(field) {
     const preview = field.querySelector('[data-homepage-media-preview]');
     const placeholder = field.querySelector('[data-homepage-media-placeholder]');
@@ -152,16 +121,14 @@ function syncBackgroundPreview(root) {
 
     const setting = (key) => root.querySelector(`[name="settings[${key}]"]:checked`)
         || root.querySelector(`[name="settings[${key}]"]`);
-    const activeMode = root.querySelector('[data-homepage-admin-mode-tab].is-active')?.dataset.homepageAdminModeTab || 'analysis';
-    const modeSetting = (key) => setting(activeMode === 'analysis' ? key : `${activeMode}_${key}`) || setting(key);
     const brightness = Number(setting('background_brightness')?.value || 100);
     const overlayEnabled = root.querySelector('[type="checkbox"][name="settings[background_overlay_enabled]"]')?.checked ?? true;
     const overlayOpacity = Number(setting('background_overlay_opacity')?.value || 0);
     const position = setting('background_position')?.value || 'center';
-    const afterColor = modeSetting('after_background_color')?.value || '#ec6367';
-    const beforeColor = modeSetting('before_background_color')?.value || '#ffffff';
-    const afterEffect = safeSurfaceEffect(modeSetting('after_color_effect')?.value, 'gradient');
-    const beforeEffect = safeSurfaceEffect(modeSetting('before_color_effect')?.value, 'solid');
+    const afterColor = setting('after_background_color')?.value || '#0058d4';
+    const beforeColor = setting('before_background_color')?.value || '#fafcff';
+    const afterEffect = safeSurfaceEffect(setting('after_color_effect')?.value, 'gradient');
+    const beforeEffect = safeSurfaceEffect(setting('before_color_effect')?.value, 'solid');
     const hasBackdrop = preview.classList.contains('has-media') || preview.classList.contains('has-default');
     const mixedOpacity = hasBackdrop ? (overlayEnabled ? overlayOpacity / 100 : 0) : 1;
 
@@ -219,7 +186,6 @@ export async function init(ctx = {}) {
     root.querySelectorAll('[data-homepage-color-field]').forEach((field) => bindColorField(field, signal));
     root.querySelectorAll('[data-homepage-range-field]').forEach((field) => bindRangeField(field, signal));
     root.querySelectorAll('[data-homepage-media-field]').forEach(syncMediaField);
-    bindModeLabels(root, signal);
     syncSurfaceEditors(root);
     syncBackgroundPreview(root);
     syncComputerPreviews(root);
@@ -256,13 +222,6 @@ export async function init(ctx = {}) {
     }, { signal });
 
     root.addEventListener('click', (event) => {
-        const modeTab = event.target.closest('[data-homepage-admin-mode-tab]');
-
-        if (modeTab) {
-            activateMode(root, modeTab.dataset.homepageAdminModeTab);
-            return;
-        }
-
         const clearButton = event.target.closest('[data-homepage-media-clear]');
         if (!clearButton) return;
 
@@ -300,12 +259,6 @@ export async function init(ctx = {}) {
         objectUrls.clear();
     });
 
-    const errorPanel = [...root.querySelectorAll('[data-homepage-admin-mode-panel]')]
-        .find((panel) => panel.querySelector('.kt-input-invalid, .text-danger'));
-
-    if (errorPanel) {
-        activateMode(root, errorPanel.dataset.homepageAdminModePanel);
-    }
 }
 
 export default { init };

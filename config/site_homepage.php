@@ -109,7 +109,7 @@ return [
         [
             'type' => 'section',
             'label' => 'Genel Sayfa Bilgileri',
-            'description' => 'Her iki sekmede ortak kullanılan tarayıcı bilgileri.',
+            'description' => 'Giriş ekranının ortak tarayıcı bilgileri.',
         ],
         [
             'key' => 'browser_title',
@@ -121,19 +121,19 @@ return [
         [
             'type' => 'section',
             'label' => 'İstatistiksel Analiz',
-            'description' => 'Analiz sekmesinin üst menü, ana mesaj ve buton içeriği.',
+            'description' => 'Soldaki analiz alanının ana mesajı ve yönlendirme butonu.',
             'mode' => 'analysis',
         ],
         [
             'key' => 'analysis_tab_label',
-            'label' => 'Sekme Metni',
+            'label' => 'Sol Alan Üst Etiketi (alternatif görünüm)',
             'type' => 'text',
             'default' => 'İstatistiksel Analiz',
             'rules' => ['required', 'string', 'max:80'],
             'mode' => 'analysis',
             'colors' => [
                 ['key' => 'analysis_tab_after_text_color', 'label' => 'Sol panel', 'default' => '#ffffff'],
-                ['key' => 'analysis_tab_before_text_color', 'label' => 'Sağ panel', 'default' => '#445963'],
+                ['key' => 'analysis_tab_before_text_color', 'label' => 'Sağ panel', 'default' => '#27313d'],
             ],
         ],
         [
@@ -146,8 +146,8 @@ return [
             'wrapper_class' => 'grid gap-2 lg:col-span-2',
             'mode' => 'analysis',
             'colors' => [
-                ['key' => 'hero_after_text_color', 'label' => 'Sol panel', 'default' => '#ffffff'],
-                ['key' => 'hero_before_text_color', 'label' => 'Sağ panel', 'default' => '#445963'],
+                ['key' => 'hero_after_text_color', 'label' => 'Sağ panel', 'default' => '#ffffff'],
+                ['key' => 'hero_before_text_color', 'label' => 'Sol panel', 'default' => '#27313d'],
             ],
         ],
         [
@@ -158,8 +158,8 @@ return [
             'rules' => ['required', 'string', 'max:120'],
             'mode' => 'analysis',
             'colors' => [
-                ['key' => 'cta_after_text_color', 'label' => 'Sol panel', 'default' => '#ffffff'],
-                ['key' => 'cta_before_text_color', 'label' => 'Sağ panel', 'default' => '#eb5155'],
+                ['key' => 'cta_after_text_color', 'label' => 'Sağ panel', 'default' => '#ffffff'],
+                ['key' => 'cta_before_text_color', 'label' => 'Sol panel', 'default' => '#0045aa'],
             ],
         ],
         [
@@ -390,12 +390,12 @@ return [
             'wrapper_class' => 'xl:col-span-2',
             'content_class' => 'lg:grid-cols-2',
             'fields' => [
-                $surfaceField('', 'after', 'Sol Panel Yüzeyi', '#ec6367', '#ffffff'),
-                $surfaceField('', 'before', 'Sağ Panel Yüzeyi', '#ffffff', '#445963'),
-                ['key' => 'after_text_color', 'label' => 'Sol Panel Metni', 'type' => 'color', 'default' => '#ffffff'],
-                ['key' => 'before_text_color', 'label' => 'Sağ Panel Metni', 'type' => 'color', 'default' => '#445963'],
-                ['key' => 'after_highlight_color', 'label' => 'Sol Panel Vurgusu', 'type' => 'color', 'default' => '#445963'],
-                ['key' => 'before_highlight_color', 'label' => 'Sağ Panel Vurgusu', 'type' => 'color', 'default' => '#ec6367'],
+                $surfaceField('', 'after', 'Sağ Panel Yüzeyi', '#0058d4', '#ffffff'),
+                $surfaceField('', 'before', 'Sol Panel Yüzeyi', '#fafcff', '#27313d'),
+                ['key' => 'after_text_color', 'label' => 'Sağ Panel Metni', 'type' => 'color', 'default' => '#ffffff'],
+                ['key' => 'before_text_color', 'label' => 'Sol Panel Metni', 'type' => 'color', 'default' => '#27313d'],
+                ['key' => 'after_highlight_color', 'label' => 'Sağ Panel Vurgusu', 'type' => 'color', 'default' => '#b9dcff'],
+                ['key' => 'before_highlight_color', 'label' => 'Sol Panel Vurgusu', 'type' => 'color', 'default' => '#0058d4'],
             ],
         ],
         [
@@ -404,11 +404,11 @@ return [
             'description' => 'Analiz görünümündeki bilgi noktaları, ayırıcı ve sembol renkleri.',
             'mode' => 'analysis',
             'fields' => [
-                ['key' => 'after_hotspot_color', 'label' => 'Sol Panel Noktaları', 'type' => 'color', 'default' => '#ffffff'],
-                ['key' => 'before_hotspot_color', 'label' => 'Sağ Panel Noktaları', 'type' => 'color', 'default' => '#ec6367'],
-                ['key' => 'drag_handle_color', 'label' => 'Karşılaştırma Tutamacı', 'type' => 'color', 'default' => '#ec6367'],
+                ['key' => 'after_hotspot_color', 'label' => 'Sağ Panel Noktaları', 'type' => 'color', 'default' => '#ffffff'],
+                ['key' => 'before_hotspot_color', 'label' => 'Sol Panel Noktaları', 'type' => 'color', 'default' => '#0058d4'],
+                ['key' => 'drag_handle_color', 'label' => 'Karşılaştırma Tutamacı', 'type' => 'color', 'default' => '#0045aa'],
                 ['key' => 'cursor_symbol_after_color', 'label' => 'Sağ Panel Uçuşan Semboller', 'type' => 'color', 'default' => '#ffffff'],
-                ['key' => 'cursor_symbol_before_color', 'label' => 'Sol Panel Uçuşan Semboller', 'type' => 'color', 'default' => '#ec6367'],
+                ['key' => 'cursor_symbol_before_color', 'label' => 'Sol Panel Uçuşan Semboller', 'type' => 'color', 'default' => '#0058d4'],
             ],
         ],
         [
@@ -428,10 +428,10 @@ return [
             'description' => 'Butonun iki paneldeki normal ve üzerine gelme renkleri.',
             'mode' => 'analysis',
             'fields' => [
-                ['key' => 'cta_after_hover_background', 'label' => 'Sol Panel Hover Zemini', 'type' => 'color', 'default' => '#ffffff'],
-                ['key' => 'cta_after_hover_text', 'label' => 'Sol Panel Hover Metni', 'type' => 'color', 'default' => '#eb5155'],
-                ['key' => 'cta_before_hover_background', 'label' => 'Sağ Panel Hover Zemini', 'type' => 'color', 'default' => '#eb5155'],
-                ['key' => 'cta_before_hover_text', 'label' => 'Sağ Panel Hover Metni', 'type' => 'color', 'default' => '#ffffff'],
+                ['key' => 'cta_after_hover_background', 'label' => 'Sağ Panel Hover Zemini', 'type' => 'color', 'default' => '#ffffff'],
+                ['key' => 'cta_after_hover_text', 'label' => 'Sağ Panel Hover Metni', 'type' => 'color', 'default' => '#0045aa'],
+                ['key' => 'cta_before_hover_background', 'label' => 'Sol Panel Hover Zemini', 'type' => 'color', 'default' => '#0058d4'],
+                ['key' => 'cta_before_hover_text', 'label' => 'Sol Panel Hover Metni', 'type' => 'color', 'default' => '#ffffff'],
             ],
         ],
         [
@@ -521,12 +521,12 @@ return [
         [
             'key' => 'header',
             'title' => 'Üst Menü ve Logo',
-            'description' => 'İki sekmenin ortasında kullanılacak logo ve ortak üst menü renkleri.',
+            'description' => 'Giriş ekranının sol üst logosu ve üst menü renkleri.',
             'fields' => [
-                ['key' => 'header_logo_media_id', 'label' => 'Orta Logo', 'type' => 'media', 'default' => null, 'wrapper_class' => 'sm:col-span-2'],
+                ['key' => 'header_logo_media_id', 'label' => 'Sol Üst Logo', 'type' => 'media', 'default' => null, 'wrapper_class' => 'sm:col-span-2'],
                 ['key' => 'logo_color', 'label' => 'Varsayılan Logo Rengi', 'type' => 'color', 'default' => '#ffffff'],
-                ['key' => 'sticky_header_background', 'label' => 'Sabit Başlık Zemini', 'type' => 'color', 'default' => '#ebeef0'],
-                ['key' => 'sticky_logo_color', 'label' => 'Sabit Logo Rengi', 'type' => 'color', 'default' => '#ec6367'],
+                ['key' => 'sticky_header_background', 'label' => 'Sabit Başlık Zemini', 'type' => 'color', 'default' => '#fafcff'],
+                ['key' => 'sticky_logo_color', 'label' => 'Sabit Logo Rengi', 'type' => 'color', 'default' => '#0058d4'],
             ],
         ],
     ],

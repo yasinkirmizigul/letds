@@ -416,6 +416,9 @@ body.site-shell .font-display {
 
 .dark body.site-shell,
 [data-kt-theme-mode="dark"] body.site-shell {
+    --site-coral: var(--site-palette-dark-primary, var(--site-palette-primary, #ec6367));
+    --site-coral-deep: var(--site-palette-dark-primary-active, var(--site-palette-primary-active, #d84d54));
+    --site-ink: var(--site-palette-dark-ink, var(--site-palette-ink, #445963));
     --site-paper: var(--site-palette-dark-paper, #172329);
     --site-mist: #223239;
     --background: var(--site-palette-dark-background, #1b292f);
@@ -426,6 +429,7 @@ body.site-shell .font-display {
     --accent: var(--site-palette-dark-accent, #293c43);
     --accent-foreground: var(--site-palette-dark-accent-foreground, #f5f8f7);
     --bs-primary-light: var(--site-palette-dark-primary-light, #422b30);
+    --bs-primary-rgb: var(--site-palette-dark-primary-rgb, 236, 99, 103);
     background:
         radial-gradient(circle at 8% 4%, color-mix(in srgb, var(--primary) 14%, transparent), transparent 27rem),
         radial-gradient(circle at 92% 16%, color-mix(in srgb, var(--muted-foreground) 11%, transparent), transparent 32rem),
@@ -8904,16 +8908,16 @@ body.site-shell .site-services-empty { padding: 4rem; border: 1px dashed var(--b
     }
 }
 
-/* Services: fixed editorial palette and image assets, independent of dashboard colors. */
+/* The services illustration keeps its own controls; shared page surfaces use the site theme. */
 body.site-shell .site-services-page {
-    --primary: #3b83b8;
-    --site-ink: #0b203b;
-    --foreground: #0b203b;
-    --background: #fffdfa;
-    --muted-foreground: #667b90;
-    --border: #e1e8eb;
-    --services-accent: #3b83b8;
-    background: #fbfaf8;
+    --primary: var(--site-coral);
+    --site-ink: var(--site-palette-ink, #0b203b);
+    --foreground: var(--site-palette-foreground, #0b203b);
+    --background: var(--site-palette-background, #fffdfa);
+    --muted-foreground: var(--site-palette-muted-foreground, #667b90);
+    --border: var(--site-palette-border, #e1e8eb);
+    --services-accent: var(--primary);
+    background: var(--site-paper);
 }
 
 body.site-shell .site-services-hero {
@@ -8922,7 +8926,10 @@ body.site-shell .site-services-hero {
     background:
         radial-gradient(ellipse at 83% 18%, color-mix(in srgb, var(--primary) 10%, transparent), transparent 41%),
         radial-gradient(ellipse at 17% 88%, color-mix(in srgb, var(--primary) 7%, transparent), transparent 40%),
-        linear-gradient(125deg, #fffdfa, #f7fbfd 68%, #e9f4fa);
+        linear-gradient(125deg,
+            color-mix(in srgb, var(--services-hero-light-bg, #f7fbfd) 76%, white),
+            var(--services-hero-light-bg, #f7fbfd) 68%,
+            color-mix(in srgb, var(--services-hero-light-bg, #f7fbfd) 76%, #d7eefa));
     color: var(--site-ink);
 }
 
@@ -9100,7 +9107,6 @@ body.site-shell .site-analysis-support__history-item a { display: inline-block; 
 }
 
 @media (max-width: 960px) {
-    body.site-shell .site-services-hero { background: linear-gradient(140deg, #fffdfa, #eff8fc); }
     body.site-shell .site-services-hero__inner { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 1rem; padding-top: 3rem; }
     body.site-shell .site-services-hero h1 { font-size: clamp(2.2rem, 4.5vw, 3.2rem); }
     body.site-shell .site-services-hero__visual { min-height: 0; }
@@ -9120,18 +9126,17 @@ body.site-shell .site-analysis-support__history-item a { display: inline-block; 
     body.site-shell .site-analysis-support__footer button { justify-content: center; }
 }
 
-/* The illustrations stay fixed; only the services page surfaces follow dark mode. */
+/* The illustrations stay fixed; the services page surfaces follow the managed dark palette. */
 html[data-site-theme="dark"] body.site-shell .site-services-page {
-    --primary: #80bce5;
-    --primary-foreground: #102532;
-    --site-ink: #eff6fa;
-    --foreground: #eff6fa;
-    --background: #142833;
-    --muted-foreground: #aabec9;
-    --border: #35515f;
-    --services-accent: #80bce5;
-    background: #101f29;
-    color: #eff6fa;
+    --primary: var(--site-coral);
+    --site-ink: var(--site-palette-dark-ink, var(--site-palette-dark-foreground, #eff6fa));
+    --foreground: var(--site-palette-dark-foreground, #eff6fa);
+    --background: var(--site-palette-dark-background, #142833);
+    --muted-foreground: var(--site-palette-dark-muted-foreground, #aabec9);
+    --border: var(--site-palette-dark-border, #35515f);
+    --services-accent: var(--primary);
+    background: var(--site-paper);
+    color: var(--foreground);
 }
 
 html[data-site-theme="dark"] body.site-shell .site-services-hero {
@@ -9139,7 +9144,10 @@ html[data-site-theme="dark"] body.site-shell .site-services-hero {
     background:
         radial-gradient(ellipse at 82% 28%, rgba(55, 128, 176, .23), transparent 44%),
         radial-gradient(ellipse at 12% 88%, rgba(47, 102, 133, .15), transparent 42%),
-        linear-gradient(125deg, #12242e, #1a3341 70%, #203c4d);
+        linear-gradient(125deg,
+            color-mix(in srgb, var(--services-hero-dark-bg, #1a3341) 70%, #12242e),
+            var(--services-hero-dark-bg, #1a3341) 70%,
+            color-mix(in srgb, var(--services-hero-dark-bg, #1a3341) 72%, #2c5166));
 }
 
 html[data-site-theme="dark"] body.site-shell .site-services-hero__grid {
@@ -9153,7 +9161,7 @@ html[data-site-theme="dark"] body.site-shell .site-services-section__header p,
 html[data-site-theme="dark"] body.site-shell .site-service-card :is(p, .site-service-card__list),
 html[data-site-theme="dark"] body.site-shell .site-process-step p,
 html[data-site-theme="dark"] body.site-shell .site-services-pricing p {
-    color: #aec2cd;
+    color: var(--muted-foreground);
 }
 
 html[data-site-theme="dark"] body.site-shell .site-services-hero .site-services-primary-cta {
@@ -9170,8 +9178,8 @@ html[data-site-theme="dark"] body.site-shell .site-services-secondary-cta {
 
 html[data-site-theme="dark"] body.site-shell .site-service-card,
 html[data-site-theme="dark"] body.site-shell .site-process-step {
-    border-color: #3a5663;
-    background: linear-gradient(145deg, #1d3440, #172c37 70%);
+    border-color: var(--border);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--background) 80%, var(--accent)), var(--background) 70%);
     box-shadow: 0 16px 34px rgba(3, 14, 22, .2);
 }
 
@@ -9185,8 +9193,8 @@ html[data-site-theme="dark"] body.site-shell :is(.site-service-card__arrow, .sit
 }
 
 html[data-site-theme="dark"] body.site-shell .site-services-pricing {
-    border-color: #3a5663;
-    background: #192f3a;
+    border-color: var(--border);
+    background: var(--background);
 }
 
 html[data-site-theme="dark"] body.site-shell .site-services-final-cta {

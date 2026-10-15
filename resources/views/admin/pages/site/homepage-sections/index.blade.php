@@ -71,22 +71,56 @@
                 <div class="kt-card-header py-5">
                     <div>
                         <h2 class="kt-card-title">Neler Sunuyoruz? / Hareketli P</h2>
-                        <p class="text-sm text-muted-foreground">Üst görseldeki Σ, μ, σ ve x̄ sembollerinin renklerini ayarlayın. Sayfanın açık ve koyu düzeni değişmez.</p>
+                        <p class="text-sm text-muted-foreground">Hizmetler sayfasının açık ve koyu temalarında arka planı ve hareketli P sembollerinin renklerini ayrı ayrı yönetin.</p>
                     </div>
                 </div>
-                <form method="POST" action="{{ route('admin.site.services.symbol-colors.update') }}" class="kt-card-content grid gap-5 p-5 lg:p-6" data-native-submit="true">
+                <form method="POST" action="{{ route('admin.site.services.symbol-colors.update') }}" class="kt-card-content grid gap-5 p-5 lg:p-6" data-native-submit="true" data-services-visual-form>
                     @csrf
                     @method('PUT')
-                    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                        @foreach(['Σ', 'μ', 'σ', 'x̄'] as $index => $symbol)
-                            <label class="grid gap-2">
-                                <span class="kt-form-label">{{ $symbol }} sembolü</span>
-                                <input type="color" name="services_symbol_colors[{{ $index }}]" value="{{ old('services_symbol_colors.' . $index, $siteSettings->servicesSymbolColors()[$index]) }}" class="h-12 w-full cursor-pointer rounded-xl border border-border bg-background p-1">
-                                @error('services_symbol_colors.' . $index)<span class="text-xs text-danger">{{ $message }}</span>@enderror
-                            </label>
+                    <div class="grid gap-5 xl:grid-cols-2">
+                        @foreach(['light' => 'Açık Tema', 'dark' => 'Koyu Tema'] as $theme => $themeLabel)
+                            @php
+                                $colorField = $theme === 'light' ? 'services_symbol_light_colors' : 'services_symbol_colors';
+                                $backgroundField = 'services_hero_' . $theme . '_background';
+                                $previewColors = $siteSettings->servicesSymbolColors($theme);
+                                $previewBackground = $siteSettings->servicesHeroBackground($theme);
+                                $defaultColors = $theme === 'light' ? \App\Models\Site\SiteSetting::SERVICES_SYMBOL_LIGHT_DEFAULTS : \App\Models\Site\SiteSetting::SERVICES_SYMBOL_DEFAULTS;
+                                $defaultBackground = $theme === 'light' ? \App\Models\Site\SiteSetting::SERVICES_HERO_LIGHT_BACKGROUND_DEFAULT : \App\Models\Site\SiteSetting::SERVICES_HERO_DARK_BACKGROUND_DEFAULT;
+                            @endphp
+                            <div class="grid gap-4 rounded-2xl border border-border bg-background/60 p-4" data-services-theme="{{ $theme }}">
+                                <div class="flex flex-wrap items-start justify-between gap-3">
+                                    <div>
+                                        <h3 class="font-semibold">{{ $themeLabel }}</h3>
+                                        <p class="text-xs text-muted-foreground">Zemin ve dört sembol rengi bu tema için bağımsız kaydedilir.</p>
+                                    </div>
+                                    <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-services-reset>Varsayılanları Yükle</button>
+                                </div>
+                                <div class="flex min-h-28 items-center justify-center gap-4 rounded-xl border border-border/60 p-4 text-3xl" style="background-color: {{ $previewBackground }}" aria-label="{{ $themeLabel }} renk ön izlemesi" data-services-preview>
+                                    @foreach(['Σ', 'μ', 'σ', 'x̄'] as $index => $symbol)
+                                        <span style="color: {{ $previewColors[$index] }}" data-services-preview-symbol="{{ $index }}">{{ $symbol }}</span>
+                                    @endforeach
+                                </div>
+                                <label class="grid gap-2">
+                                    <span class="kt-form-label">Arka Plan Rengi</span>
+                                    <input type="color" name="{{ $backgroundField }}" value="{{ old($backgroundField, $previewBackground) }}" data-services-background-color data-default-color="{{ $defaultBackground }}" class="h-12 w-full cursor-pointer rounded-xl border border-border bg-background p-1">
+                                    <span class="font-mono text-xs text-muted-foreground" data-services-hex>{{ $previewBackground }}</span>
+                                    @error($backgroundField)<span class="text-xs text-danger">{{ $message }}</span>@enderror
+                                </label>
+                                <div class="grid gap-3 sm:grid-cols-2">
+                                    @foreach(['Σ', 'μ', 'σ', 'x̄'] as $index => $symbol)
+                                        <label class="grid gap-2">
+                                            <span class="kt-form-label">{{ $symbol }} sembolü</span>
+                                            <input type="color" name="{{ $colorField }}[{{ $index }}]" value="{{ old($colorField . '.' . $index, $previewColors[$index]) }}" data-services-symbol-color="{{ $index }}" data-default-color="{{ $defaultColors[$index] }}" class="h-12 w-full cursor-pointer rounded-xl border border-border bg-background p-1">
+                                            <span class="font-mono text-xs text-muted-foreground" data-services-hex>{{ $previewColors[$index] }}</span>
+                                            @error($colorField . '.' . $index)<span class="text-xs text-danger">{{ $message }}</span>@enderror
+                                        </label>
+                                    @endforeach
+                                </div>
+                                @error($colorField)<p class="text-sm text-danger">{{ $message }}</p>@enderror
+                            </div>
                         @endforeach
                     </div>
-                    @error('services_symbol_colors')<p class="text-sm text-danger">{{ $message }}</p>@enderror
+                    <p class="text-xs text-muted-foreground">Ön izleme seçimlerinizle anında değişir; yayınlamak için Renkleri Kaydet düğmesine basın.</p>
                     <div class="flex justify-end">
                         <button type="submit" class="kt-btn kt-btn-primary">Renkleri Kaydet</button>
                     </div>

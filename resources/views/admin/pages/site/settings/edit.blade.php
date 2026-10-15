@@ -252,6 +252,50 @@
                         </div>
                     </div>
 
+                    <div class="kt-card" data-site-theme-colors>
+                        <div class="kt-card-header py-5">
+                            <div>
+                                <h3 class="kt-card-title">Genel Açık / Koyu Tema Renkleri</h3>
+                                <p class="text-sm text-muted-foreground">İç sayfaların, üye alanının ve ortak bileşenlerin renklerini her tema için ayrı ayarlayın. Hazır paleti değiştirirseniz yeni paletin renklerini yükleyip kaydedebilirsiniz.</p>
+                            </div>
+                        </div>
+                        <div class="kt-card-content grid gap-5 p-6 xl:grid-cols-2">
+                            @foreach(['light' => 'Açık Mod', 'dark' => 'Koyu Mod'] as $theme => $themeLabel)
+                                @php
+                                    $themePreview = fn (string $field) => old('site_theme_colors.'.$theme.'.'.$field, $settings->themeColor($theme, $field));
+                                @endphp
+                                <div class="grid content-start gap-4 rounded-2xl border border-border p-4" data-site-theme-panel="{{ $theme }}">
+                                    <div class="flex flex-wrap items-center justify-between gap-3">
+                                        <h4 class="font-semibold">{{ $themeLabel }}</h4>
+                                        <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-site-theme-reset>Seçili Paletin Renklerini Yükle</button>
+                                    </div>
+                                    <div class="flex min-h-24 items-center justify-between gap-4 rounded-xl border p-4" data-site-theme-preview
+                                        style="background-color: {{ $themePreview('paper') }}; color: {{ $themePreview('foreground') }}; border-color: {{ $themePreview('border') }}">
+                                        <span class="font-semibold">Başlık ve metin ön izlemesi</span>
+                                        <span class="rounded-lg px-4 py-2 text-sm font-semibold text-white" data-site-theme-preview-button style="background-color: {{ $themePreview('primary') }}">Buton</span>
+                                    </div>
+                                    <div class="grid gap-3 sm:grid-cols-2">
+                                        @foreach(\App\Models\Site\SiteSetting::THEME_COLOR_FIELDS[$theme] as $field => $label)
+                                            <label class="grid gap-1.5">
+                                                <span class="kt-form-label">{{ $label }}</span>
+                                                <input type="color" name="site_theme_colors[{{ $theme }}][{{ $field }}]"
+                                                    value="{{ $themePreview($field) }}"
+                                                    data-site-theme-color="{{ $field }}"
+                                                    data-default-coral="{{ $settings->themePaletteColor('coral', $theme, $field) }}"
+                                                    data-default-probablue="{{ $settings->themePaletteColor('probablue', $theme, $field) }}"
+                                                    class="h-11 w-full cursor-pointer rounded-lg border border-border bg-background p-1">
+                                                <span class="font-mono text-xs text-muted-foreground" data-site-theme-hex>{{ strtoupper($themePreview($field)) }}</span>
+                                                @error('site_theme_colors.'.$theme.'.'.$field)<span class="text-xs text-danger">{{ $message }}</span>@enderror
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endforeach
+                            @error('site_theme_colors')<p class="text-sm text-danger xl:col-span-2">{{ $message }}</p>@enderror
+                            <p class="text-xs text-muted-foreground xl:col-span-2">Ön izleme kaydetmeden değişir. Siteye uygulamak için sayfanın altındaki Kaydet düğmesine basın. Hizmetler sayfasının hareketli P görseli ve girişi ayrıca kendi bölümünden yönetilir.</p>
+                        </div>
+                    </div>
+
                     <div class="kt-card">
                         <div class="kt-card-header py-5">
                             <div>

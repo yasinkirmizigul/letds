@@ -140,19 +140,12 @@ export function initServicesParticleLogo() {
         sourceContext.drawImage(logo, 0, 0, 420, 420);
         const pixels = sourceContext.getImageData(0, 0, 420, 420).data;
         const filled = (x, y) => x >= 0 && y >= 0 && x < 420 && y < 420 && pixels[(Math.floor(y) * 420 + Math.floor(x)) * 4 + 3] > 105;
-        const colors = [1, 2, 3, 4].map((n) => getComputedStyle(root).getPropertyValue(`--symbol-${n}`).trim());
         let dark = document.documentElement.dataset.siteTheme === 'dark';
-        const blend = (color, target, ratio) => {
-            const hex = color.replace('#', '');
-            const targetHex = target.replace('#', '');
-            if (!/^[\da-f]{6}$/i.test(hex)) return color;
-            const channels = [0, 2, 4].map((offset) => Math.round(
-                parseInt(hex.slice(offset, offset + 2), 16) * (1 - ratio)
-                + parseInt(targetHex.slice(offset, offset + 2), 16) * ratio,
-            ));
-            return `#${channels.map((channel) => channel.toString(16).padStart(2, '0')).join('')}`;
-        };
-        // Rasterize translucent outlines once per theme; color controls remain dashboard-owned.
+        const readColors = () => [1, 2, 3, 4].map((n) =>
+            getComputedStyle(root).getPropertyValue(`--symbol-${dark ? 'dark' : 'light'}-${n}`).trim(),
+        );
+        let colors = readColors();
+        // Each theme uses its own dashboard palette without blending the hues together.
         const sprites = ['Σ', 'μ', 'σ', 'x̄'].map(() => {
             const sprite = document.createElement('canvas');
             sprite.width = sprite.height = 96;
@@ -161,7 +154,7 @@ export function initServicesParticleLogo() {
         const paintSprites = () => sprites.forEach((sprite, index) => {
             const symbol = ['Σ', 'μ', 'σ', 'x̄'][index];
             const brush = sprite.getContext('2d');
-            const color = dark ? colors[index] : blend(colors[index], '#1b3957', .72);
+            const color = colors[index];
             brush.clearRect(0, 0, 96, 96);
             brush.font = '600 63px Georgia, serif';
             brush.textAlign = 'center';
@@ -455,6 +448,7 @@ export function initServicesParticleLogo() {
         }).observe(hero);
         new MutationObserver(() => {
             dark = document.documentElement.dataset.siteTheme === 'dark';
+            colors = readColors();
             paintSprites();
             start();
         }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-site-theme'] });

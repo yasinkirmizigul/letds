@@ -49,7 +49,7 @@
             </div>
         </article>
 
-        <article class="home-probablue-panel home-probablue-panel--consultation" style="{{ $modeStyle($rightMode) }}">
+        <article class="home-probablue-panel home-probablue-panel--consultation" style="{{ $modeStyle($leftMode) }}">
             <span class="home-probablue-panel__grid" aria-hidden="true"></span>
             <div class="home-probablue-panel__content">
                 <span class="home-probablue-panel__eyebrow">Probablue Studio</span>

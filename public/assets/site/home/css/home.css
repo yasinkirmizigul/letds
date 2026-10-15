@@ -153,16 +153,16 @@
 .home-probablue-panel--analysis {
     justify-content: flex-start;
     background:
-        linear-gradient(135deg, color-mix(in srgb, var(--home-after-bg, #176b87) 88%, #061934), var(--home-after-bg, #176b87));
-    color: var(--home-after-text, #fff);
+        radial-gradient(circle at 78% 28%, color-mix(in srgb, var(--home-before-highlight, #006ae6) 14%, transparent), transparent 34%),
+        var(--home-before-bg, #f7fafc);
+    color: var(--home-before-text, #293f4b);
 }
 
 .home-probablue-panel--consultation {
     justify-content: flex-end;
     background:
-        radial-gradient(circle at 78% 28%, color-mix(in srgb, var(--home-before-highlight, #006ae6) 14%, transparent), transparent 34%),
-        var(--home-before-bg, #f7fafc);
-    color: var(--home-before-text, #293f4b);
+        linear-gradient(135deg, color-mix(in srgb, var(--home-after-bg, #176b87) 88%, #061934), var(--home-after-bg, #176b87));
+    color: var(--home-after-text, #fff);
     text-align: right;
 }
 
@@ -237,11 +237,11 @@
 }
 
 .home-probablue-panel--analysis .home-probablue-panel__cta:hover {
-    color: var(--home-after-bg, #176b87);
+    color: var(--home-before-bg, #f7fafc);
 }
 
 .home-probablue-panel--consultation .home-probablue-panel__cta:hover {
-    color: var(--home-before-bg, #f7fafc);
+    color: var(--home-after-bg, #176b87);
 }
 
 .home-probablue-panel__orb {
@@ -343,13 +343,13 @@
 
 html[data-site-theme='dark'] .home-probablue-panel--consultation {
     background:
-        radial-gradient(circle at 78% 28%, color-mix(in srgb, var(--home-before-highlight, #35a4ff) 22%, transparent), transparent 34%),
-        color-mix(in srgb, var(--home-before-bg, #f7fafc) 13%, #071426);
-    color: #edf6ff;
+        radial-gradient(circle at 78% 28%, color-mix(in srgb, var(--home-after-highlight, #35a4ff) 22%, transparent), transparent 34%),
+        color-mix(in srgb, var(--home-after-bg, #176b87) 82%, #071426);
+    color: var(--home-after-text, #edf6ff);
 }
 
 html[data-site-theme='dark'] .home-probablue-hero__brand {
-    color: #edf6ff;
+    color: var(--home-before-text, #293f4b);
 }
 
 @media (max-width: 900px) {
