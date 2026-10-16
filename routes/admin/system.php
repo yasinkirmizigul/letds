@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AuditLog\AuditLogController;
 use App\Http\Controllers\Admin\Menu\AdminMenuVisibilityController;
 use App\Http\Controllers\Admin\System\DemoDataFactoryController;
+use App\Http\Controllers\Admin\System\RecoveryBackupController;
 use App\Http\Controllers\Admin\TrashController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,15 @@ Route::middleware('superadmin')
         Route::get('/', [DemoDataFactoryController::class, 'index'])->name('index');
         Route::post('/generate', [DemoDataFactoryController::class, 'generate'])->name('generate');
         Route::delete('/reset', [DemoDataFactoryController::class, 'reset'])->name('reset');
+    });
+
+Route::middleware('superadmin')
+    ->prefix('recovery-backups')
+    ->as('recovery-backups.')
+    ->group(function () {
+        Route::get('/', [RecoveryBackupController::class, 'index'])->name('index');
+        Route::get('/download', [RecoveryBackupController::class, 'download'])->name('download');
+        Route::post('/import', [RecoveryBackupController::class, 'import'])->name('import');
     });
 
 Route::prefix('trash')->as('trash.')->group(function () {

@@ -835,8 +835,8 @@
     "semantic_hash": "d18593472c5e35d8ab5add4240fc95f6"
   },
   "composer.json": {
-    "mtime": 1790153399.9674354,
-    "ast_hash": "06a80a4184039896c9379338657d20db",
+    "mtime": 1792094159.8879378,
+    "ast_hash": "2cbc6bd6862d43ade78d12e257dad6c1",
     "semantic_hash": ""
   },
   "config/admin-module-generator.php": {
@@ -895,9 +895,9 @@
     "semantic_hash": ""
   },
   "config/filesystems.php": {
-    "mtime": 1766758254.2964444,
-    "ast_hash": "acedf2feea8c0c48a652cbc8291dbb36",
-    "semantic_hash": "acedf2feea8c0c48a652cbc8291dbb36"
+    "mtime": 1792094268.4988675,
+    "ast_hash": "fa3b3a6ec515087dddf9d0958d75aaa6",
+    "semantic_hash": ""
   },
   "config/logging.php": {
     "mtime": 1790153399.971435,
@@ -1770,8 +1770,8 @@
     "semantic_hash": ""
   },
   "resources/views/admin/layouts/main/sidebar.blade.php": {
-    "mtime": 1792069902.897571,
-    "ast_hash": "27529066134859f1cb20eef4345c41d2",
+    "mtime": 1792094352.4806683,
+    "ast_hash": "59cd0be59e6943fcf27b5896364a631e",
     "semantic_hash": ""
   },
   "resources/views/admin/layouts/main/sidebar/_sidebar_item.blade.php": {
@@ -2435,13 +2435,13 @@
     "semantic_hash": "18fcf7c7c59b7d4e5894be4f5fedf9f3"
   },
   "routes/admin/system.php": {
-    "mtime": 1786914746.4421885,
-    "ast_hash": "961fc4986572f67b448728f15e0c2b4e",
+    "mtime": 1792094352.4796667,
+    "ast_hash": "2309ffe9b0eb4b6f7ebdb72978750c33",
     "semantic_hash": ""
   },
   "routes/console.php": {
-    "mtime": 1785738151.2995124,
-    "ast_hash": "be5206abce131bda1b6f7e407443acf1",
+    "mtime": 1792094305.5738835,
+    "ast_hash": "85def1685bdb73cd1e8c6196e63ed259",
     "semantic_hash": ""
   },
   "routes/site/content.php": {
@@ -2965,8 +2965,8 @@
     "semantic_hash": ""
   },
   "app/Http/Controllers/Admin/Site/HomepageSectionController.php": {
-    "mtime": 1792078403.5253458,
-    "ast_hash": "ce308c3874c4fbad4893753a06338a82",
+    "mtime": 1792092933.4231956,
+    "ast_hash": "2651bac123ec0a9c0c2f6957c206d3f1",
     "semantic_hash": ""
   },
   "app/Models/Site/SiteHomepageSection.php": {
@@ -3005,8 +3005,8 @@
     "semantic_hash": ""
   },
   "resources/views/admin/pages/site/homepage-sections/index.blade.php": {
-    "mtime": 1792078640.8952515,
-    "ast_hash": "ef2f1cd192e2c62d2adb47b79dd31e5c",
+    "mtime": 1792092933.4185398,
+    "ast_hash": "af27c4f2d733509bf2c4a361809f4a6d",
     "semantic_hash": ""
   },
   "resources/views/site/home-sections/features.blade.php": {
@@ -3420,8 +3420,8 @@
     "semantic_hash": ""
   },
   "tests/Feature/SiteVisualStoriesTest.php": {
-    "mtime": 1792079351.2971368,
-    "ast_hash": "19f1b51502b54cf28a0674b669b28c2f",
+    "mtime": 1792092946.9326315,
+    "ast_hash": "3b364626f1e3a3d16b4a963f05b5925d",
     "semantic_hash": ""
   },
   "tests/Frontend/visual-stories.test.mjs": {
@@ -3512,6 +3512,56 @@
   "database/migrations/2026_10_15_000003_add_site_theme_colors_to_site_settings.php": {
     "mtime": 1792079267.9452093,
     "ast_hash": "7f14b6c3483592bf784eb62ed2a9f991",
+    "semantic_hash": ""
+  },
+  "app/Console/Commands/RecoveryBackupCommand.php": {
+    "mtime": 1792094305.5728824,
+    "ast_hash": "fd3adcf30749fb29ab9d08340987257a",
+    "semantic_hash": ""
+  },
+  "app/Console/Commands/RecoveryRestoreDatabaseCommand.php": {
+    "mtime": 1792094464.7967212,
+    "ast_hash": "87b88c64e7b4278d04246286f6b239aa",
+    "semantic_hash": ""
+  },
+  "app/Console/Commands/RecoveryStageCommand.php": {
+    "mtime": 1792094705.7564301,
+    "ast_hash": "589db62296601fd13aec996199da85b6",
+    "semantic_hash": ""
+  },
+  "app/Http/Controllers/Admin/System/RecoveryBackupController.php": {
+    "mtime": 1792094352.4796667,
+    "ast_hash": "7656e7ae375d79e2377f222ddcfdc999",
+    "semantic_hash": ""
+  },
+  "app/Support/Recovery/RecoveryArchives.php": {
+    "mtime": 1792094509.5165298,
+    "ast_hash": "cb4487af82baaff2b25a97b953c1ada7",
+    "semantic_hash": ""
+  },
+  "app/Support/Recovery/RecoveryConfiguration.php": {
+    "mtime": 1792094305.5718813,
+    "ast_hash": "83f89f724c1342b1d282c86bfc50736e",
+    "semantic_hash": ""
+  },
+  "config/backup.php": {
+    "mtime": 1792094564.5888307,
+    "ast_hash": "38b007291ac8b0c25705d3084e30d343",
+    "semantic_hash": ""
+  },
+  "resources/views/admin/pages/system/recovery-backups/index.blade.php": {
+    "mtime": 1792094464.797721,
+    "ast_hash": "46eabfb13a27d0e63e4002b6b611bd6c",
+    "semantic_hash": ""
+  },
+  "tests/Feature/RecoveryBackupTest.php": {
+    "mtime": 1792094666.6455176,
+    "ast_hash": "4472fcab98741794b99a3fc24baf05f3",
+    "semantic_hash": ""
+  },
+  "docs/recovery-backups.md": {
+    "mtime": 1792094666.6445174,
+    "ast_hash": "b6e8b15a8a77ec902d44493f29ac1d67",
     "semantic_hash": ""
   }
 }

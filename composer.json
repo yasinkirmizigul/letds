@@ -9,7 +9,10 @@
         "php": "^8.4",
         "intervention/image": "^4.2",
         "laravel/framework": "^13.0",
-        "laravel/tinker": "^3.0"
+        "laravel/tinker": "^3.0",
+        "league/flysystem-aws-s3-v3": "^3.35",
+        "spatie/laravel-backup": "^10.3",
+        "wnx/laravel-backup-restore": "^1.9"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^4.4",

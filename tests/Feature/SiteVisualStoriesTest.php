@@ -208,4 +208,42 @@ class SiteVisualStoriesTest extends TestCase
         $this->assertSame($colors, SiteSetting::current()->fresh()->servicesSymbolColors());
         $this->get(route('admin.site.settings.edit'))->assertForbidden();
     }
+
+    public function test_services_theme_defaults_can_be_restored_without_javascript(): void
+    {
+        $role = Role::query()->create(['name' => 'Super Admin', 'slug' => 'superadmin']);
+        $user = User::query()->create([
+            'name' => 'Site Yönetimi', 'email' => 'services-reset-admin@example.test',
+            'password' => 'password', 'is_active' => true,
+        ]);
+        $user->roles()->attach($role);
+
+        $settings = SiteSetting::current();
+        $settings->update([
+            'services_symbol_colors' => ['#111111', '#222222', '#333333', '#444444'],
+            'services_symbol_light_colors' => ['#555555', '#666666', '#777777', '#888888'],
+            'services_hero_light_background' => '#EEEEEE',
+            'services_hero_dark_background' => '#111111',
+        ]);
+
+        $this->actingAs($user)
+            ->put(route('admin.site.services.symbol-colors.update'), [
+                'restore_theme' => 'dark',
+                'services_symbol_colors' => ['invalid'],
+            ])
+            ->assertRedirect(route('admin.site.services.index'));
+
+        $settings->refresh();
+        $this->assertSame(SiteSetting::SERVICES_SYMBOL_DEFAULTS, $settings->servicesSymbolColors('dark'));
+        $this->assertSame(SiteSetting::SERVICES_HERO_DARK_BACKGROUND_DEFAULT, $settings->servicesHeroBackground('dark'));
+        $this->assertSame(['#555555', '#666666', '#777777', '#888888'], $settings->servicesSymbolColors('light'));
+        $this->assertSame('#EEEEEE', $settings->servicesHeroBackground('light'));
+
+        $this->put(route('admin.site.services.symbol-colors.update'), ['restore_theme' => 'light'])
+            ->assertRedirect(route('admin.site.services.index'));
+
+        $settings->refresh();
+        $this->assertSame(SiteSetting::SERVICES_SYMBOL_LIGHT_DEFAULTS, $settings->servicesSymbolColors('light'));
+        $this->assertSame(SiteSetting::SERVICES_HERO_LIGHT_BACKGROUND_DEFAULT, $settings->servicesHeroBackground('light'));
+    }
 }

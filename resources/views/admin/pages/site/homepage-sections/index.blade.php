@@ -93,7 +93,7 @@
                                         <h3 class="font-semibold">{{ $themeLabel }}</h3>
                                         <p class="text-xs text-muted-foreground">Zemin ve dört sembol rengi bu tema için bağımsız kaydedilir.</p>
                                     </div>
-                                    <button type="button" class="kt-btn kt-btn-sm kt-btn-light" data-services-reset>Varsayılanları Yükle</button>
+                                    <button type="submit" name="restore_theme" value="{{ $theme }}" formnovalidate class="kt-btn kt-btn-sm kt-btn-light" data-services-reset>Varsayılanları Uygula</button>
                                 </div>
                                 <div class="flex min-h-28 items-center justify-center gap-4 rounded-xl border border-border/60 p-4 text-3xl" style="background-color: {{ $previewBackground }}" aria-label="{{ $themeLabel }} renk ön izlemesi" data-services-preview>
                                     @foreach(['Σ', 'μ', 'σ', 'x̄'] as $index => $symbol)
@@ -120,7 +120,7 @@
                             </div>
                         @endforeach
                     </div>
-                    <p class="text-xs text-muted-foreground">Ön izleme seçimlerinizle anında değişir; yayınlamak için Renkleri Kaydet düğmesine basın.</p>
+                    <p class="text-xs text-muted-foreground">Ön izleme seçimlerinizle anında değişir. Özel renkleri yayınlamak için Renkleri Kaydet'e basın; Varsayılanları Uygula ilgili temayı doğrudan kaydeder.</p>
                     <div class="flex justify-end">
                         <button type="submit" class="kt-btn kt-btn-primary">Renkleri Kaydet</button>
                     </div>

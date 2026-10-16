@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-15T15:14:52.141896+00:00",
+  "generated_at": "2026-10-15T20:35:22.215096+00:00",
   "nodes": {
     "app_http_controllers_admin_auth_passwordresetcontroller_passwordresetcontroller": {
       "code_fingerprint": "884c3a4330984a3599126a1723598429fc092c73aada5075b32a63caa314edd6",
@@ -12,7 +12,7 @@
           "q": "Şifre ve şifre tekrar alanlarında anlık ve form gönderiminde eşleşme kontrolü var mı?"
         }
       ],
-      "score": 0.340279869,
+      "score": 0.338534483,
       "source_file": "app/Http/Controllers/Admin/Auth/PasswordResetController.php",
       "status": "tentative",
       "uses": 1
@@ -28,7 +28,7 @@
           "q": "InfinityFree production upload: Composer and Vite completeness, oversized assets, rewrite and storage URL compatibility"
         }
       ],
-      "score": 0.762540662,
+      "score": 0.758629388,
       "source_file": "app/Jobs/SendProjectStageWhatsAppJob.php",
       "status": "tentative",
       "uses": 1
@@ -44,7 +44,7 @@
           "q": "Local database and InfinityFree migration, seed data, authentication and filesystem compatibility"
         }
       ],
-      "score": 0.762253557,
+      "score": 0.758343756,
       "source_file": "app/Models/Admin/User/Permission.php",
       "status": "tentative",
       "uses": 1
@@ -60,7 +60,7 @@
           "q": "Local database and InfinityFree migration, seed data, authentication and filesystem compatibility"
         }
       ],
-      "score": 0.762253557,
+      "score": 0.758343756,
       "source_file": "app/Models/Admin/User/Role.php",
       "status": "tentative",
       "uses": 1
@@ -76,7 +76,7 @@
           "q": "InfinityFree production upload: Composer and Vite completeness, oversized assets, rewrite and storage URL compatibility"
         }
       ],
-      "score": 0.762540662,
+      "score": 0.758629388,
       "source_file": "app/Services/Site/SeoFileGenerator.php",
       "status": "tentative",
       "uses": 1
@@ -92,7 +92,7 @@
           "q": "Local database and InfinityFree migration, seed data, authentication and filesystem compatibility"
         }
       ],
-      "score": 0.762253557,
+      "score": 0.758343756,
       "source_file": "app/Support/Site/SiteLocalization.php",
       "status": "tentative",
       "uses": 1
@@ -108,7 +108,7 @@
           "q": "Local database and InfinityFree migration, seed data, authentication and filesystem compatibility"
         }
       ],
-      "score": 0.762253557,
+      "score": 0.758343756,
       "source_file": "database/seeders/DatabaseSeeder.php",
       "status": "tentative",
       "uses": 1
@@ -129,7 +129,7 @@
           "q": "Apply the InfinityFree pinned CDN workaround and verify the regenerated deployment package"
         }
       ],
-      "score": 1.539098918,
+      "score": 1.53120447,
       "source_file": "package.json",
       "status": "preferred",
       "uses": 2
@@ -145,7 +145,7 @@
           "q": "localde soldaki infitide sağdaki be msoldaki olsun sitiyorum"
         }
       ],
-      "score": 0.763189614,
+      "score": 0.759275011,
       "source_file": "resources/js/core/page-registry.js",
       "status": "tentative",
       "uses": 1
@@ -161,7 +161,7 @@
           "q": "anasayfada dark light mode butonu beyaz zemidne gözükmüyor; yanına hamburger menü ve aşağı kayan, kapanabilen header navigasyonu ekle"
         }
       ],
-      "score": 0.340067762,
+      "score": 0.338323465,
       "source_file": "resources/views/admin/layouts/main/header.blade.php",
       "status": "tentative",
       "uses": 1
@@ -177,7 +177,7 @@
           "q": "anasayfada dark light mode butonu beyaz zemidne gözükmüyor; yanına hamburger menü ve aşağı kayan, kapanabilen header navigasyonu ekle"
         }
       ],
-      "score": 0.340067762,
+      "score": 0.338323465,
       "source_file": "resources/views/site/partials/navigation/mobile-item.blade.php",
       "status": "tentative",
       "uses": 1
@@ -193,7 +193,7 @@
           "q": "biraz daha açık ton olmalı bence çok koyu kalmış gibiler"
         }
       ],
-      "score": 0.340129155,
+      "score": 0.338384543,
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
       "status": "tentative",
       "uses": 1

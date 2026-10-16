@@ -84,6 +84,26 @@ class HomepageSectionController extends Controller
 
     public function updateServicesSymbolColors(Request $request): RedirectResponse
     {
+        if ($request->exists('restore_theme')) {
+            $theme = $request->validate([
+                'restore_theme' => ['required', Rule::in(['light', 'dark'])],
+            ])['restore_theme'];
+
+            SiteSetting::current()->update($theme === 'light' ? [
+                'services_symbol_light_colors' => SiteSetting::SERVICES_SYMBOL_LIGHT_DEFAULTS,
+                'services_hero_light_background' => SiteSetting::SERVICES_HERO_LIGHT_BACKGROUND_DEFAULT,
+            ] : [
+                'services_symbol_colors' => SiteSetting::SERVICES_SYMBOL_DEFAULTS,
+                'services_hero_dark_background' => SiteSetting::SERVICES_HERO_DARK_BACKGROUND_DEFAULT,
+            ]);
+
+            AuditEvent::log('site.services.symbol-colors.update');
+
+            return redirect()
+                ->route('admin.site.services.index')
+                ->with('success', ($theme === 'light' ? 'Açık' : 'Koyu').' tema hareketli P renkleri ve arka planı varsayılana döndürüldü.');
+        }
+
         $validated = $request->validate([
             'services_symbol_colors' => ['required', 'array', 'size:4'],
             'services_symbol_colors.*' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],

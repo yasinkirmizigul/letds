@@ -71,6 +71,17 @@
                             'style' => 'margin-inline-start: -5px;',
                         ],
                     ])
+                    @include('admin.layouts.main.sidebar._sidebar_item', [
+                        'item' => [
+                            'key' => 'recovery_backups',
+                            'type' => 'single',
+                            'title' => 'Kurtarma Yedekleri',
+                            'icon' => 'ki-filled ki-cloud-download text-lg',
+                            'route' => 'admin.recovery-backups.index',
+                            'active' => ['admin.recovery-backups.*'],
+                            'style' => 'margin-inline-start: -5px;',
+                        ],
+                    ])
                 @endif
 
             </div>
