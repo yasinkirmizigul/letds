@@ -1,6 +1,54 @@
 {
-  "generated_at": "2026-10-15T20:35:22.215096+00:00",
+  "generated_at": "2026-10-16T07:50:00.142338+00:00",
   "nodes": {
+    "app_console_commands_recoverybackupcommand_recoverybackupcommand": {
+      "code_fingerprint": "7c4ba0c9e5434e74106b38992fa598028c127773724a539aae5406d5db06eec1",
+      "label": "RecoveryBackupCommand",
+      "last": "2026-10-15T20:35:59.533479+00:00",
+      "provenance": [
+        {
+          "date": "2026-10-15T20:35:59.533479+00:00",
+          "outcome": "useful",
+          "q": "Kiralık hostingte konsol çalıştırmak sorun olabilir mi; mevcut kurtarma yedeklemesi buna bağlı mı?"
+        }
+      ],
+      "score": 0.989243724,
+      "source_file": "app/Console/Commands/RecoveryBackupCommand.php",
+      "status": "tentative",
+      "uses": 1
+    },
+    "app_console_commands_recoveryrestoredatabasecommand_recoveryrestoredatabasecommand": {
+      "code_fingerprint": "99c90f807b8a64b9976d6e09a83e630117bad55c5bf8355e60d1220b237791f4",
+      "label": "RecoveryRestoreDatabaseCommand",
+      "last": "2026-10-15T20:35:59.533479+00:00",
+      "provenance": [
+        {
+          "date": "2026-10-15T20:35:59.533479+00:00",
+          "outcome": "useful",
+          "q": "Kiralık hostingte konsol çalıştırmak sorun olabilir mi; mevcut kurtarma yedeklemesi buna bağlı mı?"
+        }
+      ],
+      "score": 0.989243724,
+      "source_file": "app/Console/Commands/RecoveryRestoreDatabaseCommand.php",
+      "status": "tentative",
+      "uses": 1
+    },
+    "app_console_commands_recoverystagecommand_recoverystagecommand": {
+      "code_fingerprint": "b58b9139f5b2c791d7b3af5ded035e20ed588c7f48eff4a5a2f94ad05578dca6",
+      "label": "RecoveryStageCommand",
+      "last": "2026-10-15T20:35:59.533479+00:00",
+      "provenance": [
+        {
+          "date": "2026-10-15T20:35:59.533479+00:00",
+          "outcome": "useful",
+          "q": "Kiralık hostingte konsol çalıştırmak sorun olabilir mi; mevcut kurtarma yedeklemesi buna bağlı mı?"
+        }
+      ],
+      "score": 0.989243724,
+      "source_file": "app/Console/Commands/RecoveryStageCommand.php",
+      "status": "tentative",
+      "uses": 1
+    },
     "app_http_controllers_admin_auth_passwordresetcontroller_passwordresetcontroller": {
       "code_fingerprint": "884c3a4330984a3599126a1723598429fc092c73aada5075b32a63caa314edd6",
       "label": "PasswordResetController",
@@ -12,7 +60,7 @@
           "q": "Şifre ve şifre tekrar alanlarında anlık ve form gönderiminde eşleşme kontrolü var mı?"
         }
       ],
-      "score": 0.338534483,
+      "score": 0.334889771,
       "source_file": "app/Http/Controllers/Admin/Auth/PasswordResetController.php",
       "status": "tentative",
       "uses": 1
@@ -28,7 +76,7 @@
           "q": "InfinityFree production upload: Composer and Vite completeness, oversized assets, rewrite and storage URL compatibility"
         }
       ],
-      "score": 0.758629388,
+      "score": 0.750461872,
       "source_file": "app/Jobs/SendProjectStageWhatsAppJob.php",
       "status": "tentative",
       "uses": 1
@@ -44,7 +92,7 @@
           "q": "Local database and InfinityFree migration, seed data, authentication and filesystem compatibility"
         }
       ],
-      "score": 0.758343756,
+      "score": 0.750179315,
       "source_file": "app/Models/Admin/User/Permission.php",
       "status": "tentative",
       "uses": 1
@@ -60,7 +108,7 @@
           "q": "Local database and InfinityFree migration, seed data, authentication and filesystem compatibility"
         }
       ],
-      "score": 0.758343756,
+      "score": 0.750179315,
       "source_file": "app/Models/Admin/User/Role.php",
       "status": "tentative",
       "uses": 1
@@ -76,7 +124,7 @@
           "q": "InfinityFree production upload: Composer and Vite completeness, oversized assets, rewrite and storage URL compatibility"
         }
       ],
-      "score": 0.758629388,
+      "score": 0.750461872,
       "source_file": "app/Services/Site/SeoFileGenerator.php",
       "status": "tentative",
       "uses": 1
@@ -92,7 +140,7 @@
           "q": "Local database and InfinityFree migration, seed data, authentication and filesystem compatibility"
         }
       ],
-      "score": 0.758343756,
+      "score": 0.750179315,
       "source_file": "app/Support/Site/SiteLocalization.php",
       "status": "tentative",
       "uses": 1
@@ -108,7 +156,7 @@
           "q": "Local database and InfinityFree migration, seed data, authentication and filesystem compatibility"
         }
       ],
-      "score": 0.758343756,
+      "score": 0.750179315,
       "source_file": "database/seeders/DatabaseSeeder.php",
       "status": "tentative",
       "uses": 1
@@ -129,7 +177,7 @@
           "q": "Apply the InfinityFree pinned CDN workaround and verify the regenerated deployment package"
         }
       ],
-      "score": 1.53120447,
+      "score": 1.514719297,
       "source_file": "package.json",
       "status": "preferred",
       "uses": 2
@@ -145,7 +193,7 @@
           "q": "localde soldaki infitide sağdaki be msoldaki olsun sitiyorum"
         }
       ],
-      "score": 0.759275011,
+      "score": 0.751100544,
       "source_file": "resources/js/core/page-registry.js",
       "status": "tentative",
       "uses": 1
@@ -161,7 +209,7 @@
           "q": "anasayfada dark light mode butonu beyaz zemidne gözükmüyor; yanına hamburger menü ve aşağı kayan, kapanabilen header navigasyonu ekle"
         }
       ],
-      "score": 0.338323465,
+      "score": 0.334681024,
       "source_file": "resources/views/admin/layouts/main/header.blade.php",
       "status": "tentative",
       "uses": 1
@@ -177,7 +225,7 @@
           "q": "anasayfada dark light mode butonu beyaz zemidne gözükmüyor; yanına hamburger menü ve aşağı kayan, kapanabilen header navigasyonu ekle"
         }
       ],
-      "score": 0.338323465,
+      "score": 0.334681024,
       "source_file": "resources/views/site/partials/navigation/mobile-item.blade.php",
       "status": "tentative",
       "uses": 1
@@ -193,7 +241,7 @@
           "q": "biraz daha açık ton olmalı bence çok koyu kalmış gibiler"
         }
       ],
-      "score": 0.338384543,
+      "score": 0.334741445,
       "source_file": "tests/Unit/ResponsiveMarkupTest.php",
       "status": "tentative",
       "uses": 1

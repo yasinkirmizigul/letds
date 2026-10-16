@@ -141,9 +141,18 @@ export function initServicesParticleLogo() {
         const pixels = sourceContext.getImageData(0, 0, 420, 420).data;
         const filled = (x, y) => x >= 0 && y >= 0 && x < 420 && y < 420 && pixels[(Math.floor(y) * 420 + Math.floor(x)) * 4 + 3] > 105;
         let dark = document.documentElement.dataset.siteTheme === 'dark';
-        const readColors = () => [1, 2, 3, 4].map((n) =>
-            getComputedStyle(root).getPropertyValue(`--symbol-${dark ? 'dark' : 'light'}-${n}`).trim(),
-        );
+        const readColors = () => {
+            const style = getComputedStyle(root);
+            const defaults = dark
+                ? ['#f2c75a', '#e4edff', '#6dc7c4', '#ae91dd']
+                : ['#a97200', '#315d88', '#147d83', '#7857a2'];
+            // A partially updated server may still render the previous palette
+            // properties. Never pass an empty/invalid color to canvas: it stays black.
+            return defaults.map((fallback, index) => [
+                style.getPropertyValue(`--symbol-${dark ? 'dark' : 'light'}-${index + 1}`).trim(),
+                style.getPropertyValue(`--symbol-${index + 1}`).trim(),
+            ].find((color) => /^#[0-9a-f]{6}$/i.test(color)) || fallback);
+        };
         let colors = readColors();
         // Each theme uses its own dashboard palette without blending the hues together.
         const sprites = ['Σ', 'μ', 'σ', 'x̄'].map(() => {

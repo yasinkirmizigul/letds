@@ -12,6 +12,11 @@ test('particle animation keeps a fixed population, avoids frame layout reads and
     let rendered = [];
     let onMotionChange, onVisibility, onThemeChange;
     const paintedColors = [];
+    const palettes = {
+        dark: ['#f2c75a', '#e4edff', '#6dc7c4', '#ae91dd'],
+        light: ['#a97200', '#315d88', '#147d83', '#7857a2'],
+    };
+    let colorMode = 'themed';
     const motion = { matches: false, addEventListener: (_type, callback) => { onMotionChange = callback; } };
     const context = {
         setTransform(...values) { transform = values; },
@@ -51,7 +56,13 @@ test('particle animation keeps a fixed population, avoids frame layout reads and
     try {
         install('window', { matchMedia: () => motion, scrollY: 0, devicePixelRatio: 2, addEventListener() {} });
         install('document', documentStub);
-        install('getComputedStyle', () => ({ getPropertyValue: () => '#559acc' }));
+        install('getComputedStyle', () => ({ getPropertyValue: (name) => {
+            if (colorMode === 'legacy') return /^--symbol-[1-4]$/.test(name) ? '#559acc' : '';
+            if (colorMode === 'missing') return '';
+            if (colorMode === 'invalid') return 'invalid-color';
+            const match = name.match(/^--symbol-(dark|light)-([1-4])$/);
+            return match ? palettes[match[1]][Number(match[2]) - 1] : '';
+        } }));
         install('requestAnimationFrame', (callback) => { frames.set(++frameId, callback); return frameId; });
         install('cancelAnimationFrame', (id) => frames.delete(id));
         install('ResizeObserver', class { observe() {} });
@@ -93,9 +104,21 @@ test('particle animation keeps a fixed population, avoids frame layout reads and
         assert.ok(leftEdge >= 81 && rightEdge <= 602,
             `The projected mark must remain inside the hero when hovered near an edge (${leftEdge}, ${rightEdge})`);
         const darkColors = paintedColors.slice(-4);
+        assert.deepEqual(darkColors, palettes.dark, 'Saved dark colors must reach the glyph sprites unchanged');
         documentStub.documentElement.dataset.siteTheme = 'light';
         onThemeChange(); step();
-        assert.notDeepEqual(paintedColors.slice(-4), darkColors, 'Glyphs must be repainted with light-theme contrast');
+        assert.deepEqual(paintedColors.slice(-4), palettes.light, 'Glyphs must be repainted with the saved light colors');
+        colorMode = 'legacy';
+        onThemeChange(); step();
+        assert.deepEqual(paintedColors.slice(-4), Array(4).fill('#559acc'), 'Previous server templates must retain their palette');
+        for (const mode of ['missing', 'invalid']) {
+            colorMode = mode;
+            for (const theme of ['light', 'dark']) {
+                documentStub.documentElement.dataset.siteTheme = theme;
+                onThemeChange(); step();
+                assert.deepEqual(paintedColors.slice(-4), palettes[theme], `${mode} colors must use visible ${theme} defaults instead of canvas black`);
+            }
+        }
         motion.matches = true;
         onMotionChange(); step();
         assert.equal(frames.size, 0, 'Reduced motion renders once and stops');
